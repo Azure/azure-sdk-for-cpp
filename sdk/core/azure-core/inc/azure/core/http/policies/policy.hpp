@@ -363,7 +363,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy : public HttpPolicy {
+    class RetryPolicy
+#if !defined(_azure_TESTING_BUILD)
+        final
+#endif
+        : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
@@ -412,6 +416,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
 
+    private:
       /**
        * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
        * a request, based on the returned HTTP response.
