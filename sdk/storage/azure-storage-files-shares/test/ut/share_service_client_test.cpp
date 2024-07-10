@@ -417,4 +417,24 @@ namespace Azure { namespace Storage { namespace Test {
     premiumFileShareServiceClient.SetProperties(originalProperties);
   }
 
+  TEST_F(FileShareServiceClientTest, OAuth_PLAYBACKONLY_)
+  {
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    auto shareServiceClient
+        = Files::Shares::ShareServiceClient(m_shareServiceClient->GetUrl(), credential, options);
+    // Get Properties
+    Files::Shares::Models::ShareServiceProperties properties;
+    EXPECT_NO_THROW(properties = shareServiceClient.GetProperties().Value);
+
+    // Set Properties
+    properties.Protocol.Reset();
+    EXPECT_NO_THROW(shareServiceClient.SetProperties(properties));
+
+    // List Shares
+    EXPECT_NO_THROW(shareServiceClient.ListShares());
+  }
+
 }}} // namespace Azure::Storage::Test
