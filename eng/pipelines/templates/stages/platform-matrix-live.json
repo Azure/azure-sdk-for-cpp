@@ -132,7 +132,7 @@
         "x86_with_unit_test_libcurl": {
           "CMAKE_GENERATOR_PLATFORM": "Win32",
           "VCPKG_DEFAULT_TRIPLET": "x86-windows-static",
-          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
           "BuildArgs": "-v --parallel 8"
         },
         "x64_with_json_unit_samples_winHttp": {
@@ -148,7 +148,7 @@
         "x64_with_unit_test_winHttp": {
           "VcpkgInstall": "openssl",
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "WindowsCtestConfig": "-C Release"
@@ -157,7 +157,7 @@
           "VcpkgInstall": "openssl",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
           "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
@@ -166,7 +166,7 @@
           "VcpkgInstall": "curl[winssl] openssl",
           "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
           "CMAKE_GENERATOR_PLATFORM": "x64",
-          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
           "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"

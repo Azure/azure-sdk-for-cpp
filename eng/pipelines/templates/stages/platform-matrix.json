@@ -15,7 +15,7 @@
           "Pool": "env:MACPOOL",
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "PublishMapFiles": "true"
         }
       },
@@ -41,7 +41,7 @@
       },
       "BuildSettings": {
         "Curl": {
-          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON "
+          "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON"
         },
         "WinHttp": { "CmakeArgs": " -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON " }
       }
@@ -59,7 +59,7 @@
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON"
         },
         "Win32Api_release_curl": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "BuildArgs": "--parallel 8 --config Release",
           "PublishMapFiles": "true"
         }
@@ -86,12 +86,12 @@
       },
       "TargetPlatform": {
         "Win32Api_debug_tests_curl": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "BuildArgs": "--parallel 8 --config Debug",
           "PublishMapFiles": "true"
         },
         "Win32Api_debug_tests_winhttp": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DMSVC_USE_STATIC_CRT=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "BuildArgs": "--parallel 8 --config Debug",
           "PublishMapFiles": "true"
         }
@@ -166,23 +166,23 @@
         },
         "included_coverage": {
           "AptDependencies": "gcovr lcov",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "CODE_COVERAGE_COLLECT_ONLY": "1",
           "CODE_COVERAGE": "enabled",
           "PublishMapFiles": "true"
         },
         "included_debug": {
           "CMAKE_BUILD_TYPE": "Debug",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "PublishMapFiles": "true"
         },
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "PublishMapFiles": "true"
         },
         "included_samples": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "PublishMapFiles": "true"
         }
       }
@@ -214,7 +214,7 @@
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
           "CXX": "/usr/bin/clang++-11",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON",
           "PublishMapFiles": "true",
           "RunProxyTests": true
         }
