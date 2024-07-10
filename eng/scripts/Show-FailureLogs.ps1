@@ -15,14 +15,25 @@ if (!$filteredLogs) {
     exit 0
 }
 
-foreach ($logFile in $filteredLogs)
+$filteredLogs = $filteredLogs | select FullName
+
+for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
 {
+    $logFile = $filteredLogs[$i]
+
     Write-Host "//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"
     Write-Host "=============================================================================================================================="
     Write-Host "Log file: $logFile"
     Write-Host "=============================================================================================================================="
     try {
         Get-Content $logFile | Write-Host
+
+        $rawContents = Get-Content $logFile -Raw
+        $regexMatches = Select-String "See logs for more information\:\s*(\r|\n|\r\n|\n\r)(\s+(?<logFilePath>\S*)\s*(\r|\n|\r\n|\n\r))+" -input $logFile -AllMatches
+        foreach ($furtherDetails in $regexMatches.matches.groups.Where({ $_.Name -eq "logFilePath" }))
+        {
+            $filteredLogs += $furtherDetails.Value
+        }
     } catch { 
         Write-Host "Could not locate file found using Get-ChildItem $logFile"
     }
