@@ -4,31 +4,6 @@
   },
   "include": [
     {
-      "OSConfiguration": {
-        "macos-latest": {
-          "OSVmImage": "env:MACVMIMAGE",
-          "XCODE_VERSION": "14.2"
-        }
-      },
-      "StaticConfigs": {
-        "_": {
-          "Pool": "env:MACPOOL",
-          "BuildArgs": "-j 10",
-          "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DENABLE_PROXY_TESTS=OFF -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
-          "PublishMapFiles": "true"
-        }
-      },
-      "BuildConfig": {
-        "debug": {
-          "CMAKE_BUILD_TYPE": "Debug"
-        },
-        "release": {
-          "CMAKE_BUILD_TYPE": "Release"
-        }
-      }
-    },
-    {
       "StaticConfigs": {
         "Win2019_x64_Release": {
           "OSVmImage": "env:WINDOWSPREVIOUSVMIMAGE",

@@ -5,22 +5,6 @@
   "include": [
     {
       "StaticConfigs": {
-        "macos-latest": {
-          "Pool": "env:MACPOOL",
-          "OSVmImage": "env:MACVMIMAGE",
-          "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "BuildArgs": "-j 4"
-        }
-      },
-      "BuildConfig": {
-        "x64_with_unit_test": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DDISABLE_PROXY_TESTS=ON ",
-          "AZURE_CORE_ENABLE_JSON_TESTS": 1
-        }
-      }
-    },
-    {
-      "StaticConfigs": {
         "Ubu2204": {
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 4",
