@@ -6,7 +6,8 @@
 # sensitive information.
 
 $logFiles = Get-ChildItem -Recurse -Filter *.log
-$filteredLogs = $logFiles.Where({ $_.Name -in ('vcpkg-bootstrap.log', 'vcpkg-manifest-install.log') })
+$vcpkgLogFileNames = ('vcpkg-bootstrap.log', 'vcpkg-manifest-install.log')
+$filteredLogs = $logFiles.Where({ $_.Name -in $vcpkgLogFileNames })
 
 $filteredLogs.FullName | Write-Host
 
@@ -15,14 +16,28 @@ if (!$filteredLogs) {
     exit 0
 }
 
-foreach ($logFile in $filteredLogs)
+$filteredLogs = $filteredLogs | foreach {$_.FullName}
+
+for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
 {
+    $logFile = $filteredLogs[$i]
+
     Write-Host "//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////"
     Write-Host "=============================================================================================================================="
     Write-Host "Log file: $logFile"
     Write-Host "=============================================================================================================================="
     try {
         Get-Content $logFile | Write-Host
+
+        if ($i -lt $vcpkgLogFileNames.Length)
+        {
+            $rawContents = Get-Content $logFile -Raw
+            $regexMatches = Select-String "See logs for more information\:\s*(\r|\n|\r\n|\n\r)(\s+(?<logFilePath>\S*)\s*(\r|\n|\r\n|\n\r))+" -input $rawContents -AllMatches
+            foreach ($additionalLogFile in $regexMatches.matches.groups.Where({ $_.Name -eq "logFilePath" }))
+            {
+                $filteredLogs += $additionalLogFile.Value
+            }
+        }
     } catch { 
         Write-Host "Could not locate file found using Get-ChildItem $logFile"
     }
