@@ -16,7 +16,7 @@ if (!$filteredLogs) {
     exit 0
 }
 
-$filteredLogs = $filteredLogs | select FullName
+$filteredLogs = $filteredLogs | foreach {$_.FullName}
 
 for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
 {
@@ -29,21 +29,12 @@ for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
     try {
         Get-Content $logFile | Write-Host
 
-        Write-Host "i =" $i
-        Write-Host "vcpkgLogFileNames.Length =" $vcpkgLogFileNames.Length
         if ($i -lt $vcpkgLogFileNames.Length)
         {
             $rawContents = Get-Content $logFile -Raw
             $regexMatches = Select-String "See logs for more information\:\s*(\r|\n|\r\n|\n\r)(\s+(?<logFilePath>\S*)\s*(\r|\n|\r\n|\n\r))+" -input $logFile -AllMatches
-            Write-Host "regexMatches.matches.groups.Length =" $regexMatches.matches.groups.Length
-            Write-Host "---"
-            Write-Host "---"
-            Write-Host $regexMatches.matches.groups
-            Write-Host "---"
-            Write-Host "---"
             foreach ($furtherDetails in $regexMatches.matches.groups.Where({ $_.Name -eq "logFilePath" }))
             {
-                Write-Host "furtherDetails.Value = " $furtherDetails.Value
                 $filteredLogs += $furtherDetails.Value
             }
         }
