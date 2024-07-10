@@ -527,7 +527,11 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   {
     Models::TableEntity tableEntity{};
 
-    auto properties = json.get<std::map<std::string, std::string>>();
+    std::map<std::string, std::string> properties;    
+    for (auto [key,value] : json.items()) {
+      properties[key] = value.dump();
+    }
+    
     std::vector<std::string> erasable;
     for (auto property : properties)
     {
