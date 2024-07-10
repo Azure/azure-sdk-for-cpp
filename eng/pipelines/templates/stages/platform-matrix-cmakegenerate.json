@@ -12,11 +12,6 @@
         "Pool": "env:WINDOWSPOOL",
         "OSVmImage": "env:WINDOWSVMIMAGE",
         "VCPKG_DEFAULT_TRIPLET": "x64-windows"
-      },
-      "Mac": {
-        "Pool": "env:MACPOOL",
-        "OSVmImage": "env:MACVMIMAGE",
-        "VCPKG_DEFAULT_TRIPLET": "x64-osx"
       }
     }
   }
