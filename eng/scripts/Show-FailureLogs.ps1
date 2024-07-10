@@ -32,10 +32,10 @@ for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
         if ($i -lt $vcpkgLogFileNames.Length)
         {
             $rawContents = Get-Content $logFile -Raw
-            $regexMatches = Select-String "See logs for more information\:\s*(\r|\n|\r\n|\n\r)(\s+(?<logFilePath>\S*)\s*(\r|\n|\r\n|\n\r))+" -input $logFile -AllMatches
-            foreach ($furtherDetails in $regexMatches.matches.groups.Where({ $_.Name -eq "logFilePath" }))
+            $regexMatches = Select-String "See logs for more information\:\s*(\r|\n|\r\n|\n\r)(\s+(?<logFilePath>\S*)\s*(\r|\n|\r\n|\n\r))+" -input $rawContents -AllMatches
+            foreach ($additionalLogFile in $regexMatches.matches.groups.Where({ $_.Name -eq "logFilePath" }))
             {
-                $filteredLogs += $furtherDetails.Value
+                $filteredLogs += $additionalLogFile.Value
             }
         }
     } catch { 
