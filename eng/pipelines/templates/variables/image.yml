@@ -17,7 +17,7 @@ variables:
   - name: LINUXNEXTVMIMAGE
     value: azsdk-pool-mms-ubuntu-2204-1espt
   - name: WINDOWSVMIMAGE
-    value: azsdk-pool-mms-win-2022-1espt-118-0-0
+    value: azsdk-pool-mms-win-2022-1espt
   - name: WINDOWSPREVIOUSVMIMAGE
     value: azsdk-pool-mms-win-2019-1espt
   - name: MACVMIMAGE

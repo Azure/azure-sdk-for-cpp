@@ -24,7 +24,7 @@ stages:
 
             pool:
               name: azsdk-pool-mms-win-2022-general
-              image: azsdk-pool-mms-win-2022-1espt-118-0-0
+              image: azsdk-pool-mms-win-2022-1espt
               os: windows
 
             strategy:
@@ -66,7 +66,7 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt-118-0-0
+                image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
               strategy:
@@ -96,7 +96,7 @@ stages:
               dependsOn: TagRepository
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt-118-0-0
+                image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
               variables:
@@ -237,7 +237,7 @@ stages:
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt-118-0-0
+                image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
               strategy:
