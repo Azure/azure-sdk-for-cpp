@@ -90,8 +90,28 @@ void InitTracer(const std::string& stressScenarioName)
   auto processor = trace_sdk::SimpleSpanProcessorFactory::Create(std::move(exporter));
 
   auto resource{GetTraceResource(stressScenarioName)};
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+  // https://github.com/Azure/azure-sdk-for-cpp/issues/5784
+
   std::shared_ptr<opentelemetry::trace::TracerProvider> provider
       = trace_sdk::TracerProviderFactory::Create(std::move(processor), std::move(resource));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
   // Set the global trace provider
   trace::Provider::SetTracerProvider(provider);
@@ -181,8 +201,27 @@ void InitLogger(const std::string& stressScenarioName)
 
     auto resource{GetTraceResource(stressScenarioName)};
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+    // https://github.com/Azure/azure-sdk-for-cpp/issues/5784
+
     std::shared_ptr<logs::LoggerProvider> provider
         = logs_sdk::LoggerProviderFactory::Create(std::move(processor), std::move(resource));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
     // Set the global log provider.
     logs::Provider::SetLoggerProvider(provider);
