@@ -6,7 +6,7 @@
 # sensitive information.
 
 $logFiles = Get-ChildItem -Recurse -Filter *.log
-$vcpkgLogFileNames = ('vcpkg-bootstrap.log', 'vcpkg-manifest-install.log')
+$vcpkgLogFileNames = @('vcpkg-bootstrap.log', 'vcpkg-manifest-install.log')
 $filteredLogs = $logFiles.Where({ $_.Name -in $vcpkgLogFileNames })
 
 $filteredLogs.FullName | Write-Host
