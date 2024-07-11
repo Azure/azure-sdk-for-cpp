@@ -108,7 +108,7 @@ extends:
     sdl:
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
-        image: azsdk-pool-mms-win-2022-1espt
+        image: azsdk-pool-mms-win-2022-1espt-118-0-0
         os: windows
       eslint:
         enabled: false
