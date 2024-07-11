@@ -4,10 +4,7 @@
   "supports": "!(windows & !static)",
   "dependencies": [
     "azure-core-cpp",
-    {
-      "name": "opentelemetry-cpp",
-      "default-features": false
-    },
+    "opentelemetry-cpp",
     {
       "name": "vcpkg-cmake",
       "host": true
