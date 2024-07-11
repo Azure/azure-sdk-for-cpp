@@ -16,7 +16,7 @@ if (!$filteredLogs) {
     exit 0
 }
 
-$filteredLogs = $filteredLogs | foreach {$_.FullName}
+$filteredLogs = @($filteredLogs.FullName)
 
 for ($i = 0; $i -lt $filteredLogs.Length; $i += 1)
 {
