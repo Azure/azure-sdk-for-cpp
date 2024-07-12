@@ -13,214 +13,207 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
-namespace Azure { namespace Core { namespace Test {
-  class TestTransportPolicy final : public HttpPolicy {
-  private:
-    std::function<std::unique_ptr<RawResponse>()> m_send;
+namespace {
+class TestTransportPolicy final : public HttpPolicy {
+private:
+  std::function<std::unique_ptr<RawResponse>()> m_send;
 
-  public:
-    TestTransportPolicy(std::function<std::unique_ptr<RawResponse>()> send) : m_send(send) {}
+public:
+  TestTransportPolicy(std::function<std::unique_ptr<RawResponse>()> send) : m_send(send) {}
 
-    std::unique_ptr<Azure::Core::Http::RawResponse> Send(
-        Request&,
-        NextHttpPolicy,
-        Azure::Core::Context const&) const override
-    {
-      return m_send();
-    }
+  std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+      Request&,
+      NextHttpPolicy,
+      Azure::Core::Context const&) const override
+  {
+    return m_send();
+  }
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<TestTransportPolicy>(*this);
-    }
-  };
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestTransportPolicy>(*this);
+  }
+};
 
-  class RetryPolicyTest final : public RetryPolicy {
-  private:
-    std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
-        m_shouldRetryOnTransportFailure;
+class RetryPolicyTest final : public RetryPolicy {
+private:
+  std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
+      m_shouldRetryOnTransportFailure;
 
-    std::function<
-        bool(RawResponse const&, RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
-        m_shouldRetryOnResponse;
+  std::function<
+      bool(RawResponse const&, RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
+      m_shouldRetryOnResponse;
 
-  public:
-    bool BaseShouldRetryOnTransportFailure(
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor) const
-    {
-      return RetryPolicy::ShouldRetryOnTransportFailure(
-          retryOptions, attempt, retryAfter, jitterFactor);
-    }
+public:
+  bool BaseShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const
+  {
+    return RetryPolicy::ShouldRetryOnTransportFailure(
+        retryOptions, attempt, retryAfter, jitterFactor);
+  }
 
-    bool BaseShouldRetryOnResponse(
-        RawResponse const& response,
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor) const
-    {
-      return RetryPolicy::ShouldRetryOnResponse(
-          response, retryOptions, attempt, retryAfter, jitterFactor);
-    }
+  bool BaseShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const
+  {
+    return RetryPolicy::ShouldRetryOnResponse(
+        response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
 
-    RetryPolicyTest(
-        RetryOptions const& retryOptions,
-        decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
-        decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
-        : RetryPolicy(retryOptions),
-          m_shouldRetryOnTransportFailure(
-              shouldRetryOnTransportFailure != nullptr //
-                  ? shouldRetryOnTransportFailure
-                  : static_cast<decltype(m_shouldRetryOnTransportFailure)>( //
-                      [this](auto options, auto attempt, auto retryAfter, auto jitter) {
-                        retryAfter = std::chrono::milliseconds(0);
-                        auto ignore = decltype(retryAfter)();
-                        return this->BaseShouldRetryOnTransportFailure(
-                            options, attempt, ignore, jitter);
-                      })),
-          m_shouldRetryOnResponse(
-              shouldRetryOnResponse != nullptr //
-                  ? shouldRetryOnResponse
-                  : static_cast<decltype(m_shouldRetryOnResponse)>( //
-                      [this](
-                          RawResponse const& response,
-                          auto options,
-                          auto attempt,
-                          auto retryAfter,
-                          auto jitter) {
-                        retryAfter = std::chrono::milliseconds(0);
-                        auto ignore = decltype(retryAfter)();
-                        return this->BaseShouldRetryOnResponse(
-                            response, options, attempt, ignore, jitter);
-                      }))
-    {
-    }
+  RetryPolicyTest(
+      RetryOptions const& retryOptions,
+      decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
+      decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
+      : RetryPolicy(retryOptions),
+        m_shouldRetryOnTransportFailure(
+            shouldRetryOnTransportFailure != nullptr //
+                ? shouldRetryOnTransportFailure
+                : static_cast<decltype(m_shouldRetryOnTransportFailure)>( //
+                    [this](auto options, auto attempt, auto retryAfter, auto jitter) {
+                      retryAfter = std::chrono::milliseconds(0);
+                      auto ignore = decltype(retryAfter)();
+                      return this->BaseShouldRetryOnTransportFailure(
+                          options, attempt, ignore, jitter);
+                    })),
+        m_shouldRetryOnResponse(
+            shouldRetryOnResponse != nullptr //
+                ? shouldRetryOnResponse
+                : static_cast<decltype(m_shouldRetryOnResponse)>( //
+                    [this](
+                        RawResponse const& response,
+                        auto options,
+                        auto attempt,
+                        auto retryAfter,
+                        auto jitter) {
+                      retryAfter = std::chrono::milliseconds(0);
+                      auto ignore = decltype(retryAfter)();
+                      return this->BaseShouldRetryOnResponse(
+                          response, options, attempt, ignore, jitter);
+                    }))
+  {
+  }
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<RetryPolicyTest>(*this);
-    }
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<RetryPolicyTest>(*this);
+  }
 
-  protected:
-    bool ShouldRetryOnTransportFailure(
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor) const override
-    {
-      return m_shouldRetryOnTransportFailure(retryOptions, attempt, retryAfter, jitterFactor);
-    }
+protected:
+  bool ShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const override
+  {
+    return m_shouldRetryOnTransportFailure(retryOptions, attempt, retryAfter, jitterFactor);
+  }
 
-    bool ShouldRetryOnResponse(
-        RawResponse const& response,
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor) const override
-    {
-      return m_shouldRetryOnResponse(response, retryOptions, attempt, retryAfter, jitterFactor);
-    }
-  };
+  bool ShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor) const override
+  {
+    return m_shouldRetryOnResponse(response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
+};
 
-  class RetryPolicyTest_CustomRetry_True final : public RetryPolicy {
-  public:
-    RetryPolicyTest_CustomRetry_True(RetryOptions const& retryOptions) : RetryPolicy(retryOptions)
-    {
-    }
+class RetryPolicyTest_CustomRetry_True final : public RetryPolicy {
+public:
+  RetryPolicyTest_CustomRetry_True(RetryOptions const& retryOptions) : RetryPolicy(retryOptions) {}
 
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<RetryPolicyTest_CustomRetry_True>(*this);
-    }
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<RetryPolicyTest_CustomRetry_True>(*this);
+  }
 
-  protected:
-    bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
+protected:
+  bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
+  {
+    return true;
+  }
+};
+
+class RetryPolicyTest_CustomRetry_Throw final : public RetryPolicy {
+public:
+  RetryPolicyTest_CustomRetry_Throw(RetryOptions const& retryOptions) : RetryPolicy(retryOptions) {}
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<RetryPolicyTest_CustomRetry_Throw>(*this);
+  }
+
+protected:
+  bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
+  {
+    throw TransportException("Short-circuit evaluation means this should never be called.");
+  }
+};
+
+class RetryPolicyTest_CustomRetry_CopySource final : public RetryPolicy {
+public:
+  RetryPolicyTest_CustomRetry_CopySource(RetryOptions const& retryOptions)
+      : RetryPolicy(retryOptions)
+  {
+  }
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<RetryPolicyTest_CustomRetry_CopySource>(*this);
+  }
+
+protected:
+  bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const&) const override
+  {
+    if (response == nullptr)
     {
       return true;
     }
-  };
 
-  class RetryPolicyTest_CustomRetry_Throw final : public RetryPolicy {
-  public:
-    RetryPolicyTest_CustomRetry_Throw(RetryOptions const& retryOptions) : RetryPolicy(retryOptions)
+    if (static_cast<std::underlying_type_t<Azure::Core::Http::HttpStatusCode>>(
+            response->GetStatusCode())
+        >= 400)
     {
-    }
-
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<RetryPolicyTest_CustomRetry_Throw>(*this);
-    }
-
-  protected:
-    bool ShouldRetry(std::unique_ptr<RawResponse> const&, RetryOptions const&) const override
-    {
-      throw TransportException("Short-circuit evaluation means this should never be called.");
-    }
-  };
-
-  class RetryPolicyTest_CustomRetry_CopySource final : public RetryPolicy {
-  public:
-    RetryPolicyTest_CustomRetry_CopySource(RetryOptions const& retryOptions)
-        : RetryPolicy(retryOptions)
-    {
-    }
-
-    std::unique_ptr<HttpPolicy> Clone() const override
-    {
-      return std::make_unique<RetryPolicyTest_CustomRetry_CopySource>(*this);
-    }
-
-  protected:
-    bool ShouldRetry(std::unique_ptr<RawResponse> const& response, RetryOptions const&)
-        const override
-    {
-      if (response == nullptr)
+      const auto& headers = response->GetHeaders();
+      auto ite = headers.find("x-ms-error-code");
+      if (ite != headers.end())
       {
-        return true;
-      }
+        const std::string error = ite->second;
 
-      if (static_cast<std::underlying_type_t<Azure::Core::Http::HttpStatusCode>>(
-              response->GetStatusCode())
-          >= 400)
-      {
-        const auto& headers = response->GetHeaders();
-        auto ite = headers.find("x-ms-error-code");
-        if (ite != headers.end())
+        if (error == "InternalError" || error == "OperationTimedOut" || error == "ServerBusy")
         {
-          const std::string error = ite->second;
-
-          if (error == "InternalError" || error == "OperationTimedOut" || error == "ServerBusy")
-          {
-            return true;
-          }
+          return true;
         }
       }
+    }
 
-      if (static_cast<std::underlying_type_t<Azure::Core::Http::HttpStatusCode>>(
-              response->GetStatusCode())
-          >= 400)
+    if (static_cast<std::underlying_type_t<Azure::Core::Http::HttpStatusCode>>(
+            response->GetStatusCode())
+        >= 400)
+    {
+      const auto& headers = response->GetHeaders();
+      auto ite = headers.find("x-ms-copy-source-error-code");
+      if (ite != headers.end())
       {
-        const auto& headers = response->GetHeaders();
-        auto ite = headers.find("x-ms-copy-source-error-code");
-        if (ite != headers.end())
-        {
-          const std::string error = ite->second;
+        const std::string error = ite->second;
 
-          if (error == "InternalError" || error == "OperationTimedOut" || error == "ServerBusy")
-          {
-            return true;
-          }
+        if (error == "InternalError" || error == "OperationTimedOut" || error == "ServerBusy")
+        {
+          return true;
         }
       }
-      return false;
     }
-  };
-}}} // namespace Azure::Core::Test
-
-using namespace Azure::Core::Test;
+    return false;
+  }
+};
+} // namespace
 
 TEST(RetryPolicy, ShouldRetry)
 {
@@ -596,38 +589,38 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
   EXPECT_EQ(jitterReceived, -1);
 }
 
-namespace Azure { namespace Core { namespace Test {
-  class RetryLogic final : private RetryPolicy {
-    RetryLogic() : RetryPolicy(RetryOptions()) {}
-    ~RetryLogic() {}
+namespace {
+class RetryLogic final : private RetryPolicy {
+  RetryLogic() : RetryPolicy(RetryOptions()) {}
+  ~RetryLogic() {}
 
-    static RetryLogic const g_retryPolicy;
+  static RetryLogic const g_retryPolicy;
 
-  public:
-    static bool TestShouldRetryOnTransportFailure(
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor)
-    {
-      return g_retryPolicy.ShouldRetryOnTransportFailure(
-          retryOptions, attempt, retryAfter, jitterFactor);
-    }
+public:
+  static bool TestShouldRetryOnTransportFailure(
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor)
+  {
+    return g_retryPolicy.ShouldRetryOnTransportFailure(
+        retryOptions, attempt, retryAfter, jitterFactor);
+  }
 
-    static bool TestShouldRetryOnResponse(
-        RawResponse const& response,
-        RetryOptions const& retryOptions,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor)
-    {
-      return g_retryPolicy.ShouldRetryOnResponse(
-          response, retryOptions, attempt, retryAfter, jitterFactor);
-    }
-  };
+  static bool TestShouldRetryOnResponse(
+      RawResponse const& response,
+      RetryOptions const& retryOptions,
+      int32_t attempt,
+      std::chrono::milliseconds& retryAfter,
+      double jitterFactor)
+  {
+    return g_retryPolicy.ShouldRetryOnResponse(
+        response, retryOptions, attempt, retryAfter, jitterFactor);
+  }
+};
 
-  RetryLogic const RetryLogic::g_retryPolicy;
-}}} // namespace Azure::Core::Test
+RetryLogic const RetryLogic::g_retryPolicy;
+} // namespace
 
 TEST(RetryPolicy, Exponential)
 {

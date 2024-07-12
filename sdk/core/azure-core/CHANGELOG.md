@@ -9,7 +9,6 @@
 ### Other Changes
 
 - Updated JSON library to 3.11.3.
-- Hide methods on the `RetryPolicy` that are not intended for public use.
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 
 ### Acknowledgments
