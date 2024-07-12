@@ -57,9 +57,10 @@ TEST_F(TokenCredentialTest, ClientSecret)
 {
   if (m_testContext.IsLiveMode())
   {
-    SkipTest();
-    return;
+    GTEST_SKIP_(
+        "Skipping ClientSecret test since it requires env vars that aren't set in live mode.");
   }
+
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetClientSecretCredential(testName);
 
@@ -78,9 +79,10 @@ TEST_F(TokenCredentialTest, EnvironmentCredential)
 {
   if (m_testContext.IsLiveMode())
   {
-    SkipTest();
-    return;
+    GTEST_SKIP_("Skipping EnvironmentCredential test since it requires env vars that aren't set in "
+                "live mode.");
   }
+
   std::string const testName(GetTestName());
   auto const clientSecretCredential = GetEnvironmentCredential(testName);
 
