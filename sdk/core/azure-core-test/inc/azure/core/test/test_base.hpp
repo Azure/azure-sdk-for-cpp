@@ -15,6 +15,8 @@
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/identity/azure_pipelines_credential.hpp>
+#include <azure/identity/chained_token_credential.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/identity/default_azure_credential.hpp>
 
@@ -246,7 +248,17 @@ namespace Azure { namespace Core { namespace Test {
         }
         if (clientSecret.empty())
         {
-          m_testCredential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+          m_testCredential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+              Azure::Identity::ChainedTokenCredential::Sources{
+                  std ::make_shared<Azure::Identity::AzurePipelinesCredential>(
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_TENANT_ID"),
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_CLIENT_ID"),
+                      Azure::Core::_internal::Environment::GetVariable(
+                          "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+                      Azure::Core::_internal::Environment::GetVariable("SYSTEM_ACCESSTOKEN")),
+                  std::make_shared<Azure::Identity::DefaultAzureCredential>()});
         }
         else
         {
@@ -302,7 +314,7 @@ namespace Azure { namespace Core { namespace Test {
      *
      * @return The value of the environment variable retrieved.
      *
-     * @note If AZURE_TENANT_ID, AZURE_CLIENT_ID, or AZURE_CLIENT_SECRET are not available in the
+     * @note If AZURE_TENANT_ID or AZURE_CLIENT_ID are not available in the
      * environment, the AZURE_SERVICE_DIRECTORY environment variable is used to set those values
      * with the values emitted by the New-TestResources.ps1 script.
      *
