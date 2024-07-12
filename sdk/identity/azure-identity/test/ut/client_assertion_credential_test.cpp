@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/identity/azure_pipelines_credential.hpp"
+#include "azure/identity/client_assertion_credential.hpp"
 #include "credential_test_helper.hpp"
 
 #include <cstdio>
@@ -14,37 +14,42 @@ using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
-using Azure::Identity::AzurePipelinesCredential;
-using Azure::Identity::AzurePipelinesCredentialOptions;
+using Azure::Identity::ClientAssertionCredential;
+using Azure::Identity::ClientAssertionCredentialOptions;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
-TEST(AzurePipelinesCredential, GetCredentialName)
+std::string GetAssertion_Throw(Azure::Core::Context const&)
 {
-  std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
-  std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-  std::string serviceConnectionId = "abc";
-  std::string systemAccessToken = "123";
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  EXPECT_EQ(cred.GetCredentialName(), "AzurePipelinesCredential");
+  throw std::runtime_error(
+      "The test is not expected to call this function used for assertion callback.");
 }
 
-TEST(AzurePipelinesCredential, GetOptionsFromEnvironment)
+std::string GetAssertion_Test(Azure::Core::Context const&) { return "sample-assertion"; }
+
+TEST(ClientAssertionCredential, GetCredentialName)
 {
   std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
   std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
   std::string serviceConnectionId = "abc";
   std::string systemAccessToken = "123";
+
+  ClientAssertionCredential const cred(tenantId, clientId, GetAssertion_Throw);
+
+  EXPECT_EQ(cred.GetCredentialName(), "ClientAssertionCredential");
+}
+
+TEST(ClientAssertionCredential, GetOptionsFromEnvironment)
+{
+  std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
+  std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
 
   {
     std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", ""}};
     CredentialTestHelper::EnvironmentOverride const env(envVars);
 
-    AzurePipelinesCredentialOptions options;
-    AzurePipelinesCredential const cred(
-        tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-    EXPECT_EQ(cred.GetCredentialName(), "AzurePipelinesCredential");
+    ClientAssertionCredentialOptions options;
+    ClientAssertionCredential const cred(tenantId, clientId, GetAssertion_Throw, options);
+    EXPECT_EQ(cred.GetCredentialName(), "ClientAssertionCredential");
 
     EXPECT_EQ(options.AuthorityHost, "https://login.microsoftonline.com/");
   }
@@ -53,7 +58,7 @@ TEST(AzurePipelinesCredential, GetOptionsFromEnvironment)
     std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", "foo"}};
     CredentialTestHelper::EnvironmentOverride const env(envVars);
 
-    AzurePipelinesCredentialOptions options;
+    ClientAssertionCredentialOptions options;
     options.AuthorityHost = "bar";
     EXPECT_EQ(options.AuthorityHost, "bar");
   }
@@ -63,151 +68,123 @@ TEST(AzurePipelinesCredential, GetOptionsFromEnvironment)
         = {{"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}};
     CredentialTestHelper::EnvironmentOverride const env(envVars);
 
-    AzurePipelinesCredentialOptions options;
+    ClientAssertionCredentialOptions options;
     EXPECT_EQ(options.AuthorityHost, "https://microsoft.com/");
   }
 }
 
-TEST(AzurePipelinesCredential, InvalidArgs)
+TEST(ClientAssertionCredential, InvalidArgs)
 {
   std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
   std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-  std::string serviceConnectionId = "abc";
-  std::string systemAccessToken = "123";
-
-  std::map<std::string, std::string> validEnvVars
-      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
-
-  // Empty Oidc Request Uri
-  {
-    std::map<std::string, std::string> invalidEnvVars = {{"SYSTEM_OIDCREQUESTURI", ""}};
-    CredentialTestHelper::EnvironmentOverride const env(invalidEnvVars);
-
-    TokenRequestContext trc;
-    trc.Scopes.push_back("https://storage.azure.com/.default");
-
-    AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
-    AzurePipelinesCredentialOptions options;
-    AzurePipelinesCredential const credWithOptions(
-        tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-    EXPECT_THROW(credWithOptions.GetToken(trc, {}), AuthenticationException);
-  }
 
   // Empty Tenant ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
-    AzurePipelinesCredential const cred("", clientId, serviceConnectionId, systemAccessToken);
+    ClientAssertionCredential const cred("", clientId, GetAssertion_Throw);
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
 
   // Invalid Tenant ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
-    AzurePipelinesCredential const cred(
-        "!=invalidTenantId=!", clientId, serviceConnectionId, systemAccessToken);
+    ClientAssertionCredential const cred("!=invalidTenantId=!", clientId, GetAssertion_Throw);
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
 
   // Empty client ID
   {
-    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
-    AzurePipelinesCredential const cred(tenantId, "", serviceConnectionId, systemAccessToken);
+    ClientAssertionCredential const cred(tenantId, "", GetAssertion_Throw);
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
 
-  // Empty service connection ID
+  // Empty asssertion call back
   {
-    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
-    AzurePipelinesCredential const cred(tenantId, clientId, "", systemAccessToken);
+    ClientAssertionCredential const cred(tenantId, clientId, nullptr);
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
-
-  // Empty system access token
   {
-    CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
+    std::function<std::string(Azure::Core::Context const&)> emptyCallBack;
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
-    AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, "");
+    ClientAssertionCredential const cred(tenantId, clientId, emptyCallBack);
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
 }
 
-TEST(AzurePipelinesCredential, Regular)
+TEST(ClientAssertionCredential, Regular)
 {
-  std::map<std::string, std::string> validEnvVars
-      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
-  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        AzurePipelinesCredentialOptions options;
+        ClientAssertionCredentialOptions options;
         options.Transport.Transport = transport;
 
         std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
         std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-        std::string serviceConnectionId = "a/bc";
-        std::string systemAccessToken = "123";
 
-        return std::make_unique<AzurePipelinesCredential>(
-            tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+        return std::make_unique<ClientAssertionCredential>(
+            tenantId, clientId, GetAssertion_Test, options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
-          "{\"oidcToken\":\"abc/d\"}", "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 2U);
-  EXPECT_EQ(actual.Responses.size(), 1U);
+  EXPECT_EQ(actual.Responses.size(), 2U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
 
   auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
 
   EXPECT_EQ(request0.HttpMethod, HttpMethod::Post);
   EXPECT_EQ(request1.HttpMethod, HttpMethod::Post);
 
   EXPECT_EQ(
       request0.AbsoluteUrl,
-      "https://localhost/instance?api-version=7.1&serviceConnectionId=a%2Fbc");
+      "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    constexpr char expectedBodyStart1[] // cspell:disable
+    constexpr char expectedBodyStart0[] // cspell:disable
         = "grant_type=client_credentials"
-          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-"
-          "bearer"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
           "&scope=https%3A%2F%2Fazure.com%2F.default"
-          "&client_assertion=abc%2Fd"; // cspell:enable
+          "&client_assertion=sample-assertion"; // cspell:enable
 
-    EXPECT_EQ(request0.Body.size(), 0);
+    constexpr char expectedBodyStart1[] // cspell:disable
+        = "grant_type=client_credentials"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_assertion=sample-assertion"; // cspell:enable
+
+    EXPECT_EQ(request0.Body.size(), (sizeof(expectedBodyStart0) - 1));
     EXPECT_EQ(request1.Body.size(), (sizeof(expectedBodyStart1) - 1));
 
-    EXPECT_EQ(request1.Body, expectedBodyStart1);
+    EXPECT_EQ(request0.Body.substr(0, (sizeof(expectedBodyStart0) - 1)), expectedBodyStart0);
+    EXPECT_EQ(request1.Body.substr(0, (sizeof(expectedBodyStart1) - 1)), expectedBodyStart1);
 
-    EXPECT_EQ(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_EQ(
+        std::stoi(request0.Headers.at("Content-Length")),
+        static_cast<int>(sizeof(expectedBodyStart0) - 1));
 
     EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
     EXPECT_EQ(
@@ -216,73 +193,80 @@ TEST(AzurePipelinesCredential, Regular)
   }
 
   EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
-  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/json");
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
   EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
   EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
   EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
-TEST(AzurePipelinesCredential, AzureStack)
+TEST(ClientAssertionCredential, AzureStack)
 {
-  std::map<std::string, std::string> validEnvVars
-      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
-  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        AzurePipelinesCredentialOptions options;
+        ClientAssertionCredentialOptions options;
         options.Transport.Transport = transport;
 
         std::string tenantId = "adfs";
         std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-        std::string serviceConnectionId = "a/bc";
-        std::string systemAccessToken = "123";
 
-        return std::make_unique<AzurePipelinesCredential>(
-            tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+        return std::make_unique<ClientAssertionCredential>(
+            tenantId, clientId, GetAssertion_Test, options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
-          "{\"oidcToken\":\"abc/d\"}", "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 2U);
-  EXPECT_EQ(actual.Responses.size(), 1U);
+  EXPECT_EQ(actual.Responses.size(), 2U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
 
   auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
 
   EXPECT_EQ(request0.HttpMethod, HttpMethod::Post);
   EXPECT_EQ(request1.HttpMethod, HttpMethod::Post);
 
-  EXPECT_EQ(
-      request0.AbsoluteUrl,
-      "https://localhost/instance?api-version=7.1&serviceConnectionId=a%2Fbc");
+  EXPECT_EQ(request0.AbsoluteUrl, "https://login.microsoftonline.com/adfs/oauth2/token");
 
   EXPECT_EQ(request1.AbsoluteUrl, "https://login.microsoftonline.com/adfs/oauth2/token");
 
   {
-    constexpr char expectedBodyStart1[] // cspell:disable
+    constexpr char expectedBodyStart0[] // cspell:disable
         = "grant_type=client_credentials"
-          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-"
-          "bearer"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
           "&scope=https%3A%2F%2Fazure.com"
-          "&client_assertion=abc%2Fd"; // cspell:enable
+          "&client_assertion=sample-assertion"; // cspell:enable
 
-    EXPECT_EQ(request0.Body.size(), 0);
+    constexpr char expectedBodyStart1[] // cspell:disable
+        = "grant_type=client_credentials"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_assertion=sample-assertion"; // cspell:enable
+
+    EXPECT_EQ(request0.Body.size(), (sizeof(expectedBodyStart0) - 1));
     EXPECT_EQ(request1.Body.size(), (sizeof(expectedBodyStart1) - 1));
 
-    EXPECT_EQ(request1.Body, expectedBodyStart1);
+    EXPECT_EQ(request0.Body.substr(0, (sizeof(expectedBodyStart0) - 1)), expectedBodyStart0);
+    EXPECT_EQ(request1.Body.substr(0, (sizeof(expectedBodyStart1) - 1)), expectedBodyStart1);
 
-    EXPECT_EQ(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_EQ(
+        std::stoi(request0.Headers.at("Content-Length")),
+        static_cast<int>(sizeof(expectedBodyStart0) - 1));
 
     EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
     EXPECT_EQ(
@@ -291,75 +275,85 @@ TEST(AzurePipelinesCredential, AzureStack)
   }
 
   EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
-  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/json");
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
   EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
   EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
   EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
-TEST(AzurePipelinesCredential, Authority)
+TEST(ClientAssertionCredential, Authority)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"},
-       {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"}});
-
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        AzurePipelinesCredentialOptions options;
+        ClientAssertionCredentialOptions options;
         options.Transport.Transport = transport;
 
         std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
         std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-        std::string serviceConnectionId = "a/bc";
-        std::string systemAccessToken = "123";
+        options.AuthorityHost = "https://microsoft.com/";
 
-        return std::make_unique<AzurePipelinesCredential>(
-            tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+        return std::make_unique<ClientAssertionCredential>(
+            tenantId, clientId, GetAssertion_Test, options);
       },
-      {{{"https://azure.com/.default"}}},
+      {{{"https://azure.com/.default"}}, {{}}},
       std::vector<std::string>{
-          "{\"oidcToken\":\"abc/d\"}", "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
 
   EXPECT_EQ(actual.Requests.size(), 2U);
-  EXPECT_EQ(actual.Responses.size(), 1U);
+  EXPECT_EQ(actual.Responses.size(), 2U);
 
   auto const& request0 = actual.Requests.at(0);
   auto const& request1 = actual.Requests.at(1);
 
   auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
 
   EXPECT_EQ(request0.HttpMethod, HttpMethod::Post);
   EXPECT_EQ(request1.HttpMethod, HttpMethod::Post);
 
   EXPECT_EQ(
       request0.AbsoluteUrl,
-      "https://localhost/instance?api-version=7.1&serviceConnectionId=a%2Fbc");
+      "https://microsoft.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://microsoft.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
-    constexpr char expectedBodyStart1[] // cspell:disable
+    constexpr char expectedBodyStart0[] // cspell:disable
         = "grant_type=client_credentials"
-          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-"
-          "bearer"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
           "&scope=https%3A%2F%2Fazure.com%2F.default"
-          "&client_assertion=abc%2Fd"; // cspell:enable
+          "&client_assertion=sample-assertion"; // cspell:enable
 
-    EXPECT_EQ(request0.Body.size(), 0);
+    constexpr char expectedBodyStart1[] // cspell:disable
+        = "grant_type=client_credentials"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_assertion=sample-assertion"; // cspell:enable
+
+    EXPECT_EQ(request0.Body.size(), (sizeof(expectedBodyStart0) - 1));
     EXPECT_EQ(request1.Body.size(), (sizeof(expectedBodyStart1) - 1));
 
-    EXPECT_EQ(request1.Body, expectedBodyStart1);
+    EXPECT_EQ(request0.Body.substr(0, (sizeof(expectedBodyStart0) - 1)), expectedBodyStart0);
+    EXPECT_EQ(request1.Body.substr(0, (sizeof(expectedBodyStart1) - 1)), expectedBodyStart1);
 
-    EXPECT_EQ(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_EQ(
+        std::stoi(request0.Headers.at("Content-Length")),
+        static_cast<int>(sizeof(expectedBodyStart0) - 1));
 
     EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
     EXPECT_EQ(
@@ -368,311 +362,45 @@ TEST(AzurePipelinesCredential, Authority)
   }
 
   EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
-  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/json");
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
   EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
 
   EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
 
   using namespace std::chrono_literals;
   EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
   EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
-TEST(AzurePipelinesCredential, HttpSchemeNotSupported)
+TEST(ClientAssertionCredential, HttpSchemeNotSupported)
 {
-  CredentialTestHelper::EnvironmentOverride const env(
-      {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"},
-       {"AZURE_AUTHORITY_HOST", "http://microsoft.com/"}});
+  std::map<std::string, std::string> envVars = {{"AZURE_AUTHORITY_HOST", "http://microsoft.com/"}};
+  CredentialTestHelper::EnvironmentOverride const env(envVars);
 
   try
   {
     auto const actual = CredentialTestHelper::SimulateTokenRequest(
         [](auto transport) {
-          AzurePipelinesCredentialOptions options;
+          ClientAssertionCredentialOptions options;
           options.Transport.Transport = transport;
 
           std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
           std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-          std::string serviceConnectionId = "a/bc";
-          std::string systemAccessToken = "123";
 
-          return std::make_unique<AzurePipelinesCredential>(
-              tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+          return std::make_unique<ClientAssertionCredential>(
+              tenantId, clientId, GetAssertion_Throw, options);
         },
         {{{"https://azure.com/.default"}}},
-        std::vector<std::string>{
-            "{\"oidcToken\":\"abc\"}", "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
+        std::vector<std::string>{"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"});
   }
   catch (AuthenticationException const& e)
   {
     EXPECT_TRUE(std::string(e.what()).find("https") != std::string::npos) << e.what();
-  }
-}
-
-TEST(AzurePipelinesCredential, InvalidOidcResponse)
-{
-  std::map<std::string, std::string> validEnvVars
-      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
-  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
-  std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
-  std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-  std::string serviceConnectionId = "a/bc";
-  std::string systemAccessToken = "123";
-
-  // Non-OK response
-  try
-  {
-    using Azure::Core::Http::HttpStatusCode;
-    std::vector<std::string> const testScopes;
-    CredentialTestHelper::TokenRequestSimulationServerResponse testResponse;
-    testResponse.StatusCode = HttpStatusCode::BadRequest;
-    testResponse.Body = "Invalid response body";
-
-    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          AzurePipelinesCredentialOptions options;
-          options.Transport.Transport = transport;
-
-          return std::make_unique<AzurePipelinesCredential>(
-              tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-        },
-        {testScopes},
-        {testResponse}));
-
-    EXPECT_TRUE(!"AzurePipelinesCredential should throw given the response above.");
-  }
-  catch (AuthenticationException const& ex)
-  {
-    std::string expectedMessage
-        = "AzurePipelinesCredential : 400 (Test) response from the OIDC endpoint. Check service "
-          "connection ID and Pipeline configuration.\n\nInvalid response body";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
-  }
-
-  // Invalid JSON
-  EXPECT_THROW(
-      CredentialTestHelper::SimulateTokenRequest(
-          [&](auto transport) {
-            AzurePipelinesCredentialOptions options;
-            options.Transport.Transport = transport;
-
-            return std::make_unique<AzurePipelinesCredential>(
-                tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-          },
-          {{{"https://azure.com/.default"}}},
-          std::vector<std::string>{"{\"oidc\":\"abc\"]", ""}),
-      AuthenticationException);
-
-  // Missing token
-  EXPECT_THROW(
-      CredentialTestHelper::SimulateTokenRequest(
-          [&](auto transport) {
-            AzurePipelinesCredentialOptions options;
-            options.Transport.Transport = transport;
-
-            return std::make_unique<AzurePipelinesCredential>(
-                tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-          },
-          {{{"https://azure.com/.default"}}},
-          std::vector<std::string>{"{\"oidc\":\"abc\"}", ""}),
-      AuthenticationException);
-
-  // Incorrect token type
-  EXPECT_THROW(
-      CredentialTestHelper::SimulateTokenRequest(
-          [&](auto transport) {
-            AzurePipelinesCredentialOptions options;
-            options.Transport.Transport = transport;
-
-            return std::make_unique<AzurePipelinesCredential>(
-                tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-          },
-          {{{"https://azure.com/.default"}}},
-          std::vector<std::string>{"{\"oidcToken\":5}", ""}),
-      AuthenticationException);
-}
-
-constexpr auto TenantIdEnvVar = "AZURESUBSCRIPTION_TENANT_ID";
-constexpr auto ClientIdEnvVar = "AZURESUBSCRIPTION_CLIENT_ID";
-constexpr auto ServiceConnectionIdEnvVar = "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID";
-constexpr auto SystemAccessTokenEnv = "SYSTEM_ACCESSTOKEN";
-
-static std::string GetSkipTestMessage(
-    std::string tenantId,
-    std::string clientId,
-    std::string serviceConnectionId,
-    std::string systemAccessToken)
-{
-  std::string message = "Set " + std::string(TenantIdEnvVar) + ", " + ClientIdEnvVar + ", "
-      + ServiceConnectionIdEnvVar + ", and " + SystemAccessTokenEnv
-      + " to run this AzurePipelinesCredential test. Tenant ID - '" + tenantId + "', Client ID - '"
-      + clientId + "', Service Connection ID - '" + serviceConnectionId
-      + "', and System Access Token size : " + std::to_string(systemAccessToken.size()) + ".";
-  return message;
-}
-
-TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
-{
-  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
-  std::string serviceConnectionId
-      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
-  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-
-  if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
-      || systemAccessToken.empty())
-  {
-    std::string message
-        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    GTEST_SKIP_(message.c_str());
-  }
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://vault.azure.net/.default");
-
-  AccessToken token = cred.GetToken(trc, {});
-  EXPECT_NE(token.Token, "") << "GetToken returned an invalid token.";
-
-  EXPECT_TRUE(token.ExpiresOn >= std::chrono::system_clock::now())
-      << "GetToken returned an invalid expiration time.";
-
-  AccessToken token2 = cred.GetToken(trc, {});
-  EXPECT_TRUE(token.Token == token2.Token && token.ExpiresOn == token2.ExpiresOn)
-      << "Expected a cached token.";
-}
-
-TEST(AzurePipelinesCredential, InvalidTenantId_LIVEONLY_)
-{
-  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
-  std::string serviceConnectionId
-      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
-  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-
-  const std::string tenantId = "invalidtenantId";
-
-  if (clientId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
-  {
-    std::string message
-        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    GTEST_SKIP_(message.c_str());
-  }
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://vault.azure.net/.default");
-
-  try
-  {
-    AccessToken token = cred.GetToken(trc, {});
-    GTEST_FAIL() << "GetToken should have thrown an exception due to an invalid tenant ID.";
-  }
-  catch (AuthenticationException const& ex)
-  {
-    EXPECT_TRUE(std::string(ex.what()).find("400 Bad Request") != std::string::npos) << ex.what();
-    EXPECT_TRUE(std::string(ex.what()).find("AADSTS900023") != std::string::npos) << ex.what();
-  }
-}
-
-TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
-{
-  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
-  std::string serviceConnectionId
-      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
-  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-
-  const std::string clientId = "invalidClientId";
-
-  if (tenantId.empty() || serviceConnectionId.empty() || systemAccessToken.empty())
-  {
-    std::string message
-        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    GTEST_SKIP_(message.c_str());
-  }
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://vault.azure.net/.default");
-
-  try
-  {
-    AccessToken token = cred.GetToken(trc, {});
-    GTEST_FAIL() << "GetToken should have thrown an exception due to an invalid client ID.";
-  }
-  catch (AuthenticationException const& ex)
-  {
-    EXPECT_TRUE(std::string(ex.what()).find("400 Bad Request") != std::string::npos) << ex.what();
-    EXPECT_TRUE(std::string(ex.what()).find("AADSTS700016") != std::string::npos) << ex.what();
-  }
-}
-
-TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
-{
-  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
-  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
-
-  const std::string serviceConnectionId = "invalidServiceConnectionId";
-
-  if (tenantId.empty() || clientId.empty() || systemAccessToken.empty())
-  {
-    std::string message
-        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    GTEST_SKIP_(message.c_str());
-  }
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://vault.azure.net/.default");
-
-  try
-  {
-    AccessToken token = cred.GetToken(trc, {});
-    GTEST_FAIL()
-        << "GetToken should have thrown an exception due to an invalid service connection ID.";
-  }
-  catch (AuthenticationException const& ex)
-  {
-    EXPECT_TRUE(std::string(ex.what()).find("404 (Not Found)") != std::string::npos) << ex.what();
-  }
-}
-
-TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
-{
-  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
-  std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
-  std::string serviceConnectionId
-      = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
-
-  const std::string systemAccessToken = "invalidSystemAccessToken";
-
-  if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty())
-  {
-    std::string message
-        = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    GTEST_SKIP_(message.c_str());
-  }
-
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-
-  TokenRequestContext trc;
-  trc.Scopes.push_back("https://vault.azure.net/.default");
-
-  try
-  {
-    AccessToken token = cred.GetToken(trc, {});
-    GTEST_FAIL()
-        << "GetToken should have thrown an exception due to an invalid system access token.";
-  }
-  catch (AuthenticationException const& ex)
-  {
-    EXPECT_TRUE(std::string(ex.what()).find("302 (Found)") != std::string::npos) << ex.what();
   }
 }
