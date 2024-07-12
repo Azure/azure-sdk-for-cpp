@@ -675,4 +675,4 @@ TEST(AzurePipelinesCredential, DISABLED_InvalidSystemAccessToken_LIVEONLY_)
   {
     EXPECT_TRUE(std::string(ex.what()).find("302 (Found)") != std::string::npos) << ex.what();
   }
-}*/
+}
