@@ -62,6 +62,8 @@ parameters:
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
         ServiceConnection: azure-sdk-tests
+        # Temporary fix until an eng/common config for Preview can be merged
+        SubscriptionConfigurationFilePaths: []
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         ServiceConnection: azure-sdk-tests
