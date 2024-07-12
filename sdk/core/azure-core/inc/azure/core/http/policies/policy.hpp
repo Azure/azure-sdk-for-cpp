@@ -420,7 +420,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * request. Custom implementations of this method that override the retry behavior, should
        * handle that error case, if that needs to be customized.
        *
-       * @remark Unless overriden, the default implementation is to always return `false`. The
+       * @remark Unless overriden, the default implementation is to always return true. The
        * non-retriable errors, including those specified in the RetryOptions, remain evaluated
        * before calling ShouldRetry.
        *
