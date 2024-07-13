@@ -23,6 +23,10 @@ namespace Azure { namespace Core { namespace Test {
   namespace _detail {
     constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
     constexpr static const char AzureSdkHttpbinServer[] = "azuresdkforcpp.azurewebsites.net";
+
+    // If we see intermittent test failures due to Httpbin reliability, even with a couple retries
+    // we'd revisit the use of this for tests, rather than increasing retries.
+    constexpr static const int AzureSdkHttpbinRetryCount = 2;
   } // namespace _detail
 
   struct AzureSdkHttpbinServer final
