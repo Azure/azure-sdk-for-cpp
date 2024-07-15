@@ -78,7 +78,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     friend class _internal::TelemetryPolicy;
     long CppStandardVersion =
 #if defined(_azure_BUILDING_SDK)
-        -9223372036854775808L
+        -2L
 #elif defined(_azure_BUILDING_TESTS)
         -1L
 #elif defined(_azure_BUILDING_SAMPLES)
