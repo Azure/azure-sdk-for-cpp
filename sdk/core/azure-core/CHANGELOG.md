@@ -1,6 +1,6 @@
 # Release History
 
-## 1.13.0-beta.2 (Unreleased)
+## 1.14.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -10,8 +10,23 @@
 
 ### Other Changes
 
+## 1.13.0 (2024-07-12)
+
+### Bugs Fixed
+
+- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket.  (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
+
+### Other Changes
+
 - Updated JSON library to 3.11.3.
-- Hide methods on the `RetryPolicy` that are not intended for public use.
+- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Anton Popov _([GitHub](https://github.com/CurtizJ))_
+- AlexYue _([GitHub](https://github.com/ByteYue))_
 
 ## 1.13.0-beta.1 (2024-06-06)
 
