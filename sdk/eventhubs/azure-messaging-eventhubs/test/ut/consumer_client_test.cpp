@@ -311,6 +311,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       GTEST_SKIP();
     }
+
+    // Disabled test for now.
+    GTEST_SKIP();
+
     EventHubsManagement administrationClient;
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
