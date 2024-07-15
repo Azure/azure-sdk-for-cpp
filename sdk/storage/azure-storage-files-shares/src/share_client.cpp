@@ -152,6 +152,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
+    protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
+    protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -254,6 +257,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
+    protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
+    protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }

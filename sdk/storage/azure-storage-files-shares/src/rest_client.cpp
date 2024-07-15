@@ -629,6 +629,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kEnabledProtocols,
           kRootSquash,
           kEnableSnapshotVirtualDirectoryAccess,
+          kPaidBurstingEnabled,
+          kPaidBurstingMaxIops,
+          kPaidBurstingMaxBandwidthMibps,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -664,6 +667,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"RootSquash", XmlTagEnum::kRootSquash},
             {"EnableSnapshotVirtualDirectoryAccess",
              XmlTagEnum::kEnableSnapshotVirtualDirectoryAccess},
+            {"PaidBurstingEnabled", XmlTagEnum::kPaidBurstingEnabled},
+            {"PaidBurstingMaxIops", XmlTagEnum::kPaidBurstingMaxIops},
+            {"PaidBurstingMaxBandwidthMibps", XmlTagEnum::kPaidBurstingMaxBandwidthMibps},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -892,6 +898,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = node.Value == std::string("true");
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kPaidBurstingEnabled)
+            {
+              vectorElement1.Details.PaidBurstingEnabled = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kPaidBurstingMaxIops)
+            {
+              vectorElement1.Details.PaidBurstingMaxIops = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kPaidBurstingMaxBandwidthMibps)
+            {
+              vectorElement1.Details.PaidBurstingMaxBandwidthMibps = std::stoll(node.Value);
+            }
+            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
@@ -963,6 +993,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-enable-snapshot-virtual-directory-access",
             options.EnableSnapshotVirtualDirectoryAccess.Value() ? "true" : "false");
+      }
+      if (options.PaidBurstingEnabled.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-enabled",
+            options.PaidBurstingEnabled.Value() ? "true" : "false");
+      }
+      if (options.PaidBurstingMaxBandwidthMibps.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-max-bandwidth-mibps",
+            std::to_string(options.PaidBurstingMaxBandwidthMibps.Value()));
+      }
+      if (options.PaidBurstingMaxIops.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-max-iops",
+            std::to_string(options.PaidBurstingMaxIops.Value()));
       }
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
@@ -1091,6 +1139,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.EnableSnapshotVirtualDirectoryAccess
             = pRawResponse->GetHeaders().at("x-ms-enable-snapshot-virtual-directory-access")
             == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-paid-bursting-enabled") != 0)
+      {
+        response.PaidBurstingEnabled
+            = pRawResponse->GetHeaders().at("x-ms-share-paid-bursting-enabled")
+            == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-paid-bursting-max-iops") != 0)
+      {
+        response.PaidBurstingMaxIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-paid-bursting-max-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-paid-bursting-max-bandwidth-mibps") != 0)
+      {
+        response.PaidBurstingMaxBandwidthMibps = std::stoll(
+            pRawResponse->GetHeaders().at("x-ms-share-paid-bursting-max-bandwidth-mibps"));
       }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
@@ -1471,6 +1535,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-enable-snapshot-virtual-directory-access",
             options.EnableSnapshotVirtualDirectoryAccess.Value() ? "true" : "false");
+      }
+      if (options.PaidBurstingEnabled.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-enabled",
+            options.PaidBurstingEnabled.Value() ? "true" : "false");
+      }
+      if (options.PaidBurstingMaxBandwidthMibps.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-max-bandwidth-mibps",
+            std::to_string(options.PaidBurstingMaxBandwidthMibps.Value()));
+      }
+      if (options.PaidBurstingMaxIops.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-paid-bursting-max-iops",
+            std::to_string(options.PaidBurstingMaxIops.Value()));
       }
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
