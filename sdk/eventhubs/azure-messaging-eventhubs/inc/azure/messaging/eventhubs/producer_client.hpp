@@ -47,7 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     friend class ProducerClient;
     long CppStandardVersion =
 #if defined(_azure_BUILDING_SDK)
-        -9223372036854775808L
+        -2L
 #elif defined(_azure_BUILDING_TESTS)
         -1L
 #elif defined(_azure_BUILDING_SAMPLES)
