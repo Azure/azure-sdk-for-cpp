@@ -244,18 +244,14 @@ jobs:
       # Will run samples described on a file name [service]-samples.txt within the build directory.
       # For example keyvault-samples.txt.
       # The file is written by CMake during configuration when building samples.
-    - task: AzurePowerShell@5
-      displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+    - task: AzureCLI@2
+      displayName: "Run Samples with AzureCli for : ${{ parameters.ServiceDirectory }}"
       condition: and(succeeded(), eq(variables['RunSamples'], '1'))
       inputs:
         azureSubscription: ${{ parameters.CloudConfig.ServiceConnection }}
-        azurePowerShellVersion: LatestVersion
-        ScriptType: InlineScript
-        Inline: |
-          $account = (Get-AzContext).Account
-          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id
-          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants
-
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {
@@ -270,7 +266,7 @@ jobs:
           }
         workingDirectory: build
       env:
-        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ else }}:
