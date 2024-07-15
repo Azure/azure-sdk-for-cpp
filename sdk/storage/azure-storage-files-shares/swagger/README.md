@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/preview/2024-05-04/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-08-04/file.json
 ```
 
 ## ModelFour Options
@@ -79,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-05-04"]
+        "enum": ["2024-08-04"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-05-04";
+      $.ApiVersionParameter.enum[0] = "2024-08-04";
 ```
 
 ### Rename Operations
@@ -469,6 +469,7 @@ directive:
       $["x-ms-enabled-protocols"]["enum"] = ["Smb", "Nfs"];
       $["x-ms-enabled-protocols"]["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $["x-ms-enabled-protocols"]["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
+      $["x-ms-enable-snapshot-virtual-directory-access"]["x-nullable"] = true;
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
@@ -1067,6 +1068,7 @@ directive:
       $.ShareItemDetails.properties["EnabledProtocols"].description = "The protocols which have been enabled on the share.";
       $.ShareItemDetails.properties["RootSquash"].description = "Root squash to set on the share.  Only valid for NFS shares.";
       $.ShareItemDetails.properties["Last-Modified"].description = "The date and time the share was last modified.";
+      $.ShareItemDetails.properties["EnableSnapshotVirtualDirectoryAccess"].description = "Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be accessible at the root of share mount point when NFS is enabled. This header is only returned for shares, not for snapshots.";
       $.ShareItemInternal.properties["Name"].description = "The name of the share.";
       $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
       $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";

@@ -56,7 +56,7 @@ namespace Azure { namespace Core { namespace Test {
     // Using a reference because the context lives in the test_base class and we don't want to make
     // a copy.
     Azure::Core::Test::TestContextManager& m_testContext;
-    const std::string m_proxy = "https://localhost:5001";
+    const std::string m_proxy = "http://localhost:5000";
     bool m_isInsecureEnabled = true;
     TestMode m_currentMode = TestMode::LIVE;
     std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_privatePipeline;

@@ -232,7 +232,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace OpenTelemetry {
         {
           return header.Value();
         }
-        return std::string();
+        return {};
       }
 
       /** @brief Sets the value of an HTTP header in the request.

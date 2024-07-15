@@ -1,33 +1,16 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
+
+// disable -Wnoexcept due to struct pod_bis
+DOCTEST_GCC_SUPPRESS_WARNING_PUSH
+DOCTEST_GCC_SUPPRESS_WARNING("-Wnoexcept")
 
 #include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
@@ -44,34 +27,40 @@ struct pod_bis
 {
 };
 
-void to_json(json&, pod) noexcept;
-void to_json(json&, pod_bis);
-void from_json(const json&, pod) noexcept;
-void from_json(const json&, pod_bis);
-void to_json(json&, pod) noexcept {}
-void to_json(json&, pod_bis) {}
-void from_json(const json&, pod) noexcept {}
-void from_json(const json&, pod_bis) {}
-
-static json* j = nullptr;
+void to_json(json& /*unused*/, pod /*unused*/) noexcept;
+void to_json(json& /*unused*/, pod_bis /*unused*/);
+void from_json(const json& /*unused*/, pod /*unused*/) noexcept;
+void from_json(const json& /*unused*/, pod_bis /*unused*/);
+void to_json(json& /*unused*/, pod /*unused*/) noexcept {}
+void to_json(json& /*unused*/, pod_bis /*unused*/) {}
+void from_json(const json& /*unused*/, pod /*unused*/) noexcept {}
+void from_json(const json& /*unused*/, pod_bis /*unused*/) {}
 
 static_assert(noexcept(json{}), "");
-static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, 2)), "");
-static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, 2.5)), "");
-static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, true)), "");
-static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, test{})), "");
-static_assert(noexcept(Azure::Core::Json::_internal::to_json(*j, pod{})), "");
-static_assert(not noexcept(Azure::Core::Json::_internal::to_json(*j, pod_bis{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), 2)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), 2.5)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), true)), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), test{})), "");
+static_assert(noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), pod{})), "");
+static_assert(
+    !noexcept(Azure::Core::Json::_internal::to_json(std::declval<json&>(), pod_bis{})),
+    "");
 static_assert(noexcept(json(2)), "");
 static_assert(noexcept(json(test{})), "");
 static_assert(noexcept(json(pod{})), "");
-static_assert(noexcept(j->get<pod>()), "");
-static_assert(not noexcept(j->get<pod_bis>()), "");
+static_assert(noexcept(std::declval<json>().get<pod>()), "");
+static_assert(!noexcept(std::declval<json>().get<pod_bis>()), "");
 static_assert(noexcept(json(pod{})), "");
 } // namespace
 
-TEST_CASE("runtime checks")
+TEST_CASE("noexcept")
 {
+  // silence -Wunneeded-internal-declaration errors
+  static_cast<void>(static_cast<void (*)(json&, pod)>(&to_json));
+  static_cast<void>(static_cast<void (*)(json&, pod_bis)>(&to_json));
+  static_cast<void>(static_cast<void (*)(const json&, pod)>(&from_json));
+  static_cast<void>(static_cast<void (*)(const json&, pod_bis)>(&from_json));
+
   SECTION("nothrow-copy-constructible exceptions")
   {
     // for ERR60-CPP (https://github.com/nlohmann/json/issues/531):
@@ -98,14 +87,6 @@ TEST_CASE("runtime checks")
         std::is_nothrow_copy_constructible<json::other_error>::value
         == std::is_nothrow_copy_constructible<std::runtime_error>::value);
   }
-
-  SECTION("silence -Wunneeded-internal-declaration errors")
-  {
-    j = nullptr;
-    json j2;
-    to_json(j2, pod());
-    to_json(j2, pod_bis());
-    from_json(j2, pod());
-    from_json(j2, pod_bis());
-  }
 }
+
+DOCTEST_GCC_SUPPRESS_WARNING_POP

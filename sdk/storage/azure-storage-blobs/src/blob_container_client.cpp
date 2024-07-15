@@ -516,4 +516,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     return Azure::Response<Models::SubmitBlobBatchResult>(
         Models::SubmitBlobBatchResult(), std::move(response.RawResponse));
   }
+
+  Azure::Response<Models::AccountInfo> BlobContainerClient::GetAccountInfo(
+      const GetAccountInfoOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::BlobContainerClient::GetBlobContainerAccountInfoOptions protocolLayerOptions;
+    return _detail::BlobContainerClient::GetAccountInfo(
+        *m_pipeline,
+        m_blobContainerUrl,
+        protocolLayerOptions,
+        _internal::WithReplicaStatus(context));
+  }
 }}} // namespace Azure::Storage::Blobs

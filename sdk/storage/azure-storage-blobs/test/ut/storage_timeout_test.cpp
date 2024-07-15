@@ -36,7 +36,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::function<void(const Core::Http::Request&)> m_callback;
   };
 
-  TEST_F(StorageTest, StoragetimeoutTestBasic)
+  TEST_F(StorageTest, StoragetimeoutTestBasic_LIVEONLY_)
   {
     Azure::Nullable<int64_t> timeout;
     auto callback = [&timeout](const Core::Http::Request& request) {
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_LE(timeout.Value(), 301);
   }
 
-  TEST_F(StorageTest, StoragetimeoutTest_Cancelled)
+  TEST_F(StorageTest, StoragetimeoutTest_Cancelled_LIVEONLY_)
   {
     Blobs::BlobClientOptions clientOptions;
     auto containerClient = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(

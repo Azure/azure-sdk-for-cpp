@@ -264,19 +264,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     template <typename T>
     static void SetUserAgent(T& options, std::string const& applicationId, long cplusplusValue)
     {
-      constexpr const char* packageName = "cpp-azure-messaging-eventhubs-cpp";
+      constexpr const char* packageName = "azure-messaging-eventhubs-cpp";
 
-      options.Properties.emplace("Product", packageName);
-      options.Properties.emplace("Version", PackageVersion::ToString());
+      options.Properties.emplace("product", packageName);
+      options.Properties.emplace("version", PackageVersion::ToString());
 #if defined(AZ_PLATFORM_WINDOWS)
-      options.Properties.emplace("Platform", "Windows");
+      options.Properties.emplace("platform", "Windows");
 #elif defined(AZ_PLATFORM_LINUX)
-      options.Properties.emplace("Platform", "Linux");
+      options.Properties.emplace("platform", "Linux");
 #elif defined(AZ_PLATFORM_MAC)
-      options.Properties.emplace("Platform", "Mac");
+      options.Properties.emplace("platform", "Mac");
 #endif
       options.Properties.emplace(
-          "User-Agent",
+          "user-agent",
           Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }

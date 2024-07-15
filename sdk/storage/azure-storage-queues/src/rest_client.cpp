@@ -189,7 +189,7 @@ namespace Azure { namespace Storage { namespace Queues {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -209,7 +209,7 @@ namespace Azure { namespace Storage { namespace Queues {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -446,7 +446,7 @@ namespace Azure { namespace Storage { namespace Queues {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "stats");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -546,7 +546,7 @@ namespace Azure { namespace Storage { namespace Queues {
             _internal::UrlEncodeQueryParameter(
                 ListQueuesIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -669,7 +669,7 @@ namespace Azure { namespace Storage { namespace Queues {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (!(httpStatusCode == Core::Http::HttpStatusCode::Created
@@ -687,7 +687,7 @@ namespace Azure { namespace Storage { namespace Queues {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -706,7 +706,7 @@ namespace Azure { namespace Storage { namespace Queues {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "metadata");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -737,7 +737,7 @@ namespace Azure { namespace Storage { namespace Queues {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -755,7 +755,7 @@ namespace Azure { namespace Storage { namespace Queues {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -898,7 +898,7 @@ namespace Azure { namespace Storage { namespace Queues {
       request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -926,7 +926,7 @@ namespace Azure { namespace Storage { namespace Queues {
         request.GetUrl().AppendQueryParameter(
             "visibilitytimeout", std::to_string(options.Visibilitytimeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1052,7 +1052,7 @@ namespace Azure { namespace Storage { namespace Queues {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1094,7 +1094,7 @@ namespace Azure { namespace Storage { namespace Queues {
         request.GetUrl().AppendQueryParameter(
             "messagettl", std::to_string(options.MessageTimeToLive.Value()));
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1203,7 +1203,7 @@ namespace Azure { namespace Storage { namespace Queues {
         request.GetUrl().AppendQueryParameter(
             "numofmessages", std::to_string(options.NumberOfMessages.Value()));
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1332,7 +1332,7 @@ namespace Azure { namespace Storage { namespace Queues {
       }
       request.GetUrl().AppendQueryParameter(
           "visibilitytimeout", std::to_string(options.Visibilitytimeout));
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -1358,7 +1358,7 @@ namespace Azure { namespace Storage { namespace Queues {
         request.GetUrl().AppendQueryParameter(
             "popreceipt", _internal::UrlEncodeQueryParameter(options.PopReceipt));
       }
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -1382,7 +1382,7 @@ namespace Azure { namespace Storage { namespace Queues {
       }
       request.GetUrl().AppendQueryParameter(
           "visibilitytimeout", std::to_string(options.Visibilitytimeout));
-      request.SetHeader("x-ms-version", "2019-12-12");
+      request.SetHeader("x-ms-version", "2024-08-04");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)

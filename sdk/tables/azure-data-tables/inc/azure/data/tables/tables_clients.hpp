@@ -240,7 +240,8 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Get table access policy.
+     * @brief Retrieves details about any stored access policies specified on the table that may be
+     * used with Shared Access Signatures.
      *
      * @param context for canceling long running operations.
      * @return Get access policy result.
@@ -248,7 +249,8 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::TableAccessPolicy> GetAccessPolicy(Core::Context const& context = {});
 
     /**
-     * @brief Set table access policy.
+     * @brief Sets stored access policies for the table that may be used with Shared Access
+     * Signatures.
      *
      * @param tableAccessPolicy The TableAccessPolicy to set.
      * @param context for canceling long running operations.
@@ -259,7 +261,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Add table entity.
+     * @brief Add entity in a table.
      *
      * @param tableEntity The TableEntity to set.
      * @param options Optional parameters to execute this function.
@@ -272,7 +274,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Update table entity.
+     * @brief Update entity in a table.
      *
      * @param tableEntity The TableEntity to set.
      * @param options Optional parameters to execute this function.
@@ -285,7 +287,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Merge table entity.
+     * @brief Merge entity in a table.
      *
      * @param tableEntity The TableEntity to merge.
      * @param options Optional parameters to execute this function.
@@ -298,7 +300,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Delete table entity.
+     * @brief Deletes the specified entity in a table.
      *
      * @param tableEntity The TableEntity to delete.
      * @param context for canceling long running operations.
@@ -309,7 +311,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Upsert table entity.
+     * @brief Upsert specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
      * @param options Optional parameters to execute this function.
@@ -322,7 +324,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Query table entities.
+     * @brief Queries entities in a table.
      *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
@@ -333,7 +335,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Get one table entity.
+     * @brief Queries a single entity in a table.
      *
      * @param partitionKey The partition key of the entity.
      * @param rowKey The row key of the entity.
@@ -462,7 +464,7 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Create the table indicated in the tableName field of the client.
+     * @brief Creates a new table under the given account.
      *
      * @param context for canceling long running operations.
      * @param tableName The name of the table to be created.
@@ -473,7 +475,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Delete the table indicated in the tableName field of the client.
+     * @brief Operation permanently deletes the specified table.
      *
      * @param context for canceling long running operations.
      * @param tableName The name of the table to be deleted.
@@ -484,11 +486,11 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Query tables.
+     * @brief Queries tables under the given account.
      *
      * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
-     * @return List tables paged response.
+     * @return Query tables paged response.
      */
     Models::QueryTablesPagedResponse QueryTables(
         const Models::QueryTablesOptions& options = {},

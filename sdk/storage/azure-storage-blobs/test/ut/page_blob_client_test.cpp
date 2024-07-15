@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_blobContent.resize(static_cast<size_t>(2_KB));
   }
 
-  TEST_F(PageBlobClientTest, Constructors)
+  TEST_F(PageBlobClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     {
@@ -288,14 +288,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto pageBlobClient2 = GetPageBlobClientTestForTest(RandomString());
     pageBlobClient2.Create(m_blobContent.size());
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::UploadPagesFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
@@ -713,6 +708,76 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
     }
+  }
+  TEST_F(PageBlobClientTest, SharedKeySigningHeaderWithSymbols_LIVEONLY_)
+  {
+    class AdditionalHeaderPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
+    public:
+      ~AdditionalHeaderPolicy() override {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<AdditionalHeaderPolicy>(*this);
+      }
+
+      std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+          Azure::Core::Http::Request& request,
+          Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+          Azure::Core::Context const& context) const override
+      {
+        // cSpell:disable
+        request.SetHeader("x-ms-test", "val");
+        request.SetHeader("x-ms-test-", "val");
+        request.SetHeader("x-ms-test-a", "val");
+        request.SetHeader("x-ms-test-g", "val");
+        request.SetHeader("x-ms-test-Z", "val");
+        request.SetHeader("x-ms-testa", "val");
+        request.SetHeader("x-ms-testd", "val");
+        request.SetHeader("x-ms-testx", "val");
+        request.SetHeader("x-ms-test--", "val");
+        request.SetHeader("x-ms-test-_", "val");
+        request.SetHeader("x-ms-test_-", "val");
+        request.SetHeader("x-ms-test__", "val");
+        request.SetHeader("x-ms-test-a", "val");
+        request.SetHeader("x-ms-test-A", "val");
+        request.SetHeader("x-ms-test-_A", "val");
+        request.SetHeader("x-ms-test_a", "val");
+        request.SetHeader("x-ms-test_Z", "val");
+        request.SetHeader("x-ms-test_a_", "val");
+        request.SetHeader("x-ms-test_a-", "val");
+        request.SetHeader("x-ms-test_a-_", "val");
+        request.SetHeader("x-ms-testa--", "val");
+        request.SetHeader("x-ms-test-a-", "val");
+        request.SetHeader("x-ms-test--a", "val");
+        request.SetHeader("x-ms-testaa-", "val");
+        request.SetHeader("x-ms-testa-a", "val");
+        request.SetHeader("x-ms-test-aa", "val");
+
+        request.SetHeader("x-ms-test-!", "val");
+        request.SetHeader("x-ms-test-#", "val");
+        request.SetHeader("x-ms-test-$", "val");
+        request.SetHeader("x-ms-test-%", "val");
+        request.SetHeader("x-ms-test-&", "val");
+        request.SetHeader("x-ms-test-*", "val");
+        request.SetHeader("x-ms-test-+", "val");
+        request.SetHeader("x-ms-test-.", "val");
+        request.SetHeader("x-ms-test-^", "val");
+        request.SetHeader("x-ms-test-_", "val");
+        request.SetHeader("x-ms-test-`", "val");
+        request.SetHeader("x-ms-test-|", "val");
+        request.SetHeader("x-ms-test-~", "val");
+        // cSpell:enable
+        return nextPolicy.Send(request, context);
+      }
+    };
+
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    clientOptions.PerOperationPolicies.push_back(std::make_unique<AdditionalHeaderPolicy>());
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto blockBlobClient
+        = Blobs::BlockBlobClient(m_pageBlobClient->GetUrl(), keyCredential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 
 }}} // namespace Azure::Storage::Test

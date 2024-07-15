@@ -6,11 +6,14 @@
 #include "private/identity_log.hpp"
 
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/platform.hpp>
 
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
 #include <utility>
+
+#include <sys/stat.h> // for stat() used to check file size
 
 using namespace Azure::Identity::_detail;
 
@@ -29,6 +32,73 @@ void PrintEnvNotSetUpMessage(std::string const& credName, std::string const& cre
       IdentityLog::Level::Verbose,
       credName + ": Environment is not set up for the credential to be created"
           + WithSourceMessage(credSource) + '.');
+}
+
+// ExpectedArcKeyDirectory returns the directory expected to contain Azure Arc keys.
+std::string ExpectedArcKeyDirectory()
+{
+  using Azure::Core::Credentials::AuthenticationException;
+
+#if defined(AZ_PLATFORM_LINUX)
+  return "/var/opt/azcmagent/tokens";
+#elif defined(AZ_PLATFORM_WINDOWS)
+  const std::string programDataPath{
+      Azure::Core::_internal::Environment::GetVariable("ProgramData")};
+  if (programDataPath.empty())
+  {
+    throw AuthenticationException("Unable to get ProgramData folder path.");
+  }
+  return programDataPath + "\\AzureConnectedMachineAgent\\Tokens";
+#else
+  throw AuthenticationException("Unsupported OS. Arc supports only Linux and Windows.");
+#endif
+}
+
+static constexpr off_t MaximumAzureArcKeySize = 4096;
+
+#if defined(AZ_PLATFORM_WINDOWS)
+static constexpr char DirectorySeparator = '\\';
+#else
+static constexpr char DirectorySeparator = '/';
+#endif
+
+// Validates that a given Azure Arc MSI file path is valid for use.
+// The specified file must:
+// - be in the expected directory for the OS
+// - have a .key extension
+// - contain at most 4096 bytes
+void ValidateArcKeyFile(std::string fileName)
+{
+  using Azure::Core::Credentials::AuthenticationException;
+
+  std::string directory;
+  const size_t lastSlashIndex = fileName.rfind(DirectorySeparator);
+  if (std::string::npos != lastSlashIndex)
+  {
+    directory = fileName.substr(0, lastSlashIndex);
+  }
+  if (directory != ExpectedArcKeyDirectory() || fileName.size() < 5
+      || fileName.substr(fileName.size() - 4) != ".key")
+  {
+    throw AuthenticationException(
+        "The file specified in the 'WWW-Authenticate' header in the response from Azure Arc "
+        "Managed Identity Endpoint has an unexpected file path.");
+  }
+
+  struct stat s;
+  if (!stat(fileName.c_str(), &s))
+  {
+    if (s.st_size > MaximumAzureArcKeySize)
+    {
+      throw AuthenticationException(
+          "The file specified in the 'WWW-Authenticate' header in the response from Azure Arc "
+          "Managed Identity Endpoint is larger than 4096 bytes.");
+    }
+  }
+  else
+  {
+    throw AuthenticationException("Failed to get file size for '" + fileName + "'.");
+  }
 }
 } // namespace
 
@@ -336,7 +406,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
           if (authHeader == headers.end())
           {
             throw AuthenticationException(
-                "Did not receive expected WWW-Authenticate header "
+                "Did not receive expected 'WWW-Authenticate' header "
                 "in the response from Azure Arc Managed Identity Endpoint.");
           }
 
@@ -347,12 +417,16 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
               || challenge.find(ChallengeValueSeparator, eq + 1) != std::string::npos)
           {
             throw AuthenticationException(
-                "The WWW-Authenticate header in the response from Azure Arc "
+                "The 'WWW-Authenticate' header in the response from Azure Arc "
                 "Managed Identity Endpoint did not match the expected format.");
           }
 
           auto request = createRequest();
-          std::ifstream secretFile(challenge.substr(eq + 1));
+
+          const std::string fileName = challenge.substr(eq + 1);
+          ValidateArcKeyFile(fileName);
+
+          std::ifstream secretFile(fileName);
           request->HttpRequest.SetHeader(
               "Authorization",
               "Basic "

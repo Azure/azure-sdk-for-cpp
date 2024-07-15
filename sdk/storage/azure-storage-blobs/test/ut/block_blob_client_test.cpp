@@ -57,7 +57,7 @@ namespace Azure { namespace Storage { namespace Test {
         = m_blockBlobClient->GetProperties().Value.HttpHeaders.ContentHash;
   }
 
-  TEST_F(BlockBlobClientTest, Constructors)
+  TEST_F(BlockBlobClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
     {
@@ -127,9 +127,10 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, SoftDelete)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
-    auto blobContainerClient
-        = Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-            AdlsGen2ConnectionString(), LowercaseRandomString(), clientOptions);
+    auto blobContainerClient = Azure::Storage::Blobs::BlobContainerClient(
+        "https://" + AdlsGen2AccountName() + ".blob.core.windows.net/" + LowercaseRandomString(),
+        GetTestCredential(),
+        clientOptions);
     blobContainerClient.CreateIfNotExists();
     auto blobName = RandomString();
     auto blobClient = blobContainerClient.GetBlockBlobClient(blobName);
@@ -453,14 +454,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceBlobClient = m_blobContainerClient->GetBlockBlobClient("source" + RandomString());
     sourceBlobClient.UploadFrom(m_blobContent.data(), m_blobContent.size());
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     const std::string blobName = "dest" + RandomString();
     auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
@@ -520,9 +516,11 @@ namespace Azure { namespace Storage { namespace Test {
       builder.Resource = Sas::BlobSasResource::Blob;
       builder.EncryptionScope = encryptionScope;
       builder.SetPermissions("r");
-      auto keyCredential
-          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-      auto sasToken = builder.GenerateSasToken(*keyCredential);
+      auto userDelegationKey
+          = GetBlobServiceClientOAuth()
+                .GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                .Value;
+      auto sasToken = builder.GenerateSasToken(userDelegationKey, m_accountName);
 
       auto destBlobClient = *m_blockBlobClient;
       auto response = destBlobClient.CopyFromUri(srcBlobClient.GetUrl() + sasToken);
@@ -817,14 +815,9 @@ namespace Azure { namespace Storage { namespace Test {
     auto destClient = GetBlockBlobClientForTest(RandomString());
     const std::string blockId1 = Base64EncodeText("0");
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::StageBlockFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
@@ -1460,14 +1453,9 @@ namespace Azure { namespace Storage { namespace Test {
     const std::vector<uint8_t> blobCrc64
         = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
 
-    Azure::Identity::ClientSecretCredential oauthCredential(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
     Azure::Core::Credentials::TokenRequestContext requestContext;
     requestContext.Scopes = {Storage::_internal::StorageScope};
-    auto oauthToken = oauthCredential.GetToken(requestContext, Azure::Core::Context());
+    auto oauthToken = GetTestCredential()->GetToken(requestContext, Azure::Core::Context());
 
     Storage::Blobs::UploadBlockBlobFromUriOptions options;
     options.SourceAuthorization = "Bearer " + oauthToken.Token;
@@ -1990,11 +1978,18 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const auto sourceContainerName = "container1";
     const auto sourceBlobName = "b1";
-    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto clientOptions = Blobs::BlobClientOptions();
     auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
         AdlsGen2ConnectionString(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient(sourceContainerName);
     auto sourceBlobClient = sourceContainerClient.GetBlockBlobClient(sourceBlobName);
+
+    if (!m_testContext.IsPlaybackMode())
+    {
+      // recording, need to create a big blob
+      std::vector<uint8_t> buffer = RandomBuffer(512 * 1024 * 1024);
+      sourceBlobClient.UploadFrom(buffer.data(), buffer.size());
+    }
 
     auto getSas = [&]() {
       Sas::BlobSasBuilder sasBuilder;
@@ -2028,11 +2023,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
 
     // audience by default
@@ -2048,10 +2039,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // service audience
 
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
-    clientOptions.Audience = Blobs::BlobAudience::CreateBlobServiceAccountAudience(accountName);
+    clientOptions.Audience = Blobs::BlobAudience::CreateBlobServiceAccountAudience(m_accountName);
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
@@ -2073,5 +2061,76 @@ namespace Azure { namespace Storage { namespace Test {
     blockBlobClient
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(blockBlobClient.GetProperties(), StorageException);
+  }
+
+  TEST_F(BlockBlobClientTest, SharedKeySigningHeaderWithSymbols_LIVEONLY_)
+  {
+    class AdditionalHeaderPolicy final : public Azure::Core::Http::Policies::HttpPolicy {
+    public:
+      ~AdditionalHeaderPolicy() override {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<AdditionalHeaderPolicy>(*this);
+      }
+
+      std::unique_ptr<Azure::Core::Http::RawResponse> Send(
+          Azure::Core::Http::Request& request,
+          Azure::Core::Http::Policies::NextHttpPolicy nextPolicy,
+          Azure::Core::Context const& context) const override
+      {
+        // cSpell:disable
+        request.SetHeader("x-ms-test", "val");
+        request.SetHeader("x-ms-test-", "val");
+        request.SetHeader("x-ms-test-a", "val");
+        request.SetHeader("x-ms-test-g", "val");
+        request.SetHeader("x-ms-test-Z", "val");
+        request.SetHeader("x-ms-testa", "val");
+        request.SetHeader("x-ms-testd", "val");
+        request.SetHeader("x-ms-testx", "val");
+        request.SetHeader("x-ms-test--", "val");
+        request.SetHeader("x-ms-test-_", "val");
+        request.SetHeader("x-ms-test_-", "val");
+        request.SetHeader("x-ms-test__", "val");
+        request.SetHeader("x-ms-test-a", "val");
+        request.SetHeader("x-ms-test-A", "val");
+        request.SetHeader("x-ms-test-_A", "val");
+        request.SetHeader("x-ms-test_a", "val");
+        request.SetHeader("x-ms-test_Z", "val");
+        request.SetHeader("x-ms-test_a_", "val");
+        request.SetHeader("x-ms-test_a-", "val");
+        request.SetHeader("x-ms-test_a-_", "val");
+        request.SetHeader("x-ms-testa--", "val");
+        request.SetHeader("x-ms-test-a-", "val");
+        request.SetHeader("x-ms-test--a", "val");
+        request.SetHeader("x-ms-testaa-", "val");
+        request.SetHeader("x-ms-testa-a", "val");
+        request.SetHeader("x-ms-test-aa", "val");
+
+        request.SetHeader("x-ms-test-!", "val");
+        request.SetHeader("x-ms-test-#", "val");
+        request.SetHeader("x-ms-test-$", "val");
+        request.SetHeader("x-ms-test-%", "val");
+        request.SetHeader("x-ms-test-&", "val");
+        request.SetHeader("x-ms-test-*", "val");
+        request.SetHeader("x-ms-test-+", "val");
+        request.SetHeader("x-ms-test-.", "val");
+        request.SetHeader("x-ms-test-^", "val");
+        request.SetHeader("x-ms-test-_", "val");
+        request.SetHeader("x-ms-test-`", "val");
+        request.SetHeader("x-ms-test-|", "val");
+        request.SetHeader("x-ms-test-~", "val");
+        // cSpell:enable
+        return nextPolicy.Send(request, context);
+      }
+    };
+
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    clientOptions.PerOperationPolicies.push_back(std::make_unique<AdditionalHeaderPolicy>());
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto blockBlobClient
+        = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), keyCredential, clientOptions);
+    EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 }}} // namespace Azure::Storage::Test

@@ -1,6 +1,6 @@
 # Release History
 
-## 12.10.0-beta.1 (Unreleased)
+## 12.10.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.10.0-beta.1 (2024-06-11)
+
+### Features Added
+
+- Bumped up API version to `2024-08-04`.
+- Added more detailed messaging for authorization failure cases.
+- Added support for snapshot management on NFS shares.
 
 ## 12.9.0 (2024-05-07)
 

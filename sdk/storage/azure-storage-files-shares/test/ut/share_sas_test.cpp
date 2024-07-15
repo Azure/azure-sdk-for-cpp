@@ -70,7 +70,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(ShareSasTest, AccountSasPermissions)
+  TEST_F(ShareSasTest, AccountSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, ShareServiceSasPermissions)
+  TEST_F(ShareSasTest, ShareServiceSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -193,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, FileServiceSasPermissions)
+  TEST_F(ShareSasTest, FileServiceSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, AccountSasExpired)
+  TEST_F(ShareSasTest, AccountSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasExpired)
+  TEST_F(ShareSasTest, ServiceSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -310,7 +310,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, AccountSasWithoutStarttime)
+  TEST_F(ShareSasTest, AccountSasWithoutStarttime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasWithoutStarttime)
+  TEST_F(ShareSasTest, ServiceSasWithoutStarttime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -361,7 +361,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, AccountSasWithIP)
+  TEST_F(ShareSasTest, AccountSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -390,7 +390,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasNonRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, ServiceSasWithIP)
+  TEST_F(ShareSasTest, ServiceSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -420,7 +420,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasNonRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, SasWithIdentifier)
+  TEST_F(ShareSasTest, SasWithIdentifier_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -457,7 +457,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyShareSasRead(fileClient, sasToken);
   }
 
-  TEST_F(ShareSasTest, FileSasResponseHeadersOverride)
+  TEST_F(ShareSasTest, FileSasResponseHeadersOverride_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -492,5 +492,40 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.Value.HttpHeaders.ContentDisposition, fileSasBuilder.ContentDisposition);
     EXPECT_EQ(properties.Value.HttpHeaders.CacheControl, fileSasBuilder.CacheControl);
     EXPECT_EQ(properties.Value.HttpHeaders.ContentEncoding, fileSasBuilder.ContentEncoding);
+  }
+
+  TEST_F(ShareSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    std::string fileName = RandomString();
+
+    auto shareClient = *m_shareClient;
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    fileClient.Create(1);
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Files;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Service;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto unauthorizedFileClient = GetSasAuthenticatedClient(fileClient, sasToken);
+    try
+    {
+      unauthorizedFileClient.Download();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
+      EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
+    }
   }
 }}} // namespace Azure::Storage::Test

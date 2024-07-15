@@ -195,15 +195,24 @@ stages:
                           OpenAsDraft: ${{ parameters.TestPipeline }}
                           CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
+                      - task: AzureCLI@2
+                        displayName: Authenticate to OpenSource API
+                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
+                        inputs:
+                          azureSubscription: opensource-api-connection
+                          scriptType: pscore
+                          scriptLocation: inlineScript
+                          inlineScript: |
+                            $jwt_accessToken = az account get-access-token --resource "api://2789159d-8d8b-4d13-b90b-ca29c1707afd" --query "accessToken" --output tsv
+                            Write-Host "##vso[task.setvariable variable=opensource-api-token;isSecret=true]$jwt_accessToken"
+
                       # Workaround: -Fallback uses names from CODEOWNERS who
                       # should be notified about the release in the event of a
                       # failure to resolve the appropriate aliases.
                       - pwsh: |
                           $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
                             -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
-                            -ClientId '$(opensource-aad-app-id)' `
-                            -ClientSecret '$(opensource-aad-secret)' `
-                            -TenantId '$(opensource-aad-tenant-id)' `
+                            -OpenApiToken "$(opensource-api-token)" `
                             -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
 
                           $prComment = "Adding ${{ artifact.Name }} to release"

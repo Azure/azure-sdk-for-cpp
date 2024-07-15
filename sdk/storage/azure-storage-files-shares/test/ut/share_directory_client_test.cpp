@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileShareDirectoryClient->Create();
   }
 
-  TEST_F(FileShareDirectoryClientTest, Constructors)
+  TEST_F(FileShareDirectoryClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     {
@@ -899,10 +899,7 @@ namespace Azure { namespace Storage { namespace Test {
   // cspell:ignore myshare mydirectory
   TEST_F(FileShareDirectoryClientTest, HandlesFunctionalityWorks_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "myshare",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto directoryClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
     Files::Shares::ListDirectoryHandlesOptions options;
@@ -926,15 +923,15 @@ namespace Azure { namespace Storage { namespace Test {
   {
     const std::string directoryName = RandomString();
     const std::string directoryNameWithTrailingDot = directoryName + ".";
-    const std::string connectionString = StandardStorageConnectionString();
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-          connectionString, options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto directoryClient
@@ -1002,17 +999,17 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareDirectoryClientTest, RenameAllowTrailingDot)
   {
     const std::string directoryNameWithTrailingDot = RandomString() + ".";
-    const std::string connectionString = StandardStorageConnectionString();
     const std::string shareName = m_shareName;
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
     auto testTrailingDot = [&](Nullable<bool> allowTrailingDot,
                                Nullable<bool> allowSourceTrailingDot) {
       options.AllowTrailingDot = allowTrailingDot;
       options.AllowSourceTrailingDot = allowSourceTrailingDot;
 
-      auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-          connectionString, options);
+      auto shareServiceClient
+          = Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options);
       auto shareClient = shareServiceClient.GetShareClient(shareName);
       auto rootDirectoryClient = shareClient.GetRootDirectoryClient();
       auto directoryClient
@@ -1104,9 +1101,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string directoryName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1164,20 +1159,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     // OAuth Constructor
     auto directoryClient1 = Files::Shares::ShareDirectoryClient(
-        m_fileShareDirectoryClient->GetUrl(),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-        options);
+        m_fileShareDirectoryClient->GetUrl(), GetTestCredential(), options);
     EXPECT_NO_THROW(directoryClient1.GetProperties());
   }
 
   // cspell:ignore myshare mydirectory
   TEST_F(FileShareDirectoryClientTest, ListHandlesAccessRights_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "myshare",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto directoryClient
         = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("mydirectory");
     auto directoryHandles = directoryClient.ListHandles().DirectoryHandles;
@@ -1192,10 +1181,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareDirectoryClientTest, ListHandlesWithClientName_PLAYBACKONLY_)
   {
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(),
-        "testing",
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    auto shareClient = m_shareServiceClient->GetShareClient("myshare");
     auto directoryClient = shareClient.GetRootDirectoryClient().GetSubdirectoryClient("dir1");
     auto directoryHandles = directoryClient.ListHandles().DirectoryHandles;
     EXPECT_EQ(directoryHandles.size(), 1L);
@@ -1218,13 +1204,9 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 
-  TEST_F(FileShareDirectoryClientTest, Audience_PLAYBACKONLY_)
+  TEST_F(FileShareDirectoryClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 

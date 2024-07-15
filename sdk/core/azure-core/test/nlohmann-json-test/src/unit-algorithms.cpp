@@ -1,35 +1,16 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
 #include <azure/core/internal/json/json.hpp>
+
+#include <algorithm>
 using Azure::Core::Json::_internal::json;
 
 TEST_CASE("algorithms")
@@ -42,7 +23,7 @@ TEST_CASE("algorithms")
     SECTION("std::all_of")
     {
       CHECK(std::all_of(
-          j_array.begin(), j_array.end(), [](const json& value) { return value.size() > 0; }));
+          j_array.begin(), j_array.end(), [](const json& value) { return !value.empty(); }));
       CHECK(std::all_of(j_object.begin(), j_object.end(), [](const json& value) {
         return value.type() == json::value_t::number_integer;
       }));
@@ -51,7 +32,7 @@ TEST_CASE("algorithms")
     SECTION("std::any_of")
     {
       CHECK(std::any_of(j_array.begin(), j_array.end(), [](const json& value) {
-        return value.is_string() and value.get<std::string>() == "foo";
+        return value.is_string() && value.get<std::string>() == "foo";
       }));
       CHECK(std::any_of(j_object.begin(), j_object.end(), [](const json& value) {
         return value.get<int>() > 1;
@@ -61,7 +42,7 @@ TEST_CASE("algorithms")
     SECTION("std::none_of")
     {
       CHECK(std::none_of(
-          j_array.begin(), j_array.end(), [](const json& value) { return value.size() == 0; }));
+          j_array.begin(), j_array.end(), [](const json& value) { return value.empty(); }));
       CHECK(std::none_of(j_object.begin(), j_object.end(), [](const json& value) {
         return value.get<int>() <= 0;
       }));
@@ -124,7 +105,7 @@ TEST_CASE("algorithms")
       {
         CHECK(std::equal(j_array.begin(), j_array.end(), j_array.begin()));
         CHECK(std::equal(j_object.begin(), j_object.end(), j_object.begin()));
-        CHECK(not std::equal(j_array.begin(), j_array.end(), j_object.begin()));
+        CHECK(!std::equal(j_array.begin(), j_array.end(), j_object.begin()));
       }
 
       SECTION("using user-defined comparison")
@@ -140,7 +121,7 @@ TEST_CASE("algorithms")
                {{"one", 1}, {"two", 2}, {"three", 3}},
                "foo",
                "baz"};
-        CHECK(not std::equal(j_array.begin(), j_array.end(), j_array2.begin()));
+        CHECK(!std::equal(j_array.begin(), j_array.end(), j_array2.begin()));
         CHECK(std::equal(
             j_array.begin(), j_array.end(), j_array2.begin(), [](const json& a, const json& b) {
               return (a.size() == b.size());
@@ -203,7 +184,7 @@ TEST_CASE("algorithms")
       auto it = std::partition(
           j_array.begin(), j_array.end(), [](const json& v) { return v.is_string(); });
       CHECK(std::distance(j_array.begin(), it) == 2);
-      CHECK(not it[2].is_string());
+      CHECK(!it[2].is_string());
     }
   }
 
@@ -242,10 +223,10 @@ TEST_CASE("algorithms")
       SECTION("sorting an object")
       {
         json j({{"one", 1}, {"two", 2}});
-        CHECK_THROWS_AS(std::sort(j.begin(), j.end()), json::invalid_iterator&);
-        CHECK_THROWS_WITH(
+        CHECK_THROWS_WITH_AS(
             std::sort(j.begin(), j.end()),
-            "[json.exception.invalid_iterator.209] cannot use offsets with object iterators");
+            "[json.exception.invalid_iterator.209] cannot use offsets with object iterators",
+            json::invalid_iterator&);
       }
     }
 
@@ -333,5 +314,71 @@ TEST_CASE("algorithms")
     CHECK(
         j_array
         == json({false, true, 3, 13, 29, {{"one", 1}, {"two", 2}}, {1, 2, 3}, "baz", "foo"}));
+  }
+
+  SECTION("iota")
+  {
+    SECTION("int")
+    {
+      json json_arr = {0, 5, 2, 4, 10, 20, 30, 40, 50, 1};
+      std::iota(json_arr.begin(), json_arr.end(), 0);
+      CHECK(json_arr == json({0, 1, 2, 3, 4, 5, 6, 7, 8, 9}));
+    }
+    SECTION("double")
+    {
+      json json_arr = {0.5, 1.5, 1.3, 4.1, 10.2, 20.5, 30.6, 40.1, 50.22, 1.5};
+      std::iota(json_arr.begin(), json_arr.end(), 0.5);
+      CHECK(json_arr == json({0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5}));
+    }
+
+    SECTION("char")
+    {
+      json json_arr = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', '0', '1'};
+      std::iota(json_arr.begin(), json_arr.end(), '0');
+      CHECK(json_arr == json({'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}));
+    }
+  }
+
+  SECTION("copy")
+  {
+    SECTION("copy without if")
+    {
+      json dest_arr;
+      const json source_arr = {1, 2, 3, 4};
+
+      std::copy(source_arr.begin(), source_arr.end(), std::back_inserter(dest_arr));
+
+      CHECK(dest_arr == source_arr);
+    }
+    SECTION("copy if")
+    {
+      json dest_arr;
+      const json source_arr = {0, 3, 6, 9, 12, 15, 20};
+
+      std::copy_if(
+          source_arr.begin(),
+          source_arr.end(),
+          std::back_inserter(dest_arr),
+          [](const json& _value) { return _value.get<int>() % 3 == 0; });
+      CHECK(dest_arr == json({0, 3, 6, 9, 12, 15}));
+    }
+    SECTION("copy n")
+    {
+      const json source_arr = {0, 1, 2, 3, 4, 5, 6, 7};
+      json dest_arr;
+      const unsigned char numToCopy = 2;
+
+      std::copy_n(source_arr.begin(), numToCopy, std::back_inserter(dest_arr));
+      CHECK(dest_arr == json{0, 1});
+    }
+    SECTION("copy n chars")
+    {
+      const json source_arr = {'1', '2', '3', '4', '5', '6', '7'};
+      json dest_arr;
+      const unsigned char numToCopy = 4;
+
+      std::copy_n(source_arr.begin(), numToCopy, std::back_inserter(dest_arr));
+      CHECK(dest_arr == json{'1', '2', '3', '4'});
+    }
   }
 }

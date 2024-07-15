@@ -1,8 +1,16 @@
 # Release History
 
-## 4.5.0-beta.2 (Unreleased)
+## 4.5.0-beta.3 (Unreleased)
 
 ### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 4.5.0-beta.2 (2024-06-11)
 
 ### Breaking Changes
 
@@ -10,9 +18,11 @@
 - Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap256`.
 - Deprecated `KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384` in favor of `KeyEncryptionAlgorithm::RsaAesKeyWrap384`.
 
-### Bugs Fixed
-
 ### Other Changes
+
+- Relocated samples to the `samples` directory.
+- Updated the `README.md` file with the latest information.
+- Updated samples. 
 
 ## 4.5.0-beta.1 (2024-04-09)
 

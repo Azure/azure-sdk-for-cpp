@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   };
 
-  TEST_F(DataLakeSasTest, AccountSasPermissions)
+  TEST_F(DataLakeSasTest, AccountSasPermissions_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -197,15 +197,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
 
-    Files::DataLake::Models::UserDelegationKey userDelegationKey;
-    {
-      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
-          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
-      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
-    }
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string directoryName = RandomString();
     std::string fileName = RandomString();
@@ -293,15 +286,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
 
-    Files::DataLake::Models::UserDelegationKey userDelegationKey;
-    {
-      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
-          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
-      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
-    }
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string fileName = RandomString();
 
@@ -375,15 +361,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
 
-    Files::DataLake::Models::UserDelegationKey userDelegationKey;
-    {
-      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
-          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
-      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
-    }
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string directoryName = RandomString();
 
@@ -440,7 +419,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeSasTest, AccountSasExpired)
+  TEST_F(DataLakeSasTest, AccountSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -470,7 +449,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, ServiceSasExpired)
+  TEST_F(DataLakeSasTest, ServiceSasExpired_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiredOn = std::chrono::system_clock::now() - std::chrono::minutes(1);
@@ -501,7 +480,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, AccountSasWithoutStarttime)
+  TEST_F(DataLakeSasTest, AccountSasWithoutStarttime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -525,7 +504,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, ServiceSasWithoutStartTime)
+  TEST_F(DataLakeSasTest, ServiceSasWithoutStartTime_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -550,7 +529,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, AccountSasWithIP)
+  TEST_F(DataLakeSasTest, AccountSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -578,7 +557,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasNonRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, ServiceSasWithIP)
+  TEST_F(DataLakeSasTest, ServiceSasWithIP_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -614,15 +593,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
     auto accountName = keyCredential->AccountName;
 
-    Files::DataLake::Models::UserDelegationKey userDelegationKey;
-    {
-      auto dataLakeServiceClient = Files::DataLake::DataLakeServiceClient(
-          Files::DataLake::_detail::GetDfsUrlFromUrl(m_dataLakeServiceClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-          InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
-      userDelegationKey = dataLakeServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
-    }
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
 
     std::string fileName = RandomString();
 
@@ -643,7 +615,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, FileSasWithIdentifier)
+  TEST_F(DataLakeSasTest, FileSasWithIdentifier_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -682,7 +654,7 @@ namespace Azure { namespace Storage { namespace Test {
     VerifyDataLakeSasRead(dataLakeFileClient, sasToken);
   }
 
-  TEST_F(DataLakeSasTest, FileSasResponseHeadersOverride)
+  TEST_F(DataLakeSasTest, FileSasResponseHeadersOverride_LIVEONLY_)
   {
 
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -718,7 +690,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.Value.HttpHeaders.ContentEncoding, fileSasBuilder.ContentEncoding);
   }
 
-  TEST_F(DataLakeSasTest, AccountSasEncryptionScope)
+  TEST_F(DataLakeSasTest, AccountSasEncryptionScope_LIVEONLY_)
   {
     const std::string encryptionScope = GetTestEncryptionScope();
 
@@ -753,7 +725,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
   }
 
-  TEST_F(DataLakeSasTest, ServiceSasEncryptionScope)
+  TEST_F(DataLakeSasTest, ServiceSasEncryptionScope_LIVEONLY_)
   {
     const std::string encryptionScope = GetTestEncryptionScope();
 
@@ -785,5 +757,42 @@ namespace Azure { namespace Storage { namespace Test {
 
     ASSERT_TRUE(properties.EncryptionScope.HasValue());
     EXPECT_EQ(properties.EncryptionScope.Value(), encryptionScope);
+  }
+
+  TEST_F(DataLakeSasTest, AccountSasAuthorizationErrorDetail_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::AccountSasBuilder accountSasBuilder;
+    accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    accountSasBuilder.StartsOn = sasStartsOn;
+    accountSasBuilder.ExpiresOn = sasExpiresOn;
+    accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+    accountSasBuilder.ResourceTypes = Sas::AccountSasResource::Service;
+    accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::All);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+
+    std::string directoryName = RandomString();
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeDirectoryClient = dataLakeFileSystemClient.GetDirectoryClient(directoryName);
+    dataLakeDirectoryClient.Create();
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+    auto unauthorizedFileClient = GetSasAuthenticatedClient(dataLakeFileClient, sasToken);
+    try
+    {
+      unauthorizedFileClient.Download();
+    }
+    catch (StorageException& e)
+    {
+      EXPECT_EQ("AuthorizationResourceTypeMismatch", e.ErrorCode);
+      EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
+    }
   }
 }}} // namespace Azure::Storage::Test

@@ -21,12 +21,51 @@ namespace Azure { namespace Storage { namespace Test {
     StorageTest::SetUp();
 
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
-    m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
-        Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), options));
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    if (m_useTokenCredentialByDefault)
+    {
+      m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+          Files::Shares::ShareServiceClient(GetShareServiceUrl(), GetTestCredential(), options));
+    }
+    else
+    {
+      m_shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+          Files::Shares::ShareServiceClient::CreateFromConnectionString(
+              StandardStorageConnectionString(), options));
+    }
+
+    // Most APIs don't work for premium shares
+    {
+      std::string premiumConnectionString;
+      try
+      {
+        premiumConnectionString = PremiumFileConnectionString();
+      }
+      catch (...)
+      {
+      }
+      if (!premiumConnectionString.empty())
+      {
+        m_premiumShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+            Files::Shares::ShareServiceClient::CreateFromConnectionString(
+                premiumConnectionString, options));
+      }
+    }
   }
 
-  TEST_F(FileShareServiceClientTest, Constructors)
+  Files::Shares::ShareClient FileShareServiceClientTest::GetPremiumShareClientForTest(
+      const std::string& shareName,
+      Files::Shares::ShareClientOptions clientOptions)
+  {
+    InitStorageClientOptions(clientOptions);
+    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+        PremiumFileConnectionString(), shareName, clientOptions);
+    m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
+
+    return shareClient;
+  }
+
+  TEST_F(FileShareServiceClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     {
@@ -130,6 +169,50 @@ namespace Azure { namespace Storage { namespace Test {
     {
       m_shareServiceClient->GetShareClient(shareName).DeleteIfExists();
     }
+  }
+
+  TEST_F(FileShareServiceClientTest, ListSharesEnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  {
+    auto premiumFileShareServiceClient = *m_premiumShareServiceClient;
+    std::string shareName1 = LowercaseRandomString();
+    std::string shareName2 = LowercaseRandomString();
+    auto shareClient1 = GetPremiumShareClientForTest(shareName1);
+    auto shareClient2 = GetPremiumShareClientForTest(shareName2);
+    Files::Shares::CreateShareOptions createOptions;
+    createOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    shareClient1.Create(createOptions);
+    shareClient2.Create(createOptions);
+
+    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = true;
+    shareClient1.SetProperties(setPropertiesOptions);
+    setPropertiesOptions.EnableSnapshotVirtualDirectoryAccess = false;
+    shareClient2.SetProperties(setPropertiesOptions);
+
+    Azure::Nullable<Files::Shares::Models::ShareItem> share1;
+    Azure::Nullable<Files::Shares::Models::ShareItem> share2;
+    for (auto page = premiumFileShareServiceClient.ListShares(); page.HasPage();
+         page.MoveToNextPage())
+    {
+      for (const auto& share : page.Shares)
+      {
+        if (share.Name == shareName1)
+        {
+          share1 = share;
+        }
+        else if (share.Name == shareName2)
+        {
+          share2 = share;
+        }
+      }
+    }
+    ASSERT_TRUE(share1.HasValue() && share2.HasValue());
+    EXPECT_TRUE(
+        share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && share1.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
+    EXPECT_TRUE(
+        share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.HasValue()
+        && !share2.Value().Details.EnableSnapshotVirtualDirectoryAccess.Value());
   }
 
   TEST_F(FileShareServiceClientTest, GetProperties)
@@ -238,13 +321,10 @@ namespace Azure { namespace Storage { namespace Test {
     m_shareServiceClient->SetProperties(originalProperties);
   }
 
-  TEST_F(FileShareServiceClientTest, SetPremiumFileProperties)
+  TEST_F(FileShareServiceClientTest, SetPremiumFileProperties_LIVEONLY_)
   {
-    auto premiumFileShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
-        Files::Shares::ShareServiceClient::CreateFromConnectionString(
-            PremiumFileConnectionString(),
-            InitStorageClientOptions<Files::Shares::ShareClientOptions>()));
-    auto properties = premiumFileShareServiceClient->GetProperties().Value;
+    auto premiumFileShareServiceClient = *m_premiumShareServiceClient;
+    auto properties = premiumFileShareServiceClient.GetProperties().Value;
     auto originalProperties = properties;
 
     properties.HourMetrics.Enabled = true;
@@ -276,11 +356,11 @@ namespace Azure { namespace Storage { namespace Test {
     protocolSettings.Settings.Multichannel.Enabled = true;
     properties.Protocol = protocolSettings;
 
-    EXPECT_NO_THROW(premiumFileShareServiceClient->SetProperties(properties));
+    EXPECT_NO_THROW(premiumFileShareServiceClient.SetProperties(properties));
     // It takes some time before the new properties comes into effect.
     using namespace std::chrono_literals;
     TestSleep(10s);
-    auto downloadedProperties = premiumFileShareServiceClient->GetProperties().Value;
+    auto downloadedProperties = premiumFileShareServiceClient.GetProperties().Value;
 
     EXPECT_EQ(downloadedProperties.HourMetrics.Version, properties.HourMetrics.Version);
     EXPECT_EQ(downloadedProperties.HourMetrics.Enabled, properties.HourMetrics.Enabled);
@@ -334,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_EQ(true, properties.Protocol.Value().Settings.Multichannel.Enabled);
 
-    premiumFileShareServiceClient->SetProperties(originalProperties);
+    premiumFileShareServiceClient.SetProperties(originalProperties);
   }
 
 }}} // namespace Azure::Storage::Test

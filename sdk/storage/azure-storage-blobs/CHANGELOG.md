@@ -1,6 +1,6 @@
 # Release History
 
-## 12.12.0-beta.1 (Unreleased)
+## 12.12.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.12.0-beta.1 (2024-06-11)
+
+### Features Added
+
+- Bumped up API version to `2024-08-04`.
+- Added `BlobContainerClient::GetAccountInfo()` and `BlobClient::GetAccountInfo` APIs.
+- Added more detailed messaging for authorization failure cases.
 
 ## 12.11.0 (2024-05-07)
 

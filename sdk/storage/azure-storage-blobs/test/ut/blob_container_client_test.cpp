@@ -56,8 +56,11 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::BlobClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto blobContainerClient = Blobs::BlobContainerClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), containerName, clientOptions);
+    auto containerUrl = GetBlobContainerUrl(containerName);
+    auto blobContainerClient = m_useTokenCredentialByDefault
+        ? Blobs::BlobContainerClient(containerUrl, GetTestCredential(), clientOptions)
+        : Blobs::BlobContainerClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), containerName, clientOptions);
     m_resourceCleanupFunctions.push_back(
         [blobContainerClient]() { blobContainerClient.DeleteIfExists(); });
 
@@ -72,8 +75,19 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.BlobContainerName = m_containerName;
     sasBuilder.Resource = Sas::BlobSasResource::BlobContainer;
     sasBuilder.SetPermissions(Sas::BlobContainerSasPermissions::All);
-    return sasBuilder.GenerateSasToken(
-        *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+    if (m_useTokenCredentialByDefault)
+    {
+      auto userDelegationKey
+          = m_blobServiceClient
+                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                .Value;
+      return sasBuilder.GenerateSasToken(userDelegationKey, m_accountName);
+    }
+    else
+    {
+      return sasBuilder.GenerateSasToken(
+          *_internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential);
+    }
   }
 
   Blobs::Models::BlobItem BlobContainerClientTest::GetBlobItem(
@@ -1379,10 +1393,12 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ObjectReplication_PLAYBACKONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
-    auto sourceServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), clientOptions);
-    auto destServiceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString(), clientOptions);
+    const auto sourceServiceUrl = GetBlobServiceUrl();
+    const auto destServiceUrl = "https://" + AdlsGen2AccountName() + ".blob.core.windows.net";
+    auto sourceServiceClient
+        = Blobs::BlobServiceClient(sourceServiceUrl, GetTestCredential(), clientOptions);
+    auto destServiceClient
+        = Blobs::BlobServiceClient(destServiceUrl, GetTestCredential(), clientOptions);
     auto sourceContainerClient = sourceServiceClient.GetBlobContainerClient("src");
     auto destContainerClient = destServiceClient.GetBlobContainerClient("dest");
 
@@ -1446,11 +1462,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlobContainerClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
 
     // default audience
@@ -1493,4 +1505,5 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(e.ErrorCode, "BlobNotFound");
     }
   }
+
 }}} // namespace Azure::Storage::Test

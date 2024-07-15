@@ -5,7 +5,7 @@
   "include": [
     {
       "StaticConfigs": {
-        "macOS-11": {
+        "macos-latest": {
           "Pool": "env:MACPOOL",
           "OSVmImage": "env:MACVMIMAGE",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",

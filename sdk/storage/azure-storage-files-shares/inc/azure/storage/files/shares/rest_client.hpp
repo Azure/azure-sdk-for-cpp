@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-05-04";
+    constexpr static const char* ApiVersion = "2024-08-04";
   } // namespace _detail
   namespace Models {
     /**
@@ -393,6 +393,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Root squash to set on the share.  Only valid for NFS shares.
        */
       Nullable<ShareRootSquash> RootSquash;
+      /**
+       * Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be
+       * accessible at the root of share mount point when NFS is enabled. This header is only
+       * returned for shares, not for snapshots.
+       */
+      Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -570,6 +576,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Valid for NFS shares only.
        */
       Nullable<ShareRootSquash> RootSquash;
+      /**
+       * Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be
+       * accessible at the root of share mount point when NFS is enabled. This header is only
+       * returned for shares, not for snapshots.
+       */
+      Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -2085,6 +2097,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::AccessTier> AccessTier;
         Nullable<Models::ShareProtocols> EnabledProtocols;
         Nullable<Models::ShareRootSquash> RootSquash;
+        Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2200,6 +2213,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::AccessTier> AccessTier;
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareRootSquash> RootSquash;
+        Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,

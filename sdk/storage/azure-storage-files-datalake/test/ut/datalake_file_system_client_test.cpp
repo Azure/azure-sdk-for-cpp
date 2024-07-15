@@ -25,8 +25,19 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.FileSystemName = m_fileSystemName;
     sasBuilder.Resource = Sas::DataLakeSasResource::FileSystem;
     sasBuilder.SetPermissions(Sas::DataLakeFileSystemSasPermissions::All);
-    return sasBuilder.GenerateSasToken(
-        *_internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential);
+    if (m_useTokenCredentialByDefault)
+    {
+      auto userDelegationKey
+          = m_dataLakeServiceClient
+                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                .Value;
+      return sasBuilder.GenerateSasToken(userDelegationKey, AdlsGen2AccountName());
+    }
+    else
+    {
+      return sasBuilder.GenerateSasToken(
+          *_internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential);
+    }
   }
 
   void DataLakeFileSystemClientTest::SetUp()
@@ -67,8 +78,11 @@ namespace Azure { namespace Storage { namespace Test {
       Files::DataLake::DataLakeClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto fsClient = Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
-        AdlsGen2ConnectionString(), fileSystemName, clientOptions);
+    auto fsClient = m_useTokenCredentialByDefault
+        ? Files::DataLake::DataLakeFileSystemClient(
+            GetDataLakeFileSystemUrl(fileSystemName), GetTestCredential(), clientOptions)
+        : Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
+            AdlsGen2ConnectionString(), fileSystemName, clientOptions);
     m_resourceCleanupFunctions.push_back([fsClient]() { fsClient.DeleteIfExists(); });
     return fsClient;
   }
@@ -287,7 +301,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, ConstructorsWorks)
+  TEST_F(DataLakeFileSystemClientTest, Constructors_LIVEONLY_)
   {
     {
       // Create from connection string validates static creator function and shared key constructor.
@@ -303,9 +317,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create from client secret credential.
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-          = std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret());
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
       Azure::Storage::Files::DataLake::DataLakeClientOptions options;
 
       auto clientSecretClient = InitTestClient<
@@ -743,7 +755,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(newDirectoryClient.GetProperties(), StorageException);
   }
 
-  TEST_F(DataLakeFileSystemClientTest, RenameFileSasAuthentication)
+  TEST_F(DataLakeFileSystemClientTest, RenameFileSasAuthentication_LIVEONLY_)
   {
     const std::string baseName = RandomString();
     const std::string sourceFilename = baseName + "1";
@@ -932,11 +944,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(DataLakeFileSystemClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
 
     // default audience
