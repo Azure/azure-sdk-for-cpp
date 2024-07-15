@@ -20,6 +20,7 @@
 
 - Updated JSON library to 3.11.3.
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+- [[#5766]](https://github.com/Azure/azure-sdk-for-cpp/pull/5766) Add missing include.  (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
 
 ### Acknowledgments
 
@@ -27,6 +28,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 - Anton Popov _([GitHub](https://github.com/CurtizJ))_
 - AlexYue _([GitHub](https://github.com/ByteYue))_
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
 
 ## 1.13.0-beta.1 (2024-06-06)
 
