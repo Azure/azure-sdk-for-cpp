@@ -12,6 +12,6 @@ add_executable (
   macros_build.cpp
   macros_build.hpp)
 
-create_per_service_target_build_for_sample(keyvault macros-build)
+create_per_service_target_build_for_sample(keyvault macros-build TRUE)
 
 target_link_libraries(macros-build PRIVATE azure-security-keyvault-keys)

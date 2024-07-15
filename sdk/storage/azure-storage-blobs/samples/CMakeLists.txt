@@ -9,20 +9,20 @@ endif()
 
 add_executable(blob-getting-started blob_getting_started.cpp)
 target_link_libraries(blob-getting-started PRIVATE azure-storage-blobs get-env-helper)
-create_per_service_target_build_for_sample(storage blob-getting-started)
+create_per_service_target_build_for_sample(storage blob-getting-started TRUE)
 
 add_executable(blob-list-operation blob_list_operation.cpp)
 target_link_libraries(blob-list-operation  PRIVATE azure-storage-blobs get-env-helper)
-create_per_service_target_build_for_sample(storage blob-list-operation)
+create_per_service_target_build_for_sample(storage blob-list-operation TRUE)
 
 add_executable(blob-sas blob_sas.cpp)
 target_link_libraries(blob-sas PRIVATE azure-storage-blobs get-env-helper)
-create_per_service_target_build_for_sample(storage blob-sas)
+create_per_service_target_build_for_sample(storage blob-sas TRUE)
 
 add_executable(transactional-checksum transactional_checksum.cpp)
 target_link_libraries(transactional-checksum PRIVATE azure-storage-blobs get-env-helper)
-create_per_service_target_build_for_sample(storage transactional-checksum)
+create_per_service_target_build_for_sample(storage transactional-checksum TRUE)
 
 add_executable(blob-query blob_query.cpp)
 target_link_libraries(blob-query PRIVATE azure-storage-blobs get-env-helper)
-create_per_service_target_build_for_sample(storage blob-query)
+create_per_service_target_build_for_sample(storage blob-query TRUE)

@@ -12,7 +12,7 @@ add_executable (
   eventhubs-${samplename}
   ${samplename}.cpp)
 
-CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename})
+CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename} FALSE)
 
 target_link_libraries(eventhubs-${samplename} PRIVATE azure-messaging-eventhubs azure-identity)
 endmacro()

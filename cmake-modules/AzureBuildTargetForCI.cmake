@@ -18,7 +18,7 @@ endmacro()
 # Adds a target to be built and also run during a CI run
 # - param service: The Azure SDK service group
 # - param target:  The name of the cmake target to be built
-macro(create_per_service_target_build_for_sample  service target)
+macro(create_per_service_target_build_for_sample  service target run_sample)
     
     # Create the built target
     create_per_service_target_build(${service} ${target})
@@ -32,6 +32,8 @@ macro(create_per_service_target_build_for_sample  service target)
     if(CMAKE_GENERATOR MATCHES "Visual Studio.*")
         SET(binary "Release/${binary}")
     endif()
-    file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
-    
+
+    if (${run_sample})
+      file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
+    endif()
 endmacro()
