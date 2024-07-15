@@ -154,7 +154,7 @@ if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
 endif()
 
-if(BUILD_SAMPLES_DISABLED)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
 

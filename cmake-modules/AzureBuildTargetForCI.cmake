@@ -41,7 +41,7 @@ macro(create_per_service_target_build_for_sample  service target)
           set(RUN_SAMPLE FALSE)
           message("Disabling sample execution for ${service}/${binary}")
         else()
-          message(ERROR "Unknown extra argument: ${arg}")
+          message(FATAL_ERROR "Unknown extra argument: ${arg}")
         endif()
       endforeach()
 
