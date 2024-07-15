@@ -50,9 +50,10 @@ bool IsValidTenantId(std::string const& tenantId)
 ClientAssertionCredential::ClientAssertionCredential(
     std::string tenantId,
     std::string clientId,
-    std::function<std::string(Context const&)> const& assertionCallback,
+    std::function<std::string(Context const&)> assertionCallback,
     ClientAssertionCredentialOptions const& options)
-    : TokenCredential("ClientAssertionCredential"), m_assertionCallback(assertionCallback),
+    : TokenCredential("ClientAssertionCredential"),
+      m_assertionCallback(std::move(assertionCallback)),
       m_clientCredentialCore(tenantId, options.AuthorityHost, options.AdditionallyAllowedTenants)
 {
   bool isTenantIdValid = IsValidTenantId(tenantId);
@@ -60,7 +61,7 @@ ClientAssertionCredential::ClientAssertionCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        "Invalid tenant ID provided  for " + GetCredentialName()
+        "Invalid tenant ID provided for " + GetCredentialName()
             + ". The tenant ID must be a non-empty string containing only alphanumeric characters, "
               "periods, or hyphens. You can locate your tenant ID by following the instructions "
               "listed here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
@@ -70,7 +71,7 @@ ClientAssertionCredential::ClientAssertionCredential(
     IdentityLog::Write(
         IdentityLog::Level::Warning, "No client ID specified for " + GetCredentialName() + ".");
   }
-  if (!assertionCallback)
+  if (!m_assertionCallback)
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
@@ -78,7 +79,7 @@ ClientAssertionCredential::ClientAssertionCredential(
             + GetCredentialName() + ".");
   }
 
-  if (isTenantIdValid && !clientId.empty() && assertionCallback)
+  if (isTenantIdValid && !clientId.empty() && m_assertionCallback)
   {
     m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
     m_requestBody
@@ -141,8 +142,8 @@ AccessToken ClientAssertionCredential::GetToken(
       }
 
       // Get the request url before calling m_assertionCallback to validate the authority host
-      // scheme. This is to avoid calling the assertion callback if the authority host scheme is
-      // invalid.
+      // scheme (GetRequestUrl() will throw if validation fails). This is to avoid calling the
+      // assertion callback if the authority host scheme is invalid.
       auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
 
       const std::string assertion = m_assertionCallback(context);

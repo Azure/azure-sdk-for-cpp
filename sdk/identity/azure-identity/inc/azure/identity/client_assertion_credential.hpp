@@ -76,7 +76,7 @@ namespace Azure { namespace Identity {
     explicit ClientAssertionCredential(
         std::string tenantId,
         std::string clientId,
-        std::function<std::string(Core::Context const&)> const& assertionCallback,
+        std::function<std::string(Core::Context const&)> assertionCallback,
         ClientAssertionCredentialOptions const& options = {});
 
     /**

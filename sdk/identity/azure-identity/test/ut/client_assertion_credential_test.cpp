@@ -105,7 +105,7 @@ TEST(ClientAssertionCredential, InvalidArgs)
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
 
-  // Empty assertion call back
+  // Empty assertion callback
   {
     TokenRequestContext trc;
     trc.Scopes.push_back("https://storage.azure.com/.default");
