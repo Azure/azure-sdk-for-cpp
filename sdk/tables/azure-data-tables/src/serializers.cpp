@@ -528,13 +528,16 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
     Models::TableEntity tableEntity{};
 
     std::map<std::string, std::string> properties;
-    for (auto it = json.items().begin(); it != json.items().end(); ++it) {
+    for (auto it = json.items().begin(); it != json.items().end(); ++it) 
+    {
       const std::string& key = it.key();
       const auto& value = it.value();
-      if (value.is_string()) {
+      if (value.is_string()) 
+      {
           properties[key] = value.get<std::string>();
       } 
-      else {
+      else 
+      {
           properties[key] = value.dump();
       }
     }
