@@ -18,7 +18,7 @@ endmacro()
 # Adds a target to be built and also run during a CI run
 # - param service: The Azure SDK service group
 # - param target:  The name of the cmake target to be built
-macro(create_per_service_target_build_for_sample  service target run_sample)
+macro(create_per_service_target_build_for_sample  service target)
     
     # Create the built target
     create_per_service_target_build(${service} ${target})
@@ -33,7 +33,20 @@ macro(create_per_service_target_build_for_sample  service target run_sample)
         SET(binary "Release/${binary}")
     endif()
 
-    if (${run_sample})
-      file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
+    set(RUN_SAMPLE TRUE)
+    if(${ARGC} GREATER 2)
+      set(extra_args "${ARGN}")
+      foreach(arg IN LISTS extra_args)
+        if (${arg} MATCHES "DISABLE_RUN")
+          set(RUN_SAMPLE FALSE)
+          message("Disabling sample execution for ${service}/${binary}")
+        else()
+          message(ERROR "Unknown extra argument: ${arg}")
+        endif()
+      endforeach()
+
+      if (RUN_SAMPLE)
+          file(APPEND ${CMAKE_BINARY_DIR}/${service}-samples.txt "${CMAKE_CURRENT_BINARY_DIR}/${binary}\n")
+      endif()
     endif()
 endmacro()
