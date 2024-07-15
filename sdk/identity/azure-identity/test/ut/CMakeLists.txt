@@ -34,6 +34,8 @@ add_executable (
     workload_identity_credential_test.cpp
     )
   
+target_compile_definitions(azure-identity-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(identity azure-identity-test)
 
 create_map_file(azure-identity-test azure-identity-test.map)

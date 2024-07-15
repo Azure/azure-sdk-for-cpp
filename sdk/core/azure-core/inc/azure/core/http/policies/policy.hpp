@@ -76,7 +76,17 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 
   private:
     friend class _internal::TelemetryPolicy;
-    long CppStandardVersion = __cplusplus;
+    long CppStandardVersion =
+#if defined(_azure_BUILDING_SDK)
+        -9223372036854775808L
+#elif defined(_azure_BUILDING_TESTS)
+        -1L
+#elif defined(_azure_BUILDING_SAMPLES)
+        0L
+#else
+        __cplusplus
+#endif
+        ;
   };
 
   /**

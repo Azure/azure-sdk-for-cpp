@@ -31,6 +31,8 @@ add_executable (
      ${AZURE_CORE_PERF_TEST_HEADER} ${AZURE_CORE_PERF_TEST_SOURCE}
 )
 
+target_compile_definitions(azure-core-perf PRIVATE _azure_BUILDING_TESTS)
+
 # Include the headers from the project.
 target_include_directories(
   azure-core-perf

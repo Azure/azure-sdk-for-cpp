@@ -33,6 +33,8 @@ add_executable (
     test_consts.hpp
 )
 
+target_compile_definitions(azure-security-keyvault-keys-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-keys-test)
 create_map_file(azure-security-keyvault-keys-test azure-security-keyvault-keys-test.map)
 

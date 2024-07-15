@@ -4,6 +4,8 @@
 add_executable(mssbcbs_sample
 	main.c)
 
+target_compile_definitions(mssbcbs_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(mssbcbs_sample)
 
 include_directories(.)

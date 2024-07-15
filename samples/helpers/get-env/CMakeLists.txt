@@ -15,4 +15,6 @@ add_library(
       src/get_env.cpp
 )
 
+target_compile_definitions(get-env-helper PRIVATE _azure_BUILDING_SAMPLES)
+
 target_include_directories(get-env-helper PUBLIC inc)

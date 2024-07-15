@@ -54,6 +54,9 @@ set(
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+
+target_compile_definitions(azure-template PRIVATE _azure_BUILDING_SDK)
+
 create_per_service_target_build(template azure-template)
 
 target_include_directories(

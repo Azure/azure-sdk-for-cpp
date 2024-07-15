@@ -45,7 +45,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   private:
     friend class ProducerClient;
-    long CppStandardVersion = __cplusplus;
+    long CppStandardVersion =
+#if defined(_azure_BUILDING_SDK)
+        -9223372036854775808L
+#elif defined(_azure_BUILDING_TESTS)
+        -1L
+#elif defined(_azure_BUILDING_SAMPLES)
+        0L
+#else
+        __cplusplus
+#endif
+        ;
   };
 
   /**@brief  ProducerClient can be used to send events to an Event Hub.

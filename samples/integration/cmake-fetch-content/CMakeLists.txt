@@ -26,5 +26,7 @@ add_executable (
      src/main.cpp
 )
 
+target_compile_definitions(application PRIVATE _azure_BUILDING_SAMPLES)
+
 # Link to Azure SDK
 target_link_libraries(application Azure::azure-storage-blobs get-env-helper)

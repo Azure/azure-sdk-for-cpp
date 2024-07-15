@@ -22,6 +22,8 @@ add_executable (
     macro_guard.cpp
 )
 
+target_compile_definitions(azure-security-keyvault-certificates-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-certificates-test)
 
 create_map_file(azure-security-keyvault-certificates-test azure-security-keyvault-certificates-test.map)

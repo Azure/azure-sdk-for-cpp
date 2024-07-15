@@ -35,6 +35,8 @@ add_executable (
      ${AZURE_STORAGE_BLOBS_PERF_TEST_HEADER} ${AZURE_STORAGE_BLOBS_PERF_TEST_SOURCE}
 )
 
+target_compile_definitions(azure-storage-blobs-perf PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(storage azure-storage-blobs-perf)
 
 include(PerfTest)

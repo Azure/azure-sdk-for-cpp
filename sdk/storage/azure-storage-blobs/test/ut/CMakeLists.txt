@@ -40,6 +40,8 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
 
+target_compile_definitions(azure-storage-blobs-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(storage azure-storage-blobs-test)
 
 create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)

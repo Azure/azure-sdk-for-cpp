@@ -64,6 +64,9 @@ set(
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})
+
+target_compile_definitions(azure-storage-queues PRIVATE _azure_BUILDING_SDK)
+
 create_per_service_target_build(storage azure-storage-queues)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-queues ALIAS azure-storage-queues)

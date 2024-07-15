@@ -34,6 +34,8 @@ add_executable (
     test_exporter.hpp
 )
 
+target_compile_definitions(azure-core-tracing-opentelemetry-test PRIVATE _azure_BUILDING_TESTS)
+
 if (MSVC)
   # Disable warnings:
   # - C26495: Variable

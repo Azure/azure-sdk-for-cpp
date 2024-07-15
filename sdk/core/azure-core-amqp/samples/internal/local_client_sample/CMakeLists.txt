@@ -10,6 +10,9 @@ project(local_client_sample)
 add_executable(local_client_sample
     local_client_sample.cpp
 )
+
+target_compile_definitions(local_client_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 add_dependencies(local_client_sample Azure::azure-core-amqp)
 
 target_link_libraries(local_client_sample PRIVATE Azure::azure-core-amqp)

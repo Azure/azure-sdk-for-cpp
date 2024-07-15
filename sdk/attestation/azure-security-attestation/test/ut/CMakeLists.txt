@@ -37,6 +37,8 @@ add_executable (
      tpmattestation_test.cpp
 )
 
+target_compile_definitions(azure-security-attestation-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(attestation azure-security-attestation-test)
 
 create_map_file(azure-security-attestation-test azure-security-attestation-test.map)
