@@ -134,6 +134,7 @@ Configuration is attempted in the above order. For example, if values for a clie
 ### Authenticate service principals
 |Credential | Usage
 |-|-
+|`AzurePipelinesCredential`|Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines.
 |`ClientSecretCredential`|Authenticates a service principal [using a secret](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals).
 |`ClientCertificateCredential`|Authenticates a service principal [using a certificate](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals).
 

@@ -1,44 +1,38 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2013-2019 Niels Lohmann <http://nlohmann.me>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
-#define private public
+#define _azure_JSON_TESTS_PRIVATE
 #include <azure/core/internal/json/json.hpp>
 using Azure::Core::Json::_internal::json;
-#undef private
 
 namespace {
 // special test case to check if memory is leaked if constructor throws
 template <class T> struct bad_allocator : std::allocator<T>
 {
-  template <class... Args> void construct(T*, Args&&...) { throw std::bad_alloc(); }
+  using std::allocator<T>::allocator;
+
+  bad_allocator() = default;
+  template <class U> bad_allocator(const bad_allocator<U>& /*unused*/) {}
+
+  template <class... Args>
+  void construct(
+      T* /*unused*/,
+      Args&&... /*unused*/) // NOLINT(cppcoreguidelines-missing-std-forward)
+  {
+    throw std::bad_alloc();
+  }
+
+  template <class U> struct rebind
+  {
+    using other = bad_allocator<U>;
+  };
 };
 } // namespace
 
@@ -78,10 +72,8 @@ template <class T> struct my_allocator : std::allocator<T>
       next_construct_fails = false;
       throw std::bad_alloc();
     }
-    else
-    {
-      ::new (reinterpret_cast<void*>(p)) T(std::forward<Args>(args)...);
-    }
+
+    ::new (reinterpret_cast<void*>(p)) T(std::forward<Args>(args)...);
   }
 
   void deallocate(T* p, std::size_t n)
@@ -91,10 +83,8 @@ template <class T> struct my_allocator : std::allocator<T>
       next_deallocate_fails = false;
       throw std::bad_alloc();
     }
-    else
-    {
-      std::allocator<T>::deallocate(p, n);
-    }
+
+    std::allocator<T>::deallocate(p, n);
   }
 
   void destroy(T* p)
@@ -104,10 +94,9 @@ template <class T> struct my_allocator : std::allocator<T>
       next_destroy_fails = false;
       throw std::bad_alloc();
     }
-    else
-    {
-      p->~T();
-    }
+
+    static_cast<void>(p); // fix MSVC's C4100 warning
+    p->~T();
   }
 
   template <class U> struct rebind
@@ -175,7 +164,7 @@ TEST_CASE("controlled bad_alloc")
     SECTION("json_value(const string_t&)")
     {
       next_construct_fails = false;
-      my_json::string_t v("foo");
+      const my_json::string_t v("foo");
       CHECK_NOTHROW(my_allocator_clean_up(my_json::json_value(v).string));
       next_construct_fails = true;
       CHECK_THROWS_AS(my_json::json_value(v), std::bad_alloc&);
@@ -188,7 +177,7 @@ TEST_CASE("controlled bad_alloc")
     SECTION("basic_json(const CompatibleObjectType&)")
     {
       next_construct_fails = false;
-      std::map<std::string, std::string> v{{"foo", "bar"}};
+      const std::map<std::string, std::string> v{{"foo", "bar"}};
       CHECK_NOTHROW(my_json(v));
       next_construct_fails = true;
       CHECK_THROWS_AS(my_json(v), std::bad_alloc&);
@@ -198,7 +187,7 @@ TEST_CASE("controlled bad_alloc")
     SECTION("basic_json(const CompatibleArrayType&)")
     {
       next_construct_fails = false;
-      std::vector<std::string> v{"foo", "bar", "baz"};
+      const std::vector<std::string> v{"foo", "bar", "baz"};
       CHECK_NOTHROW(my_json(v));
       next_construct_fails = true;
       CHECK_THROWS_AS(my_json(v), std::bad_alloc&);
@@ -217,7 +206,7 @@ TEST_CASE("controlled bad_alloc")
     SECTION("basic_json(const typename string_t::value_type*)")
     {
       next_construct_fails = false;
-      std::string s("foo");
+      const std::string s("foo");
       CHECK_NOTHROW(my_json(s));
       next_construct_fails = true;
       CHECK_THROWS_AS(my_json(s), std::bad_alloc&);
@@ -229,8 +218,8 @@ TEST_CASE("controlled bad_alloc")
 namespace {
 template <class T> struct allocator_no_forward : std::allocator<T>
 {
-  allocator_no_forward() {}
-  template <class U> allocator_no_forward(allocator_no_forward<U>) {}
+  allocator_no_forward() = default;
+  template <class U> allocator_no_forward(allocator_no_forward<U> /*unused*/) {}
 
   template <class U> struct rebind
   {

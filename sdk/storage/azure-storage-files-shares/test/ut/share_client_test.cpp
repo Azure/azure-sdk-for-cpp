@@ -68,8 +68,11 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        StandardStorageConnectionString(), shareName, clientOptions);
+    clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    auto shareClient = m_useTokenCredentialByDefault
+        ? Files::Shares::ShareClient(GetShareUrl(shareName), GetTestCredential(), clientOptions)
+        : Files::Shares::ShareClient::CreateFromConnectionString(
+            StandardStorageConnectionString(), shareName, clientOptions);
     m_resourceCleanupFunctions.push_back([shareClient]() {
       Files::Shares::DeleteShareOptions options;
       options.DeleteSnapshots = true;
@@ -528,11 +531,9 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, GetStatistics) { EXPECT_NO_THROW(m_shareClient->GetStatistics()); }
 
-  TEST_F(FileShareClientTest, PremiumShare)
+  TEST_F(FileShareClientTest, PremiumShare_LIVEONLY_)
   {
-    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
-    auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
-        PremiumFileConnectionString(), shareClientOptions);
+    auto shareServiceClient = *m_premiumShareServiceClient;
     {
       auto shareName = LowercaseRandomString();
       auto shareClient = GetPremiumShareClientForTest(shareName);
@@ -642,9 +643,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(FileShareClientTest, OAuth_PLAYBACKONLY_)
   {
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-        = std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions());
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -661,11 +660,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
 
     // OAuth Constructor
-    auto shareClient1 = Files::Shares::ShareClient(
-        m_shareClient->GetUrl(),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
-        options);
+    auto shareClient1
+        = Files::Shares::ShareClient(m_shareClient->GetUrl(), GetTestCredential(), options);
     EXPECT_NO_THROW(shareClient1.GetPermission(created.FilePermissionKey));
   }
 
@@ -687,11 +683,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, Audience_PLAYBACKONLY_)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
     std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"

@@ -37,7 +37,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  TEST_F(DataLakeDirectoryClientTest, Constructors)
+  TEST_F(DataLakeDirectoryClientTest, Constructors_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
     {
@@ -56,8 +56,7 @@ namespace Azure { namespace Storage { namespace Test {
     {
       auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
-          std::make_shared<Azure::Identity::ClientSecretCredential>(
-              AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+          GetTestCredential(),
           clientOptions);
       EXPECT_NO_THROW(directoryClient.GetProperties());
     }
@@ -145,8 +144,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string baseName = RandomString();
     auto oauthFileSystemClient = Files::DataLake::DataLakeFileSystemClient(
         Files::DataLake::_detail::GetDfsUrlFromUrl(m_fileSystemClient->GetUrl()),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), GetTokenCredentialOptions()),
+        GetTestCredential(),
         InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
     // Delete empty
     auto emptyDir = baseName + "OAuthEmptyDir";
@@ -234,7 +232,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(newFileClient.GetProperties(), StorageException);
   }
 
-  TEST_F(DataLakeDirectoryClientTest, RenameFileSasAuthentication)
+  TEST_F(DataLakeDirectoryClientTest, RenameFileSasAuthentication_LIVEONLY_)
   {
     const std::string baseName = RandomString();
     const std::string sourceFilename = baseName + "1";
@@ -844,7 +842,7 @@ namespace Azure { namespace Storage { namespace Test {
       // List without FileSystemUrl in client configuration
       auto directoryClient = Files::DataLake::DataLakeDirectoryClient(
           Files::DataLake::_detail::GetDfsUrlFromUrl(m_directoryClient->GetUrl()),
-          _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential,
+          GetTestCredential(),
           InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
 
       std::set<std::string> results;

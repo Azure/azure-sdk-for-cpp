@@ -183,6 +183,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
 
       auto events = partitionClient.ReceiveEvents(m_batchSize, context);
       total += events.size();
+      std::cout << "[r: " << round << "/" << m_rounds << "p: " << m_partitionId
+                << "] Received: " << total << " messages" << std::endl;
     }
 
     void AddEndProperty(

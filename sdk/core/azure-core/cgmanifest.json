@@ -36,7 +36,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/nlohmann/json",
-          "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
+          "CommitHash": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
         }
       },
       "DevelopmentDependency": false

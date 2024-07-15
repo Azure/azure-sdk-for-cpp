@@ -22,6 +22,7 @@ add_executable (
     queue_client_test.hpp
     queue_sas_test.cpp
     queue_service_client_test.cpp
+    queue_service_client_test.hpp
     simplified_header_test.cpp
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp

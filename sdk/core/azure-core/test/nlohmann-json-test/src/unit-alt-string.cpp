@@ -1,31 +1,11 @@
-/*
-    __ _____ _____ _____
- __|  |   __|     |   | |  JSON for Modern C++ (test suite)
-|  |  |__   |  |  | | | |  version 3.8.0
-|_____|_____|_____|_|___|  https://github.com/nlohmann/json
-
-Licensed under the MIT License <http://opensource.org/licenses/MIT>.
-SPDX-License-Identifier: MIT
-Copyright (c) 2018 Vitaliy Manushkin <agri@akamo.info>.
-
-Permission is hereby  granted, free of charge, to any  person obtaining a copy
-of this software and associated  documentation files (the "Software"), to deal
-in the Software  without restriction, including without  limitation the rights
-to  use, copy,  modify, merge,  publish, distribute,  sublicense, and/or  sell
-copies  of  the Software,  and  to  permit persons  to  whom  the Software  is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE  IS PROVIDED "AS  IS", WITHOUT WARRANTY  OF ANY KIND,  EXPRESS OR
-IMPLIED,  INCLUDING BUT  NOT  LIMITED TO  THE  WARRANTIES OF  MERCHANTABILITY,
-FITNESS FOR  A PARTICULAR PURPOSE AND  NONINFRINGEMENT. IN NO EVENT  SHALL THE
-AUTHORS  OR COPYRIGHT  HOLDERS  BE  LIABLE FOR  ANY  CLAIM,  DAMAGES OR  OTHER
-LIABILITY, WHETHER IN AN ACTION OF  CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE  OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
+//     __ _____ _____ _____
+//  __|  |   __|     |   | |  JSON for Modern C++ (supporting code)
+// |  |  |__   |  |  | | | |  version 3.11.3
+// |_____|_____|_____|_|___|  https://github.com/nlohmann/json
+//
+// SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
+// SPDX-FileCopyrightText: 2018 Vitaliy Manushkin <agri@akamo.info>
+// SPDX-License-Identifier: MIT
 
 #include "doctest_compatibility.h"
 
@@ -36,7 +16,7 @@ SOFTWARE.
 
 /* forward declarations */
 class alt_string;
-bool operator<(const char* op1, const alt_string& op2);
+bool operator<(const char* op1, const alt_string& op2) noexcept;
 void int_to_string(alt_string& target, std::size_t value);
 
 /*
@@ -46,6 +26,8 @@ void int_to_string(alt_string& target, std::size_t value);
 class alt_string {
 public:
   using value_type = std::string::value_type;
+
+  static constexpr auto npos = static_cast<std::size_t>(-1);
 
   alt_string(const char* str) : str_impl(str) {}
   alt_string(const char* str, std::size_t count) : str_impl(str, count) {}
@@ -74,9 +56,12 @@ public:
 
   void resize(std::size_t n, char c) { str_impl.resize(n, c); }
 
-  template <typename op_type> bool operator<(const op_type& op) const { return str_impl < op; }
+  template <typename op_type> bool operator<(const op_type& op) const noexcept
+  {
+    return str_impl < op;
+  }
 
-  bool operator<(const alt_string& op) const { return str_impl < op.str_impl; }
+  bool operator<(const alt_string& op) const noexcept { return str_impl < op.str_impl; }
 
   const char* c_str() const { return str_impl.c_str(); }
 
@@ -90,12 +75,36 @@ public:
 
   void clear() { str_impl.clear(); }
 
-  const value_type* data() { return str_impl.data(); }
+  const value_type* data() const { return str_impl.data(); }
+
+  bool empty() const { return str_impl.empty(); }
+
+  std::size_t find(const alt_string& str, std::size_t pos = 0) const
+  {
+    return str_impl.find(str.str_impl, pos);
+  }
+
+  std::size_t find_first_of(char c, std::size_t pos = 0) const
+  {
+    return str_impl.find_first_of(c, pos);
+  }
+
+  alt_string substr(std::size_t pos = 0, std::size_t count = npos) const
+  {
+    const std::string s = str_impl.substr(pos, count);
+    return {s.data(), s.size()};
+  }
+
+  alt_string& replace(std::size_t pos, std::size_t count, const alt_string& str)
+  {
+    str_impl.replace(pos, count, str.str_impl);
+    return *this;
+  }
 
 private:
-  std::string str_impl{};
+  std::string str_impl{}; // NOLINT(readability-redundant-member-init)
 
-  friend bool ::operator<(const char*, const alt_string&);
+  friend bool operator<(const char* /*op1*/, const alt_string& /*op2*/) noexcept;
 };
 
 void int_to_string(alt_string& target, std::size_t value)
@@ -114,7 +123,7 @@ using alt_json = Azure::Core::Json::_internal::basic_json<
     std::allocator,
     Azure::Core::Json::_internal::adl_serializer>;
 
-bool operator<(const char* op1, const alt_string& op2) { return op1 < op2.str_impl; }
+bool operator<(const char* op1, const alt_string& op2) noexcept { return op1 < op2.str_impl; }
 
 TEST_CASE("alternative string type")
 {
@@ -172,24 +181,24 @@ TEST_CASE("alternative string type")
 
   SECTION("parse")
   {
-    auto doc = alt_json::parse("{\"foo\": \"bar\"}");
+    auto doc = alt_json::parse(R"({"foo": "bar"})");
     alt_string dump = doc.dump();
     CHECK(dump == R"({"foo":"bar"})");
   }
 
   SECTION("items")
   {
-    auto doc = alt_json::parse("{\"foo\": \"bar\"}");
+    auto doc = alt_json::parse(R"({"foo": "bar"})");
 
-    for (auto item : doc.items())
+    for (const auto& item : doc.items())
     {
       CHECK(item.key() == "foo");
       CHECK(item.value() == "bar");
     }
 
-    auto doc_array = alt_json::parse("[\"foo\", \"bar\"]");
+    auto doc_array = alt_json::parse(R"(["foo", "bar"])");
 
-    for (auto item : doc_array.items())
+    for (const auto& item : doc_array.items())
     {
       if (item.key() == "0")
       {
@@ -234,5 +243,21 @@ TEST_CASE("alternative string type")
       CHECK_FALSE("I'm Bruce Wayne" == const_doc["Who are you?"]);
       CHECK_FALSE(const_doc["Who are you?"] == "I'm Bruce Wayne");
     }
+  }
+
+  SECTION("JSON pointer")
+  {
+    // conversion from json to alt_json fails to compile (see #3425);
+    // attempted fix(*) produces: [[['b','a','r'],['b','a','z']]] (with each char being an integer)
+    // (*) disable implicit conversion for json_refs of any basic_json type
+    // alt_json j = R"(
+    // {
+    //     "foo": ["bar", "baz"]
+    // }
+    // )"_json;
+    auto j = alt_json::parse(R"({"foo": ["bar", "baz"]})");
+
+    CHECK(j.at(alt_json::json_pointer("/foo/0")) == j["foo"][0]);
+    CHECK(j.at(alt_json::json_pointer("/foo/1")) == j["foo"][1]);
   }
 }

@@ -79,11 +79,10 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
   ```
   "<your-service-principal-object-id>"
   ```
-- Use the returned credentials above to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET** (password), and **AZURE_TENANT_ID** (tenant) environment variables. The following example shows a way to do this in Powershell:
+- Use the returned credentials above to set **AZURE_CLIENT_ID** (appId) and **AZURE_TENANT_ID** (tenant) environment variables. The following example shows a way to do this in Powershell:
 
   ```PowerShell
   $Env:AZURE_CLIENT_ID="generated-app-ID"
-  $Env:AZURE_CLIENT_SECRET="random-password"
   $Env:AZURE_TENANT_ID="tenant-ID"
   ```
 

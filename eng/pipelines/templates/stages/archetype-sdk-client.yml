@@ -56,15 +56,24 @@ parameters:
     default:
       Public:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        ServiceConnection: azure-sdk-tests
+        SubscriptionConfigurationFilePaths:
+          - eng/common/TestResources/sub-config/AzurePublicMsft.json
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
+        ServiceConnection: azure-sdk-tests
+        # Temporary fix until an eng/common config for Preview can be merged
+        SubscriptionConfigurationFilePaths: []
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        ServiceConnection: azure-sdk-tests
         Location: 'eastus2euap'
       UsGov:
         SubscriptionConfiguration: $(sub-config-gov-test-resources)
+        ServiceConnection: usgov_azure-sdk-tests
       China:
         SubscriptionConfiguration: $(sub-config-cn-test-resources)
+        ServiceConnection: china_azure-sdk-tests
   - name: Clouds
     type: string
     default: Public
@@ -83,6 +92,12 @@ parameters:
   - name: CMakeGenerationTimeoutInMinutes
     type: number
     default: 120
+  - name: EnvVars
+    type: object
+    default: {}
+  - name: UseFederatedAuth
+    type: boolean
+    default: false
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -104,6 +119,10 @@ extends:
         compiled: true
         break: true
       policy: M365
+      codeql:
+        compiled:
+          enabled: false
+          justificationForDisabling: CodeQL times our pipelines out by running for 2+ hours before being force canceled.
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
         toolVersion: 2.3.12.23
@@ -190,6 +209,8 @@ extends:
               UnsupportedClouds: ${{ parameters.UnsupportedClouds }}
               PreTestSteps: ${{ parameters.PreTestSteps }}
               PostTestSteps: ${{ parameters.PostTestSteps }}
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              EnvVars: ${{ parameters.EnvVars }}
 
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
           - template: archetype-cpp-release.yml@self
