@@ -120,7 +120,7 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
   ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
   ThrowIfNotSafeCmdLineInput(tenantId, ".-", "TenantID");
   std::string command
-      = "az account get-access-token --debug --output json --scope \"" + scopes + "\"";
+      = "az account get-access-token --debug --verbose --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
   {
