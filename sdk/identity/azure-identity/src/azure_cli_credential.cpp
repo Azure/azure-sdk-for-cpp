@@ -188,7 +188,8 @@ AccessToken AzureCliCredential::GetToken(
       {
         auto const result = RunShellCommand("az account show", m_cliProcessTimeout, context);
         IdentityLog::Write(
-            IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ account show !!! " + result);
+            IdentityLog::Level::Warning,
+            GetCredentialName() + " !!! AZ account show !!! " + result);
       }
       catch (std::exception const& e)
       {
@@ -197,9 +198,25 @@ AccessToken AzureCliCredential::GetToken(
       }
       try
       {
-        auto const result = RunShellCommand("az account list", m_cliProcessTimeout, context);
+        auto const result
+            = RunShellCommand("az account list --debug", m_cliProcessTimeout, context);
         IdentityLog::Write(
-            IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ account list !!! " + result);
+            IdentityLog::Level::Warning,
+            GetCredentialName() + " !!! AZ account list !!! " + result);
+
+        std::string configDirValue = Environment::GetVariable("AZURE_CONFIG_DIR");
+        if (!configDirValue.empty())
+        {
+          IdentityLog::Write(
+              IdentityLog::Level::Warning,
+              GetCredentialName() + " !!! AZURE_CONFIG_DIR !!! " + configDirValue);
+        }
+        else
+        {
+          IdentityLog::Write(
+              IdentityLog::Level::Warning,
+              GetCredentialName() + " !!! AZURE_CONFIG_DIR !!! not set");
+        }
       }
       catch (std::exception const& e)
       {
@@ -208,7 +225,8 @@ AccessToken AzureCliCredential::GetToken(
       }
       try
       {
-        auto const result = RunShellCommand("az login --debug --verbose", m_cliProcessTimeout, context);
+        auto const result
+            = RunShellCommand("az login --debug --verbose", m_cliProcessTimeout, context);
         IdentityLog::Write(
             IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ login !!! " + result);
       }

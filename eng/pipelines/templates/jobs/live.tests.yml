@@ -258,10 +258,14 @@ jobs:
           az --version
           Write-Host "Run az account show"
           az account show
-          Write-Host "Run az account list"
-          az account list
+          Write-Host "Run az account list --debug"
+          az account list --debug
           Write-Host "Run az account get-access-token --output none --debug --verbose"
           az account get-access-token --output none --debug --verbose
+          Write-Host "Run $env:AZURE_CONFIG_DIR"
+          $env:AZURE_CONFIG_DIR
+          Write-Host "Run Get-ChildItem env:"
+          Get-ChildItem env:
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {
