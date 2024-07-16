@@ -252,9 +252,6 @@ jobs:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az --version 
-          az account show 
-          az account list
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {
