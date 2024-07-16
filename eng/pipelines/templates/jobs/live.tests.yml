@@ -252,6 +252,10 @@ jobs:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          Write-Host "Check az CLI version"
+          az --version
+          Write-Host "Upgrade az CLI as needed"
+          az upgrade
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {
