@@ -52,7 +52,7 @@ BackupRestoreClient::BackupRestoreClient(
       std::move(perCallpolicies));
 }
 
-Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
+Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackup(
     Azure::Core::Url const& blobContainerUrl,
     SasTokenParameter const& sasToken,
     Core::Context const& context)
@@ -98,7 +98,7 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  FullBackupOperation response{};
+  FullBackupOperationStatus response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -140,10 +140,10 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackup(
     }
   }
 
-  return Response<FullBackupOperation>(std::move(response), std::move(rawResponse));
+  return Response<FullBackupOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
+Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackupStatus(
     std::string const& jobId,
     Core::Context const& context)
 {
@@ -166,7 +166,7 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  FullBackupOperation response{};
+  FullBackupOperationStatus response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -208,10 +208,10 @@ Azure::Response<FullBackupOperation> BackupRestoreClient::FullBackupStatus(
     }
   }
 
-  return Response<FullBackupOperation>(std::move(response), std::move(rawResponse));
+  return Response<FullBackupOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
+Azure::Response<RestoreOperationStatus> BackupRestoreClient::FullRestore(
     Azure::Core::Url const& blobContainerUrl,
     std::string folderToRestore,
     SasTokenParameter const& sasToken,
@@ -259,7 +259,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  RestoreOperation response{};
+  RestoreOperationStatus response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -294,10 +294,10 @@ Azure::Response<RestoreOperation> BackupRestoreClient::FullRestore(
     }
   }
 
-  return Response<RestoreOperation>(std::move(response), std::move(rawResponse));
+  return Response<RestoreOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
+Azure::Response<RestoreOperationStatus> BackupRestoreClient::RestoreStatus(
     std::string const& jobId,
     Core::Context const& context)
 {
@@ -318,7 +318,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  RestoreOperation response{};
+  RestoreOperationStatus response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -353,7 +353,7 @@ Azure::Response<RestoreOperation> BackupRestoreClient::RestoreStatus(
     }
   }
 
-  return Response<RestoreOperation>(std::move(response), std::move(rawResponse));
+  return Response<RestoreOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(

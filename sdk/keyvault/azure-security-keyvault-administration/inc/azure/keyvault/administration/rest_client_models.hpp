@@ -114,7 +114,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief The full backup operation.
      *
      */
-    struct FullBackupOperation final
+    struct FullBackupOperationStatus final
     {
       /**
        * @brief Status of the backup operation.
@@ -190,7 +190,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Full restore operation.
      *
      */
-    struct RestoreOperation final
+    struct RestoreOperationStatus final
     {
       /**
        * @brief Status of the restore operation.

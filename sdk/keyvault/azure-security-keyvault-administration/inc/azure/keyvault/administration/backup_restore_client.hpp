@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A full backup operation.
      */
-    Response<FullBackupOperation> FullBackup(
+    Response<FullBackupOperationStatus> FullBackup(
         Azure::Core::Url const& blobContainerUrl,
         SasTokenParameter const& sasToken,
         Core::Context const& context = {});
@@ -75,7 +75,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A full backup operation.
      */
-    Response<FullBackupOperation> FullBackupStatus(
+    Response<FullBackupOperationStatus> FullBackupStatus(
         std::string const& jobId,
         Core::Context const& context = {});
 
@@ -91,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A full restore operation.
      */
-    Response<RestoreOperation> FullRestore(
+    Response<RestoreOperationStatus> FullRestore(
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
         SasTokenParameter const& sasToken,
@@ -104,7 +104,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A restore operation.
      */
-    Response<RestoreOperation> RestoreStatus(
+    Response<RestoreOperationStatus> RestoreStatus(
         std::string const& jobId,
         Core::Context const& context = {});
 
