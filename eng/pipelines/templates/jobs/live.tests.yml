@@ -260,6 +260,8 @@ jobs:
           az account show
           Write-Host "Run az account list"
           az account list
+          Write-Host "Run az account get-access-token --output none --debug --verbose"
+          az account get-access-token --output none --debug --verbose
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {

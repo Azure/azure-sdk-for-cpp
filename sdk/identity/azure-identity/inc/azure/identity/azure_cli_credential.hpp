@@ -35,7 +35,7 @@ namespace Azure { namespace Identity {
      * @brief The CLI process timeout.
      */
     DateTime::duration CliProcessTimeout
-        = std::chrono::seconds(30); // Value was taken from .NET SDK.
+        = std::chrono::seconds(120); // Value was taken from .NET SDK.
 
     /**
      * @brief For multi-tenant applications, specifies additional tenants for which the credential
