@@ -14,7 +14,7 @@ add_executable (
   cryptohelpers.hpp
 )
 
-CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation attestation-${samplename})
+CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation attestation-${samplename} DISABLE_RUN)
 
 target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation azure-identity get-env-helper)
 

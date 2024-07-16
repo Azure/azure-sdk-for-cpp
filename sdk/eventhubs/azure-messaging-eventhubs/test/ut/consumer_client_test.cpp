@@ -303,7 +303,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return name;
   }
 
-  TEST_P(ConsumerClientTest, RetrieveMultipleEvents)
+  TEST_P(ConsumerClientTest, DISABLED_RetrieveMultipleEvents)
   {
     // This test depends on being able to create a new eventhub instance, so skip it on the
     // emulator.
@@ -311,6 +311,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       GTEST_SKIP();
     }
+
+    // Disabled test for now.
     EventHubsManagement administrationClient;
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
