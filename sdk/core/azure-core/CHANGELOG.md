@@ -8,7 +8,7 @@
 
 - Deprecated the `Azure::Core::Context::ApplicationContext` object. 
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
-  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`.
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context{}.WithDeadline()` instead of `Azure::Core::Context::ApplicationContext.WithDeadline()`.
 
 ### Bugs Fixed
 
@@ -44,7 +44,6 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 - [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version. (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 - [[#5515]](https://github.com/Azure/azure-sdk-for-cpp/issues/5515) Add a `ShouldRetry` virtual method to the retry policy to enable customization of service-specific retry logic.
-   
 
 ### Acknowledgments
 
