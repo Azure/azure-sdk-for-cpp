@@ -148,8 +148,8 @@ Accept: */*
   TEST_F(TestSocketTransport, SimpleOpen)
   {
     // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
-    Azure::Core::Context completionContext = Azure::Core::Context{}.WithDeadline(
-        std::chrono::system_clock::now() + std::chrono::seconds(10));
+    Azure::Core::Context completionContext
+        = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(10)};
     {
       Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80)};
 
@@ -205,10 +205,9 @@ Accept: */*
       Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80, &events)};
 
       // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
-      Azure::Core::Context completionContext = Azure::Core::Context{}.WithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(10));
-      ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
-
+      Azure::Core::Context completionContext = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(10))};
+      ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext)
+    
       unsigned char val[] = R"(GET / HTTP/1.1
 Host: www.microsoft.com
 User-Agent: AMQP Tests 0.0.1
@@ -220,8 +219,8 @@ Accept: */*
 
       AsyncOperationQueue<TransportSendStatus> sendOperation;
       EXPECT_TRUE(transport.Send(val, sizeof(val), [&sendOperation](TransportSendStatus result) {
-        std::cout << "Send complete" << StringFromSendResult(result);
-        sendOperation.CompleteOperation(result);
+            std::cout << "Send complete" << StringFromSendResult(result);
+            sendOperation.CompleteOperation(result);
       }));
       GTEST_LOG_(INFO) << "Wait for send" << std::endl;
 
@@ -399,8 +398,7 @@ Host: www.microsoft.com)";
     GTEST_LOG_(INFO) << "Wait for received event.";
     events.WaitForReceive(
         *listenerTransport,
-        Azure::Core::Context{}.WithDeadline(
-            std::chrono::system_clock::now() + std::chrono::seconds(10)));
+        Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(10)});
 
     GTEST_LOG_(INFO) << "Listener received the bytes we just sent, now wait until the sender "
                         "received those bytes back.";
