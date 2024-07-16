@@ -253,11 +253,17 @@ jobs:
         scriptLocation: 'inlineScript'
         inlineScript: |
           Write-Host "Where is az CLI located"
-          where az
+          (Get-Command az).Path
           Write-Host "Check az CLI version"
           az --version
           Write-Host "Upgrade az CLI as needed"
-          az upgrade --yes
+          az upgrade --yes --debug
+          Start-Sleep -Seconds 60
+          Write-Host "Check az CLI version"
+          az --version
+          Write-Host "Run az login"
+          az login --debug
+          Start-Sleep -Seconds 30
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
             $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
             foreach ($sample in $samples) {
