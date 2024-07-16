@@ -205,8 +205,8 @@ Accept: */*
       Transport transport{SocketTransportFactory::Create("www.microsoft.com", 80, &events)};
 
       // Wait until we receive data from the www.microsoft.com server, with a 10 second timeout.
-      Azure::Core::Context completionContext = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(10))};
-      ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext)
+      Azure::Core::Context completionContext = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(10)};
+      ASSERT_EQ(TransportOpenStatus::Ok, transport.Open(completionContext));
     
       unsigned char val[] = R"(GET / HTTP/1.1
 Host: www.microsoft.com

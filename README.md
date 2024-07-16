@@ -61,7 +61,7 @@ target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-stor
 
 Here's a walkthrough video on how to install the Azure SDK packages, using vcpkg, into an MSBuild project in VS: https://aka.ms/azsdk/cpp/gettingstarted-vcpkg-msbuild-video
 
-See the [vcpkg documentation](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
+See the [vcpkg documentation](https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
 
 ### Additional methods for installing and configuring
 
@@ -198,8 +198,8 @@ snippet below will cancel a blob client upload after 5 seconds.
 
 <!-- @insert_snippet: CreateBlobContext -->
 ```cpp
-      Azure::Core::Context cancelledIn5s = Azure::Core::Context::CreateWithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(5));
+      Azure::Core::Context cancelledIn5s
+          = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)};
 
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
           GetConnectionString(), containerName + std::to_string(i));
@@ -401,3 +401,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
+
