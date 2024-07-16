@@ -62,6 +62,8 @@ parameters:
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
         ServiceConnection: azure-sdk-tests
+        # Temporary fix until an eng/common config for Preview can be merged
+        SubscriptionConfigurationFilePaths: []
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         ServiceConnection: azure-sdk-tests
@@ -117,6 +119,10 @@ extends:
         compiled: true
         break: true
       policy: M365
+      codeql:
+        compiled:
+          enabled: false
+          justificationForDisabling: CodeQL times our pipelines out by running for 2+ hours before being force canceled.
       credscan:
         suppressionsFile: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
         toolVersion: 2.3.12.23

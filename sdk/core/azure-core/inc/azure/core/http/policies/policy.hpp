@@ -363,7 +363,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy : public HttpPolicy {
+    class RetryPolicy
+#if !defined(_azure_TESTING_BUILD)
+        final
+#endif
+        : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
@@ -411,26 +415,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
-
-      /**
-       * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
-       * a request, based on the returned HTTP response.
-       *
-       * @remark A null response pointer means there was no response received from the corresponding
-       * request. Custom implementations of this method that override the retry behavior, should
-       * handle that error case, if that needs to be customized.
-       *
-       * @remark Unless overriden, the default implementation is to always return `false`. The
-       * non-retriable errors, including those specified in the RetryOptions, remain evaluated
-       * before calling ShouldRetry.
-       *
-       * @param response An HTTP response returned corresponding to the request sent by the policy.
-       * @param retryOptions The set of options provided to the RetryPolicy.
-       * @return Whether or not the HTTP request should be sent again through the pipeline.
-       */
-      virtual bool ShouldRetry(
-          std::unique_ptr<RawResponse> const& response,
-          RetryOptions const& retryOptions) const;
     };
 
     /**
