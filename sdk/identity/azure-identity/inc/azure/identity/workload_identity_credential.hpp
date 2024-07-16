@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/identity/client_assertion_credential.hpp"
 #include "azure/identity/detail/client_credential_core.hpp"
 #include "azure/identity/detail/token_cache.hpp"
 
@@ -74,11 +75,11 @@ namespace Azure { namespace Identity {
    */
   class WorkloadIdentityCredential final : public Core::Credentials::TokenCredential {
   private:
-    _detail::TokenCache m_tokenCache;
-    _detail::ClientCredentialCore m_clientCredentialCore;
-    std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    std::string m_requestBody;
+    std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
     std::string m_tokenFilePath;
+    bool m_credentialCreatedSuccessfully;
+
+    std::string GetAssertion(Core::Context const& context);
 
   public:
     /**
