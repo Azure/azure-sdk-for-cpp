@@ -264,6 +264,8 @@ jobs:
           az account get-access-token --output none --debug --verbose
           Write-Host "Run env:AZURE_CONFIG_DIR"
           $env:AZURE_CONFIG_DIR
+          Write-Host "Remove env:AZURE_CONFIG_DIR"
+          $env:AZURE_CONFIG_DIR=''
           Write-Host "Run Get-ChildItem env:"
           Get-ChildItem env:
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
