@@ -181,6 +181,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned for shares, not for snapshots.
      */
     Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+
+    /**
+     * Optional. Boolean. Version 2023-11-03 and newer. Default if not specified is false. This
+     * property enables paid bursting.
+     */
+    Nullable<bool> EnablePaidBursting;
+
+    /**
+     * Optional. Integer. Version 2023-11-03 and newer. Default if not specified is the maximum IOPS
+     * the file share can support. Current maximum for a file share is 102,400 IOPS.
+     */
+    Nullable<int64_t> PaidBurstingMaxIops;
+
+    /**
+     * Optional. Integer. Version 2023-11-03 and newer. Default if not specified is the maximum
+     * throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.
+     */
+    Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
   };
 
   /**
@@ -240,6 +258,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned for shares, not for snapshots.
      */
     Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+
+    /**
+     * Optional. Boolean. Version 2023-11-03 and newer. Default if not specified is false. This
+     * property enables paid bursting.
+     */
+    Nullable<bool> EnablePaidBursting;
+
+    /**
+     * Optional. Integer. Version 2023-11-03 and newer. Default if not specified is the maximum IOPS
+     * the file share can support. Current maximum for a file share is 102,400 IOPS.
+     */
+    Nullable<int64_t> PaidBurstingMaxIops;
+
+    /**
+     * Optional. Integer. Version 2023-11-03 and newer. Default if not specified is the maximum
+     * throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.
+     */
+    Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
   };
 
   /**
