@@ -198,8 +198,8 @@ snippet below will cancel a blob client upload after 5 seconds.
 
 <!-- @insert_snippet: CreateBlobContext -->
 ```cpp
-      Azure::Core::Context cancelledIn5s
-          = Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)};
+      Azure::Core::Context cancelledIn5s = Azure::Core::Context::CreateWithDeadline(
+          std::chrono::system_clock::now() + std::chrono::seconds(5));
 
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
           GetConnectionString(), containerName + std::to_string(i));

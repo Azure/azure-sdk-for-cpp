@@ -395,7 +395,7 @@ namespace Azure { namespace Core { namespace Test {
     for (int i = 0; i < 10; i++)
     {
       Azure::Core::Context cancelThis
-          = Context(std::chrono::system_clock::now() + std::chrono::milliseconds(500));
+          = Context::CreateWithDeadline(std::chrono::system_clock::now() + std::chrono::milliseconds(500));
 
       auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, hostPath);
 

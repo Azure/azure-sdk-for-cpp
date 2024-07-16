@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
+- Added new factory for `Azure::Core::Context` named `Azure::Core::Context::CreateWithDeadline`to create a new `Context` object with a deadline. It takes a `std::chrono::system_clock::time_point` deadline, similar to the `WithDeadline` method. This function is the equivalent of calling `Azure::Core::Context{}.WithDeadline(...)`.
  
 ### Breaking Changes
 
