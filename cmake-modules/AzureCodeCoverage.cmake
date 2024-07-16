@@ -55,7 +55,8 @@ function(add_gcovr_html)
             -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}/index.html
-
+            --exclude-unreachable-branches
+            --exclude-throw-branches
         BYPRODUCTS ${PROJECT_BINARY_DIR}/${args_TARGET_NAME}  # report directory
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
@@ -104,7 +105,6 @@ function(add_gcovr_xml)
             -o ${args_TARGET_NAME}.xml
             --exclude-unreachable-branches
             --exclude-throw-branches
-#            --exclude-function-lines
         BYPRODUCTS ${args_TARGET_NAME}.xml
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
