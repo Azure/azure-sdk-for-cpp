@@ -61,22 +61,23 @@ ClientAssertionCredential::ClientAssertionCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        "Invalid tenant ID provided for " + GetCredentialName()
-            + ". The tenant ID must be a non-empty string containing only alphanumeric characters, "
-              "periods, or hyphens. You can locate your tenant ID by following the instructions "
-              "listed here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
+        GetCredentialName()
+            + ": Invalid tenant ID provided. The tenant ID must be a non-empty string containing "
+              "only alphanumeric characters, periods, or hyphens. You can locate your tenant ID by "
+              "following the instructions listed here: "
+              "https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
   }
   if (clientId.empty())
   {
     IdentityLog::Write(
-        IdentityLog::Level::Warning, "No client ID specified for " + GetCredentialName() + ".");
+        IdentityLog::Level::Warning, GetCredentialName() + ": No client ID specified.");
   }
   if (!m_assertionCallback)
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        "The assertionCallback must be a valid function that returns assertions for "
-            + GetCredentialName() + ".");
+        GetCredentialName()
+            + ": The assertionCallback must be a valid function that returns assertions.");
   }
 
   if (isTenantIdValid && !clientId.empty() && m_assertionCallback)
