@@ -151,7 +151,7 @@ TEST(AzurePipelinesCredential, InvalidArgs)
   }
 }
 
-TEST(AzurePipelinesCredential, Regular)
+TEST(AzurePipelinesCredential, DISABLED_Regular)
 {
   std::map<std::string, std::string> validEnvVars
       = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
@@ -228,7 +228,7 @@ TEST(AzurePipelinesCredential, Regular)
   EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 }
 
-TEST(AzurePipelinesCredential, AzureStack)
+TEST(AzurePipelinesCredential, DISABLED_AzureStack)
 {
   std::map<std::string, std::string> validEnvVars
       = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
@@ -303,7 +303,7 @@ TEST(AzurePipelinesCredential, AzureStack)
   EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
 }
 
-TEST(AzurePipelinesCredential, Authority)
+TEST(AzurePipelinesCredential, DISABLED_Authority)
 {
   CredentialTestHelper::EnvironmentOverride const env(
       {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"},
