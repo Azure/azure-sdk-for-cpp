@@ -178,6 +178,20 @@ AccessToken AzureCliCredential::GetToken(
         auto const result = RunShellCommand("az --version", m_cliProcessTimeout, context);
         IdentityLog::Write(
             IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ VERSION !!! " + result);
+
+        std::string configDirValue = Environment::GetVariable("AZURE_CONFIG_DIR");
+        if (!configDirValue.empty())
+        {
+          IdentityLog::Write(
+              IdentityLog::Level::Warning,
+              GetCredentialName() + " !!! aaa AZURE_CONFIG_DIR !!! " + configDirValue);
+        }
+        else
+        {
+          IdentityLog::Write(
+              IdentityLog::Level::Warning,
+              GetCredentialName() + " !!! aaa AZURE_CONFIG_DIR !!! not set");
+        }
       }
       catch (std::exception const& e)
       {
