@@ -104,7 +104,7 @@ function(add_gcovr_xml)
             -o ${args_TARGET_NAME}.xml
             --exclude-unreachable-branches
             --exclude-throw-branches
-            --exclude-function-lines
+#            --exclude-function-lines
         BYPRODUCTS ${args_TARGET_NAME}.xml
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
