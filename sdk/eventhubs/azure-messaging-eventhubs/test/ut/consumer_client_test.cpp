@@ -385,8 +385,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_EQ(totalReceived, numberOfEvents);
 
       // We have consumed all the events. Attempting to consume one more should block.
-      Azure::Core::Context timeout = Azure::Core::Context::CreateWithDeadline(
-          Azure::DateTime::clock::now() + std::chrono::seconds());
+      Azure::Core::Context timeout{Azure::DateTime::clock::now() + std::chrono::seconds()};
       EXPECT_THROW(
           partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
     }

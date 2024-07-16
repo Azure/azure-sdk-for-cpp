@@ -4,13 +4,13 @@
 
 ### Features Added
 
-- Added new factory for `Azure::Core::Context` named `Azure::Core::Context::CreateWithDeadline`to create a new `Context` object with a deadline. It takes a `std::chrono::system_clock::time_point` deadline, similar to the `WithDeadline` method. This function is the equivalent of calling `Azure::Core::Context{}.WithDeadline(...)`.
+- Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
  
 ### Breaking Changes
 
 - Deprecated the `Azure::Core::Context::ApplicationContext` object. 
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
-  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(...)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(...)`.
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(deadline)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(deadline)`.
 
 ### Bugs Fixed
 

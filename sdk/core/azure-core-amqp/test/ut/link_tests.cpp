@@ -359,8 +359,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<LinkState> m_linkStateQueue;
     };
-    Azure::Core::Context timeoutContext = Azure::Core::Context::CreateWithDeadline(
-        Azure::DateTime::clock::now() + std::chrono::seconds(60));
+    Azure::Core::Context timeoutContext
+        = Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
     Link keepAliveLink{
         session, "KeepConnectionAlive", SessionRole::Receiver, "MyTarget", "TestReceiver"};
     keepAliveLink.Attach();

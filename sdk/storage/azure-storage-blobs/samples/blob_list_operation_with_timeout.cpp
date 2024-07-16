@@ -36,8 +36,8 @@ int main()
     for (int i = 0; i < 2; ++i)
     {
       // @begin_snippet: CreateBlobContext
-      Azure::Core::Context cancelledIn5s = Azure::Core::Context::CreateWithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(5));
+      Azure::Core::Context cancelledIn5s{
+          std::chrono::system_clock::now() + std::chrono::seconds(5)};
 
       auto containerClient = BlobContainerClient::CreateFromConnectionString(
           GetConnectionString(), containerName + std::to_string(i));

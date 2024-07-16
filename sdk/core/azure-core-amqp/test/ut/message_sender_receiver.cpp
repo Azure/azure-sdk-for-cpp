@@ -314,8 +314,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Session session{connection.CreateSession()};
 
     // Set up a 30 second deadline on the receiver.
-    Azure::Core::Context receiveContext = Azure::Core::Context::CreateWithDeadline(
-        Azure::DateTime::clock::now() + std::chrono::seconds(15));
+    Azure::Core::Context receiveContext
+        = Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(15)};
 
     // Ensure that the thread is started before we start using the message sender.
     mockServer.StartListening();
@@ -793,8 +793,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Receive a message with a 15 second timeout. It shouldn't throw.
     {
-      Azure::Core::Context receiveContext = Azure::Core::Context::CreateWithDeadline(
-          std::chrono::system_clock::now() + std::chrono::seconds(15));
+      Azure::Core::Context receiveContext{
+          std::chrono::system_clock::now() + std::chrono::seconds(15)};
 
       // Tell the server it should send a message in the polling loop.
       serviceEndpoint->ShouldSendMessage(true);

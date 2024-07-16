@@ -200,6 +200,18 @@ namespace Azure { namespace Core {
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
+     * @brief Constructs a context with a deadline
+     * object.
+     *
+     * @param deadline A point in time after which a context expires.
+     *
+     */
+    explicit Context(DateTime const& deadline)
+        : m_contextSharedState(std::make_shared<ContextSharedState>(nullptr, deadline))
+    {
+    }
+
+    /**
      * @brief Copies a context.
      *
      * This operation copies one context to another. Context objects are copied by reference,
@@ -251,18 +263,6 @@ namespace Azure { namespace Core {
      *
      */
     ~Context() = default;
-
-    /**
-     * @brief Creates a context with a deadline when you do not have an existing Context
-     * object.
-     *
-     * @param deadline A point in time after which a context expires.
-     *
-     */
-    static Context CreateWithDeadline(DateTime const& deadline)
-    {
-      return Context{std::make_shared<ContextSharedState>(nullptr, deadline)};
-    }
 
     /**
      * @brief Creates a context with a deadline from an existing Context object.
@@ -369,7 +369,7 @@ namespace Azure { namespace Core {
       }
     }
 
-    /** @brief The `ApplicationContext` is the root of all Context objects.
+    /** @brief The `ApplicationContext` is a deprecated singleton Context object.
      *
      * @note: The `ApplicationContext` object is deprecated and will be removed in a future release.
      * If your application is using `ApplicationContext`, you should create your own root context
