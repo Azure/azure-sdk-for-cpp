@@ -420,6 +420,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * returned for shares, not for snapshots.
        */
       Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+      /**
+       * Optional. Boolean. Default if not specified is false. This property enables paid bursting.
+       */
+      Nullable<bool> PaidBurstingEnabled;
+      /**
+       * Optional. Integer. Default if not specified is the maximum IOPS the file share can support.
+       * Current maximum for a file share is 102,400 IOPS.
+       */
+      Nullable<int64_t> PaidBurstingMaxIops;
+      /**
+       * Optional. Integer. Default if not specified is the maximum throughput the file share can
+       * support. Current maximum for a file share is 10,340 MiB/sec.
+       */
+      Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -603,6 +617,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * returned for shares, not for snapshots.
        */
       Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+      /**
+       * Optional. Boolean. Default if not specified is false. This property enables paid bursting.
+       */
+      Nullable<bool> PaidBurstingEnabled;
+      /**
+       * Optional. Integer. Default if not specified is the maximum IOPS the file share can support.
+       * Current maximum for a file share is 102,400 IOPS.
+       */
+      Nullable<int64_t> PaidBurstingMaxIops;
+      /**
+       * Optional. Integer. Default if not specified is the maximum throughput the file share can
+       * support. Current maximum for a file share is 10,340 MiB/sec.
+       */
+      Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -2101,6 +2129,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareProtocols> EnabledProtocols;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+        Nullable<bool> PaidBurstingEnabled;
+        Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
+        Nullable<int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateShareResult> Create(
@@ -2226,6 +2257,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
+        Nullable<bool> PaidBurstingEnabled;
+        Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
+        Nullable<int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
