@@ -5,13 +5,16 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/operation.hpp>
+#include <azure/core/test/test_base.hpp>
 
 #include <string>
 #include <vector>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  class EventHubsManagement {
+  // Derived from Azure::Core::Test::TestBase to get access to GetTestCredential, which has logic to
+  // add the pipeline credential when run in CI.
+  class EventHubsManagement : Azure::Core::Test::TestBase {
   public:
     enum class EventHubsPricingTier
     {
@@ -259,6 +262,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Core::Context const& context = {});
 
   private:
+    // Dummy test body to satisfy Azure::Core::Test::TestBase.
+    void TestBody() {}
     std::string m_resourceGroup;
     std::string m_location;
     std::string m_subscriptionId;

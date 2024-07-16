@@ -1,5 +1,17 @@
 # Release History
 
+## 1.9.0-beta.2 (Unreleased)
+
+### Features Added
+
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.9.0-beta.1 (2024-06-21)
 
 ### Features Added

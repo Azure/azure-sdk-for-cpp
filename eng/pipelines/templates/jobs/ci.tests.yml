@@ -143,6 +143,11 @@ jobs:
             echo ""
             echo "List of files not formatted correctly:"
             git status | grep modified | awk '{print $2}'
+            echo ""
+            echo ""
+            echo "--- Differences (patch file): ---"
+            git diff
+            echo "--- (You can apply the diff above locally using the 'git apply --ignore-space-change <patch_file>' command) ---"
             exit 1
           fi
 
