@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "azure/identity/client_assertion_credential.hpp"
 #include "azure/identity/detail/client_credential_core.hpp"
 #include "azure/identity/detail/token_cache.hpp"
 
@@ -57,14 +58,12 @@ namespace Azure { namespace Identity {
   private:
     std::string m_serviceConnectionId;
     std::string m_systemAccessToken;
-    _detail::ClientCredentialCore m_clientCredentialCore;
     Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
     std::string m_oidcRequestUrl;
-    std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    std::string m_requestBody;
-    _detail::TokenCache m_tokenCache;
+    std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
+    bool m_credentialCreatedSuccessfully;
 
-    std::string GetAssertion(Core::Context const& context) const;
+    std::string GetAssertion(Core::Context const& context);
     Azure::Core::Http::Request CreateOidcRequestMessage() const;
     std::string GetOidcTokenResponse(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& response,

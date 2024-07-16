@@ -24,29 +24,6 @@ using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
-namespace {
-bool IsValidTenantId(std::string const& tenantId)
-{
-  const std::string allowedChars = ".-";
-  if (tenantId.empty())
-  {
-    return false;
-  }
-  for (auto const c : tenantId)
-  {
-    if (allowedChars.find(c) != std::string::npos)
-    {
-      continue;
-    }
-    if (!StringExtensions::IsAlphaNumeric(c))
-    {
-      return false;
-    }
-  }
-  return true;
-}
-} // namespace
-
 ClientAssertionCredential::ClientAssertionCredential(
     std::string tenantId,
     std::string clientId,
@@ -56,7 +33,7 @@ ClientAssertionCredential::ClientAssertionCredential(
       m_assertionCallback(std::move(assertionCallback)),
       m_clientCredentialCore(tenantId, options.AuthorityHost, options.AdditionallyAllowedTenants)
 {
-  bool isTenantIdValid = IsValidTenantId(tenantId);
+  bool isTenantIdValid = TenantIdResolver::IsValidTenantId(tenantId);
   if (!isTenantIdValid)
   {
     IdentityLog::Write(
