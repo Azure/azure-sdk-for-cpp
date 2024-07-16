@@ -237,18 +237,6 @@ AccessToken AzureCliCredential::GetToken(
         auto const errorMsg = GetCredentialName() + "CCC: \"" + e.what() + '\"';
         IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
       }
-      try
-      {
-        auto const result
-            = RunShellCommand("az login --debug --verbose", m_cliProcessTimeout, context);
-        IdentityLog::Write(
-            IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ login !!! " + result);
-      }
-      catch (std::exception const& e)
-      {
-        auto const errorMsg = GetCredentialName() + "DDD: \"" + e.what() + '\"';
-        IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
-      }
 
       auto const azCliResult = RunShellCommand(command, m_cliProcessTimeout, context);
 
