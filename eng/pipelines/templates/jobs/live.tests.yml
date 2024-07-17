@@ -285,7 +285,7 @@ jobs:
       env:
         # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
-        AZURE_CONFIG_DIR: ''
+        AZURE_CONFIG_DIR: 'C:\customAzureCli'
 
   - ${{ else }}:
     - bash: |
