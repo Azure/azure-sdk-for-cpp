@@ -4,6 +4,10 @@
 # Defines utility functions to create code coverage targets with gcov.
 # gcov html and xml report.
 #
+#
+# There is an incredibly helpful FAQ on gcovr and branch coverage which should be read
+# here: https://gcovr.com/en/stable/faq.html#why-does-c-code-have-so-many-uncovered-branches
+
 
 ## SET UP only when option is set. 
 if(BUILD_CODE_COVERAGE)
