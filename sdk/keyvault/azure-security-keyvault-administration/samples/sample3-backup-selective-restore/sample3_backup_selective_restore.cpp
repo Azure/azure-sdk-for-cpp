@@ -42,19 +42,13 @@ int main()
   try
   {
     // Create a full backup using a user-provided SAS token to an Azure blob storage container.
-    auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter);
+    auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter).Value;
 
-    std::cout << "Backup Job Id: " << backupResponse.Value.JobId << std::endl
-              << "Backup Status: " << backupResponse.Value.Status << std::endl;
-    // Get the status of the backup operation.
-    auto backupStatus = client.FullBackupStatus(backupResponse.Value.JobId);
-
-    // Wait for the backup to complete.
-    while (backupStatus.Value.Status == "InProgress")
-    {
-      std::this_thread::sleep_for(5s);
-      backupStatus = client.FullBackupStatus(backupStatus.Value.JobId);
-    }
+    std::cout << "Backup Job Id: " << backupResponse.Value().JobId << std::endl
+              << "Backup Status: " << backupResponse.Value().Status << std::endl;
+    // Wait for the operation to complete.
+    auto backupStatus = backupResponse.PollUntilDone(10s);
+   
     std::cout << "Backup Job Id: " << backupStatus.Value.JobId << std::endl
               << "Backup Status: " << backupStatus.Value.Status << std::endl;
     // Restore a selected key from the backup using a user-provided SAS token to an Azure blob
@@ -65,17 +59,12 @@ int main()
 
     std::cout << "Folder to restore: " << folderToRestore << std::endl;
     auto selectiveRestore
-        = client.SelectiveKeyRestore("trytry", blobUrl, folderToRestore, sasTokenParameter);
-    std::cout << "Selective Restore Job Id: " << selectiveRestore.Value.JobId << std::endl
-              << "Selective Restore Status: " << selectiveRestore.Value.Status << std::endl;
+        = client.SelectiveKeyRestore("trytry", blobUrl, folderToRestore, sasTokenParameter).Value;
+    std::cout << "Selective Restore Job Id: " << selectiveRestore.Value().JobId << std::endl
+              << "Selective Restore Status: " << selectiveRestore.Value().Status << std::endl;
 
-    // Get the status of the restore operation.
-    auto selectiveStatus = client.RestoreStatus(selectiveRestore.Value.JobId);
-    while (selectiveStatus.Value.Status == "InProgress")
-    {
-      std::this_thread::sleep_for(5s);
-      selectiveStatus = client.RestoreStatus(selectiveStatus.Value.JobId);
-    }
+    // Wait for the operation to complete.
+    auto selectiveStatus = selectiveRestore.PollUntilDone(10s);
     std::cout << "Selective Restore Job Id: " << selectiveStatus.Value.JobId << std::endl
               << "Selective Restore Status: " << selectiveStatus.Value.Status << std::endl;
   }

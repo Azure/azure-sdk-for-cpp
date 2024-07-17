@@ -103,18 +103,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        *
        */
       std::string Message;
-      /**
-       * @brief Inner error details.
-       *
-       */
-      std::unique_ptr<KeyVaultServiceError> InnerError;
     };
 
     /**
      * @brief The full backup operation.
      *
      */
-    struct FullBackupOperationStatus final
+    struct BackupRestoreOperationStatus final
     {
       /**
        * @brief Status of the backup operation.
@@ -186,79 +181,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::string JobId;
     };
 
-    /**
-     * @brief Full restore operation.
-     *
-     */
-    struct RestoreOperationStatus final
-    {
-      /**
-       * @brief Status of the restore operation.
-       *
-       */
-      std::string Status;
-      /**
-       * @brief The status details of restore operation.
-       *
-       */
-      Azure::Nullable<std::string> StatusDetails;
-      /**
-       * @brief Error encountered, if any, during the restore operation.
-       *
-       */
-      Azure::Nullable<KeyVaultServiceError> Error;
-      /**
-       * @brief Identifier for the restore operation.
-       *
-       */
-      std::string JobId;
-      /**
-       * @brief The start time of the restore operation.
-       *
-       */
-      DateTime StartTime;
-      /**
-       * @brief The end time of the restore operation.
-       *
-       */
-      Nullable<DateTime> EndTime;
-    };
-
-    /**
-     * @brief The selective key restore operation.
-     *
-     */
-    struct SelectiveKeyRestoreOperation final
-    {
-      /**
-       * @brief The status of the selective key restore operation.
-       *
-       */
-      std::string Status;
-      /**
-       * @brief The status details of the selective key restore operation.
-       *
-       */
-      Azure::Nullable<std::string> StatusDetails;
-      /**
-       * @brief Error encountered, if any, during the selective key restore operation.
-       *
-       */
-      Azure::Nullable<KeyVaultServiceError> Error;
-      /**
-       * @brief Identifier for the selective key restore operation.
-       *
-       */
-      std::string JobId;
-      /**
-       * @brief The start time of the selective key restore operation.
-       *
-       */
-      DateTime StartTime;
-      /**
-       * @brief The end time of the selective key restore operation.
-       *
-       */
-      Nullable<DateTime> EndTime;
-    };
+    
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

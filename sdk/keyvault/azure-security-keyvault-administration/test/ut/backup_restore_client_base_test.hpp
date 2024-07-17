@@ -55,9 +55,8 @@ namespace Azure {
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
-    Azure::Core::Url m_blobUrl;
-    int m_testPollingTimeOutMinutes = 20;
-    std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::minutes(1);
+    Azure::Core::Url m_blobUrl; 
+    std::chrono::milliseconds m_testPollingIntervalMs = std::chrono::seconds(1);
 
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or

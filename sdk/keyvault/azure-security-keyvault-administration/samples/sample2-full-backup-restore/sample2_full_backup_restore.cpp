@@ -41,19 +41,13 @@ int main()
   try
   {
     // Create a full backup using a user-provided SAS token to an Azure blob storage container.
-    auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter);
+    auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter).Value;
 
-    std::cout << "Backup Job Id: " << backupResponse.Value.JobId << std::endl
-              << "Backup Status: " << backupResponse.Value.Status << std::endl;
-    // Get the status of the backup operation.
-    auto backupStatus = client.FullBackupStatus(backupResponse.Value.JobId);
+    std::cout << "Backup Job Id: " << backupResponse.Value().JobId << std::endl
+              << "Backup Status: " << backupResponse.Value().Status << std::endl;
+    // Wait for the operation to complete.
+    auto backupStatus = backupResponse.PollUntilDone(10s);
 
-    // Wait for the backup to complete.
-    while (backupStatus.Value.Status == "InProgress")
-    {
-      std::this_thread::sleep_for(5s);
-      backupStatus = client.FullBackupStatus(backupStatus.Value.JobId);
-    }
     std::cout << "Backup Job Id: " << backupStatus.Value.JobId << std::endl
               << "Backup Status: " << backupStatus.Value.Status << std::endl;
 
@@ -63,18 +57,12 @@ int main()
     std::string folderToRestore = subPath.substr(7, subPath.size() - 1);
 
     std::cout << "Folder to restore: " << folderToRestore << std::endl;
-    auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter);
-    std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
-              << "Restore Status: " << restoreResponse.Value.Status << std::endl;
+    auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter).Value;
+    std::cout << "Restore Job Id: " << restoreResponse.Value().JobId << std::endl
+              << "Restore Status: " << restoreResponse.Value().Status << std::endl;
 
-    // Get the status of the restore operation.
-    auto restoreStatus = client.RestoreStatus(restoreResponse.Value.JobId);
-    // Wait for the restore to complete.
-    while (restoreStatus.Value.Status == "InProgress")
-    {
-      std::this_thread::sleep_for(5s);
-      restoreStatus = client.RestoreStatus(restoreStatus.Value.JobId);
-    }
+    // Wait for the operation to complete.
+    auto restoreStatus = restoreResponse.PollUntilDone(10s);
     std::cout << "Restore Job Id: " << restoreStatus.Value.JobId << std::endl
               << "Restore Status: " << restoreStatus.Value.Status << std::endl;
   }

@@ -52,7 +52,7 @@ BackupRestoreClient::BackupRestoreClient(
       std::move(perCallpolicies));
 }
 
-Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackup(
+Azure::Response<BackupRestoreOperation> BackupRestoreClient::FullBackup(
     Azure::Core::Url const& blobContainerUrl,
     SasTokenParameter const& sasToken,
     Core::Context const& context)
@@ -98,52 +98,13 @@ Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackup(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  FullBackupOperationStatus response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-      response.Status = jsonRoot["status"].get<std::string>();
-
-      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
-      {
-        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
-      }
-
-      response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
-                                            : jsonRoot["startTime"].get<std::int64_t>());
-
-      if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
-      {
-        response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-            jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
-                                            : jsonRoot["endTime"].get<std::int64_t>());
-      }
-
-      response.JobId = jsonRoot["jobId"].get<std::string>();
-
-      if (jsonRoot.contains("azureStorageBlobContainerUri")
-          && !jsonRoot["azureStorageBlobContainerUri"].is_null())
-      {
-        response.AzureStorageBlobContainerUri
-            = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
-      }
-
-      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
-      {
-        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
-      }
-    }
-  }
-
-  return Response<FullBackupOperationStatus>(std::move(response), std::move(rawResponse));
+  BackupRestoreOperationStatus response= DeserializeBackupRestoreOperationStatus(*rawResponse);
+  BackupRestoreOperation operation(
+      std::make_shared<BackupRestoreClient>(*this), std::move(response), true);
+  return Response<BackupRestoreOperation>(std::move(operation), std::move(rawResponse));
 }
 
-Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackupStatus(
+Azure::Response<BackupRestoreOperationStatus> BackupRestoreClient::FullBackupStatus(
     std::string const& jobId,
     Core::Context const& context)
 {
@@ -166,52 +127,14 @@ Azure::Response<FullBackupOperationStatus> BackupRestoreClient::FullBackupStatus
     throw Core::RequestFailedException(rawResponse);
   }
 
-  FullBackupOperationStatus response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+  BackupRestoreOperationStatus response
+  
+    = DeserializeBackupRestoreOperationStatus(*rawResponse);
 
-      response.Status = jsonRoot["status"].get<std::string>();
-
-      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
-      {
-        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
-      }
-
-      response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
-                                            : jsonRoot["startTime"].get<std::int64_t>());
-
-      if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
-      {
-        response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-            jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
-                                            : jsonRoot["endTime"].get<std::int64_t>());
-      }
-
-      response.JobId = jsonRoot["jobId"].get<std::string>();
-
-      if (jsonRoot.contains("azureStorageBlobContainerUri")
-          && !jsonRoot["azureStorageBlobContainerUri"].is_null())
-      {
-        response.AzureStorageBlobContainerUri
-            = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
-      }
-
-      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
-      {
-        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
-      }
-    }
-  }
-
-  return Response<FullBackupOperationStatus>(std::move(response), std::move(rawResponse));
+  return Response<BackupRestoreOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperationStatus> BackupRestoreClient::FullRestore(
+Azure::Response<BackupRestoreOperation> BackupRestoreClient::FullRestore(
     Azure::Core::Url const& blobContainerUrl,
     std::string folderToRestore,
     SasTokenParameter const& sasToken,
@@ -259,45 +182,13 @@ Azure::Response<RestoreOperationStatus> BackupRestoreClient::FullRestore(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  RestoreOperationStatus response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-      response.Status = jsonRoot["status"].get<std::string>();
-
-      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
-      {
-        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
-      }
-
-      response.JobId = jsonRoot["jobId"].get<std::string>();
-
-      response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
-                                            : jsonRoot["startTime"].get<std::int64_t>());
-
-      if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
-      {
-        response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-            jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
-                                            : jsonRoot["endTime"].get<std::int64_t>());
-      }
-
-      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
-      {
-        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
-      }
-    }
-  }
-
-  return Response<RestoreOperationStatus>(std::move(response), std::move(rawResponse));
+  BackupRestoreOperationStatus response = DeserializeBackupRestoreOperationStatus(*rawResponse);
+  BackupRestoreOperation operation(
+      std::make_shared<BackupRestoreClient>(*this), std::move(response), false);
+  return Response<BackupRestoreOperation>(std::move(operation), std::move(rawResponse));
 }
 
-Azure::Response<RestoreOperationStatus> BackupRestoreClient::RestoreStatus(
+Azure::Response<BackupRestoreOperationStatus> BackupRestoreClient::RestoreStatus(
     std::string const& jobId,
     Core::Context const& context)
 {
@@ -318,45 +209,12 @@ Azure::Response<RestoreOperationStatus> BackupRestoreClient::RestoreStatus(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  RestoreOperationStatus response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+  BackupRestoreOperationStatus response = DeserializeBackupRestoreOperationStatus(*rawResponse);
 
-      response.Status = jsonRoot["status"].get<std::string>();
-
-      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
-      {
-        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
-      }
-
-      response.JobId = jsonRoot["jobId"].get<std::string>();
-
-      response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
-                                            : jsonRoot["startTime"].get<std::int64_t>());
-
-      if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
-      {
-        response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-            jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
-                                            : jsonRoot["endTime"].get<std::int64_t>());
-      }
-
-      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
-      {
-        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
-      }
-    }
-  }
-
-  return Response<RestoreOperationStatus>(std::move(response), std::move(rawResponse));
+  return Response<BackupRestoreOperationStatus>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(
+Azure::Response<BackupRestoreOperation> BackupRestoreClient::SelectiveKeyRestore(
     std::string const& keyName,
     Azure::Core::Url const& blobContainerUrl,
     std::string folderToRestore,
@@ -407,40 +265,55 @@ Azure::Response<SelectiveKeyRestoreOperation> BackupRestoreClient::SelectiveKeyR
     throw Core::RequestFailedException(rawResponse);
   }
 
-  SelectiveKeyRestoreOperation response{};
+  BackupRestoreOperationStatus response = DeserializeBackupRestoreOperationStatus(*rawResponse);
+  BackupRestoreOperation operation(
+      std::make_shared<BackupRestoreClient>(*this), std::move(response), false);
+  return Response<BackupRestoreOperation>(std::move(operation), std::move(rawResponse));
+}
+
+BackupRestoreOperationStatus BackupRestoreClient::DeserializeBackupRestoreOperationStatus(
+    Azure::Core::Http::RawResponse const& rawResponse)
+{
+  BackupRestoreOperationStatus response{};
+  auto const& responseBody = rawResponse.GetBody();
+  if (responseBody.size() > 0)
   {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
+    auto const jsonRoot
+        = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+    response.Status = jsonRoot["status"].get<std::string>();
+
+    if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
     {
-      auto const jsonRoot
-          = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+      response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
+    }
 
-      response.Status = jsonRoot["status"].get<std::string>();
+    response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+        jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
+                                          : jsonRoot["startTime"].get<std::int64_t>());
 
-      if (jsonRoot.contains("statusDetails") && !jsonRoot["statusDetails"].is_null())
-      {
-        response.StatusDetails = jsonRoot["statusDetails"].get<std::string>();
-      }
+    if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
+    {
+      response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+          jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
+                                          : jsonRoot["endTime"].get<std::int64_t>());
+    }
 
-      response.JobId = jsonRoot["jobId"].get<std::string>();
+    response.JobId = jsonRoot["jobId"].get<std::string>();
 
-      response.StartTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-          jsonRoot["startTime"].is_string() ? std::stoll(jsonRoot["startTime"].get<std::string>())
-                                            : jsonRoot["startTime"].get<std::int64_t>());
-      if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
-      {
-        response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
-      }
-      if (jsonRoot.contains("endTime") && !jsonRoot["endTime"].is_null())
-      {
-        response.EndTime = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-            jsonRoot["endTime"].is_string() ? std::stoll(jsonRoot["endTime"].get<std::string>())
-                                            : jsonRoot["endTime"].get<std::int64_t>());
-      }
+    if (jsonRoot.contains("azureStorageBlobContainerUri")
+        && !jsonRoot["azureStorageBlobContainerUri"].is_null())
+    {
+      response.AzureStorageBlobContainerUri
+          = jsonRoot["azureStorageBlobContainerUri"].get<std::string>();
+    }
+
+    if (jsonRoot.contains("error") && !jsonRoot["error"].is_null())
+    {
+      response.Error = DeserializeKeyVaultServiceError(jsonRoot["error"]);
     }
   }
-
-  return Response<SelectiveKeyRestoreOperation>(std::move(response), std::move(rawResponse));
+  return response;
 }
 
 KeyVaultServiceError BackupRestoreClient::DeserializeKeyVaultServiceError(
@@ -454,11 +327,6 @@ KeyVaultServiceError BackupRestoreClient::DeserializeKeyVaultServiceError(
   if (errorFragment.contains("message"))
   {
     result.Message = errorFragment["message"].get<std::string>();
-  }
-  if (errorFragment.contains("innererror"))
-  {
-    result.InnerError = std::make_unique<KeyVaultServiceError>(
-        DeserializeKeyVaultServiceError(errorFragment["innererror"]));
   }
   return result;
 }

@@ -171,28 +171,22 @@ Since this is a long running operation the service provides endpoints to determi
 
 ```cpp Snippet:SampleAdministration2StartBackup
 // Create a full backup using a user-provided SAS token to an Azure blob storage container.
-auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter);
+auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter).Value;
 
-std::cout << "Backup Job Id: " << backupResponse.Value.JobId << std::endl
-          << "Backup Status: " << backupResponse.Value.Status << std::endl;
+std::cout << "Backup Job Id: " << backupResponse.Value().JobId << std::endl
+            << "Backup Status: " << backupResponse.Value().Status << std::endl;
 ```
 
-### Backup status check 
+### Backup operation waiting 
 
-In order to determine the status of the operation we need to call the corresponding endpoint.
+In order to wait for the operation to complete we will call the polling method.
 
 ```cpp Snippet:SampleAdministration2StatusBackup
-// Get the status of the backup operation.
-auto backupStatus = client.FullBackupStatus(backupResponse.Value.JobId);
+// Wait for the operation to complete.
+auto backupStatus = backupResponse.PollUntilDone(10s);
 
-// Wait for the backup to complete.
-while (backupStatus.Value.Status == "InProgress")
-{
-  std::this_thread::sleep_for(5s);
-  backupStatus = client.FullBackupStatus(backupStatus.Value.JobId);
-}
 std::cout << "Backup Job Id: " << backupStatus.Value.JobId << std::endl
-          << "Backup Status: " << backupStatus.Value.Status << std::endl;
+            << "Backup Status: " << backupStatus.Value.Status << std::endl;
 ```
 
 ## The FullRestore operation
@@ -204,27 +198,19 @@ Similar to the backup operation after we initialize the operation we can check t
 the restore operation requires a folder where a backup was previously performed along side the SAS token parameter. 
 ```cpp Snippet:SampleAdministration2FullRestoreStart
 // Restore the full backup using a user-provided SAS token to an Azure blob storage container.
-std::string folderToRestore = ...;
-
 std::cout << "Folder to restore: " << folderToRestore << std::endl;
-auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter);
-std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
-          << "Restore Status: " << restoreResponse.Value.Status << std::endl;
+auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter).Value;
+std::cout << "Restore Job Id: " << restoreResponse.Value().JobId << std::endl
+            << "Restore Status: " << restoreResponse.Value().Status << std::endl;
 ```
 
-### FullRestore status check
+### FullRestore operation waiting
 
 ```cpp Snippet:SampleAdministration2StatusRestore
-// Get the status of the restore operation.
-auto restoreStatus = client.RestoreStatus(restoreResponse.Value.JobId);
-// Wait for the restore to complete.
-while (restoreStatus.Value.Status == "InProgress")
-{
-  std::this_thread::sleep_for(5s);
-  restoreStatus = client.RestoreStatus(restoreStatus.Value.JobId);
-}
+// Wait for the operation to complete.
+auto restoreStatus = restoreResponse.PollUntilDone(10s);
 std::cout << "Restore Job Id: " << restoreStatus.Value.JobId << std::endl
-          << "Restore Status: " << restoreStatus.Value.Status << std::endl;
+            << "Restore Status: " << restoreStatus.Value.Status << std::endl;
 ```
 
 ## The SelectiveRestore operation
@@ -238,28 +224,21 @@ The selective restore operation requires a folder where a backup was previously 
 ```cpp Snippet:SampleAdministration2FullRestoreStart
 // Restore the full backup using a user-provided SAS token to an Azure blob storage container.
 std::string folderToRestore = ...;
-
-std::cout << "Folder to restore: " << folderToRestore << std::endl;
-auto selectiveRestore
-    = client.SelectiveKeyRestore("keyName", blobUrl, folderToRestore, sasTokenParameter);
+std::cout << "Folder to restore: " << restoreBlobDetails.FolderToRestore << std::endl;
+auto selectiveRestore = client.SelectiveKeyRestore("keyName", blobUrl, folderToRestore, sasTokenParameter);
 std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
           << "Restore Status: " << restoreResponse.Value.Status << std::endl;
 ```
 
-### FullRestore status check
+### Selective restore operation completion
 
 ```cpp Snippet:SampleAdministration2StatusRestore
-// Get the status of the restore operation.
-auto restoreStatus = client.RestoreStatus(restoreResponse.Value.JobId);
-// Wait for the restore to complete.
-while (restoreStatus.Value.Status == "InProgress")
-{
-  std::this_thread::sleep_for(5s);
-  restoreStatus = client.RestoreStatus(restoreStatus.Value.JobId);
-}
-std::cout << "Restore Job Id: " << restoreStatus.Value.JobId << std::endl
-          << "Restore Status: " << restoreStatus.Value.Status << std::endl;
+// Wait for the operation to complete.
+auto selectiveStatus = selectiveRestore.PollUntilDone(10s);
+std::cout << "Selective Restore Job Id: " << selectiveStatus.Value.JobId << std::endl
+            << "Selective Restore Status: " << selectiveStatus.Value.Status << std::endl;
 ```
+
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
