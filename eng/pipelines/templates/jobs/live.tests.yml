@@ -285,6 +285,7 @@ jobs:
       env:
         # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
+        AZURE_CONFIG_DIR: ''
 
   - ${{ else }}:
     - bash: |
