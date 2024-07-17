@@ -33,32 +33,29 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   std::string clientId = options.ClientId;
   m_tokenFilePath = options.TokenFilePath;
 
-  ClientAssertionCredentialOptions clientAssertionCredentialOptions{};
-  // Get the options from the base class (including ClientOptions).
-  static_cast<Core::Credentials::TokenCredentialOptions&>(clientAssertionCredentialOptions)
-      = options;
-  clientAssertionCredentialOptions.AuthorityHost = options.AuthorityHost;
-  clientAssertionCredentialOptions.AdditionallyAllowedTenants = options.AdditionallyAllowedTenants;
-
-  std::function<std::string(Context const&)> callback
-      = [this](Context const& context) { return GetAssertion(context); };
-
-  // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
-  // warning messages otherwise.
-  m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
-      tenantId, clientId, callback, clientAssertionCredentialOptions);
-
   if (TenantIdResolver::IsValidTenantId(tenantId) && !clientId.empty() && !m_tokenFilePath.empty())
   {
+    ClientAssertionCredentialOptions clientAssertionCredentialOptions{};
+    // Get the options from the base class (including ClientOptions).
+    static_cast<Core::Credentials::TokenCredentialOptions&>(clientAssertionCredentialOptions)
+        = options;
+    clientAssertionCredentialOptions.AuthorityHost = options.AuthorityHost;
+    clientAssertionCredentialOptions.AdditionallyAllowedTenants
+        = options.AdditionallyAllowedTenants;
+
+    std::function<std::string(Context const&)> callback
+        = [this](Context const& context) { return GetAssertion(context); };
+
+    // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
+    // warning messages otherwise.
+    m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
+        tenantId, clientId, callback, clientAssertionCredentialOptions);
+
     IdentityLog::Write(
         IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
   }
   else
   {
-    // We use this to indicate that the credential is not usable, so that we can throw when used in
-    // GetToken().
-    m_clientAssertionCredential.reset();
-
     IdentityLog::Write(
         IdentityLog::Level::Warning,
         "Azure Kubernetes environment is not set up for the " + GetCredentialName()
@@ -74,30 +71,26 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
   std::string const clientId = _detail::DefaultOptionValues::GetClientId();
   m_tokenFilePath = _detail::DefaultOptionValues::GetFederatedTokenFile();
 
-  ClientAssertionCredentialOptions clientAssertionCredentialOptions{};
-  // Get the options from the base class (including ClientOptions).
-  static_cast<Core::Credentials::TokenCredentialOptions&>(clientAssertionCredentialOptions)
-      = options;
-
-  std::function<std::string(Context const&)> callback
-      = [this](Context const& context) { return GetAssertion(context); };
-
-  // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
-  // warning messages otherwise.
-  m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
-      tenantId, clientId, callback, clientAssertionCredentialOptions);
-
   if (TenantIdResolver::IsValidTenantId(tenantId) && !clientId.empty() && !m_tokenFilePath.empty())
   {
+    ClientAssertionCredentialOptions clientAssertionCredentialOptions{};
+    // Get the options from the base class (including ClientOptions).
+    static_cast<Core::Credentials::TokenCredentialOptions&>(clientAssertionCredentialOptions)
+        = options;
+
+    std::function<std::string(Context const&)> callback
+        = [this](Context const& context) { return GetAssertion(context); };
+
+    // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
+    // warning messages otherwise.
+    m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
+        tenantId, clientId, callback, clientAssertionCredentialOptions);
+
     IdentityLog::Write(
         IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
   }
   else
   {
-    // We use this to indicate that the credential is not usable, so that we can throw when used in
-    // GetToken().
-    m_clientAssertionCredential.reset();
-
     IdentityLog::Write(
         IdentityLog::Level::Warning,
         "Azure Kubernetes environment is not set up for the " + GetCredentialName()
