@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/core/context.hpp>
-#include <azure/core/tracing/tracing.hpp>
+#include "azure/core/context.hpp"
 
 #include <chrono>
 #include <memory>
 #include <string>
 #include <thread>
-#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -241,7 +239,7 @@ struct SomeStructForContext final
 TEST(Context, InstanceValue)
 {
   Context::Key const key;
-  auto contextP = Context::ApplicationContext.WithValue(key, SomeStructForContext());
+  auto contextP = Context{}.WithValue(key, SomeStructForContext());
   SomeStructForContext contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext>(key, contextValueRef));
   EXPECT_EQ(contextValueRef.someField, 12345);
@@ -251,7 +249,7 @@ TEST(Context, Ptr)
 {
   Context::Key const key;
   SomeStructForContext value;
-  auto contextP = Context::ApplicationContext.WithValue(key, &value);
+  auto contextP = Context{}.WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
@@ -277,7 +275,7 @@ TEST(Context, NestedClassPtr)
 
     Context::Key const key;
 
-    auto context = Context::ApplicationContext.WithValue(key, sharedPtr);
+    auto context = Context{}.WithValue(key, sharedPtr);
     EXPECT_EQ(sharedPtr.use_count(), 2);
 
     std::shared_ptr<TestClass> foundPtr;

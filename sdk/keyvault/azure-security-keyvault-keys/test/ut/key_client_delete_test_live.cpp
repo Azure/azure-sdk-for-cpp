@@ -49,7 +49,7 @@ TEST_F(KeyVaultKeyClient, DeleteKey)
     // for so long if something happens and no exception is thrown (paranoid scenario)
     auto duration
         = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
-    auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
+    Azure::Core::Context cancelToken{duration};
 
     auto keyResponseLRO = client.StartDeleteKey(keyName);
     auto expectedStatusToken = keyName;
@@ -124,7 +124,7 @@ TEST_F(KeyVaultKeyClient, DoubleDelete)
   {
     auto duration
         = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
-    auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
+    Azure::Core::Context cancelToken{duration};
     auto keyResponseLRO = client.StartDeleteKey(keyName);
     auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMs, cancelToken);
   }
@@ -197,7 +197,7 @@ TEST_F(KeyVaultKeyClient, CreateDeletedKey)
   {
     auto duration
         = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
-    auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
+    Azure::Core::Context cancelToken{duration};
     auto keyResponseLRO = client.StartDeleteKey(keyName);
     auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMs, cancelToken);
   }
@@ -281,7 +281,7 @@ TEST_F(KeyVaultKeyClient, GetDeletedKey)
     // Wait until key is deleted
     auto duration
         = std::chrono::system_clock::now() + std::chrono::minutes(m_testPollingTimeOutMinutes);
-    auto cancelToken = Azure::Core::Context::ApplicationContext.WithDeadline(duration);
+    Azure::Core::Context cancelToken{duration};
 
     auto keyResponseLRO = client.StartDeleteKey(keyName);
     auto expectedStatusToken = m_keyVaultUrl

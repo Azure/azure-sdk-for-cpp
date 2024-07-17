@@ -297,8 +297,7 @@ TEST(AzureCliCredential, ContextCancelled)
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
 
-  auto context = Context::ApplicationContext.WithDeadline(
-      std::chrono::system_clock::now() + std::chrono::hours(24));
+  Context context{std::chrono::system_clock::now() + std::chrono::hours(24)};
 
   std::atomic<bool> thread1Started(false);
 

@@ -16,7 +16,7 @@ int main(int argc, char** argv)
       Azure::Identity::Test::EnvironmentCredentialTest::GetTestMetadata(),
       Azure::Identity::Test::SecretCredentialTest::GetTestMetadata()};
 
-  Azure::Perf::Program::Run(Azure::Core::Context::ApplicationContext, tests, argc, argv);
+  Azure::Perf::Program::Run(Azure::Core::Context{}, tests, argc, argv);
 
   return 0;
 }
