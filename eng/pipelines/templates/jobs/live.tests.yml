@@ -281,7 +281,6 @@ jobs:
             }
           }
         workingDirectory: build
-        useGlobalConfig: true
       env:
         # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
