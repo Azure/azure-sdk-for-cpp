@@ -181,5 +181,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::string JobId;
     };
 
-    
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models

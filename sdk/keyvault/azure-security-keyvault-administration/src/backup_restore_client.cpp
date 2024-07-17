@@ -98,7 +98,7 @@ Azure::Response<BackupRestoreOperation> BackupRestoreClient::FullBackup(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  BackupRestoreOperationStatus response= DeserializeBackupRestoreOperationStatus(*rawResponse);
+  BackupRestoreOperationStatus response = DeserializeBackupRestoreOperationStatus(*rawResponse);
   BackupRestoreOperation operation(
       std::make_shared<BackupRestoreClient>(*this), std::move(response), true);
   return Response<BackupRestoreOperation>(std::move(operation), std::move(rawResponse));
@@ -128,8 +128,8 @@ Azure::Response<BackupRestoreOperationStatus> BackupRestoreClient::FullBackupSta
   }
 
   BackupRestoreOperationStatus response
-  
-    = DeserializeBackupRestoreOperationStatus(*rawResponse);
+
+      = DeserializeBackupRestoreOperationStatus(*rawResponse);
 
   return Response<BackupRestoreOperationStatus>(std::move(response), std::move(rawResponse));
 }

@@ -48,7 +48,7 @@ int main()
               << "Backup Status: " << backupResponse.Value().Status << std::endl;
     // Wait for the operation to complete.
     auto backupStatus = backupResponse.PollUntilDone(10s);
-   
+
     std::cout << "Backup Job Id: " << backupStatus.Value.JobId << std::endl
               << "Backup Status: " << backupStatus.Value.Status << std::endl;
     // Restore a selected key from the backup using a user-provided SAS token to an Azure blob

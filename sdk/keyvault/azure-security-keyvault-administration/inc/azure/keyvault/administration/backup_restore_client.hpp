@@ -144,9 +144,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
   };
   namespace Models {
     /*
-    * @brief The backup restore long running operation.
-    *
-    */
+     * @brief The backup restore long running operation.
+     *
+     */
     class BackupRestoreOperation final
         : public Azure::Core::Operation<BackupRestoreOperationStatus> {
     private:
