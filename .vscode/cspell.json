@@ -27,6 +27,7 @@
     "*.lib",
     "*.yaml",
     ".github/CODEOWNERS",
+    ".github/CODEOWNERS_baseline_errors.txt",
     ".gitignore",
     ".vscode/cspell.json",
     "vcpkg-custom-ports",
