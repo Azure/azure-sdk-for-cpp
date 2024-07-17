@@ -126,7 +126,7 @@ TEST(WorkloadIdentityCredential, GetOptionsFromEnvironmentInvalid)
   }
 }
 
-TEST(WorkloadIdentityCredential, DISABLED_Regular)
+TEST(WorkloadIdentityCredential, Regular)
 {
   TempCertFile const tempCertFile;
 
@@ -213,7 +213,7 @@ TEST(WorkloadIdentityCredential, DISABLED_Regular)
   EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
-TEST(WorkloadIdentityCredential, DISABLED_AzureStack)
+TEST(WorkloadIdentityCredential, AzureStack)
 {
   TempCertFile const tempCertFile;
 
@@ -296,7 +296,7 @@ TEST(WorkloadIdentityCredential, DISABLED_AzureStack)
   EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
 }
 
-TEST(WorkloadIdentityCredential, DISABLED_Authority)
+TEST(WorkloadIdentityCredential, Authority)
 {
   TempCertFile const tempCertFile;
 

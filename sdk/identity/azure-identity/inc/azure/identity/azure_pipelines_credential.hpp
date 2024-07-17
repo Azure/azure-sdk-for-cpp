@@ -61,7 +61,6 @@ namespace Azure { namespace Identity {
     Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
     std::string m_oidcRequestUrl;
     std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
-    bool m_credentialCreatedSuccessfully;
 
     std::string GetAssertion(Core::Context const& context);
     Azure::Core::Http::Request CreateOidcRequestMessage() const;

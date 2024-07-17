@@ -77,7 +77,6 @@ namespace Azure { namespace Identity {
   private:
     std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
     std::string m_tokenFilePath;
-    bool m_credentialCreatedSuccessfully;
 
     std::string GetAssertion(Core::Context const& context);
 
