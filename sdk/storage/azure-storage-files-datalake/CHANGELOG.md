@@ -1,14 +1,10 @@
 # Release History
 
-## 12.11.0-beta.2 (Unreleased)
+## 12.11.0 (2024-07-16)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Features in `12.11.0-beta.1` are now generally available.
 
 ## 12.11.0-beta.1 (2024-06-11)
 
