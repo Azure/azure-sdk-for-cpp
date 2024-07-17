@@ -61,7 +61,7 @@ target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-stor
 
 Here's a walkthrough video on how to install the Azure SDK packages, using vcpkg, into an MSBuild project in VS: https://aka.ms/azsdk/cpp/gettingstarted-vcpkg-msbuild-video
 
-See the [vcpkg documentation](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
+See the [vcpkg documentation](https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
 
 ### Additional methods for installing and configuring
 

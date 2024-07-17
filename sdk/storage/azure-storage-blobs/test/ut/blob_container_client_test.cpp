@@ -442,7 +442,6 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.CreateIfNotExists();
 
     Blobs::SetBlobContainerAccessPolicyOptions options;
-    options.AccessType = Blobs::Models::PublicAccessType::Blob;
     {
       Blobs::Models::SignedIdentifier identifier;
       identifier.Id = RandomString(63) + "1";
@@ -479,11 +478,26 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
 
     auto ret2 = containerClient.GetAccessPolicy();
-    EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
     if (m_testContext.IsLiveMode())
     {
       EXPECT_EQ(ret2.Value.SignedIdentifiers, options.SignedIdentifiers);
     }
+    containerClient.DeleteIfExists();
+  }
+
+  TEST_F(BlobContainerClientTest, AccessType_PLAYBACKONLY_)
+  {
+    auto containerClient = *m_blobContainerClient;
+    containerClient.CreateIfNotExists();
+
+    Blobs::SetBlobContainerAccessPolicyOptions options;
+    options.AccessType = Blobs::Models::PublicAccessType::Blob;
+    auto ret = containerClient.SetAccessPolicy(options);
+    EXPECT_TRUE(ret.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+
+    auto ret2 = containerClient.GetAccessPolicy();
+    EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
     containerClient.DeleteIfExists();
   }
 

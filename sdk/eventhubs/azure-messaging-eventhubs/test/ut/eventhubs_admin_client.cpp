@@ -9,7 +9,6 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/response.hpp>
-#include <azure/identity/default_azure_credential.hpp>
 
 #include <memory>
 #include <sstream>
@@ -35,7 +34,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       tokenContext.Scopes = {"https://management.azure.com/.default"};
       perRetrypolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              std::make_unique<Azure::Identity::DefaultAzureCredential>(), tokenContext));
+              GetTestCredential(), tokenContext));
     }
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
     options.Telemetry.ApplicationId = "eventhubs.test";
