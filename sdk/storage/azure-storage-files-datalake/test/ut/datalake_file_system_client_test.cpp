@@ -304,7 +304,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(DataLakeFileSystemClientTest, Constructors_LIVEONLY_)
   {
     {
-      // Create from connection string validates static creator function and shared key constructor.
+      // Create from connection string validates static creator function and shared key
+      // constructor.
       auto fileSystemName = LowercaseRandomString() + "1";
       auto connectionStringClient
           = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateFromConnectionString(
@@ -653,10 +654,18 @@ namespace Azure { namespace Storage { namespace Test {
       {
         EXPECT_EQ(ret2.Value.SignedIdentifiers, options.SignedIdentifiers);
       }
+    }
+  }
 
+  TEST_F(DataLakeFileSystemClientTest, AccessType_PLAYBACKONLY_)
+  {
+    {
+      auto fileSystem = GetFileSystemClientForTest(LowercaseRandomString());
+      fileSystem.CreateIfNotExists();
+      Files::DataLake::SetFileSystemAccessPolicyOptions options;
       options.AccessType = Files::DataLake::Models::PublicAccessType::FileSystem;
       EXPECT_NO_THROW(fileSystem.SetAccessPolicy(options));
-      ret2 = fileSystem.GetAccessPolicy();
+      auto ret2 = fileSystem.GetAccessPolicy();
       EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
 
       options.AccessType = Files::DataLake::Models::PublicAccessType::None;
@@ -664,6 +673,7 @@ namespace Azure { namespace Storage { namespace Test {
       ret2 = fileSystem.GetAccessPolicy();
       EXPECT_EQ(ret2.Value.AccessType, options.AccessType);
     }
+
     {
       auto fileSystem = GetFileSystemClientForTest(LowercaseRandomString());
       Files::DataLake::CreateFileSystemOptions options;
