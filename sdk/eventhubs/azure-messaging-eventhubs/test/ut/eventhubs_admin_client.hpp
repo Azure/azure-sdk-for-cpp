@@ -264,6 +264,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   private:
     // Dummy test body to satisfy Azure::Core::Test::TestBase.
     void TestBody() {}
+
+    void SetUp() override { SetUpTestBase(AZURE_TEST_RECORDING_DIR); };
     std::string m_resourceGroup;
     std::string m_location;
     std::string m_subscriptionId;
