@@ -4,6 +4,7 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #pragma once
+#include "azure/keyvault/administration/backup_restore_operation.hpp"
 #include "azure/keyvault/administration/rest_client_models.hpp"
 
 #include <azure/core/context.hpp>
@@ -23,14 +24,6 @@
 using namespace Azure::Security::KeyVault::Administration::Models;
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
-  namespace Models {
-    /*
-     * @brief The backup / restore long running operation.
-     * @remark Forward definition of BackupRestoreOperation.
-     * 
-     */
-    class BackupRestoreOperation;
-  } // namespace Models
   /**
    * @brief Backup restore client.
    *
@@ -149,143 +142,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 
-  namespace Models {
-    /*
-     * @brief BackupRestoreOperation : The backup / restore long running operation.
-     *
-     */
-    class BackupRestoreOperation final
-        : public Azure::Core::Operation<BackupRestoreOperationStatus> {
-    private:
-      /* BackupRestoreOperation can be constructed only by friends classes (internal
-       * creation). The constructor is private and requires internal components.*/
-      friend class Azure::Security::KeyVault::Administration::BackupRestoreClient;
-
-      std::shared_ptr<BackupRestoreClient> m_keyClient;
-      BackupRestoreOperationStatus m_value;
-      std::string m_continuationToken;
-      bool m_isBackupOperation = true;
-
-      std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
-          Azure::Core::Context const& context) override
-      {
-        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-        try
-        {
-          Azure::Response<BackupRestoreOperationStatus> response = m_isBackupOperation
-              ? m_keyClient->FullBackupStatus(m_continuationToken, context)
-              : m_keyClient->RestoreStatus(m_continuationToken, context);
-
-          m_value = response.Value;
-          m_continuationToken = response.Value.JobId;
-          rawResponse = std::move(response.RawResponse);
-          if (response.Value.Status == "InProgress")
-          {
-            m_status = Azure::Core::OperationStatus::Running;
-          }
-          else if (response.Value.Status == "Succeeded")
-          {
-            m_status = Azure::Core::OperationStatus::Succeeded;
-          }
-          else if (response.Value.Status == "Failed")
-          {
-            m_status = Azure::Core::OperationStatus::Failed;
-          }
-          else
-          {
-            throw Azure::Core::RequestFailedException(response.RawResponse);
-          }
-        }
-        catch (Azure::Core::RequestFailedException& error)
-        {
-          rawResponse = std::move(error.RawResponse);
-        }
-
-        return rawResponse;
-      }
-
-      Azure::Response<BackupRestoreOperationStatus> PollUntilDoneInternal(
-          std::chrono::milliseconds period,
-          Azure::Core::Context& context) override
-      {
-        while (true)
-        {
-          // Poll will update the raw response.
-          Poll(context);
-          if (IsDone())
-          {
-            break;
-          }
-          std::this_thread::sleep_for(period);
-        }
-
-        return Azure::Response<BackupRestoreOperationStatus>(
-            m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
-      }
-
-      /*
-       * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
-       * because a KeyVaultPipelne is required and it is not exposed to customers.
-       *
-       * Since C++ doesn't offer `internal` access, we use friends-only instead.
-       */
-      BackupRestoreOperation(
-          std::shared_ptr<BackupRestoreClient> const& keyClient,
-          BackupRestoreOperationStatus const& response,
-          bool isBackupOperation)
-          : m_keyClient{keyClient}, m_value{response}, m_continuationToken{response.JobId},
-            m_isBackupOperation{isBackupOperation} {};
-
-      BackupRestoreOperation(
-          std::shared_ptr<BackupRestoreClient> const& keyClient,
-          std::string const& continuationToken,
-          bool isBackupOperation)
-          : m_keyClient{keyClient}, m_continuationToken{continuationToken},
-            m_isBackupOperation{isBackupOperation} {};
-
-    public:
-      /**
-       * @brief Get the BackupRestoreOperationStatus object.
-       *
-       * @remark The status contains the current progress result at the time of the call.
-       *
-       * @return A BackupRestoreOperationStatus object.
-       */
-      BackupRestoreOperationStatus Value() const override { return m_value; }
-
-      /**
-       * @brief Get the continuation token used for further status inquiries
-       *
-       * @return std::string
-       */
-      std::string GetResumeToken() const override { return m_continuationToken; }
-
-      /**
-       * @brief Create a #BackupRestoreOperation from the \p resumeToken fetched from
-       * another `Operation<T>`, updated to the the latest operation status.
-       *
-       * @remark After the operation is initialized, it is used to poll the last update from the
-       * server using the \p context.
-       *
-       * @param resumeToken A previously generated token used to resume the polling of the
-       * operation.
-       * @param client A #BackupRestoreClient that is used for getting status updates.
-       * @param isBackupOperation A boolean indicating if the operation is a backup operation if
-       * false it is considered a restore operation.
-       * @param context A Azure::Core::Context controlling the request lifetime.
-       * @return BackupRestoreOperation
-       */
-      static BackupRestoreOperation CreateFromResumeToken(
-          std::string const& resumeToken,
-          BackupRestoreClient const& client,
-          bool isBackupOperation,
-          Azure::Core::Context const& context = Azure::Core::Context())
-      {
-        BackupRestoreOperation operation(
-            std::make_shared<BackupRestoreClient>(client), resumeToken, isBackupOperation);
-        operation.Poll(context);
-        return operation;
-      }
-    };
-  } // namespace Models
 }}}} // namespace Azure::Security::KeyVault::Administration
