@@ -143,9 +143,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     BackupRestoreOperationStatus DeserializeBackupRestoreOperationStatus(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
+
   namespace Models {
     /*
-     * @brief The backup restore long running operation.
+     * @brief The backup / restore long running operation.
      *
      */
     class BackupRestoreOperation final
@@ -264,6 +265,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
        * @param resumeToken A previously generated token used to resume the polling of the
        * operation.
        * @param client A #BackupRestoreClient that is used for getting status updates.
+       * @param isBackupOperation A boolean indicating if the operation is a backup operation if
+       * false it is considered a restore operation.
        * @param context A Azure::Core::Context controlling the request lifetime.
        * @return BackupRestoreOperation
        */
