@@ -65,7 +65,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       auto body = e.RawResponse->GetBody();
       auto bodyAsString = std::string(body.begin(), body.end());
 
-      GTEST_LOG_(INFO) << "Response: " << bodyAsString;
+      GTEST_LOG_(ERROR) << "Response: " << bodyAsString;
+      GTEST_FAIL();
     }
   }
 
