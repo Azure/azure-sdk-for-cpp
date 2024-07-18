@@ -59,8 +59,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::shared_ptr<BackupRestoreClient> const& keyClient,
         std::string const& continuationToken,
         bool isBackupOperation)
-        : m_keyClient{keyClient}, m_continuationToken{continuationToken},
-          m_isBackupOperation{isBackupOperation} {};
+        : m_keyClient{keyClient}, m_continuationToken{continuationToken}, m_isBackupOperation{
+                                                                              isBackupOperation} {};
 
   public:
     /**
