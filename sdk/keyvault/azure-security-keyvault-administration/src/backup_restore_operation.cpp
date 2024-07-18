@@ -16,8 +16,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> BackupRestoreOperation::PollInte
   try
   {
     Azure::Response<BackupRestoreOperationStatus> response = m_isBackupOperation
-        ? m_keyClient->FullBackupStatus(m_continuationToken, context)
-        : m_keyClient->RestoreStatus(m_continuationToken, context);
+        ? m_backupRestoreClient->FullBackupStatus(m_continuationToken, context)
+        : m_backupRestoreClient->RestoreStatus(m_continuationToken, context);
 
     m_value = response.Value;
     m_continuationToken = response.Value.JobId;

@@ -23,7 +23,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
   /*
    * @brief BackupRestoreOperation : The backup / restore long running operation.
-   *
+   * @remark Used to handle  both backup and restore operations due to the similarity in patterns
+   * and return values.
    */
   class BackupRestoreOperation final : public Azure::Core::Operation<BackupRestoreOperationStatus> {
   private:
@@ -31,7 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * creation). The constructor is private and requires internal components.*/
     friend class Azure::Security::KeyVault::Administration::BackupRestoreClient;
 
-    std::shared_ptr<BackupRestoreClient> m_keyClient;
+    std::shared_ptr<BackupRestoreClient> m_backupRestoreClient;
     BackupRestoreOperationStatus m_value;
     std::string m_continuationToken;
     bool m_isBackupOperation = true;
@@ -44,24 +45,33 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         Azure::Core::Context& context) override;
 
     /*
-     * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
+     * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
      * because a KeyVaultPipelne is required and it is not exposed to customers.
-     *
+     * 
+     * @param backupRestoreClient A #BackupRestoreClient that is used for getting status updates.
+     * @param response A #BackupRestoreOperationStatus object.
+     * @param isBackupOperation A boolean indicating if the operation is a backup operation or a restore. 
+     */
+    BackupRestoreOperation(
+        std::shared_ptr<BackupRestoreClient> const& backupRestoreClient,
+        BackupRestoreOperationStatus const& status,
+        bool isBackupOperation)
+        : m_backupRestoreClient{backupRestoreClient}, m_value{status},
+          m_continuationToken{status.JobId},
+          m_isBackupOperation{isBackupOperation} {};
+    /*
+     * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
+     * because a KeyVaultPipelne is required and it is not exposed to customers.
+     * @param backupRestoreClient A #BackupRestoreClient that is used for getting status updates.
+     * @param continuationToken A string that is used to resume the operation.
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     BackupRestoreOperation(
-        std::shared_ptr<BackupRestoreClient> const& keyClient,
-        BackupRestoreOperationStatus const& response,
-        bool isBackupOperation)
-        : m_keyClient{keyClient}, m_value{response}, m_continuationToken{response.JobId},
-          m_isBackupOperation{isBackupOperation} {};
-
-    BackupRestoreOperation(
-        std::shared_ptr<BackupRestoreClient> const& keyClient,
+        std::shared_ptr<BackupRestoreClient> const& backupRestoreClient,
         std::string const& continuationToken,
         bool isBackupOperation)
-        : m_keyClient{keyClient}, m_continuationToken{continuationToken}, m_isBackupOperation{
-                                                                              isBackupOperation} {};
+        : m_backupRestoreClient{backupRestoreClient}, m_continuationToken{continuationToken},
+          m_isBackupOperation{isBackupOperation} {};
 
   public:
     /**
