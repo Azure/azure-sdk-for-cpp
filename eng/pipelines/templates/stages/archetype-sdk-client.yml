@@ -61,9 +61,7 @@ parameters:
           - eng/common/TestResources/sub-config/AzurePublicMsft.json
       Preview:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-        ServiceConnection: azure-sdk-tests
-        # Temporary fix until an eng/common config for Preview can be merged
-        SubscriptionConfigurationFilePaths: []
+        ServiceConnection: azure-sdk-tests-preview
       Canary:
         SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         ServiceConnection: azure-sdk-tests
