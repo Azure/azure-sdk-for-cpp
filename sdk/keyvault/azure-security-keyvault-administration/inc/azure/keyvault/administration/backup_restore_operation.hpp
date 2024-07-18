@@ -21,7 +21,7 @@ using namespace Azure::Security::KeyVault::Administration::Models;
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   class BackupRestoreClient;
 
-  /*
+  /**
    * @brief BackupRestoreOperation : The backup / restore long running operation.
    * @remark Used to handle  both backup and restore operations due to the similarity in patterns
    * and return values.
@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
-    /*
+    /**
      * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
      * because a KeyVaultPipelne is required and it is not exposed to customers.
      *
@@ -59,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         bool isBackupOperation)
         : m_backupRestoreClient{backupRestoreClient}, m_value{status},
           m_continuationToken{status.JobId}, m_isBackupOperation{isBackupOperation} {};
-    /*
+    /**
      * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
      * because a KeyVaultPipelne is required and it is not exposed to customers.
      * @param backupRestoreClient A #BackupRestoreClient that is used for getting status updates.
