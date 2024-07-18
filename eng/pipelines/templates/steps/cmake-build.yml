@@ -11,7 +11,11 @@ steps:
   - script: mkdir build
     displayName: create working directory
 
-  - script: cmake --version
+  - script: |
+      cmake --version
+      echo AZURE_CONFIG_DIR
+      echo "FOO"
+      set AZURE_CONFIG_DIR=
     workingDirectory: build
     displayName: cmake --version
 
