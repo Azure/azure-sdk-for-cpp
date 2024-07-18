@@ -32,6 +32,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes = {"https://management.azure.com/.default"};
+      auto credential = GetTestCredential();
+      GTEST_LOG_(INFO) << "Credential type: " << credential->GetCredentialName();
+
+      GTEST_LOG_(INFO) << "Adding BearerTokenAuthenticationPolicy to pipeline.";
       perRetrypolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               GetTestCredential(), tokenContext));
