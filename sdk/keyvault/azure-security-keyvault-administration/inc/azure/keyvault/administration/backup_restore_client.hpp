@@ -18,6 +18,7 @@
 
 #include <memory>
 #include <string>
+#include <thread>
 
 using namespace Azure::Security::KeyVault::Administration::Models;
 
@@ -216,6 +217,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
             m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
       }
 
+    protected:
       /*
        * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
        * because a KeyVaultPipelne is required and it is not exposed to customers.
