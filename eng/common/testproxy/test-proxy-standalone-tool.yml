@@ -33,6 +33,9 @@ steps:
 
       Write-Host "Installing test-proxy version $version"
       ${{ parameters.templateRoot }}/eng/common/testproxy/install-test-proxy.ps1 -Version $version -InstallDirectory $(Build.BinariesDirectory)/test-proxy
+      
+      Write-Host "Remove env:AZURE_CONFIG_DIR"
+      $env:AZURE_CONFIG_DIR=''
     displayName: "Install test-proxy"
     condition: and(succeeded(), ${{ parameters.condition }})
 
