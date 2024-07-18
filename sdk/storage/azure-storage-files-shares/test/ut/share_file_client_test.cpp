@@ -1860,7 +1860,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(xorAccessRights, accessRightsA ^ accessRightsB);
   }
 
-  // cspell:ignore sddl
   TEST_F(FileShareFileClientTest, FilePermissionFormat_PLAYBACKONLY_)
   {
     // sddl format

@@ -1230,7 +1230,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(directoryClient.GetProperties(), StorageException);
   }
 
-  // cspell:ignore sddl
   TEST_F(FileShareDirectoryClientTest, FilePermissionFormat_PLAYBACKONLY_)
   {
     // sddl format

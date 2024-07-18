@@ -781,7 +781,6 @@ namespace Azure { namespace Storage { namespace Test {
         && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
   }
 
-  // cspell:ignore sddl
   TEST_F(FileShareClientTest, FilePermissionFormat_PLAYBACKONLY_)
   {
     // sddl format
