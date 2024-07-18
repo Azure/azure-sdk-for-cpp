@@ -311,6 +311,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct CreateSharePermissionOptions final
   {
+    /**
+     * Format of Permission.
+     */
+    Nullable<Models::FilePermissionFormat> FilePermissionFormat;
   };
 
   /**
@@ -388,6 +392,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
 
     /**
+     * Format of Permission.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
+
+    /**
      * A name-value pair to associate with a file storage object.
      */
     Storage::Metadata Metadata;
@@ -444,6 +453,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
 
     /**
+     * Format of Permission.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
+
+    /**
      * A name-value pair to associate with a file storage object.
      */
     Storage::Metadata Metadata;
@@ -477,6 +491,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * group and dacl.
      */
     Azure::Nullable<std::string> FilePermission;
+
+    /**
+     * Format of Permission.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
   };
 
   /**
@@ -590,9 +609,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     /**
      * This permission is the security descriptor for the file specified in the Security
-     * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
+     * Descriptor Definition Language (SDDL) or base64 encoded
+     * binary format. If not specified, 'inherit' is used.
      */
     Azure::Nullable<std::string> Permission;
+
+    /**
+     * Format of Permission.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
     /**
      * SMB properties to set for the file.
@@ -722,9 +747,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     /**
      * This permission is the security descriptor for the file specified in the Security
-     * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
+     * Descriptor Definition Language (SDDL) or base64 encoded
+     * binary format. If not specified, 'inherit' is used.
      */
     Azure::Nullable<std::string> Permission;
+
+    /**
+     * Format of Permission.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
     /**
      * Specify this to resize a file to the specified value.

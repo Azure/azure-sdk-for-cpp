@@ -797,6 +797,33 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       DateTime LastModified;
     };
     /**
+     * @brief Optional. Available for version 2023-06-01 and later. Specifies the format in which
+     * the permission is returned. Acceptable values are SDDL or binary. If
+     * x-ms-file-permission-format is unspecified or explicitly set to SDDL, the permission is
+     * returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
+     * permission is returned as a base64 string representing the binary encoding of the permission.
+     */
+    class FilePermissionFormat final {
+    public:
+      /** Constructs a new FilePermissionFormat instance */
+      FilePermissionFormat() = default;
+      /** Constructs a new FilePermissionFormat from a string. */
+      explicit FilePermissionFormat(std::string value) : m_value(std::move(value)) {}
+      /** Compares with another FilePermissionFormat. */
+      bool operator==(const FilePermissionFormat& other) const { return m_value == other.m_value; }
+      /** Compares with another FilePermissionFormat. */
+      bool operator!=(const FilePermissionFormat& other) const { return !(*this == other); }
+      /** Converts the value to a string. */
+      const std::string& ToString() const { return m_value; }
+      /** Constant value of type FilePermissionFormat: Sddl */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Sddl;
+      /** Constant value of type FilePermissionFormat: Binary */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Binary;
+
+    private:
+      std::string m_value;
+    };
+    /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::CreatePermission.
      */
     struct CreateSharePermissionResult final
@@ -816,6 +843,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * The permission in the Security Descriptor Definition Language (SDDL).
          */
         std::string Permission;
+        Nullable<FilePermissionFormat> Format;
       };
     } // namespace _detail
     /**
@@ -2243,6 +2271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct GetSharePermissionOptions final
       {
         std::string FilePermissionKey;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::_detail::SharePermission> GetPermission(
@@ -2353,6 +2382,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct SetDirectoryPropertiesOptions final
       {
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
@@ -2434,6 +2464,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::map<std::string, std::string> Metadata;
         Nullable<bool> AllowTrailingDot;
@@ -2460,6 +2491,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileContentDisposition;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
@@ -2519,6 +2551,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::vector<uint8_t>> FileContentMD5;
         Nullable<std::string> FileContentDisposition;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
@@ -2647,6 +2680,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         std::string CopySource;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         Nullable<Models::PermissionCopyMode> FilePermissionCopyMode;
         Nullable<bool> IgnoreReadOnly;
@@ -2715,6 +2749,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> FileContentType;

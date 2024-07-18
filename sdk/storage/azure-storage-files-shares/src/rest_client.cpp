@@ -106,6 +106,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const ShareRootSquash ShareRootSquash::RootSquash("RootSquash");
     const ShareRootSquash ShareRootSquash::AllSquash("AllSquash");
     const DeleteSnapshotsOption DeleteSnapshotsOption::Include("include");
+    const FilePermissionFormat FilePermissionFormat::Sddl("sddl");
+    const FilePermissionFormat FilePermissionFormat::Binary("binary");
     FileAttributes::FileAttributes(const std::string& value)
     {
       const std::string delimiter = " | ";
@@ -1443,6 +1445,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         auto jsonRoot = Core::Json::_internal::json::object();
         jsonRoot["permission"] = options.SharePermission.Permission;
+        if (options.SharePermission.Format.HasValue())
+        {
+          jsonRoot["format"] = options.SharePermission.Format.Value().ToString();
+        }
         jsonBody = jsonRoot.dump();
       }
       Core::IO::MemoryBodyStream requestBody(
@@ -1482,6 +1488,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey);
       }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
+      }
       request.SetHeader("x-ms-version", "2024-11-04");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
@@ -1500,6 +1512,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
         response.Permission = jsonRoot["permission"].get<std::string>();
+        if (jsonRoot.count("format") != 0)
+        {
+          response.Format = Models::FilePermissionFormat(jsonRoot["format"].get<std::string>());
+        }
       }
       return Response<Models::_detail::SharePermission>(
           std::move(response), std::move(pRawResponse));
@@ -2074,6 +2090,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
       }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
@@ -2902,6 +2924,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
       }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
+      }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
@@ -3003,6 +3031,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
       }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
@@ -3471,6 +3505,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
       }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
@@ -4073,6 +4113,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
       }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
+      }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
@@ -4494,6 +4540,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
+      }
+      if (options.FilePermissionFormat.HasValue()
+          && !options.FilePermissionFormat.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
       }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {

@@ -317,6 +317,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Azure::Nullable<ShareFileHandleAccessRights> AccessRights;
     };
+
+    /**
+     * @brief A permission at the share level.
+     */
+    struct ShareFilePermission final
+    {
+      /**
+       * The permission in the Security Descriptor Definition Language (SDDL) or base64 encoded
+       * binary format.
+       */
+      std::string Permission;
+
+      /**
+       * Format of Permission.
+       */
+      Nullable<FilePermissionFormat> PermissionFormat;
+    };
   } // namespace Models
 
   /**

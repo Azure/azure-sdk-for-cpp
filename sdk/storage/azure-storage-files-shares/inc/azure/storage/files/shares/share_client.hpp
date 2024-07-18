@@ -242,6 +242,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetSharePermissionOptions& options = GetSharePermissionOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Gets the permission of the share using the specific key.
+     * @param permissionKey The permission key of a permission.
+     * @param filePermissionFormat Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to <see cref="FilePermissionKeyFormat.Sddl"/>, the permission will be
+     * returned in SSDL format.
+     * @param options Optional parameters to get share's permission.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<std::string> containing the permission string with specified key.
+     */
+    Azure::Response<Models::ShareFilePermission> GetPermission(
+        const std::string& permissionKey,
+        const Nullable<Models::FilePermissionFormat> filePermissionFormat,
+        const GetSharePermissionOptions& options = GetSharePermissionOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_shareUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
