@@ -19,7 +19,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  EventHubsManagement::EventHubsManagement(std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential)
+  EventHubsManagement::EventHubsManagement(
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential)
       : m_resourceGroup{Azure::Core::_internal::Environment::GetVariable(
           "EVENTHUBS_RESOURCE_GROUP")},
         m_location{Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_LOCATION")},

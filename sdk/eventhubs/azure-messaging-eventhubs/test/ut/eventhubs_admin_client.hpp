@@ -6,6 +6,7 @@
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/operation.hpp>
+
 #include <string>
 #include <vector>
 
