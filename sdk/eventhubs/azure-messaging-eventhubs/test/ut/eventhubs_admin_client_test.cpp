@@ -28,7 +28,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, ListNamespaceTest_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto response = administrationClient.ListNamespaces();
     EXPECT_TRUE(response.size() > 0);
   }
@@ -36,7 +36,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(AdminTest, DoesNamespaceExistTest_LIVEONLY_)
   {
 
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto response = administrationClient.DoesNamespaceExist(GetRandomName());
     EXPECT_FALSE(response);
 
@@ -47,7 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateDeleteNamespaceTest_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string namespaceName = GetRandomName("ehCreate");
     auto createOperation = administrationClient.CreateNamespace(namespaceName);
     createOperation.PollUntilDone(std::chrono::milliseconds(500));
@@ -57,7 +57,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, EnumerateEventHubs_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string namespaceName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
@@ -68,7 +68,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateEventHub_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string eventHubName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
@@ -82,7 +82,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateConsumerGroup_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string eventHubName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));

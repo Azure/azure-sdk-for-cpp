@@ -19,14 +19,13 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
-  EventHubsManagement::EventHubsManagement()
+  EventHubsManagement::EventHubsManagement(std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential)
       : m_resourceGroup{Azure::Core::_internal::Environment::GetVariable(
           "EVENTHUBS_RESOURCE_GROUP")},
         m_location{Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_LOCATION")},
         m_subscriptionId{
             Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_SUBSCRIPTION_ID")}
   {
-    SetUp();
 
     Azure::Core::_internal::ClientOptions options;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
@@ -34,13 +33,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes = {"https://management.azure.com/.default"};
-      auto credential = GetTestCredential();
-      GTEST_LOG_(INFO) << "Credential type: " << credential->GetCredentialName();
-
-      GTEST_LOG_(INFO) << "Adding BearerTokenAuthenticationPolicy to pipeline.";
       perRetrypolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              GetTestCredential(), tokenContext));
+              credential, tokenContext));
     }
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
     options.Telemetry.ApplicationId = "eventhubs.test";

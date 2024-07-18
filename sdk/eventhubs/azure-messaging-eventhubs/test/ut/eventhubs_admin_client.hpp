@@ -2,11 +2,10 @@
 // Licensed under the MIT License.
 #pragma once
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/operation.hpp>
-#include <azure/core/test/test_base.hpp>
-
 #include <string>
 #include <vector>
 
@@ -14,7 +13,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   // Derived from Azure::Core::Test::TestBase to get access to GetTestCredential, which has logic to
   // add the pipeline credential when run in CI.
-  class EventHubsManagement : Azure::Core::Test::TestBase {
+  class EventHubsManagement {
   public:
     enum class EventHubsPricingTier
     {
@@ -22,7 +21,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Standard,
       Basic
     };
-    EventHubsManagement();
+    EventHubsManagement(std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential);
 
     ~EventHubsManagement() = default;
 
@@ -262,10 +261,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Core::Context const& context = {});
 
   private:
-    // Dummy test body to satisfy Azure::Core::Test::TestBase.
-    void TestBody() override {}
-
-    void SetUp() override { SetUpTestBase(AZURE_TEST_RECORDING_DIR); };
     std::string m_resourceGroup;
     std::string m_location;
     std::string m_subscriptionId;
