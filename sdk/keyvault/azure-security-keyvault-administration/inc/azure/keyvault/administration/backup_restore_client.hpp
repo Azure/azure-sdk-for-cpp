@@ -153,7 +153,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     private:
       /* BackupRestoreOperation can be constructed only by friends classes (internal
        * creation). The constructor is private and requires internal components.*/
-      friend class BackupRestoreClient;
+      friend class Azure::Security::KeyVault::Administration::BackupRestoreClient;
 
       std::shared_ptr<BackupRestoreClient> m_keyClient;
       BackupRestoreOperationStatus m_value;
@@ -217,7 +217,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
             m_value, std::make_unique<Azure::Core::Http::RawResponse>(*m_rawResponse));
       }
 
-    protected:
       /*
        * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
        * because a KeyVaultPipelne is required and it is not exposed to customers.
