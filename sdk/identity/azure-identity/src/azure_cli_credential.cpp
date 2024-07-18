@@ -119,8 +119,7 @@ std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::str
   // well for a list of scopes, but that isn't currently required.
   ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
   ThrowIfNotSafeCmdLineInput(tenantId, ".-", "TenantID");
-  std::string command
-      = "az account get-access-token --debug --verbose --output json --scope \"" + scopes + "\"";
+  std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
   {
@@ -173,71 +172,6 @@ AccessToken AzureCliCredential::GetToken(
   return m_tokenCache.GetToken(scopes, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
     try
     {
-      try
-      {
-        auto const result = RunShellCommand("az --version", m_cliProcessTimeout, context);
-        IdentityLog::Write(
-            IdentityLog::Level::Warning, GetCredentialName() + " !!! AZ VERSION !!! " + result);
-
-        std::string configDirValue = Environment::GetVariable("AZURE_CONFIG_DIR");
-        if (!configDirValue.empty())
-        {
-          IdentityLog::Write(
-              IdentityLog::Level::Warning,
-              GetCredentialName() + " !!! aaa AZURE_CONFIG_DIR !!! " + configDirValue);
-        }
-        else
-        {
-          IdentityLog::Write(
-              IdentityLog::Level::Warning,
-              GetCredentialName() + " !!! aaa AZURE_CONFIG_DIR !!! not set");
-        }
-      }
-      catch (std::exception const& e)
-      {
-        auto const errorMsg = GetCredentialName() + "AAA: \"" + e.what() + '\"';
-        IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
-      }
-      try
-      {
-        auto const result = RunShellCommand("az account show", m_cliProcessTimeout, context);
-        IdentityLog::Write(
-            IdentityLog::Level::Warning,
-            GetCredentialName() + " !!! AZ account show !!! " + result);
-      }
-      catch (std::exception const& e)
-      {
-        auto const errorMsg = GetCredentialName() + "BBB: \"" + e.what() + '\"';
-        IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
-      }
-      try
-      {
-        auto const result
-            = RunShellCommand("az account list --debug", m_cliProcessTimeout, context);
-        IdentityLog::Write(
-            IdentityLog::Level::Warning,
-            GetCredentialName() + " !!! AZ account list !!! " + result);
-
-        std::string configDirValue = Environment::GetVariable("AZURE_CONFIG_DIR");
-        if (!configDirValue.empty())
-        {
-          IdentityLog::Write(
-              IdentityLog::Level::Warning,
-              GetCredentialName() + " !!! AZURE_CONFIG_DIR !!! " + configDirValue);
-        }
-        else
-        {
-          IdentityLog::Write(
-              IdentityLog::Level::Warning,
-              GetCredentialName() + " !!! AZURE_CONFIG_DIR !!! not set");
-        }
-      }
-      catch (std::exception const& e)
-      {
-        auto const errorMsg = GetCredentialName() + "CCC: \"" + e.what() + '\"';
-        IdentityLog::Write(IdentityLog::Level::Warning, errorMsg);
-      }
-
       auto const azCliResult = RunShellCommand(command, m_cliProcessTimeout, context);
 
       try
