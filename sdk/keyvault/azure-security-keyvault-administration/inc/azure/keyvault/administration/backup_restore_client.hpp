@@ -24,8 +24,13 @@ using namespace Azure::Security::KeyVault::Administration::Models;
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   namespace Models {
+    /*
+     * @brief The backup / restore long running operation.
+     * @remark Forward definition of BackupRestoreOperation.
+     * 
+     */
     class BackupRestoreOperation;
-  }
+  } // namespace Models
   /**
    * @brief Backup restore client.
    *
@@ -146,7 +151,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
   namespace Models {
     /*
-     * @brief The backup / restore long running operation.
+     * @brief BackupRestoreOperation : The backup / restore long running operation.
      *
      */
     class BackupRestoreOperation final
