@@ -247,7 +247,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * @param permissionKey The permission key of a permission.
      * @param filePermissionFormat Optional. Available for version 2024-11-04 and later. Specifies
      * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
-     * explicityly set to SDDL format, the permission will be
+     * explicitly set to SDDL format, the permission will be
      * returned in SDDL format.
      * @param options Optional parameters to get share's permission.
      * @param context Context for cancelling long running operations.
