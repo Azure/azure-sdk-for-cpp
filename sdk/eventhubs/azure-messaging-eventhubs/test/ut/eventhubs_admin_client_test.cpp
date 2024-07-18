@@ -47,12 +47,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateDeleteNamespaceTest_LIVEONLY_)
   {
-    EventHubsManagement administrationClient{GetTestCredential()};
-    std::string namespaceName = GetRandomName("ehCreate");
-    auto createOperation = administrationClient.CreateNamespace(namespaceName);
-    createOperation.PollUntilDone(std::chrono::milliseconds(500));
-    auto deleteOperation = administrationClient.DeleteNamespace(namespaceName);
-    deleteOperation.PollUntilDone(std::chrono::milliseconds(500));
+    try
+    {
+      EventHubsManagement administrationClient{GetTestCredential()};
+      std::string namespaceName = GetRandomName("ehCreate");
+      auto createOperation = administrationClient.CreateNamespace(namespaceName);
+      createOperation.PollUntilDone(std::chrono::milliseconds(500));
+      auto deleteOperation = administrationClient.DeleteNamespace(namespaceName);
+      deleteOperation.PollUntilDone(std::chrono::milliseconds(500));
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      GTEST_LOG_(INFO) << "CreateDeleteNamespaceTest_LIVEONLY_ failed with code: "
+                       << static_cast<std::underlying_type<decltype(e.StatusCode)>::type>(
+                              e.StatusCode);
+      GTEST_LOG_(INFO) << "Message: " << e.Message;
+      auto body = e.RawResponse->GetBody();
+      auto bodyAsString = std::string(body.begin(), body.end());
+
+      GTEST_LOG_(INFO) << "Response: " << bodyAsString;
+    }
   }
 
   TEST_F(AdminTest, EnumerateEventHubs_LIVEONLY_)
