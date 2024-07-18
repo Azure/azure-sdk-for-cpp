@@ -283,6 +283,7 @@ jobs:
       env:
         # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
+        AZURE_CONFIG_DIR: 'D:\a\_work\_temp\.azclitask'
 
   - ${{ else }}:
     - bash: |
