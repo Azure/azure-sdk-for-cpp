@@ -26,6 +26,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         m_subscriptionId{
             Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_SUBSCRIPTION_ID")}
   {
+    SetUp();
+
     Azure::Core::_internal::ClientOptions options;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
 
