@@ -47,12 +47,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateDeleteNamespaceTest_LIVEONLY_)
   {
+    EventHubsManagement administrationClient{GetTestCredential()};
+    std::string namespaceName = GetRandomName("ehCreate");
+    auto createOperation = administrationClient.CreateNamespace(namespaceName);
+    createOperation.PollUntilDone(std::chrono::milliseconds(500));
     try
     {
-      EventHubsManagement administrationClient{GetTestCredential()};
-      std::string namespaceName = GetRandomName("ehCreate");
-      auto createOperation = administrationClient.CreateNamespace(namespaceName);
-      createOperation.PollUntilDone(std::chrono::milliseconds(500));
       auto deleteOperation = administrationClient.DeleteNamespace(namespaceName);
       deleteOperation.PollUntilDone(std::chrono::milliseconds(500));
     }
