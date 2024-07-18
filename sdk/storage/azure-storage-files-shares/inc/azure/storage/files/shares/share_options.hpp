@@ -14,8 +14,7 @@
 #include <string>
 #include <vector>
 
-/* cSpell:ignore dacl, sddl*/
-
+// cspell:ignore dacl sddl
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
