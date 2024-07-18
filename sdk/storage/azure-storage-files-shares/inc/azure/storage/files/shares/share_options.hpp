@@ -312,7 +312,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   struct CreateSharePermissionOptions final
   {
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models::FilePermissionFormat> FilePermissionFormat;
   };
@@ -392,7 +395,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
 
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
@@ -453,7 +459,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
 
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
@@ -493,7 +502,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> FilePermission;
 
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
   };
@@ -615,7 +627,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> Permission;
 
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
@@ -753,7 +768,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<std::string> Permission;
 
     /**
-     * Format of Permission.
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicityly set to SDDL format format, the permission will be
+     * returned in SSDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
