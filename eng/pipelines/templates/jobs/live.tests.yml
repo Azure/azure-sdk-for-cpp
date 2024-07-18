@@ -252,6 +252,10 @@ jobs:
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          Write-Host "Run env:AZURE_CONFIG_DIR"
+          $env:AZURE_CONFIG_DIR
+          Write-Host "Remove env:AZURE_CONFIG_DIR"
+          $env:AZURE_CONFIG_DIR=''
           Write-Host "Where is az CLI located"
           (Get-Command az).Path
           Write-Host "Check az CLI version"
@@ -262,8 +266,6 @@ jobs:
           az account list --debug
           Write-Host "Run az account get-access-token --output none --debug --verbose"
           az account get-access-token --output none --debug --verbose
-          Write-Host "Run env:AZURE_CONFIG_DIR"
-          $env:AZURE_CONFIG_DIR
           Write-Host "Run Get-ChildItem env:"
           Get-ChildItem env:
           if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
@@ -283,7 +285,7 @@ jobs:
       env:
         # SYSTEM_ACCESSTOKEN: $(System.AccessToken)
         ${{ insert }}: ${{ parameters.EnvVars }}
-        AZURE_CONFIG_DIR: 'C:\customAzureCli'
+        # AZURE_CONFIG_DIR: 'C:\customAzureCli'
 
   - ${{ else }}:
     - bash: |

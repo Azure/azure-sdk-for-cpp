@@ -89,7 +89,9 @@ jobs:
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
 
-  - script: cmake --version
+  - script: |
+      cmake --version
+      set AZURE_CONFIG_DIR=
     displayName: cmake --version
 
   - ${{ each artifact in parameters.Artifacts }}:
