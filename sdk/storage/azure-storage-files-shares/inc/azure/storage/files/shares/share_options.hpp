@@ -325,6 +325,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct GetSharePermissionOptions final
   {
+    /**
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If filePermissionKeyFormat is unspecified or
+     * explicitly set to SDDL format, the permission will be
+     * returned in SDDL format.
+     */
+    Nullable<Models::FilePermissionFormat> FilePermissionFormat;
   };
 
   /**

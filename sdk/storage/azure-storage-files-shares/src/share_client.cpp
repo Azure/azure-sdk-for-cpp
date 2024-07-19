@@ -332,34 +332,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePermissionOptions& options,
       const Azure::Core::Context& context) const
   {
-    (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
     protocolLayerOptions.FilePermissionKey = permissionKey;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto result = _detail::ShareClient::GetPermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
 
     return Azure::Response<std::string>(result.Value.Permission, std::move(result.RawResponse));
-  }
-
-  Azure::Response<Models::ShareFilePermission> ShareClient::GetPermission(
-      const std::string& permissionKey,
-      const Nullable<Models::FilePermissionFormat> filePermissionFormat,
-      const GetSharePermissionOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    (void)options;
-    auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
-    protocolLayerOptions.FilePermissionKey = permissionKey;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
-    protocolLayerOptions.FilePermissionFormat = filePermissionFormat;
-    auto result = _detail::ShareClient::GetPermission(
-        *m_pipeline, m_shareUrl, protocolLayerOptions, context);
-    Models::ShareFilePermission ret;
-    ret.Permission = std::move(result.Value.Permission);
-    ret.PermissionFormat = result.Value.Format;
-    return Azure::Response<Models::ShareFilePermission>(
-        std::move(ret), std::move(result.RawResponse));
   }
 
 }}}} // namespace Azure::Storage::Files::Shares

@@ -1232,13 +1232,16 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareDirectoryClientTest, FilePermissionFormat_PLAYBACKONLY_)
   {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto binaryPermission = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+                            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
+                            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+                            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
     // sddl format
     {
-      auto sddlPermission
-          = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
-            "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-"
-            "626881126-"
-            "188441444-3053964)S:NO_ACCESS_CONTROL";
       auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
 
       // Set Properties
@@ -1249,10 +1252,10 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::Models::FileSmbProperties(), setOptions);
       auto permissionKey
           = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey.Value();
-      auto permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(sddlPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
 
       // Rename File
       auto sourceFileName = LowercaseRandomString();
@@ -1267,10 +1270,8 @@ namespace Azure { namespace Storage { namespace Test {
                     sourceFileName, m_directoryName + "/" + LowercaseRandomString(), renameOptions)
                 .Value;
       permissionKey = destFileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
-      permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(sddlPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
 
       // Rename Subdirectory
       auto sourceDirectoryName = LowercaseRandomString();
@@ -1287,18 +1288,11 @@ namespace Azure { namespace Storage { namespace Test {
                                          renameDirOptions)
                                      .Value;
       permissionKey = destDirectoryClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
-      permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(sddlPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
     }
     // binary format
     {
-      auto binaryPermission
-          = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
-            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
-            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
-            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
       auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
       // Set Properties
       Files::Shares::SetDirectoryPropertiesOptions setOptions;
@@ -1308,10 +1302,10 @@ namespace Azure { namespace Storage { namespace Test {
           Files::Shares::Models::FileSmbProperties(), setOptions);
       auto permissionKey
           = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey.Value();
-      auto permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(binaryPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
 
       // Rename File
       auto sourceFileName = LowercaseRandomString();
@@ -1326,10 +1320,8 @@ namespace Azure { namespace Storage { namespace Test {
                     sourceFileName, m_directoryName + "/" + LowercaseRandomString(), renameOptions)
                 .Value;
       permissionKey = destFileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
-      permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(binaryPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
 
       // Rename Subdirectory
       auto sourceDirectoryName = LowercaseRandomString();
@@ -1346,10 +1338,8 @@ namespace Azure { namespace Storage { namespace Test {
                                          renameDirOptions)
                                      .Value;
       permissionKey = destDirectoryClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
-      permission = m_shareClient->GetPermission(permissionKey, permissionFormat).Value;
-      EXPECT_EQ(binaryPermission, permission.Permission);
-      EXPECT_TRUE(permission.PermissionFormat.HasValue());
-      EXPECT_EQ(permissionFormat, permission.PermissionFormat.Value());
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
     }
   }
 }}} // namespace Azure::Storage::Test
