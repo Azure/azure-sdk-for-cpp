@@ -34,12 +34,6 @@ extends:
       Clouds: Preview
       SupportedClouds: Preview
       UseFederatedAuth: true
-      CloudConfig:
-        Preview:
-          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources-preview)
-          ServiceConnection: azure-sdk-tests
-          SubscriptionConfigurationFilePaths:
-            - eng/common/TestResources/sub-config/AzurePublicMsft.json
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common
