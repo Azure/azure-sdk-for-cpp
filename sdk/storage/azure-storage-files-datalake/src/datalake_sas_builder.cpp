@@ -306,4 +306,62 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
+  std::string DataLakeSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  {
+    std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
+    if (Resource == DataLakeSasResource::File)
+    {
+      canonicalName += "/" + Path;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = DataLakeSasResourceToString(Resource);
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
+        + SasVersion + "\n" + resource + "\n" + "\n" + EncryptionScope + "\n" + CacheControl + "\n"
+        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+  }
+
+  std::string DataLakeSasBuilder::GenerateStringToSign(
+      const Blobs::Models::UserDelegationKey& userDelegationKey,
+      const std::string& accountName)
+  {
+    std::string canonicalName = "/blob/" + accountName + "/" + FileSystemName;
+    if (Resource == DataLakeSasResource::File || Resource == DataLakeSasResource::Directory)
+    {
+      canonicalName += "/" + Path;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = DataLakeSasResourceToString(Resource);
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = ExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
+        + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
+        + "\n" + userDelegationKey.SignedVersion + "\n" + PreauthorizedAgentObjectId + "\n"
+        + AgentObjectId + "\n" + CorrelationId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
+        + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + "\n" + EncryptionScope
+        + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n"
+        + ContentLanguage + "\n" + ContentType;
+  }
+
 }}} // namespace Azure::Storage::Sas

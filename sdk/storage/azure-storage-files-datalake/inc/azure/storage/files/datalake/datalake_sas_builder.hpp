@@ -341,6 +341,29 @@ namespace Azure { namespace Storage { namespace Sas {
         const Files::DataLake::Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
+    /**
+     * @brief For debugging purposes only.
+     *
+     * @param credential
+     * The storage account's shared key credential.
+     * @return Returns the string to sign that will be used to generate the signature for the SAS
+     * URL.
+     */
+    std::string GenerateStringToSign(const StorageSharedKeyCredential& credential);
+
+    /**
+     * @brief For debugging purposes only.
+     *
+     * @param userDelegationKey UserDelegationKey returned from
+     * BlobServiceClient.GetUserDelegationKey.
+     * @param accountName The name of the storage account.
+     * @return Returns the string to sign that will be used to generate the signature for the SAS
+     * URL.
+     */
+    std::string GenerateStringToSign(
+        const Blobs::Models::UserDelegationKey& userDelegationKey,
+        const std::string& accountName);
+
   private:
     std::string Permissions;
   };
