@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @return Returns the string to sign that will be used to generate the signature for the SAS
      * URL.
      */
-    std::string GenerateStringToSign(const StorageSharedKeyCredential& credential);
+    [[deprecated]] std::string GenerateStringToSign(const StorageSharedKeyCredential& credential);
 
     /**
      * @brief For debugging purposes only.
@@ -346,7 +346,7 @@ namespace Azure { namespace Storage { namespace Sas {
      * @return Returns the string to sign that will be used to generate the signature for the SAS
      * URL.
      */
-    std::string GenerateStringToSign(
+    [[deprecated]] std::string GenerateStringToSign(
         const Blobs::Models::UserDelegationKey& userDelegationKey,
         const std::string& accountName);
 
