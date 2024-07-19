@@ -57,14 +57,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::shared_ptr<BackupClient> const& backupClient,
         BackupOperationStatus const& status,
         bool isBackupOperation)
-        : m_backupClient{backupClient}, m_value{status},
-          m_continuationToken{status.JobId}, m_isBackupOperation{isBackupOperation} {};
+        : m_backupClient{backupClient}, m_value{status}, m_continuationToken{status.JobId},
+          m_isBackupOperation{isBackupOperation} {};
     /**
      * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
      * because a KeyVaultPipelne is required and it is not exposed to customers.
      * @param backupClient A BackupClient that is used for getting status updates.
      * @param continuationToken A string that is used to resume the operation.
-     * Since C++ doesn't offer `internal` access, we use friends-only instead.
+     * @param isBackupOperation A boolean indicating if the operation is a backup operation or a
+     * restore.
      */
     BackupOperation(
         std::shared_ptr<BackupClient> const& backupClient,

@@ -99,8 +99,7 @@ Azure::Response<BackupOperation> BackupClient::FullBackup(
   }
 
   BackupOperationStatus response = DeserializeBackupOperationStatus(*rawResponse);
-  BackupOperation operation(
-      std::make_shared<BackupClient>(*this), std::move(response), true);
+  BackupOperation operation(std::make_shared<BackupClient>(*this), std::move(response), true);
   return Response<BackupOperation>(std::move(operation), std::move(rawResponse));
 }
 
@@ -183,8 +182,7 @@ Azure::Response<BackupOperation> BackupClient::FullRestore(
   }
 
   BackupOperationStatus response = DeserializeBackupOperationStatus(*rawResponse);
-  BackupOperation operation(
-      std::make_shared<BackupClient>(*this), std::move(response), false);
+  BackupOperation operation(std::make_shared<BackupClient>(*this), std::move(response), false);
   return Response<BackupOperation>(std::move(operation), std::move(rawResponse));
 }
 
@@ -266,8 +264,7 @@ Azure::Response<BackupOperation> BackupClient::SelectiveKeyRestore(
   }
 
   BackupOperationStatus response = DeserializeBackupOperationStatus(*rawResponse);
-  BackupOperation operation(
-      std::make_shared<BackupClient>(*this), std::move(response), false);
+  BackupOperation operation(std::make_shared<BackupClient>(*this), std::move(response), false);
   return Response<BackupOperation>(std::move(operation), std::move(rawResponse));
 }
 
