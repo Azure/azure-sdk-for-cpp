@@ -49,7 +49,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * because a KeyVaultPipelne is required and it is not exposed to customers.
      *
      * @param backupRestoreClient A #BackupRestoreClient that is used for getting status updates.
-     * @param response A #BackupRestoreOperationStatus object.
+     * @param status A #BackupRestoreOperationStatus object.
      * @param isBackupOperation A boolean indicating if the operation is a backup operation or a
      * restore.
      */
