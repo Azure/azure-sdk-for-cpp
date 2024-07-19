@@ -245,7 +245,7 @@ jobs:
       # For example keyvault-samples.txt.
       # The file is written by CMake during configuration when building samples.
     - task: AzureCLI@2
-      displayName: "Run Samples with AzureCli for : ${{ parameters.ServiceDirectory }}"
+      displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
       condition: and(succeeded(), eq(variables['RunSamples'], '1'))
       inputs:
         azureSubscription: ${{ parameters.CloudConfig.ServiceConnection }}
