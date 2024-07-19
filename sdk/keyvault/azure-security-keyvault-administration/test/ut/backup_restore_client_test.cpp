@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/keyvault/administration/backup_restore_client.hpp"
+#include "azure/keyvault/administration/backup_client.hpp"
 #include "backup_restore_client_base_test.hpp"
 
 #include <azure/core/base64.hpp>

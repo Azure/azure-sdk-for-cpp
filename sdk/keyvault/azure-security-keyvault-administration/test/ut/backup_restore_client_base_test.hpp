@@ -29,10 +29,10 @@ namespace Azure {
     BackupRestoreClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
     void CreateHSMClientForTest(std::string hsmUrl = "")
     {
-      BackupRestoreClientOptions options;
+      BackupClientOptions options;
       m_client = InitTestClient<
-          Azure::Security::KeyVault::Administration::BackupRestoreClient,
-          Azure::Security::KeyVault::Administration::Models::BackupRestoreClientOptions>(
+          Azure::Security::KeyVault::Administration::BackupClient,
+          Azure::Security::KeyVault::Administration::Models::BackupClientOptions>(
           hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
 
@@ -49,7 +49,7 @@ namespace Azure {
     }
 
   private:
-    std::unique_ptr<Azure::Security::KeyVault::Administration::BackupRestoreClient> m_client;
+    std::unique_ptr<Azure::Security::KeyVault::Administration::BackupClient> m_client;
 
   protected:
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
@@ -68,7 +68,7 @@ namespace Azure {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
 
-    Azure::Security::KeyVault::Administration::BackupRestoreClient& GetClientForTest(
+    Azure::Security::KeyVault::Administration::BackupClient& GetClientForTest(
         std::string const& testName)
     {
       // set the interceptor for the current test
@@ -84,13 +84,13 @@ namespace Azure {
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 
       // Options and credential for the client
-      BackupRestoreClientOptions options;
+      BackupClientOptions options;
       m_credential = GetTestCredential();
 
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
-          Azure::Security::KeyVault::Administration::BackupRestoreClient,
-          Azure::Security::KeyVault::Administration::Models::BackupRestoreClientOptions>(
+          Azure::Security::KeyVault::Administration::BackupClient,
+          Azure::Security::KeyVault::Administration::Models::BackupClientOptions>(
           m_keyVaultUrl, m_credential, options);
 
       UpdateWaitingTime(m_testPollingIntervalMs);

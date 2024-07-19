@@ -78,7 +78,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Define the options to create an SDK Keys client.
      *
      */
-    struct BackupRestoreClientOptions final : public Azure::Core::_internal::ClientOptions
+    struct BackupClientOptions final : public Azure::Core::_internal::ClientOptions
     {
       /**
        * @brief Service Version used.
@@ -109,7 +109,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief The full backup operation.
      *
      */
-    struct BackupRestoreOperationStatus final
+    struct BackupOperationStatus final
     {
       /**
        * @brief Status of the backup operation.

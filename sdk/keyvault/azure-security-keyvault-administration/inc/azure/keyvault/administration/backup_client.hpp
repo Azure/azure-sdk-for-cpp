@@ -4,7 +4,7 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #pragma once
-#include "azure/keyvault/administration/backup_restore_operation.hpp"
+#include "azure/keyvault/administration/backup_operation.hpp"
 #include "azure/keyvault/administration/rest_client_models.hpp"
 
 #include <azure/core/context.hpp>
@@ -28,32 +28,32 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
    * @brief Backup restore client.
    *
    */
-  class BackupRestoreClient final {
+  class BackupClient final {
   public:
     /**
      * @brief Destructor.
      *
      */
-    virtual ~BackupRestoreClient() = default;
+    virtual ~BackupClient() = default;
 
     /**
-     * @brief Construct a new BackupRestoreClient object
+     * @brief Construct a new BackupClient object
      *
      * @param vaultUrl The URL address where the client will send the requests to.
      * @param credential The authentication method to use.
      * @param options The options to customize the client behavior.
      */
-    explicit BackupRestoreClient(
+    explicit BackupClient(
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        BackupRestoreClientOptions options = BackupRestoreClientOptions());
+        BackupClientOptions options = BackupClientOptions());
 
     /**
-     * @brief Construct a new BackupRestoreClient object from another key client.
+     * @brief Construct a new BackupClient object from another key client.
      *
-     * @param backupRestoreClient An existing backup restore client.
+     * @param backupClient An existing backup restore client.
      */
-    explicit BackupRestoreClient(BackupRestoreClient const& backupRestoreClient) = default;
+    explicit BackupClient(BackupClient const& backupClient) = default;
 
     /**
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation.
      */
-    Response<BackupRestoreOperation> FullBackup(
+    Response<BackupOperation> FullBackup(
         Azure::Core::Url const& blobContainerUrl,
         SasTokenParameter const& sasToken,
         Core::Context const& context = {});
@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return Backup restore operation status.
      */
-    Response<BackupRestoreOperationStatus> FullBackupStatus(
+    Response<BackupOperationStatus> FullBackupStatus(
         std::string const& jobId,
         Core::Context const& context = {});
 
@@ -95,7 +95,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation.
      */
-    Response<BackupRestoreOperation> FullRestore(
+    Response<BackupOperation> FullRestore(
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
         SasTokenParameter const& sasToken,
@@ -108,7 +108,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation status.
      */
-    Response<BackupRestoreOperationStatus> RestoreStatus(
+    Response<BackupOperationStatus> RestoreStatus(
         std::string const& jobId,
         Core::Context const& context = {});
 
@@ -125,7 +125,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation.
      */
-    Response<BackupRestoreOperation> SelectiveKeyRestore(
+    Response<BackupOperation> SelectiveKeyRestore(
         std::string const& keyName,
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
@@ -138,7 +138,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     std::string m_apiVersion;
     KeyVaultServiceError DeserializeKeyVaultServiceError(
         Azure::Core::Json::_internal::json errorFragment);
-    BackupRestoreOperationStatus DeserializeBackupRestoreOperationStatus(
+    BackupOperationStatus DeserializeBackupOperationStatus(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 

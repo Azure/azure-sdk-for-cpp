@@ -130,13 +130,13 @@ To update the value of any of the the available settings, we will call the Updat
 Setting updatedSetting
    = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
 ```
-## Creating a BackupRestoreClient
+## Creating a BackupClient
 
-To create a new `BackupRestoreClient` to perform these operations, you need the endpoint to an Azure Key Vault HSM and credentials.
+To create a new `BackupClient` to perform these operations, you need the endpoint to an Azure Key Vault HSM and credentials.
 
-Key Vault BackupRestoreClient client for C++ currently supports any `TokenCredential` for authenticating.
+Key Vault BackupClient client for C++ currently supports any `TokenCredential` for authenticating.
 
-```cpp Snippet:SampleBackupRestoreCreateCredential
+```cpp Snippet:SampleBackupCreateCredential
   auto credential
       = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
@@ -145,7 +145,7 @@ Then, in the sample below, you can set `keyVaultUrl` based on an environment var
 
 ```cpp Snippet:SampleAdministration2CreateClient
   // create client
-  BackupRestoreClient client(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+  BackupClient client(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
 ```
 ## Create the SasTokenParameter
 

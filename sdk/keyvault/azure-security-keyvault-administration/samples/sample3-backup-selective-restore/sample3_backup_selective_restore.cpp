@@ -28,7 +28,7 @@ int main()
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  BackupRestoreClient client(
+  BackupClient client(
       Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_HSM_URL"), credential);
   SasTokenParameter sasTokenParameter;
   // the backup/restore needs a SAS token to access the storage account
