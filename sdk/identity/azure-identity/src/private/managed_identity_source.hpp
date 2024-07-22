@@ -23,8 +23,7 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     virtual Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const
-        = 0;
+        Core::Context const& context) const = 0;
 
   protected:
     _detail::TokenCache m_tokenCache;
@@ -44,8 +43,8 @@ namespace Azure { namespace Identity { namespace _detail {
     {
     }
 
-    // std::string const& GetClientId() const { return m_clientId; }
-    // std::string const& GetAuthorityHost() const { return m_authorityHost; }
+    std::string const& GetClientId() const { return m_clientId; }
+    std::string const& GetAuthorityHost() const { return m_authorityHost; }
   };
 
   class AppServiceManagedIdentitySource : public ManagedIdentitySource {
