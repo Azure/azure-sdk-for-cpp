@@ -795,4 +795,98 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
     }
   }
+
+  TEST(SasStringToSignTest, GenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string blobUrl = "https://testAccountName.blob.core.windows.net/container/blob";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // Datalake Sas
+    {
+      Sas::DataLakeSasBuilder datalakeSasBuilder;
+      datalakeSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      datalakeSasBuilder.StartsOn = sasStartsOn;
+      datalakeSasBuilder.ExpiresOn = sasExpiresOn;
+      datalakeSasBuilder.FileSystemName = "filesystem";
+      datalakeSasBuilder.Path = "path";
+      datalakeSasBuilder.Resource = Sas::DataLakeSasResource::File;
+      datalakeSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::Read);
+      auto sasToken = datalakeSasBuilder.GenerateSasToken(*keyCredential);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      auto stringToSign = datalakeSasBuilder.GenerateSasStringToSign(*keyCredential);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+
+    // Datalake User Delegation Sas
+    {
+      Blobs::Models::UserDelegationKey userDelegationKey;
+      userDelegationKey.SignedObjectId = "testSignedObjectId";
+      userDelegationKey.SignedTenantId = "testSignedTenantId";
+      userDelegationKey.SignedStartsOn = sasStartsOn;
+      userDelegationKey.SignedExpiresOn = sasExpiresOn;
+      userDelegationKey.SignedService = "b";
+      userDelegationKey.SignedVersion = "2020-08-04";
+      userDelegationKey.Value = accountKey;
+
+      Sas::DataLakeSasBuilder datalakeSasBuilder;
+      datalakeSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      datalakeSasBuilder.StartsOn = sasStartsOn;
+      datalakeSasBuilder.ExpiresOn = sasExpiresOn;
+      datalakeSasBuilder.FileSystemName = "container";
+      datalakeSasBuilder.Path = "blob";
+      datalakeSasBuilder.Resource = Sas::DataLakeSasResource::File;
+      datalakeSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::Read);
+      auto sasToken = datalakeSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      auto stringToSign
+          = datalakeSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
 }}} // namespace Azure::Storage::Test

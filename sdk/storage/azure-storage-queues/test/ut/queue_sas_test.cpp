@@ -349,4 +349,49 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST(SasStringToSignTest, GenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string queueUrl = "https://testAccountName.queue.core.windows.net/container/blob";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // Share Sas
+    {
+      Sas::QueueSasBuilder queueSasBuilder;
+      queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      queueSasBuilder.StartsOn = sasStartsOn;
+      queueSasBuilder.ExpiresOn = sasExpiresOn;
+      queueSasBuilder.QueueName = "share";
+      queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::Read);
+      auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(queueUrl + sasToken).GetQueryParameters().find("sig")->second);
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+      auto stringToSign = queueSasBuilder.GenerateSasStringToSign(*keyCredential);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test
