@@ -176,6 +176,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
     explicit ImdsManagedIdentitySource(
         std::string const& clientId,
+        Azure::Core::Url const& imdsUrl,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:

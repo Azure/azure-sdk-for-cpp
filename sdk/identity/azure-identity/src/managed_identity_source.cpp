@@ -449,35 +449,40 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
       credName + " will be created" + WithSourceMessage("Azure Instance Metadata Service")
           + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
-  return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(clientId, options));
+  std::string imdsHost = "http://169.254.169.254";
+  std::string customImdsHost = Environment::GetVariable("AZURE_IMDS_CUSTOM_AUTHORITY_HOST");
+  if (!customImdsHost.empty())
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, "Custom IMDS host is set to: " + customImdsHost);
+    imdsHost = customImdsHost;
+  }
+  Azure::Core::Url imdsUrl(imdsHost);
+  imdsUrl.AppendPath("/metadata/identity/oauth2/token");
+
+  return std::unique_ptr<ManagedIdentitySource>(
+      new ImdsManagedIdentitySource(clientId, imdsUrl, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
+    Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("http://169.254.169.254/metadata/identity/oauth2/token"))
+      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(imdsUrl))
 {
-  const std::string defaultImdsHost = "http://169.254.169.254";
-
-  std::string customImdsHost = Environment::GetVariable("AZURE_IMDS_CUSTOM_AUTHORITY_HOST");
-  Azure::Core::Url url(customImdsHost.empty() ? defaultImdsHost : customImdsHost);
-  url.AppendPath("/metadata/identity/oauth2/token");
-  if (!customImdsHost.empty())
   {
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, "Custom IMDS host is set to " + customImdsHost + ".\n");
+    using Azure::Core::Url;
+    auto& url = m_request.GetUrl();
+
+    url.AppendQueryParameter("api-version", "2018-02-01");
+
+    if (!clientId.empty())
+    {
+      url.AppendQueryParameter("client_id", clientId);
+    }
   }
 
-  url.AppendQueryParameter("api-version", "2018-02-01");
-  if (!clientId.empty())
-  {
-    url.AppendQueryParameter("client_id", clientId);
-  }
-
-  m_request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
   m_request.SetHeader("Metadata", "true");
 }
 
