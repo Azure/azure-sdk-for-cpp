@@ -4113,12 +4113,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
       }
-      if (options.FilePermissionFormat.HasValue()
-          && !options.FilePermissionFormat.Value().ToString().empty())
-      {
-        request.SetHeader(
-            "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
-      }
       if (options.FilePermissionKey.HasValue() && !options.FilePermissionKey.Value().empty())
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());

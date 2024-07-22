@@ -2680,7 +2680,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         std::string CopySource;
         Nullable<std::string> FilePermission;
-        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         Nullable<Models::PermissionCopyMode> FilePermissionCopyMode;
         Nullable<bool> IgnoreReadOnly;
