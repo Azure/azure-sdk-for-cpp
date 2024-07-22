@@ -818,7 +818,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = datalakeSasBuilder.GenerateSasToken(*keyCredential);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = datalakeSasBuilder.GenerateStringToSign(*keyCredential);
+      auto stringToSign = datalakeSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));
@@ -847,7 +847,8 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = datalakeSasBuilder.GenerateSasToken(userDelegationKey, accountName);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = datalakeSasBuilder.GenerateStringToSign(userDelegationKey, accountName);
+      auto stringToSign
+          = datalakeSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));

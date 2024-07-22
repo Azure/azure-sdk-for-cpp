@@ -793,7 +793,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = accountSasBuilder.GenerateStringToSign(*keyCredential);
+      auto stringToSign = accountSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));
@@ -813,7 +813,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = blobSasBuilder.GenerateStringToSign(*keyCredential);
+      auto stringToSign = blobSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));
@@ -842,7 +842,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = blobSasBuilder.GenerateStringToSign(userDelegationKey, accountName);
+      auto stringToSign = blobSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));

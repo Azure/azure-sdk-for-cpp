@@ -144,7 +144,8 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string AccountSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  std::string AccountSasBuilder::GenerateSasStringToSign(
+      const StorageSharedKeyCredential& credential)
   {
     std::string protocol = _detail::SasProtocolToString(Protocol);
 

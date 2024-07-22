@@ -323,7 +323,7 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string BlobSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  std::string BlobSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
@@ -360,7 +360,7 @@ namespace Azure { namespace Storage { namespace Sas {
         + "\n" + ContentType;
   }
 
-  std::string BlobSasBuilder::GenerateStringToSign(
+  std::string BlobSasBuilder::GenerateSasStringToSign(
       const Blobs::Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {

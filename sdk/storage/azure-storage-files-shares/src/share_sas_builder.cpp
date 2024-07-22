@@ -157,7 +157,7 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string ShareSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  std::string ShareSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/file/" + credential.AccountName + "/" + ShareName;
     if (Resource == ShareSasResource::File)

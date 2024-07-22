@@ -306,7 +306,8 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string DataLakeSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  std::string DataLakeSasBuilder::GenerateSasStringToSign(
+      const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + FileSystemName;
     if (Resource == DataLakeSasResource::File)
@@ -331,7 +332,7 @@ namespace Azure { namespace Storage { namespace Sas {
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
   }
 
-  std::string DataLakeSasBuilder::GenerateStringToSign(
+  std::string DataLakeSasBuilder::GenerateSasStringToSign(
       const Blobs::Models::UserDelegationKey& userDelegationKey,
       const std::string& accountName)
   {

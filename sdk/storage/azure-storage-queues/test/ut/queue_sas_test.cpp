@@ -369,7 +369,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(queueUrl + sasToken).GetQueryParameters().find("sig")->second);
-      auto stringToSign = queueSasBuilder.GenerateStringToSign(*keyCredential);
+      auto stringToSign = queueSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
           std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
           Azure::Core::Convert::Base64Decode(accountKey)));

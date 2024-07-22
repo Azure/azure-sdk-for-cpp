@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
-  std::string QueueSasBuilder::GenerateStringToSign(const StorageSharedKeyCredential& credential)
+  std::string QueueSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/queue/" + credential.AccountName + "/" + QueueName;
 
