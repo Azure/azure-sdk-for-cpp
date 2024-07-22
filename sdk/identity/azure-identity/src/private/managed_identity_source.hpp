@@ -67,7 +67,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
-        std::string const& resouceId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options,
         char const* endpointVarName,
         char const* secretVarName,

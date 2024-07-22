@@ -140,7 +140,7 @@ template <typename T>
 std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
-    std::string const& resouceId,
+    std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     char const* endpointVarName,
     char const* secretVarName,
@@ -155,7 +155,7 @@ std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
   {
     return std::unique_ptr<ManagedIdentitySource>(new T(
         clientId,
-        resouceId,
+        resourceId,
         options,
         ParseEndpointUrl(credName, msiEndpoint, endpointVarName, credSource),
         msiSecret));
