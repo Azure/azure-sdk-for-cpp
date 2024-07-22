@@ -31,7 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
   void XmlGlobalInitialize() {}
   void XmlGlobalDeinitialize() {}
 
-  struct XmlReaderContext
+  struct XmlReader::XmlReaderContext
   {
     XmlReaderContext()
     {
@@ -99,20 +99,14 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Unsupported xml encoding.");
     }
 
-    m_context = context.release();
+    m_context = std::move(context);
   }
 
-  XmlReader::~XmlReader()
-  {
-    if (m_context)
-    {
-      delete static_cast<XmlReaderContext*>(m_context);
-    }
-  }
+  XmlReader::~XmlReader() {}
 
   XmlNode XmlReader::Read()
   {
-    auto context = static_cast<XmlReaderContext*>(m_context);
+    auto& context = m_context;
 
     auto moveToNext = [&]() {
       HRESULT ret = WsReadNode(context->reader, context->error);
@@ -222,7 +216,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
   }
 
-  struct XmlWriterContext
+  struct XmlWriter::XmlWriterContext
   {
     XmlWriterContext()
     {
@@ -276,20 +270,14 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to initialize xml writer.");
     }
 
-    m_context = context.release();
+    m_context = std::move(context);
   }
 
-  XmlWriter::~XmlWriter()
-  {
-    if (m_context)
-    {
-      delete static_cast<XmlWriterContext*>(m_context);
-    }
-  }
+  XmlWriter::~XmlWriter() {}
 
   void XmlWriter::Write(XmlNode node)
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
+    auto& context = m_context;
     if (node.Type == XmlNodeType::StartTag)
     {
       if (node.HasValue)
@@ -363,7 +351,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string XmlWriter::GetDocument()
   {
-    auto context = static_cast<XmlWriterContext*>(m_context);
+    auto& context = m_context;
 
     BOOL boolValueTrue = TRUE;
     WS_XML_WRITER_PROPERTY writerProperty[2];
