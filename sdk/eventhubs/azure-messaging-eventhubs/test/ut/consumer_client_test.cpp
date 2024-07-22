@@ -303,7 +303,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     return name;
   }
 
-  TEST_P(ConsumerClientTest, DISABLED_RetrieveMultipleEvents)
+  TEST_P(ConsumerClientTest, RetrieveMultipleEvents)
   {
     // This test depends on being able to create a new eventhub instance, so skip it on the
     // emulator.
@@ -313,7 +313,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     // Disabled test for now.
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
     std::string eventHubName{GetRandomName("eventhub")};
@@ -385,12 +385,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_EQ(totalReceived, numberOfEvents);
 
       // We have consumed all the events. Attempting to consume one more should block.
-      {
-        Azure::Core::Context timeout = Azure::Core::Context::ApplicationContext.WithDeadline(
-            Azure::DateTime::clock::now() + std::chrono::seconds(3));
-        EXPECT_THROW(
-            partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
-      }
+      Azure::Core::Context timeout{Azure::DateTime::clock::now() + std::chrono::seconds(3)};
+      EXPECT_THROW(
+          partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
     }
     eventhubNamespace.DeleteEventHub(eventHubName);
   }
