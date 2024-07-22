@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
+- Added support for customizing the IMDS endpoint within `ManagedIdentityCredential`.
 
 ### Breaking Changes
 

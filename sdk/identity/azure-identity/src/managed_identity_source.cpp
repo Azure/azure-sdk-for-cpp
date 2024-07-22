@@ -460,18 +460,24 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
           Azure::Core::Http::HttpMethod::Get,
           Azure::Core::Url("http://169.254.169.254/metadata/identity/oauth2/token"))
 {
+  const std::string defaultImdsHost = "http://169.254.169.254";
+
+  std::string customImdsHost = Environment::GetVariable("AZURE_IMDS_CUSTOM_AUTHORITY_HOST");
+  Azure::Core::Url url(customImdsHost.empty() ? defaultImdsHost : customImdsHost);
+  url.AppendPath("/metadata/identity/oauth2/token");
+  if (!customImdsHost.empty())
   {
-    using Azure::Core::Url;
-    auto& url = m_request.GetUrl();
-
-    url.AppendQueryParameter("api-version", "2018-02-01");
-
-    if (!clientId.empty())
-    {
-      url.AppendQueryParameter("client_id", clientId);
-    }
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, "Custom IMDS host is set to " + customImdsHost + ".\n");
   }
 
+  url.AppendQueryParameter("api-version", "2018-02-01");
+  if (!clientId.empty())
+  {
+    url.AppendQueryParameter("client_id", clientId);
+  }
+
+  m_request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
   m_request.SetHeader("Metadata", "true");
 }
 
