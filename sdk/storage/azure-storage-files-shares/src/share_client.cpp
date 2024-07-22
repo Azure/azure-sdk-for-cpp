@@ -321,6 +321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::CreateSharePermissionOptions();
     protocolLayerOptions.SharePermission.Permission = permission;
+    protocolLayerOptions.SharePermission.Format = options.FilePermissionFormat;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::CreatePermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
@@ -331,10 +332,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePermissionOptions& options,
       const Azure::Core::Context& context) const
   {
-    (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
     protocolLayerOptions.FilePermissionKey = permissionKey;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto result = _detail::ShareClient::GetPermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
 

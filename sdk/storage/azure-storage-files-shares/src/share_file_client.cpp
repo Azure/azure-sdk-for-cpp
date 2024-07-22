@@ -217,6 +217,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto result
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
@@ -541,6 +542,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
 
     return _detail::FileClient::SetHttpHeaders(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);

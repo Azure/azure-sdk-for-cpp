@@ -780,4 +780,46 @@ namespace Azure { namespace Storage { namespace Test {
         properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
         && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
   }
+
+  TEST_F(FileShareClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto binaryPermission = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+                            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
+                            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+                            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+    // sddl format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      Files::Shares::CreateSharePermissionOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      auto permissionKey
+          = m_shareClient->CreatePermission(sddlPermission, options).Value.FilePermissionKey;
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+      getOptions.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+    }
+    // binary format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      Files::Shares::CreateSharePermissionOptions options;
+      options.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto permissionKey
+          = m_shareClient->CreatePermission(binaryPermission, options).Value.FilePermissionKey;
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+      getOptions.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+    }
+  }
 }}} // namespace Azure::Storage::Test
