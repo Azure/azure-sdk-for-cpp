@@ -157,6 +157,10 @@ jobs:
           parameters:
             ContinueOnError: false
 
+        # Install Python on the machine for verify-path-length script.
+        - task: UsePythonVersion@0
+          displayName: Install Python Version
+
         # Base Path Length calculated based on Visual Studio's defaults for projects.
         # By default, Visual Studio puts projects in a folder structure like this:
         # C:\Users\<username>\source\repos\<project>. That is 34 characters before project.
