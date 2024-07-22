@@ -19,7 +19,7 @@ int main()
     Azure::Service::Client azureServiceClient("serviceUrl", environmentCredential);
 
     // Step 3: Start using the Azure Service Client.
-    azureServiceClient.DoSomething(Azure::Core::Context::ApplicationContext);
+    azureServiceClient.DoSomething();
 
     std::cout << "Success!" << std::endl;
   }

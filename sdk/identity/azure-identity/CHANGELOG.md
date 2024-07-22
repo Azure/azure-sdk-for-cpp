@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
+
 ### Breaking Changes
 
 ### Bugs Fixed

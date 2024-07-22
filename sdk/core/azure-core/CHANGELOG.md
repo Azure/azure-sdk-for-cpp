@@ -1,15 +1,32 @@
 # Release History
 
+## 1.14.0-beta.1 (Unreleased)
+
+### Features Added
+
+- Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
+ 
+### Breaking Changes
+
+- Deprecated the `Azure::Core::Context::ApplicationContext` object. 
+  - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(deadline)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(deadline)`.
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.13.0 (2024-07-12)
 
 ### Bugs Fixed
 
-- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket.  (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
+- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket. (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
 
 ### Other Changes
 
 - Updated JSON library to 3.11.3.
-- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version. (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+- [[#5766]](https://github.com/Azure/azure-sdk-for-cpp/pull/5766) Add missing include. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
 
 ### Acknowledgments
 
@@ -17,16 +34,17 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 - Anton Popov _([GitHub](https://github.com/CurtizJ))_
 - AlexYue _([GitHub](https://github.com/ByteYue))_
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
 
 ## 1.13.0-beta.1 (2024-06-06)
 
 ### Bugs Fixed
 
-- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket.  (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
+- [[#5589]](https://github.com/Azure/azure-sdk-for-cpp/pull/5589) Fix possible endless loop while polling curl socket. (A community contribution, courtesy of _[CurtizJ](https://github.com/CurtizJ)_)
 
 ### Other Changes
 
-- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version.  (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
+- [[#5622]](https://github.com/Azure/azure-sdk-for-cpp/pull/5622) Documentation fix for building the SDK with specific OpenSSL version. (A community contribution, courtesy of _[ByteYue](https://github.com/ByteYue)_)
 - [[#5515]](https://github.com/Azure/azure-sdk-for-cpp/issues/5515) Add a `ShouldRetry` virtual method to the retry policy to enable customization of service-specific retry logic.
 
 ### Acknowledgments
