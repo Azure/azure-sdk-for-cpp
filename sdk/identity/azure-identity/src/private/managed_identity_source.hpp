@@ -23,7 +23,8 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     virtual Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const = 0;
+        Core::Context const& context) const
+        = 0;
 
   protected:
     _detail::TokenCache m_tokenCache;
@@ -43,8 +44,8 @@ namespace Azure { namespace Identity { namespace _detail {
     {
     }
 
-    std::string const& GetClientId() const { return m_clientId; }
-    std::string const& GetAuthorityHost() const { return m_authorityHost; }
+    // std::string const& GetClientId() const { return m_clientId; }
+    // std::string const& GetAuthorityHost() const { return m_authorityHost; }
   };
 
   class AppServiceManagedIdentitySource : public ManagedIdentitySource {
@@ -54,6 +55,7 @@ namespace Azure { namespace Identity { namespace _detail {
   protected:
     explicit AppServiceManagedIdentitySource(
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl,
         std::string const& secret,
@@ -65,6 +67,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resouceId,
         Core::Credentials::TokenCredentialOptions const& options,
         char const* endpointVarName,
         char const* secretVarName,
@@ -82,11 +85,13 @@ namespace Azure { namespace Identity { namespace _detail {
   private:
     explicit AppServiceV2017ManagedIdentitySource(
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl,
         std::string const& secret)
         : AppServiceManagedIdentitySource(
             clientId,
+            resourceId,
             options,
             endpointUrl,
             secret,
@@ -100,6 +105,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
   };
 
@@ -109,11 +115,13 @@ namespace Azure { namespace Identity { namespace _detail {
   private:
     explicit AppServiceV2019ManagedIdentitySource(
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options,
         Core::Url endpointUrl,
         std::string const& secret)
         : AppServiceManagedIdentitySource(
             clientId,
+            resourceId,
             options,
             endpointUrl,
             secret,
@@ -127,6 +135,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
   };
 
@@ -144,6 +153,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(
@@ -163,6 +173,7 @@ namespace Azure { namespace Identity { namespace _detail {
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(
@@ -176,12 +187,14 @@ namespace Azure { namespace Identity { namespace _detail {
 
     explicit ImdsManagedIdentitySource(
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
         std::string const& credName,
         std::string const& clientId,
+        std::string const& resourceId,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(
