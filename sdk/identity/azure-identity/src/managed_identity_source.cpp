@@ -464,18 +464,28 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
       credName + " will be created" + WithSourceMessage("Azure Instance Metadata Service")
           + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
+  std::string imdsHost = "http://169.254.169.254";
+  std::string customImdsHost = Environment::GetVariable("AZURE_IMDS_CUSTOM_AUTHORITY_HOST");
+  if (!customImdsHost.empty())
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Informational, "Custom IMDS host is set to: " + customImdsHost);
+    imdsHost = customImdsHost;
+  }
+  Azure::Core::Url imdsUrl(imdsHost);
+  imdsUrl.AppendPath("/metadata/identity/oauth2/token");
+
   return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, resourceId, options));
+      new ImdsManagedIdentitySource(clientId, resourceId, imdsUrl, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     std::string const& resourceId,
+    Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("http://169.254.169.254/metadata/identity/oauth2/token"))
+      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
     using Azure::Core::Url;
