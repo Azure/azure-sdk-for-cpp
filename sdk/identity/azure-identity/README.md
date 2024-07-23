@@ -96,6 +96,45 @@ The [Managed identity authentication](https://learn.microsoft.com/entra/identity
 * [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 * [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 
+### Specify a user-assigned managed identity with `ManagedIdentityCredential`
+
+Many Azure hosts allow the assignment of a user-assigned managed identity. The following examples demonstrate configuring `ManagedIdentityCredential` to authenticate a user-assigned managed identity when deployed to an Azure host. The sample code uses the credential to authenticate a `BlobClient` from the [Azure::Storage::Blobs][blobs_client_library] client library. It also demonstrates how you can specify a user-assigned managed identity either by a client ID or a resource ID.
+
+#### Client ID
+
+To use a client ID, set the `clientId` parameter in the `ManagedIdentityCredential` constructor. For example:
+
+```cpp
+// When deployed to an Azure host, ManagedIdentityCredential will authenticate the specified user-assigned managed identity.
+
+std::string userAssignedClientId = "<your managed identity client ID>";
+auto credential = std::make_shared<ManagedIdentityCredential>(userAssignedClientId);
+
+std::string blobUrl = "https://myaccount.blob.core.windows.net/mycontainer/myblob";
+auto blobClient = BlobClient(blobUrl, credential);
+```
+
+#### Resource ID
+
+To use a resource ID, call the `ManagedIdentityCredential` constructor that accepts a `ResourceIdentifier`. The resource ID takes the form `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}`. Because resource IDs can be built by convention, they can be more convenient when there are a large number of user-assigned managed identities in your environment. For example:
+
+```cpp
+std::string userAssignedResourceId = "<your managed identity resource ID>";
+auto credential
+    = std::make_shared<ManagedIdentityCredential>(ResourceIdentifier(userAssignedResourceId));
+
+auto blobClient = BlobClient(blobUrl, credential);
+```
+
+### Specify a system-assigned managed identity with `ManagedIdentityCredential`
+
+By not providing a client ID or resource ID as a constructor parameter to `ManagedIdentityCredential`, you get the system-assigned managed identity. For example:
+
+```cpp
+auto credential = std::make_shared<ManagedIdentityCredential>();
+auto blobClient = BlobClient(blobUrl, credential);
+```
+
 ## Environment Variables
 
 `DefaultAzureCredential` and `EnvironmentCredential` can be configured with environment variables. Each type of authentication requires values for specific variables:
@@ -190,6 +229,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [default_azure_credential_auth_flow]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
+[blobs_client_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs
 [meid_doc]: https://learn.microsoft.com/entra/identity/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/
