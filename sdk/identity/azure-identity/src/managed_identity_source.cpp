@@ -469,7 +469,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(imdsUrl))
+      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
     using Azure::Core::Url;
