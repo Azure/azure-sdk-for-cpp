@@ -922,6 +922,8 @@ namespace Azure { namespace Storage { namespace Test {
     options.Range.Value().Length = 64;
     Files::Shares::Models::GetFileRangeListResult result;
 
+    // sleep for 1 second to make sure the rename is finished
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     // SupportRename == true
     options.IncludeRenames = true;
     EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot, options).Value);
