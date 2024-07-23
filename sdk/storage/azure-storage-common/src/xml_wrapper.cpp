@@ -384,17 +384,13 @@ namespace Azure { namespace Storage { namespace _internal {
 
 #else
 
-  void XmlGlobalInitialize()
+  struct XmlGlobalInitializer final
   {
-    static std::once_flag flag;
-    std::call_once(flag, [] { xmlInitParser(); });
-  }
+    XmlGlobalInitializer() { xmlInitParser(); }
+    ~XmlGlobalInitializer() { xmlCleanupParser(); }
+  };
 
-  void XmlGlobalDeinitialize()
-  {
-    static std::once_flag flag;
-    std::call_once(flag, [] { xmlCleanupParser(); });
-  }
+  static void XmlGlobalInitialize() { static XmlGlobalInitializer globalInitializer; }
 
   struct XmlReader::XmlReaderContext
   {
