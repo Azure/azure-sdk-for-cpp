@@ -876,6 +876,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     // GetRangeListDiff with Range
     {
+      // sleep for 1 second to make sure the previous operation is finished
+      TestSleep(std::chrono::milliseconds(1000));
       auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
       EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
       Files::Shares::GetFileRangeListOptions options;
@@ -910,6 +912,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
 
+    // sleep for 1 second to make sure the previous operation is finished
+    TestSleep(std::chrono::milliseconds(1000));
     auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
     EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
 
