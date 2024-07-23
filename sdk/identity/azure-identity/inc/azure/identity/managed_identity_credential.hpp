@@ -80,7 +80,7 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         ResourceIdentifier const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options = {});
+        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
