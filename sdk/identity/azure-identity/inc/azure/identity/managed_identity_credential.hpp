@@ -23,7 +23,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief An Azure Resource Manager resource identifier.
    */
-  class ResourceIdentifier {
+  class ResourceIdentifier final {
     std::string m_resourceId;
 
   public:
@@ -32,7 +32,7 @@ namespace Azure { namespace Identity {
      *
      * @param resourceId The id string to create the ResourceIdentifier from.
      */
-    ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId){};
+    explicit ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId){};
 
     /**
      * @brief The string representation of this resource identifier.
@@ -80,8 +80,7 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         ResourceIdentifier const& resourceId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options
-        = Azure::Core::Credentials::TokenCredentialOptions());
+        Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
