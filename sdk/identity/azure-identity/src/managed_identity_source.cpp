@@ -482,10 +482,10 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     std::string const& resourceId,
-    Azure::Core::Url const& imdsUrl,
+    Azure::Core::Url imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
+      m_request(Azure::Core::Http::HttpMethod::Get, std::move(imdsUrl))
 {
   {
     using Azure::Core::Url;
