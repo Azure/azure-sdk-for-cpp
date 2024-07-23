@@ -876,6 +876,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     // GetRangeListDiff with Range
     {
+      // sleep for 1 second to make sure the previous operation is finished
+      TestSleep(std::chrono::milliseconds(1000));
       auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
       EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
       Files::Shares::GetFileRangeListOptions options;
@@ -910,6 +912,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
 
+    // sleep for 1 second to make sure the previous operation is finished
+    TestSleep(std::chrono::milliseconds(1000));
     auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
     EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
 
@@ -922,8 +926,6 @@ namespace Azure { namespace Storage { namespace Test {
     options.Range.Value().Length = 64;
     Files::Shares::Models::GetFileRangeListResult result;
 
-    // sleep for 1 second to make sure the rename is finished
-    TestSleep(std::chrono::milliseconds(1000));
     // SupportRename == true
     options.IncludeRenames = true;
     EXPECT_NO_THROW(result = fileClient.GetRangeListDiff(snapshot, options).Value);
