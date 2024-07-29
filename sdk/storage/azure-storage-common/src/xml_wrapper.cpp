@@ -8,8 +8,8 @@
 #include <cstring>
 #include <limits>
 #include <memory>
-#include <stdexcept>
 #include <mutex>
+#include <stdexcept>
 
 #if defined(AZ_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
@@ -400,9 +400,7 @@ namespace Azure { namespace Storage { namespace _internal {
     bool readingAttributes = false;
     bool readingEmptyTag = false;
 
-    explicit XmlReaderContext(XmlTextReaderPtr && reader_)
-      : reader(std::move(reader_))
-    {}
+    explicit XmlReaderContext(XmlTextReaderPtr&& reader_) : reader(std::move(reader_)) {}
   };
 
   XmlReader::XmlReader(const char* data, size_t length)
@@ -414,8 +412,8 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Xml data too big.");
     }
 
-    auto reader
-        = XmlReaderContext::XmlTextReaderPtr(xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0), xmlFreeTextReader);
+    auto reader = XmlReaderContext::XmlTextReaderPtr(
+        xmlReaderForMemory(data, static_cast<int>(length), nullptr, nullptr, 0), xmlFreeTextReader);
 
     if (!reader)
     {
@@ -437,8 +435,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
   XmlNode XmlReader::Read()
   {
-    XmlReaderContext * context = m_context.get();
-    xmlTextReader * reader = m_context->reader.get();
+    XmlReaderContext* context = m_context.get();
+    xmlTextReader* reader = m_context->reader.get();
     if (context->readingAttributes)
     {
       int ret = xmlTextReaderMoveToNextAttribute(reader);
@@ -526,10 +524,10 @@ namespace Azure { namespace Storage { namespace _internal {
     XmlBufferPtr buffer;
     XmlTextWriterPtr writer;
 
-    explicit XmlWriterContext(XmlBufferPtr && buffer_, XmlTextWriterPtr && writer_)
-      : buffer(std::move(buffer_))
-      , writer(std::move(writer_))
-    {}
+    explicit XmlWriterContext(XmlBufferPtr&& buffer_, XmlTextWriterPtr&& writer_)
+        : buffer(std::move(buffer_)), writer(std::move(writer_))
+    {
+    }
   };
 
   XmlWriter::XmlWriter()
@@ -542,7 +540,8 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to initialize xml writer.");
     }
 
-    auto writer = XmlWriterContext::XmlTextWriterPtr(xmlNewTextWriterMemory(buffer.get(), 0), xmlFreeTextWriter);
+    auto writer = XmlWriterContext::XmlTextWriterPtr(
+        xmlNewTextWriterMemory(buffer.get(), 0), xmlFreeTextWriter);
 
     if (!writer)
     {
@@ -562,7 +561,6 @@ namespace Azure { namespace Storage { namespace _internal {
     return *this;
   }
 
-
   XmlWriter::~XmlWriter() = default;
 
   namespace {
@@ -574,7 +572,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void XmlWriter::Write(XmlNode node)
   {
-    xmlTextWriter * writer = m_context->writer.get();
+    xmlTextWriter* writer = m_context->writer.get();
     if (node.Type == XmlNodeType::StartTag)
     {
       if (!node.HasValue)
@@ -612,7 +610,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
   std::string XmlWriter::GetDocument()
   {
-    return std::string(reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
+    return std::string(
+        reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
   }
 
 #endif
