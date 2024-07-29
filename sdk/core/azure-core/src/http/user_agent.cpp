@@ -166,7 +166,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     static std::string const osVer = GetOSVersion();
     telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << " "
-                << "Cpp" << cplusplusValue << ")";
+                << "Cpp/" << cplusplusValue << ")";
 
     return telemetryId.str();
   }

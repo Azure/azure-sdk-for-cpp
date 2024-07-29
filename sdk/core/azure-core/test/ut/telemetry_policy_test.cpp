@@ -43,19 +43,19 @@ TEST(TelemetryPolicy, telemetryString)
     const std::string applicationId;
     const std::string expectedPrefix;
   } UserAgentTests[]
-      = {{"storage-blob", "11.0.0", "", "azsdk-cpp-storage-blob/11.0.0 ("},
+      = {{"storage-blob", "11.0.0", "", "azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
          {"storage-blob",
           "11.0.0",
           "AzCopy/10.0.4-Preview",
-          "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
+          "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
          {"storage-blob",
           "11.0.0",
           "AzCopy / 10.0.4-Preview ",
-          "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
+          "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
          {"storage-blob",
           "11.0.0",
           "  01234567890123456789abcde  ",
-          "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 ("}};
+          "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"}};
 
   constexpr auto TelemetryHeader = "user-agent";
   constexpr auto ClosingBrace = ')';
@@ -86,7 +86,7 @@ TEST(TelemetryPolicy, telemetryString)
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
 
     EXPECT_EQ(
-        actualValue.substr(actualValue.length() - 10, test.expectedPrefix.size()), "Cpp201402)");
+        actualValue.substr(actualValue.length() - 11, test.expectedPrefix.size()), "Cpp/201402)");
   }
 }
 
@@ -96,16 +96,16 @@ TEST(TelemetryPolicy, UserAgentCppVer)
     const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
-    EXPECT_GE(ua.length(), 10);
-    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201402)");
+    EXPECT_GE(ua.length(), 11);
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201402)");
   }
 
   {
     const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
 
-    EXPECT_GE(ua.length(), 10);
-    EXPECT_EQ(ua.substr(ua.length() - 10, ua.size()), "Cpp201703)");
+    EXPECT_GE(ua.length(), 11);
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201703)");
   }
 }
 
