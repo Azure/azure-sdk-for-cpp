@@ -44,6 +44,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Nullable<std::uint64_t> MaxMessageSize{};
 
   private:
+    // The friend declaration is needed so that ProducerClient could access CppStandardVersion,
+    // and it is not a struct's public field like the ones above to be set non-programmatically.
+    // When building the SDK, tests, or samples, the value of __cplusplus is ultimately controlled
+    // by the cmake files in this repo (i.e. C++14), therefore we set distinct values of 0, -1, etc
+    // when it is the case.
     friend class ProducerClient;
     long CppStandardVersion =
 #if defined(_azure_BUILDING_SDK)

@@ -75,6 +75,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
 
   private:
+    // The friend declaration is needed so that TelemetryPolicy could access CppStandardVersion,
+    // and it is not a struct's public field like the ones above to be set non-programmatically.
+    // When building the SDK, tests, or samples, the value of __cplusplus is ultimately controlled
+    // by the cmake files in this repo (i.e. C++14), therefore we set distinct values of 0, -1, etc
+    // when it is the case.
     friend class _internal::TelemetryPolicy;
     long CppStandardVersion =
 #if defined(_azure_BUILDING_SDK)
@@ -266,7 +271,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     virtual std::unique_ptr<RawResponse> Send(
         Request& request,
         NextHttpPolicy nextPolicy,
-        Context const& context) const = 0;
+        Context const& context) const
+        = 0;
 
     /**
      * @brief Destructs `%HttpPolicy`.
