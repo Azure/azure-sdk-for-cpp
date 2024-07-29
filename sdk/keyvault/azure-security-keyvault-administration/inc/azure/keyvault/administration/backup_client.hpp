@@ -49,13 +49,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         BackupClientOptions options = BackupClientOptions());
 
     /**
-     * @brief Construct a new BackupClient object from another key client.
-     *
-     * @param backupClient An existing backup restore client.
-     */
-    explicit BackupClient(BackupClient const& backupClient) = default;
-
-    /**
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
      *        container.
      *
@@ -80,7 +73,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @return Backup restore operation status.
      */
     Response<BackupOperationStatus> FullBackupStatus(
-        std::string const& jobId,
+        std::string const& jobId = "",
         Core::Context const& context = {});
 
     /**

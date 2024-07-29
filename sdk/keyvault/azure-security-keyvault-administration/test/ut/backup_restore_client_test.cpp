@@ -68,6 +68,37 @@ TEST_F(BackupRestoreClientTest, BackupFullStatus_RECORDEDONLY_)
   }
 }
 
+TEST_F(BackupRestoreClientTest, BackupFullStatusEmptyJobId_RECORDEDONLY_)
+{
+  if (m_keyVaultHsmUrl != m_keyVaultUrl)
+  {
+    auto testName = "BackupFullStatusEmptyJobId";
+    CreateHSMClientForTest();
+    auto& client = GetClientForTest(testName);
+    SasTokenParameter sasTokenParameter = GetSasTokenBackup();
+
+    auto response = client.FullBackup(m_blobUrl, sasTokenParameter).Value;
+
+    EXPECT_EQ(response.Value().Status, "InProgress");
+    EXPECT_TRUE(response.Value().StartTime > response.Value().StartTime.min());
+    EXPECT_FALSE(response.Value().EndTime.HasValue());
+    EXPECT_FALSE(response.Value().Error.HasValue());
+
+    try
+    {
+      auto response2 = client.FullBackupStatus("").Value;
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      EXPECT_EQ(e.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NotFound);
+    }
+  }
+  else
+  {
+    SkipTest();
+  }
+}
+
 TEST_F(BackupRestoreClientTest, BackupFullErrorStatus_RECORDEDONLY_)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)

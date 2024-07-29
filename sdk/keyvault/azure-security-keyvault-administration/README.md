@@ -136,14 +136,14 @@ To create a new `BackupClient` to perform these operations, you need the endpoin
 
 Key Vault BackupClient client for C++ currently supports any `TokenCredential` for authenticating.
 
-```cpp Snippet:SampleBackupCreateCredential
+```cpp
   auto credential
       = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 ```
 
 Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
 
-```cpp Snippet:SampleAdministration2CreateClient
+```cpp
   // create client
   BackupClient client(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
 ```
@@ -153,7 +153,7 @@ Since these operations require a blob storage for the backup/restore operations,
 
 In this sample we rely on a couple of extra environment variables. 
 
-```cpp Snippet:SampleAdministration2CreateSASParam
+```cpp
  SasTokenParameter sasTokenParameter;
  // the backup/restore needs a SAS token to access the storage account
  sasTokenParameter.Token
@@ -169,7 +169,7 @@ Since this is a long running operation the service provides endpoints to determi
 
 ### Starting the backup operation
 
-```cpp Snippet:SampleAdministration2StartBackup
+```cpp
 // Create a full backup using a user-provided SAS token to an Azure blob storage container.
 auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter).Value;
 
@@ -181,7 +181,7 @@ std::cout << "Backup Job Id: " << backupResponse.Value().JobId << std::endl
 
 In order to wait for the operation to complete we will call the polling method.
 
-```cpp Snippet:SampleAdministration2StatusBackup
+```cpp
 // Wait for the operation to complete.
 auto backupStatus = backupResponse.PollUntilDone(10s);
 
@@ -196,7 +196,7 @@ Similar to the backup operation after we initialize the operation we can check t
 ### Starting the restore operation 
 
 the restore operation requires a folder where a backup was previously performed along side the SAS token parameter. 
-```cpp Snippet:SampleAdministration2FullRestoreStart
+```cpp
 // Restore the full backup using a user-provided SAS token to an Azure blob storage container.
 std::cout << "Folder to restore: " << folderToRestore << std::endl;
 auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter).Value;
@@ -206,7 +206,7 @@ std::cout << "Restore Job Id: " << restoreResponse.Value().JobId << std::endl
 
 ### FullRestore operation waiting
 
-```cpp Snippet:SampleAdministration2StatusRestore
+```cpp
 // Wait for the operation to complete.
 auto restoreStatus = restoreResponse.PollUntilDone(10s);
 std::cout << "Restore Job Id: " << restoreStatus.Value.JobId << std::endl
@@ -221,7 +221,7 @@ Similar to the backup operation after we initialize the operation we can check t
 
 The selective restore operation requires a folder where a backup was previously performed along side the SAS token parameter. 
 
-```cpp Snippet:SampleAdministration2FullRestoreStart
+```cpp
 // Restore the full backup using a user-provided SAS token to an Azure blob storage container.
 std::string folderToRestore = ...;
 std::cout << "Folder to restore: " << restoreBlobDetails.FolderToRestore << std::endl;
@@ -232,7 +232,7 @@ std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
 
 ### Selective restore operation completion
 
-```cpp Snippet:SampleAdministration2StatusRestore
+```cpp
 // Wait for the operation to complete.
 auto selectiveStatus = selectiveRestore.PollUntilDone(10s);
 std::cout << "Selective Restore Job Id: " << selectiveStatus.Value.JobId << std::endl
