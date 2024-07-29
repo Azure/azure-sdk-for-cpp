@@ -79,7 +79,9 @@ TEST(TelemetryPolicy, telemetryString)
     auto telemetryHeader = headers.find(TelemetryHeader);
     EXPECT_NE(telemetryHeader, headers.end());
     auto const actualValue = telemetryHeader->second;
-    EXPECT_GE(actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + CppVersionSuffix.length());
+    EXPECT_GE(
+        actualValue.size(),
+        test.expectedPrefix.size() + OSInfoMinLength + CppVersionSuffix.length());
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
 
