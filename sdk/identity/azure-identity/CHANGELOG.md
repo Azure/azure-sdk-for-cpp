@@ -1,6 +1,6 @@
 # Release History
 
-## 1.9.0-beta.2 (Unreleased)
+## 1.9.0-beta.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.9.0-beta.2 (2024-07-22)
+
+### Features Added
+
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
+- Added support for providing a Resource ID to `ManagedIdentityCredential`.
+- Added support for customizing the IMDS endpoint within `ManagedIdentityCredential`.
 
 ## 1.9.0-beta.1 (2024-06-21)
 

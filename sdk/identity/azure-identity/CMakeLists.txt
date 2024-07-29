@@ -50,6 +50,7 @@ set(
     inc/azure/identity/azure_cli_credential.hpp
     inc/azure/identity/azure_pipelines_credential.hpp
     inc/azure/identity/chained_token_credential.hpp
+    inc/azure/identity/client_assertion_credential.hpp
     inc/azure/identity/client_certificate_credential.hpp
     inc/azure/identity/client_secret_credential.hpp
     inc/azure/identity/default_azure_credential.hpp
@@ -67,6 +68,7 @@ set(
     src/azure_cli_credential.cpp
     src/azure_pipelines_credential.cpp
     src/chained_token_credential.cpp
+    src/client_assertion_credential.cpp
     src/client_certificate_credential.cpp
     src/client_credential_core.cpp
     src/client_secret_credential.cpp

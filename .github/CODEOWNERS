@@ -48,7 +48,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
-# ServiceOwners:@vinjiang @Jinming-Hu @EmmaZhu 
+# ServiceOwners:@vinjiang @Jinming-Hu @microzchang
 # ServiceLabel: %Storage
 
 # PRLabel: %Storage

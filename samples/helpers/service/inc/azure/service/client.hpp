@@ -34,7 +34,7 @@ namespace Azure { namespace Service {
     // token, which is not critical for the intended demonstration purposes. And if user runs this,
     // and authentication is unsuccessful, it may draw an unnecessary attention to an irrelevant (to
     // the demo) point.
-    void DoSomething(const Core::Context& context) const;
+    void DoSomething(const Core::Context& context = {}) const;
   };
 
 }} // namespace Azure::Service

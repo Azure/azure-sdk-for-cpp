@@ -33,7 +33,7 @@ extends:
       LiveTestCtestRegex: azure-storage
       Clouds: Preview
       SupportedClouds: Preview
-      UseFederatedAuth: false
+      UseFederatedAuth: true
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common

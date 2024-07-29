@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 #pragma once
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/operation.hpp>
@@ -11,6 +12,8 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
+  // Derived from Azure::Core::Test::TestBase to get access to GetTestCredential, which has logic to
+  // add the pipeline credential when run in CI.
   class EventHubsManagement {
   public:
     enum class EventHubsPricingTier
@@ -19,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Standard,
       Basic
     };
-    EventHubsManagement();
+    EventHubsManagement(std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential);
 
     ~EventHubsManagement() = default;
 

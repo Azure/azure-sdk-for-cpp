@@ -579,7 +579,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         "Type",
         "Locales",
         messageToSend,
-        Azure::Core::Context::ApplicationContext.WithDeadline(
+        Azure::Core::Context{}.WithDeadline(
             std::chrono::system_clock::now() + std::chrono::seconds(10)));
     EXPECT_EQ(response.Status, ManagementOperationStatus::Error);
     EXPECT_EQ(response.StatusCode, 500);

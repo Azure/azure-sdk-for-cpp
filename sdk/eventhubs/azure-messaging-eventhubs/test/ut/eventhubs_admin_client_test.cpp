@@ -28,7 +28,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, ListNamespaceTest_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto response = administrationClient.ListNamespaces();
     EXPECT_TRUE(response.size() > 0);
   }
@@ -36,7 +36,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST_F(AdminTest, DoesNamespaceExistTest_LIVEONLY_)
   {
 
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto response = administrationClient.DoesNamespaceExist(GetRandomName());
     EXPECT_FALSE(response);
 
@@ -47,17 +47,32 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateDeleteNamespaceTest_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string namespaceName = GetRandomName("ehCreate");
     auto createOperation = administrationClient.CreateNamespace(namespaceName);
     createOperation.PollUntilDone(std::chrono::milliseconds(500));
-    auto deleteOperation = administrationClient.DeleteNamespace(namespaceName);
-    deleteOperation.PollUntilDone(std::chrono::milliseconds(500));
+    try
+    {
+      auto deleteOperation = administrationClient.DeleteNamespace(namespaceName);
+      deleteOperation.PollUntilDone(std::chrono::milliseconds(500));
+    }
+    catch (Azure::Core::RequestFailedException& e)
+    {
+      GTEST_LOG_(INFO) << "CreateDeleteNamespaceTest_LIVEONLY_ failed with code: "
+                       << static_cast<std::underlying_type<decltype(e.StatusCode)>::type>(
+                              e.StatusCode);
+      GTEST_LOG_(INFO) << "Message: " << e.Message;
+      auto body = e.RawResponse->GetBody();
+      auto bodyAsString = std::string(body.begin(), body.end());
+
+      GTEST_LOG_(ERROR) << "Response: " << bodyAsString;
+      GTEST_FAIL();
+    }
   }
 
   TEST_F(AdminTest, EnumerateEventHubs_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string namespaceName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
@@ -68,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateEventHub_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string eventHubName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));
@@ -82,7 +97,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_F(AdminTest, CreateConsumerGroup_LIVEONLY_)
   {
-    EventHubsManagement administrationClient;
+    EventHubsManagement administrationClient{GetTestCredential()};
     std::string eventHubName = GetRandomName("eventhub");
     auto eventhubsNamespace = administrationClient.GetNamespace(
         Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_NAMESPACE"));

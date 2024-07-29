@@ -13,12 +13,23 @@
 #include <azure/core/context.hpp>
 
 #include <chrono>
-#include <string>
 #include <thread>
 
 #include <gtest/gtest.h>
 
 using namespace Azure::Core;
+
+// Disable deprecation warning
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 TEST(Context, ApplicationContext)
 {
@@ -41,3 +52,10 @@ TEST(Context, ApplicationContext)
   Context appContext2 = Context::ApplicationContext;
   EXPECT_TRUE(appContext2.IsCancelled());
 }
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif // _MSC_VER
