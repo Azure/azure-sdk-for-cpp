@@ -43,25 +43,25 @@ TEST(TelemetryPolicy, telemetryString)
     const std::string applicationId;
     const std::string expectedPrefix;
   } UserAgentTests[]
-      = {{"storage-blob", "11.0.0", "", "azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
+      = {{"storage-blob", "11.0.0", "", "azsdk-cpp-storage-blob/11.0.0 ("},
          {"storage-blob",
           "11.0.0",
           "AzCopy/10.0.4-Preview",
-          "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
+          "AzCopy/10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
          {"storage-blob",
           "11.0.0",
           "AzCopy / 10.0.4-Preview ",
-          "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"},
+          "AzCopy / 10.0.4-Preview azsdk-cpp-storage-blob/11.0.0 ("},
          {"storage-blob",
           "11.0.0",
           "  01234567890123456789abcde  ",
-          "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 (Cpp/-1"}};
+          "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 ("}};
 
   constexpr auto TelemetryHeader = "user-agent";
-  constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMinLength = 10;
+  const std::string CppVersionSuffix = " Cpp/-1)"
 
-  for (auto const& test : UserAgentTests)
+      for (auto const& test : UserAgentTests)
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     Azure::Core::_internal::ClientOptions options;
@@ -79,14 +79,14 @@ TEST(TelemetryPolicy, telemetryString)
     auto telemetryHeader = headers.find(TelemetryHeader);
     EXPECT_NE(telemetryHeader, headers.end());
     auto const actualValue = telemetryHeader->second;
-    EXPECT_GE(
-        actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + sizeof(ClosingBrace));
-    EXPECT_EQ(actualValue[actualValue.size() - 1], ClosingBrace);
+    EXPECT_GE(actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + CppVersionSuffix.length());
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
 
     EXPECT_EQ(
-        actualValue.substr(actualValue.length() - 11, test.expectedPrefix.size()), "Cpp/201402)");
+        actualValue.substr(
+            actualValue.length() - CppVersionSuffix.length(), CppVersionSuffix.length()),
+        CppVersionSuffix);
   }
 }
 
