@@ -109,7 +109,7 @@ Azure::Response<BackupOperationStatus> BackupClient::FullBackupStatus(
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("backup");
-  url.AppendPath(!jobId.empty() ? Core::Url::Encode(jobId) : "null");
+  url.AppendPath(Core::Url::Encode(jobId));
   url.AppendPath("pending");
 
   url.SetQueryParameters({{"api-version", m_apiVersion}});
@@ -192,7 +192,7 @@ Azure::Response<BackupOperationStatus> BackupClient::RestoreStatus(
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("restore");
-  url.AppendPath(!jobId.empty() ? Core::Url::Encode(jobId) : "null");
+  url.AppendPath(Core::Url::Encode(jobId));
   url.AppendPath("pending");
 
   url.SetQueryParameters({{"api-version", "7.5"}});
@@ -221,7 +221,7 @@ Azure::Response<BackupOperation> BackupClient::SelectiveKeyRestore(
 {
   auto url = m_vaultBaseUrl;
   url.AppendPath("keys");
-  url.AppendPath(!keyName.empty() ? Core::Url::Encode(keyName) : "null");
+  url.AppendPath(Core::Url::Encode(keyName));
   url.AppendPath("restore");
 
   url.SetQueryParameters({{"api-version", "7.5"}});

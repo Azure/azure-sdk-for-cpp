@@ -102,7 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @return A backup restore operation status.
      */
     Response<BackupOperationStatus> RestoreStatus(
-        std::string const& jobId,
+        std::string const& jobId = "",
         Core::Context const& context = {});
 
     /**
