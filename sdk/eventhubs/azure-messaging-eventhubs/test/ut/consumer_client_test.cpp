@@ -311,7 +311,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       GTEST_SKIP();
     }
-    EventHubsManagement administrationClient;
+
+    // Disabled test for now.
+    EventHubsManagement administrationClient{GetTestCredential()};
     auto eventhubNamespace{administrationClient.GetNamespace(GetEnv("EVENTHUBS_NAMESPACE"))};
 
     std::string eventHubName{GetRandomName("eventhub")};
@@ -383,12 +385,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_EQ(totalReceived, numberOfEvents);
 
       // We have consumed all the events. Attempting to consume one more should block.
-      {
-        Azure::Core::Context timeout = Azure::Core::Context::ApplicationContext.WithDeadline(
-            Azure::DateTime::clock::now() + std::chrono::seconds(3));
-        EXPECT_THROW(
-            partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
-      }
+      Azure::Core::Context timeout{Azure::DateTime::clock::now() + std::chrono::seconds(3)};
+      EXPECT_THROW(
+          partitionClient.ReceiveEvents(50, timeout), Azure::Core::OperationCancelledException);
     }
     eventhubNamespace.DeleteEventHub(eventHubName);
   }

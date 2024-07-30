@@ -39,6 +39,8 @@ if (MSVC)
   target_compile_options(azure-core-test-fw PUBLIC /wd6326)
 endif()
 
+target_compile_definitions(azure-core-test-fw PRIVATE _azure_BUILDING_TESTS)
+
 target_include_directories (azure-core-test-fw
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>

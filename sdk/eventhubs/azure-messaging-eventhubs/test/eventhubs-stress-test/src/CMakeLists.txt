@@ -34,6 +34,8 @@ add_executable(
   ${SOURCE_FILES} ${INCLUDE_FILES}
 )
 
+target_compile_definitions(azure-messaging-eventhubs-stress-test PRIVATE _azure_BUILDING_TESTS)
+
 if (MSVC)
   #argagg warnings
   target_compile_options(azure-messaging-eventhubs-stress-test PUBLIC /wd28020 /wd28204)

@@ -10,7 +10,6 @@
 
 #include "azure/core/azure_assert.hpp"
 #include "azure/core/datetime.hpp"
-#include "azure/core/dll_import_export.hpp"
 #include "azure/core/rtti.hpp"
 
 #include <atomic>
@@ -41,7 +40,34 @@ namespace Azure { namespace Core {
   };
 
   /**
-   * @brief A context is a node within a tree that represents deadlines and key/value pairs.
+   * @brief A context is a node within a unidirectional tree that represents deadlines and key/value
+   * pairs.
+   *
+   * Most Azure Service Client operations accept a Context object. The Context object allows the
+   * caller to cancel the operation if it is taking too long, or to ensure that the operation
+   * completes before a specific deadline. This allows an application to apply timeouts to
+   * operations, or to cancel operations that need to be abandoned.
+   *
+   * After cancelling a Context, all service operations which have the cancelled context
+   * as a parent context will be cancelled. Cancellation is indicated by throwing an
+   * Azure::Core::OperationCancelledException from the operation.
+   *
+   * Context objects support the following operations to create new contexts:
+   * - WithDeadline(DateTime): creates a new child context with a deadline.
+   * - WithValue(Key, T): creates a new child context with a key/value pair.
+   *
+   * Context objects support the following operations to retrieve data:
+   * - GetDeadline(): gets the deadline for the context.
+   * - TryGetValue(Key, T): gets the value associated with a key.
+   *
+   * Context objects support two operations to manage the context:
+   * - Cancel(): cancels the context.
+   * - IsCancelled(): checks if the context is cancelled.
+   *
+   * Context objects support the following operation to throw if the context is cancelled:
+   * - ThrowIfCancelled(): throws an OperationCancelledException if the context is cancelled.
+   *
+   *
    */
   class Context final {
   public:
@@ -97,6 +123,14 @@ namespace Azure { namespace Core {
         return DateTime(DateTime::time_point(DateTime::duration(dtRepresentation)));
       }
 
+      ContextSharedState(ContextSharedState const&) = delete;
+      ContextSharedState(ContextSharedState&&) = delete;
+      ContextSharedState& operator=(ContextSharedState const&) = delete;
+      ContextSharedState&& operator=(ContextSharedState&&) = delete;
+
+      /**
+       * @brief Creates a new ContextSharedState object with no deadline and no value.
+       */
       explicit ContextSharedState()
           : Deadline(ToDateTimeRepresentation((DateTime::max)())), Value(nullptr)
 #if defined(AZ_CORE_RTTI)
@@ -106,9 +140,16 @@ namespace Azure { namespace Core {
       {
       }
 
+      /**
+       * @brief Create a new ContextSharedState from another ContextSharedState with a deadline.
+       *
+       * @param parent The parent context to create a child context from.
+       * @param deadline The deadline for the new context.
+       *
+       */
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
-          DateTime const& deadline)
+          DateTime const& deadline = (DateTime::max)())
           : Parent(parent), Deadline(ToDateTimeRepresentation(deadline)), Value(nullptr)
 #if defined(AZ_CORE_RTTI)
             ,
@@ -117,6 +158,17 @@ namespace Azure { namespace Core {
       {
       }
 
+      /**
+       * @brief Create a new ContextSharedState from another ContextSharedState with a deadline and
+       * a key value pair.
+       *
+       * @tparam T The type of the value to be stored with the key.
+       * @param parent The parent context to create a child context from.
+       * @param deadline The deadline for the new context.
+       * @param key The key to associate with the value.
+       * @param value The value to associate with the key.
+       *
+       */
       template <class T>
       explicit ContextSharedState(
           const std::shared_ptr<ContextSharedState>& parent,
@@ -142,13 +194,78 @@ namespace Azure { namespace Core {
 
   public:
     /**
-     * @brief Constructs a new context with no deadline, and no value associated.
+     * @brief Constructs a context with no deadline, and no value associated.
      *
      */
     Context() : m_contextSharedState(std::make_shared<ContextSharedState>()) {}
 
     /**
-     * @brief Creates a context with a deadline.
+     * @brief Constructs a context with a deadline
+     * object.
+     *
+     * @param deadline A point in time after which a context expires.
+     *
+     */
+    explicit Context(DateTime const& deadline)
+        : m_contextSharedState(std::make_shared<ContextSharedState>(nullptr, deadline))
+    {
+    }
+
+    /**
+     * @brief Copies a context.
+     *
+     * This operation copies one context to another. Context objects are copied by reference,
+     * so the new context will share the same state as the original context. This also means
+     * that cancelling one context cancels all contexts which are copied from the original
+     * context.
+     *
+     * 	@param other Another context to copy.
+     *
+     */
+    Context(Context const&) = default;
+
+    /**
+     * @brief Assigns a context.
+     *
+     * This operation assigns one context to another. Context objects are copied by reference, so
+     * the new context will share the same state as the original context. This also means that
+     * cancelling one context cancels all contexts which are copied from the original context.
+     *
+     * @param other Another context to assign.
+     *
+     * @return A new Context referencing the state of the original context.
+     */
+    Context& operator=(Context const& other) = default;
+
+    /**
+     * @brief Moves a context.
+     *
+     * This operation moves one context to another.
+     *
+     * @param other The context to move.
+     *
+     */
+    Context(Context&& other) = default;
+
+    /**
+     * @brief Moves a context.
+     *
+     * This operation moves one context to another.
+     *
+     * @param other The context to move.
+     * @return A new Context referencing the state of the original context.
+     *
+     */
+    Context& operator=(Context&& other) = default;
+
+    /**
+     * @brief Destroys a context.
+     *
+     */
+    ~Context() = default;
+
+    /**
+     * @brief Creates a context with a deadline from an existing Context object.
      *
      * @param deadline A point in time after which a context expires.
      *
@@ -160,13 +277,14 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Creates a context without a deadline, but with \p key and \p value associated with it.
+     * @brief Creates a new child context with \p key and \p value
+     * associated with it.
      *
      * @tparam T The type of the value to be stored with the key.
      * @param key A key to associate with this context.
      * @param value A value to associate with this context.
      *
-     * @return A child context with no deadline and the \p key and \p value associated with it.
+     * @return A child context with the \p key and \p value associated with it.
      */
     template <class T> Context WithValue(Key const& key, T&& value) const
     {
@@ -200,7 +318,7 @@ namespace Azure { namespace Core {
      */
     template <class T> bool TryGetValue(Key const& key, T& outputValue) const
     {
-      for (auto ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
+      for (std::shared_ptr<ContextSharedState> ptr = m_contextSharedState; ptr; ptr = ptr->Parent)
       {
         if (ptr->Key == key)
         {
@@ -217,7 +335,14 @@ namespace Azure { namespace Core {
     }
 
     /**
-     * @brief Cancels the context.
+     * @brief Cancels the context. All operations which share this Context will be cancelled.
+     *
+     * @note Cancellation of a Context is a best-faith effort. Because of the synchronous nature of
+     * Azure C++ SDK APIs, it is possible that the operation will not be cancelled immediately. Each
+     * operation explicitly checks the context's state to determine if it has been cancelled,
+     * those checks may not happen immediately, or at all.
+     *
+     * @note Once a context has been cancelled, the cancellation cannot be undone.
      *
      */
     void Cancel()
@@ -232,10 +357,9 @@ namespace Azure { namespace Core {
      */
     bool IsCancelled() const { return GetDeadline() < std::chrono::system_clock::now(); }
 
-    /**
-     * @brief Checks if the context is cancelled.
-     * @throw #Azure::Core::OperationCancelledException if the context is cancelled.
+    /** @brief Throws if the context is cancelled.
      *
+     * @throw #Azure::Core::OperationCancelledException if the context is cancelled.
      */
     void ThrowIfCancelled() const
     {
@@ -245,10 +369,15 @@ namespace Azure { namespace Core {
       }
     }
 
-    /**
-     * @brief The application context (root).
+    /** @brief The `ApplicationContext` is a deprecated singleton Context object.
+     *
+     * @note: The `ApplicationContext` object is deprecated and will be removed in a future release.
+     * If your application is using `ApplicationContext`, you should create your own root context
+     * and use it where you would have otherwise used `ApplicationContext`.
      *
      */
-    static const AZ_CORE_DLLEXPORT Context ApplicationContext;
+    [[deprecated(
+        "ApplicationContext is no longer supported. Instead customers should create their "
+        "own root context objects.")]] static const AZ_CORE_DLLEXPORT Context ApplicationContext;
   };
 }} // namespace Azure::Core

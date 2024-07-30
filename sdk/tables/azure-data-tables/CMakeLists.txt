@@ -78,6 +78,9 @@ set(
 )
 
 add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})
+
+target_compile_definitions(azure-data-tables PRIVATE _azure_BUILDING_SDK)
+
 create_per_service_target_build(tables azure-data-tables)
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-data-tables ALIAS azure-data-tables)

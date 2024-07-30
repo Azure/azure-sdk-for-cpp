@@ -93,6 +93,8 @@ target_include_directories(
 
 target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
 
+target_compile_definitions(azure-storage-blobs PRIVATE _azure_BUILDING_SDK)
+
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-storage-blobs ${AZ_LIBRARY_VERSION})
 

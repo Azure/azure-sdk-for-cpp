@@ -4,6 +4,10 @@
 # Defines utility functions to create code coverage targets with gcov.
 # gcov html and xml report.
 #
+#
+# There is an incredibly helpful FAQ on gcovr and branch coverage which should be read
+# here: https://gcovr.com/en/stable/faq.html#why-does-c-code-have-so-many-uncovered-branches
+
 
 ## SET UP only when option is set. 
 if(BUILD_CODE_COVERAGE)
@@ -55,7 +59,8 @@ function(add_gcovr_html)
             -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}/index.html
-
+            --exclude-unreachable-branches
+            --exclude-throw-branches
         BYPRODUCTS ${PROJECT_BINARY_DIR}/${args_TARGET_NAME}  # report directory
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS
@@ -102,6 +107,8 @@ function(add_gcovr_xml)
             -r ${BASEDIR} ${EXCLUDE_ARGS}
             --object-directory=${PROJECT_BINARY_DIR}
             -o ${args_TARGET_NAME}.xml
+            --exclude-unreachable-branches
+            --exclude-throw-branches
         BYPRODUCTS ${args_TARGET_NAME}.xml
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         DEPENDS

@@ -61,7 +61,7 @@ target_link_libraries(HelloWorld PRIVATE Azure::azure-identity Azure::azure-stor
 
 Here's a walkthrough video on how to install the Azure SDK packages, using vcpkg, into an MSBuild project in VS: https://aka.ms/azsdk/cpp/gettingstarted-vcpkg-msbuild-video
 
-See the [vcpkg documentation](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
+See the [vcpkg documentation](https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild?pivots=shell-cmd) for more details.
 
 ### Additional methods for installing and configuring
 
@@ -187,6 +187,69 @@ You can intermittently poll whether the operation has finished by using the `Pol
               << std::endl;
   }
 ```
+
+#### `Azure::Core::Context`
+
+Most Azure SDK Service Client methods accept an optional `Azure::Core::Context` parameter, which is used to enable cancellation of the operation or to
+establish an absolute deadline for the operation.
+
+This is useful when you want to assign a time limit on an operation to ensure that it completes in a "reasonable" timeframe. For instance, the 
+snippet below will cancel a blob client upload after 5 seconds.
+
+<!-- @insert_snippet: CreateBlobContext -->
+```cpp
+      Azure::Core::Context cancelledIn5s{
+          std::chrono::system_clock::now() + std::chrono::seconds(5)};
+
+      auto containerClient = BlobContainerClient::CreateFromConnectionString(
+          GetConnectionString(), containerName + std::to_string(i));
+      containerClient.CreateIfNotExists({}, cancelledIn5s);
+      for (int j = 0; j < 3; ++j)
+      {
+        BlockBlobClient blobClient
+            = containerClient.GetBlockBlobClient(blobName + std::to_string(j));
+        blobClient.UploadFrom(
+            reinterpret_cast<const uint8_t*>(blobContent.data()),
+            blobContent.size(),
+            {},
+            cancelledIn5s);
+      }
+```
+
+`Context` objects can also be directly cancelled using the `Cancel()` method.
+
+`Context` objects form a directed tree, where a child context can be created from a parent context. 
+The context tree is unidirectional and acyclic.
+
+These are the basic operations that can be performed on a `Context` object:
+
+* Create a child context from a parent context with a Key/Value pair. This is useful for associating metadata with a context.
+* Create a child context from a parent context with a deadline. This is useful for setting a timeout.
+* Cancel a context. This will cancel the context and all its children. Note that there is no way of un-cancelling a context.
+* Check if a context is cancelled.
+
+When a context is copied from another context, the copied context will share state with the original context. 
+This means that if the original context is cancelled, the copied context will also be cancelled.
+
+Cancellation of a `Context` is a permanent operation. Once a context is cancelled, it cannot be un-cancelled.
+
+When a client operation fails with an `Azure::Core::OperationCancelledException`, it is typically due to a `Context` getting cancelled. This exception can be caught and handled by the application.
+
+#### Public, Private, and Internal Types
+
+For the most part, the APIs defined in the Azure SDK for C++ fall into three categories:
+
+- **Public**: These are the types that are intended to be used by the consumers of the SDK.
+They are part of the public API and are stable. Breaking changes to these types will be avoided as much
+as possible. All public types and functions are located are in the `Azure` root namespace.
+- **Internal**: These are the types that are used internally by the packages within the SDK.
+They are intended for use by the packages which make up the Azure SDK. They are NOT intended to be used by the consumers of the SDK.
+Breaking changes to these types are allowed, within certain constraints. These types are located in an `Azure` namespace within the `_internal` terminal namespace (for instance, `Azure::Core::Http::Policies::_internal::RequestActivityPolicy`).
+- **Private**: These are the types that are used internally to individual Azure SDK Packages.
+They are not intended to be used by the consumers of the SDK, nor by other SDK packages. Breaking changes
+to these types are allowed. These types are located in an `Azure` namespace within the `_detail` terminal namespace.
+
+Within the source tree, Internal types are typically declared in directories named "internal", and Private types are typically declared in directories named "private".
 
 #### Interacting with Azure SDK for C++
 
@@ -338,3 +401,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2FREADME.png)
+

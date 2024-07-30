@@ -110,6 +110,8 @@ target_include_directories(
 
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
+target_compile_definitions(azure-messaging-eventhubs PRIVATE _azure_BUILDING_SDK)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
 

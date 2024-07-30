@@ -98,6 +98,8 @@ add_executable (
     uuid_test.cpp
 )
 
+target_compile_definitions(azure-core-test PRIVATE _azure_BUILDING_TESTS)
+
 if (MSVC)
   # Disable warnings:
   # - C26495: Variable

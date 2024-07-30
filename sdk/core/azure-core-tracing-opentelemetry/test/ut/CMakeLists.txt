@@ -13,12 +13,6 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
   add_compile_options(-Wno-error=deprecated-declarations)
 endif()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-# Disable deprecation warnings.
-  add_compile_options(/wd4996)
-endif()
-
-
 project (azure-core-tracing-opentelemetry-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -33,6 +27,8 @@ add_executable (
     service_support_test.cpp
     test_exporter.hpp
 )
+
+target_compile_definitions(azure-core-tracing-opentelemetry-test PRIVATE _azure_BUILDING_TESTS)
 
 if (MSVC)
   # Disable warnings:

@@ -311,8 +311,7 @@ namespace Azure { namespace Core { namespace Test {
         // Now check the pool until the clean thread until finishes removing the connections or
         // fail after 5 minutes (indicates a problem with the clean routine)
 
-        auto timeOut
-            = Context::ApplicationContext.WithDeadline(std::chrono::system_clock::now() + 5min);
+        auto timeOut = Context{std::chrono::system_clock::now() + 5min};
         bool poolIsEmpty = false;
         while (!poolIsEmpty && !timeOut.IsCancelled())
         {
@@ -373,13 +372,13 @@ namespace Azure { namespace Core { namespace Test {
       //                             .ConnectionPoolIndex[hostKey]
       //                             .begin();
       //     EXPECT_EQ(
-      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::ApplicationContext),
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context{}),
       //         2000 - 1); // starting from zero
       //     connectionIt = --(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
       //                           .ConnectionPoolIndex[hostKey]
       //                           .end());
       //     EXPECT_EQ(
-      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context::ApplicationContext),
+      //         connectionIt->get()->ReadFromSocket(nullptr, 0, Context{}),
       //         2000 - 1024);
 
       //     // Check the pool will take other host-key
@@ -603,7 +602,7 @@ namespace Azure { namespace Core { namespace Test {
         // Check that CURLE_SEND_ERROR is produced when trying to use the connection.
         auto session
             = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+        auto r = session->Perform(Azure::Core::Context{});
         EXPECT_EQ(CURLE_SEND_ERROR, r);
       }
     }
@@ -623,7 +622,7 @@ namespace Azure { namespace Core { namespace Test {
         auto session
             = std::make_unique<Azure::Core::Http::CurlSession>(req, std::move(connection), options);
 
-        auto r = session->Perform(Azure::Core::Context::ApplicationContext);
+        auto r = session->Perform(Azure::Core::Context{});
         EXPECT_EQ(CURLE_OK, r);
         auto response = session->ExtractResponse();
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::SwitchingProtocols);
@@ -652,7 +651,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         // Create a pipeline to send the request and dispose after it.
         Azure::Core::Http::_internal::HttpPipeline pipeline({}, "test", "test", {}, {});
-        auto response = pipeline.Send(req, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(req, Azure::Core::Context{});
         EXPECT_PRED2(
             [](Azure::Core::Http::HttpStatusCode a, Azure::Core::Http::HttpStatusCode b) {
               return a == b;

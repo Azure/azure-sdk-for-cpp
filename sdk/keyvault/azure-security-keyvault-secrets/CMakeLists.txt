@@ -97,6 +97,8 @@ target_include_directories(
 
 target_link_libraries(azure-security-keyvault-secrets PUBLIC Azure::azure-core)
 
+target_compile_definitions(azure-security-keyvault-secrets PRIVATE _azure_BUILDING_SDK)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-secrets azure-security-keyvault-secrets-test "tests?/*;samples?/*")
 
@@ -117,7 +119,7 @@ if (BUILD_PERFORMANCE_TESTS)
   add_subdirectory(test/perf)
 endif()
 
-if(BUILD_SAMPLES_DISABLED)
+if(BUILD_SAMPLES)
   add_subdirectory(samples)
 endif()
 

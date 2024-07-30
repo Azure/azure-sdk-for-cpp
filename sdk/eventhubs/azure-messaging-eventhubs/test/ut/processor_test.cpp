@@ -86,8 +86,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void TestWithLoadBalancer(Models::ProcessorStrategy processorStrategy)
     {
-      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
-          Azure::DateTime::clock::now() + std::chrono::minutes(5));
+      Azure::Core::Context context
+          = Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::minutes(5)};
 
       std::string eventHubName{GetEnv("EVENTHUB_NAME")};
 
@@ -163,8 +163,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void TestWithLoadBalancerSingleThreaded(Models::ProcessorStrategy processorStrategy)
     {
-      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
-          Azure::DateTime::clock::now() + std::chrono::minutes(5));
+      Azure::Core::Context context{Azure::DateTime::clock::now() + std::chrono::minutes(5)};
 
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
@@ -217,8 +216,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     void TestPartitionAcquisition(Models::ProcessorStrategy processorStrategy)
     {
-      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
-          Azure::DateTime::clock::now() + std::chrono::minutes(5));
+      Azure::Core::Context context{Azure::DateTime::clock::now() + std::chrono::minutes(5)};
 
       Azure::Messaging::EventHubs::ConsumerClientOptions consumerClientOptions;
       consumerClientOptions.ApplicationID
@@ -579,8 +577,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     // Attempts to retrieve a partition client should throw because there are no clients available.
-    auto context = Azure::Core::Context::ApplicationContext.WithDeadline(
-        Azure::DateTime::clock::now() + std::chrono::milliseconds(50));
+    Azure::Core::Context context{Azure::DateTime::clock::now() + std::chrono::milliseconds(50)};
     EXPECT_ANY_THROW(processor.NextPartitionClient(context));
 
     while (!partitionClients.empty())

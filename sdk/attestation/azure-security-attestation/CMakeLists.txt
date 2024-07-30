@@ -76,6 +76,7 @@ target_include_directories(
 )
 
 target_link_libraries(azure-security-attestation PUBLIC Azure::azure-core OpenSSL::Crypto OpenSSL::SSL)
+target_compile_definitions(azure-security-attestation PRIVATE _azure_BUILDING_SDK)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-security-attestation ALIAS azure-security-attestation)

@@ -6,6 +6,8 @@ add_executable(local_server_tls_sample
         tls_server_io_schannel.c
 )
 
+target_compile_definitions(local_server_tls_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(local_server_tls_sample)
 
 include_directories(.)

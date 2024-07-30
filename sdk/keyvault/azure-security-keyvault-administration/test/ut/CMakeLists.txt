@@ -23,6 +23,8 @@ add_executable (
     settings_client_base_test.hpp
     settings_client_test.cpp)
 
+target_compile_definitions(azure-security-keyvault-administration-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-administration-test)
 
 create_map_file(azure-security-keyvault-administration-test azure-security-keyvault-administration-test.map)

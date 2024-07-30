@@ -15,6 +15,7 @@ add_executable (
 CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename})
 
 target_link_libraries(eventhubs-${samplename} PRIVATE azure-messaging-eventhubs azure-identity)
+target_compile_definitions(eventhubs-${samplename} PRIVATE _azure_BUILDING_SAMPLES)
 endmacro()
 
 define_sample(consume_events)

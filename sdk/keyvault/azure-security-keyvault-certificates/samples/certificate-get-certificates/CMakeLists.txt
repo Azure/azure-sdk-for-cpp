@@ -11,6 +11,9 @@ add_executable (
   certificate-get-certificates
   certificate_get_certificates.cpp
 )
+
+target_compile_definitions(certificate-get-certificates PRIVATE _azure_BUILDING_SAMPLES)
+
 create_per_service_target_build_for_sample(keyvault certificate-get-certificates)
 
 target_link_libraries(certificate-get-certificates PRIVATE azure-security-keyvault-certificates azure-identity get-env-helper)
