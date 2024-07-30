@@ -95,7 +95,7 @@ parameters:
     default: {}
   - name: UseFederatedAuth
     type: boolean
-    default: false
+    default: true
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
