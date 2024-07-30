@@ -22,7 +22,6 @@
 
 #include <chrono>
 #include <memory>
-#include <regex>
 #include <thread>
 
 #include <gtest/gtest.h>

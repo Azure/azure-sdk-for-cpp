@@ -10,7 +10,6 @@
 #include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
 
 #include <chrono>
-#include <regex>
 
 #include <gtest/gtest.h>
 #if defined(_MSC_VER)
