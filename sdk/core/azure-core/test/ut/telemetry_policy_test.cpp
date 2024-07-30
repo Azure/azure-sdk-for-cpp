@@ -67,7 +67,7 @@ TEST(TelemetryPolicy, telemetryString)
     Azure::Core::_internal::ClientOptions options;
     options.Telemetry.ApplicationId = test.applicationId;
     policies.emplace_back(std::make_unique<TelemetryPolicy>(
-        test.serviceName, test.serviceVersion, options.Telemetry));
+        test.serviceName, test.serviceVersion, options.Telemetry)); 
     policies.emplace_back(std::make_unique<NoOpPolicy>());
     HttpPipeline pipeline(policies);
 
