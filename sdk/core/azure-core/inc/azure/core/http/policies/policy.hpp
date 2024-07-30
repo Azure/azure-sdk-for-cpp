@@ -49,6 +49,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
+  namespace _internal {
+    class TelemetryPolicy;
+  }
+
   /**
    * @brief Telemetry options, used to configure telemetry parameters.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
@@ -69,6 +73,25 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * this will be the tracing provider specified in the application context.
      */
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
+
+  private:
+    // The friend declaration is needed so that TelemetryPolicy could access CppStandardVersion,
+    // and it is not a struct's public field like the ones above to be set non-programmatically.
+    // When building the SDK, tests, or samples, the value of __cplusplus is ultimately controlled
+    // by the cmake files in this repo (i.e. C++14), therefore we set distinct values of 0, -1, etc
+    // when it is the case.
+    friend class _internal::TelemetryPolicy;
+    long CppStandardVersion =
+#if defined(_azure_BUILDING_SDK)
+        -2L
+#elif defined(_azure_BUILDING_TESTS)
+        -1L
+#elif defined(_azure_BUILDING_SAMPLES)
+        0L
+#else
+        __cplusplus
+#endif
+        ;
   };
 
   /**
@@ -525,7 +548,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               packageName,
               packageVersion,
-              options.ApplicationId))
+              options.ApplicationId,
+              options.CppStandardVersion))
       {
       }
 

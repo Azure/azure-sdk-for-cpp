@@ -21,6 +21,8 @@ add_executable (
     key_client_test_hsm_live.cpp
 )
 
+target_compile_definitions(azure-security-keyvault-keys-hsm-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-keys-hsm-test)
 create_map_file(azure-security-keyvault-keys-hsm-test azure-security-keyvault-keys-hsm-test.map)
 

@@ -6,6 +6,8 @@ add_executable(websockets_sample
     iothub_certs.h
     iothub_certs.c)
 
+target_compile_definitions(websockets_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(websockets_sample)
 
 include_directories(.)

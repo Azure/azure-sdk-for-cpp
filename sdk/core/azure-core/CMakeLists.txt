@@ -161,6 +161,8 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
+target_compile_definitions(azure-core PRIVATE _azure_BUILDING_SDK)
+
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core ALIAS azure-core)
 

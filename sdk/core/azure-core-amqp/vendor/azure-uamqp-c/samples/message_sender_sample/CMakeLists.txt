@@ -4,6 +4,8 @@
 add_executable(message_sender_sample
 	main.c)
 
+target_compile_definitions(message_sender_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(message_sender_sample)
 
 include_directories(.)

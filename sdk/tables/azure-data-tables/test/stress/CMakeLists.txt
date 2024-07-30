@@ -12,6 +12,8 @@ add_executable(
   tables_stress_test.cpp
 )
 
+target_compile_definitions(azure-data-tables-stress-test PRIVATE _azure_BUILDING_TESTS)
+
 target_link_libraries(azure-data-tables-stress-test PRIVATE azure-data-tables)
 
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}

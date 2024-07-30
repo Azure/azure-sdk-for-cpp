@@ -16,6 +16,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     static std::string GenerateUserAgent(
         std::string const& componentName,
         std::string const& componentVersion,
-        std::string const& applicationId);
+        std::string const& applicationId,
+        long cplusplusValue);
   };
 }}}} // namespace Azure::Core::Http::_detail
