@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- [[#5767]](https://github.com/Azure/azure-sdk-for-cpp/pull/5767) XML: Use RAII wrappers instead of manual memory management. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
+
 ## 12.7.0 (2024-07-16)
 
 ### Features Added
