@@ -640,7 +640,7 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   }
   catch (AuthenticationException const& ex)
   {
-    EXPECT_TRUE(std::string(ex.what()).find("404 (Not Found)") != std::string::npos) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("401 Unauthorized") != std::string::npos) << ex.what();
   }
 }
 
