@@ -59,9 +59,9 @@ TEST(TelemetryPolicy, telemetryString)
 
   constexpr auto TelemetryHeader = "user-agent";
   constexpr auto OSInfoMinLength = 10;
-  const std::string CppVersionSuffix = " Cpp/-1)"
+  const std::string CppVersionSuffix = " Cpp/-1)";
 
-      for (auto const& test : UserAgentTests)
+  for (auto const& test : UserAgentTests)
   {
     std::vector<std::unique_ptr<HttpPolicy>> policies;
     Azure::Core::_internal::ClientOptions options;
