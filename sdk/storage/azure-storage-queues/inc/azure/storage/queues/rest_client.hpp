@@ -9,6 +9,7 @@
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/core/response.hpp>
@@ -42,7 +43,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<int32_t> Days;
+      Nullable<std::int32_t> Days;
     };
     /**
      * @brief Azure Analytics Logging settings.
@@ -126,7 +127,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
-      int32_t MaxAgeInSeconds = int32_t();
+      std::int32_t MaxAgeInSeconds = std::int32_t();
     };
     /**
      * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::SetProperties.
@@ -159,27 +160,20 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * @brief The status of the secondary location.
      */
-    class GeoReplicationStatus final {
+    class GeoReplicationStatus final
+        : public Core::_internal::ExtendableEnumeration<GeoReplicationStatus> {
     public:
       /** Constructs a new GeoReplicationStatus instance */
       GeoReplicationStatus() = default;
       /** Constructs a new GeoReplicationStatus from a string. */
-      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another GeoReplicationStatus. */
-      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another GeoReplicationStatus. */
-      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit GeoReplicationStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type GeoReplicationStatus: Live */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
       AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Geo-Replication information for the Secondary Storage Service.
@@ -302,7 +296,7 @@ namespace Azure { namespace Storage { namespace Queues {
        * The approximate number of messages in the queue. This number is not lower than the actual
        * number of messages in the queue, but could be higher.
        */
-      int32_t ApproximateMessageCount = int32_t();
+      std::int32_t ApproximateMessageCount = std::int32_t();
     };
     /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::SetMetadata.
@@ -378,7 +372,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * The number of times the message has been dequeued.
        */
-      int64_t DequeueCount = int64_t();
+      std::int64_t DequeueCount = std::int64_t();
       /**
        * The content of the Message.
        */
@@ -460,7 +454,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * The number of times the message has been dequeued.
        */
-      int64_t DequeueCount = int64_t();
+      std::int64_t DequeueCount = std::int64_t();
       /**
        * The content of the Message.
        */
@@ -529,7 +523,7 @@ namespace Azure { namespace Storage { namespace Queues {
       {
         Nullable<std::string> Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListQueuesIncludeFlags> Include;
       };
       static Response<Models::_detail::ListQueuesResult> ListQueuesSegment(
@@ -593,8 +587,8 @@ namespace Azure { namespace Storage { namespace Queues {
           const Core::Context& context);
       struct ReceiveQueueMessagesOptions final
       {
-        Nullable<int64_t> NumberOfMessages;
-        Nullable<int32_t> Visibilitytimeout;
+        Nullable<std::int64_t> NumberOfMessages;
+        Nullable<std::int32_t> Visibilitytimeout;
       };
       static Response<Models::ReceivedMessages> ReceiveMessages(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -612,8 +606,8 @@ namespace Azure { namespace Storage { namespace Queues {
       struct EnqueueQueueMessageOptions final
       {
         Models::_detail::QueueMessageInternal QueueMessage;
-        Nullable<int32_t> Visibilitytimeout;
-        Nullable<int32_t> MessageTimeToLive;
+        Nullable<std::int32_t> Visibilitytimeout;
+        Nullable<std::int32_t> MessageTimeToLive;
       };
       static Response<Models::EnqueueMessageResult> EnqueueMessage(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -622,7 +616,7 @@ namespace Azure { namespace Storage { namespace Queues {
           const Core::Context& context);
       struct PeekQueueMessagesOptions final
       {
-        Nullable<int64_t> NumberOfMessages;
+        Nullable<std::int64_t> NumberOfMessages;
       };
       static Response<Models::PeekedMessages> PeekMessages(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -633,7 +627,7 @@ namespace Azure { namespace Storage { namespace Queues {
       {
         Models::_detail::QueueMessageInternal QueueMessage;
         std::string PopReceipt;
-        int32_t Visibilitytimeout = int32_t();
+        std::int32_t Visibilitytimeout = std::int32_t();
       };
       static Response<Models::UpdateMessageResult> UpdateMessage(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -652,7 +646,7 @@ namespace Azure { namespace Storage { namespace Queues {
       struct UpdateQueueMessageVisibilityOptions final
       {
         std::string PopReceipt;
-        int32_t Visibilitytimeout = int32_t();
+        std::int32_t Visibilitytimeout = std::int32_t();
       };
       static Response<Models::UpdateMessageResult> UpdateMessageVisibility(
           Core::Http::_internal::HttpPipeline& pipeline,
