@@ -17,10 +17,11 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 
 add_executable (
   azure-security-keyvault-administration-test
+    backup_restore_client_base_test.hpp
+    backup_restore_client_test.cpp
     macro_guard.cpp
     settings_client_base_test.hpp
-    settings_client_test.cpp
-)
+    settings_client_test.cpp)
 
 target_compile_definitions(azure-security-keyvault-administration-test PRIVATE _azure_BUILDING_TESTS)
 
