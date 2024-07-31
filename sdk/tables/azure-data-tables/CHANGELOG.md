@@ -1,14 +1,11 @@
 # Release History
 
-## 1.0.0-beta.4 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.4 (2024-08-06)
 
 ### Bugs Fixed
 
-### Other Changes
+- Contributed by github user 0xar1.
+  Fixed an issue around deserializing non-string values in `TableEntity` properties.
 
 ## 1.0.0-beta.3 (2024-06-11)
 
