@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- [[#5765]](https://github.com/Azure/azure-sdk-for-cpp/pull/5765) Fix libcxx build. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage Blobs better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
+
 ## 12.12.0 (2024-07-16)
 
 ### Features Added

@@ -16,6 +16,14 @@
 
 ### Other Changes
 
+- [[#5851]](https://github.com/Azure/azure-sdk-for-cpp/pull/5851) Remove unneeded `<regex>` includes. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
+
 ## 1.13.0 (2024-07-12)
 
 ### Bugs Fixed
