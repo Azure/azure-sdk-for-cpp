@@ -24,7 +24,8 @@ int main()
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+  SettingsClient settingsClient(
+      Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_HSM_URL"), credential);
 
   try
   {

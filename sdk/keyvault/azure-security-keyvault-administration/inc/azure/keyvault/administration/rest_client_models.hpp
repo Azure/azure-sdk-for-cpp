@@ -74,4 +74,111 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
       std::vector<Setting> Value;
     };
 
+    /**
+     * @brief Define the options to create an SDK Keys client.
+     *
+     */
+    struct BackupClientOptions final : public Azure::Core::_internal::ClientOptions
+    {
+      /**
+       * @brief Service Version used.
+       *
+       */
+      const std::string ApiVersion{"7.5"};
+    };
+
+    /**
+     * @brief KeyVault Service Error model.
+     *
+     */
+    struct KeyVaultServiceError final
+    {
+      /**
+       * @brief The error code.
+       *
+       */
+      std::string Code;
+      /**
+       * @brief The error message.
+       *
+       */
+      std::string Message;
+    };
+
+    /**
+     * @brief The full backup operation.
+     *
+     */
+    struct BackupOperationStatus final
+    {
+      /**
+       * @brief Status of the backup operation.
+       *
+       */
+      std::string Status;
+      /**
+       * @brief The status details of backup operation.
+       *
+       */
+      Azure::Nullable<std::string> StatusDetails;
+      /**
+       * @brief Error encountered, if any, during the full backup operation.
+       *
+       */
+      Azure::Nullable<KeyVaultServiceError> Error;
+      /**
+       * @brief The start time of the backup operation in UTC.
+       *
+       */
+      DateTime StartTime;
+      /**
+       * @brief The end time of the backup operation in UTC.
+       *
+       */
+      Nullable<DateTime> EndTime;
+      /**
+       * @brief Identifier for the full backup operation.
+       *
+       */
+      std::string JobId;
+      /**
+       * @brief The Azure blob storage container Uri which contains the full backup.
+       *
+       */
+      std::string AzureStorageBlobContainerUri;
+    };
+
+    /**
+     * @brief Sas token parameter for backup and restore operations.
+     *
+     */
+    struct SasTokenParameter final
+    {
+      /**
+       * @brief The SAS token pointing to an Azure Blob storage container.
+       *
+       */
+      Nullable<std::string> Token;
+      /**
+       * @brief Indicates which authentication method should be used. If set to true, Managed HSM
+       * will use the configured user-assigned managed identity to authenticate with Azure Storage.
+       * Otherwise, a SAS token has to be specified.
+       *
+       */
+      Nullable<bool> UseManagedIdentity;
+    };
+
+    /**
+     * @brief Full backup status options.
+     *
+     */
+    struct FullBackupStatusOptions final
+    {
+      /**
+       * @brief Identifier for the full backup operation.
+       *
+       */
+      std::string JobId;
+    };
+
 }}}}} // namespace Azure::Security::KeyVault::Administration::Models
