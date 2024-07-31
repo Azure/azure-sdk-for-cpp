@@ -11,6 +11,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/nullable.hpp>
@@ -49,7 +50,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * value will be deleted. Metrics data is deleted on a best-effort basis after the retention
        * period expires.
        */
-      Nullable<int32_t> Days;
+      Nullable<std::int32_t> Days;
     };
     /**
      * @brief Storage Analytics metrics for file service.
@@ -106,7 +107,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
-      int32_t MaxAgeInSeconds = int32_t();
+      std::int32_t MaxAgeInSeconds = std::int32_t();
     };
     /**
      * @brief Settings for SMB multichannel.
@@ -141,23 +142,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Valid value is backup.
      */
-    class ShareTokenIntent final {
+    class ShareTokenIntent final : public Core::_internal::ExtendableEnumeration<ShareTokenIntent> {
     public:
       /** Constructs a new ShareTokenIntent instance */
       ShareTokenIntent() = default;
       /** Constructs a new ShareTokenIntent from a string. */
-      explicit ShareTokenIntent(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ShareTokenIntent. */
-      bool operator==(const ShareTokenIntent& other) const { return m_value == other.m_value; }
-      /** Compares with another ShareTokenIntent. */
-      bool operator!=(const ShareTokenIntent& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit ShareTokenIntent(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type ShareTokenIntent: Backup */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareServiceClient::SetProperties.
@@ -190,18 +183,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Specifies the access tier of the share.
      */
-    class AccessTier final {
+    class AccessTier final : public Core::_internal::ExtendableEnumeration<AccessTier> {
     public:
       /** Constructs a new AccessTier instance */
       AccessTier() = default;
       /** Constructs a new AccessTier from a string. */
-      explicit AccessTier(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another AccessTier. */
-      bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
-      /** Compares with another AccessTier. */
-      bool operator!=(const AccessTier& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit AccessTier(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type AccessTier: TransactionOptimized */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier TransactionOptimized;
       /** Constant value of type AccessTier: Hot */
@@ -210,48 +198,32 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Cool;
       /** Constant value of type AccessTier: Premium */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Premium;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief The current lease status of the share.
      */
-    class LeaseStatus final {
+    class LeaseStatus final : public Core::_internal::ExtendableEnumeration<LeaseStatus> {
     public:
       /** Constructs a new LeaseStatus instance */
       LeaseStatus() = default;
       /** Constructs a new LeaseStatus from a string. */
-      explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseStatus. */
-      bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseStatus. */
-      bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseStatus: Locked */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Locked;
       /** Constant value of type LeaseStatus: Unlocked */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Unlocked;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Lease state of the share.
      */
-    class LeaseState final {
+    class LeaseState final : public Core::_internal::ExtendableEnumeration<LeaseState> {
     public:
       /** Constructs a new LeaseState instance */
       LeaseState() = default;
       /** Constructs a new LeaseState from a string. */
-      explicit LeaseState(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseState. */
-      bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseState. */
-      bool operator!=(const LeaseState& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseState(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseState: Available */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Available;
       /** Constant value of type LeaseState: Leased */
@@ -262,80 +234,54 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Breaking;
       /** Constant value of type LeaseState: Broken */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Broken;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief When a share is leased, specifies whether the lease is of infinite or fixed duration.
      */
-    class LeaseDurationType final {
+    class LeaseDurationType final
+        : public Core::_internal::ExtendableEnumeration<LeaseDurationType> {
     public:
       /** Constructs a new LeaseDurationType instance */
       LeaseDurationType() = default;
       /** Constructs a new LeaseDurationType from a string. */
-      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseDurationType. */
-      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseDurationType. */
-      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseDurationType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseDurationType: Infinite */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
       /** Constant value of type LeaseDurationType: Fixed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief The protocols that have been enabled on the share.
      */
-    class ShareProtocols final {
+    class ShareProtocols final : public Core::_internal::ExtendableEnumeration<ShareProtocols> {
     public:
       /** Constructs a new ShareProtocols instance */
       ShareProtocols() = default;
       /** Constructs a new ShareProtocols from a string. */
-      explicit ShareProtocols(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ShareProtocols. */
-      bool operator==(const ShareProtocols& other) const { return m_value == other.m_value; }
-      /** Compares with another ShareProtocols. */
-      bool operator!=(const ShareProtocols& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit ShareProtocols(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type ShareProtocols: Smb */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Smb;
       /** Constant value of type ShareProtocols: Nfs */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Nfs;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Root squash to set on the share.  Only valid for NFS shares.
      */
-    class ShareRootSquash final {
+    class ShareRootSquash final : public Core::_internal::ExtendableEnumeration<ShareRootSquash> {
     public:
       /** Constructs a new ShareRootSquash instance */
       ShareRootSquash() = default;
       /** Constructs a new ShareRootSquash from a string. */
-      explicit ShareRootSquash(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ShareRootSquash. */
-      bool operator==(const ShareRootSquash& other) const { return m_value == other.m_value; }
-      /** Compares with another ShareRootSquash. */
-      bool operator!=(const ShareRootSquash& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit ShareRootSquash(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type ShareRootSquash: NoRootSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash NoRootSquash;
       /** Constant value of type ShareRootSquash: RootSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash RootSquash;
       /** Constant value of type ShareRootSquash: AllSquash */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash AllSquash;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Properties of a share.
@@ -353,23 +299,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The Quota for the item.
        */
-      int64_t Quota = int64_t();
+      std::int64_t Quota = std::int64_t();
       /**
        * Provisioned Iops.
        */
-      Nullable<int32_t> ProvisionedIops;
+      Nullable<std::int32_t> ProvisionedIops;
       /**
        * Provisioned Ingress MBps.
        */
-      Nullable<int32_t> ProvisionedIngressMBps;
+      Nullable<std::int32_t> ProvisionedIngressMBps;
       /**
        * Provisioned Egress MBps.
        */
-      Nullable<int32_t> ProvisionedEgressMBps;
+      Nullable<std::int32_t> ProvisionedEgressMBps;
       /**
        * Provisioned Bandwidth MBps.
        */
-      Nullable<int32_t> ProvisionedBandwidthMBps;
+      Nullable<std::int32_t> ProvisionedBandwidthMBps;
       /**
        * Next allowed Quota Downgrade Time.
        */
@@ -381,7 +327,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Remaining retention days.
        */
-      int32_t RemainingRetentionDays = int32_t();
+      std::int32_t RemainingRetentionDays = std::int32_t();
       /**
        * Specifies the access tier of the share.
        */
@@ -428,12 +374,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Optional. Integer. Default if not specified is the maximum IOPS the file share can support.
        * Current maximum for a file share is 102,400 IOPS.
        */
-      Nullable<int64_t> PaidBurstingMaxIops;
+      Nullable<std::int64_t> PaidBurstingMaxIops;
       /**
        * Optional. Integer. Default if not specified is the maximum throughput the file share can
        * support. Current maximum for a file share is 10,340 MiB/sec.
        */
-      Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
+      Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -508,7 +454,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string ServiceEndpoint;
         Nullable<std::string> Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         /**
          * Array of ShareItem.
          */
@@ -562,19 +508,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Returns the current share quota in GB.
        */
-      int64_t Quota = int64_t();
+      std::int64_t Quota = std::int64_t();
       /**
        * Returns the current share provisioned IOPS.
        */
-      Nullable<int32_t> ProvisionedIops;
+      Nullable<std::int32_t> ProvisionedIops;
       /**
        * Returns the current share provisioned ingress in megabytes per second.
        */
-      Nullable<int32_t> ProvisionedIngressMBps;
+      Nullable<std::int32_t> ProvisionedIngressMBps;
       /**
        * Returns the current share provisioned egress in megabytes per second.
        */
-      Nullable<int32_t> ProvisionedEgressMBps;
+      Nullable<std::int32_t> ProvisionedEgressMBps;
       /**
        * Returns the current share next allowed quota downgrade time.
        */
@@ -582,7 +528,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Returns the current share provisioned bandwidth in megabits per second.
        */
-      Nullable<int32_t> ProvisionedBandwidthMBps;
+      Nullable<std::int32_t> ProvisionedBandwidthMBps;
       /**
        * When a share is leased, specifies whether the lease is of infinite or fixed duration.
        */
@@ -625,33 +571,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Optional. Integer. Default if not specified is the maximum IOPS the file share can support.
        * Current maximum for a file share is 102,400 IOPS.
        */
-      Nullable<int64_t> PaidBurstingMaxIops;
+      Nullable<std::int64_t> PaidBurstingMaxIops;
       /**
        * Optional. Integer. Default if not specified is the maximum throughput the file share can
        * support. Current maximum for a file share is 10,340 MiB/sec.
        */
-      Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
+      Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
      */
-    class DeleteSnapshotsOption final {
+    class DeleteSnapshotsOption final
+        : public Core::_internal::ExtendableEnumeration<DeleteSnapshotsOption> {
     public:
       /** Constructs a new DeleteSnapshotsOption instance */
       DeleteSnapshotsOption() = default;
       /** Constructs a new DeleteSnapshotsOption from a string. */
-      explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another DeleteSnapshotsOption. */
-      bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
-      /** Compares with another DeleteSnapshotsOption. */
-      bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit DeleteSnapshotsOption(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type DeleteSnapshotsOption: Include */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOption Include;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::Delete.
@@ -763,7 +702,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         /**
          * Approximate time remaining in the lease period, in seconds.
          */
-        int32_t LeaseTime = int32_t();
+        std::int32_t LeaseTime = std::int32_t();
       };
     } // namespace _detail
     /**
@@ -803,25 +742,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned in SDDL format. If x-ms-file-permission-format is explicitly set to binary, the
      * permission is returned as a base64 string representing the binary encoding of the permission.
      */
-    class FilePermissionFormat final {
+    class FilePermissionFormat final
+        : public Core::_internal::ExtendableEnumeration<FilePermissionFormat> {
     public:
       /** Constructs a new FilePermissionFormat instance */
       FilePermissionFormat() = default;
       /** Constructs a new FilePermissionFormat from a string. */
-      explicit FilePermissionFormat(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another FilePermissionFormat. */
-      bool operator==(const FilePermissionFormat& other) const { return m_value == other.m_value; }
-      /** Compares with another FilePermissionFormat. */
-      bool operator!=(const FilePermissionFormat& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit FilePermissionFormat(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type FilePermissionFormat: Sddl */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Sddl;
       /** Constant value of type FilePermissionFormat: Binary */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Binary;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::CreatePermission.
@@ -945,7 +877,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The approximate size of the data stored in bytes. Note that this value may not include all
        * recently created or recently resized files.
        */
-      int64_t ShareUsageInBytes = int64_t();
+      std::int64_t ShareUsageInBytes = std::int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -1217,7 +1149,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * handle is closed or the op-lock is broken. To retrieve current property values, call Get
        * File Properties.
        */
-      int64_t FileSize = int64_t();
+      std::int64_t FileSize = std::int64_t();
       /**
        * The time the file was last accessed.
        */
@@ -1306,7 +1238,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string DirectoryPath;
         StringEncoded Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         /**
          * Abstract for entries that can be listed from Directory.
          */
@@ -1317,27 +1249,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Access rights of the access policy.
        */
-      class AccessRight final {
+      class AccessRight final : public Core::_internal::ExtendableEnumeration<AccessRight> {
       public:
         /** Constructs a new AccessRight instance */
         AccessRight() = default;
         /** Constructs a new AccessRight from a string. */
-        explicit AccessRight(std::string value) : m_value(std::move(value)) {}
-        /** Compares with another AccessRight. */
-        bool operator==(const AccessRight& other) const { return m_value == other.m_value; }
-        /** Compares with another AccessRight. */
-        bool operator!=(const AccessRight& other) const { return !(*this == other); }
-        /** Converts the value to a string. */
-        const std::string& ToString() const { return m_value; }
+        explicit AccessRight(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
         /** Constant value of type AccessRight: Read */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
         /** Constant value of type AccessRight: Write */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
         /** Constant value of type AccessRight: Delete */
         AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
-
-      private:
-        std::string m_value;
       };
       /**
        * @brief A listed Azure Storage handle item.
@@ -1399,11 +1323,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         /**
          * Contains count of number of handles closed.
          */
-        int32_t NumberOfHandlesClosed = int32_t();
+        std::int32_t NumberOfHandlesClosed = std::int32_t();
         /**
          * Contains count of number of handles that failed to close.
          */
-        int32_t NumberOfHandlesFailedToClose = int32_t();
+        std::int32_t NumberOfHandlesFailedToClose = std::int32_t();
       };
       /**
        * @brief Response type for #Azure::Storage::Files::Shares::DirectoryClient::Rename.
@@ -1518,18 +1442,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Status of a copy operation.
      */
-    class CopyStatus final {
+    class CopyStatus final : public Core::_internal::ExtendableEnumeration<CopyStatus> {
     public:
       /** Constructs a new CopyStatus instance */
       CopyStatus() = default;
       /** Constructs a new CopyStatus from a string. */
-      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another CopyStatus. */
-      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another CopyStatus. */
-      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit CopyStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type CopyStatus: Pending */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Pending;
       /** Constant value of type CopyStatus: Success */
@@ -1538,9 +1457,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Aborted;
       /** Constant value of type CopyStatus: Failed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Detailed information of the downloaded file.
@@ -1642,7 +1558,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Size of the file in bytes.
        */
-      int64_t FileSize = int64_t();
+      std::int64_t FileSize = std::int64_t();
       /**
        * MD5 hash for the downloaded range of data.
        */
@@ -1682,7 +1598,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
        * header that is stored with the file.
        */
-      int64_t FileSize = int64_t();
+      std::int64_t FileSize = std::int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally, in quotes.
        */
@@ -1869,25 +1785,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief If the file last write time should be preserved or overwritten.
      */
-    class FileLastWrittenMode final {
+    class FileLastWrittenMode final
+        : public Core::_internal::ExtendableEnumeration<FileLastWrittenMode> {
     public:
       /** Constructs a new FileLastWrittenMode instance */
       FileLastWrittenMode() = default;
       /** Constructs a new FileLastWrittenMode from a string. */
-      explicit FileLastWrittenMode(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another FileLastWrittenMode. */
-      bool operator==(const FileLastWrittenMode& other) const { return m_value == other.m_value; }
-      /** Compares with another FileLastWrittenMode. */
-      bool operator!=(const FileLastWrittenMode& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit FileLastWrittenMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type FileLastWrittenMode: Now */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Now;
       /** Constant value of type FileLastWrittenMode: Preserve */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Preserve;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRange.
@@ -1969,32 +1878,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The size of the file in bytes.
        */
-      int64_t FileSize = int64_t();
+      std::int64_t FileSize = std::int64_t();
     };
     /**
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the header value of x-ms-file-permission or
      * x-ms-file-permission-key.
      */
-    class PermissionCopyMode final {
+    class PermissionCopyMode final
+        : public Core::_internal::ExtendableEnumeration<PermissionCopyMode> {
     public:
       /** Constructs a new PermissionCopyMode instance */
       PermissionCopyMode() = default;
       /** Constructs a new PermissionCopyMode from a string. */
-      explicit PermissionCopyMode(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another PermissionCopyMode. */
-      bool operator==(const PermissionCopyMode& other) const { return m_value == other.m_value; }
-      /** Compares with another PermissionCopyMode. */
-      bool operator!=(const PermissionCopyMode& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit PermissionCopyMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type PermissionCopyMode: Source */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Source;
       /** Constant value of type PermissionCopyMode: Override */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Override;
-
-    private:
-      std::string m_value;
     };
     namespace _detail {
       /**
@@ -2054,11 +1956,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         /**
          * Contains count of number of handles closed.
          */
-        int32_t NumberOfHandlesClosed = int32_t();
+        std::int32_t NumberOfHandlesClosed = std::int32_t();
         /**
          * Contains count of number of handles that failed to close.
          */
-        int32_t NumberOfHandlesFailedToClose = int32_t();
+        std::int32_t NumberOfHandlesFailedToClose = std::int32_t();
       };
       /**
        * @brief Response type for #Azure::Storage::Files::Shares::FileClient::Rename.
@@ -2137,7 +2039,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<std::string> Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListSharesIncludeFlags> Include;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
@@ -2152,14 +2054,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct CreateShareOptions final
       {
         std::map<std::string, std::string> Metadata;
-        Nullable<int64_t> Quota;
+        Nullable<std::int64_t> Quota;
         Nullable<Models::AccessTier> AccessTier;
         Nullable<Models::ShareProtocols> EnabledProtocols;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
         Nullable<bool> PaidBurstingEnabled;
-        Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
-        Nullable<int64_t> PaidBurstingMaxIops;
+        Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+        Nullable<std::int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::CreateShareResult> Create(
@@ -2192,7 +2094,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct AcquireShareLeaseOptions final
       {
-        Nullable<int32_t> Duration;
+        Nullable<std::int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> Sharesnapshot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
@@ -2238,7 +2140,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct BreakShareLeaseOptions final
       {
-        Nullable<int32_t> BreakPeriod;
+        Nullable<std::int32_t> BreakPeriod;
         Nullable<std::string> LeaseId;
         Nullable<std::string> Sharesnapshot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
@@ -2281,14 +2183,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct SetSharePropertiesOptions final
       {
-        Nullable<int64_t> Quota;
+        Nullable<std::int64_t> Quota;
         Nullable<Models::AccessTier> AccessTier;
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareRootSquash> RootSquash;
         Nullable<bool> EnableSnapshotVirtualDirectoryAccess;
         Nullable<bool> PaidBurstingEnabled;
-        Nullable<int64_t> PaidBurstingMaxBandwidthMibps;
-        Nullable<int64_t> PaidBurstingMaxIops;
+        Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+        Nullable<std::int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
@@ -2412,7 +2314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Prefix;
         Nullable<std::string> Sharesnapshot;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListFilesIncludeFlags> Include;
         Nullable<bool> IncludeExtendedInfo;
         Nullable<bool> AllowTrailingDot;
@@ -2427,7 +2329,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct ListDirectoryHandlesOptions final
       {
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<std::string> Sharesnapshot;
         Nullable<bool> Recursive;
         Nullable<bool> AllowTrailingDot;
@@ -2482,12 +2384,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct CreateFileOptions final
       {
         Nullable<bool> AllowTrailingDot;
-        int64_t FileContentLength = int64_t();
+        std::int64_t FileContentLength = std::int64_t();
         Nullable<std::string> FileContentType;
         Nullable<std::string> FileContentEncoding;
         Nullable<std::string> FileContentLanguage;
         Nullable<std::string> FileCacheControl;
-        Nullable<std::vector<uint8_t>> FileContentMD5;
+        Nullable<std::vector<std::uint8_t>> FileContentMD5;
         Nullable<std::string> FileContentDisposition;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> FilePermission;
@@ -2543,12 +2445,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct SetFileHttpHeadersOptions final
       {
-        Nullable<int64_t> FileContentLength;
+        Nullable<std::int64_t> FileContentLength;
         Nullable<std::string> FileContentType;
         Nullable<std::string> FileContentEncoding;
         Nullable<std::string> FileContentLanguage;
         Nullable<std::string> FileCacheControl;
-        Nullable<std::vector<uint8_t>> FileContentMD5;
+        Nullable<std::vector<std::uint8_t>> FileContentMD5;
         Nullable<std::string> FileContentDisposition;
         Nullable<std::string> FilePermission;
         Nullable<Models::FilePermissionFormat> FilePermissionFormat;
@@ -2580,7 +2482,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Context& context);
       struct AcquireFileLeaseOptions final
       {
-        Nullable<int32_t> Duration;
+        Nullable<std::int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
@@ -2628,7 +2530,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         std::string Range;
         std::string FileRangeWrite;
-        Nullable<std::vector<uint8_t>> ContentMD5;
+        Nullable<std::vector<std::uint8_t>> ContentMD5;
         Nullable<std::string> LeaseId;
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
         Nullable<bool> AllowTrailingDot;
@@ -2645,9 +2547,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::string Range;
         std::string CopySource;
         Nullable<std::string> SourceRange;
-        Nullable<std::vector<uint8_t>> SourceContentCrc64;
-        Nullable<std::vector<uint8_t>> SourceIfMatchCrc64;
-        Nullable<std::vector<uint8_t>> SourceIfNoneMatchCrc64;
+        Nullable<std::vector<std::uint8_t>> SourceContentCrc64;
+        Nullable<std::vector<std::uint8_t>> SourceIfMatchCrc64;
+        Nullable<std::vector<std::uint8_t>> SourceIfNoneMatchCrc64;
         Nullable<std::string> LeaseId;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
@@ -2713,7 +2615,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct ListFileHandlesOptions final
       {
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<std::string> Sharesnapshot;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
