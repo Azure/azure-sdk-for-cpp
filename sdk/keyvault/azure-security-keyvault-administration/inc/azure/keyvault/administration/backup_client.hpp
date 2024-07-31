@@ -21,8 +21,6 @@
 #include <string>
 #include <thread>
 
-using namespace Azure::Security::KeyVault::Administration::Models;
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
   /**
    * @brief Backup restore client.
@@ -46,7 +44,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     explicit BackupClient(
         std::string const& vaultUrl,
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        BackupClientOptions options = BackupClientOptions());
+        Azure::Security::KeyVault::Administration::Models::BackupClientOptions options
+        = Azure::Security::KeyVault::Administration::Models::BackupClientOptions());
 
     /**
      * @brief Creates a full backup using a user-provided SAS token to an Azure blob storage
@@ -62,7 +61,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<BackupOperation> FullBackup(
         Azure::Core::Url const& blobContainerUrl,
-        SasTokenParameter const& sasToken,
+        Azure::Security::KeyVault::Administration::Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -72,9 +71,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return Backup restore operation status.
      */
-    Response<BackupOperationStatus> FullBackupStatus(
-        std::string const& jobId = "",
-        Core::Context const& context = {});
+    Response<Azure::Security::KeyVault::Administration::Models::BackupOperationStatus>
+    FullBackupStatus(std::string const& jobId = "", Core::Context const& context = {});
 
     /**
      * @brief Restores all key materials using the SAS token pointing to a previously stored Azure
@@ -91,7 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     Response<BackupOperation> FullRestore(
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
-        SasTokenParameter const& sasToken,
+        Azure::Security::KeyVault::Administration::Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -101,9 +99,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation status.
      */
-    Response<BackupOperationStatus> RestoreStatus(
-        std::string const& jobId = "",
-        Core::Context const& context = {});
+    Response<Azure::Security::KeyVault::Administration::Models::BackupOperationStatus>
+    RestoreStatus(std::string const& jobId = "", Core::Context const& context = {});
 
     /**
      * @brief  Restores all key versions of a given key using user supplied SAS token pointing to a
@@ -122,17 +119,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::string const& keyName,
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
-        SasTokenParameter const& sasToken,
+        Azure::Security::KeyVault::Administration::Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Core::Url m_vaultBaseUrl;
     std::string m_apiVersion;
-    KeyVaultServiceError DeserializeKeyVaultServiceError(
-        Azure::Core::Json::_internal::json errorFragment);
-    BackupOperationStatus DeserializeBackupOperationStatus(
-        Azure::Core::Http::RawResponse const& rawResponse);
+    Azure::Security::KeyVault::Administration::Models::KeyVaultServiceError
+    DeserializeKeyVaultServiceError(Azure::Core::Json::_internal::json errorFragment);
+    Azure::Security::KeyVault::Administration::Models::BackupOperationStatus
+    DeserializeBackupOperationStatus(Azure::Core::Http::RawResponse const& rawResponse);
   };
 
 }}}} // namespace Azure::Security::KeyVault::Administration

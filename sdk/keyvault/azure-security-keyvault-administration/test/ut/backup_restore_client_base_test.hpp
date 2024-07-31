@@ -29,16 +29,17 @@ namespace Azure {
     BackupRestoreClientTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }
     void CreateHSMClientForTest(std::string hsmUrl = "")
     {
-      BackupClientOptions options;
+      Azure::Security::KeyVault::Administration::Models::BackupClientOptions options;
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::BackupClient,
           Azure::Security::KeyVault::Administration::Models::BackupClientOptions>(
           hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
 
-    SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
+    Azure::Security::KeyVault::Administration::Models::SasTokenParameter GetSasTokenBackup(
+        bool managedIdentity = false)
     {
-      SasTokenParameter sasTokenParameter;
+      Azure::Security::KeyVault::Administration::Models::SasTokenParameter sasTokenParameter;
       // the backup/restore needs a SAS token to access the storage account
       sasTokenParameter.Token = GetEnv("AZURE_KEYVAULT_BACKUP_TOKEN");
       // the backup/restore needs a url to a blob storage resource
@@ -84,7 +85,7 @@ namespace Azure {
       m_keyVaultHsmUrl = GetEnv("AZURE_KEYVAULT_HSM_URL");
 
       // Options and credential for the client
-      BackupClientOptions options;
+      Azure::Security::KeyVault::Administration::Models::BackupClientOptions options;
       m_credential = GetTestCredential();
 
       // `InitTestClient` takes care of setting up Record&Playback.
