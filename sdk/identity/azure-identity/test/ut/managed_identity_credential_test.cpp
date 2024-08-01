@@ -26,11 +26,11 @@
 #include <windows.h>
 #endif
 
+using Azure::Core::ResourceIdentifier;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpMethod;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
-using Azure::Core::ResourceIdentifier;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 TEST(ManagedIdentityCredential, GetCredentialName)
