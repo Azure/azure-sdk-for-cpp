@@ -2248,6 +2248,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
