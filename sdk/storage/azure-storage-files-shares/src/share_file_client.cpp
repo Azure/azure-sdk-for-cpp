@@ -1084,6 +1084,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1201,6 +1202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
