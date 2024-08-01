@@ -95,6 +95,7 @@ CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
        "tracestate",
        "Transfer-Encoding",
        "User-Agent",
+       "WWW-Authenticate",
        "x-ms-client-request-id",
        "x-ms-date",
        "x-ms-error-code",

@@ -94,6 +94,7 @@ void SendRequest(
     request.SetHeader("tracestate", "tracestate");
     request.SetHeader("Transfer-Encoding", "Transfer-Encoding");
     request.SetHeader("User-Agent", "User-Agent");
+    request.SetHeader("WWW-Authenticate", "WWW-Authenticate");
     request.SetHeader("x-ms-client-request-id", "x-ms-client-request-id");
     request.SetHeader("x-ms-date", "x-ms-date");
     request.SetHeader("x-ms-error-code", "x-ms-error-code");
@@ -311,6 +312,7 @@ TEST(LogPolicy, DefaultHeaders)
       "\ntracestate : tracestate"
       "\ntransfer-encoding : Transfer-Encoding"
       "\nuser-agent : User-Agent"
+      "\nwww-authenticate : WWW-Authenticate"
       "\nx-ms-client-request-id : x-ms-client-request-id"
       "\nx-ms-date : x-ms-date"
       "\nx-ms-error-code : x-ms-error-code"
