@@ -24,24 +24,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
    * @remark Used to handle  both backup and restore operations due to the similarity in patterns
    * and return values.
    */
-  class BackupOperation final
-      : public Azure::Core::Operation<
-            Azure::Security::KeyVault::Administration::Models::BackupOperationStatus> {
+  class BackupOperation final : public Azure::Core::Operation<Models::BackupOperationStatus> {
   private:
     /* BackupOperation can be constructed only by friends classes (internal
      * creation). The constructor is private and requires internal components.*/
     friend class Azure::Security::KeyVault::Administration::BackupClient;
 
     std::shared_ptr<BackupClient> m_backupClient;
-    Azure::Security::KeyVault::Administration::Models::BackupOperationStatus m_value;
+    Models::BackupOperationStatus m_value;
     std::string m_continuationToken;
     bool m_isBackupOperation = true;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> PollInternal(
         Azure::Core::Context const& context) override;
 
-    Azure::Response<Azure::Security::KeyVault::Administration::Models::BackupOperationStatus>
-    PollUntilDoneInternal(std::chrono::milliseconds period, Azure::Core::Context& context) override;
+    Azure::Response<Models::BackupOperationStatus> PollUntilDoneInternal(
+        std::chrono::milliseconds period,
+        Azure::Core::Context& context) override;
 
     /**
      * @brief Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
@@ -54,7 +53,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     BackupOperation(
         std::shared_ptr<BackupClient> const& backupClient,
-        Azure::Security::KeyVault::Administration::Models::BackupOperationStatus const& status,
+        Models::BackupOperationStatus const& status,
         bool isBackupOperation)
         : m_backupClient{backupClient}, m_value{status}, m_continuationToken{status.JobId},
           m_isBackupOperation{isBackupOperation} {};
@@ -81,10 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      *
      * @return A BackupOperationStatus object.
      */
-    Azure::Security::KeyVault::Administration::Models::BackupOperationStatus Value() const override
-    {
-      return m_value;
-    }
+    Models::BackupOperationStatus Value() const override { return m_value; }
 
     /**
      * @brief Get the continuation token used for further status inquiries
