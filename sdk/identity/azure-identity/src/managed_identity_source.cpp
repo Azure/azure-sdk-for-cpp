@@ -268,9 +268,8 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
     if (!clientId.empty() || !resourceId.empty())
     {
       throw AuthenticationException(
-          "User assigned identity is not supported in the Cloud Shell environment. To authenticate "
-          "with the system assigned identity, omit the client or resource ID when constructing the "
-          "ManagedIdentityCredential.");
+          "User-assigned managed identities are not supported in Cloud Shell environments. Omit "
+          "the client or resource ID when constructing the ManagedIdentityCredential.");
     }
 
     return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
