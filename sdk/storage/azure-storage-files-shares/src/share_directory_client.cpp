@@ -209,6 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.DirectoryPermissionFormat;
     auto result = _detail::DirectoryClient::Create(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::CreateDirectoryResult ret;
