@@ -17,6 +17,7 @@
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 using namespace std::chrono_literals;
 
 int main()

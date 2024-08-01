@@ -8,6 +8,7 @@
 #include "azure/keyvault/administration/backup_client.hpp"
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 
 std::unique_ptr<Azure::Core::Http::RawResponse> BackupOperation::PollInternal(
     Azure::Core::Context const& context)

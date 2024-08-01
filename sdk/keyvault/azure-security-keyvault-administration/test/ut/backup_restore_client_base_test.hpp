@@ -32,13 +32,13 @@ namespace Azure {
       BackupClientOptions options;
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::BackupClient,
-          Azure::Security::KeyVault::Administration::Models::BackupClientOptions>(
+          BackupClientOptions>(
           hsmUrl.length() == 0 ? m_keyVaultHsmUrl : hsmUrl, m_credential, options);
     }
 
-    SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
+    Models::SasTokenParameter GetSasTokenBackup(bool managedIdentity = false)
     {
-      SasTokenParameter sasTokenParameter;
+      Models::SasTokenParameter sasTokenParameter;
       // the backup/restore needs a SAS token to access the storage account
       sasTokenParameter.Token = GetEnv("AZURE_KEYVAULT_BACKUP_TOKEN");
       // the backup/restore needs a url to a blob storage resource
@@ -90,8 +90,7 @@ namespace Azure {
       // `InitTestClient` takes care of setting up Record&Playback.
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::BackupClient,
-          Azure::Security::KeyVault::Administration::Models::BackupClientOptions>(
-          m_keyVaultUrl, m_credential, options);
+          BackupClientOptions>(m_keyVaultUrl, m_credential, options);
 
       UpdateWaitingTime(m_testPollingIntervalMs);
     }

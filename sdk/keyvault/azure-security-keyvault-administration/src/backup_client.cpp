@@ -22,6 +22,7 @@
 #include <utility>
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
