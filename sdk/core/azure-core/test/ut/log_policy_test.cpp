@@ -71,9 +71,11 @@ void SendRequest(
   {
 
     request.SetHeader("Accept", "Accept");
+    request.SetHeader("accept-ranges", "Accept-Ranges");
     request.SetHeader("Cache-Control", "Cache-Control");
     request.SetHeader("Connection", "Connection");
     request.SetHeader("Content-Length", "Content-Length");
+    request.SetHeader("content-range", "Content-Range");
     request.SetHeader("Content-Type", "Content-Type");
     request.SetHeader("Date", "Date");
     request.SetHeader("ETag", "ETag");
@@ -84,6 +86,7 @@ void SendRequest(
     request.SetHeader("If-Unmodified-Since", "If-Unmodified-Since");
     request.SetHeader("Last-Modified", "Last-Modified");
     request.SetHeader("Pragma", "Pragma");
+    request.SetHeader("range", "Range");
     request.SetHeader("Request-Id", "Request-Id");
     request.SetHeader("Retry-After", "Retry-After");
     request.SetHeader("Server", "Server");
@@ -92,8 +95,12 @@ void SendRequest(
     request.SetHeader("Transfer-Encoding", "Transfer-Encoding");
     request.SetHeader("User-Agent", "User-Agent");
     request.SetHeader("x-ms-client-request-id", "x-ms-client-request-id");
+    request.SetHeader("x-ms-date", "x-ms-date");
+    request.SetHeader("x-ms-error-code", "x-ms-error-code");
+    request.SetHeader("x-ms-range", "x-ms-range");
     request.SetHeader("x-ms-request-id", "x-ms-request-id");
     request.SetHeader("x-ms-return-client-request-id", "x-ms-return-client-request-id");
+    request.SetHeader("x-ms-version", "x-ms-version");
   }
   else
   {
@@ -279,9 +286,11 @@ TEST(LogPolicy, DefaultHeaders)
       "&qparam%25204=REDACTED"
       "&qparam1=REDACTED"
       "\naccept : Accept"
+      "\naccept-ranges : Accept-Ranges"
       "\ncache-control : Cache-Control"
       "\nconnection : Connection"
       "\ncontent-length : Content-Length"
+      "\ncontent-range : Content-Range"
       "\ncontent-type : Content-Type"
       "\ndate : Date"
       "\netag : ETag"
@@ -294,6 +303,7 @@ TEST(LogPolicy, DefaultHeaders)
       "\nif-unmodified-since : If-Unmodified-Since"
       "\nlast-modified : Last-Modified"
       "\npragma : Pragma"
+      "\nrange : Range"
       "\nrequest-id : Request-Id"
       "\nretry-after : Retry-After"
       "\nserver : Server"
@@ -302,8 +312,12 @@ TEST(LogPolicy, DefaultHeaders)
       "\ntransfer-encoding : Transfer-Encoding"
       "\nuser-agent : User-Agent"
       "\nx-ms-client-request-id : x-ms-client-request-id"
+      "\nx-ms-date : x-ms-date"
+      "\nx-ms-error-code : x-ms-error-code"
+      "\nx-ms-range : x-ms-range"
       "\nx-ms-request-id : x-ms-request-id"
-      "\nx-ms-return-client-request-id : x-ms-return-client-request-id");
+      "\nx-ms-return-client-request-id : x-ms-return-client-request-id"
+      "\nx-ms-version : x-ms-version");
 
   EXPECT_TRUE(StartsWith(entry2.Message, "HTTP/1.1 Response ("));
   EXPECT_TRUE(EndsWith(entry2.Message, "ms) : 200 OKAY"));

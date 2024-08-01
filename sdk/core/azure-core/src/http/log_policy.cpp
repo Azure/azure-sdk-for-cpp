@@ -72,9 +72,11 @@ std::set<std::string> const Policies::_detail::g_defaultAllowedHttpQueryParamete
 
 CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
     = {"Accept",
+       "Accept-Ranges",
        "Cache-Control",
        "Connection",
        "Content-Length",
+       "Content-Range",
        "Content-Type",
        "Date",
        "ETag",
@@ -85,6 +87,7 @@ CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
        "If-Unmodified-Since",
        "Last-Modified",
        "Pragma",
+       "Range",
        "Request-Id",
        "Retry-After",
        "Server",
@@ -93,16 +96,12 @@ CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
        "Transfer-Encoding",
        "User-Agent",
        "x-ms-client-request-id",
+       "x-ms-date",
+       "x-ms-error-code",
+       "x-ms-range",
        "x-ms-request-id",
        "x-ms-return-client-request-id",
-       "x-ms-error-code",
-       "WWW-Authenticate",
-       "x-ms-version",
-       "x-ms-date",
-       "x-ms-range",
-       "range",
-       "accept-ranges",
-       "content-range"};
+       "x-ms-version"};
 
 std::unique_ptr<RawResponse> LogPolicy::Send(
     Request& request,
