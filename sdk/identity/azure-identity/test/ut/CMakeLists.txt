@@ -28,7 +28,6 @@ add_executable (
     environment_credential_test.cpp
     macro_guard_test.cpp
     managed_identity_credential_test.cpp
-    resource_identifier_test.cpp
     simplified_header_test.cpp
     tenant_id_resolver_test.cpp
     token_cache_test.cpp
