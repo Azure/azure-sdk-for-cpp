@@ -25,5 +25,7 @@ namespace Azure { namespace Identity { namespace _detail {
 
     // ADFS is the Active Directory Federation Service, a tenant ID that is used in Azure Stack.
     static bool IsAdfs(std::string const& tenantId);
+
+    static bool IsValidTenantId(std::string const& tenantId);
   };
 }}} // namespace Azure::Identity::_detail
