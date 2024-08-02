@@ -53,7 +53,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
-    ResourceIdentifier const& resourceId,
+    Azure::Core::ResourceIdentifier const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {

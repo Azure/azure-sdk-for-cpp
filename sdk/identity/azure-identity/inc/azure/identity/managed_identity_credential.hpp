@@ -10,6 +10,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/resource_identifier.hpp>
 
 #include <memory>
 #include <string>
@@ -18,29 +19,6 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class ManagedIdentitySource;
   }
-
-  // This will move to Azure::Core.
-  /**
-   * @brief An Azure Resource Manager resource identifier.
-   */
-  class ResourceIdentifier final {
-    std::string m_resourceId;
-
-  public:
-    /**
-     * @brief Constructs a resource identifier.
-     *
-     * @param resourceId The id string to create the ResourceIdentifier from.
-     */
-    explicit ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId){};
-
-    /**
-     * @brief The string representation of this resource identifier.
-     *
-     * @return The resource identifier string.
-     */
-    std::string ToString() const { return m_resourceId; }
-  };
 
   /**
    * @brief Attempts authentication using a managed identity that has been assigned to the
@@ -79,7 +57,7 @@ namespace Azure { namespace Identity {
      * @param options Options for token retrieval.
      */
     explicit ManagedIdentityCredential(
-        ResourceIdentifier const& resourceId,
+        Azure::Core::ResourceIdentifier const& resourceId,
         Azure::Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
