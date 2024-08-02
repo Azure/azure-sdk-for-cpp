@@ -873,7 +873,9 @@ TEST(ManagedIdentityCredential, CloudShell)
 
 TEST(ManagedIdentityCredential, CloudShellClientId)
 {
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
@@ -887,71 +889,49 @@ TEST(ManagedIdentityCredential, CloudShellClientId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            "fedcba98-7654-3210-0123-456789abcdef", options);
+        std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
+        EXPECT_THROW(
+            cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
+                "fedcba98-7654-3210-0123-456789abcdef", options),
+            AuthenticationException);
+
+        return cloudShellManagedIdentityCredential;
       },
-      {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
-      std::vector<std::string>{
-          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
-          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
-
-  EXPECT_EQ(actual.Requests.size(), 3U);
-  EXPECT_EQ(actual.Responses.size(), 3U);
-
-  auto const& request0 = actual.Requests.at(0);
-  auto const& request1 = actual.Requests.at(1);
-  auto const& request2 = actual.Requests.at(2);
-
-  auto const& response0 = actual.Responses.at(0);
-  auto const& response1 = actual.Responses.at(1);
-  auto const& response2 = actual.Responses.at(2);
-
-  EXPECT_EQ(request0.HttpMethod, HttpMethod::Post);
-  EXPECT_EQ(request1.HttpMethod, HttpMethod::Post);
-  EXPECT_EQ(request2.HttpMethod, HttpMethod::Post);
-
-  EXPECT_EQ(request0.AbsoluteUrl, "https://microsoft.com");
-  EXPECT_EQ(request1.AbsoluteUrl, "https://microsoft.com");
-  EXPECT_EQ(request2.AbsoluteUrl, "https://microsoft.com");
-
-  EXPECT_EQ(
-      request0.Body,
-      "resource=https%3A%2F%2Fazure.com&client_id=fedcba98-7654-3210-0123-456789abcdef"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request1.Body,
-      "resource=https%3A%2F%2Foutlook.com&client_id=fedcba98-7654-3210-0123-456789abcdef"); // cspell:disable-line
-
-  EXPECT_EQ(request2.Body, "client_id=fedcba98-7654-3210-0123-456789abcdef");
-
-  {
-    EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("Metadata"), "true");
-
-    EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("Metadata"), "true");
-
-    EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("Metadata"), "true");
-  }
-
-  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
-  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
-
-  using namespace std::chrono_literals;
-  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
-
-  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
-  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
-
-  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
-  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
 }
 
 TEST(ManagedIdentityCredential, CloudShellResourceId)
+{
+  using Azure::Core::Credentials::AuthenticationException;
+
+  static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            {"MSI_ENDPOINT", "https://microsoft.com/"},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", "https://xbox.com/"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
+        });
+
+        std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
+        EXPECT_THROW(
+            cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
+                ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options),
+            AuthenticationException);
+
+        return cloudShellManagedIdentityCredential;
+      },
+      {},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}"}));
+}
+
+TEST(ManagedIdentityCredential, CloudShellScope)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
@@ -967,8 +947,7 @@ TEST(ManagedIdentityCredential, CloudShellResourceId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{

@@ -141,7 +141,6 @@ namespace Azure { namespace Identity { namespace _detail {
   class CloudShellManagedIdentitySource final : public ManagedIdentitySource {
   private:
     Core::Url m_url;
-    std::string m_body;
 
     explicit CloudShellManagedIdentitySource(
         std::string const& clientId,
