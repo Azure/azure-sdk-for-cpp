@@ -49,6 +49,10 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
+  namespace _internal {
+    class TelemetryPolicy;
+  }
+
   /**
    * @brief Telemetry options, used to configure telemetry parameters.
    * @note See https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy.
@@ -69,6 +73,25 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      * this will be the tracing provider specified in the application context.
      */
     std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
+
+  private:
+    // The friend declaration is needed so that TelemetryPolicy could access CppStandardVersion,
+    // and it is not a struct's public field like the ones above to be set non-programmatically.
+    // When building the SDK, tests, or samples, the value of __cplusplus is ultimately controlled
+    // by the cmake files in this repo (i.e. C++14), therefore we set distinct values of 0, -1, etc
+    // when it is the case.
+    friend class _internal::TelemetryPolicy;
+    long CppStandardVersion =
+#if defined(_azure_BUILDING_SDK)
+        -2L
+#elif defined(_azure_BUILDING_TESTS)
+        -1L
+#elif defined(_azure_BUILDING_SAMPLES)
+        0L
+#else
+        __cplusplus
+#endif
+        ;
   };
 
   /**
@@ -363,7 +386,11 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy : public HttpPolicy {
+    class RetryPolicy
+#if !defined(_azure_TESTING_BUILD)
+        final
+#endif
+        : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
@@ -411,26 +438,6 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
-
-      /**
-       * @brief Overriding this method customizes the logic of when the RetryPolicy will re-attempt
-       * a request, based on the returned HTTP response.
-       *
-       * @remark A null response pointer means there was no response received from the corresponding
-       * request. Custom implementations of this method that override the retry behavior, should
-       * handle that error case, if that needs to be customized.
-       *
-       * @remark Unless overriden, the default implementation is to always return `false`. The
-       * non-retriable errors, including those specified in the RetryOptions, remain evaluated
-       * before calling ShouldRetry.
-       *
-       * @param response An HTTP response returned corresponding to the request sent by the policy.
-       * @param retryOptions The set of options provided to the RetryPolicy.
-       * @return Whether or not the HTTP request should be sent again through the pipeline.
-       */
-      virtual bool ShouldRetry(
-          std::unique_ptr<RawResponse> const& response,
-          RetryOptions const& retryOptions) const;
     };
 
     /**
@@ -541,7 +548,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
               packageName,
               packageVersion,
-              options.ApplicationId))
+              options.ApplicationId,
+              options.CppStandardVersion))
       {
       }
 

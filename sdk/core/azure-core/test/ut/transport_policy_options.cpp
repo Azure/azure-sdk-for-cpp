@@ -234,7 +234,7 @@ namespace Azure { namespace Core { namespace Test {
     auto body = response.ExtractBodyStream();
     EXPECT_NE(body, nullptr);
 
-    std::vector<uint8_t> bodyVector = body->ReadToEnd(Azure::Core::Context::ApplicationContext);
+    std::vector<uint8_t> bodyVector = body->ReadToEnd(Azure::Core::Context{});
     int64_t bodySize = body->Length();
     EXPECT_EQ(bodySize, size);
 
@@ -446,7 +446,7 @@ namespace Azure { namespace Core { namespace Test {
         HttpPipeline pipeline(CreateHttpPipeline(transportOptions));
 
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
       catch (Azure::Core::Http::TransportException const&)
@@ -506,7 +506,7 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
@@ -521,8 +521,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
         EXPECT_THROW(
-            pipeline.Send(request, Azure::Core::Context::ApplicationContext),
-            Azure::Core::Http::TransportException);
+            pipeline.Send(request, Azure::Core::Context{}), Azure::Core::Http::TransportException);
       }
     }
     {
@@ -544,7 +543,7 @@ namespace Azure { namespace Core { namespace Test {
 
       {
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, testUrl);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
     }
@@ -692,7 +691,7 @@ namespace Azure { namespace Core { namespace Test {
 
         Azure::Core::Url url(AzureSdkHttpbinServer::Get());
         auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, url);
-        auto response = pipeline.Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = pipeline.Send(request, Azure::Core::Context{});
         EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
       }
 #endif
@@ -816,7 +815,7 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Url(TestProxyUrl() + "/record/start"),
             &postBody);
 
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         auto& responseHeaders = response->GetHeaders();
         auto responseId = responseHeaders.find("x-recording-id");
         return Azure::Response<std::string>(responseId->second, std::move(response));
@@ -828,7 +827,7 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Http::HttpMethod::Post, Azure::Core::Url(TestProxyUrl() + "/record/stop"));
         request.SetHeader("x-recording-id", recordingId);
 
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         auto responseCode = response->GetStatusCode();
         return Azure::Response<Azure::Core::Http::HttpStatusCode>(
             responseCode, std::move(response));
@@ -847,7 +846,7 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Url(TestProxyUrl() + "/playback/start"),
             &postBody);
 
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         auto& responseHeaders = response->GetHeaders();
         auto responseId = responseHeaders.find("x-recording-id");
         return Azure::Response<std::string>(responseId->second, std::move(response));
@@ -861,7 +860,7 @@ namespace Azure { namespace Core { namespace Test {
             Azure::Core::Url(TestProxyUrl() + "/playback/stop"));
         request.SetHeader("x-recording-id", recordingId);
 
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         auto responseCode = response->GetStatusCode();
         return Azure::Response<Azure::Core::Http::HttpStatusCode>(
             responseCode, std::move(response));
@@ -881,7 +880,7 @@ namespace Azure { namespace Core { namespace Test {
         request.SetHeader("x-recording-id", recordingId);
         request.SetHeader("x-recording-mode", (isRecording ? "record" : "playback"));
 
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         std::string responseBody(response->GetBody().begin(), response->GetBody().end());
         return Azure::Response<std::string>(responseBody, std::move(response));
       }
@@ -891,7 +890,7 @@ namespace Azure { namespace Core { namespace Test {
         auto request = Azure::Core::Http::Request(
             Azure::Core::Http::HttpMethod::Get,
             Azure::Core::Url(TestProxyUrl() + "/Admin/IsAlive"));
-        auto response = m_pipeline->Send(request, Azure::Core::Context::ApplicationContext);
+        auto response = m_pipeline->Send(request, Azure::Core::Context{});
         auto statusCode = response->GetStatusCode();
         return Azure::Response<Azure::Core::Http::HttpStatusCode>(statusCode, std::move(response));
       }

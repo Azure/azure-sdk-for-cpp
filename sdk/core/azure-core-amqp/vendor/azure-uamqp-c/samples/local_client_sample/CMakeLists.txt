@@ -4,6 +4,8 @@
 add_executable(local_client_sample
 	main.c)
 
+target_compile_definitions(local_client_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(local_client_sample)
 
 include_directories(.)

@@ -12,6 +12,11 @@ namespace Azure { namespace Storage { namespace Test {
   protected:
     void SetUp() override;
 
+    std::string GetShareDirectoryUrl(const std::string& shareName, const std::string& directoryName)
+    {
+      return GetShareUrl(shareName) + "/" + directoryName;
+    }
+
     std::shared_ptr<Files::Shares::ShareDirectoryClient> m_fileShareDirectoryClient;
     std::string m_directoryName;
   };

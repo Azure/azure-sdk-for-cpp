@@ -5,7 +5,7 @@
   "include": [
     {
       "StaticConfigs": {
-        "macOS-14": {
+        "macos-latest": {
           "Pool": "env:MACPOOL",
           "OSVmImage": "env:MACVMIMAGE",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
@@ -105,7 +105,6 @@
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_PROXY_TESTS=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
-          "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
         }
       }
@@ -142,7 +141,6 @@
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
           "AZURE_CORE_ENABLE_JSON_TESTS": 1,
-          "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
         },
         "x64_with_unit_test_winHttp": {
@@ -159,7 +157,6 @@
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
-          "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
         },
         "x64_with_unit_samples_libcurl": {
@@ -168,7 +165,6 @@
           "CMAKE_GENERATOR_PLATFORM": "x64",
           "CmakeArgs": " -DBUILD_TRANSPORT_CURL=ON -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON  -DBUILD_SAMPLES=ON -DMSVC_USE_STATIC_CRT=ON ",
           "BuildArgs": "-v --parallel 8 --config Release",
-          "RunSamples": 1,
           "WindowsCtestConfig": "-C Release"
         }
       }

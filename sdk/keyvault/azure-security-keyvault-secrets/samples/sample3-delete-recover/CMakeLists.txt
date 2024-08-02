@@ -12,6 +12,8 @@ add_executable (
   sample3_delete_recover.cpp
 )
 
+target_compile_definitions(sample3-delete-recover PRIVATE _azure_BUILDING_SAMPLES)
+
 create_per_service_target_build_for_sample(keyvault sample3-delete-recover)
 
 target_link_libraries(sample3-delete-recover PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)

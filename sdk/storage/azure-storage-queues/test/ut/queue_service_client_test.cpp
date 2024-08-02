@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "test/ut/test_base.hpp"
+#include "queue_service_client_test.hpp"
 
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/queues.hpp>
@@ -38,23 +38,24 @@ namespace Azure { namespace Storage { namespace Queues { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class QueueServiceClientTest : public Azure::Storage::Test::StorageTest {
-  protected:
-    void SetUp()
+  void QueueServiceClientTest::SetUp()
+  {
+    StorageTest::SetUp();
+    m_options = InitStorageClientOptions<Queues::QueueClientOptions>();
+    if (m_useTokenCredentialByDefault)
     {
-      StorageTest::SetUp();
-      m_options = InitStorageClientOptions<Queues::QueueClientOptions>();
+      m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
+          GetQueueServiceUrl(), GetTestCredential(), m_options);
+    }
+    else
+    {
       m_queueServiceClient = std::make_shared<Queues::QueueServiceClient>(
           Queues::QueueServiceClient::CreateFromConnectionString(
               StandardStorageConnectionString(), m_options));
     }
-    void TearDown() { StorageTest::TearDown(); }
+  }
 
-    std::shared_ptr<Queues::QueueServiceClient> m_queueServiceClient;
-    Queues::QueueClientOptions m_options;
-  };
-
-  TEST_F(QueueServiceClientTest, Constructors)
+  TEST_F(QueueServiceClientTest, Constructors_LIVEONLY_)
   {
     auto keyCredential
         = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
@@ -292,10 +293,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     EXPECT_THROW(m_queueServiceClient->GetStatistics(), StorageException);
 
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto secondaryServiceClient = Queues::QueueServiceClient(
-        InferSecondaryUrl(m_queueServiceClient->GetUrl()), keyCredential, m_options);
+    const std::string secondaryUrl = InferSecondaryUrl(m_queueServiceClient->GetUrl());
+    auto secondaryServiceClient
+        = Queues::QueueServiceClient(secondaryUrl, GetTestCredential(), m_options);
     auto serviceStatistics = secondaryServiceClient.GetStatistics().Value;
     EXPECT_FALSE(serviceStatistics.GeoReplication.Status.ToString().empty());
     if (serviceStatistics.GeoReplication.LastSyncedOn.HasValue())
@@ -316,11 +316,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(QueueServiceClientTest, Audience)
   {
-    auto credential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        AadTenantId(),
-        AadClientId(),
-        AadClientSecret(),
-        InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>());
+    auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
 
     // default audience
@@ -343,8 +339,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueServiceClient.GetProperties(), StorageException);
   }
 
-  TEST_F(QueueServiceClientTest, BearerChallengeWorks)
+  TEST_F(QueueServiceClientTest, DISABLED_BearerChallengeWorks)
   {
+    // This testcase needs a client secret to run.
+    const std::string aadTenantId = "";
+    const std::string aadClientId = "";
+    const std::string aadClientSecret = "";
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
     auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
 
@@ -354,7 +354,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            AadTenantId(), AadClientId(), AadClientSecret(), options),
+            aadTenantId, aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
@@ -364,7 +364,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            "", AadClientId(), AadClientSecret(), options),
+            "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
@@ -375,18 +375,18 @@ namespace Azure { namespace Storage { namespace Test {
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            "", AadClientId(), AadClientSecret(), options),
+            "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
     clientOptions.Audience.Reset();
 
-    // With error tenantId
+    // With wrong tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            "test", AadClientId(), AadClientSecret(), options),
+            "test", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            "", AadClientId(), AadClientSecret(), options),
+            "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_THROW(
         queueServiceClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
@@ -406,7 +406,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueServiceClient = Queues::QueueServiceClient(
         m_queueServiceClient->GetUrl(),
         std::make_shared<Azure::Identity::ClientSecretCredential>(
-            "", AadClientId(), AadClientSecret(), options),
+            "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_THROW(
         queueServiceClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);

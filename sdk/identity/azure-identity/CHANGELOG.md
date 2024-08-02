@@ -1,14 +1,25 @@
 # Release History
 
-## 1.9.0-beta.1 (Unreleased)
+## 1.9.0 (2024-08-06)
 
 ### Features Added
 
-### Breaking Changes
+- Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
 
-### Bugs Fixed
+## 1.9.0-beta.2 (2024-07-22)
 
-### Other Changes
+### Features Added
+
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
+- Added support for providing a Resource ID to `ManagedIdentityCredential`.
+- Added support for customizing the IMDS endpoint within `ManagedIdentityCredential`.
+
+## 1.9.0-beta.1 (2024-06-21)
+
+### Features Added
+
+- Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
 
 ## 1.8.0 (2024-06-11)
 

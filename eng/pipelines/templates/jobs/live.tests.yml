@@ -42,6 +42,12 @@ parameters:
 - name: OSName
   type: string
   default: ''
+- name: EnvVars
+  type: object
+  default: {}
+- name: UseFederatedAuth
+  type: boolean
+  default: true
 
 jobs:
 - job:
@@ -58,7 +64,7 @@ jobs:
     ${{ else }}:
       image: $(OSVmImage)
     os: ${{ parameters.OSName }}
-    
+
 
   ${{ if eq(parameters.UsePlatformContainer, 'true') }}:
     # Add a default so the job doesn't fail when the matrix is empty
@@ -101,7 +107,7 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
-          
+
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   # Add g++5 repo to ubuntu
@@ -154,12 +160,22 @@ jobs:
     parameters:
       SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
       SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+      EnvVars:
+        Pool: $(Pool)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      ${{ if parameters.UseFederatedAuth }}:
+        SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
 
   - template: /eng/common/TestResources/deploy-test-resources.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+      EnvVars:
+        Pool: $(Pool)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+      UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+      ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
   - template: /eng/common/testproxy/test-proxy-tool.yml
     parameters:
@@ -167,25 +183,46 @@ jobs:
 
   - ${{ parameters.PreTestSteps }}
 
-    # For non multi-config generator use the same build configuration to run tests
-    # We don't need to set it to invoke ctest
-    # Visual Studio generator used in CI is a multi-config generator.
-    # As such, it requires the configuration argument for building and invoking ctest
-  - bash: |
-      export AZURE_CLIENT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
-      export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
-      export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
+  - ${{ if parameters.UseFederatedAuth }}:
+    - task: AzurePowerShell@5
+      displayName: ctest
+      condition: and(succeeded(), ne(variables['RunSamples'], '1'))
+      inputs:
+        azureSubscription: ${{ parameters.CloudConfig.ServiceConnection }}
+        azurePowerShellVersion: LatestVersion
+        ScriptType: InlineScript
+        Inline: |
+          $account = (Get-AzContext).Account
+          $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id
+          $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants
 
-      ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
-    workingDirectory: build
-    displayName: ctest
-    # Runs only if test-resources are happily deployed.
-    # unit-tests runs for those configs where samples are not ran.
-    # This enables to run tests and samples at the same time as different matrix configuration.
-    # Then unit-tests runs, samples should not run.
-    condition: and(
-      succeeded(),
-      ne(variables['RunSamples'], '1'))
+          ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+          exit $LASTEXITCODE
+        workingDirectory: build
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+        ${{ insert }}: ${{ parameters.EnvVars }}
+
+  - ${{ else }}:
+      # For non multi-config generator use the same build configuration to run tests
+      # We don't need to set it to invoke ctest
+      # Visual Studio generator used in CI is a multi-config generator.
+      # As such, it requires the configuration argument for building and invoking ctest
+    - bash: |
+        export AZURE_CLIENT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
+        export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
+        export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
+
+        ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+      workingDirectory: build
+      displayName: ctest
+      # Runs only if test-resources are happily deployed.
+      # unit-tests runs for those configs where samples are not ran.
+      # This enables to run tests and samples at the same time as different matrix configuration.
+      # Then unit-tests runs, samples should not run.
+      condition: and(succeeded(), ne(variables['RunSamples'], '1'))
+      env:
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ parameters.PostTestSteps }}
 
@@ -201,32 +238,62 @@ jobs:
     # this step only makes sense when ctest has run
     condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
 
-    # Running Samples step.
-    # Will run samples described on a file name [service]-samples.txt within the build directory.
-    # For example keyvault-samples.txt.
-    # The file is written by CMake during configuration when building samples.
-  - bash: |
-      IFS=$'\n'
-      if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
-        for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
-        do
-          export AZURE_CLIENT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
-          export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
-          export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
-          echo "**********Running sample: ${sample}"
-          bash -c "$sample"
-          status=$?
-          if [[ $status -eq 0 ]]; then
-            echo "*********Sample completed*********"
-          else
-            echo "*Sample returned a failed code: $status"
-            exit 1
-          fi
-        done
-      fi
-    workingDirectory: build
-    displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
-    condition: and(succeeded(), eq(variables['RunSamples'], '1'))
+
+  - ${{ if parameters.UseFederatedAuth }}:
+      # Running Samples step.
+      # Will run samples described on a file name [service]-samples.txt within the build directory.
+      # For example keyvault-samples.txt.
+      # The file is written by CMake during configuration when building samples.
+    - task: AzureCLI@2
+      displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+      condition: and(succeeded(), eq(variables['RunSamples'], '1'))
+      inputs:
+        azureSubscription: ${{ parameters.CloudConfig.ServiceConnection }}
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          if (Test-Path -Path "${{ parameters.ServiceDirectory }}-samples.txt") {
+            $samples = Get-Content "${{ parameters.ServiceDirectory }}-samples.txt"
+            foreach ($sample in $samples) {
+              Write-Host "**********Running sample: $sample"
+              & "$sample"
+              if ($LASTEXITCODE) {
+                Write-Host "Sample failed with exit code $LASTEXITCODE"
+                exit 1
+              }
+              Write-Host "**********Sample completed"
+            }
+          }
+        workingDirectory: build
+        useGlobalConfig: true
+      env:
+        ${{ insert }}: ${{ parameters.EnvVars }}
+
+  - ${{ else }}:
+    - bash: |
+        IFS=$'\n'
+        if [[ -f "./${{ parameters.ServiceDirectory }}-samples.txt" ]]; then
+          for sample in `cat ./${{ parameters.ServiceDirectory }}-samples.txt`
+          do
+            export AZURE_CLIENT_ID=$(${{parameters.ServiceDirectory}}_CLIENT_ID)
+            export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
+            export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
+            echo "**********Running sample: ${sample}"
+            bash -c "$sample"
+            status=$?
+            if [[ $status -eq 0 ]]; then
+              echo "*********Sample completed*********"
+            else
+              echo "*Sample returned a failed code: $status"
+              exit 1
+            fi
+          done
+        fi
+      workingDirectory: build
+      displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
+      condition: and(succeeded(), eq(variables['RunSamples'], '1'))
+      env:
+        ${{ insert }}: ${{ parameters.EnvVars }}      
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
@@ -248,3 +315,6 @@ jobs:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       SubscriptionConfiguration: $(SubscriptionConfiguration)
+      UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+      EnvVars: ${{ parameters.EnvVars }}
+      ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}

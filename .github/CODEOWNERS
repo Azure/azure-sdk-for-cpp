@@ -6,8 +6,14 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman
-/sdk/                    @rickwinter @LarryOsterman
+# /**
+
+#Catch all for files at the root
+/*                        @rickwinter @LarryOsterman @ahsonkhan @antkmsft @gearama
+/sdk/                    @rickwinter
+
+# Git Hub integration and bot rules
+/.github/              @rickwinter @ronniegeraghty
 
 # Samples
 /samples/                @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
@@ -42,7 +48,7 @@
 # PRLabel: %KeyVault
 /sdk/keyvault/           @gearama @antkmsft @rickwinter @LarryOsterman
 
-# ServiceOwners:@vinjiang @Jinming-Hu @EmmaZhu 
+# ServiceOwners:@vinjiang @Jinming-Hu @microzchang
 # ServiceLabel: %Storage
 
 # PRLabel: %Storage

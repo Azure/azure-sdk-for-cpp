@@ -54,6 +54,12 @@ set(
 )
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
+
+# SDK libraries should privately define _azure_BUILDING_SDK,
+# tests should define _azure_BUILDING_TESTS,
+# samples should have _azure_BUILDING_SAMPLES.
+target_compile_definitions(azure-template PRIVATE _azure_BUILDING_SDK)
+
 create_per_service_target_build(template azure-template)
 
 target_include_directories(

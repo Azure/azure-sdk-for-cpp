@@ -37,6 +37,8 @@ set(
 
 add_library(azure-perf ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})
 
+target_compile_definitions(azure-perf PRIVATE _azure_BUILDING_TESTS)
+
 target_include_directories(
   azure-perf
     PUBLIC

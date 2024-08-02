@@ -48,6 +48,8 @@ endif()
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER
     inc/azure/keyvault/administration.hpp
+    inc/azure/keyvault/administration/backup_client.hpp
+    inc/azure/keyvault/administration/backup_operation.hpp
     inc/azure/keyvault/administration/dll_import_export.hpp
     inc/azure/keyvault/administration/rest_client_models.hpp
     inc/azure/keyvault/administration/rtti.hpp
@@ -57,6 +59,8 @@ set(
 
 set(
   AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE
+    src/backup_client.cpp
+    src/backup_operation.cpp
     src/keyvault_settings_common_request.cpp
     src/private/administration_constants.hpp
     src/private/keyvault_settings_common_request.hpp
@@ -85,6 +89,8 @@ target_include_directories(
 
 target_link_libraries(azure-security-keyvault-administration PUBLIC Azure::azure-core)
 
+target_compile_definitions(azure-security-keyvault-administration PRIVATE _azure_BUILDING_SDK)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-administration azure-security-keyvault-administration-test "tests?/*;samples?/*")
 
@@ -104,8 +110,8 @@ if (BUILD_PERFORMANCE_TESTS)
   #add_subdirectory(test/perf)
 endif()
 
-if(BUILD_SAMPLES_HSM)
-  add_subdirectory(test/samples)
+if(BUILD_SAMPLES)
+  add_subdirectory(samples)
 endif()
 
 az_vcpkg_export(

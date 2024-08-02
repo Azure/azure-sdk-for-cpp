@@ -11,6 +11,9 @@ add_executable (
   sample3-get-keys
   sample3_get_keys.cpp
 )
+
+target_compile_definitions(sample3-get-keys PRIVATE _azure_BUILDING_SAMPLES)
+
 create_per_service_target_build_for_sample(keyvault sample3-get-keys)
 
 target_link_libraries(sample3-get-keys PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

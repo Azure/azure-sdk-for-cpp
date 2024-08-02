@@ -132,6 +132,8 @@ target_include_directories(
 
 target_link_libraries(azure-security-keyvault-keys PUBLIC Azure::azure-core)
 
+target_compile_definitions(azure-security-keyvault-keys PRIVATE _azure_BUILDING_SDK)
+
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test "tests?/*;samples?/*")
 

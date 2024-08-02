@@ -11,6 +11,9 @@ project(eventhub_reader_sample)
 add_executable(eventhub_reader_sample
     eventhub_reader_sample.cpp
 )
+
+target_compile_definitions(eventhub_reader_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 add_dependencies(eventhub_reader_sample Azure::azure-core-amqp)
 
 # Link test executable against the prototype.

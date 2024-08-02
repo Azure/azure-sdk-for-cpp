@@ -41,4 +41,6 @@ target_link_libraries(vcpkg-all-smoke
      get-env-helper
 )
 
+target_compile_definitions(vcpkg-all-smoke PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build_for_sample(keyvault vcpkg-all-smoke)

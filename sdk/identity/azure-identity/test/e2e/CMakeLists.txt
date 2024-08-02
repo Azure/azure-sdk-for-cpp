@@ -13,5 +13,7 @@ add_executable (
 )
 create_per_service_target_build(identity azure-identity-e2e-test)
 
+target_compile_definitions(azure-identity-e2e-test PRIVATE _azure_BUILDING_TESTS)
+
 create_map_file(azure-identity-e2e-test azure-identity-e2e-test.map)
 target_link_libraries(azure-identity-e2e-test PRIVATE azure-identity)

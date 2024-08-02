@@ -9,7 +9,9 @@
 #pragma once
 
 #include "azure/identity/azure_cli_credential.hpp"
+#include "azure/identity/azure_pipelines_credential.hpp"
 #include "azure/identity/chained_token_credential.hpp"
+#include "azure/identity/client_assertion_credential.hpp"
 #include "azure/identity/client_certificate_credential.hpp"
 #include "azure/identity/client_secret_credential.hpp"
 #include "azure/identity/default_azure_credential.hpp"

@@ -17,7 +17,9 @@ add_compile_definitions(AZURE_TEST_RECORDING_DIR="${CMAKE_CURRENT_LIST_DIR}")
 add_executable (
   azure-identity-test
     azure_cli_credential_test.cpp
+    azure_pipelines_credential_test.cpp
     chained_token_credential_test.cpp
+    client_assertion_credential_test.cpp
     client_certificate_credential_test.cpp
     client_secret_credential_test.cpp
     credential_test_helper.cpp
@@ -34,6 +36,8 @@ add_executable (
     workload_identity_credential_test.cpp
     )
   
+target_compile_definitions(azure-identity-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(identity azure-identity-test)
 
 create_map_file(azure-identity-test azure-identity-test.map)
