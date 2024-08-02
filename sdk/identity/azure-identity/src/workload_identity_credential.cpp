@@ -100,7 +100,7 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
 
 WorkloadIdentityCredential::~WorkloadIdentityCredential() = default;
 
-std::string WorkloadIdentityCredential::GetAssertion(Context const&)
+std::string WorkloadIdentityCredential::GetAssertion(Context const&) const
 {
   // Read the specified file's content, which is expected to be a Kubernetes service account
   // token. Kubernetes is responsible for updating the file as service account tokens expire.

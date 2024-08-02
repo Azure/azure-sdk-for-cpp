@@ -159,7 +159,7 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
 
 AzurePipelinesCredential::~AzurePipelinesCredential() = default;
 
-std::string AzurePipelinesCredential::GetAssertion(Context const& context)
+std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
 {
   Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
   std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
