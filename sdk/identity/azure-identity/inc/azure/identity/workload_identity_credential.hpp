@@ -19,7 +19,7 @@
 
 namespace Azure { namespace Identity {
   namespace _detail {
-    class TokenCredentialImpl;
+    class ClientAssertionCredentialImpl;
   } // namespace _detail
 
   /**
@@ -75,7 +75,7 @@ namespace Azure { namespace Identity {
    */
   class WorkloadIdentityCredential final : public Core::Credentials::TokenCredential {
   private:
-    std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
+    std::unique_ptr<_detail::ClientAssertionCredentialImpl> m_clientAssertionCredentialImpl;
     std::string m_tokenFilePath;
 
     std::string GetAssertion(Core::Context const& context) const;

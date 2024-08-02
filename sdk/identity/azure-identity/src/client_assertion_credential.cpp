@@ -3,15 +3,16 @@
 
 #include "azure/identity/client_assertion_credential.hpp"
 
+#include "private/client_assertion_credential_impl.hpp"
 #include "private/identity_log.hpp"
 #include "private/package_version.hpp"
 #include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 
 using Azure::Identity::ClientAssertionCredential;
 using Azure::Identity::ClientAssertionCredentialOptions;
+using Azure::Identity::_detail::ClientAssertionCredentialImpl;
 
 using Azure::Core::Context;
 using Azure::Core::Url;
@@ -24,13 +25,13 @@ using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
-ClientAssertionCredential::ClientAssertionCredential(
+ClientAssertionCredentialImpl::ClientAssertionCredentialImpl(
+    std::string const& credentialName,
     std::string tenantId,
     std::string clientId,
     std::function<std::string(Context const&)> assertionCallback,
     ClientAssertionCredentialOptions const& options)
-    : TokenCredential("ClientAssertionCredential"),
-      m_assertionCallback(std::move(assertionCallback)),
+    : m_assertionCallback(std::move(assertionCallback)),
       m_clientCredentialCore(tenantId, options.AuthorityHost, options.AdditionallyAllowedTenants)
 {
   bool isTenantIdValid = TenantIdResolver::IsValidTenantId(tenantId);
@@ -38,7 +39,7 @@ ClientAssertionCredential::ClientAssertionCredential(
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        GetCredentialName()
+        credentialName
             + ": Invalid tenant ID provided. The tenant ID must be a non-empty string containing "
               "only alphanumeric characters, periods, or hyphens. You can locate your tenant ID by "
               "following the instructions listed here: "
@@ -46,14 +47,13 @@ ClientAssertionCredential::ClientAssertionCredential(
   }
   if (clientId.empty())
   {
-    IdentityLog::Write(
-        IdentityLog::Level::Warning, GetCredentialName() + ": No client ID specified.");
+    IdentityLog::Write(IdentityLog::Level::Warning, credentialName + ": No client ID specified.");
   }
   if (!m_assertionCallback)
   {
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        GetCredentialName()
+        credentialName
             + ": The assertionCallback must be a valid function that returns assertions.");
   }
 
@@ -69,7 +69,7 @@ ClientAssertionCredential::ClientAssertionCredential(
         + Url::Encode(clientId);
 
     IdentityLog::Write(
-        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+        IdentityLog::Level::Informational, credentialName + " was created successfully.");
   }
   else
   {
@@ -78,23 +78,22 @@ ClientAssertionCredential::ClientAssertionCredential(
     // primarily needed for credentials that are part of the DefaultAzureCredential, which this
     // credential is not intended for.
     IdentityLog::Write(
-        IdentityLog::Level::Warning, GetCredentialName() + " was not initialized correctly.");
+        IdentityLog::Level::Warning, credentialName + " was not initialized correctly.");
   }
 }
 
-ClientAssertionCredential::~ClientAssertionCredential() = default;
-
-AccessToken ClientAssertionCredential::GetToken(
+AccessToken ClientAssertionCredentialImpl::GetToken(
+    std::string const& credentialName,
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
   if (!m_tokenCredentialImpl)
   {
-    auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
+    auto const AuthUnavailable = credentialName + " authentication unavailable. ";
 
     IdentityLog::Write(
         IdentityLog::Level::Warning,
-        AuthUnavailable + "See earlier " + GetCredentialName() + " log messages for details.");
+        AuthUnavailable + "See earlier " + credentialName + " log messages for details.");
 
     throw AuthenticationException(AuthUnavailable);
   }
@@ -136,4 +135,28 @@ AccessToken ClientAssertionCredential::GetToken(
       return request;
     });
   });
+}
+
+ClientAssertionCredential::ClientAssertionCredential(
+    std::string tenantId,
+    std::string clientId,
+    std::function<std::string(Context const&)> assertionCallback,
+    ClientAssertionCredentialOptions const& options)
+    : TokenCredential("ClientAssertionCredential"),
+      m_impl(std::make_unique<ClientAssertionCredentialImpl>(
+          GetCredentialName(),
+          tenantId,
+          clientId,
+          assertionCallback,
+          options))
+{
+}
+
+ClientAssertionCredential::~ClientAssertionCredential() = default;
+
+AccessToken ClientAssertionCredential::GetToken(
+    TokenRequestContext const& tokenRequestContext,
+    Context const& context) const
+{
+  return m_impl->GetToken(GetCredentialName(), tokenRequestContext, context);
 }

@@ -21,7 +21,7 @@
 
 namespace Azure { namespace Identity {
   namespace _detail {
-    class TokenCredentialImpl;
+    class ClientAssertionCredentialImpl;
   } // namespace _detail
 
   /**
@@ -60,7 +60,7 @@ namespace Azure { namespace Identity {
     std::string m_systemAccessToken;
     Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
     std::string m_oidcRequestUrl;
-    std::unique_ptr<ClientAssertionCredential> m_clientAssertionCredential;
+    std::unique_ptr<_detail::ClientAssertionCredentialImpl> m_clientAssertionCredentialImpl;
 
     std::string GetAssertion(Core::Context const& context) const;
     Azure::Core::Http::Request CreateOidcRequestMessage() const;

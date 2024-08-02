@@ -3,10 +3,10 @@
 
 #include "azure/identity/azure_pipelines_credential.hpp"
 
+#include "private/client_assertion_credential_impl.hpp"
 #include "private/identity_log.hpp"
 #include "private/package_version.hpp"
 #include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 
@@ -28,7 +28,6 @@ using Azure::Core::Json::_internal::json;
 using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::PackageVersion;
 using Azure::Identity::_detail::TenantIdResolver;
-using Azure::Identity::_detail::TokenCredentialImpl;
 
 AzurePipelinesCredential::AzurePipelinesCredential(
     std::string tenantId,
@@ -78,11 +77,8 @@ AzurePipelinesCredential::AzurePipelinesCredential(
 
     // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
     // warning messages otherwise.
-    m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
-        tenantId, clientId, callback, clientAssertionCredentialOptions);
-
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+    m_clientAssertionCredentialImpl = std::make_unique<_detail::ClientAssertionCredentialImpl>(
+        GetCredentialName(), tenantId, clientId, callback, clientAssertionCredentialOptions);
   }
   else
   {
@@ -182,7 +178,7 @@ AccessToken AzurePipelinesCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  if (!m_clientAssertionCredential)
+  if (!m_clientAssertionCredentialImpl)
   {
     auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
 
@@ -194,5 +190,6 @@ AccessToken AzurePipelinesCredential::GetToken(
         AuthUnavailable + "Azure Pipelines environment is not set up correctly.");
   }
 
-  return m_clientAssertionCredential->GetToken(tokenRequestContext, context);
+  return m_clientAssertionCredentialImpl->GetToken(
+      GetCredentialName(), tokenRequestContext, context);
 }

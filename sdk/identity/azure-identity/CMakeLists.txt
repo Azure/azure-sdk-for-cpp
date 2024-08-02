@@ -77,6 +77,7 @@ set(
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
     src/private/chained_token_credential_impl.hpp
+    src/private/client_assertion_credential_impl.hpp
     src/private/identity_log.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp

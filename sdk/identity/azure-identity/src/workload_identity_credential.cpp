@@ -3,9 +3,9 @@
 
 #include "azure/identity/workload_identity_credential.hpp"
 
+#include "private/client_assertion_credential_impl.hpp"
 #include "private/identity_log.hpp"
 #include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/environment.hpp>
 
@@ -23,7 +23,6 @@ using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::TenantIdResolver;
-using Azure::Identity::_detail::TokenCredentialImpl;
 
 WorkloadIdentityCredential::WorkloadIdentityCredential(
     WorkloadIdentityCredentialOptions const& options)
@@ -48,11 +47,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
 
     // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
     // warning messages otherwise.
-    m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
-        tenantId, clientId, callback, clientAssertionCredentialOptions);
-
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+    m_clientAssertionCredentialImpl = std::make_unique<_detail::ClientAssertionCredentialImpl>(
+        GetCredentialName(), tenantId, clientId, callback, clientAssertionCredentialOptions);
   }
   else
   {
@@ -83,11 +79,8 @@ WorkloadIdentityCredential::WorkloadIdentityCredential(
 
     // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
     // warning messages otherwise.
-    m_clientAssertionCredential = std::make_unique<ClientAssertionCredential>(
-        tenantId, clientId, callback, clientAssertionCredentialOptions);
-
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+    m_clientAssertionCredentialImpl = std::make_unique<_detail::ClientAssertionCredentialImpl>(
+        GetCredentialName(), tenantId, clientId, callback, clientAssertionCredentialOptions);
   }
   else
   {
@@ -114,7 +107,7 @@ AccessToken WorkloadIdentityCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  if (!m_clientAssertionCredential)
+  if (!m_clientAssertionCredentialImpl)
   {
     auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
 
@@ -126,5 +119,6 @@ AccessToken WorkloadIdentityCredential::GetToken(
         AuthUnavailable + "Azure Kubernetes environment is not set up correctly.");
   }
 
-  return m_clientAssertionCredential->GetToken(tokenRequestContext, context);
+  return m_clientAssertionCredentialImpl->GetToken(
+      GetCredentialName(), tokenRequestContext, context);
 }
