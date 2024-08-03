@@ -87,7 +87,6 @@ TEST(AzurePipelinesCredential, InvalidArgs)
     trc.Scopes.push_back("https://storage.azure.com/.default");
 
     AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
-    cred.GetToken(trc, {});
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
     AzurePipelinesCredentialOptions options;
     AzurePipelinesCredential const credWithOptions(
@@ -517,27 +516,19 @@ static std::string GetSkipTestMessage(
 
 TEST(AzurePipelinesCredential, RegularLive_LIVEONLY_)
 {
-  std::map<std::string, std::string> validEnvVars
-      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
-  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
-
-  std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
-  std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
-  std::string serviceConnectionId = "a/bc";
-  std::string systemAccessToken = "123";
-  /*std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
+  std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
   std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
   std::string serviceConnectionId
       = Environment::GetVariable("AZURESUBSCRIPTION_SERVICE_CONNECTION_ID");
-  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");*/
+  std::string systemAccessToken = Environment::GetVariable("SYSTEM_ACCESSTOKEN");
 
-  /*if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
+  if (tenantId.empty() || clientId.empty() || serviceConnectionId.empty()
       || systemAccessToken.empty())
   {
     std::string message
         = GetSkipTestMessage(tenantId, clientId, serviceConnectionId, systemAccessToken);
     GTEST_SKIP_(message.c_str());
-  }*/
+  }
 
   AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
 
