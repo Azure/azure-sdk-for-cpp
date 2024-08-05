@@ -5,6 +5,8 @@ variables:
     value: azsdk-pool-mms-ubuntu-2004-general
   - name: LINUXNEXTPOOL
     value: azsdk-pool-mms-ubuntu-2204-general
+  - name: LINUX24POOL
+    value: azsdk-pool-mms-ubuntu-2404-general
   - name: WINDOWSPOOL
     value: azsdk-pool-mms-win-2022-general
   - name: WINDOWSPREVIOUSPOOL
@@ -16,6 +18,8 @@ variables:
     value: azsdk-pool-mms-ubuntu-2004-1espt
   - name: LINUXNEXTVMIMAGE
     value: azsdk-pool-mms-ubuntu-2204-1espt
+  - name: LINU24VMIMAGE
+    value: azsdk-pool-mms-ubuntu-2404-1espt
   - name: WINDOWSVMIMAGE
     value: azsdk-pool-mms-win-2022-1espt
   - name: WINDOWSPREVIOUSVMIMAGE

@@ -140,6 +140,38 @@
     },
     {
       "StaticConfigs": {
+        "Ubuntu24": {
+          "OSVmImage": "env:LINUX24VMIMAGE",
+          "Pool": "env:LINUX24POOL",
+          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
+          "BuildArgs": "-j 10",
+          "RunProxyTests": true
+        }
+      },
+      "BuildSettings": {
+        "clang-17": {
+          "AptDependencies": "clang-17",
+          "CC": "/usr/bin/clang-17",
+          "CXX": "/usr/bin/clang++-17"
+        },
+        "included_debug": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "PublishMapFiles": "true"
+        },
+        "included_release": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "PublishMapFiles": "true"
+        },
+        "included_samples": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
+          "PublishMapFiles": "true"
+        }
+      }
+    },
+    {
+      "StaticConfigs": {
         "Ubuntu22": {
           "OSVmImage": "env:LINUXNEXTVMIMAGE",
           "Pool": "env:LINUXNEXTPOOL",
