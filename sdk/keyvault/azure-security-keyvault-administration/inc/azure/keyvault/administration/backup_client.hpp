@@ -21,9 +21,20 @@
 #include <string>
 #include <thread>
 
-using namespace Azure::Security::KeyVault::Administration::Models;
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Administration {
+  /**
+   * @brief Define the options to create an SDK Keys client.
+   *
+   */
+  struct BackupClientOptions final : public Azure::Core::_internal::ClientOptions
+  {
+    /**
+     * @brief Service Version used.
+     *
+     */
+    std::string ApiVersion{"7.5"};
+  };
+
   /**
    * @brief Backup restore client.
    *
@@ -62,7 +73,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     Response<BackupOperation> FullBackup(
         Azure::Core::Url const& blobContainerUrl,
-        SasTokenParameter const& sasToken,
+        Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -72,7 +83,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return Backup restore operation status.
      */
-    Response<BackupOperationStatus> FullBackupStatus(
+    Response<Models::BackupOperationStatus> FullBackupStatus(
         std::string const& jobId = "",
         Core::Context const& context = {});
 
@@ -91,7 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
     Response<BackupOperation> FullRestore(
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
-        SasTokenParameter const& sasToken,
+        Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
     /**
@@ -101,7 +112,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @param context The context for the operation can be used for request cancellation.
      * @return A backup restore operation status.
      */
-    Response<BackupOperationStatus> RestoreStatus(
+    Response<Models::BackupOperationStatus> RestoreStatus(
         std::string const& jobId = "",
         Core::Context const& context = {});
 
@@ -122,16 +133,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
         std::string const& keyName,
         Azure::Core::Url const& blobContainerUrl,
         std::string folderToRestore,
-        SasTokenParameter const& sasToken,
+        Models::SasTokenParameter const& sasToken,
         Core::Context const& context = {});
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Azure::Core::Url m_vaultBaseUrl;
     std::string m_apiVersion;
-    KeyVaultServiceError DeserializeKeyVaultServiceError(
+    Models::KeyVaultServiceError DeserializeKeyVaultServiceError(
         Azure::Core::Json::_internal::json errorFragment);
-    BackupOperationStatus DeserializeBackupOperationStatus(
+    Models::BackupOperationStatus DeserializeBackupOperationStatus(
         Azure::Core::Http::RawResponse const& rawResponse);
   };
 

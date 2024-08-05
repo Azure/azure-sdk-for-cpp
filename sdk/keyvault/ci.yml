@@ -32,7 +32,6 @@ extends:
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
-      UseFederatedAuth: true
       Artifacts:
         - Name: azure-security-keyvault-keys
           Path: azure-security-keyvault-keys

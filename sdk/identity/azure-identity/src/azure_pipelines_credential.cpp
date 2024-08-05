@@ -3,10 +3,10 @@
 
 #include "azure/identity/azure_pipelines_credential.hpp"
 
+#include "private/client_assertion_credential_impl.hpp"
 #include "private/identity_log.hpp"
 #include "private/package_version.hpp"
 #include "private/tenant_id_resolver.hpp"
-#include "private/token_credential_impl.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 
@@ -28,30 +28,6 @@ using Azure::Core::Json::_internal::json;
 using Azure::Identity::_detail::IdentityLog;
 using Azure::Identity::_detail::PackageVersion;
 using Azure::Identity::_detail::TenantIdResolver;
-using Azure::Identity::_detail::TokenCredentialImpl;
-
-namespace {
-bool IsValidTenantId(std::string const& tenantId)
-{
-  const std::string allowedChars = ".-";
-  if (tenantId.empty())
-  {
-    return false;
-  }
-  for (auto const c : tenantId)
-  {
-    if (allowedChars.find(c) != std::string::npos)
-    {
-      continue;
-    }
-    if (!StringExtensions::IsAlphaNumeric(c))
-    {
-      return false;
-    }
-  }
-  return true;
-}
-} // namespace
 
 AzurePipelinesCredential::AzurePipelinesCredential(
     std::string tenantId,
@@ -61,26 +37,10 @@ AzurePipelinesCredential::AzurePipelinesCredential(
     AzurePipelinesCredentialOptions const& options)
     : TokenCredential("AzurePipelinesCredential"), m_serviceConnectionId(serviceConnectionId),
       m_systemAccessToken(systemAccessToken),
-      m_clientCredentialCore(tenantId, options.AuthorityHost, options.AdditionallyAllowedTenants),
       m_httpPipeline(HttpPipeline(options, "identity", PackageVersion::ToString(), {}, {}))
 {
   m_oidcRequestUrl = _detail::DefaultOptionValues::GetOidcRequestUrl();
 
-  bool isTenantIdValid = IsValidTenantId(tenantId);
-  if (!isTenantIdValid)
-  {
-    IdentityLog::Write(
-        IdentityLog::Level::Warning,
-        "Invalid tenant ID provided  for " + GetCredentialName()
-            + ". The tenant ID must be a non-empty string containing only alphanumeric characters, "
-              "periods, or hyphens. You can locate your tenant ID by following the instructions "
-              "listed here: https://learn.microsoft.com/partner-center/find-ids-and-domain-names");
-  }
-  if (clientId.empty())
-  {
-    IdentityLog::Write(
-        IdentityLog::Level::Warning, "No client ID specified for " + GetCredentialName() + ".");
-  }
   if (serviceConnectionId.empty())
   {
     IdentityLog::Write(
@@ -101,20 +61,24 @@ AzurePipelinesCredential::AzurePipelinesCredential(
             + "' needed by " + GetCredentialName() + ". This should be set by Azure Pipelines.");
   }
 
-  if (isTenantIdValid && !clientId.empty() && !serviceConnectionId.empty()
-      && !systemAccessToken.empty() && !m_oidcRequestUrl.empty())
+  if (TenantIdResolver::IsValidTenantId(tenantId) && !clientId.empty()
+      && !serviceConnectionId.empty() && !systemAccessToken.empty() && !m_oidcRequestUrl.empty())
   {
-    m_tokenCredentialImpl = std::make_unique<TokenCredentialImpl>(options);
-    m_requestBody
-        = std::string(
-              "grant_type=client_credentials"
-              "&client_assertion_type="
-              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
-              "&client_id=")
-        + Url::Encode(clientId);
+    ClientAssertionCredentialOptions clientAssertionCredentialOptions{};
+    // Get the options from the base class (including ClientOptions).
+    static_cast<Core::Credentials::TokenCredentialOptions&>(clientAssertionCredentialOptions)
+        = options;
+    clientAssertionCredentialOptions.AuthorityHost = options.AuthorityHost;
+    clientAssertionCredentialOptions.AdditionallyAllowedTenants
+        = options.AdditionallyAllowedTenants;
 
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, GetCredentialName() + " was created successfully.");
+    std::function<std::string(Context const&)> callback
+        = [this](Context const& context) { return GetAssertion(context); };
+
+    // ClientAssertionCredential validates the tenant ID, client ID, and assertion callback and logs
+    // warning messages otherwise.
+    m_clientAssertionCredentialImpl = std::make_unique<_detail::ClientAssertionCredentialImpl>(
+        GetCredentialName(), tenantId, clientId, callback, clientAssertionCredentialOptions);
   }
   else
   {
@@ -214,7 +178,7 @@ AccessToken AzurePipelinesCredential::GetToken(
     TokenRequestContext const& tokenRequestContext,
     Context const& context) const
 {
-  if (!m_tokenCredentialImpl)
+  if (!m_clientAssertionCredentialImpl)
   {
     auto const AuthUnavailable = GetCredentialName() + " authentication unavailable. ";
 
@@ -226,41 +190,6 @@ AccessToken AzurePipelinesCredential::GetToken(
         AuthUnavailable + "Azure Pipelines environment is not set up correctly.");
   }
 
-  auto const tenantId = TenantIdResolver::Resolve(
-      m_clientCredentialCore.GetTenantId(),
-      tokenRequestContext,
-      m_clientCredentialCore.GetAdditionallyAllowedTenants());
-
-  auto const scopesStr
-      = m_clientCredentialCore.GetScopesString(tenantId, tokenRequestContext.Scopes);
-
-  // TokenCache::GetToken() and m_tokenCredentialImpl->GetToken() can only use the lambda
-  // argument when they are being executed. They are not supposed to keep a reference to lambda
-  // argument to call it later. Therefore, any capture made here will outlive the possible time
-  // frame when the lambda might get called.
-  return m_tokenCache.GetToken(scopesStr, tenantId, tokenRequestContext.MinimumExpiration, [&]() {
-    return m_tokenCredentialImpl->GetToken(context, false, [&]() {
-      auto body = m_requestBody;
-      if (!scopesStr.empty())
-      {
-        body += "&scope=" + scopesStr;
-      }
-
-      // Get the request url before calling GetAssertion to validate the authority host scheme.
-      // This is to avoid making a request to the OIDC endpoint if the authority host scheme is
-      // invalid.
-      auto const requestUrl = m_clientCredentialCore.GetRequestUrl(tenantId);
-
-      const std::string assertion = GetAssertion(context);
-
-      body += "&client_assertion=" + Azure::Core::Url::Encode(assertion);
-
-      auto request
-          = std::make_unique<TokenCredentialImpl::TokenRequest>(HttpMethod::Post, requestUrl, body);
-
-      request->HttpRequest.SetHeader("Host", requestUrl.GetHost());
-
-      return request;
-    });
-  });
+  return m_clientAssertionCredentialImpl->GetToken(
+      GetCredentialName(), tokenRequestContext, context);
 }
