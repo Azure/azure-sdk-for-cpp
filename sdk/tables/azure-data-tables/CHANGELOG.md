@@ -12,8 +12,6 @@ Thank you to our developer community members who helped to make Azure Data Table
 
 - arwell _([GitHub](https://github.com/0xar1))_
 
-### Other Changes
-
 ## 1.0.0-beta.3 (2024-06-11)
 
 ### Bugs Fixed
