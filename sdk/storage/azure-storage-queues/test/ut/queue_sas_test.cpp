@@ -349,4 +349,32 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST(SasStringToSignTest, GenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string queueUrl = "https://testAccountName.queue.core.windows.net/container/blob";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // Share Sas
+    {
+      Sas::QueueSasBuilder queueSasBuilder;
+      queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      queueSasBuilder.StartsOn = sasStartsOn;
+      queueSasBuilder.ExpiresOn = sasExpiresOn;
+      queueSasBuilder.QueueName = "share";
+      queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::Read);
+      auto sasToken = queueSasBuilder.GenerateSasToken(*keyCredential);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(queueUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = queueSasBuilder.GenerateSasStringToSign(*keyCredential);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

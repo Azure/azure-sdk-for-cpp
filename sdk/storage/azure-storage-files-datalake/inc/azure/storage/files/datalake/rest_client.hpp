@@ -9,6 +9,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/nullable.hpp>
@@ -30,47 +31,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   } // namespace _detail
   namespace Models {
     namespace _detail {
-      class PathRenameMode final {
+      class PathRenameMode final : public Core::_internal::ExtendableEnumeration<PathRenameMode> {
       public:
         /** Constructs a new PathRenameMode instance */
         PathRenameMode() = default;
         /** Constructs a new PathRenameMode from a string. */
-        explicit PathRenameMode(std::string value) : m_value(std::move(value)) {}
-        /** Compares with another PathRenameMode. */
-        bool operator==(const PathRenameMode& other) const { return m_value == other.m_value; }
-        /** Compares with another PathRenameMode. */
-        bool operator!=(const PathRenameMode& other) const { return !(*this == other); }
-        /** Converts the value to a string. */
-        const std::string& ToString() const { return m_value; }
+        explicit PathRenameMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
         /** Constant value of type PathRenameMode: Legacy */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
         /** Constant value of type PathRenameMode: Posix */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
-
-      private:
-        std::string m_value;
       };
-      class PathSetAccessControlListRecursiveMode final {
+      class PathSetAccessControlListRecursiveMode final
+          : public Core::_internal::ExtendableEnumeration<PathSetAccessControlListRecursiveMode> {
       public:
         /** Constructs a new PathSetAccessControlListRecursiveMode instance */
         PathSetAccessControlListRecursiveMode() = default;
         /** Constructs a new PathSetAccessControlListRecursiveMode from a string. */
         explicit PathSetAccessControlListRecursiveMode(std::string value)
-            : m_value(std::move(value))
+            : ExtendableEnumeration(std::move(value))
         {
         }
-        /** Compares with another PathSetAccessControlListRecursiveMode. */
-        bool operator==(const PathSetAccessControlListRecursiveMode& other) const
-        {
-          return m_value == other.m_value;
-        }
-        /** Compares with another PathSetAccessControlListRecursiveMode. */
-        bool operator!=(const PathSetAccessControlListRecursiveMode& other) const
-        {
-          return !(*this == other);
-        }
-        /** Converts the value to a string. */
-        const std::string& ToString() const { return m_value; }
+
         /** Constant value of type PathSetAccessControlListRecursiveMode: Set */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
         /** Constant value of type PathSetAccessControlListRecursiveMode: Modify */
@@ -79,36 +62,25 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         /** Constant value of type PathSetAccessControlListRecursiveMode: Remove */
         AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Remove;
-
-      private:
-        std::string m_value;
       };
     } // namespace _detail
     /**
      * @brief Specifies whether data in the file system may be accessed publicly and the level of
      * access.
      */
-    class PublicAccessType final {
+    class PublicAccessType final : public Core::_internal::ExtendableEnumeration<PublicAccessType> {
     public:
       /** Constructs a new PublicAccessType instance */
       PublicAccessType() = default;
       /** Constructs a new PublicAccessType from a string. */
-      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another PublicAccessType. */
-      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
-      /** Compares with another PublicAccessType. */
-      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit PublicAccessType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type PublicAccessType: None */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
       /** Constant value of type PublicAccessType: FileSystem */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
       /** Constant value of type PublicAccessType: Path */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
-
-    private:
-      std::string m_value;
     };
     namespace _detail {
       struct PathItem final
@@ -116,7 +88,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::string Name;
         bool IsDirectory = false;
         DateTime LastModified;
-        int64_t FileSize = int64_t();
+        std::int64_t FileSize = std::int64_t();
         std::string Owner;
         std::string Group;
         std::string Permissions;
@@ -151,25 +123,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Required only for Create File and Create Directory. The value must be "file" or
      * "directory".
      */
-    class PathResourceType final {
+    class PathResourceType final : public Core::_internal::ExtendableEnumeration<PathResourceType> {
     public:
       /** Constructs a new PathResourceType instance */
       PathResourceType() = default;
       /** Constructs a new PathResourceType from a string. */
-      explicit PathResourceType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another PathResourceType. */
-      bool operator==(const PathResourceType& other) const { return m_value == other.m_value; }
-      /** Compares with another PathResourceType. */
-      bool operator!=(const PathResourceType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit PathResourceType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type PathResourceType: Directory */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
       /** Constant value of type PathResourceType: File */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Create.
@@ -192,7 +156,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The size of the resource in bytes.
        */
-      Nullable<int64_t> FileSize;
+      Nullable<std::int64_t> FileSize;
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -202,7 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.
@@ -255,9 +219,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       struct SetAccessControlListRecursiveResult final
       {
-        int32_t NumberOfSuccessfulDirectories = int32_t();
-        int32_t NumberOfSuccessfulFiles = int32_t();
-        int32_t NumberOfFailures = int32_t();
+        std::int32_t NumberOfSuccessfulDirectories = std::int32_t();
+        std::int32_t NumberOfSuccessfulFiles = std::int32_t();
+        std::int32_t NumberOfFailures = std::int32_t();
         /**
          * Array of AclFailedEntry.
          */
@@ -317,18 +281,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * lease. If "release" it will release the lease only on flush. If "acquire-release" it will
      * acquire & complete the operation & release the lease once operation is done.
      */
-    class LeaseAction final {
+    class LeaseAction final : public Core::_internal::ExtendableEnumeration<LeaseAction> {
     public:
       /** Constructs a new LeaseAction instance */
       LeaseAction() = default;
       /** Constructs a new LeaseAction from a string. */
-      explicit LeaseAction(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseAction. */
-      bool operator==(const LeaseAction& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseAction. */
-      bool operator!=(const LeaseAction& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseAction(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseAction: Acquire */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
       /** Constant value of type LeaseAction: AutoRenew */
@@ -337,9 +296,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
       /** Constant value of type LeaseAction: AcquireRelease */
       AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Flush.
@@ -358,7 +314,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The size of the resource in bytes.
        */
-      int64_t FileSize = int64_t();
+      std::int64_t FileSize = std::int64_t();
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -368,7 +324,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * If the lease was auto-renewed with this request.
        */
@@ -393,7 +349,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * If the lease was auto-renewed with this request.
        */
@@ -406,11 +362,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       struct ListFileSystemPathsOptions final
       {
         Nullable<std::string> RequestId;
-        Nullable<int32_t> Timeout;
+        Nullable<std::int32_t> Timeout;
         Nullable<std::string> ContinuationToken;
         Nullable<std::string> Path;
         bool Recursive = bool();
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<bool> Upn;
       };
       static Response<Models::_detail::PathList> ListPaths(
@@ -424,7 +380,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       struct CreatePathOptions final
       {
         Nullable<std::string> RequestId;
-        Nullable<int32_t> Timeout;
+        Nullable<std::int32_t> Timeout;
         Nullable<Models::PathResourceType> Resource;
         Nullable<std::string> ContinuationToken;
         Nullable<std::string> Mode;
@@ -448,13 +404,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<DateTime> SourceIfModifiedSince;
         Nullable<DateTime> SourceIfUnmodifiedSince;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> Owner;
         Nullable<std::string> Group;
         Nullable<std::string> Acl;
         Nullable<std::string> ProposedLeaseId;
-        Nullable<int64_t> LeaseDuration;
+        Nullable<std::int64_t> LeaseDuration;
         Nullable<std::string> ExpiryOptions;
         Nullable<std::string> ExpiresOn;
         Nullable<std::string> EncryptionContext;
@@ -467,7 +423,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       struct DeletePathOptions final
       {
         Nullable<std::string> RequestId;
-        Nullable<int32_t> Timeout;
+        Nullable<std::int32_t> Timeout;
         Nullable<bool> Recursive;
         Nullable<std::string> ContinuationToken;
         Nullable<std::string> LeaseId;
@@ -504,7 +460,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::string> ContinuationToken;
         std::string Mode;
         Nullable<bool> ForceFlag;
-        Nullable<int32_t> MaxRecords;
+        Nullable<std::int32_t> MaxRecords;
         Nullable<std::string> Acl;
       };
       static Response<Models::_detail::SetAccessControlListRecursiveResult>
@@ -541,13 +497,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     public:
       struct FlushFileOptions final
       {
-        Nullable<int64_t> Position;
+        Nullable<std::int64_t> Position;
         Nullable<bool> RetainUncommittedData;
         Nullable<bool> Close;
-        Nullable<std::vector<uint8_t>> ContentMD5;
+        Nullable<std::vector<std::uint8_t>> ContentMD5;
         Nullable<std::string> LeaseId;
         Nullable<Models::LeaseAction> LeaseAction;
-        Nullable<int64_t> LeaseDuration;
+        Nullable<std::int64_t> LeaseDuration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> CacheControl;
         Nullable<std::string> ContentType;
@@ -559,7 +515,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
       };
       static Response<Models::FlushFileResult> Flush(
@@ -569,15 +525,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const Core::Context& context);
       struct AppendFileOptions final
       {
-        Nullable<int64_t> Position;
-        Nullable<std::vector<uint8_t>> TransactionalContentHash;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::int64_t> Position;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentHash;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> LeaseId;
         Nullable<Models::LeaseAction> LeaseAction;
-        Nullable<int64_t> LeaseDuration;
+        Nullable<std::int64_t> LeaseDuration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<bool> Flush;
       };

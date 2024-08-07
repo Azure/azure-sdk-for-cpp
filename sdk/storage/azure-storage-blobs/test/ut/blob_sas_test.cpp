@@ -771,4 +771,82 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_TRUE(e.AdditionalInformation.count("ExtendedErrorDetail") != 0);
     }
   }
+
+  TEST(SasStringToSignTest, GenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string blobUrl = "https://testAccountName.blob.core.windows.net/container/blob";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // Account Sas
+    {
+      Sas::AccountSasBuilder accountSasBuilder;
+      accountSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      accountSasBuilder.StartsOn = sasStartsOn;
+      accountSasBuilder.ExpiresOn = sasExpiresOn;
+      accountSasBuilder.Services = Sas::AccountSasServices::Blobs;
+      accountSasBuilder.ResourceTypes = Sas::AccountSasResource::All;
+      accountSasBuilder.SetPermissions(Sas::AccountSasPermissions::Read);
+      auto sasToken = accountSasBuilder.GenerateSasToken(*keyCredential);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = accountSasBuilder.GenerateSasStringToSign(*keyCredential);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+
+    // Blob Sas
+    {
+      Sas::BlobSasBuilder blobSasBuilder;
+      blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      blobSasBuilder.StartsOn = sasStartsOn;
+      blobSasBuilder.ExpiresOn = sasExpiresOn;
+      blobSasBuilder.BlobContainerName = "container";
+      blobSasBuilder.BlobName = "blob";
+      blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+      blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::Read);
+      auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = blobSasBuilder.GenerateSasStringToSign(*keyCredential);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+
+    // Blob User Delegation Sas
+    {
+      Blobs::Models::UserDelegationKey userDelegationKey;
+      userDelegationKey.SignedObjectId = "testSignedObjectId";
+      userDelegationKey.SignedTenantId = "testSignedTenantId";
+      userDelegationKey.SignedStartsOn = sasStartsOn;
+      userDelegationKey.SignedExpiresOn = sasExpiresOn;
+      userDelegationKey.SignedService = "b";
+      userDelegationKey.SignedVersion = "2020-08-04";
+      userDelegationKey.Value = accountKey;
+
+      Sas::BlobSasBuilder blobSasBuilder;
+      blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      blobSasBuilder.StartsOn = sasStartsOn;
+      blobSasBuilder.ExpiresOn = sasExpiresOn;
+      blobSasBuilder.BlobContainerName = "container";
+      blobSasBuilder.BlobName = "blob";
+      blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+      blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::Read);
+      auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = blobSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
 }}} // namespace Azure::Storage::Test

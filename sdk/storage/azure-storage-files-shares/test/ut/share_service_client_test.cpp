@@ -417,4 +417,84 @@ namespace Azure { namespace Storage { namespace Test {
     premiumFileShareServiceClient.SetProperties(originalProperties);
   }
 
+  TEST_F(FileShareServiceClientTest, OAuth_PLAYBACKONLY_)
+  {
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+    auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+
+    auto shareServiceClient
+        = Files::Shares::ShareServiceClient(m_shareServiceClient->GetUrl(), credential, options);
+    // Get Properties
+    Files::Shares::Models::ShareServiceProperties properties;
+    EXPECT_NO_THROW(properties = shareServiceClient.GetProperties().Value);
+
+    // Set Properties
+    properties.Protocol.Reset();
+    EXPECT_NO_THROW(shareServiceClient.SetProperties(properties));
+
+    // List Shares
+    EXPECT_NO_THROW(shareServiceClient.ListShares());
+  }
+
+  TEST_F(FileShareServiceClientTest, PremiumSharePaidBurst_PLAYBACKONLY_)
+  {
+    auto shareServiceClient = *m_premiumShareServiceClient;
+    auto shareName = LowercaseRandomString();
+    auto shareClient = shareServiceClient.GetShareClient(shareName);
+
+    // Create
+    Files::Shares::CreateShareOptions createOptions;
+    createOptions.EnablePaidBursting = true;
+    createOptions.PaidBurstingMaxIops = 1000;
+    createOptions.PaidBurstingMaxBandwidthMibps = 5000;
+    shareClient.Create(createOptions);
+
+    // Get Properties
+    auto properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(properties.PaidBurstingEnabled.HasValue());
+    EXPECT_TRUE(properties.PaidBurstingEnabled.Value());
+    EXPECT_TRUE(properties.PaidBurstingMaxIops.HasValue());
+    EXPECT_EQ(properties.PaidBurstingMaxIops.Value(), 1000);
+    EXPECT_TRUE(properties.PaidBurstingMaxBandwidthMibps.HasValue());
+    EXPECT_EQ(properties.PaidBurstingMaxBandwidthMibps.Value(), 5000);
+
+    // Set Properties
+    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
+    setPropertiesOptions.EnablePaidBursting = true;
+    setPropertiesOptions.PaidBurstingMaxIops = 500;
+    setPropertiesOptions.PaidBurstingMaxBandwidthMibps = 1000;
+    shareClient.SetProperties(setPropertiesOptions);
+
+    // List Shares
+    Azure::Nullable<Files::Shares::Models::ShareItem> shareItem;
+    for (auto page = shareServiceClient.ListShares(); page.HasPage(); page.MoveToNextPage())
+    {
+      for (const auto& share : page.Shares)
+      {
+        if (share.Name == shareName)
+        {
+          shareItem = share;
+        }
+      }
+    }
+    ASSERT_TRUE(shareItem.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.PaidBurstingEnabled.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.PaidBurstingEnabled.Value());
+    EXPECT_TRUE(shareItem.Value().Details.PaidBurstingMaxIops.HasValue());
+    EXPECT_EQ(shareItem.Value().Details.PaidBurstingMaxIops.Value(), 500);
+    EXPECT_TRUE(shareItem.Value().Details.PaidBurstingMaxBandwidthMibps.HasValue());
+    EXPECT_EQ(shareItem.Value().Details.PaidBurstingMaxBandwidthMibps.Value(), 1000);
+
+    // Set Properties EnablePaidBursting = false
+    setPropertiesOptions.EnablePaidBursting = false;
+    setPropertiesOptions.PaidBurstingMaxIops.Reset();
+    setPropertiesOptions.PaidBurstingMaxBandwidthMibps.Reset();
+    shareClient.SetProperties(setPropertiesOptions);
+    properties = shareClient.GetProperties().Value;
+    EXPECT_TRUE(properties.PaidBurstingEnabled.HasValue());
+    EXPECT_FALSE(properties.PaidBurstingEnabled.Value());
+
+    shareClient.DeleteIfExists();
+  }
 }}} // namespace Azure::Storage::Test

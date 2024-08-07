@@ -151,6 +151,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.RootSquash = options.RootSquash;
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
+    protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
+    protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -190,6 +194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.DeleteSnapshots = Models::DeleteSnapshotsOption::Include;
     }
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result
         = _detail::ShareClient::Delete(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::DeleteShareResult ret;
@@ -225,6 +230,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::CreateShareSnapshotOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::CreateSnapshot(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -235,6 +241,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePropertiesOptions();
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::GetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -249,6 +256,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.RootSquash = options.RootSquash;
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
+    protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
+    protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -262,6 +273,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::SetShareMetadataOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(metadata.begin(), metadata.end());
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::SetMetadata(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -272,6 +284,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetShareAccessPolicyOptions();
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::GetAccessPolicy(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -284,6 +297,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::SetShareAccessPolicyOptions();
     protocolLayerOptions.ShareAcl = accessPolicy;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::SetAccessPolicy(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -294,6 +308,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetShareStatisticsOptions();
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::GetStatistics(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -306,6 +321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::CreateSharePermissionOptions();
     protocolLayerOptions.SharePermission.Permission = permission;
+    protocolLayerOptions.SharePermission.Format = options.FilePermissionFormat;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ShareClient::CreatePermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
@@ -316,10 +332,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const GetSharePermissionOptions& options,
       const Azure::Core::Context& context) const
   {
-    (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
     protocolLayerOptions.FilePermissionKey = permissionKey;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto result = _detail::ShareClient::GetPermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
 

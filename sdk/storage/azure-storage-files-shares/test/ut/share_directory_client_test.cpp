@@ -1229,4 +1229,150 @@ namespace Azure { namespace Storage { namespace Test {
         m_fileShareDirectoryClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(directoryClient.GetProperties(), StorageException);
   }
+
+  TEST_F(FileShareDirectoryClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto sddlPermissionNoControlFlag
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)";
+    auto binaryPermission = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+                            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
+                            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+                            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+    auto binaryPermissionNoControlFlag
+        = "AQAEgGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+          "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJd"
+          "JWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+          "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+
+    // sddl format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      auto directoryClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+
+      // Create
+      Files::Shares::CreateDirectoryOptions options;
+      options.DirectoryPermissionFormat = permissionFormat;
+      options.DirectoryPermission = sddlPermission;
+      auto permissionKey
+          = directoryClient.Create(options).Value.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermissionNoControlFlag, permission);
+
+      // Set Properties
+      Files::Shares::SetDirectoryPropertiesOptions setOptions;
+      setOptions.FilePermissionFormat = permissionFormat;
+      setOptions.FilePermission = sddlPermission;
+      m_fileShareDirectoryClient->SetProperties(
+          Files::Shares::Models::FileSmbProperties(), setOptions);
+      permissionKey
+          = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+
+      // Rename File
+      auto sourceFileName = LowercaseRandomString();
+      auto fileClient = m_fileShareDirectoryClient->GetFileClient(sourceFileName);
+      fileClient.Create(1);
+      Files::Shares::RenameFileOptions renameOptions;
+      renameOptions.FilePermissionFormat = permissionFormat;
+      renameOptions.FilePermission = sddlPermission;
+      auto destFileClient
+          = m_fileShareDirectoryClient
+                ->RenameFile(
+                    sourceFileName, m_directoryName + "/" + LowercaseRandomString(), renameOptions)
+                .Value;
+      permissionKey = destFileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+
+      // Rename Subdirectory
+      auto sourceDirectoryName = LowercaseRandomString();
+      auto subdirectoryClient
+          = m_fileShareDirectoryClient->GetSubdirectoryClient(sourceDirectoryName);
+      subdirectoryClient.Create();
+      Files::Shares::RenameDirectoryOptions renameDirOptions;
+      renameDirOptions.FilePermissionFormat = permissionFormat;
+      renameDirOptions.FilePermission = sddlPermission;
+      auto destDirectoryClient = m_fileShareDirectoryClient
+                                     ->RenameSubdirectory(
+                                         sourceDirectoryName,
+                                         m_directoryName + "/" + LowercaseRandomString(),
+                                         renameDirOptions)
+                                     .Value;
+      permissionKey = destDirectoryClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+    }
+    // binary format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto directoryClient
+          = m_shareClient->GetRootDirectoryClient().GetSubdirectoryClient(LowercaseRandomString());
+
+      // Create
+      Files::Shares::CreateDirectoryOptions options;
+      options.DirectoryPermissionFormat = permissionFormat;
+      options.DirectoryPermission = binaryPermission;
+      auto permissionKey
+          = directoryClient.Create(options).Value.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermissionNoControlFlag, permission);
+
+      // Set Properties
+      Files::Shares::SetDirectoryPropertiesOptions setOptions;
+      setOptions.FilePermissionFormat = permissionFormat;
+      setOptions.FilePermission = binaryPermission;
+      m_fileShareDirectoryClient->SetProperties(
+          Files::Shares::Models::FileSmbProperties(), setOptions);
+      permissionKey
+          = m_fileShareDirectoryClient->GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+
+      // Rename File
+      auto sourceFileName = LowercaseRandomString();
+      auto fileClient = m_fileShareDirectoryClient->GetFileClient(sourceFileName);
+      fileClient.Create(1);
+      Files::Shares::RenameFileOptions renameOptions;
+      renameOptions.FilePermissionFormat = permissionFormat;
+      renameOptions.FilePermission = binaryPermission;
+      auto destFileClient
+          = m_fileShareDirectoryClient
+                ->RenameFile(
+                    sourceFileName, m_directoryName + "/" + LowercaseRandomString(), renameOptions)
+                .Value;
+      permissionKey = destFileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+
+      // Rename Subdirectory
+      auto sourceDirectoryName = LowercaseRandomString();
+      auto subdirectoryClient
+          = m_fileShareDirectoryClient->GetSubdirectoryClient(sourceDirectoryName);
+      subdirectoryClient.Create();
+      Files::Shares::RenameDirectoryOptions renameDirOptions;
+      renameDirOptions.FilePermissionFormat = permissionFormat;
+      renameDirOptions.FilePermission = binaryPermission;
+      auto destDirectoryClient = m_fileShareDirectoryClient
+                                     ->RenameSubdirectory(
+                                         sourceDirectoryName,
+                                         m_directoryName + "/" + LowercaseRandomString(),
+                                         renameDirOptions)
+                                     .Value;
+      permissionKey = destDirectoryClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+    }
+  }
 }}} // namespace Azure::Storage::Test
