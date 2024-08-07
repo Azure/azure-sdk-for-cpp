@@ -32,7 +32,6 @@ extends:
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 27
       BranchCoverageTarget: 13
-      UseFederatedAuth: true
       Artifacts:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs
