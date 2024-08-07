@@ -1,14 +1,10 @@
 # Release History
 
-## 12.4.0-beta.1 (Unreleased)
+## 12.4.0-beta.1 (2024-08-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added ability to retrieve SAS string to sign for debugging purposes.
 
 ## 12.3.0 (2024-07-16)
 

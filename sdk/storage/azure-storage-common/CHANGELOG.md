@@ -1,12 +1,10 @@
 # Release History
 
-## 12.8.0-beta.1 (Unreleased)
+## 12.8.0-beta.1 (2024-08-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added ability to retrieve SAS string to sign for debugging purposes.
 
 ### Other Changes
 
