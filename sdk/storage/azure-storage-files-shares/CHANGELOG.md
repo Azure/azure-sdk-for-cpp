@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added support for service version 2024-11-04.
+- Bumped up API version to `2024-11-04`.
 - Added support for token-based authentication for all APIs.
 - Added support for paid bursting on premium file share accounts.
 - Added support for binary format for file permissions.
