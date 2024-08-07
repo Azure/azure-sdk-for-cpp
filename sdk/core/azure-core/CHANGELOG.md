@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
 ### Breaking Changes
 
 ### Bugs Fixed
