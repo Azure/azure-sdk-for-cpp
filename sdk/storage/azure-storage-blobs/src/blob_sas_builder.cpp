@@ -323,4 +323,84 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
+  std::string BlobSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
+  {
+    std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
+    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
+        || Resource == BlobSasResource::BlobVersion)
+    {
+      canonicalName += "/" + BlobName;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = BlobSasResourceToString(Resource);
+
+    std::string snapshotVersion;
+    if (Resource == BlobSasResource::BlobSnapshot)
+    {
+      snapshotVersion = Snapshot;
+    }
+    else if (Resource == BlobSasResource::BlobVersion)
+    {
+      snapshotVersion = BlobVersionId;
+    }
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
+        + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
+  }
+
+  std::string BlobSasBuilder::GenerateSasStringToSign(
+      const Blobs::Models::UserDelegationKey& userDelegationKey,
+      const std::string& accountName)
+  {
+    std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
+    if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
+        || Resource == BlobSasResource::BlobVersion)
+    {
+      canonicalName += "/" + BlobName;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = BlobSasResourceToString(Resource);
+
+    std::string snapshotVersion;
+    if (Resource == BlobSasResource::BlobSnapshot)
+    {
+      snapshotVersion = Snapshot;
+    }
+    else if (Resource == BlobSasResource::BlobVersion)
+    {
+      snapshotVersion = BlobVersionId;
+    }
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = ExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
+        + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
+        + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n" + CacheControl + "\n"
+        + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+  }
+
 }}} // namespace Azure::Storage::Sas

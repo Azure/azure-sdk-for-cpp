@@ -11,6 +11,7 @@
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/nullable.hpp>
@@ -38,51 +39,35 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief The algorithm used to produce the encryption key hash. Currently, the only accepted
      * value is "AES256". Must be provided if the x-ms-encryption-key header is provided.
      */
-    class EncryptionAlgorithmType final {
+    class EncryptionAlgorithmType final
+        : public Core::_internal::ExtendableEnumeration<EncryptionAlgorithmType> {
     public:
       /** Constructs a new EncryptionAlgorithmType instance */
       EncryptionAlgorithmType() = default;
       /** Constructs a new EncryptionAlgorithmType from a string. */
-      explicit EncryptionAlgorithmType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another EncryptionAlgorithmType. */
-      bool operator==(const EncryptionAlgorithmType& other) const
+      explicit EncryptionAlgorithmType(std::string value) : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another EncryptionAlgorithmType. */
-      bool operator!=(const EncryptionAlgorithmType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type EncryptionAlgorithmType: Aes256 */
       AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Extensible enum used to specify how the service should look for a block ID.
      */
-    class BlockType final {
+    class BlockType final : public Core::_internal::ExtendableEnumeration<BlockType> {
     public:
       /** Constructs a new BlockType instance */
       BlockType() = default;
       /** Constructs a new BlockType from a string. */
-      explicit BlockType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlockType. */
-      bool operator==(const BlockType& other) const { return m_value == other.m_value; }
-      /** Compares with another BlockType. */
-      bool operator!=(const BlockType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit BlockType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type BlockType: Committed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
       /** Constant value of type BlockType: Uncommitted */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
       /** Constant value of type BlockType: Latest */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief The retention policy which determines how long the associated data should persist.
@@ -97,7 +82,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
        */
-      Nullable<int32_t> Days;
+      Nullable<std::int32_t> Days;
     };
     /**
      * @brief Azure Analytics Logging settings.
@@ -180,7 +165,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The maximum amount time that a browser should cache the preflight OPTIONS request.
        */
-      int32_t MaxAgeInSeconds = int32_t();
+      std::int32_t MaxAgeInSeconds = std::int32_t();
     };
     /**
      * @brief The properties that enable an account to host a static website.
@@ -249,27 +234,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The status of the secondary location.
      */
-    class GeoReplicationStatus final {
+    class GeoReplicationStatus final
+        : public Core::_internal::ExtendableEnumeration<GeoReplicationStatus> {
     public:
       /** Constructs a new GeoReplicationStatus instance */
       GeoReplicationStatus() = default;
       /** Constructs a new GeoReplicationStatus from a string. */
-      explicit GeoReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another GeoReplicationStatus. */
-      bool operator==(const GeoReplicationStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another GeoReplicationStatus. */
-      bool operator!=(const GeoReplicationStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit GeoReplicationStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type GeoReplicationStatus: Live */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
       AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Geo-Replication information for the Secondary Storage Service.
@@ -300,41 +278,28 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The current lease status of the blob.
      */
-    class LeaseStatus final {
+    class LeaseStatus final : public Core::_internal::ExtendableEnumeration<LeaseStatus> {
     public:
       /** Constructs a new LeaseStatus instance */
       LeaseStatus() = default;
       /** Constructs a new LeaseStatus from a string. */
-      explicit LeaseStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseStatus. */
-      bool operator==(const LeaseStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseStatus. */
-      bool operator!=(const LeaseStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseStatus: Locked */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
       /** Constant value of type LeaseStatus: Unlocked */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief The current lease state of the blob.
      */
-    class LeaseState final {
+    class LeaseState final : public Core::_internal::ExtendableEnumeration<LeaseState> {
     public:
       /** Constructs a new LeaseState instance */
       LeaseState() = default;
       /** Constructs a new LeaseState from a string. */
-      explicit LeaseState(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseState. */
-      bool operator==(const LeaseState& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseState. */
-      bool operator!=(const LeaseState& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseState(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseState: Available */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
       /** Constant value of type LeaseState: Leased */
@@ -345,58 +310,40 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
       /** Constant value of type LeaseState: Broken */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief When a blob is leased, specifies whether the lease is of infinite or fixed duration.
      */
-    class LeaseDurationType final {
+    class LeaseDurationType final
+        : public Core::_internal::ExtendableEnumeration<LeaseDurationType> {
     public:
       /** Constructs a new LeaseDurationType instance */
       LeaseDurationType() = default;
       /** Constructs a new LeaseDurationType from a string. */
-      explicit LeaseDurationType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another LeaseDurationType. */
-      bool operator==(const LeaseDurationType& other) const { return m_value == other.m_value; }
-      /** Compares with another LeaseDurationType. */
-      bool operator!=(const LeaseDurationType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit LeaseDurationType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type LeaseDurationType: Infinite */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
       /** Constant value of type LeaseDurationType: Fixed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level of
      * access.
      */
-    class PublicAccessType final {
+    class PublicAccessType final : public Core::_internal::ExtendableEnumeration<PublicAccessType> {
     public:
       /** Constructs a new PublicAccessType instance */
       PublicAccessType() = default;
       /** Constructs a new PublicAccessType from a string. */
-      explicit PublicAccessType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another PublicAccessType. */
-      bool operator==(const PublicAccessType& other) const { return m_value == other.m_value; }
-      /** Compares with another PublicAccessType. */
-      bool operator!=(const PublicAccessType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit PublicAccessType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type PublicAccessType: BlobContainer */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
       /** Constant value of type PublicAccessType: Blob */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
       /** Constant value of type PublicAccessType: None */
       AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Properties of a container.
@@ -455,7 +402,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Remaining days before this container will be permanently deleted. Only valid when this
        * container was deleted.
        */
-      Nullable<int32_t> RemainingRetentionDays;
+      Nullable<std::int32_t> RemainingRetentionDays;
       /**
        * Indicates if version level worm is enabled on this container.
        */
@@ -594,18 +541,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Identifies the sku name of the account.
      */
-    class SkuName final {
+    class SkuName final : public Core::_internal::ExtendableEnumeration<SkuName> {
     public:
       /** Constructs a new SkuName instance */
       SkuName() = default;
       /** Constructs a new SkuName from a string. */
-      explicit SkuName(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another SkuName. */
-      bool operator==(const SkuName& other) const { return m_value == other.m_value; }
-      /** Compares with another SkuName. */
-      bool operator!=(const SkuName& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit SkuName(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type SkuName: StandardLrs */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
       /** Constant value of type SkuName: StandardGrs */
@@ -622,25 +564,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
       /** Constant value of type SkuName: StandardRagzrs */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Identifies the account kind.
      */
-    class AccountKind final {
+    class AccountKind final : public Core::_internal::ExtendableEnumeration<AccountKind> {
     public:
       /** Constructs a new AccountKind instance */
       AccountKind() = default;
       /** Constructs a new AccountKind from a string. */
-      explicit AccountKind(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another AccountKind. */
-      bool operator==(const AccountKind& other) const { return m_value == other.m_value; }
-      /** Compares with another AccountKind. */
-      bool operator!=(const AccountKind& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit AccountKind(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type AccountKind: Storage */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
       /** Constant value of type AccountKind: BlobStorage */
@@ -651,9 +585,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
       /** Constant value of type AccountKind: BlockBlobStorage */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Blob info from a Filter Blobs API call.
@@ -946,7 +877,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         /**
          * Approximate time remaining in the lease period, in seconds.
          */
-        int32_t LeaseTime = int32_t();
+        std::int32_t LeaseTime = std::int32_t();
       };
       /**
        * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ChangeLease.
@@ -984,18 +915,13 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Status of the copy operation.
      */
-    class CopyStatus final {
+    class CopyStatus final : public Core::_internal::ExtendableEnumeration<CopyStatus> {
     public:
       /** Constructs a new CopyStatus instance */
       CopyStatus() = default;
       /** Constructs a new CopyStatus from a string. */
-      explicit CopyStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another CopyStatus. */
-      bool operator==(const CopyStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another CopyStatus. */
-      bool operator!=(const CopyStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit CopyStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type CopyStatus: Pending */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
       /** Constant value of type CopyStatus: Success */
@@ -1004,25 +930,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Aborted;
       /** Constant value of type CopyStatus: Failed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Failed;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Optional. Indicates the tier to be set on the blob.
      */
-    class AccessTier final {
+    class AccessTier final : public Core::_internal::ExtendableEnumeration<AccessTier> {
     public:
       /** Constructs a new AccessTier instance */
       AccessTier() = default;
       /** Constructs a new AccessTier from a string. */
-      explicit AccessTier(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another AccessTier. */
-      bool operator==(const AccessTier& other) const { return m_value == other.m_value; }
-      /** Compares with another AccessTier. */
-      bool operator!=(const AccessTier& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit AccessTier(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type AccessTier: P1 */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
       /** Constant value of type AccessTier: P2 */
@@ -1061,9 +979,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
       /** Constant value of type AccessTier: Cold */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief For blob storage LRS accounts, valid values are
@@ -1071,50 +986,35 @@ namespace Azure { namespace Storage { namespace Blobs {
      * not complete then this value indicates that rehydrate is pending and also tells the
      * destination tier.
      */
-    class ArchiveStatus final {
+    class ArchiveStatus final : public Core::_internal::ExtendableEnumeration<ArchiveStatus> {
     public:
       /** Constructs a new ArchiveStatus instance */
       ArchiveStatus() = default;
       /** Constructs a new ArchiveStatus from a string. */
-      explicit ArchiveStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ArchiveStatus. */
-      bool operator==(const ArchiveStatus& other) const { return m_value == other.m_value; }
-      /** Compares with another ArchiveStatus. */
-      bool operator!=(const ArchiveStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit ArchiveStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type ArchiveStatus: RehydratePendingToHot */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
       /** Constant value of type ArchiveStatus: RehydratePendingToCool */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
       /** Constant value of type ArchiveStatus: RehydratePendingToCold */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCold;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Optional: Indicates the priority with which to rehydrate an archived blob.
      */
-    class RehydratePriority final {
+    class RehydratePriority final
+        : public Core::_internal::ExtendableEnumeration<RehydratePriority> {
     public:
       /** Constructs a new RehydratePriority instance */
       RehydratePriority() = default;
       /** Constructs a new RehydratePriority from a string. */
-      explicit RehydratePriority(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another RehydratePriority. */
-      bool operator==(const RehydratePriority& other) const { return m_value == other.m_value; }
-      /** Compares with another RehydratePriority. */
-      bool operator!=(const RehydratePriority& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit RehydratePriority(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type RehydratePriority: High */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
       /** Constant value of type RehydratePriority: Standard */
       AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Standard HTTP properties supported by containers and blobs.
@@ -1150,28 +1050,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief The replication status of blob with the given policy and rule identifiers.
      */
-    class ObjectReplicationStatus final {
+    class ObjectReplicationStatus final
+        : public Core::_internal::ExtendableEnumeration<ObjectReplicationStatus> {
     public:
       /** Constructs a new ObjectReplicationStatus instance */
       ObjectReplicationStatus() = default;
       /** Constructs a new ObjectReplicationStatus from a string. */
-      explicit ObjectReplicationStatus(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ObjectReplicationStatus. */
-      bool operator==(const ObjectReplicationStatus& other) const
+      explicit ObjectReplicationStatus(std::string value) : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another ObjectReplicationStatus. */
-      bool operator!=(const ObjectReplicationStatus& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type ObjectReplicationStatus: Complete */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
       /** Constant value of type ObjectReplicationStatus: Failed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Contains the object replication rule ID and replication status of a blob.
@@ -1206,28 +1098,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies the immutability policy mode to set on the blob.
      */
-    class BlobImmutabilityPolicyMode final {
+    class BlobImmutabilityPolicyMode final
+        : public Core::_internal::ExtendableEnumeration<BlobImmutabilityPolicyMode> {
     public:
       /** Constructs a new BlobImmutabilityPolicyMode instance */
       BlobImmutabilityPolicyMode() = default;
       /** Constructs a new BlobImmutabilityPolicyMode from a string. */
-      explicit BlobImmutabilityPolicyMode(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlobImmutabilityPolicyMode. */
-      bool operator==(const BlobImmutabilityPolicyMode& other) const
+      explicit BlobImmutabilityPolicyMode(std::string value)
+          : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another BlobImmutabilityPolicyMode. */
-      bool operator!=(const BlobImmutabilityPolicyMode& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type BlobImmutabilityPolicyMode: Unlocked */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Unlocked;
       /** Constant value of type BlobImmutabilityPolicyMode: Locked */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Locked;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Immutability policy associated with the blob.
@@ -1264,7 +1149,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The current sequence number for a page blob.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
       /**
        * The current lease status of the blob.
        */
@@ -1343,7 +1228,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Remaining days before this blob will be permanently deleted. Only valid when this blob was
        * deleted.
        */
-      Nullable<int32_t> RemainingRetentionDays;
+      Nullable<std::int32_t> RemainingRetentionDays;
       /**
        * The tier of page blob on a premium storage account or tier of block blob on blob storage or
        * general purpose v2 account.
@@ -1363,7 +1248,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * SHA-256 hash of the encryption key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * The name of the encryption scope under which the blob is encrypted.
        */
@@ -1419,27 +1304,19 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Type of the blob.
      */
-    class BlobType final {
+    class BlobType final : public Core::_internal::ExtendableEnumeration<BlobType> {
     public:
       /** Constructs a new BlobType instance */
       BlobType() = default;
       /** Constructs a new BlobType from a string. */
-      explicit BlobType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlobType. */
-      bool operator==(const BlobType& other) const { return m_value == other.m_value; }
-      /** Compares with another BlobType. */
-      bool operator!=(const BlobType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit BlobType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type BlobType: BlockBlob */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
       /** Constant value of type BlobType: PageBlob */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
       /** Constant value of type BlobType: AppendBlob */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
-
-    private:
-      std::string m_value;
     };
     namespace _detail {
       /**
@@ -1478,7 +1355,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         /**
          * Size in bytes.
          */
-        int64_t BlobSize = int64_t();
+        std::int64_t BlobSize = std::int64_t();
         /**
          * Type of the blob.
          */
@@ -1601,11 +1478,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The current sequence number for a page blob.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
       /**
        * The number of committed blocks present in the blob.
        */
-      Nullable<int32_t> CommittedBlockCount;
+      Nullable<std::int32_t> CommittedBlockCount;
       /**
        * If the blob has been sealed. This value is null for block blobs or page blobs.
        */
@@ -1631,7 +1508,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * SHA-256 hash of the encryption key used to encrypt the blob data and metadata.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Name of the encryption scope used to encrypt the blob data and metadata.
        */
@@ -1647,7 +1524,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The number of tags associated with the blob.
        */
-      Nullable<int32_t> TagCount;
+      Nullable<std::int32_t> TagCount;
       /**
        * String identifier for this copy operation. Use with Get Blob Properties to check the status
        * of this copy operation, or pass to Abort Copy Blob to abort a pending copy.
@@ -1718,7 +1595,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Size of the blob in bytes.
        */
-      int64_t BlobSize = int64_t();
+      std::int64_t BlobSize = std::int64_t();
       /**
        * Indicates the range of bytes returned.
        */
@@ -1842,7 +1719,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Size of the blob in bytes.
        */
-      int64_t BlobSize = int64_t();
+      std::int64_t BlobSize = std::int64_t();
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -1852,12 +1729,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The current sequence number for a page blob. This header is not returned for block blobs or
        * append blobs.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
       /**
        * The number of committed blocks present in the blob. This header is returned only for append
        * blobs.
        */
-      Nullable<int32_t> CommittedBlockCount;
+      Nullable<std::int32_t> CommittedBlockCount;
       /**
        * The value of this header is set to true if the blob data and application metadata are
        * completely encrypted using the specified algorithm. Otherwise, the value is set to false
@@ -1869,7 +1746,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the metadata. This header is only
        * returned when the metadata was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -1915,7 +1792,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The number of tags associated with the blob.
        */
-      Nullable<int32_t> TagCount;
+      Nullable<std::int32_t> TagCount;
       /**
        * The time this blob will expire.
        */
@@ -1944,25 +1821,18 @@ namespace Azure { namespace Storage { namespace Blobs {
      * options: include: Delete the base blob and all of its snapshots. only: Delete only the blob's
      * snapshots and not the blob itself.
      */
-    class DeleteSnapshotsOption final {
+    class DeleteSnapshotsOption final
+        : public Core::_internal::ExtendableEnumeration<DeleteSnapshotsOption> {
     public:
       /** Constructs a new DeleteSnapshotsOption instance */
       DeleteSnapshotsOption() = default;
       /** Constructs a new DeleteSnapshotsOption from a string. */
-      explicit DeleteSnapshotsOption(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another DeleteSnapshotsOption. */
-      bool operator==(const DeleteSnapshotsOption& other) const { return m_value == other.m_value; }
-      /** Compares with another DeleteSnapshotsOption. */
-      bool operator!=(const DeleteSnapshotsOption& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit DeleteSnapshotsOption(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type DeleteSnapshotsOption: IncludeSnapshots */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
       /** Constant value of type DeleteSnapshotsOption: OnlySnapshots */
       AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Delete.
@@ -1983,21 +1853,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Required. Indicates mode of the expiry time.
      */
-    class ScheduleBlobExpiryOriginType final {
+    class ScheduleBlobExpiryOriginType final
+        : public Core::_internal::ExtendableEnumeration<ScheduleBlobExpiryOriginType> {
     public:
       /** Constructs a new ScheduleBlobExpiryOriginType instance */
       ScheduleBlobExpiryOriginType() = default;
       /** Constructs a new ScheduleBlobExpiryOriginType from a string. */
-      explicit ScheduleBlobExpiryOriginType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another ScheduleBlobExpiryOriginType. */
-      bool operator==(const ScheduleBlobExpiryOriginType& other) const
+      explicit ScheduleBlobExpiryOriginType(std::string value)
+          : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another ScheduleBlobExpiryOriginType. */
-      bool operator!=(const ScheduleBlobExpiryOriginType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type ScheduleBlobExpiryOriginType: NeverExpire */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
       /** Constant value of type ScheduleBlobExpiryOriginType: RelativeToCreation */
@@ -2006,9 +1872,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
       /** Constant value of type ScheduleBlobExpiryOriginType: Absolute */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.
@@ -2047,7 +1910,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The current sequence number for a page blob. This header is not returned for block blobs or
        * append blobs.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::SetImmutabilityPolicy.
@@ -2084,7 +1947,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to check sequence
        * number for a page blob.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -2111,7 +1974,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the metadata. This header is only
        * returned when the metadata was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -2219,7 +2082,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         /**
          * Approximate time remaining in the lease period, in seconds.
          */
-        int32_t LeaseTime = int32_t();
+        std::int32_t LeaseTime = std::int32_t();
       };
     } // namespace _detail
     /**
@@ -2231,7 +2094,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to get SHA256 of
        * the encryption key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * The field is deprecated and is always null. Use GetProperties() instead to check the
        * encryption scope.
@@ -2304,28 +2167,20 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional, default 'replace'.  Indicates if source tags should be copied or replaced
      * with the tags specified by x-ms-tags.
      */
-    class BlobCopySourceTagsMode final {
+    class BlobCopySourceTagsMode final
+        : public Core::_internal::ExtendableEnumeration<BlobCopySourceTagsMode> {
     public:
       /** Constructs a new BlobCopySourceTagsMode instance */
       BlobCopySourceTagsMode() = default;
       /** Constructs a new BlobCopySourceTagsMode from a string. */
-      explicit BlobCopySourceTagsMode(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlobCopySourceTagsMode. */
-      bool operator==(const BlobCopySourceTagsMode& other) const
+      explicit BlobCopySourceTagsMode(std::string value) : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another BlobCopySourceTagsMode. */
-      bool operator!=(const BlobCopySourceTagsMode& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type BlobCopySourceTagsMode: Replace */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
       /** Constant value of type BlobCopySourceTagsMode: Copy */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
@@ -2404,42 +2259,29 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * @brief Required. The type of the provided query expression.
        */
-      class QueryRequestQueryType final {
+      class QueryRequestQueryType final
+          : public Core::_internal::ExtendableEnumeration<QueryRequestQueryType> {
       public:
         /** Constructs a new QueryRequestQueryType instance */
         QueryRequestQueryType() = default;
         /** Constructs a new QueryRequestQueryType from a string. */
-        explicit QueryRequestQueryType(std::string value) : m_value(std::move(value)) {}
-        /** Compares with another QueryRequestQueryType. */
-        bool operator==(const QueryRequestQueryType& other) const
+        explicit QueryRequestQueryType(std::string value) : ExtendableEnumeration(std::move(value))
         {
-          return m_value == other.m_value;
         }
-        /** Compares with another QueryRequestQueryType. */
-        bool operator!=(const QueryRequestQueryType& other) const { return !(*this == other); }
-        /** Converts the value to a string. */
-        const std::string& ToString() const { return m_value; }
+
         /** Constant value of type QueryRequestQueryType: SQL */
         AZ_STORAGE_BLOBS_DLLEXPORT const static QueryRequestQueryType SQL;
-
-      private:
-        std::string m_value;
       };
       /**
        * @brief The quick query format type.
        */
-      class QueryFormatType final {
+      class QueryFormatType final : public Core::_internal::ExtendableEnumeration<QueryFormatType> {
       public:
         /** Constructs a new QueryFormatType instance */
         QueryFormatType() = default;
         /** Constructs a new QueryFormatType from a string. */
-        explicit QueryFormatType(std::string value) : m_value(std::move(value)) {}
-        /** Compares with another QueryFormatType. */
-        bool operator==(const QueryFormatType& other) const { return m_value == other.m_value; }
-        /** Compares with another QueryFormatType. */
-        bool operator!=(const QueryFormatType& other) const { return !(*this == other); }
-        /** Converts the value to a string. */
-        const std::string& ToString() const { return m_value; }
+        explicit QueryFormatType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
         /** Constant value of type QueryFormatType: Delimited */
         AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Delimited;
         /** Constant value of type QueryFormatType: Json */
@@ -2448,9 +2290,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Arrow;
         /** Constant value of type QueryFormatType: Parquet */
         AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Parquet;
-
-      private:
-        std::string m_value;
       };
       /**
        * @brief Groups the settings used for interpreting the blob data if the blob is delimited
@@ -2493,21 +2332,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Type of blob query arrow field.
      */
-    class BlobQueryArrowFieldType final {
+    class BlobQueryArrowFieldType final
+        : public Core::_internal::ExtendableEnumeration<BlobQueryArrowFieldType> {
     public:
       /** Constructs a new BlobQueryArrowFieldType instance */
       BlobQueryArrowFieldType() = default;
       /** Constructs a new BlobQueryArrowFieldType from a string. */
-      explicit BlobQueryArrowFieldType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlobQueryArrowFieldType. */
-      bool operator==(const BlobQueryArrowFieldType& other) const
+      explicit BlobQueryArrowFieldType(std::string value) : ExtendableEnumeration(std::move(value))
       {
-        return m_value == other.m_value;
       }
-      /** Compares with another BlobQueryArrowFieldType. */
-      bool operator!=(const BlobQueryArrowFieldType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+
       /** Constant value of type BlobQueryArrowFieldType: Int64 */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
       /** Constant value of type BlobQueryArrowFieldType: Bool */
@@ -2520,9 +2354,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
       /** Constant value of type BlobQueryArrowFieldType: Decimal */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Groups settings regarding specific field of an arrow schema.
@@ -2540,11 +2371,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Precision of the field.
        */
-      Nullable<int32_t> Precision;
+      Nullable<std::int32_t> Precision;
       /**
        * Scale of the field.
        */
-      Nullable<int32_t> Scale;
+      Nullable<std::int32_t> Scale;
     };
     namespace _detail {
       /**
@@ -2669,7 +2500,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The field is deprecated and is always null. Use GetProperties() instead to check sequence
        * number for a page blob.
        */
-      Nullable<int64_t> SequenceNumber;
+      Nullable<std::int64_t> SequenceNumber;
       /**
        * The ETag contains a value that you can use to perform operations conditionally. If the
        * request version is 2011-08-18 or newer, the ETag value will be in quotes.
@@ -2696,7 +2527,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -2728,7 +2559,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The current sequence number for the page blob.
        */
-      int64_t SequenceNumber = int64_t();
+      std::int64_t SequenceNumber = int64_t();
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -2738,7 +2569,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the pages. This header is only
        * returned when the pages were encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -2765,7 +2596,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The current sequence number for the page blob.
        */
-      int64_t SequenceNumber = int64_t();
+      std::int64_t SequenceNumber = int64_t();
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UploadPagesFromUri.
@@ -2791,7 +2622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The current sequence number for the page blob.
        */
-      int64_t SequenceNumber = int64_t();
+      std::int64_t SequenceNumber = int64_t();
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -2801,7 +2632,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -2820,7 +2651,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         /**
          * Size of the blob in bytes.
          */
-        int64_t BlobSize = int64_t();
+        std::int64_t BlobSize = std::int64_t();
         /**
          * Array of PageRange.
          */
@@ -2841,7 +2672,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         /**
          * Size of the blob in bytes.
          */
-        int64_t BlobSize = int64_t();
+        std::int64_t BlobSize = std::int64_t();
         /**
          * Array of PageRange.
          */
@@ -2873,34 +2704,27 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The current sequence number for a page blob. This header is not returned for block blobs or
        * append blobs.
        */
-      int64_t SequenceNumber = int64_t();
+      std::int64_t SequenceNumber = std::int64_t();
     };
     /**
      * @brief Required if the x-ms-blob-sequence-number header is set for the request. This property
      * applies to page blobs only. This property indicates how the service should modify the blob's
      * sequence number.
      */
-    class SequenceNumberAction final {
+    class SequenceNumberAction final
+        : public Core::_internal::ExtendableEnumeration<SequenceNumberAction> {
     public:
       /** Constructs a new SequenceNumberAction instance */
       SequenceNumberAction() = default;
       /** Constructs a new SequenceNumberAction from a string. */
-      explicit SequenceNumberAction(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another SequenceNumberAction. */
-      bool operator==(const SequenceNumberAction& other) const { return m_value == other.m_value; }
-      /** Compares with another SequenceNumberAction. */
-      bool operator!=(const SequenceNumberAction& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit SequenceNumberAction(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type SequenceNumberAction: Max */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Max;
       /** Constant value of type SequenceNumberAction: Update */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Update;
       /** Constant value of type SequenceNumberAction: Increment */
       AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber.
@@ -2922,7 +2746,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The current sequence number for a page blob. This header is not returned for block blobs or
        * append blobs.
        */
-      int64_t SequenceNumber = int64_t();
+      std::int64_t SequenceNumber = std::int64_t();
     };
     namespace _detail {
       /**
@@ -2993,7 +2817,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3026,12 +2850,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
        */
-      int64_t AppendOffset = int64_t();
+      std::int64_t AppendOffset = std::int64_t();
       /**
        * The number of committed blocks present in the blob. This header is returned only for append
        * blobs.
        */
-      int32_t CommittedBlockCount = int32_t();
+      std::int32_t CommittedBlockCount = std::int32_t();
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -3041,7 +2865,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the block. This header is only
        * returned when the block was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3074,17 +2898,17 @@ namespace Azure { namespace Storage { namespace Blobs {
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
        */
-      int64_t AppendOffset = int64_t();
+      std::int64_t AppendOffset = std::int64_t();
       /**
        * The number of committed blocks present in the blob. This header is returned only for append
        * blobs.
        */
-      int32_t CommittedBlockCount = int32_t();
+      std::int32_t CommittedBlockCount = std::int32_t();
       /**
        * The SHA-256 hash of the encryption key used to encrypt the block. This header is only
        * returned when the block was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3154,7 +2978,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3198,7 +3022,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3226,7 +3050,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the block. This header is only
        * returned when the block was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3254,7 +3078,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the block. This header is only
        * returned when the block was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3316,7 +3140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
        * returned when the blob was encrypted with a customer-provided key.
        */
-      Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
        * Returns the name of the encryption scope used to encrypt the blob contents and application
        * metadata.  Note that the absence of this header implies use of the default account
@@ -3336,33 +3160,25 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The block size in bytes.
        */
-      int64_t Size = int64_t();
+      std::int64_t Size = std::int64_t();
     };
     /**
      * @brief Specifies whether to return the list of committed blocks, the list of uncommitted
      * blocks, or both lists together.
      */
-    class BlockListType final {
+    class BlockListType final : public Core::_internal::ExtendableEnumeration<BlockListType> {
     public:
       /** Constructs a new BlockListType instance */
       BlockListType() = default;
       /** Constructs a new BlockListType from a string. */
-      explicit BlockListType(std::string value) : m_value(std::move(value)) {}
-      /** Compares with another BlockListType. */
-      bool operator==(const BlockListType& other) const { return m_value == other.m_value; }
-      /** Compares with another BlockListType. */
-      bool operator!=(const BlockListType& other) const { return !(*this == other); }
-      /** Converts the value to a string. */
-      const std::string& ToString() const { return m_value; }
+      explicit BlockListType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
       /** Constant value of type BlockListType: Committed */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
       /** Constant value of type BlockListType: Uncommitted */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
       /** Constant value of type BlockListType: All */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
-
-    private:
-      std::string m_value;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.
@@ -3383,7 +3199,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * Size of the blob in bytes.
        */
-      int64_t BlobSize = 0;
+      std::int64_t BlobSize = 0;
       /**
        * List of committed blocks.
        */
@@ -3426,7 +3242,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Nullable<std::string> Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobContainersIncludeFlags> Include;
       };
       static Response<Models::_detail::ListBlobContainersResult> ListBlobContainers(
@@ -3465,7 +3281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Nullable<std::string> Where;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
       };
       static Response<Models::_detail::FindBlobsByTagsResult> FindBlobsByTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3574,7 +3390,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Nullable<std::string> Where;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
       };
       static Response<Models::_detail::FindBlobsByTagsResult> FindBlobsByTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3583,7 +3399,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct AcquireBlobContainerLeaseOptions final
       {
-        Nullable<int32_t> Duration;
+        Nullable<std::int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
@@ -3617,7 +3433,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct BreakBlobContainerLeaseOptions final
       {
-        Nullable<int32_t> BreakPeriod;
+        Nullable<std::int32_t> BreakPeriod;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
       };
@@ -3642,7 +3458,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Nullable<std::string> Prefix;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
       };
       static Response<Models::_detail::ListBlobsResult> ListBlobs(
@@ -3655,7 +3471,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Prefix;
         std::string Delimiter;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
         Nullable<std::string> ShowOnly;
       };
@@ -3684,7 +3500,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<bool> RangeGetContentMD5;
         Nullable<bool> RangeGetContentCRC64;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
@@ -3704,7 +3520,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> VersionId;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
@@ -3757,7 +3573,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string BlobCacheControl;
         std::string BlobContentType;
-        std::vector<uint8_t> BlobContentMD5;
+        std::vector<std::uint8_t> BlobContentMD5;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
         Nullable<std::string> LeaseId;
@@ -3806,7 +3622,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -3822,7 +3638,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct AcquireBlobLeaseOptions final
       {
-        Nullable<int32_t> Duration;
+        Nullable<std::int32_t> Duration;
         Nullable<std::string> ProposedLeaseId;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
@@ -3880,7 +3696,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct BreakBlobLeaseOptions final
       {
-        Nullable<int32_t> BreakPeriod;
+        Nullable<std::int32_t> BreakPeriod;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
@@ -3896,7 +3712,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -3955,7 +3771,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> IfTags;
         std::string CopySource;
         Nullable<std::string> LeaseId;
-        Nullable<std::vector<uint8_t>> SourceContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentMD5;
         Nullable<std::string> BlobTagsString;
         Nullable<DateTime> ImmutabilityPolicyExpiry;
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
@@ -3963,7 +3779,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<std::string> EncryptionScope;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
-        Nullable<std::vector<uint8_t>> SourceContentcrc64;
+        Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::CopyBlobFromUriResult> CopyFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4008,7 +3824,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Snapshot;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
@@ -4038,8 +3854,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::map<std::string, std::string> Tags;
         Nullable<std::string> VersionId;
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> IfTags;
         Nullable<std::string> LeaseId;
       };
@@ -4057,13 +3873,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlobContentType;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
-        std::vector<uint8_t> BlobContentMD5;
+        std::vector<std::uint8_t> BlobContentMD5;
         std::string BlobCacheControl;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         std::string BlobContentDisposition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -4071,8 +3887,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
-        int64_t BlobContentLength = int64_t();
-        Nullable<int64_t> BlobSequenceNumber;
+        std::int64_t BlobContentLength = std::int64_t();
+        Nullable<std::int64_t> BlobSequenceNumber;
         Nullable<std::string> BlobTagsString;
         Nullable<DateTime> ImmutabilityPolicyExpiry;
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
@@ -4085,17 +3901,17 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct UploadPageBlobPagesOptions final
       {
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> Range;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
-        Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Nullable<int64_t> IfSequenceNumberLessThan;
-        Nullable<int64_t> IfSequenceNumberEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThan;
+        Nullable<std::int64_t> IfSequenceNumberEqualTo;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
@@ -4113,12 +3929,12 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Range;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
-        Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Nullable<int64_t> IfSequenceNumberLessThan;
-        Nullable<int64_t> IfSequenceNumberEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThan;
+        Nullable<std::int64_t> IfSequenceNumberEqualTo;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
@@ -4134,17 +3950,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string SourceUrl;
         std::string SourceRange;
-        Nullable<std::vector<uint8_t>> SourceContentMD5;
-        Nullable<std::vector<uint8_t>> SourceContentcrc64;
+        Nullable<std::vector<std::uint8_t>> SourceContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
         std::string Range;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<std::string> LeaseId;
-        Nullable<int64_t> IfSequenceNumberLessThanOrEqualTo;
-        Nullable<int64_t> IfSequenceNumberLessThan;
-        Nullable<int64_t> IfSequenceNumberEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThanOrEqualTo;
+        Nullable<std::int64_t> IfSequenceNumberLessThan;
+        Nullable<std::int64_t> IfSequenceNumberEqualTo;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
@@ -4172,7 +3988,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
       };
       static Response<Models::_detail::GetPageRangesResult> GetPageRanges(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4192,7 +4008,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Nullable<std::string> Marker;
-        Nullable<int32_t> MaxResults;
+        Nullable<std::int32_t> MaxResults;
       };
       static Response<Models::_detail::GetPageRangesDiffResult> GetPageRangesDiff(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4203,7 +4019,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -4211,7 +4027,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
-        int64_t BlobContentLength = int64_t();
+        std::int64_t BlobContentLength = std::int64_t();
       };
       static Response<Models::ResizePageBlobResult> Resize(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4227,7 +4043,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
         Models::SequenceNumberAction SequenceNumberAction;
-        Nullable<int64_t> BlobSequenceNumber;
+        Nullable<std::int64_t> BlobSequenceNumber;
       };
       static Response<Models::UpdateSequenceNumberResult> UpdateSequenceNumber(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4256,13 +4072,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlobContentType;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
-        std::vector<uint8_t> BlobContentMD5;
+        std::vector<std::uint8_t> BlobContentMD5;
         std::string BlobCacheControl;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         std::string BlobContentDisposition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -4282,13 +4098,13 @@ namespace Azure { namespace Storage { namespace Blobs {
           const Core::Context& context);
       struct AppendAppendBlobBlockOptions final
       {
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> LeaseId;
-        Nullable<int64_t> MaxSize;
-        Nullable<int64_t> AppendPosition;
+        Nullable<std::int64_t> MaxSize;
+        Nullable<std::int64_t> AppendPosition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<DateTime> IfModifiedSince;
@@ -4307,16 +4123,16 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         std::string SourceUrl;
         Nullable<std::string> SourceRange;
-        Nullable<std::vector<uint8_t>> SourceContentMD5;
-        Nullable<std::vector<uint8_t>> SourceContentcrc64;
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<std::string> LeaseId;
-        Nullable<int64_t> MaxSize;
-        Nullable<int64_t> AppendPosition;
+        Nullable<std::int64_t> MaxSize;
+        Nullable<std::int64_t> AppendPosition;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
@@ -4340,7 +4156,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> IfUnmodifiedSince;
         ETag IfMatch;
         ETag IfNoneMatch;
-        Nullable<int64_t> AppendPosition;
+        Nullable<std::int64_t> AppendPosition;
       };
       static Response<Models::SealAppendBlobResult> Seal(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4352,17 +4168,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     public:
       struct UploadBlockBlobOptions final
       {
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
         std::string BlobContentType;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
-        std::vector<uint8_t> BlobContentMD5;
+        std::vector<std::uint8_t> BlobContentMD5;
         std::string BlobCacheControl;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         std::string BlobContentDisposition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<Models::AccessTier> Tier;
@@ -4375,7 +4191,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<DateTime> ImmutabilityPolicyExpiry;
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
       };
       static Response<Models::UploadBlockBlobResult> Upload(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4388,13 +4204,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlobContentType;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
-        std::vector<uint8_t> BlobContentMD5;
+        std::vector<std::uint8_t> BlobContentMD5;
         std::string BlobCacheControl;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         std::string BlobContentDisposition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<Models::AccessTier> Tier;
@@ -4408,13 +4224,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
         Nullable<std::string> SourceIfTags;
-        Nullable<std::vector<uint8_t>> SourceContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentMD5;
         Nullable<std::string> BlobTagsString;
         std::string CopySource;
         Nullable<bool> CopySourceBlobProperties;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
-        Nullable<std::vector<uint8_t>> SourceContentcrc64;
+        Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4424,11 +4240,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       struct StageBlockBlobBlockOptions final
       {
         std::string BlockId;
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> LeaseId;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
       };
@@ -4443,10 +4259,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlockId;
         std::string SourceUrl;
         Nullable<std::string> SourceRange;
-        Nullable<std::vector<uint8_t>> SourceContentMD5;
-        Nullable<std::vector<uint8_t>> SourceContentcrc64;
+        Nullable<std::vector<std::uint8_t>> SourceContentMD5;
+        Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<std::string> LeaseId;
@@ -4468,14 +4284,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::string BlobContentType;
         std::string BlobContentEncoding;
         std::string BlobContentLanguage;
-        std::vector<uint8_t> BlobContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentMD5;
-        Nullable<std::vector<uint8_t>> TransactionalContentCrc64;
+        std::vector<std::uint8_t> BlobContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentMD5;
+        Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         std::map<std::string, std::string> Metadata;
         Nullable<std::string> LeaseId;
         std::string BlobContentDisposition;
         Nullable<std::string> EncryptionKey;
-        Nullable<std::vector<uint8_t>> EncryptionKeySha256;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
         Nullable<Models::AccessTier> Tier;

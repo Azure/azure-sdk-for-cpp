@@ -230,6 +230,16 @@ namespace Azure { namespace Storage { namespace Sas {
      */
     std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
+    /**
+     * @brief For debugging purposes only.
+     *
+     * @param credential
+     * The storage account's shared key credential.
+     * @return Returns the string to sign that will be used to generate the signature for the SAS
+     * URL.
+     */
+    std::string GenerateSasStringToSign(const StorageSharedKeyCredential& credential);
+
   private:
     std::string Permissions;
   };
