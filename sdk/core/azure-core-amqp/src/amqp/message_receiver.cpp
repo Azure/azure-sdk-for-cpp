@@ -17,7 +17,9 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/message_receiver.h>
+#endif
 
 #include <memory>
 
@@ -26,11 +28,13 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   void UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
       MESSAGE_RECEIVER_HANDLE value)
   {
     messagereceiver_destroy(value);
   }
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -169,11 +173,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       : m_options{options}, m_source{source}, m_session{session}, m_eventHandler(eventHandler)
   {
     CreateLink(linkEndpoint);
-
+#if ENABLE_UAMQP
     m_messageReceiver.reset(messagereceiver_create(
         *m_link, MessageReceiverImpl::OnMessageReceiverStateChangedFn, this));
 
     messagereceiver_set_trace(m_messageReceiver.get(), options.EnableTrace);
+#endif
 
     // When creating a message receiver from a link endpoint, we don't want to enable polling on the
     // link at open time (because the Open call is made with the ConnectionLock held, resulting in a
@@ -186,6 +191,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageReceiverImpl::CreateLink(LinkEndpoint& endpoint)
   {
+#if ENABLE_UAMQP
     // The endpoint version of CreateLink is creating a message receiver for a sender, not for a
     // receiver.
     m_link = std::make_shared<_detail::LinkImpl>(
@@ -196,13 +202,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_source,
         m_options.MessageTarget,
         nullptr);
+#endif
     PopulateLinkProperties();
-
+#if ENABLE_UAMQP
     Log::Stream(Logger::Level::Verbose)
         << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
 
     m_link->SubscribeToDetachEvent(
         [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
+#else
+    (void)endpoint;
+#endif
   }
 
   void MessageReceiverImpl::CreateLink()
@@ -216,11 +226,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         nullptr);
     PopulateLinkProperties();
 
+#if ENABLE_UAMQP
     Log::Stream(Logger::Level::Verbose)
         << "MessageReceiver: Subscribe to link detach on:" << m_link->GetUnderlyingLink();
 
     m_link->SubscribeToDetachEvent(
         [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
+#endif
   }
 
   void MessageReceiverImpl::PopulateLinkProperties()
@@ -244,6 +256,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_link->SetAttachProperties(m_options.Properties.AsAmqpValue());
   }
 
+#if ENABLE_UAMQP
   AMQP_VALUE MessageReceiverImpl::OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message)
   {
     MessageReceiverImpl* receiver = static_cast<MessageReceiverImpl*>(const_cast<void*>(context));
@@ -304,6 +317,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_closeQueue.CompleteOperation(error);
     }
   }
+#endif
 
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
@@ -384,10 +398,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_eventHandler = nullptr;
     }
+#if ENABLE_UAMQP
     if (m_messageReceiver)
     {
       m_messageReceiver.reset();
     }
+#endif
     if (m_link)
     {
       m_link.reset();
@@ -395,6 +411,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_messageQueue.Clear();
   }
 
+#if ENABLE_UAMQP
   MessageReceiverState MessageReceiverStateFromLowLevel(MESSAGE_RECEIVER_STATE lowLevel)
   {
     switch (lowLevel)
@@ -498,6 +515,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
+#endif
 
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
@@ -516,6 +534,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         CreateLink();
       }
+#if ENABLE_UAMQP
       if (m_messageReceiver == nullptr)
       {
         m_messageReceiver.reset(messagereceiver_create(
@@ -539,6 +558,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             "Could not open message receiver. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       }
       m_receiverOpen = true;
+#endif
 
       if (m_options.EnableTrace)
       {
@@ -592,10 +612,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         // Clear messages from the queue.
         m_messageQueue.Clear();
+#if ENABLE_UAMQP
         if (messagereceiver_close(m_messageReceiver.get()))
         {
           throw std::runtime_error("Could not close message receiver");
         }
+#endif
       }
 
       // Release the lock so that the polling thread can make forward progress delivering the
@@ -621,6 +643,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         auto lock{m_session->GetConnection()->Lock()};
 
         // We've received the close, we don't care about the detach event any more.
+#if ENABLE_UAMQP
         if (m_options.EnableTrace)
         {
           Log::Stream(Logger::Level::Verbose)
@@ -630,6 +653,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         // Now that the connection is closed, the link is no longer needed. This will free the link
         m_link.reset();
+#endif
       }
       if (m_options.EnableTrace)
       {
@@ -643,12 +667,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::string MessageReceiverImpl::GetLinkName() const
   {
-    const char* linkName;
+    const char* linkName = "";
+#if ENABLE_UAMQP
     if (messagereceiver_get_link_name(m_messageReceiver.get(), &linkName))
     {
       throw std::runtime_error("Could not get link name");
     }
-    return std::string(linkName);
+#endif
+    return linkName;
   }
 
 }}}} // namespace Azure::Core::Amqp::_detail

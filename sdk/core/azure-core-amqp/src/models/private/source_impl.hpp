@@ -6,6 +6,7 @@
 #include "../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/models/message_source.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
@@ -15,10 +16,12 @@
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
 #include <azure_uamqp_c/amqp_definitions_source.h>
+#endif
 
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   template <> struct UniqueHandleHelper<std::remove_pointer<SOURCE_HANDLE>::type>
   {
     static void FreeMessageSource(SOURCE_HANDLE obj);
@@ -26,6 +29,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     using type = Core::_internal::
         BasicUniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type, FreeMessageSource>;
   };
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
@@ -196,8 +200,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
+#if ENABLE_UAMQP
     operator SOURCE_HANDLE() const { return m_source.get(); }
     Amqp::_detail::UniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type> m_source;
+#endif
 
     // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
     friend std::ostream& operator<<(std::ostream&, MessageSourceImpl const&);

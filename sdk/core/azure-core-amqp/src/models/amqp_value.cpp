@@ -10,6 +10,7 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
@@ -17,6 +18,7 @@
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/amqpvalue_to_string.h>
+#endif
 
 #include <iomanip>
 #include <iostream>
@@ -27,6 +29,7 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   /// @cond INTERNAL
   void UniqueHandleHelper<std::remove_pointer<AMQP_VALUE>::type>::FreeAmqpValue(AMQP_VALUE value)
   {
@@ -41,11 +44,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     amqpvalue_decoder_destroy(value);
   }
   /// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {
-
+#if ENABLE_UAMQP
     std::ostream& operator<<(std::ostream& os, AMQP_TYPE value)
     {
       switch (value)
@@ -144,6 +148,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return os;
     }
+#endif
   } // namespace _detail
 
   std::ostream& operator<<(std::ostream& os, AmqpValueType value)
@@ -233,98 +238,204 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::~AmqpValue() {}
 
   AmqpValue::AmqpValue(bool bool_value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_boolean(bool_value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_boolean(bool_value)})
+  }
+#endif
+  {
+    (void)bool_value;
   }
   AmqpValue::AmqpValue(std::uint8_t byte_value)
-      : m_impl{std::make_unique<AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_ubyte(byte_value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_ubyte(byte_value)})
+  }
+#endif
+  {
+    (void)byte_value;
   }
   AmqpValue::AmqpValue(char value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_byte(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_byte(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::int8_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_byte(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_byte(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::uint16_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_ushort(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_ushort(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::int16_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_short(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_short(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::uint32_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uint(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_uint(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::int32_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_int(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_int(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::uint64_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_ulong(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_ulong(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(std::int64_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_long(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_long(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(float value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_float(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_float(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(double value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_double(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_double(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(char32_t value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_char(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_char(value)})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
-              static_cast<const unsigned char*>(uuid.AsArray().data())))})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
+        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
+  }
+#endif
+  {
+    (void)uuid;
   }
 
   AmqpValue::AmqpValue(std::string const& value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value.c_str())})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value.c_str())})
+  }
+#endif
+  {
+    (void)value;
   }
   AmqpValue::AmqpValue(const char* value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value)})
+  }
+#endif
+  {
+    (void)value;
   }
 
   AmqpValue::AmqpValue() noexcept
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_null()})}
+#if ENABLE_UAMQP
+      : m_impl
+  {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_null()})
+  }
+#endif
   {
   }
 
   AmqpValue::AmqpValue(AmqpValue const& that) noexcept
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*that.m_impl)})}
+#if ENABLE_UAMQP
+      : m_impl
   {
+    std::make_unique<_detail::AmqpValueImpl>(
+        _detail::UniqueAmqpValueHandle{amqpvalue_clone(*that.m_impl)})
+  }
+#endif
+  {
+    (void)that;
   }
 
   AmqpValue::AmqpValue(AmqpValue&& that) noexcept : m_impl{std::move(that.m_impl)} {}
@@ -346,153 +457,185 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   AmqpValue::operator bool() const
   {
-    bool value;
+    bool value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_boolean(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve boolean value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::uint8_t() const
   {
-    unsigned char value;
+    unsigned char value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_ubyte(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve ubyte value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::int8_t() const
   {
-    char value;
+    char value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_byte(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve byte value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator char() const
   {
-    char value;
+    char value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_byte(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve byte value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::uint16_t() const
   {
-    uint16_t value;
+    uint16_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_ushort(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve ushort value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::int16_t() const
   {
-    int16_t value;
+    int16_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_short(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve short value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::uint32_t() const
   {
-    std::uint32_t value;
+    std::uint32_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_uint(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve uint value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::int32_t() const
   {
-    int32_t value;
+    int32_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_int(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve int value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::uint64_t() const
   {
-    uint64_t value;
+    uint64_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_ulong(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve ulong value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::int64_t() const
   {
-    int64_t value;
+    int64_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_long(*m_impl, &value) != 0)
     {
       throw std::runtime_error("Could not retrieve long value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator float() const
   {
-    float value;
+    float value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_float(*m_impl, &value))
     {
       throw std::runtime_error("Could not retrieve float value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator double() const
   {
-    double value;
+    double value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_double(*m_impl, &value))
     {
       throw std::runtime_error("Could not retrieve double value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator char32_t() const
   {
-    std::uint32_t value;
+    std::uint32_t value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_char(*m_impl, &value))
     {
       throw std::runtime_error("Could not get character.");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator std::string() const
   {
-    const char* value;
+    const char* value = {};
+#if ENABLE_UAMQP
     if (amqpvalue_get_string(*m_impl, &value))
     {
       throw std::runtime_error("Could not retrieve string value");
     }
+#endif
     return value;
   }
 
   AmqpValue::operator Azure::Core::Uuid() const
   {
+#if ENABLE_UAMQP
     uuid value;
     if (amqpvalue_get_uuid(*m_impl, &value))
     {
       throw std::runtime_error("Could not retrieve uuid value");
     }
+#endif
     std::array<uint8_t, 16> uuidArray{};
+#if ENABLE_UAMQP
     memcpy(uuidArray.data(), value, 16);
+#endif
     return Azure::Core::Uuid::CreateFromArray(uuidArray);
   }
 
@@ -530,7 +673,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         return (thisDescribed == thatDescribed);
       }
     }
+#if ENABLE_UAMQP
     return amqpvalue_are_equal(*m_impl, *that.m_impl);
+#else
+    return false;
+#endif
   }
 
   bool AmqpValue::operator<(AmqpValue const& that) const
@@ -608,7 +755,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpTimestamp AmqpValue::AsTimestamp() const { return AmqpTimestamp(*this); }
 
   namespace {
-
+#if ENABLE_UAMQP
     const std::map<AMQP_TYPE, AmqpValueType> UamqpToAmqpTypeMap{
         {AMQP_TYPE_INVALID, AmqpValueType::Invalid},
         {AMQP_TYPE_NULL, AmqpValueType::Null},
@@ -636,9 +783,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         {AMQP_TYPE_DESCRIBED, AmqpValueType::Described},
         {AMQP_TYPE_UNKNOWN, AmqpValueType::Unknown},
     };
+#endif
 
     class AmqpValueDeserializer final {
     public:
+#if ENABLE_UAMQP
       AmqpValueDeserializer() : m_decoder{amqpvalue_decoder_create(OnAmqpValueDecoded, this)} {}
 
       AmqpValue operator()(std::uint8_t const* data, size_t size) const
@@ -649,17 +798,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         return m_decodedValue;
       }
-
+#endif
     private:
+#if ENABLE_UAMQP
       _detail::UniqueAmqpDecoderHandle m_decoder;
       AmqpValue m_decodedValue;
-
       static void OnAmqpValueDecoded(void* context, AMQP_VALUE value)
       {
         auto deserializer = static_cast<AmqpValueDeserializer*>(context);
         deserializer->m_decodedValue = _detail::AmqpValueFactory::FromUamqp(
             _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
       }
+#endif
     };
     class AmqpValueSerializer final {
     public:
@@ -667,16 +817,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
       std::vector<uint8_t> operator()(AmqpValue const& value)
       {
+#if ENABLE_UAMQP
         if (amqpvalue_encode(_detail::AmqpValueFactory::ToUamqp(value), OnAmqpValueEncoded, this))
         {
           throw std::runtime_error("Could not encode object");
         }
-
+#endif
+        (void)value;
         return m_encodedValue;
       }
 
     private:
       std::vector<uint8_t> m_encodedValue;
+#if ENABLE_UAMQP
 
       // The OnAmqpValueEncoded callback appends the array provided to the existing encoded value,
       // extending as needed.
@@ -688,46 +841,72 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         serializer->m_encodedValue.insert(serializer->m_encodedValue.end(), bytes, bytes + length);
         return 0;
       }
+#endif
     };
 
   } // namespace
   AmqpValueType AmqpValue::GetType() const
   {
+#if ENABLE_UAMQP
     auto val{UamqpToAmqpTypeMap.find(amqpvalue_get_type(*m_impl))};
     if (val == UamqpToAmqpTypeMap.end())
     {
       throw std::runtime_error("Unknown AMQP AmqpValue Type");
     }
     return val->second;
+#else
+    return AmqpValueType::Invalid;
+#endif
   }
 
   std::ostream& operator<<(std::ostream& os, AmqpValue const& value)
   {
+#if ENABLE_UAMQP
     char* valueAsString{amqpvalue_to_string(_detail::AmqpValueFactory::ToUamqp(value))};
     os << valueAsString;
     free(valueAsString);
+#else
+    (void)value;
+#endif
     return os;
   }
 
   AmqpValue AmqpValue::Deserialize(uint8_t const* data, size_t size)
   {
+#if ENABLE_UAMQP
     return AmqpValueDeserializer{}(data, size);
+#else
+    (void)data;
+    (void)size;
+    return AmqpValue{};
+#endif
   }
 
   std::vector<uint8_t> AmqpValue::Serialize(AmqpValue const& value)
   {
+#if ENABLE_UAMQP
     return AmqpValueSerializer{}(value);
+#else
+    (void)value;
+    return {};
+#endif
   }
   size_t AmqpValue::GetSerializedSize(AmqpValue const& value)
   {
+#if ENABLE_UAMQP
     size_t encodedSize;
     if (amqpvalue_get_encoded_size(_detail::AmqpValueFactory::ToUamqp(value), &encodedSize))
     {
       throw std::runtime_error("Could not get encoded size for value.");
     }
     return encodedSize;
+#else
+    (void)value;
+    return {};
+#endif
   }
 
+#if ENABLE_UAMQP
   AmqpValue _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle const& value)
   {
     return AmqpValue{
@@ -744,14 +923,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   AMQP_VALUE _detail::AmqpValueFactory::ToUamqp(AmqpValue const& value) { return *value.m_impl; }
+#endif
 
   AmqpValueImpl::AmqpValueImpl(AmqpValueImpl const& other)
-      : m_value{amqpvalue_clone(other.m_value.get())}
+#if ENABLE_UAMQP
+      : m_value
   {
+    amqpvalue_clone(other.m_value.get())
   }
-
-  AmqpValueImpl::AmqpValueImpl(AmqpValueImpl&& other) noexcept : m_value{std::move(other.m_value)}
+#endif
   {
+    (void)other;
+  }
+  AmqpValueImpl::AmqpValueImpl(AmqpValueImpl&& other) noexcept
+#if ENABLE_UAMQP
+      : m_value
+  {
+    std::move(other.m_value)
+  }
+#endif
+  {
+    (void)other;
   }
 
   AmqpArray::AmqpArray(AmqpValue const& value)
@@ -760,6 +952,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Input AMQP value MUST be an array.");
     }
+#if ENABLE_UAMQP
     std::uint32_t arraySize;
     if (amqpvalue_get_array_item_count(_detail::AmqpValueFactory::ToUamqp(value), &arraySize))
     {
@@ -773,6 +966,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           amqpvalue_get_array_item(_detail::AmqpValueFactory::ToUamqp(value), i)};
       m_value.push_back(_detail::AmqpValueFactory::FromUamqp(item));
     }
+#endif
   }
   AmqpArray::AmqpArray(initializer_type const& initializer) : AmqpCollectionBase(initializer)
   {
@@ -792,6 +986,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray>::operator _detail::AmqpValueImpl()
       const
   {
+#if (ENABLE_UAMQP)
     UniqueAmqpValueHandle array{amqpvalue_create_array()};
     for (const auto& val : *this)
     {
@@ -801,20 +996,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
     return array;
+#else
+    return {};
+#endif
   }
 
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray>::AsAmqpValue() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
 
   AmqpMap::AmqpMap(AmqpValue const& value)
   {
+
     if (value.GetType() != AmqpValueType::Map)
     {
       throw std::runtime_error("Input AMQP value MUST be a map.");
     }
+#if ENABLE_UAMQP
     std::uint32_t mapSize;
     if (amqpvalue_get_map_pair_count(_detail::AmqpValueFactory::ToUamqp(value), &mapSize))
     {
@@ -828,12 +1032,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{key}),
           _detail::AmqpValueFactory::FromUamqp(UniqueAmqpValueHandle{val})));
     }
+#endif
   }
 
   template <>
   _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap>::operator _detail::
       AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle value{amqpvalue_create_map()};
     for (const auto& val : *this)
     {
@@ -846,20 +1052,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
     return value;
+#else
+    return {};
+#endif
   }
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap>::AsAmqpValue()
       const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
-
   AmqpList::AmqpList(AmqpValue const& value)
   {
     if (value.GetType() != AmqpValueType::List)
     {
       throw std::runtime_error("Input AMQP value MUST be a list.");
     }
+#if ENABLE_UAMQP
     std::uint32_t listSize;
     if (amqpvalue_get_list_item_count(_detail::AmqpValueFactory::ToUamqp(value), &listSize))
     {
@@ -871,12 +1084,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           amqpvalue_get_list_item(_detail::AmqpValueFactory::ToUamqp(value), i)};
       push_back(_detail::AmqpValueFactory::FromUamqp(item));
     }
+#endif
   }
 
   template <>
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList>::operator _detail::AmqpValueImpl()
       const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle list{amqpvalue_create_list()};
     if (amqpvalue_set_list_item_count(list.get(), static_cast<std::uint32_t>(size())))
     {
@@ -892,33 +1107,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       i += 1;
     }
     return list;
+#else
+    return {};
+#endif
   }
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList>::AsAmqpValue() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
 
   template <>
   _detail::AmqpCollectionBase<std::vector<uint8_t>, AmqpBinaryData>::operator _detail::
       AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle binary{amqpvalue_create_binary({data(), static_cast<uint32_t>(size())})};
     return binary;
+#else
+    return {};
+#endif
   }
+
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::vector<std::uint8_t>, AmqpBinaryData>::AsAmqpValue()
       const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
-
   AmqpBinaryData::AmqpBinaryData(AmqpValue const& value)
   {
     if (value.GetType() != AmqpValueType::Binary)
     {
       throw std::runtime_error("Input AMQP value MUST be binary.");
     }
+#if ENABLE_UAMQP
     amqp_binary binaryData;
     if (amqpvalue_get_binary(_detail::AmqpValueFactory::ToUamqp(value), &binaryData))
     {
@@ -928,17 +1159,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     m_value.assign(
         static_cast<const uint8_t*>(binaryData.bytes),
         static_cast<const uint8_t*>(binaryData.bytes) + binaryData.length);
+#endif
   }
 
   template <>
   _detail::AmqpCollectionBase<std::string, AmqpSymbol>::operator _detail::AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle symbol{amqpvalue_create_symbol(m_value.c_str())};
     return symbol;
+#else
+    return {};
+#endif
   }
   template <> AmqpValue _detail::AmqpCollectionBase<std::string, AmqpSymbol>::AsAmqpValue() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
 
   AmqpSymbol::AmqpSymbol(AmqpValue const& value)
@@ -948,6 +1188,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Input AMQP value MUST be a symbol.");
     }
 
+#if ENABLE_UAMQP
     const char* binaryData;
     if (amqpvalue_get_symbol(_detail::AmqpValueFactory::ToUamqp(value), &binaryData))
     {
@@ -955,18 +1196,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     // Copy the binary data to our storage.
     m_value.assign(binaryData);
+#endif
   }
 
   AmqpTimestamp::operator _detail::AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle symbol{amqpvalue_create_timestamp(m_value.count())};
     return symbol;
-  }
-  AmqpValue AmqpTimestamp::AsAmqpValue() const
-  {
-    return _detail::AmqpValueFactory::FromUamqp(static_cast<_detail::AmqpValueImpl>(*this));
+#else
+    return {};
+#endif
   }
 
+  AmqpValue AmqpTimestamp::AsAmqpValue() const
+  {
+#if ENABLE_UAMQP
+    return _detail::AmqpValueFactory::FromUamqp(static_cast<_detail::AmqpValueImpl>(*this));
+#else
+    return {};
+#endif
+  }
+
+#if ENABLE_UAMQP
   namespace {
     std::chrono::milliseconds GetMillisecondsFromAmqp(AMQP_VALUE value)
     {
@@ -982,10 +1234,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return std::chrono::milliseconds(stamp);
     }
   } // namespace
+#endif
 
   AmqpTimestamp::AmqpTimestamp(AmqpValue const& value)
+#if ENABLE_UAMQP
       : m_value(GetMillisecondsFromAmqp(_detail::AmqpValueFactory::ToUamqp(value)))
+#else
+      : m_value
   {
+  }
+#endif
+  {
+    (void)value;
   }
 
   AmqpTimestamp::AmqpTimestamp(std::chrono::milliseconds const& initializer) : m_value(initializer)
@@ -999,7 +1259,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Input AMQP value MUST be a composite value.");
     }
-
+#if ENABLE_UAMQP
     std::uint32_t compositeSize;
     if (amqpvalue_get_composite_item_count(
             _detail::AmqpValueFactory::ToUamqp(value), &compositeSize))
@@ -1019,6 +1279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not read descriptor for composite value.");
     }
+#endif
   }
 
   AmqpComposite::AmqpComposite(
@@ -1032,17 +1293,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite>::operator _detail::
       AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueImpl(_detail::UniqueAmqpValueHandle{});
+#else
+    return {};
+#endif
   }
 
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite>::AsAmqpValue() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(_detail::AmqpValueImpl{*this});
+#else
+    return {};
+#endif
   }
 
   AmqpComposite::operator _detail::AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     UniqueAmqpValueHandle composite{amqpvalue_create_composite(
         _detail::AmqpValueFactory::ToUamqp(m_descriptor), static_cast<std::uint32_t>(size()))};
     std::uint32_t i = 0;
@@ -1055,6 +1325,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       i += 1;
     }
     return composite;
+#else
+    return {};
+#endif
   }
 
   AmqpDescribed::AmqpDescribed(AmqpValue const& value)
@@ -1063,7 +1336,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Input AMQP value MUST be a described value.");
     }
-
+#if ENABLE_UAMQP
     m_descriptor
         = _detail::AmqpValueFactory::FromUamqp(_detail::UniqueAmqpValueHandle{amqpvalue_clone(
             amqpvalue_get_inplace_descriptor(_detail::AmqpValueFactory::ToUamqp(value)))});
@@ -1078,6 +1351,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not read descriptor for described value.");
     }
+#endif
   }
 
   AmqpDescribed::AmqpDescribed(AmqpSymbol const& descriptor, AmqpValue const& value)
@@ -1091,6 +1365,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   AmqpDescribed::operator _detail::AmqpValueImpl() const
   {
+#if ENABLE_UAMQP
     // For <reasons>, amqpvalue_create_described does not clone the provided descriptor or value,
     // but amqpvalue_destroy on a described destroys the underlying value. That means we need to
     // manually clone the input descriptors to ensure that the reference counts work out.
@@ -1098,16 +1373,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(m_descriptor)),
         amqpvalue_clone(_detail::AmqpValueFactory::ToUamqp(m_value)))};
     return composite;
+#else
+    return {};
+#endif
   }
 
   AmqpValue AmqpDescribed::AsAmqpValue() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(static_cast<_detail::AmqpValueImpl>(*this));
+#else
+    return {};
+#endif
   }
 
   AmqpDescribed::operator AmqpValue const() const
   {
+#if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromUamqp(static_cast<_detail::AmqpValueImpl>(*this));
+#else
+    return {};
+#endif
   }
 
   namespace {
@@ -1211,6 +1497,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   bool AmqpValue::IsNull() const
   {
+#if ENABLE_UAMQP
     return !m_impl || !m_impl->m_value || (amqpvalue_get_type(*m_impl) == AMQP_TYPE_NULL);
+#else
+    return false;
+#endif
   }
 }}}} // namespace Azure::Core::Amqp::Models

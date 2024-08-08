@@ -9,25 +9,30 @@
 #include "private/performatives/detach_impl.hpp"
 #include "private/value_impl.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_handle.h>
 
 #include <azure_uamqp_c/amqp_definitions_delivery_number.h>
 #include <azure_uamqp_c/amqp_definitions_delivery_tag.h>
 #include <azure_uamqp_c/amqp_definitions_detach.h>
+#endif
 
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<DETACH_INSTANCE_TAG>::FreeAmqpDetach(DETACH_HANDLE handle)
   {
     detach_destroy(handle);
   }
-  // @endcond
+// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 
+#if ENABLE_UAMQP
   /*
    * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
    * code will NOT take ownership of the underlying ERROR_HANDLE object.
@@ -73,6 +78,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return detachHandle;
   }
+#endif
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
