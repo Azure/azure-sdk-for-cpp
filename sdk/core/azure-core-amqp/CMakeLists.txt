@@ -30,7 +30,14 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
+
+if (USE_RUST_AMQP)
+  message(STATUS "Using RUST based uamqp")
+  set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
+else()
+  set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
+endif()
+
 if (VENDOR_UAMQP)
   message(STATUS "Using vendored uamqp")
   set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
@@ -48,14 +55,15 @@ if (VENDOR_UAMQP)
   else()
     target_compile_options(uamqp PUBLIC -Wno-pedantic -Wno-implicit-fallthrough -Wno-strict-aliasing)
   endif()
-else()
-  message(STATUS "Using vcpkg uamqp")
-  find_package(uamqp CONFIG REQUIRED)
+
+  find_package(umock_c CONFIG REQUIRED)
+  find_package(azure_macro_utils_c CONFIG REQUIRED)
+  find_package(azure_c_shared_utility CONFIG REQUIRED)
 endif()
 
-find_package(umock_c CONFIG REQUIRED)
-find_package(azure_macro_utils_c CONFIG REQUIRED)
-find_package(azure_c_shared_utility CONFIG REQUIRED)
+if (USE_RUST_AMQP)
+endif()
+
 
 
 set (AZURE_CORE_AMQP_HEADER
@@ -146,7 +154,11 @@ set(AZURE_CORE_AMQP_SOURCE
 )
 
 
+if (${USE_VENDOR_AMQP})
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
+else()
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+endif()
 
 if (VENDOR_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
@@ -159,6 +171,12 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
+if (USE_RUST_AMQP)
+  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_RUST_AMQP)
+elseif(USE_VENDOR_AMQP)
+  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_UAMQP)
+endif()
+
 target_compile_definitions(azure-core-amqp PRIVATE _azure_BUILDING_SDK)
 		
 # make sure that users can consume the project as a library.
@@ -168,6 +186,7 @@ add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tests?/*;samples?/*")
 
+if (VENDOR_UAMQP)
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
 target_link_libraries(azure-core-amqp PRIVATE
@@ -175,6 +194,10 @@ target_link_libraries(azure-core-amqp PRIVATE
     azure_macro_utils_c
     aziotsharedutil
     PUBLIC Azure::azure-core)
+else()
+target_link_libraries(azure-core-amqp PRIVATE
+    PUBLIC Azure::azure-core)
+endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})

@@ -18,25 +18,31 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/session.h>
+#endif
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   void UniqueHandleHelper<SESSION_INSTANCE_TAG>::FreeAmqpSession(SESSION_HANDLE value)
   {
     session_destroy(value);
   }
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Endpoint::~Endpoint()
   {
+#if ENABLE_UAMQP
     if (m_endpoint)
     {
       connection_destroy_endpoint(m_endpoint);
     }
+#endif
   }
 
   Session::~Session() noexcept {}
@@ -122,9 +128,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       m_connectionToPoll->EnableAsyncOperation(false);
     }
-
+#if ENABLE_UAMQP
     auto lock{m_connectionToPoll->Lock()};
     m_session.reset();
+#endif
   }
 
   SessionImpl::SessionImpl(
@@ -132,34 +139,47 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::Endpoint& endpoint,
       _internal::SessionOptions const& options,
       _internal::SessionEvents* eventHandler)
-      : m_connectionToPoll(connection), m_session{session_create_from_endpoint(
-                                            *connection,
-                                            EndpointFactory::Release(endpoint),
-                                            SessionImpl::OnLinkAttachedFn,
-                                            this)},
+      : m_connectionToPoll(connection),
+#if ENABLE_UAMQP
+        m_session{session_create_from_endpoint(
+            *connection,
+            EndpointFactory::Release(endpoint),
+            SessionImpl::OnLinkAttachedFn,
+            this)},
+#endif
         m_options{options}, m_eventHandler{eventHandler}
   {
     if (options.MaximumLinkCount.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_handle_max(m_session.get(), options.MaximumLinkCount.Value()))
       {
         throw std::runtime_error("Could not set handle max.");
       }
+#endif
     }
     if (options.InitialIncomingWindowSize.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_incoming_window(m_session.get(), options.InitialIncomingWindowSize.Value()))
       {
         throw std::runtime_error("Could not set incoming window");
       }
+#endif
     }
     if (options.InitialOutgoingWindowSize.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_outgoing_window(m_session.get(), options.InitialOutgoingWindowSize.Value()))
       {
         throw std::runtime_error("Could not set outgoing window");
       }
+#endif
     }
+#if ENABLE_UAMQP
+#else
+    (void)endpoint;
+#endif
   }
 
   SessionImpl::SessionImpl(
@@ -167,69 +187,85 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::SessionOptions const& options,
       _internal::SessionEvents* eventHandler)
       : m_connectionToPoll(connection),
+#if ENABLE_UAMQP
         m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
+#endif
         m_options{options}, m_eventHandler{eventHandler}
 
   {
     if (options.MaximumLinkCount.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_handle_max(m_session.get(), options.MaximumLinkCount.Value()))
       {
         throw std::runtime_error("Could not set handle max.");
       }
+#endif
     }
     if (options.InitialIncomingWindowSize.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_incoming_window(m_session.get(), options.InitialIncomingWindowSize.Value()))
       {
         throw std::runtime_error("Could not set incoming window");
       }
+#endif
     }
     if (options.InitialOutgoingWindowSize.HasValue())
     {
+#if ENABLE_UAMQP
       if (session_set_outgoing_window(m_session.get(), options.InitialOutgoingWindowSize.Value()))
       {
         throw std::runtime_error("Could not set outgoing window");
       }
+#endif
     }
   }
 
   uint32_t SessionImpl::GetIncomingWindow()
   {
-    uint32_t window;
+    uint32_t window{};
+#if ENABLE_UAMQP
     if (session_get_incoming_window(m_session.get(), &window))
     {
       throw std::runtime_error("Could not get incoming window");
     }
+#endif
     return window;
   }
 
   uint32_t SessionImpl::GetOutgoingWindow()
   {
-    uint32_t window;
+    uint32_t window{};
+#if ENABLE_UAMQP
     if (session_get_outgoing_window(m_session.get(), &window))
     {
       throw std::runtime_error("Could not get outgoing window");
     }
+#endif
     return window;
   }
 
   uint32_t SessionImpl::GetHandleMax()
   {
-    uint32_t max;
+    uint32_t max{};
+#if ENABLE_UAMQP
     if (session_get_handle_max(m_session.get(), &max))
     {
       throw std::runtime_error("Could not get handle max.");
     }
+#endif
     return max;
   }
 
   void SessionImpl::Begin()
   {
+#if ENABLE_UAMQP
     if (session_begin(m_session.get()))
     {
       throw std::runtime_error("Could not begin session");
     }
+#endif
 
     m_isBegun = true;
 
@@ -243,6 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Session End without corresponding Begin.");
     }
+#if ENABLE_UAMQP
     // When we end the session, it clears all the links, so we need to ensure that the
     //    m_newLinkAttachedQueue.Clear();
     if (session_end(
@@ -252,6 +289,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not begin session");
     }
+#else
+    (void)condition;
+    (void)description;
+#endif
     // Mark the connection as async so that we can use the async APIs.
     GetConnection()->EnableAsyncOperation(false);
     m_connectionAsyncStarted = false;
@@ -267,14 +308,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     detach.Closed = closeLink;
     detach.Error = error;
-
+#if ENABLE_UAMQP
     if (session_send_detach(
             linkEndpoint.Get(), Models::_detail::AmqpDetachFactory::ToAmqpDetach(detach).get()))
     {
       throw std::runtime_error("Failed to send detach performative.");
     }
+#else
+    (void)linkEndpoint;
+#endif
   }
 
+#if ENABLE_UAMQP
   bool SessionImpl::OnLinkAttachedFn(
       void* context,
       LINK_ENDPOINT_INSTANCE_TAG* newLinkEndpoint,
@@ -320,5 +365,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     return _internal::LinkEndpoint(endpoint);
   }
+#endif
 
 }}}} // namespace Azure::Core::Amqp::_detail

@@ -8,9 +8,11 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_c_shared_utility/gballoc.h>
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -27,6 +29,7 @@ using namespace Azure::Core::Diagnostics;
 // cspell: words gballoc
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
+#if ENABLE_UAMQP
   // Logging callback for uAMQP and azure-c-shared-utility.
   void AmqpLogFunction(
       LOG_CATEGORY logCategory,
@@ -86,9 +89,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     }
     va_end(args);
   }
+#endif
 
   GlobalStateHolder::GlobalStateHolder()
   {
+#if ENABLE_UAMQP
 #if defined(GB_DEBUG_ALLOC)
     gballoc_init();
 #endif
@@ -99,6 +104,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     // Integrate AMQP logging with Azure Core logging.
     xlogging_set_log_function(AmqpLogFunction);
+#endif
 
     m_pollingThread = std::thread([this]() {
       do
@@ -135,9 +141,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       m_pollingThread.join();
     }
+#if ENABLE_UAMQP
     platform_deinit();
 #if defined(GB_DEBUG_ALLOC)
     gballoc_deinit();
+#endif
 #endif
   }
 

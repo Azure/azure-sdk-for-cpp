@@ -8,21 +8,25 @@
 #include "private/performatives/transfer_impl.hpp"
 #include "private/value_impl.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_handle.h>
 
 #include <azure_uamqp_c/amqp_definitions_delivery_number.h>
 #include <azure_uamqp_c/amqp_definitions_delivery_tag.h>
 #include <azure_uamqp_c/amqp_definitions_transfer.h>
+#endif
 
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<TRANSFER_INSTANCE_TAG>::FreeAmqpTransfer(TRANSFER_HANDLE handle)
   {
     transfer_destroy(handle);
   }
-  // @endcond
+// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
@@ -31,6 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
    * code will NOT take ownership of the underlying ERROR_HANDLE object.
    */
+#if ENABLE_UAMQP
   _internal::Performatives::AmqpTransfer AmqpTransferFactory::FromUamqp(
       TRANSFER_HANDLE transferHandle)
   {
@@ -99,7 +104,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return rv;
   }
+#endif
 
+#if ENABLE_UAMQP
   AmqpValue AmqpTransferFactory::ToAmqp(_internal::Performatives::AmqpTransfer const& transfer)
   {
     _detail::UniqueAmqpTransferHandle transferHandle(transfer_create(transfer.Handle));
@@ -111,6 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     // The UniqueAmqpValueHandle will take care of freeing the cloned handle.
     return _detail::AmqpValueFactory::FromUamqp(handleAsValue);
   }
+#endif
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {

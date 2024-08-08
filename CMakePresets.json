@@ -313,6 +313,15 @@
       }
     },
     {
+      "name": "rust-amqp",
+      "displayName": "Use Rust AMQP implementation",
+      "description": "Use Rust AMQP implementation (Hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_RUST_AMQP": true
+      }
+    },
+    {
       "name": "enable-address-sanitizer",
       "displayName": "Enable Address Sanitizer",
       "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
@@ -470,6 +479,21 @@
         "winhttp-transport",
         "curl-transport"
       ]
+    },
+    {
+      "name": "x64-static-debug-perftests-rust",
+      "displayName": "x64 Debug, Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "rust-amqp",
+        "winhttp-transport",
+        "curl-transport"
+      ]
+
     },
     {
       "name": "x64-static-release-perftests-asan",

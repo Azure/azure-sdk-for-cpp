@@ -12,21 +12,25 @@
 #include "azure/core/amqp/models/amqp_header.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_annotations.h>
 #include <azure_uamqp_c/amqp_definitions_application_properties.h>
 #include <azure_uamqp_c/amqp_definitions_footer.h>
 #include <azure_uamqp_c/message.h>
+#endif
 
 #include <iostream>
 #include <set>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
   {
     message_destroy(value);
   }
-  // @endcond
+// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Amqp::_detail;
@@ -35,7 +39,7 @@ using namespace Azure::Core::Amqp::Models::_detail;
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   namespace {
-
+#if ENABLE_UAMQP
     UniqueMessageHeaderHandle GetHeaderFromMessage(MESSAGE_HANDLE message)
     {
       if (message != nullptr)
@@ -61,8 +65,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       return nullptr;
     }
+#endif // ENABLE_UAMQP
   } // namespace
 
+#if ENABLE_UAMQP
   std::shared_ptr<AmqpMessage> _detail::AmqpMessageFactory::FromUamqp(MESSAGE_INSTANCE_TAG* message)
   {
     if (message == nullptr)
@@ -357,6 +363,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     return rv;
   }
+#endif
 
   std::vector<AmqpList> const& AmqpMessage::GetBodyAsAmqpList() const
   {
@@ -422,6 +429,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::vector<uint8_t> AmqpMessage::Serialize(AmqpMessage const& message)
   {
+#if ENABLE_UAMQP
     std::vector<uint8_t> rv;
 
     // Append the message Header to the serialized message.
@@ -521,8 +529,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     return rv;
+#else
+    (void)message;
+    throw std::runtime_error("AMQP library is not enabled.");
+#endif
   }
 
+#if ENABLE_UAMQP
   namespace {
     class AmqpMessageDeserializer final {
     public:
@@ -741,10 +754,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     };
   } // namespace
+#endif // ENABLE_UAMQP
 
   AmqpMessage AmqpMessage::Deserialize(std::uint8_t const* buffer, size_t size)
   {
+#if ENABLE_UAMQP
     return AmqpMessageDeserializer{}(buffer, size);
+#else
+    (void)buffer;
+    (void)size;
+    throw std::runtime_error("AMQP library is not enabled.");
+#endif
   }
 
   std::ostream& operator<<(std::ostream& os, AmqpMessage const& message)

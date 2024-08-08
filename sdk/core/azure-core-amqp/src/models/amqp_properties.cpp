@@ -6,11 +6,11 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "private/properties_impl.hpp"
 #include "private/value_impl.hpp"
-
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_properties.h>
-
+#endif // ENABLE_UAMQP
 #include <iomanip>
 #include <iostream>
 #include <sstream>
@@ -18,16 +18,18 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
   {
     properties_destroy(value);
   }
-  // @endcond
+// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
+#if ENABLE_UAMQP
   MessageProperties _detail::MessagePropertiesFactory::FromUamqp(
       UniquePropertiesHandle const& properties)
   {
@@ -244,6 +246,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     return returnValue;
   }
+#endif // ENABLE_UAMQP
 
   namespace {
 
@@ -288,15 +291,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
+#if ENABLE_UAMQP
     auto handle = _detail::MessagePropertiesFactory::ToUamqp(properties);
     Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
         amqpvalue_create_properties(handle.get())};
     AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(propertiesAsuAMQPValue)};
     return Models::AmqpValue::Serialize(propertiesAsValue);
+#else
+    (void)properties;
+    return {};
+#endif
   }
 
   MessageProperties MessageProperties::Deserialize(uint8_t const* data, size_t size)
   {
+#if ENABLE_UAMQP
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     PROPERTIES_HANDLE handle;
     if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToUamqp(value), &handle))
@@ -306,6 +315,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
     return _detail::MessagePropertiesFactory::FromUamqp(uniqueHandle);
+#else
+    (void)data;
+    (void)size;
+    return {};
+#endif
   }
 
   namespace {
@@ -313,141 +327,150 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       std::time_t time = std::chrono::system_clock::to_time_t(t);
       char buf[26]{};
-      std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
-      return buf;
-    }
-
-    size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
-    {
-      // scratch buffer which will hold the data being logged.
-      std::stringstream ss;
-
-      size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
-
-      ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
-
-      // Write the buffer data out.
-      for (size_t i = 0; i < bytesToWrite; i += 1)
-      {
-        ss << std::hex << std::right << std::setw(2) << std::setfill('0') << static_cast<int>(pb[i])
-           << " ";
-      }
-
-      // Now write the data in string format (similar to what the debugger does).
-      // Start by padding partial lines to a fixed end.
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << "   ";
-      }
-      ss << "  * ";
-      for (size_t i = 0; i < bytesToWrite; i += 1)
-      {
-        if (isprint(pb[i]))
-        {
-          ss << pb[i];
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s
+// instead.
+#pragma warning(disable : 4996)
+#endif
+          std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+          return buf;
         }
-        else
+
+        size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
         {
-          ss << ".";
-        }
-      }
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << " ";
-      }
+          // scratch buffer which will hold the data being logged.
+          std::stringstream ss;
 
-      ss << " *";
+          size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
 
-      os << ss.str();
+          ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
 
-      return bytesToWrite;
-    }
-  } // namespace
-
-  std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
-  {
-    os << "MessageProperties {";
-    {
-      if (properties.MessageId.HasValue())
-      {
-        os << "MessageId: " << properties.MessageId.Value();
-      }
-      else
-      {
-        os << "MessageId: <null>";
-      }
-    }
-    {
-      if (properties.UserId.HasValue())
-      {
-        os << ", UserId: ";
-        const uint8_t* pb = properties.UserId.Value().data();
-        size_t cb = properties.UserId.Value().size();
-        size_t currentOffset = 0;
-        do
-        {
-          auto cbLogged = LogRawData(os, currentOffset, pb, cb);
-          pb += cbLogged;
-          cb -= cbLogged;
-          currentOffset += cbLogged;
-          if (cb)
+          // Write the buffer data out.
+          for (size_t i = 0; i < bytesToWrite; i += 1)
           {
-            os << std::endl;
+            ss << std::hex << std::right << std::setw(2) << std::setfill('0')
+               << static_cast<int>(pb[i]) << " ";
           }
-        } while (cb);
+
+          // Now write the data in string format (similar to what the debugger does).
+          // Start by padding partial lines to a fixed end.
+          for (size_t i = bytesToWrite; i < 0x10; i += 1)
+          {
+            ss << "   ";
+          }
+          ss << "  * ";
+          for (size_t i = 0; i < bytesToWrite; i += 1)
+          {
+            if (isprint(pb[i]))
+            {
+              ss << pb[i];
+            }
+            else
+            {
+              ss << ".";
+            }
+          }
+          for (size_t i = bytesToWrite; i < 0x10; i += 1)
+          {
+            ss << " ";
+          }
+
+          ss << " *";
+
+          os << ss.str();
+
+          return bytesToWrite;
+        }
+      } // namespace
+
+      std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
+      {
+        os << "MessageProperties {";
+        {
+          if (properties.MessageId.HasValue())
+          {
+            os << "MessageId: " << properties.MessageId.Value();
+          }
+          else
+          {
+            os << "MessageId: <null>";
+          }
+        }
+        {
+          if (properties.UserId.HasValue())
+          {
+            os << ", UserId: ";
+            const uint8_t* pb = properties.UserId.Value().data();
+            size_t cb = properties.UserId.Value().size();
+            size_t currentOffset = 0;
+            do
+            {
+              auto cbLogged = LogRawData(os, currentOffset, pb, cb);
+              pb += cbLogged;
+              cb -= cbLogged;
+              currentOffset += cbLogged;
+              if (cb)
+              {
+                os << std::endl;
+              }
+            } while (cb);
+          }
+        }
+        if (properties.To.HasValue())
+        {
+          os << ", To: " << properties.To.Value();
+        }
+
+        if (properties.Subject.HasValue())
+        {
+          os << ", Subject: " << properties.Subject.Value();
+        }
+
+        if (properties.ReplyTo.HasValue())
+        {
+          os << ", ReplyTo: " << properties.ReplyTo.Value();
+        }
+        if (properties.CorrelationId.HasValue())
+        {
+          os << ", CorrelationId: " << properties.CorrelationId.Value();
+        }
+
+        if (properties.ContentType.HasValue())
+        {
+          os << ", ContentType: " << properties.ContentType.Value();
+        }
+
+        if (properties.ContentEncoding.HasValue())
+        {
+          os << ", ContentEncoding: " << properties.ContentEncoding.Value();
+        }
+
+        if (properties.AbsoluteExpiryTime.HasValue())
+        {
+          os << ", AbsoluteExpiryTime: " << timeToString(properties.AbsoluteExpiryTime.Value());
+        }
+        if (properties.CreationTime.HasValue())
+        {
+          os << ", CreationTime: " << timeToString(properties.CreationTime.Value());
+        }
+        if (properties.GroupId.HasValue())
+        {
+          os << ", GroupId: " << properties.GroupId.Value();
+        }
+        if (properties.GroupSequence.HasValue())
+        {
+          os << ", GroupSequence: " << properties.GroupSequence.Value();
+        }
+
+        if (properties.ReplyToGroupId.HasValue())
+        {
+          os << ", ReplyToGroupId: " << properties.ReplyToGroupId.Value();
+        }
+        os << "}";
+        return os;
       }
-    }
-    if (properties.To.HasValue())
-    {
-      os << ", To: " << properties.To.Value();
-    }
-
-    if (properties.Subject.HasValue())
-    {
-      os << ", Subject: " << properties.Subject.Value();
-    }
-
-    if (properties.ReplyTo.HasValue())
-    {
-      os << ", ReplyTo: " << properties.ReplyTo.Value();
-    }
-    if (properties.CorrelationId.HasValue())
-    {
-      os << ", CorrelationId: " << properties.CorrelationId.Value();
-    }
-
-    if (properties.ContentType.HasValue())
-    {
-      os << ", ContentType: " << properties.ContentType.Value();
-    }
-
-    if (properties.ContentEncoding.HasValue())
-    {
-      os << ", ContentEncoding: " << properties.ContentEncoding.Value();
-    }
-
-    if (properties.AbsoluteExpiryTime.HasValue())
-    {
-      os << ", AbsoluteExpiryTime: " << timeToString(properties.AbsoluteExpiryTime.Value());
-    }
-    if (properties.CreationTime.HasValue())
-    {
-      os << ", CreationTime: " << timeToString(properties.CreationTime.Value());
-    }
-    if (properties.GroupId.HasValue())
-    {
-      os << ", GroupId: " << properties.GroupId.Value();
-    }
-    if (properties.GroupSequence.HasValue())
-    {
-      os << ", GroupSequence: " << properties.GroupSequence.Value();
-    }
-
-    if (properties.ReplyToGroupId.HasValue())
-    {
-      os << ", ReplyToGroupId: " << properties.ReplyToGroupId.Value();
-    }
-    os << "}";
-    return os;
-  }
 }}}} // namespace Azure::Core::Amqp::Models

@@ -7,20 +7,25 @@
 #include "private/header_impl.hpp"
 #include "private/value_impl.hpp"
 
+#if ENABLE_UAMQP
+
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+#endif
 
 #include <chrono>
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
   {
     header_destroy(handle);
   }
-  // @endcond
+// @endcond
+#endif // ENABLE_UAMQP
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
@@ -33,6 +38,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
+#if ENABLE_UAMQP
   MessageHeader _detail::MessageHeaderFactory::FromUamqp(
       _detail::UniqueMessageHeaderHandle const& handle)
   {
@@ -111,6 +117,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     return rv;
   }
+#endif
 
   std::ostream& operator<<(std::ostream& os, MessageHeader const& header)
   {
@@ -135,22 +142,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   size_t MessageHeader::GetSerializedSize(MessageHeader const& header)
   {
+#if ENABLE_UAMQP
     auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
     AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(
         _detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return AmqpValue::GetSerializedSize(propertiesAsValue);
+#else
+    (void)header;
+    return {};
+#endif
   }
 
   std::vector<uint8_t> MessageHeader::Serialize(MessageHeader const& header)
   {
+#if ENABLE_UAMQP
     auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
     AmqpValue headerAsValue{_detail::AmqpValueFactory::FromUamqp(
         Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return Models::AmqpValue::Serialize(headerAsValue);
+#else
+    (void)header;
+    return {};
+
+#endif
   }
 
   MessageHeader MessageHeader::Deserialize(std::uint8_t const* data, size_t size)
   {
+#if ENABLE_UAMQP
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     HEADER_HANDLE handle;
     if (amqpvalue_get_header(_detail::AmqpValueFactory::ToUamqp(value), &handle))
@@ -160,6 +179,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     _detail::UniqueMessageHeaderHandle uniqueHandle{handle};
     handle = nullptr;
     return _detail::MessageHeaderFactory::FromUamqp(uniqueHandle);
+#else
+    (void)data;
+    (void)size;
+    return {};
+#endif
   }
 
 }}}} // namespace Azure::Core::Amqp::Models
