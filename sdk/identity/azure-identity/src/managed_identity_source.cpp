@@ -269,7 +269,7 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
     {
       throw AuthenticationException(
           "User-assigned managed identities are not supported in Cloud Shell environments. Omit "
-          "the client or resource ID when constructing the ManagedIdentityCredential.");
+          "the clientId or resourceId when constructing the ManagedIdentityCredential.");
     }
 
     return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
