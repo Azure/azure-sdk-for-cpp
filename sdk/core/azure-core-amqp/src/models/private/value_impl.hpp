@@ -62,12 +62,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     static AmqpValue FromImplementation(UniqueAmqpValueHandle const& value);
     static AmqpValue FromImplementation(UniqueAmqpValueHandle&& value);
     static AmqpValue FromImplementation(AmqpValueImpl&& value);
-    #if ENABLE_UAMQP
+#if ENABLE_UAMQP
     // Returns the internal AMQP value handle, without referencing it.
     static AMQP_VALUE ToImplementation(AmqpValue const& value);
-    #elif ENABLE_RUST_AMQP
+#elif ENABLE_RUST_AMQP
     // Returns the internal AMQP value handle, without referencing it.
-    static Azure::Core::Amqp::_detail::RustInterop::AmqpValue* ToImplementation(AmqpValue const& value);
+    static Azure::Core::Amqp::_detail::RustInterop::AmqpValue* ToImplementation(
+        AmqpValue const& value);
 #endif // ENABLE_UAMQP
   };
 #if ENABLE_UAMQP
@@ -99,7 +100,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     operator AMQP_VALUE() const noexcept { return m_value.get(); }
 #endif
 #if ENABLE_RUST_AMQP
-    operator Azure::Core::Amqp::_detail::RustInterop::AmqpValue*() const noexcept { return m_value.get(); }
+    operator Azure::Core::Amqp::_detail::RustInterop::AmqpValue*() const noexcept
+    {
+      return m_value.get();
+    }
 #endif
 
   private:

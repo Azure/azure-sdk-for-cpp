@@ -899,7 +899,8 @@ namespace Azure { namespace Core { namespace Amqp {
       throw std::runtime_error("Input AMQP value MUST be an array.");
     }
     std::uint32_t arraySize;
-    if (amqpvalue_get_array_item_count(_detail::AmqpValueFactory::ToImplementation(value), &arraySize))
+    if (amqpvalue_get_array_item_count(
+            _detail::AmqpValueFactory::ToImplementation(value), &arraySize))
     {
       throw std::runtime_error("Could not get array size from AMQP_VALUE");
     }
@@ -1177,7 +1178,9 @@ namespace Azure { namespace Core { namespace Amqp {
 #if ENABLE_UAMQP
       : m_value(GetMillisecondsFromAmqp(_detail::AmqpValueFactory::ToUamqp(value)))
 #else
-      : m_value{}
+      : m_value
+  {
+  }
 #endif
   {
     (void)value;

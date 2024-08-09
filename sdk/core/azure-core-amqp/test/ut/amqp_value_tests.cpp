@@ -254,7 +254,6 @@ TEST_F(TestValues, SimpleCreateUuid)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
-
 }
 TEST_F(TestValues, MoveAmqpValues)
 {
