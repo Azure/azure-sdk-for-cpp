@@ -3,7 +3,7 @@
 
 #include "azure/core/amqp/internal/connection.hpp"
 
-#include "../models/private/value_impl.hpp"
+//#include "../models/private/value_impl.hpp"
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"

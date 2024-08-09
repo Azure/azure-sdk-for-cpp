@@ -1,0 +1,25 @@
+
+[package]
+name = "rust_wrapper"
+version = "0.1.0"
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lib]
+crate-type = ["staticlib"]
+
+
+[dependencies]
+azure_core_amqp = { workspace = true }
+azure_identity = { workspace = true }
+azure_core = { workspace = true }
+uuid = { workspace=true}
+
+[lints]
+workspace = true
+
+[build-dependencies]
+cbindgen = { workspace = true }
