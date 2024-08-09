@@ -33,6 +33,8 @@ add_executable(azure-core-amqp-tests
  "amqp_performative_tests.cpp")
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
+target_compile_definitions(azure-core-amqp-tests PRIVATE _azure_BUILDING_TESTS)
+
 if (MSVC)
   # Disable warnings:
   # - C26495: Variable

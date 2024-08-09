@@ -1,6 +1,6 @@
 # Release History
 
-## 12.13.0-beta.1 (Unreleased)
+## 12.13.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,22 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.13.0-beta.1 (2024-08-07)
+
+### Features Added
+
+- Added ability to retrieve SAS string to sign for debugging purposes.
+
+### Other Changes
+
+- [[#5765]](https://github.com/Azure/azure-sdk-for-cpp/pull/5765) Fix libcxx build. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage Blobs better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
 
 ## 12.12.0 (2024-07-16)
 

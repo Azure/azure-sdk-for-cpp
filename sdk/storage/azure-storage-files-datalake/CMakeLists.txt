@@ -76,6 +76,8 @@ set(
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
 
+target_compile_definitions(azure-storage-files-datalake PRIVATE _azure_BUILDING_SDK)
+
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-storage-files-datalake ALIAS azure-storage-files-datalake)
 create_per_service_target_build(storage azure-storage-files-datalake)

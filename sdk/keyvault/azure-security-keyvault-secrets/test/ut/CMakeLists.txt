@@ -30,6 +30,8 @@ add_executable (
     secret_update_properties_test.cpp
 )
 
+target_compile_definitions(azure-security-keyvault-secrets-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-secrets-test)
 create_map_file(azure-security-keyvault-secrets-test azure-security-keyvault-secrets-test.map)
 

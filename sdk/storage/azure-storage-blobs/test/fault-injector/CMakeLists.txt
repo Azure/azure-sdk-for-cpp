@@ -13,6 +13,9 @@ add_executable (
   azure-storage-blobs-test-fault-injector
     azure_storage_blobs_fault_injector_test.cpp
 )
+
+target_compile_definitions(azure-storage-blobs-test-fault-injector PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(storage azure-storage-blobs-test-fault-injector)
 
 target_link_libraries(azure-storage-blobs-test-fault-injector PRIVATE azure-storage-blobs)

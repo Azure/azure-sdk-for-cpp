@@ -4,6 +4,8 @@
 add_executable(eh_sender_with_sas_token_sample
 	main.c)
 
+target_compile_definitions(eh_sender_with_sas_token_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 compileTargetAsC99(eh_sender_with_sas_token_sample)
 
 #TODO: link to whatever else the platform has (now for windows it is just ws2_32)

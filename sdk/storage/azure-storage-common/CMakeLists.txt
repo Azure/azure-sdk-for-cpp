@@ -81,6 +81,7 @@ set(
 )
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
+target_compile_definitions(azure-storage-common PRIVATE _azure_BUILDING_SDK)
 create_per_service_target_build(storage azure-storage-common)
 
 # make sure that users can consume the project as a library.

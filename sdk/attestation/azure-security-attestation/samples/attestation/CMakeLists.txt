@@ -15,6 +15,8 @@ add_executable (
   attestation_collateral.cpp 
   attestation_collateral.hpp)
 
+target_compile_definitions(attestation-${samplename} PRIVATE _azure_BUILDING_SAMPLES)
+
 CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation attestation-${samplename})
 
 target_link_libraries(attestation-${samplename} PRIVATE azure-security-attestation get-env-helper)

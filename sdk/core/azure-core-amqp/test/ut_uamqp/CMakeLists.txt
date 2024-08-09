@@ -35,6 +35,8 @@ add_executable(azure-core-amqp-uamqp-tests
   uamqp_value_tests.cpp
 )
 
+target_compile_definitions(azure-core-amqp-uamqp-tests PRIVATE _azure_BUILDING_TESTS)
+
 add_dependencies(azure-core-amqp-uamqp-tests Azure::azure-core-amqp uamqp)
 
 # UAMQP Definitions and headers.

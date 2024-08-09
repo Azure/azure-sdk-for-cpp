@@ -72,6 +72,7 @@ add_library(
   azure-messaging-eventhubs-checkpointstore-blob
     ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_HEADER} ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_SOURCE}
 )
+target_compile_definitions(azure-messaging-eventhubs-checkpointstore-blob PRIVATE _azure_BUILDING_SDK)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-checkpointstore-blob)
 add_library(Azure::azure-messaging-eventhubs-checkpointstore-blob ALIAS azure-messaging-eventhubs-checkpointstore-blob)
 

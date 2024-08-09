@@ -22,6 +22,9 @@ add_executable (
   azure-security-keyvault-keys-perf
      ${AZURE_KEYVAULT_KEY_PERF_TEST_HEADER} ${AZURE_KEYVAULT_KEY_PERF_TEST_SOURCE}
 )
+
+target_compile_definitions(azure-security-keyvault-keys-perf PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(keyvault azure-security-keyvault-keys-perf)
 create_map_file(azure-security-keyvault-keys-perf azure-security-keyvault-keys-perf.map)
 

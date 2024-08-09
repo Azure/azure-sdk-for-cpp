@@ -17,6 +17,7 @@
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Administration;
+using namespace Azure::Security::KeyVault::Administration::Models;
 using namespace std::chrono_literals;
 
 int main()
@@ -24,7 +25,8 @@ int main()
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
-  SettingsClient settingsClient(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+  SettingsClient settingsClient(
+      Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_HSM_URL"), credential);
 
   try
   {

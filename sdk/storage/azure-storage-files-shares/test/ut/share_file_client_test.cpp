@@ -876,6 +876,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     // GetRangeListDiff with Range
     {
+      // sleep for 1 second to make sure the previous operation is finished
+      TestSleep(std::chrono::milliseconds(1000));
       auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
       EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
       Files::Shares::GetFileRangeListOptions options;
@@ -910,6 +912,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     EXPECT_NO_THROW(fileClient.UploadRange(0, memBodyStream));
 
+    // sleep for 1 second to make sure the previous operation is finished
+    TestSleep(std::chrono::milliseconds(1000));
     auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
     EXPECT_NO_THROW(fileClient.ClearRange(64, 64));
 
@@ -1858,5 +1862,135 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(orAccessRights, accessRightsA | accessRightsB);
     EXPECT_EQ(andAccessRights, accessRightsA & accessRightsB);
     EXPECT_EQ(xorAccessRights, accessRightsA ^ accessRightsB);
+  }
+
+  TEST_F(FileShareFileClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto sddlPermissionNoControlFlag
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)";
+    auto binaryPermission = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+                            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
+                            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+                            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+    auto binaryPermissionNoControlFlag
+        = "AQAEgGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+          "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJd"
+          "JWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+          "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+    // sddl format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      auto fileClient
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+
+      // Create
+      Files::Shares::CreateFileOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      options.Permission = sddlPermission;
+      auto permissionKey = fileClient.Create(1, options).Value.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermissionNoControlFlag, permission);
+
+      // Set Properties
+      Files::Shares::SetFilePropertiesOptions setOptions;
+      setOptions.FilePermissionFormat = permissionFormat;
+      setOptions.Permission = sddlPermission;
+      fileClient.SetProperties(
+          Files::Shares::Models::FileHttpHeaders(),
+          Files::Shares::Models::FileSmbProperties(),
+          setOptions);
+      permissionKey = fileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+
+      // Upload From
+      size_t fileSize = 512;
+      std::vector<uint8_t> content(RandomBuffer(fileSize));
+      auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+      Files::Shares::UploadFileFromOptions uploadFromOptions;
+      uploadFromOptions.FilePermission = sddlPermission;
+      uploadFromOptions.FilePermissionFormat = permissionFormat;
+
+      // UploadFrom buffer
+      auto fileClient2
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(fileClient2.UploadFrom(content.data(), fileSize, uploadFromOptions));
+      permissionKey = fileClient2.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermissionNoControlFlag, permission);
+
+      // UploadFrom file
+      auto fileClient3
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+      const std::string tempFilename = "file" + RandomString();
+      WriteFile(tempFilename, content);
+      EXPECT_NO_THROW(fileClient3.UploadFrom(tempFilename, uploadFromOptions));
+      permissionKey = fileClient3.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermissionNoControlFlag, permission);
+    }
+    // binary format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+
+      // Create
+      Files::Shares::CreateFileOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      options.Permission = binaryPermission;
+      auto permissionKey = fileClient.Create(1, options).Value.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermissionNoControlFlag, permission);
+
+      // Set Properties
+      Files::Shares::SetFilePropertiesOptions setOptions;
+      setOptions.FilePermissionFormat = permissionFormat;
+      setOptions.Permission = binaryPermission;
+      fileClient.SetProperties(
+          Files::Shares::Models::FileHttpHeaders(),
+          Files::Shares::Models::FileSmbProperties(),
+          setOptions);
+      permissionKey = fileClient.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+
+      // Upload From
+      size_t fileSize = 512;
+      std::vector<uint8_t> content(RandomBuffer(fileSize));
+      auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+      Files::Shares::UploadFileFromOptions uploadFromOptions;
+      uploadFromOptions.FilePermission = binaryPermission;
+      uploadFromOptions.FilePermissionFormat = permissionFormat;
+
+      // UploadFrom buffer
+      auto fileClient2
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+      EXPECT_NO_THROW(fileClient2.UploadFrom(content.data(), fileSize, uploadFromOptions));
+      permissionKey = fileClient2.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermissionNoControlFlag, permission);
+
+      // UploadFrom file
+      auto fileClient3
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+      const std::string tempFilename = "file" + RandomString();
+      WriteFile(tempFilename, content);
+      EXPECT_NO_THROW(fileClient3.UploadFrom(tempFilename, uploadFromOptions));
+      permissionKey = fileClient3.GetProperties().Value.SmbProperties.PermissionKey.Value();
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermissionNoControlFlag, permission);
+    }
   }
 }}} // namespace Azure::Storage::Test

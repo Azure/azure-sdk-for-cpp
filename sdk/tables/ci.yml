@@ -30,7 +30,6 @@ extends:
       CtestRegex: azure-data
       LineCoverageTarget: 77
       BranchCoverageTarget: 42
-      UseFederatedAuth: true
       LiveTestCtestRegex: azure-data
       Clouds: Preview
       SupportedClouds: Preview

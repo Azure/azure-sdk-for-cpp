@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0-beta.5 (Unreleased)
+## 4.0.0-beta.6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.0.0-beta.5 (2024-08-06)
+
+### Features Added
+
+- Add support for Backup/Restore operations for Key Vault HSM.
 
 ## 4.0.0-beta.4 (2024-01-16)
 

@@ -1,6 +1,17 @@
 # Release History
 
-## 1.14.0-beta.1 (Unreleased)
+## 1.14.0-beta.2 (Unreleased)
+
+### Features Added
+
+- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.14.0-beta.1 (2024-08-01)
 
 ### Features Added
 
@@ -12,9 +23,15 @@
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
   wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(deadline)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(deadline)`.
 
-### Bugs Fixed
-
 ### Other Changes
+
+- [[#5851]](https://github.com/Azure/azure-sdk-for-cpp/pull/5851) Remove unneeded `<regex>` includes. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
 
 ## 1.13.0 (2024-07-12)
 

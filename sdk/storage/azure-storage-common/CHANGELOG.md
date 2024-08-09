@@ -1,6 +1,6 @@
 # Release History
 
-## 12.8.0-beta.1 (Unreleased)
+## 12.8.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,25 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.8.0-beta.1 (2024-08-07)
+
+### Features Added
+
+- Bumped up Account SAS version to `2024-11-04`.
+- Added ability to retrieve SAS string to sign for debugging purposes.
+
+### Other Changes
+
+- [[#5767]](https://github.com/Azure/azure-sdk-for-cpp/pull/5767) XML: Use RAII wrappers instead of manual memory management. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_, _[alesapin](https://github.com/alesapin)_, and _[CurtizJ](https://github.com/CurtizJ)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
+
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
+- alesapin _([GitHub](https://github.com/alesapin))_
+- Anton Popov _([GitHub](https://github.com/CurtizJ))_
 
 ## 12.7.0 (2024-07-16)
 
