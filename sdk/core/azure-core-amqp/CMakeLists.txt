@@ -32,7 +32,7 @@ endif()
 
 
 if (USE_RUST_AMQP)
-  message(STATUS "Using RUST based uamqp")
+  message(STATUS "Using RUST based AMQP stack")
   set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
 else()
   set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
@@ -62,6 +62,23 @@ if (VENDOR_UAMQP)
 endif()
 
 if (USE_RUST_AMQP)
+
+include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
+
+install_rustup()
+
+include(FetchContent)
+
+FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.5 # Optionally specify a commit hash, version tag or branch here
+)
+FetchContent_MakeAvailable(Corrosion)
+
+# Import targets defined in a package or workspace manifest `Cargo.toml` file
+corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_amqp/rust_wrapper/Cargo.toml)
+
 endif()
 
 
@@ -154,9 +171,9 @@ set(AZURE_CORE_AMQP_SOURCE
 )
 
 
-if (${USE_VENDOR_AMQP})
+if (USE_VENDOR_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
-else()
+elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 endif()
 
@@ -189,13 +206,22 @@ create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tes
 if (VENDOR_UAMQP)
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
-target_link_libraries(azure-core-amqp PRIVATE
+  target_link_libraries(azure-core-amqp PRIVATE
     umock_c
     azure_macro_utils_c
     aziotsharedutil
     PUBLIC Azure::azure-core)
+elseif(USE_RUST_AMQP)
+  target_link_libraries(azure-core-amqp 
+    PRIVATE rust_wrapper-static
+    PUBLIC Azure::azure-core)
+
+  if (MSVC)
+    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
+  endif()
 else()
-target_link_libraries(azure-core-amqp PRIVATE
+  target_link_libraries(azure-core-amqp 
+    PRIVATE 
     PUBLIC Azure::azure-core)
 endif()
 

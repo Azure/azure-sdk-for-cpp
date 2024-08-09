@@ -8,6 +8,10 @@
 
 #if ENABLE_UAMQP
 #include <azure_uamqp_c/amqpvalue.h>
+#endif
+#if ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+
 #endif // ENABLE_UAMQP
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -30,6 +34,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // @endcond
   };
 #endif
+#if ENABLE_RUST_AMQP
+  template <> struct UniqueHandleHelper<RustInterop::AmqpValue>
+  {
+    // @cond INTERNAL
+    static void FreeAmqpValue(RustInterop::AmqpValue* value);
+    using type = Core::_internal::BasicUniqueHandle<RustInterop::AmqpValue, FreeAmqpValue>;
+    // @endcond
+  };
+#endif
 
 }}}} // namespace Azure::Core::Amqp::_detail
 
@@ -39,19 +52,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   using UniqueAmqpDecoderHandle
       = Amqp::_detail::UniqueHandle<std::remove_pointer<AMQPVALUE_DECODER_HANDLE>::type>;
 #endif
+#if ENABLE_RUST_AMQP
+  using UniqueAmqpValueHandle
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::RustInterop::AmqpValue>;
+#endif
 
   class AmqpValueFactory final {
   public:
-#if ENABLE_UAMQP
-    static AmqpValue FromUamqp(UniqueAmqpValueHandle const& value);
-    static AmqpValue FromUamqp(UniqueAmqpValueHandle&& value);
-    static AmqpValue FromUamqp(AmqpValueImpl&& value);
+    static AmqpValue FromImplementation(UniqueAmqpValueHandle const& value);
+    static AmqpValue FromImplementation(UniqueAmqpValueHandle&& value);
+    static AmqpValue FromImplementation(AmqpValueImpl&& value);
+    #if ENABLE_UAMQP
     // Returns the internal AMQP value handle, without referencing it.
-    static AMQP_VALUE ToUamqp(AmqpValue const& value);
+    static AMQP_VALUE ToImplementation(AmqpValue const& value);
+    #elif ENABLE_RUST_AMQP
+    // Returns the internal AMQP value handle, without referencing it.
+    static Azure::Core::Amqp::_detail::RustInterop::AmqpValue* ToImplementation(AmqpValue const& value);
 #endif // ENABLE_UAMQP
   };
 #if ENABLE_UAMQP
   std::ostream& operator<<(std::ostream& os, AMQP_VALUE_DATA_TAG* const value);
+#endif
+#if ENABLE_RUST_AMQP
+  std::ostream& operator<<(
+      std::ostream& os,
+      Azure::Core::Amqp::_detail::RustInterop::AmqpValue* const value);
 #endif
   class AmqpValueImpl final {
     friend class Azure::Core::Amqp::Models::AmqpValue;
@@ -60,6 +85,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
 #if ENABLE_UAMQP
     AmqpValueImpl(UniqueAmqpValueHandle&& value) noexcept : m_value(std::move(value)) {}
+#endif
+#if ENABLE_RUST_AMQP
+    AmqpValueImpl(UniqueAmqpValueHandle&& value) noexcept : m_value(std::move(value)) {}
+    AmqpValueImpl() = default;
 #else
     AmqpValueImpl() = default;
 #endif
@@ -69,11 +98,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
     operator AMQP_VALUE() const noexcept { return m_value.get(); }
 #endif
+#if ENABLE_RUST_AMQP
+    operator Azure::Core::Amqp::_detail::RustInterop::AmqpValue*() const noexcept { return m_value.get(); }
+#endif
 
   private:
-#if ENABLE_UAMQP
     UniqueAmqpValueHandle m_value;
-#endif
   };
 #if ENABLE_UAMQP
   std::ostream& operator<<(std::ostream& os, AMQP_TYPE value);
