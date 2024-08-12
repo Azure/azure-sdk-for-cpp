@@ -52,10 +52,11 @@ TEST_F(KeyVaultKeyClient, BackupKey)
     TestSleep(m_testPollingIntervalMs);
   }
   {
+    int retries = 15;
     // before we restore we need to ensure the key is purged.
     // since we have no visibility into the purge status we will just wait and check for a few
     // seconds
-    while (true)
+    while (retries > 0)
     {
       try
       {
@@ -67,6 +68,7 @@ TEST_F(KeyVaultKeyClient, BackupKey)
         break;
       }
       TestSleep(m_testPollingIntervalMs);
+      retries--;
     }
   }
   {

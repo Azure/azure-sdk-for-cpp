@@ -575,10 +575,11 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     TestSleep(m_defaultWait);
   }
   {
+    int retries = 15;
     // before we restore we need to ensure the certificate is purged.
     // since we have no visibility into the purge status we will just wait and check for a few
     // seconds
-    while (true)
+    while (retries > 0)
     {
       try
       {
@@ -590,6 +591,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
         break;
       }
       TestSleep(m_defaultWait);
+      retries--;
     }
   }
   {

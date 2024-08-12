@@ -187,10 +187,11 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     TestSleep(m_defaultWait);
   }
   {
+    int retries = 15;
     // before we restore we need to ensure the secret is purged.
     // since we have no visibility into the purge status we will just wait and check for a few
     // seconds
-    while (true)
+    while (retries > 15)
     {
       try
       {
@@ -203,6 +204,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
       }
       TestSleep(m_defaultWait);
     }
+    retries--;
   }
   {
     auto restore = client.RestoreSecretBackup(backupData);
