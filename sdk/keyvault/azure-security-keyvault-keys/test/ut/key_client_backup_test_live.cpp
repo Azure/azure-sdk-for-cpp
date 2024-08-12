@@ -70,6 +70,11 @@ TEST_F(KeyVaultKeyClient, BackupKey)
       TestSleep(m_testPollingIntervalMs);
       retries--;
     }
+
+    if (retries == 0)
+    {
+      EXPECT_TRUE(false);
+    }
   }
   {
     // Restore

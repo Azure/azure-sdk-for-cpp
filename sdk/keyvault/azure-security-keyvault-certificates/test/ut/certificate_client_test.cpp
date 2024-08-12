@@ -593,6 +593,11 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
       TestSleep(m_defaultWait);
       retries--;
     }
+
+    if (retries == 0)
+    {
+      EXPECT_TRUE(false);
+    }
   }
   {
     auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);

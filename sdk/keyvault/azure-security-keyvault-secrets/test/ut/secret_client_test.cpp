@@ -203,8 +203,13 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
         break;
       }
       TestSleep(m_defaultWait);
+      retries--;
     }
-    retries--;
+
+    if (retries == 0)
+    {
+      EXPECT_TRUE(false);
+    }
   }
   {
     auto restore = client.RestoreSecretBackup(backupData);
