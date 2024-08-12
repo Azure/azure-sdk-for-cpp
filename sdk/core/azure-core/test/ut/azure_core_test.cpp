@@ -14,6 +14,7 @@ int main(int argc, char** argv)
 #if defined(AZ_PLATFORM_POSIX)
   // OpenSSL signals SIGPIPE when trying to clean an HTTPS closed connection.
   // End users need to decide if SIGPIPE should be ignored or not.
+  //
   signal(SIGPIPE, SIG_IGN);
 #endif
 
