@@ -49,10 +49,32 @@ TEST_F(KeyVaultKeyClient, BackupKey)
     auto response = client.PurgeDeletedKey(keyName);
     CheckValidResponse(response, Azure::Core::Http::HttpStatusCode::NoContent);
     // Purge can take up to 2 min
-    TestSleep(4min);
+    TestSleep(m_testPollingIntervalMs);
   }
-  { // Check key is gone
-    EXPECT_THROW(client.GetKey(keyName), Azure::Core::RequestFailedException);
+  {
+    int retries = 15;
+    // before we restore we need to ensure the key is purged.
+    // since we have no visibility into the purge status we will just wait and check for a few
+    // seconds
+    while (retries > 0)
+    {
+      try
+      {
+        client.GetDeletedKey(keyName);
+      }
+      catch (Azure::Core::RequestFailedException const&)
+      {
+        std::cout << std::endl << "- Key is gone";
+        break;
+      }
+      TestSleep(m_testPollingIntervalMs);
+      retries--;
+    }
+
+    if (retries == 0)
+    {
+      EXPECT_TRUE(false);
+    }
   }
   {
     // Restore
