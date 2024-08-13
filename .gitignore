@@ -353,7 +353,7 @@ build/
 [Dd]ocs/
 
 # vscode
-.vscode/*
+**/.vscode/*
 !.vscode/cspell.json
 .factorypath
 
@@ -368,3 +368,4 @@ CMakeUserPresets.json
 
 # Generated Rust source file
 **/rust_amqp_wrapper.h
+**/Cargo.lock
