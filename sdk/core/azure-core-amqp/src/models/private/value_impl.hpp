@@ -83,15 +83,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpValueImpl(AmqpValueImpl const& other);
     AmqpValueImpl(AmqpValueImpl&& other) noexcept;
 
-#if ENABLE_UAMQP
-    operator AMQP_VALUE() const noexcept { return m_value.get(); }
-#endif
-#if ENABLE_RUST_AMQP
-    operator Azure::Core::Amqp::_detail::RustInterop::AmqpValue*() const noexcept
-    {
-      return m_value.get();
-    }
-#endif
+    operator AmqpValueImplementation*() const noexcept { return m_value.get(); }
 
   private:
     UniqueAmqpValueHandle m_value;
