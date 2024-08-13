@@ -241,7 +241,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
     if (!options.Address.IsNull())
     {
-      if (target_set_address(m_target.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
+      if (target_set_address(
+              m_target.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
       {
         throw std::runtime_error("Could not set source address.");
       }
@@ -316,7 +317,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       if (target_set_dynamic_node_properties(
               m_target.get(),
-              _detail::AmqpValueFactory::ToImplementation(options.DynamicNodeProperties.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(
+                  options.DynamicNodeProperties.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }

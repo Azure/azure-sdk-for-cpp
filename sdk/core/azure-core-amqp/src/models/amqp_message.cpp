@@ -255,7 +255,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set destination message format.");
     }
 
-    if (message_set_header(rv.get(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()))
+    if (message_set_header(
+            rv.get(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()))
     {
       throw std::runtime_error("Could not set message header.");
     }
@@ -269,7 +270,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (message_set_delivery_annotations(
               rv.get(),
-              _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(
+                  message.DeliveryAnnotations.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set delivery annotations.");
       }
@@ -279,7 +281,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (message_set_message_annotations(
               rv.get(),
-              _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(
+                  message.MessageAnnotations.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
@@ -440,18 +443,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (!message.DeliveryAnnotations.empty())
     {
-      AmqpValue deliveryAnnotations{_detail::AmqpValueFactory::FromImplementation(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_delivery_annotations(
-              _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue()))})};
+      AmqpValue deliveryAnnotations{
+          _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{
+              amqpvalue_create_delivery_annotations(_detail::AmqpValueFactory::ToImplementation(
+                  message.DeliveryAnnotations.AsAmqpValue()))})};
       auto serializedDeliveryAnnotations = AmqpValue::Serialize(deliveryAnnotations);
       rv.insert(
           rv.end(), serializedDeliveryAnnotations.begin(), serializedDeliveryAnnotations.end());
     }
     if (!message.MessageAnnotations.empty())
     {
-      AmqpValue messageAnnotations{_detail::AmqpValueFactory::FromImplementation(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_message_annotations(
-              _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue()))})};
+      AmqpValue messageAnnotations{
+          _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{
+              amqpvalue_create_message_annotations(_detail::AmqpValueFactory::ToImplementation(
+                  message.MessageAnnotations.AsAmqpValue()))})};
       auto serializedAnnotations = AmqpValue::Serialize(messageAnnotations);
       rv.insert(rv.end(), serializedAnnotations.begin(), serializedAnnotations.end());
     }
@@ -573,8 +578,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         auto deserializer = static_cast<AmqpMessageDeserializer*>(context);
 
-        deserializer->OnAmqpMessageFieldDecoded(Models::_detail::AmqpValueFactory::FromImplementation(
-            _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}));
+        deserializer->OnAmqpMessageFieldDecoded(
+            Models::_detail::AmqpValueFactory::FromImplementation(
+                _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}));
       }
 
       // Invoked when a message field
@@ -693,7 +699,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             }
             messageHeader.reset(h);
             h = nullptr;
-            m_decodedValue.Header = _detail::MessageHeaderFactory::FromImplementation(messageHeader);
+            m_decodedValue.Header
+                = _detail::MessageHeaderFactory::FromImplementation(messageHeader);
             break;
           }
           case AmqpDescriptors::DeliveryAnnotations:

@@ -391,11 +391,11 @@ namespace Azure { namespace Core {
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
-              static_cast<const unsigned char*>(uuid.AsArray().data())))})
-
-      }
+      : m_impl
+  {
+    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
+        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP

@@ -128,7 +128,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
-              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
+              returnValue.get(),
+              _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
       {
         throw std::runtime_error("Could not set message id");
       }
@@ -157,7 +158,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.To.HasValue())
     {
       if (properties_set_to(
-              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
+              returnValue.get(),
+              _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -174,7 +176,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.ReplyTo.HasValue())
     {
       if (properties_set_reply_to(
-              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
+              returnValue.get(),
+              _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
       {
         throw std::runtime_error("Could not set reply to");
       }
@@ -295,7 +298,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     auto handle = _detail::MessagePropertiesFactory::ToUamqp(properties);
     Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
         amqpvalue_create_properties(handle.get())};
-    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromImplementation(propertiesAsuAMQPValue)};
+    AmqpValue propertiesAsValue{
+        _detail::AmqpValueFactory::FromImplementation(propertiesAsuAMQPValue)};
     return Models::AmqpValue::Serialize(propertiesAsValue);
 #else
     (void)properties;

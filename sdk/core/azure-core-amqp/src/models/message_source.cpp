@@ -265,7 +265,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Address.IsNull())
     {
 #if ENABLE_UAMQP
-      if (source_set_address(m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
+      if (source_set_address(
+              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
       {
         throw std::runtime_error("Could not set source address.");
       }
@@ -368,7 +369,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
 #if ENABLE_UAMQP
       if (source_set_filter(
-              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue())))
+              m_source.get(),
+              _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set filter set.");
       }
@@ -388,7 +390,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
 #if ENABLE_UAMQP
       if (source_set_outcomes(
-              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue())))
+              m_source.get(),
+              _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set outcomes.");
       }
