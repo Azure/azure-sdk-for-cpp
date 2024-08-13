@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# cspell: words rustup ncrypt secur
+
 # setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 include(AzureVcpkg)
