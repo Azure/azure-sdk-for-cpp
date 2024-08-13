@@ -5,6 +5,8 @@
   "dictionaries": [
     "powershell",
     "cpp",
+    "rust",
+    "c",
     "markdown"
   ],
   "languageSettings": [
