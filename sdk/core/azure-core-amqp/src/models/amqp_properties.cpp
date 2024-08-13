@@ -38,13 +38,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     // properties_get_message_id returns the value in-place.
     if (!properties_get_message_id(properties.get(), &value))
     {
-      rv.MessageId = _detail::AmqpValueFactory::FromUamqp(
+      rv.MessageId = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
     if (!properties_get_correlation_id(properties.get(), &value))
     {
-      rv.CorrelationId = _detail::AmqpValueFactory::FromUamqp(
+      rv.CorrelationId = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
@@ -61,7 +61,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_to(properties.get(), &value))
     {
-      rv.To = _detail::AmqpValueFactory::FromUamqp(
+      rv.To = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!properties_get_reply_to(properties.get(), &value))
     {
-      rv.ReplyTo = _detail::AmqpValueFactory::FromUamqp(
+      rv.ReplyTo = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
     }
 
@@ -128,7 +128,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
-              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.MessageId.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
       {
         throw std::runtime_error("Could not set message id");
       }
@@ -137,7 +137,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_correlation_id(
               returnValue.get(),
-              _detail::AmqpValueFactory::ToUamqp(properties.CorrelationId.Value())))
+              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value())))
       {
         throw std::runtime_error("Could not set correlation id");
       }
@@ -157,7 +157,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.To.HasValue())
     {
       if (properties_set_to(
-              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.To.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -174,7 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (properties.ReplyTo.HasValue())
     {
       if (properties_set_reply_to(
-              returnValue.get(), _detail::AmqpValueFactory::ToUamqp(properties.ReplyTo.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
       {
         throw std::runtime_error("Could not set reply to");
       }
@@ -295,7 +295,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     auto handle = _detail::MessagePropertiesFactory::ToUamqp(properties);
     Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
         amqpvalue_create_properties(handle.get())};
-    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(propertiesAsuAMQPValue)};
+    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromImplementation(propertiesAsuAMQPValue)};
     return Models::AmqpValue::Serialize(propertiesAsValue);
 #else
     (void)properties;
@@ -308,7 +308,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 #if ENABLE_UAMQP
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     PROPERTIES_HANDLE handle;
-    if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToUamqp(value), &handle))
+    if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &handle))
     {
       throw std::runtime_error("Could not convert value to AMQP Properties.");
     }

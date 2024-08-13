@@ -48,8 +48,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    */
   struct AmqpTransferFactory
   {
-#if ENABLE_UQAMP
-    static _internal::Performatives::AmqpTransfer FromUamqp(TRANSFER_HANDLE error);
+#if ENABLE_UAMQP
+    static _internal::Performatives::AmqpTransfer FromImplementation(TRANSFER_HANDLE error);
 #endif
     static AmqpValue ToAmqp(_internal::Performatives::AmqpTransfer const& error);
     AmqpTransferFactory() = delete;

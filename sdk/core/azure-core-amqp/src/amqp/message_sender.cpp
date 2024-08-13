@@ -575,7 +575,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // is destroyed.
       onComplete(
           result,
-          Models::_detail::AmqpValueFactory::FromUamqp(
+          Models::_detail::AmqpValueFactory::FromImplementation(
               Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)}));
     }
   };
@@ -654,11 +654,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
                 ERROR_HANDLE errorHandle;
                 if (!amqpvalue_get_error(
-                        Models::_detail::AmqpValueFactory::ToUamqp(firstState), &errorHandle))
+                        Models::_detail::AmqpValueFactory::ToImplementation(firstState), &errorHandle))
                 {
                   Models::_detail::UniqueAmqpErrorHandle uniqueError{
                       errorHandle}; // This will free the error handle when it goes out of scope.
-                  error = Models::_detail::AmqpErrorFactory::FromUamqp(errorHandle);
+                  error = Models::_detail::AmqpErrorFactory::FromImplementation(errorHandle);
                 }
 #endif
               }

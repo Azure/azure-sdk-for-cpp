@@ -124,7 +124,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
 #if ENABLE_UAMQP
     TARGET_HANDLE targetHandle;
-    if (amqpvalue_get_target(_detail::AmqpValueFactory::ToUamqp(target), &targetHandle))
+    if (amqpvalue_get_target(_detail::AmqpValueFactory::ToImplementation(target), &targetHandle))
     {
       throw std::runtime_error("Could not retrieve target from value.");
     }
@@ -241,7 +241,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
     if (!options.Address.IsNull())
     {
-      if (target_set_address(m_target.get(), _detail::AmqpValueFactory::ToUamqp(options.Address)))
+      if (target_set_address(m_target.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
       {
         throw std::runtime_error("Could not set source address.");
       }
@@ -316,7 +316,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       if (target_set_dynamic_node_properties(
               m_target.get(),
-              _detail::AmqpValueFactory::ToUamqp(options.DynamicNodeProperties.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(options.DynamicNodeProperties.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -326,7 +326,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       if (target_set_capabilities(
               m_target.get(),
-              _detail::AmqpValueFactory::ToUamqp(options.Capabilities.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
@@ -342,7 +342,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     Models::_detail::UniqueAmqpValueHandle targetValue{amqpvalue_create_target(m_target.get())};
-    return _detail::AmqpValueFactory::FromUamqp(targetValue);
+    return _detail::AmqpValueFactory::FromImplementation(targetValue);
 #else
     return {};
 #endif
@@ -358,7 +358,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // target_get_address does not reference the underlying address so we need to addref it here so
     // it gets freed properly.
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
         Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)});
 #else
     return {};
@@ -456,7 +456,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // We clone the value before converting it to a UniqueAmqpValueHandle because the destructor for
     // UniqueAmqpValueHandle will remove the reference.
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
         .AsMap();
 #else
@@ -472,7 +472,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get capabilities.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                _detail::UniqueAmqpValueHandle(amqpvalue_clone(value)))
         .AsArray();
 #else

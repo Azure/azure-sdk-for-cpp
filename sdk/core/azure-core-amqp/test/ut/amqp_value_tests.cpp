@@ -329,7 +329,9 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValue('a'), list2.at(3));
     EXPECT_FALSE(list1 < list2);
   }
-
+}
+TEST_F(TestValues, Described)
+{
   {
     AmqpList test;
     AmqpDescribed desc{

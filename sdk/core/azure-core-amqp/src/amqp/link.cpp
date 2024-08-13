@@ -245,8 +245,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         *session,
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Models::_detail::AmqpValueFactory::ToUamqp(sourceValue),
-        Models::_detail::AmqpValueFactory::ToUamqp(targetValue));
+        Models::_detail::AmqpValueFactory::ToImplementation(sourceValue),
+        Models::_detail::AmqpValueFactory::ToImplementation(targetValue));
 #else
     (void)name;
     (void)role;
@@ -275,8 +275,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         LinkEndpointFactory::Release(linkEndpoint),
         name.c_str(),
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
-        Models::_detail::AmqpValueFactory::ToUamqp(sourceValue),
-        Models::_detail::AmqpValueFactory::ToUamqp(targetValue));
+        Models::_detail::AmqpValueFactory::ToImplementation(sourceValue),
+        Models::_detail::AmqpValueFactory::ToImplementation(targetValue));
 #else
     (void)linkEndpoint;
     (void)name;
@@ -487,7 +487,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void LinkImpl::SetAttachProperties(Models::AmqpValue properties)
   {
 #if ENABLE_UAMQP
-    if (link_set_attach_properties(m_link, Models::_detail::AmqpValueFactory::ToUamqp(properties)))
+    if (link_set_attach_properties(m_link, Models::_detail::AmqpValueFactory::ToImplementation(properties)))
     {
       throw std::runtime_error("Could not set attach properties.");
     }
@@ -511,7 +511,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
 #if ENABLE_UAMQP
     if (link_set_desired_capabilities(
-            m_link, Models::_detail::AmqpValueFactory::ToUamqp(desiredCapabilities)))
+            m_link, Models::_detail::AmqpValueFactory::ToImplementation(desiredCapabilities)))
     {
       throw std::runtime_error("Could not set desired capabilities.");
     }
@@ -528,7 +528,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not convert field to header.");
     }
-    return Models::_detail::AmqpValueFactory::FromUamqp(
+    return Models::_detail::AmqpValueFactory::FromImplementation(
         Models::_detail::UniqueAmqpValueHandle{desiredCapabilitiesVal});
 #else
     return {};
@@ -562,7 +562,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LinkImpl* link = static_cast<LinkImpl*>(context);
     if (link->m_onLinkDetachEvent)
     {
-      link->m_onLinkDetachEvent(Models::_detail::AmqpErrorFactory::FromUamqp(error));
+      link->m_onLinkDetachEvent(Models::_detail::AmqpErrorFactory::FromImplementation(error));
     }
   }
 
@@ -617,9 +617,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (link->m_eventHandler)
     {
 
-      return Models::_detail::AmqpValueFactory::ToUamqp(link->m_eventHandler->OnTransferReceived(
+      return Models::_detail::AmqpValueFactory::ToImplementation(link->m_eventHandler->OnTransferReceived(
           link->shared_from_this(),
-          Models::_detail::AmqpTransferFactory::FromUamqp(transfer),
+          Models::_detail::AmqpTransferFactory::FromImplementation(transfer),
           payload_size,
           payload_bytes));
     }
@@ -677,7 +677,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               close,
               (condition.empty() ? nullptr : condition.c_str()),
               (description.empty() ? nullptr : description.c_str()),
-              Models::_detail::AmqpValueFactory::ToUamqp(info)))
+              Models::_detail::AmqpValueFactory::ToImplementation(info)))
       {
         throw std::runtime_error("Could not set attach properties.");
       }
@@ -728,7 +728,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       onComplete(
           static_cast<uint32_t>(deliveryId),
           result,
-          Models::_detail::AmqpValueFactory::FromUamqp(
+          Models::_detail::AmqpValueFactory::FromImplementation(
               Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)}));
     }
   };

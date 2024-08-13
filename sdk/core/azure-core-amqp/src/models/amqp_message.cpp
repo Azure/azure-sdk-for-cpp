@@ -76,7 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return nullptr;
     }
     auto rv{std::make_shared<AmqpMessage>()};
-    rv->Header = _detail::MessageHeaderFactory::FromUamqp(GetHeaderFromMessage(message));
+    rv->Header = _detail::MessageHeaderFactory::FromImplementation(GetHeaderFromMessage(message));
     rv->Properties
         = _detail::MessagePropertiesFactory::FromUamqp(GetPropertiesFromMessage(message));
 
@@ -87,7 +87,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle deliveryAnnotations(annotationsVal);
         auto deliveryMap
-            = Models::_detail::AmqpValueFactory::FromUamqp(deliveryAnnotations).AsMap();
+            = Models::_detail::AmqpValueFactory::FromImplementation(deliveryAnnotations).AsMap();
         rv->DeliveryAnnotations = deliveryMap;
       }
     }
@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AMQP_VALUE messageAnnotations{};
       if (!message_get_message_annotations(message, &messageAnnotations) && messageAnnotations)
       {
-        rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromUamqp(
+        rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromImplementation(
                                      UniqueAmqpValueHandle{messageAnnotations})
                                      .AsMap();
       }
@@ -148,7 +148,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           {
             throw std::runtime_error("Application Properties must be a map?!");
           }
-          auto appProperties = AmqpMap(_detail::AmqpValueFactory::FromUamqp(
+          auto appProperties = AmqpMap(_detail::AmqpValueFactory::FromImplementation(
               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}));
           for (auto const& val : appProperties)
           {
@@ -167,7 +167,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       if (!message_get_delivery_tag(message, &deliveryTagVal))
       {
         UniqueAmqpValueHandle deliveryTag(deliveryTagVal);
-        rv->DeliveryTag = _detail::AmqpValueFactory::FromUamqp(deliveryTag);
+        rv->DeliveryTag = _detail::AmqpValueFactory::FromImplementation(deliveryTag);
       }
     }
     {
@@ -176,7 +176,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle footerAnnotations(footerVal);
         footerVal = nullptr;
-        auto footerMap = _detail::AmqpValueFactory::FromUamqp(footerAnnotations).AsMap();
+        auto footerMap = _detail::AmqpValueFactory::FromImplementation(footerAnnotations).AsMap();
         rv->Footer = footerMap;
       }
     }
@@ -217,7 +217,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                 AMQP_VALUE sequence;
                 if (!message_get_body_amqp_sequence_in_place(message, i, &sequence))
                 {
-                  rv->m_amqpSequenceBody.push_back(_detail::AmqpValueFactory::FromUamqp(
+                  rv->m_amqpSequenceBody.push_back(_detail::AmqpValueFactory::FromImplementation(
                       _detail::UniqueAmqpValueHandle{amqpvalue_clone(sequence)}));
                 }
               }
@@ -229,7 +229,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             AMQP_VALUE bodyValue;
             if (!message_get_body_amqp_value_in_place(message, &bodyValue))
             {
-              rv->m_amqpValueBody = _detail::AmqpValueFactory::FromUamqp(
+              rv->m_amqpValueBody = _detail::AmqpValueFactory::FromImplementation(
                   _detail::UniqueAmqpValueHandle{amqpvalue_clone(bodyValue)});
             }
             rv->BodyType = MessageBodyType::Value;
@@ -255,7 +255,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not set destination message format.");
     }
 
-    if (message_set_header(rv.get(), _detail::MessageHeaderFactory::ToUamqp(message.Header).get()))
+    if (message_set_header(rv.get(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()))
     {
       throw std::runtime_error("Could not set message header.");
     }
@@ -269,7 +269,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (message_set_delivery_annotations(
               rv.get(),
-              _detail::AmqpValueFactory::ToUamqp(message.DeliveryAnnotations.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set delivery annotations.");
       }
@@ -279,7 +279,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (message_set_message_annotations(
               rv.get(),
-              _detail::AmqpValueFactory::ToUamqp(message.MessageAnnotations.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
@@ -301,7 +301,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         appProperties.emplace(val);
       }
       if (message_set_application_properties(
-              rv.get(), _detail::AmqpValueFactory::ToUamqp(appProperties.AsAmqpValue())))
+              rv.get(), _detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set application properties.");
       }
@@ -310,7 +310,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (!message.DeliveryTag.IsNull())
     {
       if (message_set_delivery_tag(
-              rv.get(), _detail::AmqpValueFactory::ToUamqp(message.DeliveryTag)))
+              rv.get(), _detail::AmqpValueFactory::ToImplementation(message.DeliveryTag)))
       {
         throw std::runtime_error("Could not set delivery tag.");
       }
@@ -319,7 +319,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (!message.Footer.empty())
     {
       if (message_set_footer(
-              rv.get(), _detail::AmqpValueFactory::ToUamqp(message.Footer.AsAmqpValue())))
+              rv.get(), _detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set message annotations.");
       }
@@ -344,7 +344,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         for (auto const& sequenceVal : message.m_amqpSequenceBody)
         {
           if (message_add_body_amqp_sequence(
-                  rv.get(), _detail::AmqpValueFactory::ToUamqp(sequenceVal.AsAmqpValue())))
+                  rv.get(), _detail::AmqpValueFactory::ToImplementation(sequenceVal.AsAmqpValue())))
           {
             throw std::runtime_error("Could not set message body AMQP sequence value.");
           }
@@ -352,7 +352,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         break;
       case MessageBodyType::Value:
         if (message_set_body_amqp_value(
-                rv.get(), _detail::AmqpValueFactory::ToUamqp(message.m_amqpValueBody)))
+                rv.get(), _detail::AmqpValueFactory::ToImplementation(message.m_amqpValueBody)))
         {
           throw std::runtime_error("Could not set message body AMQP value.");
         }
@@ -440,18 +440,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (!message.DeliveryAnnotations.empty())
     {
-      AmqpValue deliveryAnnotations{_detail::AmqpValueFactory::FromUamqp(
+      AmqpValue deliveryAnnotations{_detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_create_delivery_annotations(
-              _detail::AmqpValueFactory::ToUamqp(message.DeliveryAnnotations.AsAmqpValue()))})};
+              _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue()))})};
       auto serializedDeliveryAnnotations = AmqpValue::Serialize(deliveryAnnotations);
       rv.insert(
           rv.end(), serializedDeliveryAnnotations.begin(), serializedDeliveryAnnotations.end());
     }
     if (!message.MessageAnnotations.empty())
     {
-      AmqpValue messageAnnotations{_detail::AmqpValueFactory::FromUamqp(
+      AmqpValue messageAnnotations{_detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_create_message_annotations(
-              _detail::AmqpValueFactory::ToUamqp(message.MessageAnnotations.AsAmqpValue()))})};
+              _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue()))})};
       auto serializedAnnotations = AmqpValue::Serialize(messageAnnotations);
       rv.insert(rv.end(), serializedAnnotations.begin(), serializedAnnotations.end());
     }
@@ -477,9 +477,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         appProperties.emplace(val);
       }
-      AmqpValue propertiesValue{Models::_detail::AmqpValueFactory::FromUamqp(
+      AmqpValue propertiesValue{Models::_detail::AmqpValueFactory::FromImplementation(
           Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_application_properties(
-              Models::_detail::AmqpValueFactory::ToUamqp(appProperties.AsAmqpValue()))})};
+              Models::_detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue()))})};
       auto serializedApplicationProperties = AmqpValue::Serialize(propertiesValue);
       rv.insert(
           rv.end(), serializedApplicationProperties.begin(), serializedApplicationProperties.end());
@@ -521,9 +521,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (!message.Footer.empty())
     {
-      AmqpValue footer{Models::_detail::AmqpValueFactory::FromUamqp(
+      AmqpValue footer{Models::_detail::AmqpValueFactory::FromImplementation(
           Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_footer(
-              Models::_detail::AmqpValueFactory::ToUamqp(message.Footer.AsAmqpValue()))})};
+              Models::_detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue()))})};
       auto serializedFooter = AmqpValue::Serialize(footer);
       rv.insert(rv.end(), serializedFooter.begin(), serializedFooter.end());
     }
@@ -573,7 +573,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         auto deserializer = static_cast<AmqpMessageDeserializer*>(context);
 
-        deserializer->OnAmqpMessageFieldDecoded(Models::_detail::AmqpValueFactory::FromUamqp(
+        deserializer->OnAmqpMessageFieldDecoded(Models::_detail::AmqpValueFactory::FromImplementation(
             _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)}));
       }
 
@@ -687,13 +687,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           case AmqpDescriptors::Header: {
             UniqueMessageHeaderHandle messageHeader;
             HEADER_HANDLE h;
-            if (amqpvalue_get_header(_detail::AmqpValueFactory::ToUamqp(value), &h))
+            if (amqpvalue_get_header(_detail::AmqpValueFactory::ToImplementation(value), &h))
             {
               throw std::runtime_error("Could not convert field to header.");
             }
             messageHeader.reset(h);
             h = nullptr;
-            m_decodedValue.Header = _detail::MessageHeaderFactory::FromUamqp(messageHeader);
+            m_decodedValue.Header = _detail::MessageHeaderFactory::FromImplementation(messageHeader);
             break;
           }
           case AmqpDescriptors::DeliveryAnnotations:
@@ -705,7 +705,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           case AmqpDescriptors::Properties: {
             UniquePropertiesHandle properties;
             PROPERTIES_HANDLE h;
-            if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToUamqp(value), &h))
+            if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &h))
             {
               throw std::runtime_error("Could not convert field to header.");
             }
