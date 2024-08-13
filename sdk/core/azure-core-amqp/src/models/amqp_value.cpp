@@ -233,7 +233,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   } // namespace _detail
 
-    std::ostream& operator<<(std::ostream& os, AmqpValueType value)
+  std::ostream& operator<<(std::ostream& os, AmqpValueType value)
   {
     switch (value)
     {
@@ -317,7 +317,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return os;
   }
 
-
   AmqpValue::~AmqpValue() {}
 
   AmqpValue::AmqpValue(bool bool_value)
@@ -387,9 +386,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
-              static_cast<const unsigned char*>(uuid.AsArray().data())))})}
+      : m_impl
+  {
+    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
+        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP
