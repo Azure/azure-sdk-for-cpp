@@ -277,11 +277,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         rv = receiver->OnMessageReceived(incomingMessage);
       }
-      return amqpvalue_clone(Models::_detail::AmqpValueFactory::ToUamqp(rv));
+      return amqpvalue_clone(Models::_detail::AmqpValueFactory::ToImplementation(rv));
     }
 
     return amqpvalue_clone(
-        Models::_detail::AmqpValueFactory::ToUamqp(Models::_internal::Messaging::DeliveryRejected(
+        Models::_detail::AmqpValueFactory::ToImplementation(Models::_internal::Messaging::DeliveryRejected(
             Models::_internal::AmqpErrorCondition::ConnectionForced.ToString(),
             "Message Receiver is closed.",
             {})));

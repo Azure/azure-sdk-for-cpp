@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
     {
       SOURCE_HANDLE sourceHandle;
-      if (amqpvalue_get_source(_detail::AmqpValueFactory::ToUamqp(source), &sourceHandle))
+      if (amqpvalue_get_source(_detail::AmqpValueFactory::ToImplementation(source), &sourceHandle))
       {
         throw std::runtime_error("Could not retrieve source from value.");
       }
@@ -166,7 +166,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * MessageSource object. */
   MessageSourceImpl::MessageSourceImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_source(sourc_create())
+      : m_source(source_create())
 #endif
   {
 #if ENABLE_UAMQP
@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Address.IsNull())
     {
 #if ENABLE_UAMQP
-      if (source_set_address(m_source.get(), _detail::AmqpValueFactory::ToUamqp(options.Address)))
+      if (source_set_address(m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
       {
         throw std::runtime_error("Could not set source address.");
       }
@@ -349,7 +349,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
       AmqpValue dynamicNodeProperties(options.DynamicNodeProperties.AsAmqpValue());
       if (source_set_dynamic_node_properties(
-              m_source.get(), _detail::AmqpValueFactory::ToUamqp(dynamicNodeProperties)))
+              m_source.get(), _detail::AmqpValueFactory::ToImplementation(dynamicNodeProperties)))
       {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
@@ -368,7 +368,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
 #if ENABLE_UAMQP
       if (source_set_filter(
-              m_source.get(), _detail::AmqpValueFactory::ToUamqp(options.Filter.AsAmqpValue())))
+              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set filter set.");
       }
@@ -378,7 +378,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
 #if ENABLE_UAMQP
       if (source_set_default_outcome(
-              m_source.get(), _detail::AmqpValueFactory::ToUamqp(options.DefaultOutcome)))
+              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.DefaultOutcome)))
       {
         throw std::runtime_error("Could not set default outcome.");
       }
@@ -388,7 +388,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
 #if ENABLE_UAMQP
       if (source_set_outcomes(
-              m_source.get(), _detail::AmqpValueFactory::ToUamqp(options.Outcomes.AsAmqpValue())))
+              m_source.get(), _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set outcomes.");
       }
@@ -399,7 +399,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #if ENABLE_UAMQP
       if (source_set_capabilities(
               m_source.get(),
-              _detail::AmqpValueFactory::ToUamqp(options.Capabilities.AsAmqpValue())))
+              _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue())))
       {
         throw std::runtime_error("Could not set capabilities.");
       }
@@ -412,7 +412,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     Models::_detail::UniqueAmqpValueHandle sourceValue{amqpvalue_create_source(m_source.get())};
-    return _detail::AmqpValueFactory::FromUamqp(sourceValue);
+    return _detail::AmqpValueFactory::FromImplementation(sourceValue);
 #else
     return {};
 #endif
@@ -428,7 +428,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // source_get_address does not reference its value, so we need to reference it before creating
     // an AmqpValueHandle.
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
         Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(address)});
 #else
     return {};
@@ -523,7 +523,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get dynamic.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
         .AsMap();
 #else
@@ -550,7 +550,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get filter set.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
         .AsMap();
 #else
@@ -568,7 +568,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     // source_get_default_outcome does not reference the value returned, we reference it so it can
     // be put into a UniqueAmqpValueHandle.
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
         _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
 #else
     return {};
@@ -583,7 +583,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get outcomes.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
         .AsArray();
 #else
@@ -599,7 +599,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not get capabilities.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(
+    return _detail::AmqpValueFactory::FromImplementation(
                _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
         .AsArray();
 #else
@@ -695,7 +695,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         // source_get_default_outcome does not reference the value returned, we reference it so it
         // can be put into a UniqueAmqpValueHandle.
         os << ", Default Outcome: "
-           << _detail::AmqpValueFactory::FromUamqp(
+           << _detail::AmqpValueFactory::FromImplementation(
                   Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcome)});
       }
     }
@@ -708,7 +708,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         // will leak an AMQPSymbol if the value at location 9 is a symbol (as opposed to being an
         // array).
         os << ", Outcomes: "
-           << _detail::AmqpValueFactory::FromUamqp(
+           << _detail::AmqpValueFactory::FromImplementation(
                   Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcomes)});
       }
     }

@@ -49,8 +49,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   struct MessageHeaderFactory
   {
 #if ENABLE_UAMQP
-    static MessageHeader FromUamqp(_detail::UniqueMessageHeaderHandle const& properties);
-    static _detail::UniqueMessageHeaderHandle ToUamqp(MessageHeader const& properties);
+    static MessageHeader FromImplementation(_detail::UniqueMessageHeaderHandle const& properties);
+    static _detail::UniqueMessageHeaderHandle ToImplementation(MessageHeader const& properties);
 #endif
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

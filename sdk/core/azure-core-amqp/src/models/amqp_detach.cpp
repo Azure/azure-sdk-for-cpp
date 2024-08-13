@@ -57,7 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       {
         UniqueAmqpErrorHandle error{amqpErrorHandle};
         amqpErrorHandle = nullptr;
-        rv.Error = _detail::AmqpErrorFactory::FromUamqp(error.get());
+        rv.Error = _detail::AmqpErrorFactory::FromImplementation(error.get());
       }
     }
     return rv;

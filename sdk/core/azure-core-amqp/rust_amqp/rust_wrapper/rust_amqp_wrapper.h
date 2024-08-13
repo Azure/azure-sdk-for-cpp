@@ -56,6 +56,14 @@ void rust_string_delete(char *rust_string);
 
 AmqpValueType amqpvalue_get_type(const AmqpValue *value);
 
+AmqpValue *amqpvalue_clone(AmqpValue *value);
+
+void amqpvalue_destroy(AmqpValue *value);
+
+bool amqpvalue_are_equal(const AmqpValue *value1, const AmqpValue *value2);
+
+char *amqpvalue_to_string(const AmqpValue *value);
+
 AmqpValue *amqpvalue_create_null();
 
 AmqpValue *amqpvalue_create_boolean(bool bool_value);
@@ -118,13 +126,13 @@ AmqpValue *amqpvalue_create_string(const char *string_value);
 
 int32_t amqpvalue_get_string(const AmqpValue *value, const char **string_value);
 
-AmqpValue *amqpvalue_clone(AmqpValue *value);
+AmqpValue *amqpvalue_create_symbol(const char *symbol_value);
 
-void amqpvalue_destroy(AmqpValue *value);
+int32_t amqpvalue_get_symbol(const AmqpValue *value, const char **symbol_value);
 
-bool amqpvalue_are_equal(const AmqpValue *value1, const AmqpValue *value2);
+AmqpValue *amqpvalue_create_binary(const uint8_t *binary_value, uint32_t size);
 
-char *amqpvalue_to_string(const AmqpValue *value);
+int32_t amqpvalue_get_binary(const AmqpValue *value, const uint8_t **binary_value, uint32_t *size);
 
 AmqpValue *amqpvalue_create_array();
 
@@ -133,6 +141,49 @@ int32_t amqpvalue_add_array_item(AmqpValue *value, AmqpValue *array_item_value);
 AmqpValue *amqpvalue_get_array_item(const AmqpValue *value, uint32_t index);
 
 int32_t amqpvalue_get_array_item_count(const AmqpValue *value, uint32_t *count);
+
+AmqpValue *amqpvalue_create_list();
+
+int32_t amqpvalue_add_list_item(AmqpValue *value, AmqpValue *list_item_value);
+
+AmqpValue *amqpvalue_get_list_item(const AmqpValue *value, uint32_t index);
+
+int32_t amqpvalue_get_list_item_count(const AmqpValue *value, uint32_t *count);
+
+int32_t amqpvalue_set_list_item_count(AmqpValue *value, uint32_t count);
+
+int32_t amqpvalue_set_list_item(AmqpValue *value, uint32_t index, AmqpValue *list_item_value);
+
+AmqpValue *amqpvalue_create_map();
+
+int32_t amqpvalue_add_map_item(AmqpValue *value, AmqpValue *key, AmqpValue *map_item_value);
+
+int32_t amqpvalue_set_map_value(AmqpValue *value, AmqpValue *key, AmqpValue *map_item_value);
+
+AmqpValue *amqpvalue_get_map_item(const AmqpValue *value, AmqpValue *key);
+
+int32_t amqpvalue_get_map_key_value_pair(const AmqpValue *value,
+                                         uint32_t index,
+                                         AmqpValue **key,
+                                         AmqpValue **map_item_value);
+
+int32_t amqpvalue_get_map_pair_count(const AmqpValue *value, uint32_t *count);
+
+AmqpValue *amqpvalue_create_described(const AmqpValue *descriptor, const AmqpValue *value);
+
+int32_t amqpvalue_get_inplace_descriptor(const AmqpValue *value, AmqpValue **descriptor);
+
+int32_t amqpvalue_get_inplace_described_value(const AmqpValue *value, AmqpValue **described_value);
+
+AmqpValue *amqpvalue_create_composite(const AmqpValue *descriptor, uintptr_t size);
+
+int32_t amqpvalue_set_composite_item(AmqpValue *value, uint32_t index, AmqpValue *composite_item);
+
+int32_t amqpvalue_get_composite_item_count(const AmqpValue *value, uint32_t *count);
+
+int32_t amqpvalue_get_composite_item_in_place(const AmqpValue *value,
+                                              uint32_t index,
+                                              AmqpValue **composite_item);
 
 } // extern "C"
 

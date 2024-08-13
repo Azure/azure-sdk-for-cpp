@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery accepted described value.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(rv);
+    return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
     return {};
 #endif
@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery released described value.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(rv);
+    return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
     return {};
 
@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not allocate delivery received described value.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(rv);
+    return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
     (void)sectionNumber;
     (void)sectionOffset;
@@ -65,12 +65,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     _detail::UniqueAmqpValueHandle rv{messaging_delivery_rejected(
         errorCondition.empty() ? nullptr : errorCondition.c_str(),
         errorDescription.empty() ? nullptr : errorDescription.c_str(),
-        _detail::AmqpValueFactory::ToUamqp(errorInfo))};
+        _detail::AmqpValueFactory::ToImplementation(errorInfo))};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery rejected described value.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(rv);
+    return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
     (void)errorCondition;
     (void)errorDescription;
@@ -85,12 +85,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_modified(
-        deliveryFailed, undeliverableHere, _detail::AmqpValueFactory::ToUamqp(annotations))};
+        deliveryFailed, undeliverableHere, _detail::AmqpValueFactory::ToImplementation(annotations))};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery modified described value.");
     }
-    return _detail::AmqpValueFactory::FromUamqp(rv);
+    return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
     (void)deliveryFailed;
     (void)undeliverableHere;

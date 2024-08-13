@@ -3,7 +3,7 @@
 
 #include "azure/core/amqp/internal/connection.hpp"
 
-//#include "../models/private/value_impl.hpp"
+#include "../models/private/value_impl.hpp"
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
@@ -283,7 +283,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (connection_set_properties(
             m_connection.get(),
-            Models::_detail::AmqpValueFactory::ToUamqp(m_options.Properties.AsAmqpValue())))
+            Models::_detail::AmqpValueFactory::ToImplementation(m_options.Properties.AsAmqpValue())))
     {
       throw std::runtime_error("Failed to set connection properties.");
     }
@@ -536,7 +536,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               m_connection.get(),
               (condition.empty() ? nullptr : condition.c_str()),
               (description.empty() ? nullptr : description.c_str()),
-              Models::_detail::AmqpValueFactory::ToUamqp(info)))
+              Models::_detail::AmqpValueFactory::ToImplementation(info)))
       {
         throw std::runtime_error("Could not close connection.");
       }
@@ -595,7 +595,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not get properties.");
     }
-    return Models::_detail::AmqpValueFactory::FromUamqp(
+    return Models::_detail::AmqpValueFactory::FromImplementation(
                Models::_detail::UniqueAmqpValueHandle{value})
         .AsMap();
 #else

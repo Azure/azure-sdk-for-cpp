@@ -43,12 +43,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    */
   struct AmqpErrorFactory
   {
-#if ENABLE_AMQP
+#if ENABLE_UAMQP
 
-    static _internal::AmqpError FromUamqp(ERROR_HANDLE error);
+    static _internal::AmqpError FromImplementation(ERROR_HANDLE error);
 #endif
     static AmqpValue ToAmqp(_internal::AmqpError const& error);
-#if ENABLE_AMQP
+#if ENABLE_UAMQP
     static UniqueAmqpErrorHandle ToAmqpError(_internal::AmqpError const& error);
 #endif
     AmqpErrorFactory() = delete;
