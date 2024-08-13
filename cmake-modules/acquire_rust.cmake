@@ -1,5 +1,7 @@
 # CMake function to download the "rustup-init" script and run it to install Rust
 
+# cspell: words rustup rustc
+
 # This function will download the "rustup-init" script from the Rust website and run it to install Rust.
 function(install_rustup)
 if(WIN32)
