@@ -250,13 +250,14 @@ std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Cre
       credName, clientId, resourceId, options, "IDENTITY_ENDPOINT", "IDENTITY_HEADER", "2019");
 }
 
-// Cloud Shell doesn't support user-assigned managed identities
 std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
-    std::string const&,
+    std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  using Azure::Core::Credentials::AuthenticationException;
+
   constexpr auto EndpointVarName = "MSI_ENDPOINT";
   auto msiEndpoint = Environment::GetVariable(EndpointVarName);
 
@@ -264,6 +265,13 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
 
   if (!msiEndpoint.empty())
   {
+    if (!clientId.empty() || !resourceId.empty())
+    {
+      throw AuthenticationException(
+          "User-assigned managed identities are not supported in Cloud Shell environments. Omit "
+          "the clientId or resourceId when constructing the ManagedIdentityCredential.");
+    }
+
     return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
         clientId, options, ParseEndpointUrl(credName, msiEndpoint, EndpointVarName, CredSource)));
   }
@@ -278,11 +286,6 @@ CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
     Azure::Core::Url endpointUrl)
     : ManagedIdentitySource(clientId, endpointUrl.GetHost(), options), m_url(std::move(endpointUrl))
 {
-  using Azure::Core::Url;
-  if (!clientId.empty())
-  {
-    m_body = std::string("client_id=" + Url::Encode(clientId));
-  }
 }
 
 Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
@@ -312,13 +315,9 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
       if (!scopesStr.empty())
       {
         resource = "resource=" + scopesStr;
-        if (!m_body.empty())
-        {
-          resource += "&";
-        }
       }
 
-      auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
+      auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource);
       request->HttpRequest.SetHeader("Metadata", "true");
 
       return request;
