@@ -36,7 +36,7 @@ impl AmqpList {
         Self(Vec::new())
     }
 
-    pub fn new_with_size(size: usize) -> Self {
+    pub fn with_capacity(size: usize) -> Self {
         Self(Vec::with_capacity(size))
     }
 
@@ -143,7 +143,6 @@ impl AmqpComposite {
         &self.value
     }
 }
-
 
 #[derive(Debug, PartialEq, Clone, Default)]
 pub enum AmqpValue {

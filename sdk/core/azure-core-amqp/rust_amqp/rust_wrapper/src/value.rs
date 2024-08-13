@@ -807,15 +807,15 @@ pub extern "C" fn amqpvalue_create_composite(
     let amqp_value = match &descriptor.inner {
         Value::ULong(v) => Value::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Code(*v),
-            AmqpList::new_with_size(size),
+            AmqpList::with_capacity(size),
         ))),
         Value::Symbol(v) => Value::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Name(v.clone()),
-            AmqpList::new_with_size(size),
+            AmqpList::with_capacity(size),
         ))),
         Value::String(v) => Value::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Name(AmqpSymbol::from(v.clone())),
-            AmqpList::new_with_size(size),
+            AmqpList::with_capacity(size),
         ))),
         _ => Value::Null,
     };
