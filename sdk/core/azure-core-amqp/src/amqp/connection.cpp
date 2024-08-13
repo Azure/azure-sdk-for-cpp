@@ -252,7 +252,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       containerId = Azure::Core::Uuid::CreateUuid().ToString();
     }
     m_containerId = containerId;
-#if ENABLE_AMQP
+#if ENABLE_UAMQP
 
     m_connection.reset(connection_create2(
         *m_transport,
