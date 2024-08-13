@@ -233,6 +233,91 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   } // namespace _detail
 
+    std::ostream& operator<<(std::ostream& os, AmqpValueType value)
+  {
+    switch (value)
+    {
+      case AmqpValueType::Invalid:
+        os << "Invalid";
+        break;
+      case AmqpValueType::Null:
+        os << "Null";
+        break;
+      case AmqpValueType::Bool:
+        os << "Bool";
+        break;
+      case AmqpValueType::Ubyte:
+        os << "Ubyte";
+        break;
+      case AmqpValueType::Ushort:
+        os << "Ushort";
+        break;
+      case AmqpValueType::Uint:
+        os << "Uint";
+        break;
+      case AmqpValueType::Ulong:
+        os << "Ulong";
+        break;
+      case AmqpValueType::Byte:
+        os << "Byte";
+        break;
+      case AmqpValueType::Short:
+        os << "Short";
+        break;
+      case AmqpValueType::Int:
+        os << "Int";
+        break;
+      case AmqpValueType::Long:
+        os << "Long";
+        break;
+      case AmqpValueType::Float:
+        os << "Float";
+        break;
+      case AmqpValueType::Double:
+        os << "Double";
+        break;
+      case AmqpValueType::Char:
+        os << "Char";
+        break;
+      case AmqpValueType::Timestamp:
+        os << "Timestamp";
+        break;
+      case AmqpValueType::Uuid:
+        os << "Uuid";
+        break;
+      case AmqpValueType::Binary:
+        os << "Binary";
+        break;
+      case AmqpValueType::String:
+        os << "String";
+        break;
+      case AmqpValueType::Symbol:
+        os << "Symbol";
+        break;
+      case AmqpValueType::List:
+        os << "List";
+        break;
+      case AmqpValueType::Map:
+        os << "Map";
+        break;
+      case AmqpValueType::Array:
+        os << "Array";
+        break;
+      case AmqpValueType::Described:
+        os << "Described";
+        break;
+      case AmqpValueType::Composite:
+        os << "Composite";
+        break;
+      case AmqpValueType::Unknown:
+        os << "Unknown";
+        break;
+    }
+
+    return os;
+  }
+
+
   AmqpValue::~AmqpValue() {}
 
   AmqpValue::AmqpValue(bool bool_value)
@@ -808,90 +893,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     rust_string_delete(valueAsString);
 #endif
     return os;
-  }
-
-  std::ostream& operator<<(std::ostream& os, AmqpValueType value)
-  {
-    switch (value)
-    {
-      case AmqpValueType::Invalid:
-        os << "Invalid";
-        break;
-      case AmqpValueType::Null:
-        os << "Null";
-        break;
-      case AmqpValueType::Bool:
-        os << "Boolean";
-        break;
-      case AmqpValueType::Ubyte:
-        os << "UByte";
-        break;
-      case AmqpValueType::Ushort:
-        os << "UShort";
-        break;
-      case AmqpValueType::Uint:
-        os << "UInt";
-        break;
-      case AmqpValueType::Ulong:
-        os << "ULong";
-        break;
-      case AmqpValueType::Byte:
-        os << "Byte";
-        break;
-      case AmqpValueType::Short:
-        os << "Short";
-        break;
-      case AmqpValueType::Int:
-        os << "Int";
-        break;
-      case AmqpValueType::Long:
-        os << "Long";
-        break;
-      case AmqpValueType::Float:
-        os << "Float";
-        break;
-      case AmqpValueType::Double:
-        os << "Double";
-        break;
-      case AmqpValueType::Char:
-        os << "Char";
-        break;
-      case AmqpValueType::Timestamp:
-        os << "Timestamp";
-        break;
-      case AmqpValueType::Uuid:
-        os << "Uuid";
-        break;
-      case AmqpValueType::Binary:
-        os << "Binary";
-        break;
-      case AmqpValueType::String:
-        os << "String";
-        break;
-      case AmqpValueType::Symbol:
-        os << "Symbol";
-        break;
-      case AmqpValueType::List:
-        os << "List";
-        break;
-      case AmqpValueType::Map:
-        os << "Map";
-        break;
-      case AmqpValueType::Array:
-        os << "Array";
-        break;
-      case AmqpValueType::Described:
-        os << "Described";
-        break;
-      case AmqpValueType::Composite:
-        os << "Composite";
-        break;
-      case AmqpValueType::Unknown:
-        os << "Unknown";
-        break;
-    }
-    return os;
-    // TODO: insert return statement here
   }
 
   AmqpValue AmqpValue::Deserialize(uint8_t const* data, size_t size)
