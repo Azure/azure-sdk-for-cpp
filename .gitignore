@@ -31,6 +31,7 @@ bld*/
 [Oo]bj/
 [Ll]og/
 [Oo]ut/
+**/target/
 [Tt]emp
 #these are for build from source temp directories 
 [Ss]dk/**/[Ss]dk/
@@ -365,3 +366,5 @@ CMakeUserPresets.json
 **/vendor/**/*.sln
 **/vendor/**/*.csproj
 
+# Generated Rust source file
+**/rust_amqp_wrapper.h
