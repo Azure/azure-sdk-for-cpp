@@ -85,7 +85,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     Models::_detail::UniqueAmqpValueHandle rv{messaging_delivery_modified(
-        deliveryFailed, undeliverableHere, _detail::AmqpValueFactory::ToImplementation(annotations))};
+        deliveryFailed,
+        undeliverableHere,
+        _detail::AmqpValueFactory::ToImplementation(annotations))};
     if (!rv)
     {
       throw std::runtime_error("Could not allocate delivery modified described value.");

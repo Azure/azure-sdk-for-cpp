@@ -283,7 +283,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (connection_set_properties(
             m_connection.get(),
-            Models::_detail::AmqpValueFactory::ToImplementation(m_options.Properties.AsAmqpValue())))
+            Models::_detail::AmqpValueFactory::ToImplementation(
+                m_options.Properties.AsAmqpValue())))
     {
       throw std::runtime_error("Failed to set connection properties.");
     }

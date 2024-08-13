@@ -487,7 +487,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void LinkImpl::SetAttachProperties(Models::AmqpValue properties)
   {
 #if ENABLE_UAMQP
-    if (link_set_attach_properties(m_link, Models::_detail::AmqpValueFactory::ToImplementation(properties)))
+    if (link_set_attach_properties(
+            m_link, Models::_detail::AmqpValueFactory::ToImplementation(properties)))
     {
       throw std::runtime_error("Could not set attach properties.");
     }
@@ -617,11 +618,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (link->m_eventHandler)
     {
 
-      return Models::_detail::AmqpValueFactory::ToImplementation(link->m_eventHandler->OnTransferReceived(
-          link->shared_from_this(),
-          Models::_detail::AmqpTransferFactory::FromImplementation(transfer),
-          payload_size,
-          payload_bytes));
+      return Models::_detail::AmqpValueFactory::ToImplementation(
+          link->m_eventHandler->OnTransferReceived(
+              link->shared_from_this(),
+              Models::_detail::AmqpTransferFactory::FromImplementation(transfer),
+              payload_size,
+              payload_bytes));
     }
     return nullptr;
   }

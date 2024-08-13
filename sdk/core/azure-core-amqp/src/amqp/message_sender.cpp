@@ -654,7 +654,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
                 ERROR_HANDLE errorHandle;
                 if (!amqpvalue_get_error(
-                        Models::_detail::AmqpValueFactory::ToImplementation(firstState), &errorHandle))
+                        Models::_detail::AmqpValueFactory::ToImplementation(firstState),
+                        &errorHandle))
                 {
                   Models::_detail::UniqueAmqpErrorHandle uniqueError{
                       errorHandle}; // This will free the error handle when it goes out of scope.
