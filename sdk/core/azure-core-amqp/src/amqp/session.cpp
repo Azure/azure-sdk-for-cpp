@@ -195,8 +195,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (!m_session)
     {
-	  throw std::runtime_error("Could not create session.");
-	}
+      throw std::runtime_error("Could not create session.");
+    }
 
     if (options.MaximumLinkCount.HasValue())
     {
