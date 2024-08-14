@@ -338,7 +338,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba";
+        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -376,21 +376,21 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
       request0.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba");
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -800,7 +800,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba";
+        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -838,21 +838,21 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
       request0.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba");
+      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -1172,7 +1172,7 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba";
+        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1659,7 +1659,7 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba";
+        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2482,7 +2482,7 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba";
+        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2520,21 +2520,21 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
       request0.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba"
+      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba");
+      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
