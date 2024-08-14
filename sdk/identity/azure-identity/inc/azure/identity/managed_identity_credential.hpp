@@ -43,6 +43,20 @@ namespace Azure { namespace Identity {
   };
 
   /**
+   * @brief Options for managed identity credential.
+   *
+   */
+  struct ManagedIdentityCredentialOptions final : public Core::Credentials::TokenCredentialOptions
+  {
+    /**
+     * @brief The object ID of the service principal used to authenticate a user-assigned managed
+     * identity. This is an alternative to providing a client ID, and isn't required for
+     * system-assigned managed identities.
+     */
+    std::string ObjectId;
+  };
+
+  /**
    * @brief Attempts authentication using a managed identity that has been assigned to the
    * deployment environment. This authentication type works in Azure VMs, App Service and Azure
    * Functions applications, as well as the Azure Cloud Shell. More information about configuring
@@ -70,6 +84,14 @@ namespace Azure { namespace Identity {
         std::string const& clientId = std::string(),
         Azure::Core::Credentials::TokenCredentialOptions const& options
         = Azure::Core::Credentials::TokenCredentialOptions());
+
+    /**
+     * @brief Constructs a Managed Identity Credential.
+     *
+     * @param options Options for token retrieval.
+     */
+    explicit ManagedIdentityCredential(
+        Azure::Identity::ManagedIdentityCredentialOptions const& options);
 
     /**
      * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
