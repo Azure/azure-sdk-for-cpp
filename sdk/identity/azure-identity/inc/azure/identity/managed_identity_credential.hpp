@@ -75,6 +75,9 @@ namespace Azure { namespace Identity {
      * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
      * resource with a user-assigned managed identity.
      *
+     * @remark Client ID and object ID are NOT interchangeable, even though they are both Uuid
+     * values. Make sure to the pass in the correct value to the corresponding constructor.
+     *
      * @param objectId The object ID of the service principal used to authenticate a user-assigned
      * managed identity. This is an alternative to providing a client ID, and isn't required for
      * system-assigned managed identities.
