@@ -56,11 +56,12 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
-    ManagedIdentityCredentialOptions const& options)
+    Azure::Core::Uuid const& objectId,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
   m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, options.ObjectId, {}, options);
+      = CreateManagedIdentitySource(GetCredentialName(), {}, objectId.ToString(), {}, options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

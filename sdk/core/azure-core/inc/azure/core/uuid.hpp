@@ -33,7 +33,13 @@ namespace Azure { namespace Core {
   public:
     /**
      * @brief Gets Uuid as a string.
-     * @details A string is in canonical format (4-2-2-2-6 lowercase hex and dashes only).
+     * @details A string is in canonical format (8-4-4-4-12 lowercase hex and dashes only).
+     */
+    std::string ToString() const;
+
+    /**
+     * @brief Gets Uuid as a string.
+     * @details A string is in canonical format (8-4-4-4-12 lowercase hex and dashes only).
      */
     std::string ToString();
 
@@ -55,5 +61,12 @@ namespace Azure { namespace Core {
      * @details Creates a Uuid from a UUID created in an external scope.
      */
     static Uuid CreateFromArray(std::array<uint8_t, UuidSize> const& uuid);
+
+    /**
+     * @brief Construct a Uuid from an existing UUID represented as a string.
+     * @details Creates a Uuid from a UUID created in an external scope. Only the canonical
+     * 8-4-4-4-12 format is supported.
+     */
+    static Uuid CreateFromString(std::string const& uuid);
   };
 }} // namespace Azure::Core

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/uuid.hpp>
 
 #include <set>
@@ -16,12 +17,78 @@ TEST(Uuid, Basic)
   EXPECT_EQ(uuid.ToString().length(), 36);
 }
 
+TEST(Uuid, CreateFromString)
+{
+  {
+    std::string uuidString = "00000000-0000-0000-0000-000000000000";
+    auto uuid = Uuid::CreateFromString(uuidString);
+    EXPECT_EQ(uuid.ToString(), uuidString);
+  }
+  {
+    std::string uuidString = "fedcba98-7654-3210-0123-456789abcdef";
+    auto uuid = Uuid::CreateFromString(uuidString);
+    EXPECT_EQ(uuid.ToString(), uuidString);
+  }
+  {
+    std::string uuidString = "fedcba98-7654-3210-0123-456789ABCDEF";
+    auto uuid = Uuid::CreateFromString(uuidString);
+    EXPECT_EQ(uuid.ToString(), Azure::Core::_internal::StringExtensions::ToLower(uuidString));
+  }
+}
+
+TEST(Uuid, InvalidString)
+{
+  // Invalid Length
+  EXPECT_THROW(Uuid::CreateFromString({}), std::invalid_argument);
+  EXPECT_THROW(Uuid::CreateFromString("00000000"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98-7654-3210-0123-456789abcdef-"), std::invalid_argument);
+
+  // Non-hex invalid characters
+  EXPECT_THROW(
+      Uuid::CreateFromString("Gedcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98-7654-3210-0123-456789abcdeG"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("@edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("gedcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("`edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString(":edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("/edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+
+  // Invalid form
+  EXPECT_THROW(
+      Uuid::CreateFromString("{fedcba98-7654-3210-0123-456789abcdef}"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98F7654-3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98-7654F3210-0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98-7654-3210F0123-456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98-7654-3210-0123F456789abcdef"), std::invalid_argument);
+  EXPECT_THROW(
+      Uuid::CreateFromString("fedcba98F7654F3210F0123F456789abcdef"), std::invalid_argument);
+}
+
 TEST(Uuid, Transparent)
 {
-  auto uuid1 = Uuid::CreateUuid();
-  auto arrayUuid1(uuid1.AsArray());
-  auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
-  EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+  {
+    auto uuid1 = Uuid::CreateUuid();
+    auto arrayUuid1(uuid1.AsArray());
+    auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
+    EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+  }
+  {
+    auto uuid1 = Uuid::CreateUuid();
+    auto stringUuid1(uuid1.ToString());
+    auto uuid2 = Azure::Core::Uuid::CreateFromString(stringUuid1);
+    EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+  }
 }
 
 TEST(Uuid, Randomness)

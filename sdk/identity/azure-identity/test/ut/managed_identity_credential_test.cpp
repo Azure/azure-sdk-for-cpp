@@ -26,11 +26,11 @@
 #include <windows.h>
 #endif
 
+using Azure::Core::Uuid;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpMethod;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
-using Azure::Identity::ManagedIdentityCredentialOptions;
 using Azure::Identity::ResourceIdentifier;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
@@ -336,9 +336,8 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        ManagedIdentityCredentialOptions options;
+        TokenCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -349,7 +348,9 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(
+            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -798,9 +799,8 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        ManagedIdentityCredentialOptions options;
+        TokenCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -811,7 +811,9 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(
+            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -1049,58 +1051,6 @@ TEST(ManagedIdentityCredential, CloudShell)
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
 
-  // An empty ObjectId provided should behave the same as passing in TokenCredentialOptions, or
-  // calling the default ctor.
-  {
-    auto const actualWithEmptyObjectId = CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          ManagedIdentityCredentialOptions options;
-          options.Transport.Transport = transport;
-          options.ObjectId = "";
-
-          CredentialTestHelper::EnvironmentOverride const env({
-              {"MSI_ENDPOINT", "https://microsoft.com/"},
-              {"MSI_SECRET", ""},
-              {"IDENTITY_ENDPOINT", ""},
-              {"IMDS_ENDPOINT", "https://xbox.com/"},
-              {"IDENTITY_HEADER", "SECRET2"},
-              {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
-          });
-
-          log.clear();
-
-          auto credential = std::make_unique<ManagedIdentityCredential>(options);
-
-          EXPECT_EQ(log.size(), LogMsgVec::size_type(3));
-
-          EXPECT_EQ(log[0].first, Logger::Level::Verbose);
-          EXPECT_EQ(
-              log[0].second,
-              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-              "to be created with App Service 2019 source.");
-
-          EXPECT_EQ(log[1].first, Logger::Level::Verbose);
-          EXPECT_EQ(
-              log[1].second,
-              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-              "to be created with App Service 2017 source.");
-
-          EXPECT_EQ(log[2].first, Logger::Level::Informational);
-          EXPECT_EQ(
-              log[2].second,
-              "Identity: ManagedIdentityCredential will be created with Cloud Shell source.");
-
-          log.clear();
-
-          return credential;
-        },
-        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
-        std::vector<std::string>{
-            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
-            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
-  }
-
   Logger::SetListener(nullptr);
 }
 
@@ -1170,9 +1120,8 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        ManagedIdentityCredentialOptions options;
+        TokenCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1185,8 +1134,10 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
 
         std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
         EXPECT_THROW(
-            cloudShellManagedIdentityCredential
-            = std::make_unique<ManagedIdentityCredential>(options),
+            cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
+                Uuid::CreateFromString(
+                    "abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+                options),
             AuthenticationException);
 
         return cloudShellManagedIdentityCredential;
@@ -1550,72 +1501,6 @@ TEST(ManagedIdentityCredential, AzureArc)
   EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
   EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
 
-  // An empty ObjectId provided should behave the same as passing in TokenCredentialOptions, or
-  // calling the default ctor.
-  {
-    auto const actualWithEmptyObjectId = CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          ManagedIdentityCredentialOptions options;
-          options.Transport.Transport = transport;
-          options.ObjectId = "";
-
-          CredentialTestHelper::EnvironmentOverride const env({
-              {"MSI_ENDPOINT", ""},
-              {"MSI_SECRET", ""},
-              {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
-              {"IMDS_ENDPOINT", "https://xbox.com/"},
-              {"IDENTITY_HEADER", ""},
-              {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
-          });
-
-          log.clear();
-
-          auto credential = std::make_unique<ManagedIdentityCredential>(options);
-
-          EXPECT_EQ(log.size(), LogMsgVec::size_type(4));
-
-          EXPECT_EQ(log[0].first, Logger::Level::Verbose);
-          EXPECT_EQ(
-              log[0].second,
-              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-              "to be created with App Service 2019 source.");
-
-          EXPECT_EQ(log[1].first, Logger::Level::Verbose);
-          EXPECT_EQ(
-              log[1].second,
-              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-              "to be created with App Service 2017 source.");
-
-          EXPECT_EQ(log[2].first, Logger::Level::Verbose);
-          EXPECT_EQ(
-              log[2].second,
-              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-              "to be created with Cloud Shell source.");
-
-          EXPECT_EQ(log[3].first, Logger::Level::Informational);
-          EXPECT_EQ(
-              log[3].second,
-              "Identity: ManagedIdentityCredential will be created with Azure Arc source.");
-
-          log.clear();
-
-          return credential;
-        },
-        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
-        {{HttpStatusCode::Unauthorized,
-          "",
-          {{"WWW-Authenticate", "ABC ABC=" + keyPath + "managed_identity_credential_test1.key"}}},
-         {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
-         {HttpStatusCode::Unauthorized,
-          "",
-          {{"WWW-Authenticate", "XYZ XYZ=" + keyPath + "managed_identity_credential_test2.key"}}},
-         {HttpStatusCode::Ok, "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}", {}},
-         {HttpStatusCode::Unauthorized,
-          "",
-          {{"WWW-Authenticate", "ABC ABC=" + keyPath + "managed_identity_credential_test3.key"}}},
-         {HttpStatusCode::Ok, "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}", {}}});
-  }
-
   Logger::SetListener(nullptr);
 }
 
@@ -1657,9 +1542,8 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        ManagedIdentityCredentialOptions options;
+        TokenCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -1672,8 +1556,10 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
 
         std::unique_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
         EXPECT_THROW(
-            azureArcManagedIdentityCredential
-            = std::make_unique<ManagedIdentityCredential>(options),
+            azureArcManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
+                Uuid::CreateFromString(
+                    "abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+                options),
             AuthenticationException);
 
         return azureArcManagedIdentityCredential;
@@ -2480,9 +2366,8 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        ManagedIdentityCredentialOptions options;
+        TokenCredentialOptions options;
         options.Transport.Transport = transport;
-        options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2493,7 +2378,9 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(options);
+        return std::make_unique<ManagedIdentityCredential>(
+            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
