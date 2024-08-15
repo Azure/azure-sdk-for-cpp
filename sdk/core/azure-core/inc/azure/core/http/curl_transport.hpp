@@ -26,6 +26,32 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     constexpr std::chrono::milliseconds DefaultConnectionTimeout = std::chrono::minutes(5);
+
+    /**
+     * @brief The configuration options for the keep-alive feature.
+     *
+     * @remark The keep-alive feature allows the SDK to reuse the same connection to the service for
+     * multiple requests.
+     */
+    struct KeepAliveOptions
+    {
+      /**
+       * @brief The time in seconds that the host will allow an idle connection to remain open
+       * before it is closed.
+       *
+       * @remark A connection is idle if no data is sent or received by a host. A host
+       * may keep an idle connection open for longer than timeout seconds, but the host should
+       * attempt to retain a connection for at least timeout seconds.
+       *
+       */
+      std::chrono::seconds ConnectionTimeout;
+
+      /**
+       * @brief The maximum number of requests that a host will allow over a single connection.
+       *
+       */
+      std::size_t MaxRequests = (size_t)0;
+    };
   } // namespace _detail
 
   /**
@@ -150,6 +176,15 @@ namespace Azure { namespace Core { namespace Http {
      * handle. It is `true` by default.
      */
     bool HttpKeepAlive = true;
+
+    /**
+     * @brief Options specified in the keep-alive request header
+     *
+     * @remark The keep-alive feature allows the SDK to reuse the same connection to the service for
+     * multiple requests. This field is populated if the Keep-Alive header is present in the
+     * request.
+     */
+    Azure::Nullable<_detail::KeepAliveOptions> KeepAliveOptions;
 
     /**
      * @brief This option determines whether libcurl verifies the authenticity of the peer's
