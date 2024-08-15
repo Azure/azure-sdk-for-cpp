@@ -596,6 +596,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
 
     if (retries == 0)
     {
+      std::cout << std::endl << "retries reached 0";
       EXPECT_TRUE(false);
     }
   }
