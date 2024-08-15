@@ -49,6 +49,76 @@ TEST(ManagedIdentityCredential, GetCredentialName)
   EXPECT_EQ(cred.GetCredentialName(), "ManagedIdentityCredential");
 }
 
+TEST(ManagedIdentityCredential, OptionsValidation)
+{
+  // At most one of the options can be set.
+  {
+    ManagedIdentityCredentialOptions options;
+    auto cred = std::make_unique<ManagedIdentityCredential>(options);
+    EXPECT_EQ(cred->GetCredentialName(), "ManagedIdentityCredential");
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
+    auto cred = std::make_unique<ManagedIdentityCredential>(options);
+    EXPECT_EQ(cred->GetCredentialName(), "ManagedIdentityCredential");
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
+    auto cred = std::make_unique<ManagedIdentityCredential>(options);
+    EXPECT_EQ(cred->GetCredentialName(), "ManagedIdentityCredential");
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+    auto cred = std::make_unique<ManagedIdentityCredential>(options);
+    EXPECT_EQ(cred->GetCredentialName(), "ManagedIdentityCredential");
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
+    options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
+
+    std::unique_ptr<ManagedIdentityCredential const> miCredInvalid;
+    EXPECT_THROW(
+        miCredInvalid = std::make_unique<ManagedIdentityCredential>(options),
+        std::invalid_argument);
+  }
+  // More than one options being set is invalid.
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+    options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
+
+    std::unique_ptr<ManagedIdentityCredential const> miCredInvalid;
+    EXPECT_THROW(
+        miCredInvalid = std::make_unique<ManagedIdentityCredential>(options),
+        std::invalid_argument);
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
+    options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+
+    std::unique_ptr<ManagedIdentityCredential const> miCredInvalid;
+    EXPECT_THROW(
+        miCredInvalid = std::make_unique<ManagedIdentityCredential>(options),
+        std::invalid_argument);
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
+    options.ClientId = "fedcba98-7654-3210-0123-456789abcdef";
+    options.ObjectId = "abcdefgh-2345-6789-9876-5432hgfedcba"; // cspell:disable-line
+
+    std::unique_ptr<ManagedIdentityCredential const> miCredInvalid;
+    EXPECT_THROW(
+        miCredInvalid = std::make_unique<ManagedIdentityCredential>(options),
+        std::invalid_argument);
+  }
+}
+
 TEST(ManagedIdentityCredential, AppServiceV2019)
 {
   using Azure::Core::Diagnostics::Logger;
@@ -246,8 +316,9 @@ TEST(ManagedIdentityCredential, AppServiceV2019ResourceId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -258,8 +329,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ResourceId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -708,8 +778,9 @@ TEST(ManagedIdentityCredential, AppServiceV2017ResourceId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -720,8 +791,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ResourceId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -1140,8 +1210,9 @@ TEST(ManagedIdentityCredential, CloudShellResourceId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1154,8 +1225,8 @@ TEST(ManagedIdentityCredential, CloudShellResourceId)
 
         std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
         EXPECT_THROW(
-            cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
-                ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options),
+            cloudShellManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return cloudShellManagedIdentityCredential;
@@ -1689,8 +1760,9 @@ TEST(ManagedIdentityCredential, AzureArcObjectId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -1703,8 +1775,8 @@ TEST(ManagedIdentityCredential, AzureArcObjectId)
 
         std::unique_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
         EXPECT_THROW(
-            azureArcManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
-                ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options),
+            azureArcManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return azureArcManagedIdentityCredential;
@@ -2390,8 +2462,9 @@ TEST(ManagedIdentityCredential, ImdsResourceId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.ResourceId = ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2402,8 +2475,7 @@ TEST(ManagedIdentityCredential, ImdsResourceId)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{

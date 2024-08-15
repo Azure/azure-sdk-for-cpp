@@ -59,17 +59,30 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     ManagedIdentityCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, options.ObjectId, {}, options);
-}
-
-ManagedIdentityCredential::ManagedIdentityCredential(
-    ResourceIdentifier const& resourceId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : TokenCredential("ManagedIdentityCredential")
-{
-  m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, {}, resourceId.ToString(), options);
+  int numOptionsSet = 0;
+  if (!options.ClientId.empty())
+  {
+    numOptionsSet++;
+  }
+  if (!options.ObjectId.empty())
+  {
+    numOptionsSet++;
+  }
+  if (!options.ResourceId.ToString().empty())
+  {
+    numOptionsSet++;
+  }
+  if (numOptionsSet > 1)
+  {
+    throw std::invalid_argument("Only one of ClientId, ObjectId, or ResourceId can be set in "
+                                "ManagedIdentityCredentialOptions.");
+  }
+  m_managedIdentitySource = CreateManagedIdentitySource(
+      GetCredentialName(),
+      options.ClientId,
+      options.ObjectId,
+      options.ResourceId.ToString(),
+      options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

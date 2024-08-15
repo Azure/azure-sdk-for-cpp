@@ -28,6 +28,11 @@ namespace Azure { namespace Identity {
 
   public:
     /**
+     * @brief Constructs a default resource identifier.
+     *
+     */
+    ResourceIdentifier(){};
+    /**
      * @brief Constructs a resource identifier.
      *
      * @param resourceId The id string to create the ResourceIdentifier from.
@@ -54,6 +59,20 @@ namespace Azure { namespace Identity {
      * system-assigned managed identities.
      */
     std::string ObjectId;
+
+    /**
+     * @brief The resource ID used to authenticate a resource with a user-assigned managed identity.
+     * This is an alternative to providing a client ID, and isn't required for system-assigned
+     * managed identities.
+     */
+    ResourceIdentifier ResourceId;
+
+    /**
+     * @brief The client ID of the service principal used to authenticate a user-assigned managed
+     * identity. This is an alternative to providing an object or resource ID, and isn't required
+     * for system-assigned managed identities.
+     */
+    std::string ClientId;
   };
 
   /**
@@ -92,17 +111,6 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         Azure::Identity::ManagedIdentityCredentialOptions const& options);
-
-    /**
-     * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
-     * resource with a user-assigned managed identity.
-     *
-     * @param resourceId The resource ID to authenticate for a user-assigned managed identity.
-     * @param options Options for token retrieval.
-     */
-    explicit ManagedIdentityCredential(
-        ResourceIdentifier const& resourceId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
