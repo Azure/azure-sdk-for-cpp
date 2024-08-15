@@ -572,7 +572,32 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
     client.PurgeDeletedCertificate(certificateName);
-    std::this_thread::sleep_for(m_defaultWait);
+    TestSleep(m_defaultWait);
+  }
+  {
+    int retries = 15;
+    // before we restore we need to ensure the certificate is purged.
+    // since we have no visibility into the purge status we will just wait and check for a few
+    // seconds
+    while (retries > 0)
+    {
+      try
+      {
+        client.GetDeletedCertificate(certificateName);
+      }
+      catch (Azure::Core::RequestFailedException const&)
+      {
+        std::cout << std::endl << "- Certificate is gone";
+        break;
+      }
+      TestSleep(m_defaultWait);
+      retries--;
+    }
+
+    if (retries == 0)
+    {
+      EXPECT_TRUE(false);
+    }
   }
   {
     auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);
