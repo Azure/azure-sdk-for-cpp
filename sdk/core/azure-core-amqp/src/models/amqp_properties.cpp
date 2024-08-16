@@ -6,10 +6,15 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "private/properties_impl.hpp"
 #include "private/value_impl.hpp"
+
 #if ENABLE_UAMQP
+
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_properties.h>
+
+#elif ENABLE_RUST_AMQP
+using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif // ENABLE_UAMQP
 #include <iomanip>
 #include <iostream>
@@ -18,37 +23,46 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
+
   // @cond
-  void UniqueHandleHelper<PROPERTIES_INSTANCE_TAG>::FreeAmqpProperties(PROPERTIES_HANDLE value)
+  void UniqueHandleHelper<PropertiesImplementation>::FreeAmqpProperties(
+      PropertiesImplementation* value)
   {
     properties_destroy(value);
   }
-// @endcond
-#endif
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-#if ENABLE_UAMQP
   MessageProperties _detail::MessagePropertiesFactory::FromUamqp(
       UniquePropertiesHandle const& properties)
   {
     MessageProperties rv;
-    AMQP_VALUE value;
     // properties_get_message_id returns the value in-place.
+    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
     if (!properties_get_message_id(properties.get(), &value))
     {
+#if ENABLE_UAMQP
       rv.MessageId = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
+#elif ENABLE_RUST_AMQP
+      rv.MessageId
+          = _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{value});
+#endif
     }
-
     if (!properties_get_correlation_id(properties.get(), &value))
     {
+#if ENABLE_UAMQP
       rv.CorrelationId = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
+#elif ENABLE_RUST_AMQP
+      rv.CorrelationId
+          = _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{value});
+#endif
     }
 
     {
+#if ENABLE_UAMQP
       amqp_binary binaryValue;
 
       if (!properties_get_user_id(properties.get(), &binaryValue))
@@ -57,12 +71,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             static_cast<const uint8_t*>(binaryValue.bytes),
             static_cast<const uint8_t*>(binaryValue.bytes) + binaryValue.length);
       }
+#elif ENABLE_RUST_AMQP
+      const uint8_t* user_id;
+      uint32_t length;
+      if (!properties_get_user_id(properties.get(), &user_id, &length))
+      {
+        rv.UserId = std::vector<uint8_t>(user_id, user_id + length);
+      }
+#endif
     }
 
     if (!properties_get_to(properties.get(), &value))
     {
+#if ENABLE_UAMQP
       rv.To = _detail::AmqpValueFactory::FromImplementation(
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
+#elif ENABLE_RUST_AMQP
+      rv.To = _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{value});
+#endif
     }
 
     const char* stringValue;
@@ -82,6 +108,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (!properties_get_content_type(properties.get(), &stringValue))
     {
       rv.ContentType = stringValue;
+#if ENABLE_RUST_AMQP
+      rust_string_delete(stringValue);
+#endif
     }
 
     if (!properties_get_content_encoding(properties.get(), &stringValue))
@@ -89,7 +118,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       rv.ContentEncoding = stringValue;
     }
 
+#if ENABLE_UAMQP
     timestamp timestampValue;
+#else
+    uint64_t timestampValue;
+#endif
+
     if (!properties_get_absolute_expiry_time(properties.get(), &timestampValue))
     {
       std::chrono::milliseconds ms{timestampValue};
@@ -117,6 +151,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     if (!properties_get_reply_to_group_id(properties.get(), &stringValue))
     {
       rv.ReplyToGroupId = stringValue;
+#if ENABLE_RUST_AMQP
+      rust_string_delete(stringValue);
+#endif
     }
     return rv;
   }
@@ -146,6 +183,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.UserId.HasValue())
     {
+#if ENABLE_UAMQP
       amqp_binary value{
           properties.UserId.Value().data(),
           static_cast<uint32_t>(properties.UserId.Value().size())};
@@ -153,6 +191,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         throw std::runtime_error("Could not set user id");
       }
+#elif ENABLE_RUST_AMQP
+      if (properties_set_user_id(
+              returnValue.get(),
+              properties.UserId.Value().data(),
+              static_cast<uint32_t>(properties.UserId.Value().size())))
+      {
+        throw std::runtime_error("Could not set user id");
+      }
+#endif
     }
 
     if (properties.To.HasValue())
@@ -249,7 +296,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     return returnValue;
   }
-#endif // ENABLE_UAMQP
 
   namespace {
 

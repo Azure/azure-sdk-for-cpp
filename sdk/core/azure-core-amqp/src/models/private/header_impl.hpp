@@ -12,6 +12,8 @@
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif
 
 #include <chrono>
@@ -23,21 +25,21 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<std::remove_pointer<HEADER_HANDLE>::type>
-  {
-    static void FreeAmqpHeader(HEADER_HANDLE obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<HEADER_HANDLE>::type, FreeAmqpHeader>;
-  };
+  using HeaderImplementation = std::remove_pointer<HEADER_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using HeaderImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageHeader;
 #endif
+  template <> struct UniqueHandleHelper<HeaderImplementation>
+  {
+    static void FreeAmqpHeader(HeaderImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<HeaderImplementation, FreeAmqpHeader>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueMessageHeaderHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<HEADER_HANDLE>::type>;
-#endif
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::HeaderImplementation>;
 
   /**
    * @brief uAMQP interoperability functions to convert a MessageHeader to a uAMQP HEADER_HANDLE
@@ -48,9 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    */
   struct MessageHeaderFactory
   {
-#if ENABLE_UAMQP
     static MessageHeader FromImplementation(_detail::UniqueMessageHeaderHandle const& properties);
     static _detail::UniqueMessageHeaderHandle ToImplementation(MessageHeader const& properties);
-#endif
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

@@ -8,27 +8,30 @@
 
 #if ENABLE_UAMQP
 #include <azure_uamqp_c/message.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif
 
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<std::remove_pointer<MESSAGE_HANDLE>::type>
-  {
-    static void FreeAmqpMessage(MESSAGE_HANDLE obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<MESSAGE_HANDLE>::type, FreeAmqpMessage>;
-  };
+  using MessageImplementation = std::remove_pointer<MESSAGE_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using MessageImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessage;
 #endif
+
+  template <> struct UniqueHandleHelper<MessageImplementation>
+  {
+    static void FreeAmqpMessage(MessageImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<MessageImplementation, FreeAmqpMessage>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueMessageHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<MESSAGE_HANDLE>::type>;
-#endif
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::MessageImplementation>;
   /**
    * @brief uAMQP interoperability functions to convert a Message to a uAMQP
    * MESSAGE_HANDLE and back.
@@ -40,9 +43,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpMessageFactory() = delete;
 
   public:
-#if ENABLE_UAMQP
-    static std::shared_ptr<AmqpMessage> FromUamqp(MESSAGE_HANDLE message);
+    static std::shared_ptr<AmqpMessage> FromUamqp(Azure::Core::Amqp::_detail::MessageImplementation* message);
     static UniqueMessageHandle ToUamqp(AmqpMessage const& message);
-#endif
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

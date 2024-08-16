@@ -16,7 +16,7 @@ crate-type = ["staticlib"]
 azure_core_amqp = { workspace = true }
 azure_identity = { workspace = true }
 azure_core = { workspace = true }
-uuid = { workspace=true}
+uuid = { workspace = true }
 
 [lints]
 workspace = true
