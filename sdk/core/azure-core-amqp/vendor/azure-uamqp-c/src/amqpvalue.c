@@ -1436,9 +1436,17 @@ int amqpvalue_set_list_item(AMQP_VALUE value, uint32_t index, AMQP_VALUE list_it
                         uint32_t i;
 
                         value_data->value.list_value.items = new_list;
+#if defined(_MSC_VER)
+                        __analysis_assume(value_data->value.list_value.count < index);
+                        __analysis_assume(value_data->value.list_value.count < index);
+                        __analysis_assume((realloc_size / sizeof(AMQP_VALUE)) > index);
+#endif
 
                         for (i = value_data->value.list_value.count; i < index; i++)
                         {
+#if defined(_MSC_VER)
+                          __analysis_assume(i < index);
+#endif
                             new_list[i] = amqpvalue_create_null();
                             if (new_list[i] == NULL)
                             {
