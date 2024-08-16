@@ -12,20 +12,20 @@
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+#elif ENABLE_RUST_AMQP
+using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif
 
 #include <chrono>
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   // @cond
-  void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
+  void UniqueHandleHelper<HeaderImplementation>::FreeAmqpHeader(HeaderImplementation* handle)
   {
     header_destroy(handle);
   }
-// @endcond
-#endif // ENABLE_UAMQP
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
@@ -38,7 +38,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
-#if ENABLE_UAMQP
   MessageHeader _detail::MessageHeaderFactory::FromImplementation(
       _detail::UniqueMessageHeaderHandle const& handle)
   {
@@ -55,11 +54,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       rv.Priority = uint8Value;
     }
 
+#if ENABLE_UAMQP
     milliseconds millisecondsValue;
     if (!header_get_ttl(handle.get(), &millisecondsValue))
     {
       rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
     }
+#else
+    uint64_t millisecondsValue;
+    if (!header_get_ttl(handle.get(), &millisecondsValue))
+    {
+      rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
+    }
+#endif
 
     if (!header_get_first_acquirer(handle.get(), &boolValue))
     {
@@ -94,7 +101,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (header.TimeToLive.HasValue())
     {
+#if ENABLE_UAMQP
       if (header_set_ttl(rv.get(), static_cast<milliseconds>(header.TimeToLive.Value().count())))
+#elif ENABLE_RUST_AMQP
+      if (header_set_ttl(rv.get(), header.TimeToLive.Value().count()))
+#endif
       {
         throw std::runtime_error("Could not set header TTL.");
       }
@@ -117,7 +128,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     return rv;
   }
-#endif
 
   std::ostream& operator<<(std::ostream& os, MessageHeader const& header)
   {

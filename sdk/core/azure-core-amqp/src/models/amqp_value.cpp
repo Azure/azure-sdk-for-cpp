@@ -54,7 +54,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
   namespace _detail {
-    std::ostream& operator<<(std::ostream& os, AmqpValueImplementationType value)
+    std::ostream& operator<<(
+        std::ostream& os,
+        Azure::Core::Amqp::_detail::AmqpValueImplementationType value)
     {
       switch (value)
       {
@@ -135,79 +137,79 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           os << "AMQP_TYPE_UNKNOWN";
           break;
 #elif ENABLE_RUST_AMQP
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueInvalid:
+        case RustAmqpValueType::AmqpValueInvalid:
           os << "AMQP_TYPE_INVALID";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueNull:
+        case RustAmqpValueType::AmqpValueNull:
           os << "AMQP_TYPE_NULL";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueBoolean:
+        case RustAmqpValueType::AmqpValueBoolean:
           os << "AMQP_TYPE_BOOL";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUByte:
+        case RustAmqpValueType::AmqpValueUByte:
           os << "AMQP_TYPE_UBYTE";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUShort:
+        case RustAmqpValueType::AmqpValueUShort:
           os << "AMQP_TYPE_USHORT";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUint:
+        case RustAmqpValueType::AmqpValueUint:
           os << "AMQP_TYPE_UINT";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUlong:
+        case RustAmqpValueType::AmqpValueUlong:
           os << "AMQP_TYPE_ULONG";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueByte:
+        case RustAmqpValueType::AmqpValueByte:
           os << "AMQP_TYPE_BYTE";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueShort:
+        case RustAmqpValueType::AmqpValueShort:
           os << "AMQP_TYPE_SHORT";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueInt:
+        case RustAmqpValueType::AmqpValueInt:
           os << "AMQP_TYPE_INT";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueLong:
+        case RustAmqpValueType::AmqpValueLong:
           os << "AMQP_TYPE_LONG";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueFloat:
+        case RustAmqpValueType::AmqpValueFloat:
           os << "AMQP_TYPE_FLOAT";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueDouble:
+        case RustAmqpValueType::AmqpValueDouble:
           os << "AMQP_TYPE_DOUBLE";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueChar:
+        case RustAmqpValueType::AmqpValueChar:
           os << "AMQP_TYPE_CHAR";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueTimestamp:
+        case RustAmqpValueType::AmqpValueTimestamp:
           os << "AMQP_TYPE_TIMESTAMP";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUuid:
+        case RustAmqpValueType::AmqpValueUuid:
           os << "AMQP_TYPE_UUID";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueBinary:
+        case RustAmqpValueType::AmqpValueBinary:
           os << "AMQP_TYPE_BINARY";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueString:
+        case RustAmqpValueType::AmqpValueString:
           os << "AMQP_TYPE_STRING";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueSymbol:
+        case RustAmqpValueType::AmqpValueSymbol:
           os << "AMQP_TYPE_SYMBOL";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueList:
+        case RustAmqpValueType::AmqpValueList:
           os << "AMQP_TYPE_LIST";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueMap:
+        case RustAmqpValueType::AmqpValueMap:
           os << "AMQP_TYPE_MAP";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueArray:
+        case RustAmqpValueType::AmqpValueArray:
           os << "AMQP_TYPE_ARRAY";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueDescribed:
+        case RustAmqpValueType::AmqpValueDescribed:
           os << "AMQP_TYPE_DESCRIBED";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueComposite:
+        case RustAmqpValueType::AmqpValueComposite:
           os << "AMQP_TYPE_COMPOSITE";
           break;
-        case Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUnknown:
+        case RustAmqpValueType::AmqpValueUnknown:
           os << "AMQP_TYPE_UNKNOWN";
           break;
 #endif
@@ -215,7 +217,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return os;
     }
 
-    std::ostream& operator<<(std::ostream& os, AmqpValueImplementation* const value)
+    std::ostream& operator<<(
+        std::ostream& os,
+        Azure::Core::Amqp::_detail::AmqpValueImplementation* const value)
     {
       if (value != nullptr)
       {
@@ -592,7 +596,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
 #elif ENABLE_RUST_AMQP
     std::string rv = value;
-    rust_string_delete(const_cast<char*>(value));
+    rust_string_delete(value);
     return rv;
 #endif
   }
@@ -758,59 +762,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         {AMQP_TYPE_UNKNOWN, AmqpValueType::Unknown},
     };
 #elif ENABLE_RUST_AMQP
-    const std::map<Azure::Core::Amqp::_detail::RustInterop::AmqpValueType, AmqpValueType>
-        ImplTypeToAmqpTypeMap{
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueInvalid,
-             AmqpValueType::Invalid},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueNull,
-             AmqpValueType::Null},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueBoolean,
-             AmqpValueType::Bool},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUByte,
-             AmqpValueType::Ubyte},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUShort,
-             AmqpValueType::Ushort},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUint,
-             AmqpValueType::Uint},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUlong,
-             AmqpValueType::Ulong},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueByte,
-             AmqpValueType::Byte},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueShort,
-             AmqpValueType::Short},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueInt,
-             AmqpValueType::Int},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueLong,
-             AmqpValueType::Long},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueFloat,
-             AmqpValueType::Float},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueDouble,
-             AmqpValueType::Double},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueChar,
-             AmqpValueType::Char},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueTimestamp,
-             AmqpValueType::Timestamp},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUuid,
-             AmqpValueType::Uuid},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueBinary,
-             AmqpValueType::Binary},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueString,
-             AmqpValueType::String},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueSymbol,
-             AmqpValueType::Symbol},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueList,
-             AmqpValueType::List},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueMap,
-             AmqpValueType::Map},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueArray,
-             AmqpValueType::Array},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueComposite,
-             AmqpValueType::Composite},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueDescribed,
-             AmqpValueType::Described},
-            {Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueUnknown,
-             AmqpValueType::Unknown},
-        };
+    const std::map<RustAmqpValueType, AmqpValueType> ImplTypeToAmqpTypeMap{
+        {RustAmqpValueType::AmqpValueInvalid, AmqpValueType::Invalid},
+        {RustAmqpValueType::AmqpValueNull, AmqpValueType::Null},
+        {RustAmqpValueType::AmqpValueBoolean, AmqpValueType::Bool},
+        {RustAmqpValueType::AmqpValueUByte, AmqpValueType::Ubyte},
+        {RustAmqpValueType::AmqpValueUShort, AmqpValueType::Ushort},
+        {RustAmqpValueType::AmqpValueUint, AmqpValueType::Uint},
+        {RustAmqpValueType::AmqpValueUlong, AmqpValueType::Ulong},
+        {RustAmqpValueType::AmqpValueByte, AmqpValueType::Byte},
+        {RustAmqpValueType::AmqpValueShort, AmqpValueType::Short},
+        {RustAmqpValueType::AmqpValueInt, AmqpValueType::Int},
+        {RustAmqpValueType::AmqpValueLong, AmqpValueType::Long},
+        {RustAmqpValueType::AmqpValueFloat, AmqpValueType::Float},
+        {RustAmqpValueType::AmqpValueDouble, AmqpValueType::Double},
+        {RustAmqpValueType::AmqpValueChar, AmqpValueType::Char},
+        {RustAmqpValueType::AmqpValueTimestamp, AmqpValueType::Timestamp},
+        {RustAmqpValueType::AmqpValueUuid, AmqpValueType::Uuid},
+        {RustAmqpValueType::AmqpValueBinary, AmqpValueType::Binary},
+        {RustAmqpValueType::AmqpValueString, AmqpValueType::String},
+        {RustAmqpValueType::AmqpValueSymbol, AmqpValueType::Symbol},
+        {RustAmqpValueType::AmqpValueList, AmqpValueType::List},
+        {RustAmqpValueType::AmqpValueMap, AmqpValueType::Map},
+        {RustAmqpValueType::AmqpValueArray, AmqpValueType::Array},
+        {RustAmqpValueType::AmqpValueComposite, AmqpValueType::Composite},
+        {RustAmqpValueType::AmqpValueDescribed, AmqpValueType::Described},
+        {RustAmqpValueType::AmqpValueUnknown, AmqpValueType::Unknown},
+    };
 #endif
 
     class AmqpValueDeserializer final {
@@ -947,7 +925,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return AmqpValue(std::make_unique<AmqpValueImpl>(std::move(value)));
   }
 
-  AmqpValueImplementation* _detail::AmqpValueFactory::ToImplementation(AmqpValue const& value)
+  Azure::Core::Amqp::_detail::AmqpValueImplementation* _detail::AmqpValueFactory::ToImplementation(
+      AmqpValue const& value)
   {
     return *value.m_impl;
   }
@@ -1033,7 +1012,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     for (std::uint32_t i = 0; i < mapSize; i += 1)
     {
-      AmqpValueImplementation *key{}, *val{};
+      Azure::Core::Amqp::_detail::AmqpValueImplementation *key{}, *val{};
       amqpvalue_get_map_key_value_pair(
           _detail::AmqpValueFactory::ToImplementation(value), i, &key, &val);
       m_value.emplace(std::make_pair(
@@ -1198,13 +1177,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
 
   namespace {
-    std::chrono::milliseconds GetMillisecondsFromAmqp(AmqpValueImplementation* value)
+    std::chrono::milliseconds GetMillisecondsFromAmqp(
+        Azure::Core::Amqp::_detail::AmqpValueImplementation* value)
     {
 #if ENABLE_UAMQP
       if (amqpvalue_get_type(value) != AMQP_TYPE_TIMESTAMP)
 #elif ENABLE_RUST_AMQP
-      if (amqpvalue_get_type(value)
-          != Azure::Core::Amqp::_detail::RustInterop::AmqpValueType::AmqpValueTimestamp)
+      if (amqpvalue_get_type(value) != RustAmqpValueType::AmqpValueTimestamp)
 #endif
       {
         throw std::runtime_error("Input AMQP value MUST be a timestamp.");
@@ -1248,7 +1227,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(amqpvalue_get_composite_item_in_place(
               _detail::AmqpValueFactory::ToImplementation(value), i))}));
 #elif ENABLE_RUST_AMQP
-      AmqpValueImplementation* item;
+      Azure::Core::Amqp::_detail::AmqpValueImplementation* item;
       if (amqpvalue_get_composite_item_in_place(
               _detail::AmqpValueFactory::ToImplementation(value), i, &item))
       {
@@ -1269,7 +1248,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not read descriptor for composite value.");
     }
 #elif ENABLE_RUST_AMQP
-    AmqpValueImplementation* item;
+    Azure::Core::Amqp::_detail::AmqpValueImplementation* item;
     if (amqpvalue_get_inplace_descriptor(_detail::AmqpValueFactory::ToImplementation(value), &item))
     {
       throw std::runtime_error("Could not get composite descriptor.");
@@ -1340,7 +1319,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
 #elif ENABLE_RUST_AMQP
-    AmqpValueImplementation* item;
+    Azure::Core::Amqp::_detail::AmqpValueImplementation* item;
     if (amqpvalue_get_inplace_descriptor(_detail::AmqpValueFactory::ToImplementation(value), &item))
     {
       throw std::runtime_error("Could not get composite item.");

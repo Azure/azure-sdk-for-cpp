@@ -193,10 +193,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options{options}, m_eventHandler{eventHandler}
 
   {
+#if ENABLE_UAMQP
     if (!m_session)
     {
       throw std::runtime_error("Could not create session.");
     }
+#endif
 
     if (options.MaximumLinkCount.HasValue())
     {

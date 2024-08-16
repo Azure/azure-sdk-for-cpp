@@ -10,27 +10,30 @@
 #include <azure_uamqp_c/amqp_definitions_sequence_no.h>
 
 #include <azure_uamqp_c/amqp_definitions_properties.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif // ENABLE_UAMQP
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<std::remove_pointer<PROPERTIES_HANDLE>::type>
-  {
-    static void FreeAmqpProperties(PROPERTIES_HANDLE obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<PROPERTIES_HANDLE>::type, FreeAmqpProperties>;
-  };
+  using PropertiesImplementation = std::remove_pointer<PROPERTIES_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using PropertiesImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageProperties;
 #endif
+
+  template <> struct UniqueHandleHelper<PropertiesImplementation>
+  {
+    static void FreeAmqpProperties(PropertiesImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<PropertiesImplementation, FreeAmqpProperties>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 
-#if ENABLE_UAMQP
   using UniquePropertiesHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<PROPERTIES_HANDLE>::type>;
-#endif // ENABLE_UAMQP
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::PropertiesImplementation>;
   /**
    * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
    * PROPERTIES_HANDLE and back.
@@ -42,9 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessagePropertiesFactory() = delete;
 
   public:
-#if ENABLE_UAMQP
     static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
     static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
-#endif
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

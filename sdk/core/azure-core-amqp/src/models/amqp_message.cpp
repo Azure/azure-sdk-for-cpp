@@ -17,20 +17,20 @@
 #include <azure_uamqp_c/amqp_definitions_application_properties.h>
 #include <azure_uamqp_c/amqp_definitions_footer.h>
 #include <azure_uamqp_c/message.h>
+#elif ENABLE_RUST_AMQP
+using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif
 
 #include <iostream>
 #include <set>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   // @cond
-  void UniqueHandleHelper<MESSAGE_INSTANCE_TAG>::FreeAmqpMessage(MESSAGE_HANDLE value)
+  void UniqueHandleHelper<MessageImplementation>::FreeAmqpMessage(MessageImplementation* value)
   {
     message_destroy(value);
   }
-// @endcond
-#endif
+  // @endcond
 }}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Amqp::_detail;
@@ -39,37 +39,35 @@ using namespace Azure::Core::Amqp::Models::_detail;
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   namespace {
-#if ENABLE_UAMQP
-    UniqueMessageHeaderHandle GetHeaderFromMessage(MESSAGE_HANDLE message)
+    UniqueMessageHeaderHandle GetHeaderFromMessage(MessageImplementation* message)
     {
       if (message != nullptr)
       {
-        HEADER_HANDLE headerValue;
+        HeaderImplementation* headerValue;
         if (!message_get_header(message, &headerValue))
         {
-          return UniqueHandle<HEADER_INSTANCE_TAG>(headerValue);
+          return UniqueMessageHeaderHandle{headerValue};
         }
       }
       return nullptr;
     }
 
-    UniquePropertiesHandle GetPropertiesFromMessage(MESSAGE_HANDLE const& message)
+    UniquePropertiesHandle GetPropertiesFromMessage(MessageImplementation* message)
     {
       if (message != nullptr)
       {
-        PROPERTIES_HANDLE propertiesValue;
+        PropertiesImplementation* propertiesValue;
         if (!message_get_properties(message, &propertiesValue))
         {
-          return UniqueHandle<PROPERTIES_INSTANCE_TAG>(propertiesValue);
+          return UniquePropertiesHandle{propertiesValue};
         }
       }
       return nullptr;
     }
-#endif // ENABLE_UAMQP
   } // namespace
 
-#if ENABLE_UAMQP
-  std::shared_ptr<AmqpMessage> _detail::AmqpMessageFactory::FromUamqp(MESSAGE_INSTANCE_TAG* message)
+  std::shared_ptr<AmqpMessage> _detail::AmqpMessageFactory::FromUamqp(
+      MessageImplementation* message)
   {
     if (message == nullptr)
     {
@@ -81,7 +79,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         = _detail::MessagePropertiesFactory::FromUamqp(GetPropertiesFromMessage(message));
 
     {
-      delivery_annotations annotationsVal;
+      AmqpValueImplementation* annotationsVal;
       // message_get_delivery_annotations returns a clone of the message annotations.
       if (!message_get_delivery_annotations(message, &annotationsVal) && annotationsVal != nullptr)
       {
@@ -91,9 +89,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         rv->DeliveryAnnotations = deliveryMap;
       }
     }
+#if 0
     {
       // message_get_message_annotations returns a clone of the message annotations.
-      AMQP_VALUE messageAnnotations{};
+      AmqpValueImplementation *messageAnnotations{};
       if (!message_get_message_annotations(message, &messageAnnotations) && messageAnnotations)
       {
         rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromImplementation(
@@ -101,6 +100,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                      .AsMap();
       }
     }
+#endif
+#if ENABLE_UAMQP
     {
       /*
        * The ApplicationProperties field in an AMQP message for uAMQP expects that the map value
@@ -242,6 +243,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
       }
     }
+#endif
     return rv;
   }
 
@@ -249,12 +251,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     UniqueMessageHandle rv(message_create());
 
+#if ENABLE_UAMQP
     // AMQP 1.0 specifies a message format of 0, but EventHubs uses other values.
     if (message_set_message_format(rv.get(), message.MessageFormat))
     {
       throw std::runtime_error("Could not set destination message format.");
     }
-
+#endif
     if (message_set_header(
             rv.get(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()))
     {
@@ -265,7 +268,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not set message properties.");
     }
-
+#if ENABLE_UAMQP
     if (!message.DeliveryAnnotations.empty())
     {
       if (message_set_delivery_annotations(
@@ -364,9 +367,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       default:
         throw std::runtime_error("Unknown message body type.");
     }
+#endif
     return rv;
   }
-#endif
 
   std::vector<AmqpList> const& AmqpMessage::GetBodyAsAmqpList() const
   {

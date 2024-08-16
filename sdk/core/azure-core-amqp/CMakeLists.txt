@@ -193,9 +193,9 @@ target_include_directories(
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
 if(USE_UAMQP)
-  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_UAMQP)
+  add_compile_definitions(ENABLE_UAMQP)
 elseif(USE_RUST_AMQP)
-  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_RUST_AMQP)
+  add_compile_definitions(ENABLE_RUST_AMQP)
 endif()
 
 target_compile_definitions(azure-core-amqp PRIVATE _azure_BUILDING_SDK)

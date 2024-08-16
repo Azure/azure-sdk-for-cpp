@@ -5,26 +5,19 @@
 
 use azure_core_amqp::value::{
     AmqpComposite, AmqpDescribed, AmqpDescriptor, AmqpList, AmqpOrderedMap, AmqpSymbol,
-    AmqpTimestamp, AmqpValue as Value,
+    AmqpTimestamp, AmqpValue,
 };
 
 use std::ffi::{c_char, CString};
 use std::mem;
 use std::ptr::null;
 
-#[no_mangle]
-pub extern "C" fn rust_string_delete(rust_string: *mut c_char) {
-    unsafe {
-        mem::drop(CString::from_raw(rust_string));
-    }
-}
-
-pub struct AmqpValue {
-    inner: Value,
+pub struct RustAmqpValue {
+    pub(crate) inner: AmqpValue,
 }
 
 #[repr(C)]
-pub enum AmqpValueType {
+pub enum RustAmqpValueType {
     AmqpValueInvalid,
     AmqpValueNull,
     AmqpValueBoolean,
@@ -53,59 +46,62 @@ pub enum AmqpValueType {
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_type(value: *const AmqpValue) -> AmqpValueType {
+pub extern "C" fn amqpvalue_get_type(value: *const RustAmqpValue) -> RustAmqpValueType {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Null => AmqpValueType::AmqpValueNull,
-        Value::Boolean(_) => AmqpValueType::AmqpValueBoolean,
-        Value::UByte(_) => AmqpValueType::AmqpValueUByte,
-        Value::UShort(_) => AmqpValueType::AmqpValueUShort,
-        Value::UInt(_) => AmqpValueType::AmqpValueUint,
-        Value::ULong(_) => AmqpValueType::AmqpValueUlong,
-        Value::Byte(_) => AmqpValueType::AmqpValueByte,
-        Value::Short(_) => AmqpValueType::AmqpValueShort,
-        Value::Int(_) => AmqpValueType::AmqpValueInt,
-        Value::Long(_) => AmqpValueType::AmqpValueLong,
-        Value::Float(_) => AmqpValueType::AmqpValueFloat,
-        Value::Double(_) => AmqpValueType::AmqpValueDouble,
-        Value::Char(_) => AmqpValueType::AmqpValueChar,
-        Value::TimeStamp(_) => AmqpValueType::AmqpValueTimestamp,
-        Value::Uuid(_) => AmqpValueType::AmqpValueUuid,
-        Value::Binary(_) => AmqpValueType::AmqpValueBinary,
-        Value::String(_) => AmqpValueType::AmqpValueString,
-        Value::Symbol(_) => AmqpValueType::AmqpValueSymbol,
-        Value::List(_) => AmqpValueType::AmqpValueList,
-        Value::Map(_) => AmqpValueType::AmqpValueMap,
-        Value::Array(_) => AmqpValueType::AmqpValueArray,
-        Value::Described(_) => AmqpValueType::AmqpValueDescribed,
-        Value::Composite(_) => AmqpValueType::AmqpValueComposite,
-        Value::Unknown => AmqpValueType::AmqpValueUnknown,
+        AmqpValue::Null => RustAmqpValueType::AmqpValueNull,
+        AmqpValue::Boolean(_) => RustAmqpValueType::AmqpValueBoolean,
+        AmqpValue::UByte(_) => RustAmqpValueType::AmqpValueUByte,
+        AmqpValue::UShort(_) => RustAmqpValueType::AmqpValueUShort,
+        AmqpValue::UInt(_) => RustAmqpValueType::AmqpValueUint,
+        AmqpValue::ULong(_) => RustAmqpValueType::AmqpValueUlong,
+        AmqpValue::Byte(_) => RustAmqpValueType::AmqpValueByte,
+        AmqpValue::Short(_) => RustAmqpValueType::AmqpValueShort,
+        AmqpValue::Int(_) => RustAmqpValueType::AmqpValueInt,
+        AmqpValue::Long(_) => RustAmqpValueType::AmqpValueLong,
+        AmqpValue::Float(_) => RustAmqpValueType::AmqpValueFloat,
+        AmqpValue::Double(_) => RustAmqpValueType::AmqpValueDouble,
+        AmqpValue::Char(_) => RustAmqpValueType::AmqpValueChar,
+        AmqpValue::TimeStamp(_) => RustAmqpValueType::AmqpValueTimestamp,
+        AmqpValue::Uuid(_) => RustAmqpValueType::AmqpValueUuid,
+        AmqpValue::Binary(_) => RustAmqpValueType::AmqpValueBinary,
+        AmqpValue::String(_) => RustAmqpValueType::AmqpValueString,
+        AmqpValue::Symbol(_) => RustAmqpValueType::AmqpValueSymbol,
+        AmqpValue::List(_) => RustAmqpValueType::AmqpValueList,
+        AmqpValue::Map(_) => RustAmqpValueType::AmqpValueMap,
+        AmqpValue::Array(_) => RustAmqpValueType::AmqpValueArray,
+        AmqpValue::Described(_) => RustAmqpValueType::AmqpValueDescribed,
+        AmqpValue::Composite(_) => RustAmqpValueType::AmqpValueComposite,
+        AmqpValue::Unknown => RustAmqpValueType::AmqpValueUnknown,
     }
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_clone(value: *mut AmqpValue) -> *mut AmqpValue {
+pub extern "C" fn amqpvalue_clone(value: *mut RustAmqpValue) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
-    let amqp_value = AmqpValue {
+    let amqp_value = RustAmqpValue {
         inner: value.inner.clone(),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn amqpvalue_destroy(value: *mut AmqpValue) {
+pub unsafe extern "C" fn amqpvalue_destroy(value: *mut RustAmqpValue) {
     mem::drop(Box::from(value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_are_equal(value1: *const AmqpValue, value2: *const AmqpValue) -> bool {
+pub extern "C" fn amqpvalue_are_equal(
+    value1: *const RustAmqpValue,
+    value2: *const RustAmqpValue,
+) -> bool {
     let value1 = unsafe { &*value1 };
     let value2 = unsafe { &*value2 };
     value1.inner == value2.inner
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_to_string(value: *const AmqpValue) -> *mut c_char {
+pub extern "C" fn amqpvalue_to_string(value: *const RustAmqpValue) -> *mut c_char {
     let value = unsafe { &*value };
     let s = format!("{:?}", value.inner);
     let c_str = CString::new(s).unwrap();
@@ -113,24 +109,26 @@ pub extern "C" fn amqpvalue_to_string(value: *const AmqpValue) -> *mut c_char {
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_null() -> *mut AmqpValue {
-    let amqp_value = AmqpValue { inner: Value::Null };
-    Box::into_raw(Box::new(amqp_value))
-}
-
-#[no_mangle]
-pub extern "C" fn amqpvalue_create_boolean(bool_value: bool) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Boolean(bool_value),
+pub extern "C" fn amqpvalue_create_null() -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Null,
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_boolean(value: *const AmqpValue, bool_value: *mut bool) -> i32 {
+pub extern "C" fn amqpvalue_create_boolean(bool_value: bool) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Boolean(bool_value),
+    };
+    Box::into_raw(Box::new(amqp_value))
+}
+
+#[no_mangle]
+pub extern "C" fn amqpvalue_get_boolean(value: *const RustAmqpValue, bool_value: *mut bool) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Boolean(b) => {
+        AmqpValue::Boolean(b) => {
             unsafe { *bool_value = b };
             0
         }
@@ -139,18 +137,18 @@ pub extern "C" fn amqpvalue_get_boolean(value: *const AmqpValue, bool_value: *mu
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_ubyte(ubyte_value: u8) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::UByte(ubyte_value),
+pub extern "C" fn amqpvalue_create_ubyte(ubyte_value: u8) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::UByte(ubyte_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_ubyte(value: *const AmqpValue, ubyte_value: *mut u8) -> i32 {
+pub extern "C" fn amqpvalue_get_ubyte(value: *const RustAmqpValue, ubyte_value: *mut u8) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::UByte(b) => {
+        AmqpValue::UByte(b) => {
             unsafe { *ubyte_value = b };
             0
         }
@@ -159,18 +157,18 @@ pub extern "C" fn amqpvalue_get_ubyte(value: *const AmqpValue, ubyte_value: *mut
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_byte(byte_value: i8) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Byte(byte_value),
+pub extern "C" fn amqpvalue_create_byte(byte_value: i8) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Byte(byte_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_byte(value: *const AmqpValue, byte_value: *mut i8) -> i32 {
+pub extern "C" fn amqpvalue_get_byte(value: *const RustAmqpValue, byte_value: *mut i8) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Byte(b) => {
+        AmqpValue::Byte(b) => {
             unsafe { *byte_value = b };
             0
         }
@@ -179,18 +177,18 @@ pub extern "C" fn amqpvalue_get_byte(value: *const AmqpValue, byte_value: *mut i
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_ushort(ushort_value: u16) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::UShort(ushort_value),
+pub extern "C" fn amqpvalue_create_ushort(ushort_value: u16) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::UShort(ushort_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_ushort(value: *const AmqpValue, ushort_value: *mut u16) -> i32 {
+pub extern "C" fn amqpvalue_get_ushort(value: *const RustAmqpValue, ushort_value: *mut u16) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::UShort(b) => {
+        AmqpValue::UShort(b) => {
             unsafe { *ushort_value = b };
             0
         }
@@ -199,18 +197,18 @@ pub extern "C" fn amqpvalue_get_ushort(value: *const AmqpValue, ushort_value: *m
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_short(short_value: i16) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Short(short_value),
+pub extern "C" fn amqpvalue_create_short(short_value: i16) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Short(short_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_short(value: *const AmqpValue, short_value: *mut i16) -> i32 {
+pub extern "C" fn amqpvalue_get_short(value: *const RustAmqpValue, short_value: *mut i16) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Short(b) => {
+        AmqpValue::Short(b) => {
             unsafe { *short_value = b };
             0
         }
@@ -219,18 +217,18 @@ pub extern "C" fn amqpvalue_get_short(value: *const AmqpValue, short_value: *mut
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_uint(uint_value: u32) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::UInt(uint_value),
+extern "C" fn amqpvalue_create_uint(uint_value: u32) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::UInt(uint_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_uint(value: *const AmqpValue, uint_value: *mut u32) -> i32 {
+extern "C" fn amqpvalue_get_uint(value: *const RustAmqpValue, uint_value: *mut u32) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::UInt(b) => {
+        AmqpValue::UInt(b) => {
             unsafe { *uint_value = b };
             0
         }
@@ -239,18 +237,18 @@ extern "C" fn amqpvalue_get_uint(value: *const AmqpValue, uint_value: *mut u32) 
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_int(int_value: i32) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Int(int_value),
+extern "C" fn amqpvalue_create_int(int_value: i32) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Int(int_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_int(value: *const AmqpValue, int_value: *mut i32) -> i32 {
+extern "C" fn amqpvalue_get_int(value: *const RustAmqpValue, int_value: *mut i32) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Int(b) => {
+        AmqpValue::Int(b) => {
             unsafe { *int_value = b };
             0
         }
@@ -259,18 +257,18 @@ extern "C" fn amqpvalue_get_int(value: *const AmqpValue, int_value: *mut i32) ->
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_ulong(ulong_value: u64) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::ULong(ulong_value),
+extern "C" fn amqpvalue_create_ulong(ulong_value: u64) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::ULong(ulong_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_ulong(value: *const AmqpValue, ulong_value: *mut u64) -> i32 {
+extern "C" fn amqpvalue_get_ulong(value: *const RustAmqpValue, ulong_value: *mut u64) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::ULong(b) => {
+        AmqpValue::ULong(b) => {
             unsafe { *ulong_value = b };
             0
         }
@@ -279,18 +277,18 @@ extern "C" fn amqpvalue_get_ulong(value: *const AmqpValue, ulong_value: *mut u64
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_long(long_value: i64) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Long(long_value),
+extern "C" fn amqpvalue_create_long(long_value: i64) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Long(long_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_long(value: *const AmqpValue, long_value: *mut i64) -> i32 {
+extern "C" fn amqpvalue_get_long(value: *const RustAmqpValue, long_value: *mut i64) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Long(b) => {
+        AmqpValue::Long(b) => {
             unsafe { *long_value = b };
             0
         }
@@ -299,18 +297,18 @@ extern "C" fn amqpvalue_get_long(value: *const AmqpValue, long_value: *mut i64) 
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_float(float_value: f32) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Float(float_value),
+extern "C" fn amqpvalue_create_float(float_value: f32) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Float(float_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_float(value: *const AmqpValue, float_value: *mut f32) -> i32 {
+extern "C" fn amqpvalue_get_float(value: *const RustAmqpValue, float_value: *mut f32) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Float(b) => {
+        AmqpValue::Float(b) => {
             unsafe { *float_value = b };
             0
         }
@@ -319,18 +317,18 @@ extern "C" fn amqpvalue_get_float(value: *const AmqpValue, float_value: *mut f32
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_double(double_value: f64) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Double(double_value),
+extern "C" fn amqpvalue_create_double(double_value: f64) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Double(double_value),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_double(value: *const AmqpValue, double_value: *mut f64) -> i32 {
+extern "C" fn amqpvalue_get_double(value: *const RustAmqpValue, double_value: *mut f64) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Double(b) => {
+        AmqpValue::Double(b) => {
             unsafe { *double_value = b };
             0
         }
@@ -339,18 +337,18 @@ extern "C" fn amqpvalue_get_double(value: *const AmqpValue, double_value: *mut f
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_char(char_value: u32) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Char(char::from_u32(char_value).unwrap()),
+extern "C" fn amqpvalue_create_char(char_value: u32) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Char(char::from_u32(char_value).unwrap()),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_char(value: *const AmqpValue, char_value: *mut u32) -> i32 {
+extern "C" fn amqpvalue_get_char(value: *const RustAmqpValue, char_value: *mut u32) -> i32 {
     let value = unsafe { &*value };
     match value.inner {
-        Value::Char(b) => {
+        AmqpValue::Char(b) => {
             unsafe { *char_value = b as u32 };
             0
         }
@@ -359,9 +357,9 @@ extern "C" fn amqpvalue_get_char(value: *const AmqpValue, char_value: *mut u32) 
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_timestamp(timestamp_value: u64) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::TimeStamp(AmqpTimestamp(
+extern "C" fn amqpvalue_create_timestamp(timestamp_value: u64) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::TimeStamp(AmqpTimestamp(
             std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp_value),
         )),
     };
@@ -369,10 +367,13 @@ extern "C" fn amqpvalue_create_timestamp(timestamp_value: u64) -> *mut AmqpValue
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_timestamp(value: *const AmqpValue, timestamp_value: *mut i64) -> i32 {
+extern "C" fn amqpvalue_get_timestamp(
+    value: *const RustAmqpValue,
+    timestamp_value: *mut i64,
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::TimeStamp(v) => {
+        AmqpValue::TimeStamp(v) => {
             unsafe {
                 *timestamp_value =
                     v.0.duration_since(std::time::SystemTime::UNIX_EPOCH)
@@ -386,18 +387,18 @@ extern "C" fn amqpvalue_get_timestamp(value: *const AmqpValue, timestamp_value: 
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_uuid(uuid_value: *const [u8; 16]) -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: unsafe { Value::Uuid(uuid::Uuid::from_bytes(*uuid_value)) },
+extern "C" fn amqpvalue_create_uuid(uuid_value: *const [u8; 16]) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: unsafe { AmqpValue::Uuid(uuid::Uuid::from_bytes(*uuid_value)) },
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_uuid(value: *const AmqpValue, uuid_value: *mut [u8; 16]) -> i32 {
+extern "C" fn amqpvalue_get_uuid(value: *const RustAmqpValue, uuid_value: *mut [u8; 16]) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Uuid(b) => {
+        AmqpValue::Uuid(b) => {
             unsafe { (*uuid_value).copy_from_slice(b.as_bytes()) };
             0
         }
@@ -406,22 +407,22 @@ extern "C" fn amqpvalue_get_uuid(value: *const AmqpValue, uuid_value: *mut [u8; 
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_string(string_value: *const c_char) -> *mut AmqpValue {
+extern "C" fn amqpvalue_create_string(string_value: *const c_char) -> *mut RustAmqpValue {
     let string_value = unsafe { std::ffi::CStr::from_ptr(string_value).to_str().unwrap() };
-    let amqp_value = AmqpValue {
-        inner: Value::String(string_value.to_string()),
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::String(string_value.to_string()),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 extern "C" fn amqpvalue_get_string(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::String(b) => {
+        AmqpValue::String(b) => {
             unsafe { *string_value = std::ffi::CString::new(b.clone()).unwrap().into_raw() };
             0
         }
@@ -430,22 +431,22 @@ extern "C" fn amqpvalue_get_string(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_symbol(symbol_value: *const c_char) -> *mut AmqpValue {
+extern "C" fn amqpvalue_create_symbol(symbol_value: *const c_char) -> *mut RustAmqpValue {
     let symbol_value = unsafe { std::ffi::CStr::from_ptr(symbol_value).to_str().unwrap() };
-    let amqp_value = AmqpValue {
-        inner: Value::Symbol(AmqpSymbol::from(symbol_value.to_string())),
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Symbol(AmqpSymbol::from(symbol_value.to_string())),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 extern "C" fn amqpvalue_get_symbol(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     symbol_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Symbol(b) => {
+        AmqpValue::Symbol(b) => {
             unsafe { *symbol_value = std::ffi::CString::new(b.0.clone()).unwrap().into_raw() };
             0
         }
@@ -454,13 +455,16 @@ extern "C" fn amqpvalue_get_symbol(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_binary(binary_value: *const u8, size: u32) -> *mut AmqpValue {
-    let mut amqp_value = AmqpValue {
-        inner: Value::Binary(Vec::new()),
+pub extern "C" fn amqpvalue_create_binary(
+    binary_value: *const u8,
+    size: u32,
+) -> *mut RustAmqpValue {
+    let mut amqp_value = RustAmqpValue {
+        inner: AmqpValue::Binary(Vec::new()),
     };
     for i in 0..size {
         match &mut amqp_value.inner {
-            Value::Binary(v) => {
+            AmqpValue::Binary(v) => {
                 v.push(unsafe { *binary_value.wrapping_add(i as usize) });
             }
             _ => {}
@@ -471,13 +475,13 @@ pub extern "C" fn amqpvalue_create_binary(binary_value: *const u8, size: u32) ->
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_binary(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     binary_value: *mut *const u8,
     size: *mut u32,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Binary(b) => {
+        AmqpValue::Binary(b) => {
             if b.len() != 0 {
                 unsafe {
                     *binary_value = b.as_ptr();
@@ -496,22 +500,22 @@ pub extern "C" fn amqpvalue_get_binary(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_array() -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Array(Vec::new()),
+pub extern "C" fn amqpvalue_create_array() -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Array(Vec::new()),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_add_array_item(
-    value: *mut AmqpValue,
-    array_item_value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
+    array_item_value: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let array_item_value = unsafe { &*array_item_value };
     match &mut value.inner {
-        Value::Array(v) => {
+        AmqpValue::Array(v) => {
             v.push(array_item_value.inner.clone());
             0
         }
@@ -520,11 +524,14 @@ pub extern "C" fn amqpvalue_add_array_item(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_array_item(value: *const AmqpValue, index: u32) -> *mut AmqpValue {
+pub extern "C" fn amqpvalue_get_array_item(
+    value: *const RustAmqpValue,
+    index: u32,
+) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Array(v) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Array(v) => {
+            let amqp_value = RustAmqpValue {
                 inner: v[index as usize].clone(),
             };
             Box::into_raw(Box::new(amqp_value))
@@ -534,10 +541,13 @@ pub extern "C" fn amqpvalue_get_array_item(value: *const AmqpValue, index: u32) 
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_array_item_count(value: *const AmqpValue, count: *mut u32) -> i32 {
+pub extern "C" fn amqpvalue_get_array_item_count(
+    value: *const RustAmqpValue,
+    count: *mut u32,
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Array(v) => unsafe {
+        AmqpValue::Array(v) => unsafe {
             *count = v.len() as u32;
             0
         },
@@ -546,22 +556,22 @@ pub extern "C" fn amqpvalue_get_array_item_count(value: *const AmqpValue, count:
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_list() -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::List(AmqpList::new()),
+pub extern "C" fn amqpvalue_create_list() -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::List(AmqpList::new()),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_add_list_item(
-    value: *mut AmqpValue,
-    list_item_value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
+    list_item_value: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let list_item_value = unsafe { &*list_item_value };
     match &mut value.inner {
-        Value::List(v) => {
+        AmqpValue::List(v) => {
             v.push(list_item_value.inner.clone());
             0
         }
@@ -570,11 +580,14 @@ pub extern "C" fn amqpvalue_add_list_item(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_list_item(value: *const AmqpValue, index: u32) -> *mut AmqpValue {
+pub extern "C" fn amqpvalue_get_list_item(
+    value: *const RustAmqpValue,
+    index: u32,
+) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::List(v) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::List(v) => {
+            let amqp_value = RustAmqpValue {
                 inner: v.0[index as usize].clone(),
             };
             Box::into_raw(Box::new(amqp_value))
@@ -584,10 +597,13 @@ pub extern "C" fn amqpvalue_get_list_item(value: *const AmqpValue, index: u32) -
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_list_item_count(value: *const AmqpValue, count: *mut u32) -> i32 {
+pub extern "C" fn amqpvalue_get_list_item_count(
+    value: *const RustAmqpValue,
+    count: *mut u32,
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::List(v) => unsafe {
+        AmqpValue::List(v) => unsafe {
             *count = v.0.len() as u32;
             0
         },
@@ -596,11 +612,11 @@ pub extern "C" fn amqpvalue_get_list_item_count(value: *const AmqpValue, count: 
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_set_list_item_count(value: *mut AmqpValue, count: u32) -> i32 {
+pub extern "C" fn amqpvalue_set_list_item_count(value: *mut RustAmqpValue, count: u32) -> i32 {
     let value = unsafe { &mut *value };
     match &mut value.inner {
-        Value::List(v) => {
-            v.0.resize(count as usize, Value::Null);
+        AmqpValue::List(v) => {
+            v.0.resize(count as usize, AmqpValue::Null);
             0
         }
         _ => -1,
@@ -609,14 +625,14 @@ pub extern "C" fn amqpvalue_set_list_item_count(value: *mut AmqpValue, count: u3
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_set_list_item(
-    value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
     index: u32,
-    list_item_value: *mut AmqpValue,
+    list_item_value: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let list_item_value = unsafe { &*list_item_value };
     match &mut value.inner {
-        Value::List(v) => {
+        AmqpValue::List(v) => {
             v.0[index as usize] = list_item_value.inner.clone();
             0
         }
@@ -625,24 +641,24 @@ pub extern "C" fn amqpvalue_set_list_item(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_create_map() -> *mut AmqpValue {
-    let amqp_value = AmqpValue {
-        inner: Value::Map(AmqpOrderedMap::new()),
+pub extern "C" fn amqpvalue_create_map() -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Map(AmqpOrderedMap::new()),
     };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_add_map_item(
-    value: *mut AmqpValue,
-    key: *mut AmqpValue,
-    map_item_value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
+    key: *mut RustAmqpValue,
+    map_item_value: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let key = unsafe { &*key };
     let map_item_value = unsafe { &*map_item_value };
     match &mut value.inner {
-        Value::Map(v) => {
+        AmqpValue::Map(v) => {
             v.insert(key.inner.clone(), map_item_value.inner.clone());
             0
         }
@@ -652,15 +668,15 @@ pub extern "C" fn amqpvalue_add_map_item(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_set_map_value(
-    value: *mut AmqpValue,
-    key: *mut AmqpValue,
-    map_item_value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
+    key: *mut RustAmqpValue,
+    map_item_value: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let key = unsafe { &*key };
     let map_item_value = unsafe { &*map_item_value };
     match &mut value.inner {
-        Value::Map(v) => {
+        AmqpValue::Map(v) => {
             v.insert(key.inner.clone(), map_item_value.inner.clone());
             0
         }
@@ -670,14 +686,14 @@ pub extern "C" fn amqpvalue_set_map_value(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_map_item(
-    value: *const AmqpValue,
-    key: *mut AmqpValue,
-) -> *mut AmqpValue {
+    value: *const RustAmqpValue,
+    key: *mut RustAmqpValue,
+) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
     let key = unsafe { &*key };
     match &value.inner {
-        Value::Map(v) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Map(v) => {
+            let amqp_value = RustAmqpValue {
                 inner: v.get(key.inner.clone()).unwrap().clone(),
             };
             Box::into_raw(Box::new(amqp_value))
@@ -688,17 +704,17 @@ pub extern "C" fn amqpvalue_get_map_item(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_map_key_value_pair(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     index: u32,
-    key: *mut *mut AmqpValue,
-    map_item_value: *mut *mut AmqpValue,
+    key: *mut *mut RustAmqpValue,
+    map_item_value: *mut *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Map(v) => {
+        AmqpValue::Map(v) => {
             let (k, m) = v.iter().nth(index as usize).unwrap();
-            let amqp_key = AmqpValue { inner: k.clone() };
-            let amqp_map_item = AmqpValue { inner: m.clone() };
+            let amqp_key = RustAmqpValue { inner: k.clone() };
+            let amqp_map_item = RustAmqpValue { inner: m.clone() };
             unsafe {
                 *key = Box::into_raw(Box::new(amqp_key));
                 *map_item_value = Box::into_raw(Box::new(amqp_map_item));
@@ -710,10 +726,13 @@ pub extern "C" fn amqpvalue_get_map_key_value_pair(
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_get_map_pair_count(value: *const AmqpValue, count: *mut u32) -> i32 {
+pub extern "C" fn amqpvalue_get_map_pair_count(
+    value: *const RustAmqpValue,
+    count: *mut u32,
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Map(v) => unsafe {
+        AmqpValue::Map(v) => unsafe {
             *count = v.len() as u32;
             0
         },
@@ -723,38 +742,38 @@ pub extern "C" fn amqpvalue_get_map_pair_count(value: *const AmqpValue, count: *
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_create_described(
-    descriptor: *const AmqpValue,
-    value: *const AmqpValue,
-) -> *mut AmqpValue {
+    descriptor: *const RustAmqpValue,
+    value: *const RustAmqpValue,
+) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
     let descriptor = unsafe { &*descriptor };
     let amqp_value = match &descriptor.inner {
-        Value::ULong(v) => Value::Described(Box::new(AmqpDescribed::new(
+        AmqpValue::ULong(v) => AmqpValue::Described(Box::new(AmqpDescribed::new(
             AmqpDescriptor::Code(*v),
             value.inner.clone(),
         ))),
-        Value::Symbol(v) => Value::Described(Box::new(AmqpDescribed::new(
+        AmqpValue::Symbol(v) => AmqpValue::Described(Box::new(AmqpDescribed::new(
             AmqpDescriptor::Name(v.clone()),
             value.inner.clone(),
         ))),
-        _ => Value::Null,
+        _ => AmqpValue::Null,
     };
-    let amqp_value = AmqpValue { inner: amqp_value };
+    let amqp_value = RustAmqpValue { inner: amqp_value };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_inplace_descriptor(
-    value: *const AmqpValue,
-    descriptor: *mut *mut AmqpValue,
+    value: *const RustAmqpValue,
+    descriptor: *mut *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Described(d) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Described(d) => {
+            let amqp_value = RustAmqpValue {
                 inner: match d.descriptor() {
-                    AmqpDescriptor::Code(v) => Value::ULong(*v),
-                    AmqpDescriptor::Name(v) => Value::Symbol(v.clone()),
+                    AmqpDescriptor::Code(v) => AmqpValue::ULong(*v),
+                    AmqpDescriptor::Name(v) => AmqpValue::Symbol(v.clone()),
                 },
             };
             unsafe {
@@ -762,11 +781,11 @@ pub extern "C" fn amqpvalue_get_inplace_descriptor(
             }
             0
         }
-        Value::Composite(c) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Composite(c) => {
+            let amqp_value = RustAmqpValue {
                 inner: match c.descriptor() {
-                    AmqpDescriptor::Code(v) => Value::ULong(*v),
-                    AmqpDescriptor::Name(v) => Value::Symbol(v.clone()),
+                    AmqpDescriptor::Code(v) => AmqpValue::ULong(*v),
+                    AmqpDescriptor::Name(v) => AmqpValue::Symbol(v.clone()),
                 },
             };
             unsafe {
@@ -780,13 +799,13 @@ pub extern "C" fn amqpvalue_get_inplace_descriptor(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_inplace_described_value(
-    value: *const AmqpValue,
-    described_value: *mut *mut AmqpValue,
+    value: *const RustAmqpValue,
+    described_value: *mut *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Described(d) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Described(d) => {
+            let amqp_value = RustAmqpValue {
                 inner: d.value().clone(),
             };
             unsafe {
@@ -800,40 +819,40 @@ pub extern "C" fn amqpvalue_get_inplace_described_value(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_create_composite(
-    descriptor: *const AmqpValue,
+    descriptor: *const RustAmqpValue,
     size: usize,
-) -> *mut AmqpValue {
+) -> *mut RustAmqpValue {
     let descriptor = unsafe { &*descriptor };
     let amqp_value = match &descriptor.inner {
-        Value::ULong(v) => Value::Composite(Box::new(AmqpComposite::new(
+        AmqpValue::ULong(v) => AmqpValue::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Code(*v),
             AmqpList::with_capacity(size),
         ))),
-        Value::Symbol(v) => Value::Composite(Box::new(AmqpComposite::new(
+        AmqpValue::Symbol(v) => AmqpValue::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Name(v.clone()),
             AmqpList::with_capacity(size),
         ))),
-        Value::String(v) => Value::Composite(Box::new(AmqpComposite::new(
+        AmqpValue::String(v) => AmqpValue::Composite(Box::new(AmqpComposite::new(
             AmqpDescriptor::Name(AmqpSymbol::from(v.clone())),
             AmqpList::with_capacity(size),
         ))),
-        _ => Value::Null,
+        _ => AmqpValue::Null,
     };
-    let amqp_value = AmqpValue { inner: amqp_value };
+    let amqp_value = RustAmqpValue { inner: amqp_value };
     Box::into_raw(Box::new(amqp_value))
 }
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_set_composite_item(
-    value: *mut AmqpValue,
+    value: *mut RustAmqpValue,
     index: u32,
-    composite_item: *mut AmqpValue,
+    composite_item: *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &mut *value };
     let composite_item = unsafe { &*composite_item };
 
     if match &value.inner {
-        Value::Composite(v) => v.value().0.capacity(),
+        AmqpValue::Composite(v) => v.value().0.capacity(),
         _ => return -1,
     } <= index as usize
     {
@@ -841,13 +860,13 @@ pub extern "C" fn amqpvalue_set_composite_item(
     }
 
     match &mut value.inner {
-        Value::Composite(v) =>  { v.value.0.resize((index + 1) as usize, Value::Null)}
+        AmqpValue::Composite(v) => v.value.0.resize((index + 1) as usize, AmqpValue::Null),
         _ => return -1,
     };
 
     match &mut value.inner {
-        Value::Composite(v) => {
-            v.value.0[index as usize]=composite_item.inner.clone();
+        AmqpValue::Composite(v) => {
+            v.value.0[index as usize] = composite_item.inner.clone();
             0
         }
         _ => -1,
@@ -856,12 +875,12 @@ pub extern "C" fn amqpvalue_set_composite_item(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_composite_item_count(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     count: *mut u32,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Composite(v) => unsafe {
+        AmqpValue::Composite(v) => unsafe {
             *count = v.value().len() as u32;
             0
         },
@@ -871,14 +890,14 @@ pub extern "C" fn amqpvalue_get_composite_item_count(
 
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_composite_item_in_place(
-    value: *const AmqpValue,
+    value: *const RustAmqpValue,
     index: u32,
-    composite_item: *mut *mut AmqpValue,
+    composite_item: *mut *mut RustAmqpValue,
 ) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
-        Value::Composite(v) => {
-            let amqp_value = AmqpValue {
+        AmqpValue::Composite(v) => {
+            let amqp_value = RustAmqpValue {
                 inner: v.value().0[index as usize].clone(),
             };
             unsafe {

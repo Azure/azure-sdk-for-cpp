@@ -188,6 +188,26 @@ impl AmqpMessageHeader {
     pub fn delivery_count(&self) -> Option<&u32> {
         self.delivery_count.as_ref()
     }
+
+    pub fn set_durable(&mut self, durable: bool) {
+        self.durable = Some(durable);
+    }
+
+    pub fn set_priority(&mut self, priority: u8) {
+        self.priority = Some(priority);
+    }
+
+    pub fn set_time_to_live(&mut self, time_to_live: std::time::Duration) {
+        self.time_to_live = Some(time_to_live);
+    }
+
+    pub fn set_first_acquirer(&mut self, first_acquirer: bool) {
+        self.first_acquirer = Some(first_acquirer);
+    }
+
+    pub fn set_delivery_count(&mut self, delivery_count: u32) {
+        self.delivery_count = Some(delivery_count);
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Default)]
@@ -266,6 +286,54 @@ impl AmqpMessageProperties {
 
     pub fn set_message_id(&mut self, message_id: impl Into<AmqpMessageId>) {
         self.message_id = Some(message_id.into());
+    }
+
+    pub fn set_correlation_id(&mut self, correlation_id: impl Into<AmqpMessageId>) {
+        self.correlation_id = Some(correlation_id.into());
+    }
+
+    pub fn set_user_id(&mut self, user_id: Vec<u8>) {
+        self.user_id = Some(user_id);
+    }
+
+    pub fn set_to(&mut self, to: String) {
+        self.to = Some(to);
+    }
+
+    pub fn set_subject(&mut self, subject: String) {
+        self.subject = Some(subject);
+    }
+
+    pub fn set_reply_to(&mut self, reply_to: String) {
+        self.reply_to = Some(reply_to);
+    }
+
+    pub fn set_content_type(&mut self, content_type: AmqpSymbol) {
+        self.content_type = Some(content_type);
+    }
+
+    pub fn set_content_encoding(&mut self, content_encoding: AmqpSymbol) {
+        self.content_encoding = Some(content_encoding);
+    }
+
+    pub fn set_absolute_expiry_time(&mut self, absolute_expiry_time: AmqpTimestamp) {
+        self.absolute_expiry_time = Some(absolute_expiry_time);
+    }
+
+    pub fn set_creation_time(&mut self, creation_time: AmqpTimestamp) {
+        self.creation_time = Some(creation_time);
+    }
+
+    pub fn set_group_id(&mut self, group_id: String) {
+        self.group_id = Some(group_id);
+    }
+
+    pub fn set_group_sequence(&mut self, group_sequence: u32) {
+        self.group_sequence = Some(group_sequence);
+    }
+
+    pub fn set_reply_to_group_id(&mut self, reply_to_group_id: String) {
+        self.reply_to_group_id = Some(reply_to_group_id);
     }
 }
 
@@ -427,6 +495,10 @@ impl AmqpMessage {
 
     pub fn footer(&self) -> Option<&AmqpAnnotations> {
         self.footer.as_ref()
+    }
+
+    pub fn set_header(&mut self, header: AmqpMessageHeader) {
+        self.header = Some(header);
     }
 
     pub fn set_properties(&mut self, properties: AmqpMessageProperties) {
