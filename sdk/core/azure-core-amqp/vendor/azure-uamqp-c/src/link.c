@@ -16,8 +16,10 @@
 #include "azure_uamqp_c/amqp_definitions.h"
 #include "azure_uamqp_c/amqp_frame_codec.h"
 #include "azure_uamqp_c/async_operation.h"
+#include "azure_c_shared_utility/safe_math.h"
 
 #define DEFAULT_LINK_CREDIT 10000
+#define RECEIVER_MIN_LINK_CREDIT 1
 
 typedef struct DELIVERY_INSTANCE_TAG
 {
@@ -57,7 +59,7 @@ typedef struct LINK_INSTANCE_TAG
     sequence_no initial_delivery_count;
     uint64_t max_message_size;
     uint64_t peer_max_message_size;
-    int32_t current_link_credit;
+    uint32_t current_link_credit;
     uint32_t max_link_credit;
     uint32_t available;
     fields attach_properties;
@@ -390,7 +392,7 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
     }
     else if (is_flow_type_by_descriptor(descriptor))
     {
-        FLOW_HANDLE flow_handle;
+        FLOW_HANDLE flow_handle=NULL;
         if (amqpvalue_get_flow(performative, &flow_handle) != 0)
         {
             LogError("Cannot get flow performative");
@@ -423,9 +425,8 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     }
                 }
             }
+            flow_destroy(flow_handle);
         }
-
-        flow_destroy(flow_handle);
     }
     else if (is_transfer_type_by_descriptor(descriptor))
     {
@@ -441,6 +442,12 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                 AMQP_VALUE delivery_state;
                 bool more;
                 bool is_error;
+
+                if (link_instance->current_link_credit <= RECEIVER_MIN_LINK_CREDIT)
+                {
+                    link_instance->current_link_credit = link_instance->max_link_credit;
+                    send_flow(link_instance);
+                }
 
                 more = false;
                 /* Attempt to get more flag, default to false */
@@ -462,10 +469,13 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     /* If this is a continuation transfer or if this is the first chunk of a multi frame transfer */
                     if ((link_instance->received_payload_size > 0) || more)
                     {
-                        unsigned char* new_received_payload = (unsigned char*)realloc(link_instance->received_payload, (size_t)link_instance->received_payload_size + payload_size);
-                        if (new_received_payload == NULL)
+                        unsigned char* new_received_payload;;
+                      
+                        size_t realloc_size = safe_add_size_t((size_t)link_instance->received_payload_size, payload_size);
+                        if (realloc_size == SIZE_MAX ||
+                            (new_received_payload = (unsigned char*)realloc(link_instance->received_payload, realloc_size)) == NULL)
                         {
-                            LogError("Could not allocate memory for the received payload");
+                            LogError("Could not allocate memory for the received payload, size:%zu", realloc_size);
                         }
                         else
                         {
@@ -1640,26 +1650,24 @@ ASYNC_OPERATION_HANDLE link_transfer_async(LINK_HANDLE link, message_format mess
                                         default:
                                         case SESSION_SEND_TRANSFER_ERROR:
                                             LogError("Failed session send transfer");
-                                            if (singlylinkedlist_remove(link->pending_deliveries, delivery_instance_list_item) != 0)
+                                            if (singlylinkedlist_remove(link->pending_deliveries, delivery_instance_list_item) == 0)
                                             {
-                                                LogError("Error removing pending delivery from the list");
+                                                async_operation_destroy(result);
                                             }
 
                                             *link_transfer_error = LINK_TRANSFER_ERROR;
-                                            async_operation_destroy(result);
                                             result = NULL;
                                             break;
 
                                         case SESSION_SEND_TRANSFER_BUSY:
                                             /* Ensure we remove from list again since sender will attempt to transfer again on flow on */
                                             LogError("Failed session send transfer");
-                                            if (singlylinkedlist_remove(link->pending_deliveries, delivery_instance_list_item) != 0)
+                                            if (singlylinkedlist_remove(link->pending_deliveries, delivery_instance_list_item) == 0)
                                             {
-                                                LogError("Error removing pending delivery from the list");
+                                                async_operation_destroy(result);
                                             }
 
                                             *link_transfer_error = LINK_TRANSFER_BUSY;
-                                            async_operation_destroy(result);
                                             result = NULL;
                                             break;
 
