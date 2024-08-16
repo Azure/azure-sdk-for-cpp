@@ -1076,6 +1076,8 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
           realloc_size = safe_multiply_size_t(sizeof(BODY_AMQP_DATA), realloc_size);
 #if defined(_MSC_VER)
           __analysis_assume(realloc_size == (message->body_amqp_data_count+1) * sizeof(BODY_AMQP_DATA));
+          __analysis_assume(realloc_size / sizeof(BODY_AMQP_DATA) > message->body_amqp_data_count);
+          __analysis_assume(message->body_amqp_data_count < realloc_size / sizeof(BODY_AMQP_DATA));
 #endif
 
 
@@ -1112,7 +1114,8 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
               }
               else
               {
-                message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes = (unsigned char*)malloc(amqp_data.length);
+                message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes
+                    = (unsigned char*)malloc(amqp_data.length);
                 if (message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes == NULL)
                 {
                   /* Codes_SRS_MESSAGE_01_153: [ If allocating memory to store the added AMQP data
@@ -1328,6 +1331,7 @@ int message_add_body_amqp_sequence(MESSAGE_HANDLE message, AMQP_VALUE sequence_l
           realloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), realloc_size);
 #if defined(_MSC_VER)
           __analysis_assume(realloc_size == (message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
+          __analysis_assume(message->body_amqp_sequence_count < realloc_size / sizeof(AMQP_VALUE));
 #endif
 
           if (realloc_size == SIZE_MAX)
