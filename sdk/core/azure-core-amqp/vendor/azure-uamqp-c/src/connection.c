@@ -2218,6 +2218,9 @@ ENDPOINT_HANDLE connection_create_endpoint(CONNECTION_HANDLE connection)
                      * the endpoints list, so that it can be tracked.] */
                     size_t realloc_size = safe_add_size_t((size_t)connection->endpoint_count, 1);
                     realloc_size = safe_multiply_size_t(realloc_size, sizeof(ENDPOINT_HANDLE));
+#if defined(_MSC_VER)
+                    __analysis_assume(realloc_size == ((size_t)connection->endpoint_count+1) * sizeof(ENDPOINT_HANDLE));
+#endif
                     if (realloc_size == SIZE_MAX
                         || (new_endpoints = (ENDPOINT_HANDLE*)realloc(connection->endpoints, realloc_size)) == NULL)
                     {
