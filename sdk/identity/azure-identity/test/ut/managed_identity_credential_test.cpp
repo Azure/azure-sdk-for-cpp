@@ -349,7 +349,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
         });
 
         return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
             options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
@@ -377,21 +377,21 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
       request0.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "https://visualstudio.com"
       "?api-version=2019-08-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -812,7 +812,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
         });
 
         return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
             options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
@@ -840,21 +840,21 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
       request0.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "https://microsoft.com"
       "?api-version=2017-09-01"
-      "&principal_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
+      "&principal_id=abcdef01-2345-6789-0876-543210fedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
@@ -1136,7 +1136,7 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
         EXPECT_THROW(
             cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
                 Uuid::CreateFromString(
-                    "abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+                    "abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
                 options),
             AuthenticationException);
 
@@ -1558,7 +1558,7 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
         EXPECT_THROW(
             azureArcManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
                 Uuid::CreateFromString(
-                    "abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+                    "abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
                 options),
             AuthenticationException);
 
@@ -2379,7 +2379,7 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
         });
 
         return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdefgh-2345-6789-9876-5432hgfedcba"), // cspell:disable-line
+            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
             options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
@@ -2407,21 +2407,21 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
       request0.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&object_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request1.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba" // cspell:disable-line
+      "&object_id=abcdef01-2345-6789-0876-543210fedcba" // cspell:disable-line
       "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
   EXPECT_EQ(
       request2.AbsoluteUrl,
       "http://169.254.169.254/metadata/identity/oauth2/token"
       "?api-version=2018-02-01"
-      "&object_id=abcdefgh-2345-6789-9876-5432hgfedcba"); // cspell:disable-line
+      "&object_id=abcdef01-2345-6789-0876-543210fedcba"); // cspell:disable-line
 
   EXPECT_TRUE(request0.Body.empty());
   EXPECT_TRUE(request1.Body.empty());
