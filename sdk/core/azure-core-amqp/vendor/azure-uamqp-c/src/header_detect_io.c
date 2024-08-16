@@ -10,6 +10,7 @@
 #include "azure_c_shared_utility/singlylinkedlist.h"
 #include "azure_uamqp_c/header_detect_io.h"
 #include "azure_uamqp_c/server_protocol_io.h"
+#include "azure_c_shared_utility/safe_math.h"
 
 static const unsigned char amqp_header_bytes[] = { 'A', 'M', 'Q', 'P', 0, 1, 0, 0 };
 static const unsigned char sasl_amqp_header_bytes[] = { 'A', 'M', 'Q', 'P', 3, 1, 0, 0 };
@@ -529,9 +530,11 @@ static CONCRETE_IO_HANDLE header_detect_io_create(void* io_create_parameters)
                 else
                 {
                     /* Codes_SRS_HEADER_DETECT_IO_01_009: [ The `header_detect_entries` array shall be copied so that it can be later used when detecting which header was received. ]*/
-                    result->header_detect_entries = (INTERNAL_HEADER_DETECT_ENTRY*)calloc(1, (header_detect_io_config->header_detect_entry_count * sizeof(INTERNAL_HEADER_DETECT_ENTRY)));
-                    if (result->header_detect_entries == NULL)
+                    size_t calloc_size = safe_multiply_size_t(header_detect_io_config->header_detect_entry_count, sizeof(INTERNAL_HEADER_DETECT_ENTRY));
+                    if (calloc_size == SIZE_MAX ||
+                        (result->header_detect_entries = (INTERNAL_HEADER_DETECT_ENTRY*)calloc(1, calloc_size)) == NULL)
                     {
+                        LogError("Could not allocate header_detect_entries, size:%zu", calloc_size);
                         free(result);
                         result = NULL;
                     }
