@@ -1420,7 +1420,7 @@ int amqpvalue_set_list_item(AMQP_VALUE value, uint32_t index, AMQP_VALUE list_it
                     size_t realloc_size = safe_add_size_t((size_t)index, 1);
                     realloc_size = safe_multiply_size_t(realloc_size, sizeof(AMQP_VALUE));
 #if defined(_MSC_VER)
-                    __analysis_assume(realloc_size == ((size_t) index + 1) * sizeof(AMQP_VALUE));
+                    __Analysis_assume(realloc_size == ((size_t) index + 1) * sizeof(AMQP_VALUE));
 #endif
 
                     if (realloc_size == SIZE_MAX ||
