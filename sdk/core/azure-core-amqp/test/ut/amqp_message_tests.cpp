@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// #include "../src/models/private/message_impl.hpp"
 #include "../src/models/private/message_impl.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 

@@ -7,7 +7,11 @@
 #include "azure/core/amqp/models/amqp_message.hpp"
 
 #if ENABLE_UAMQP
-#include <azure_uamqp_c/message.h>
+extern "C"
+{
+  typedef struct MESSAGE_INSTANCE_TAG* MESSAGE_HANDLE;
+}
+//#include <azure_uamqp_c/message.h>
 #elif ENABLE_RUST_AMQP
 #include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif
