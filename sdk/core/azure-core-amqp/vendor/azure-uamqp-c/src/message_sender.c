@@ -1079,7 +1079,7 @@ ASYNC_OPERATION_HANDLE messagesender_send_async(MESSAGE_SENDER_HANDLE message_se
                 size_t realloc_size = safe_add_size_t(message_sender->message_count, 1);
                 realloc_size = safe_multiply_size_t(realloc_size, sizeof(ASYNC_OPERATION_HANDLE));
 #if defined(_MSC_VER)
-                __Analysis_assume(realloc_size == (message_sender->message_count+1)* sizeof(ASYNC_OPERATION_HANDLE));
+                __analysis_assume(realloc_size == (message_sender->message_count+1)* sizeof(ASYNC_OPERATION_HANDLE));
 #endif
 
                 if (realloc_size == SIZE_MAX ||

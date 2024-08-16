@@ -248,7 +248,7 @@ MESSAGE_HANDLE message_clone(MESSAGE_HANDLE source_message)
             {
               size_t calloc_size = safe_multiply_size_t(source_message->body_amqp_data_count, sizeof(BODY_AMQP_DATA));
 #if defined(_MSC_VER)
-              __Analysis_assume(calloc_size == source_message->body_amqp_data_count*sizeof(BODY_AMQP_DATA));
+              __analysis_assume(calloc_size == (source_message->body_amqp_data_count+1)*sizeof(BODY_AMQP_DATA));
 #endif
 
               if (calloc_size == SIZE_MAX)
@@ -288,7 +288,7 @@ MESSAGE_HANDLE message_clone(MESSAGE_HANDLE source_message)
                     }
                     else
                     {
-                      (void)memcpy(result->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_bytes, result->body_amqp_data_items[i].body_data_section_length);
+                      (void)memcpy(result->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_length);
                     }
                   }
 
@@ -308,7 +308,7 @@ MESSAGE_HANDLE message_clone(MESSAGE_HANDLE source_message)
             {
               size_t calloc_size = safe_multiply_size_t(source_message->body_amqp_sequence_count, sizeof(AMQP_VALUE));
 #if defined(_MSC_VER)
-              __Analysis_assume(calloc_size == source_message->body_amqp_sequence_count * sizeof(AMQP_VALUE));
+              __analysis_assume(calloc_size == (source_message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
 #endif
 
               if (calloc_size == SIZE_MAX)
@@ -1075,7 +1075,7 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
           size_t realloc_size = safe_add_size_t(message->body_amqp_data_count, 1);
           realloc_size = safe_multiply_size_t(sizeof(BODY_AMQP_DATA), realloc_size);
 #if defined(_MSC_VER)
-          __Analysis_assume(realloc_size == (message->body_amqp_data_count+1) * sizeof(BODY_AMQP_DATA));
+          __analysis_assume(realloc_size == (message->body_amqp_data_count+1) * sizeof(BODY_AMQP_DATA));
 #endif
 
 
@@ -1327,7 +1327,7 @@ int message_add_body_amqp_sequence(MESSAGE_HANDLE message, AMQP_VALUE sequence_l
           size_t realloc_size = safe_add_size_t(message->body_amqp_sequence_count, 1);
           realloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), realloc_size);
 #if defined(_MSC_VER)
-          __Analysis_assume(realloc_size == (message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
+          __analysis_assume(realloc_size == (message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
 #endif
 
           if (realloc_size == SIZE_MAX)
