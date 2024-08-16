@@ -46,13 +46,15 @@ TEST(Uuid, InvalidString)
 
   // Non-hex invalid characters
   EXPECT_THROW(
-      Uuid::CreateFromString("Gedcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+      Uuid::CreateFromString("Gedcba98-7654-3210-0123-456789abcdef"), // cspell:disable-line
+      std::invalid_argument);
   EXPECT_THROW(
       Uuid::CreateFromString("fedcba98-7654-3210-0123-456789abcdeG"), std::invalid_argument);
   EXPECT_THROW(
       Uuid::CreateFromString("@edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
   EXPECT_THROW(
-      Uuid::CreateFromString("gedcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
+      Uuid::CreateFromString("gedcba98-7654-3210-0123-456789abcdef"), // cspell:disable-line
+      std::invalid_argument);
   EXPECT_THROW(
       Uuid::CreateFromString("`edcba98-7654-3210-0123-456789abcdef"), std::invalid_argument);
   EXPECT_THROW(

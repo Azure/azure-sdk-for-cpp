@@ -38,12 +38,6 @@ namespace Azure { namespace Core {
     std::string ToString() const;
 
     /**
-     * @brief Gets Uuid as a string.
-     * @details A string is in canonical format (8-4-4-4-12 lowercase hex and dashes only).
-     */
-    std::string ToString();
-
-    /**
      * @brief Returns the binary value of the Uuid for consumption by clients who need non-string
      * representation of the Uuid.
      * @returns An array with the binary representation of the Uuid.

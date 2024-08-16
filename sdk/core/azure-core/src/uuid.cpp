@@ -5,6 +5,7 @@
 
 #include <cstdio>
 #include <random>
+#include <stdexcept>
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <thread>
@@ -28,42 +29,38 @@ static uint8_t HexCharToByte(char c)
 
   throw std::invalid_argument("Invalid hexadecimal character.");
 }
-
-static std::string ToStringHelper(std::array<uint8_t, 16> uuid)
-{
-  // Guid is 36 characters
-  //  Add one byte for the \0
-  char s[37];
-
-  std::snprintf(
-      s,
-      sizeof(s),
-      "%2.2x%2.2x%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x",
-      uuid[0],
-      uuid[1],
-      uuid[2],
-      uuid[3],
-      uuid[4],
-      uuid[5],
-      uuid[6],
-      uuid[7],
-      uuid[8],
-      uuid[9],
-      uuid[10],
-      uuid[11],
-      uuid[12],
-      uuid[13],
-      uuid[14],
-      uuid[15]);
-
-  return std::string(s);
-}
 } // namespace
 
 namespace Azure { namespace Core {
-  std::string Uuid::ToString() const { return ToStringHelper(m_uuid); }
+  std::string Uuid::ToString() const
+  {
+    // Guid is 36 characters
+    //  Add one byte for the \0
+    char s[37];
 
-  std::string Uuid::ToString() { return ToStringHelper(m_uuid); }
+    std::snprintf(
+        s,
+        sizeof(s),
+        "%2.2x%2.2x%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x-%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x",
+        m_uuid[0],
+        m_uuid[1],
+        m_uuid[2],
+        m_uuid[3],
+        m_uuid[4],
+        m_uuid[5],
+        m_uuid[6],
+        m_uuid[7],
+        m_uuid[8],
+        m_uuid[9],
+        m_uuid[10],
+        m_uuid[11],
+        m_uuid[12],
+        m_uuid[13],
+        m_uuid[14],
+        m_uuid[15]);
+
+    return std::string(s);
+  }
 
   Uuid Uuid::CreateUuid()
   {
