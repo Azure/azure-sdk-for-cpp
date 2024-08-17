@@ -2219,7 +2219,7 @@ ENDPOINT_HANDLE connection_create_endpoint(CONNECTION_HANDLE connection)
                     size_t realloc_size = safe_add_size_t((size_t)connection->endpoint_count, 1);
                     realloc_size = safe_multiply_size_t(realloc_size, sizeof(ENDPOINT_HANDLE));
 #if defined(_MSC_VER)
-                    __analysis_assume(realloc_size == ((size_t)connection->endpoint_count+1) * sizeof(ENDPOINT_HANDLE));
+                    __analysis_assume(realloc_size == (connection->endpoint_count+1) * sizeof(ENDPOINT_HANDLE));
                     __analysis_assume((realloc_size / sizeof(ENDPOINT_HANDLE)) > connection->endpoint_count);
                     __analysis_assume(connection->endpoint_count < (realloc_size / sizeof(ENDPOINT_HANDLE)));
                     __analysis_assume((connection->endpoint_count*sizeof(ENDPOINT_HANDLE)) < realloc_size);
@@ -2239,6 +2239,9 @@ ENDPOINT_HANDLE connection_create_endpoint(CONNECTION_HANDLE connection)
                     {
                         // Insert the new endpoint at the end of the set of endpoints.
                         connection->endpoints = new_endpoints;
+#if defined(_MSC_VER)
+                        __analysis_assume(connection->endpoint_count < (realloc_size / sizeof(ENDPOINT_HANDLE)));
+#endif
                         connection->endpoints[connection->endpoint_count] = result;
                         connection->endpoint_count++;
 
