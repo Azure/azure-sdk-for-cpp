@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- Throw std::invalid_argument if the `TimeFractionFormat` enum passed in to DateTime `ToString()` is invalid.
+
 ### Other Changes
 
 ## 1.14.0-beta.1 (2024-08-01)
