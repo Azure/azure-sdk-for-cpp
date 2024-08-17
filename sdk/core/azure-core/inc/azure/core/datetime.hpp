@@ -63,6 +63,7 @@ private:
   static constexpr size_t Rfc1123DateTimeMaxSize = 30;
   std::array<char, Rfc1123DateTimeMaxSize> m_dateTimeRfc1123String = {};
 
+  // cspell:ignore DDTHH
   // The maximum length of an RFC 3339 compatible datetime, with nanosecond precision is 35.
   // Given Zulu time is referenced by Z, and we always use that smaller form instead of HH:MM, we'll
   // use that for max length. YYYY-MM-DDTHH:MM:SS.sssssssssZ =

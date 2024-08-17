@@ -855,7 +855,7 @@ std::string DateTime::ToString(DateFormat format)
       return std::string(m_dateTimeRfc1123String.data());
     }
     std::string str = DateTime::ToStringRfc1123();
-    std::size_t length = std::min(str.size(), Rfc1123DateTimeMaxSize);
+    std::size_t length = std::min(str.size(), Azure::DateTime::Rfc1123DateTimeMaxSize);
     std::memcpy(m_dateTimeRfc1123String.data(), str.data(), length);
     return str;
   }
@@ -956,7 +956,7 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
   }
 
   std::string str = DateTime::ToStringRfc3339(fractionFormat);
-  std::size_t length = std::min(str.size(), Rfc3339DateTimeMaxSize);
+  std::size_t length = std::min(str.size(), Azure::DateTime::Rfc3339DateTimeMaxSize);
   switch (fractionFormat)
   {
     case TimeFractionFormat::DropTrailingZeros:
