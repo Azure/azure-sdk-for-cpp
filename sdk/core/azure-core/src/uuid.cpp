@@ -5,7 +5,6 @@
 
 #include <cstdio>
 #include <random>
-#include <stdexcept>
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <thread>
@@ -16,20 +15,6 @@ namespace {
 static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
 } // namespace
 #endif
-
-namespace {
-static uint8_t HexCharToByte(char c)
-{
-  if (c >= '0' && c <= '9')
-    return c - '0';
-  if (c >= 'a' && c <= 'f')
-    return c - 'a' + 10;
-  if (c >= 'A' && c <= 'F')
-    return c - 'A' + 10;
-
-  throw std::invalid_argument("Invalid hexadecimal character.");
-}
-} // namespace
 
 namespace Azure { namespace Core {
   std::string Uuid::ToString() const

@@ -45,11 +45,6 @@ TEST(ManagedIdentityType, Basic)
     EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
   }
   {
-    ManagedIdentityType const miType(ManagedIdentityIdType::SystemAssigned);
-    EXPECT_EQ(miType.GetId(), "");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
-  }
-  {
     ManagedIdentityType const miType(ManagedIdentityIdType::SystemAssigned, "");
     EXPECT_EQ(miType.GetId(), "");
     EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
@@ -2235,7 +2230,7 @@ TEST(ManagedIdentityCredential, Imds)
         [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityType = ManagedIdentityType(ManagedIdentityIdType::SystemAssigned);
+          options.IdentityType = ManagedIdentityType(ManagedIdentityIdType::SystemAssigned, "");
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},

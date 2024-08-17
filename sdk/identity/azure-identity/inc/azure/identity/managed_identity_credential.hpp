@@ -89,7 +89,7 @@ namespace Azure { namespace Identity {
      * @remark Make sure the type of ID matches the value of the ID. For example, the client
      * ID and object ID are NOT interchangeable, even though they are both Uuid values.
      */
-    explicit ManagedIdentityType(ManagedIdentityIdType idType, std::string id = std::string())
+    explicit ManagedIdentityType(ManagedIdentityIdType idType, std::string id)
         : m_idType(idType), m_id(id)
     {
       if (idType == ManagedIdentityIdType::SystemAssigned && !id.empty())
@@ -105,7 +105,7 @@ namespace Azure { namespace Identity {
      *
      * @remark In the case of system-assigned managed identity, this will return an empty string.
      */
-    std::string GetId() const { return m_id; }
+    std::string const& GetId() const { return m_id; }
 
     /**
      * @brief Gets the type of identifier used for the managed identity, depending on how it is

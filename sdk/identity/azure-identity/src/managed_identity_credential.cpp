@@ -60,28 +60,24 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     : TokenCredential("ManagedIdentityCredential")
 {
   ManagedIdentityIdType idType = options.IdentityType.GetManagedIdentityIdType();
-  if (idType == ManagedIdentityIdType::SystemAssigned)
+  switch (idType)
   {
-    m_managedIdentitySource = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
-  }
-  else if (idType == ManagedIdentityIdType::ClientId)
-  {
-    m_managedIdentitySource = CreateManagedIdentitySource(
-        GetCredentialName(), options.IdentityType.GetId(), {}, {}, options);
-  }
-  else if (idType == ManagedIdentityIdType::ObjectId)
-  {
-    m_managedIdentitySource = CreateManagedIdentitySource(
-        GetCredentialName(), {}, options.IdentityType.GetId(), {}, options);
-  }
-  else
-  {
-    AZURE_ASSERT_MSG(
-        idType == ManagedIdentityIdType::ResourceId,
-        "The ManagedIdentityIdType must be one of the four known values.");
-
-    m_managedIdentitySource = CreateManagedIdentitySource(
-        GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
+    case ManagedIdentityIdType::SystemAssigned:
+      m_managedIdentitySource
+          = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
+      break;
+    case ManagedIdentityIdType::ClientId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), options.IdentityType.GetId(), {}, {}, options);
+      break;
+    case ManagedIdentityIdType::ObjectId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, options.IdentityType.GetId(), {}, options);
+      break;
+    case ManagedIdentityIdType::ResourceId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
+      break;
   }
 }
 
