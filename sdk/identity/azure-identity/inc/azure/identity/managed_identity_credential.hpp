@@ -98,6 +98,16 @@ namespace Azure { namespace Identity {
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
             "using system-assigned managed identity.");
       }
+
+      if (id.empty()
+          && (idType == ManagedIdentityIdType::ClientId || idType == ManagedIdentityIdType::ObjectId
+              || idType == ManagedIdentityIdType::ResourceId))
+      {
+        throw std::invalid_argument(
+            "Provide the value of the client, object, or resource ID corresponding to the "
+            "ManagedIdentityIdType specified. The provide ID should not be empty in the case of "
+            "user-assigned managed identity.");
+      }
     }
 
     /**
