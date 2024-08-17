@@ -68,7 +68,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
   {
     numOptionsSet++;
   }
-  if (!options.ResourceId.ToString().empty())
+  if (options.ResourceId.HasValue() && !options.ResourceId.Value().ToString().empty())
   {
     numOptionsSet++;
   }
@@ -77,12 +77,15 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     throw std::invalid_argument("Only one of ClientId, ObjectId, or ResourceId can be set in "
                                 "ManagedIdentityCredentialOptions.");
   }
+
+  std::string resourceIdString = "";
+  if (options.ResourceId.HasValue())
+  {
+    resourceIdString = options.ResourceId.Value().ToString();
+  }
+
   m_managedIdentitySource = CreateManagedIdentitySource(
-      GetCredentialName(),
-      options.ClientId,
-      options.ObjectId,
-      options.ResourceId.ToString(),
-      options);
+      GetCredentialName(), options.ClientId, options.ObjectId, resourceIdString, options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

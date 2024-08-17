@@ -28,11 +28,6 @@ namespace Azure { namespace Identity {
 
   public:
     /**
-     * @brief Constructs a default resource identifier.
-     *
-     */
-    ResourceIdentifier(){};
-    /**
      * @brief Constructs a resource identifier.
      *
      * @param resourceId The id string to create the ResourceIdentifier from.
@@ -65,7 +60,7 @@ namespace Azure { namespace Identity {
      * This is an alternative to providing a client ID, and isn't required for system-assigned
      * managed identities.
      */
-    ResourceIdentifier ResourceId;
+    Nullable<ResourceIdentifier> ResourceId;
 
     /**
      * @brief The client ID of the service principal used to authenticate a user-assigned managed
