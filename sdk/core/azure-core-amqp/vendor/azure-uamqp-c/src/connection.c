@@ -2221,6 +2221,7 @@ ENDPOINT_HANDLE connection_create_endpoint(CONNECTION_HANDLE connection)
 #if defined(_MSC_VER)
                     __analysis_assume(realloc_size == ((size_t)connection->endpoint_count+1) * sizeof(ENDPOINT_HANDLE));
                     __analysis_assume((realloc_size / sizeof(ENDPOINT_HANDLE)) > connection->endpoint_count);
+                    __analysis_assume(connection->endpoint_count < (realloc_size / sizeof(ENDPOINT_HANDLE)));
 #endif
                     if (realloc_size == SIZE_MAX
                         || (new_endpoints = (ENDPOINT_HANDLE*)realloc(connection->endpoints, realloc_size)) == NULL)

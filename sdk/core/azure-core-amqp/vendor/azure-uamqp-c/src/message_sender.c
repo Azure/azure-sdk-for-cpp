@@ -1118,6 +1118,10 @@ ASYNC_OPERATION_HANDLE messagesender_send_async(MESSAGE_SENDER_HANDLE message_se
                         message_with_callback->context = callback_context;
                         message_with_callback->message_sender = message_sender;
 
+#if defined(_MSC_VER)
+                        __analysis_assume(message_sender->message_count < realloc_size / sizeof(ASYNC_OPERATION_HANDLE));
+#endif
+
                         message_sender->messages[message_sender->message_count] = result;
                         message_sender->message_count++;
 

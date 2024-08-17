@@ -1114,6 +1114,9 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
               }
               else
               {
+#if defined(_MSC_VER)
+                __analysis_assume(realloc_size > message->body_amqp_data_count * sizeof(BODY_AMQP_DATA));
+#endif
                 message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes
                     = (unsigned char*)malloc(amqp_data.length);
                 if (message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes == NULL)
@@ -1357,7 +1360,11 @@ int message_add_body_amqp_sequence(MESSAGE_HANDLE message, AMQP_VALUE sequence_l
                * by `message`. ]*/
               /* Codes_SRS_MESSAGE_01_156: [ The AMQP sequence shall be cloned by calling
                * `amqpvalue_clone`. ]*/
-              message->body_amqp_sequence_items[message->body_amqp_sequence_count] = amqpvalue_clone(sequence_list);
+#if defined(_MSC_VER)
+              __analysis_assume(realloc_size > message->body_amqp_sequence_count * sizeof(AMQP_VALUE));
+#endif
+              message->body_amqp_sequence_items[message->body_amqp_sequence_count]
+                  = amqpvalue_clone(sequence_list);
               if (message->body_amqp_sequence_items[message->body_amqp_sequence_count] == NULL)
               {
                 /* Codes_SRS_MESSAGE_01_157: [ If `amqpvalue_clone` fails,
