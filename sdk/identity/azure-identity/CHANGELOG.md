@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for providing an object ID to `ManagedIdentityCredential`.
+
 ### Breaking Changes
 
 - Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
