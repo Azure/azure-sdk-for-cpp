@@ -22,6 +22,11 @@ TEST(Uuid, Transparent)
   auto arrayUuid1(uuid1.AsArray());
   auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+
+  // Repeated calls of ToString() to validate caching results in the exact value.
+  EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+  EXPECT_EQ(uuid1.ToString(), uuid1.ToString());
+  EXPECT_EQ(uuid2.ToString(), uuid2.ToString());
 }
 
 TEST(Uuid, Randomness)
