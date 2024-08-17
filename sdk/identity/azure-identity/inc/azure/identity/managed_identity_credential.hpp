@@ -105,7 +105,7 @@ namespace Azure { namespace Identity {
       {
         throw std::invalid_argument(
             "Provide the value of the client, object, or resource ID corresponding to the "
-            "ManagedIdentityIdType specified. The provide ID should not be empty in the case of "
+            "ManagedIdentityIdType specified. The provided ID should not be empty in the case of "
             "user-assigned managed identity.");
       }
     }
