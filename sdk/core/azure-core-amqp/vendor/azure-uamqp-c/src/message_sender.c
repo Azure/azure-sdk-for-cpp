@@ -1078,6 +1078,11 @@ ASYNC_OPERATION_HANDLE messagesender_send_async(MESSAGE_SENDER_HANDLE message_se
                 MESSAGE_WITH_CALLBACK* message_with_callback = GET_ASYNC_OPERATION_CONTEXT(MESSAGE_WITH_CALLBACK, result);
                 size_t realloc_size = safe_add_size_t(message_sender->message_count, 1);
                 realloc_size = safe_multiply_size_t(realloc_size, sizeof(ASYNC_OPERATION_HANDLE));
+#if defined(_MSC_VER)
+                __analysis_assume(realloc_size == (message_sender->message_count+1)* sizeof(ASYNC_OPERATION_HANDLE));
+                __analysis_assume(message_sender->message_count < realloc_size / sizeof(ASYNC_OPERATION_HANDLE));
+#endif
+
                 if (realloc_size == SIZE_MAX ||
                     (new_messages = (ASYNC_OPERATION_HANDLE*)realloc(message_sender->messages, realloc_size)) == NULL)
                 {
@@ -1112,6 +1117,10 @@ ASYNC_OPERATION_HANDLE messagesender_send_async(MESSAGE_SENDER_HANDLE message_se
                         message_with_callback->on_message_send_complete = on_message_send_complete;
                         message_with_callback->context = callback_context;
                         message_with_callback->message_sender = message_sender;
+
+#if defined(_MSC_VER)
+                        __analysis_assume(message_sender->message_count < realloc_size / sizeof(ASYNC_OPERATION_HANDLE));
+#endif
 
                         message_sender->messages[message_sender->message_count] = result;
                         message_sender->message_count++;
