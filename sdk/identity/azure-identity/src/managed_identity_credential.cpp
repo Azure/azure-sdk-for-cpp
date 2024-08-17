@@ -56,12 +56,33 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
-    Azure::Core::Uuid const& objectId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    Azure::Identity::ManagedIdentityCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, objectId.ToString(), {}, options);
+  ManagedIdentityIdType idType = options.IdentityType.GetManagedIdentityIdType();
+  if (idType == ManagedIdentityIdType::SystemAssigned)
+  {
+    m_managedIdentitySource = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
+  }
+  else if (idType == ManagedIdentityIdType::ClientId)
+  {
+    m_managedIdentitySource = CreateManagedIdentitySource(
+        GetCredentialName(), options.IdentityType.GetId(), {}, {}, options);
+  }
+  else if (idType == ManagedIdentityIdType::ObjectId)
+  {
+    m_managedIdentitySource = CreateManagedIdentitySource(
+        GetCredentialName(), {}, options.IdentityType.GetId(), {}, options);
+  }
+  else
+  {
+    AZURE_ASSERT_MSG(
+        idType == ManagedIdentityIdType::ResourceId,
+        "The ManagedIdentityIdType must be one of the four known values.");
+
+    m_managedIdentitySource = CreateManagedIdentitySource(
+        GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
+  }
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

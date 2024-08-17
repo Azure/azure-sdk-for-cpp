@@ -43,6 +43,91 @@ namespace Azure { namespace Identity {
   };
 
   /**
+   * @brief The type of managed identity identifier depending on how the managed identity is
+   * configured.
+   *
+   * @remark This can either be system assigned, or user assigned which corresponds to an identifier
+   * that represents either client ID, resource ID, or object ID, depending on how the managed
+   * identity is configuerd.
+   */
+  enum class ManagedIdentityIdType
+  {
+    SystemAssigned,
+    ClientId,
+    ObjectId,
+    ResourceId,
+  };
+
+  /**
+   * @brief The type of managed identity and its corresponding identifier.
+   *
+   * @remark This property holds the type and unique identifier of either a system or user-assigned
+   * managed identity.
+   */
+  class ManagedIdentityType final {
+  private:
+    ManagedIdentityIdType m_idType;
+    std::string m_id;
+
+  public:
+    /**
+     * @brief Constructs the type of managed identity.
+     *
+     * @remark This defaults to ManagedIdentityIdType::SystemAssigned.
+     */
+    explicit ManagedIdentityType() : m_idType(ManagedIdentityIdType::SystemAssigned) {}
+
+    /**
+     * @brief Constructs the type of managed identity.
+     *
+     * @param idType The type of the managed identity identifier.
+     * @param id The value of the managed identity identifier. This can be either a client ID,
+     * resource ID, or object ID.
+     *
+     * @remark For ManagedIdentityIdType::SystemAssigned, the id must be an empty string.
+     *
+     * @remark Make sure the type of ID matches the value of the ID. For example, the client
+     * ID and object ID are NOT interchangeable, even though they are both Uuid values.
+     */
+    explicit ManagedIdentityType(ManagedIdentityIdType idType, std::string id = std::string())
+        : m_idType(idType), m_id(id)
+    {
+      if (idType == ManagedIdentityIdType::SystemAssigned && !id.empty())
+      {
+        throw std::invalid_argument(
+            "There is no need to provide an ID (such as client, object, or resource ID) if you are "
+            "using system assigned managed identity.");
+      }
+    }
+
+    /**
+     * @brief Gets the identifier for a user-assigned managed identity.
+     *
+     * @remark In the case of system-assigned managed identity, this will return an empty string.
+     */
+    std::string GetId() const { return m_id; }
+
+    /**
+     * @brief Gets the type of identifier used for the managed identity, depending on how it is
+     * configured.
+     */
+    ManagedIdentityIdType GetManagedIdentityIdType() const { return m_idType; }
+  };
+
+  /**
+   * @brief Options for managed identity credential.
+   *
+   */
+  struct ManagedIdentityCredentialOptions final : public Core::Credentials::TokenCredentialOptions
+  {
+    /**
+     * @brief Specifies the type of managed identity and its corresponding identifier, based on how
+     * it was configured.
+     */
+    ManagedIdentityType IdentityType;
+  };
+
+  /**
    * @brief Attempts authentication using a managed identity that has been assigned to the
    * deployment environment. This authentication type works in Azure VMs, App Service and Azure
    * Functions applications, as well as the Azure Cloud Shell. More information about configuring
@@ -72,20 +157,12 @@ namespace Azure { namespace Identity {
         = Azure::Core::Credentials::TokenCredentialOptions());
 
     /**
-     * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
-     * resource with a user-assigned managed identity.
+     * @brief Constructs a Managed Identity Credential.
      *
-     * @remark Client ID and object ID are NOT interchangeable, even though they are both Uuid
-     * values. Make sure to the pass in the correct value to the corresponding constructor.
-     *
-     * @param objectId The object ID of the service principal used to authenticate a user-assigned
-     * managed identity. This is an alternative to providing a client ID, and isn't required for
-     * system-assigned managed identities.
      * @param options Options for token retrieval.
      */
     explicit ManagedIdentityCredential(
-        Azure::Core::Uuid const& objectId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
+        Azure::Identity::ManagedIdentityCredentialOptions const& options);
 
     /**
      * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a

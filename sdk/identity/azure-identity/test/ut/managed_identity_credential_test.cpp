@@ -31,8 +31,58 @@ using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Http::HttpMethod;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
+using Azure::Identity::ManagedIdentityCredentialOptions;
+using Azure::Identity::ManagedIdentityIdType;
+using Azure::Identity::ManagedIdentityType;
 using Azure::Identity::ResourceIdentifier;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
+
+TEST(ManagedIdentityType, Basic)
+{
+  {
+    ManagedIdentityType const miType;
+    EXPECT_EQ(miType.GetId(), "");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+  }
+  {
+    ManagedIdentityType const miType(ManagedIdentityIdType::SystemAssigned);
+    EXPECT_EQ(miType.GetId(), "");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+  }
+  {
+    ManagedIdentityType const miType(ManagedIdentityIdType::SystemAssigned, "");
+    EXPECT_EQ(miType.GetId(), "");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+  }
+  {
+    ManagedIdentityType const miType(ManagedIdentityIdType::ClientId, "clientId");
+    EXPECT_EQ(miType.GetId(), "clientId");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ClientId);
+  }
+  {
+    ManagedIdentityType const miType(ManagedIdentityIdType::ObjectId, "objectId");
+    EXPECT_EQ(miType.GetId(), "objectId");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ObjectId);
+  }
+  {
+    ManagedIdentityType const miType(ManagedIdentityIdType::ResourceId, "resourceId");
+    EXPECT_EQ(miType.GetId(), "resourceId");
+    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ResourceId);
+  }
+  {
+    ManagedIdentityCredentialOptions options;
+    EXPECT_EQ(options.IdentityType.GetId(), "");
+    EXPECT_EQ(
+        options.IdentityType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+  }
+}
+
+TEST(ManagedIdentityType, Invalid)
+{
+  EXPECT_THROW(
+      ManagedIdentityType(ManagedIdentityIdType::SystemAssigned, "clientId"),
+      std::invalid_argument);
+}
 
 TEST(ManagedIdentityCredential, GetCredentialName)
 {
@@ -336,8 +386,10 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.IdentityType = ManagedIdentityType(
+            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -348,9 +400,7 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
-            options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -799,8 +849,10 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.IdentityType = ManagedIdentityType(
+            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -811,9 +863,7 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", "0123456789abcdef0123456789abcdef01234567"},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
-            options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
@@ -1120,8 +1170,10 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.IdentityType = ManagedIdentityType(
+            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1134,10 +1186,8 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
 
         std::unique_ptr<ManagedIdentityCredential const> cloudShellManagedIdentityCredential;
         EXPECT_THROW(
-            cloudShellManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
-                Uuid::CreateFromString(
-                    "abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
-                options),
+            cloudShellManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return cloudShellManagedIdentityCredential;
@@ -1542,8 +1592,10 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
 
   static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.IdentityType = ManagedIdentityType(
+            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -1556,10 +1608,8 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
 
         std::unique_ptr<ManagedIdentityCredential const> azureArcManagedIdentityCredential;
         EXPECT_THROW(
-            azureArcManagedIdentityCredential = std::make_unique<ManagedIdentityCredential>(
-                Uuid::CreateFromString(
-                    "abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
-                options),
+            azureArcManagedIdentityCredential
+            = std::make_unique<ManagedIdentityCredential>(options),
             AuthenticationException);
 
         return azureArcManagedIdentityCredential;
@@ -2008,366 +2058,727 @@ TEST(ManagedIdentityCredential, Imds)
   Logger::SetLevel(Logger::Level::Verbose);
   Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
 
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [&](auto transport) {
-        TokenCredentialOptions options;
-        options.Transport.Transport = transport;
-
-        CredentialTestHelper::EnvironmentOverride const env({
-            {"MSI_ENDPOINT", ""},
-            {"MSI_SECRET", ""},
-            {"IDENTITY_ENDPOINT", ""},
-            {"IMDS_ENDPOINT", ""},
-            {"IDENTITY_HEADER", ""},
-            {"IDENTITY_SERVER_THUMBPRINT", ""},
-        });
-
-        auto credential = std::make_unique<ManagedIdentityCredential>(options);
-
-        EXPECT_EQ(log.size(), LogMsgVec::size_type(5));
-
-        EXPECT_EQ(log[0].first, Logger::Level::Verbose);
-        EXPECT_EQ(
-            log[0].second,
-            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with App Service 2019 source.");
-
-        EXPECT_EQ(log[1].first, Logger::Level::Verbose);
-        EXPECT_EQ(
-            log[1].second,
-            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with App Service 2017 source.");
-
-        EXPECT_EQ(log[2].first, Logger::Level::Verbose);
-        EXPECT_EQ(
-            log[2].second,
-            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with Cloud Shell source.");
-
-        EXPECT_EQ(log[3].first, Logger::Level::Verbose);
-        EXPECT_EQ(
-            log[3].second,
-            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with Azure Arc source.");
-
-        EXPECT_EQ(log[4].first, Logger::Level::Informational);
-        EXPECT_EQ(
-            log[4].second,
-            "Identity: ManagedIdentityCredential will be created "
-            "with Azure Instance Metadata Service source."
-            "\nSuccessful creation does not guarantee further successful token retrieval.");
-
-        log.clear();
-
-        return credential;
-      },
-      {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}, {}, {}, {}},
-      std::vector<std::string>{
-          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
-          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}",
-          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN4\", \"refresh_in\":9999}",
-          "{\"expires_in\":7199, \"access_token\":\"ACCESSTOKEN5\"}",
-          "{\"expires_in\":7202, \"access_token\":\"ACCESSTOKEN6\"}"});
-
-  EXPECT_EQ(actual.Requests.size(), 6U);
-  EXPECT_EQ(actual.Responses.size(), 6U);
-
-  auto const& request0 = actual.Requests.at(0);
-  auto const& request1 = actual.Requests.at(1);
-  auto const& request2 = actual.Requests.at(2);
-  auto const& request3 = actual.Requests.at(3);
-  auto const& request4 = actual.Requests.at(4);
-  auto const& request5 = actual.Requests.at(5);
-
-  auto const& response0 = actual.Responses.at(0);
-  auto const& response1 = actual.Responses.at(1);
-  auto const& response2 = actual.Responses.at(2);
-  auto const& response3 = actual.Responses.at(3);
-  auto const& response4 = actual.Responses.at(4);
-  auto const& response5 = actual.Responses.at(5);
-
-  EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request3.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request4.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request5.HttpMethod, HttpMethod::Get);
-
-  EXPECT_EQ(
-      request0.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request1.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request2.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01");
-
-  EXPECT_EQ(
-      request3.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01");
-
-  EXPECT_EQ(
-      request4.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01");
-
-  EXPECT_EQ(
-      request5.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01");
-
-  EXPECT_TRUE(request0.Body.empty());
-  EXPECT_TRUE(request1.Body.empty());
-  EXPECT_TRUE(request2.Body.empty());
-  EXPECT_TRUE(request3.Body.empty());
-  EXPECT_TRUE(request4.Body.empty());
-  EXPECT_TRUE(request5.Body.empty());
-
   {
-    EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [&](auto transport) {
+          TokenCredentialOptions options;
+          options.Transport.Transport = transport;
 
-    EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-    EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+          auto credential = std::make_unique<ManagedIdentityCredential>(options);
 
-    EXPECT_NE(request3.Headers.find("Metadata"), request3.Headers.end());
-    EXPECT_EQ(request3.Headers.at("Metadata"), "true");
+          EXPECT_EQ(log.size(), LogMsgVec::size_type(5));
 
-    EXPECT_NE(request4.Headers.find("Metadata"), request4.Headers.end());
-    EXPECT_EQ(request4.Headers.at("Metadata"), "true");
+          EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[0].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with App Service 2019 source.");
 
-    EXPECT_NE(request5.Headers.find("Metadata"), request5.Headers.end());
-    EXPECT_EQ(request5.Headers.at("Metadata"), "true");
+          EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[1].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with App Service 2017 source.");
+
+          EXPECT_EQ(log[2].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[2].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with Cloud Shell source.");
+
+          EXPECT_EQ(log[3].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[3].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with Azure Arc source.");
+
+          EXPECT_EQ(log[4].first, Logger::Level::Informational);
+          EXPECT_EQ(
+              log[4].second,
+              "Identity: ManagedIdentityCredential will be created "
+              "with Azure Instance Metadata Service source."
+              "\nSuccessful creation does not guarantee further successful token retrieval.");
+
+          log.clear();
+
+          return credential;
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}, {}, {}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN4\", \"refresh_in\":9999}",
+            "{\"expires_in\":7199, \"access_token\":\"ACCESSTOKEN5\"}",
+            "{\"expires_in\":7202, \"access_token\":\"ACCESSTOKEN6\"}"});
+
+    EXPECT_EQ(actual.Requests.size(), 6U);
+    EXPECT_EQ(actual.Responses.size(), 6U);
+
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+    auto const& request3 = actual.Requests.at(3);
+    auto const& request4 = actual.Requests.at(4);
+    auto const& request5 = actual.Requests.at(5);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+    auto const& response3 = actual.Responses.at(3);
+    auto const& response4 = actual.Responses.at(4);
+    auto const& response5 = actual.Responses.at(5);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request3.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request4.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request5.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request3.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request4.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request5.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+    EXPECT_TRUE(request3.Body.empty());
+    EXPECT_TRUE(request4.Body.empty());
+    EXPECT_TRUE(request5.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request3.Headers.find("Metadata"), request3.Headers.end());
+      EXPECT_EQ(request3.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request4.Headers.find("Metadata"), request4.Headers.end());
+      EXPECT_EQ(request4.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request5.Headers.find("Metadata"), request5.Headers.end());
+      EXPECT_EQ(request5.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+    EXPECT_EQ(response3.AccessToken.Token, "ACCESSTOKEN4");
+    EXPECT_EQ(response4.AccessToken.Token, "ACCESSTOKEN5");
+    EXPECT_EQ(response5.AccessToken.Token, "ACCESSTOKEN6");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+
+    EXPECT_GE(response3.AccessToken.ExpiresOn, response3.EarliestExpiration + 9999s);
+    EXPECT_LE(response3.AccessToken.ExpiresOn, response3.LatestExpiration + 9999s);
+
+    EXPECT_GE(response4.AccessToken.ExpiresOn, response4.EarliestExpiration + 7199s);
+    EXPECT_LE(response4.AccessToken.ExpiresOn, response4.LatestExpiration + 7199s);
+
+    EXPECT_GE(response5.AccessToken.ExpiresOn, response5.EarliestExpiration + 3601s);
+    EXPECT_LE(response5.AccessToken.ExpiresOn, response5.LatestExpiration + 3601s);
   }
+  {
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [&](auto transport) {
+          ManagedIdentityCredentialOptions options;
+          options.Transport.Transport = transport;
+          options.IdentityType = ManagedIdentityType(ManagedIdentityIdType::SystemAssigned);
 
-  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
-  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
-  EXPECT_EQ(response3.AccessToken.Token, "ACCESSTOKEN4");
-  EXPECT_EQ(response4.AccessToken.Token, "ACCESSTOKEN5");
-  EXPECT_EQ(response5.AccessToken.Token, "ACCESSTOKEN6");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-  using namespace std::chrono_literals;
-  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+          log.clear();
 
-  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
-  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+          auto credential = std::make_unique<ManagedIdentityCredential>(options);
 
-  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
-  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+          EXPECT_EQ(log.size(), LogMsgVec::size_type(5));
 
-  EXPECT_GE(response3.AccessToken.ExpiresOn, response3.EarliestExpiration + 9999s);
-  EXPECT_LE(response3.AccessToken.ExpiresOn, response3.LatestExpiration + 9999s);
+          EXPECT_EQ(log[0].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[0].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with App Service 2019 source.");
 
-  EXPECT_GE(response4.AccessToken.ExpiresOn, response4.EarliestExpiration + 7199s);
-  EXPECT_LE(response4.AccessToken.ExpiresOn, response4.LatestExpiration + 7199s);
+          EXPECT_EQ(log[1].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[1].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with App Service 2017 source.");
 
-  EXPECT_GE(response5.AccessToken.ExpiresOn, response5.EarliestExpiration + 3601s);
-  EXPECT_LE(response5.AccessToken.ExpiresOn, response5.LatestExpiration + 3601s);
+          EXPECT_EQ(log[2].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[2].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with Cloud Shell source.");
+
+          EXPECT_EQ(log[3].first, Logger::Level::Verbose);
+          EXPECT_EQ(
+              log[3].second,
+              "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+              "to be created with Azure Arc source.");
+
+          EXPECT_EQ(log[4].first, Logger::Level::Informational);
+          EXPECT_EQ(
+              log[4].second,
+              "Identity: ManagedIdentityCredential will be created "
+              "with Azure Instance Metadata Service source."
+              "\nSuccessful creation does not guarantee further successful token retrieval.");
+
+          log.clear();
+
+          return credential;
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}, {}, {}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN4\", \"refresh_in\":9999}",
+            "{\"expires_in\":7199, \"access_token\":\"ACCESSTOKEN5\"}",
+            "{\"expires_in\":7202, \"access_token\":\"ACCESSTOKEN6\"}"});
+
+    EXPECT_EQ(actual.Requests.size(), 6U);
+    EXPECT_EQ(actual.Responses.size(), 6U);
+
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+    auto const& request3 = actual.Requests.at(3);
+    auto const& request4 = actual.Requests.at(4);
+    auto const& request5 = actual.Requests.at(5);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+    auto const& response3 = actual.Responses.at(3);
+    auto const& response4 = actual.Responses.at(4);
+    auto const& response5 = actual.Responses.at(5);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request3.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request4.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request5.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request3.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request4.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_EQ(
+        request5.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+    EXPECT_TRUE(request3.Body.empty());
+    EXPECT_TRUE(request4.Body.empty());
+    EXPECT_TRUE(request5.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request3.Headers.find("Metadata"), request3.Headers.end());
+      EXPECT_EQ(request3.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request4.Headers.find("Metadata"), request4.Headers.end());
+      EXPECT_EQ(request4.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request5.Headers.find("Metadata"), request5.Headers.end());
+      EXPECT_EQ(request5.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+    EXPECT_EQ(response3.AccessToken.Token, "ACCESSTOKEN4");
+    EXPECT_EQ(response4.AccessToken.Token, "ACCESSTOKEN5");
+    EXPECT_EQ(response5.AccessToken.Token, "ACCESSTOKEN6");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+
+    EXPECT_GE(response3.AccessToken.ExpiresOn, response3.EarliestExpiration + 9999s);
+    EXPECT_LE(response3.AccessToken.ExpiresOn, response3.LatestExpiration + 9999s);
+
+    EXPECT_GE(response4.AccessToken.ExpiresOn, response4.EarliestExpiration + 7199s);
+    EXPECT_LE(response4.AccessToken.ExpiresOn, response4.LatestExpiration + 7199s);
+
+    EXPECT_GE(response5.AccessToken.ExpiresOn, response5.EarliestExpiration + 3601s);
+    EXPECT_LE(response5.AccessToken.ExpiresOn, response5.LatestExpiration + 3601s);
+  }
 
   Logger::SetListener(nullptr);
 }
 
 TEST(ManagedIdentityCredential, ImdsClientId)
 {
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
-        TokenCredentialOptions options;
-        options.Transport.Transport = transport;
-
-        CredentialTestHelper::EnvironmentOverride const env({
-            {"MSI_ENDPOINT", ""},
-            {"MSI_SECRET", ""},
-            {"IDENTITY_ENDPOINT", ""},
-            {"IMDS_ENDPOINT", ""},
-            {"IDENTITY_HEADER", ""},
-            {"IDENTITY_SERVER_THUMBPRINT", ""},
-        });
-
-        return std::make_unique<ManagedIdentityCredential>(
-            "fedcba98-7654-3210-0123-456789abcdef", options);
-      },
-      {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
-      std::vector<std::string>{
-          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
-          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
-
-  EXPECT_EQ(actual.Requests.size(), 3U);
-  EXPECT_EQ(actual.Responses.size(), 3U);
-
-  auto const& request0 = actual.Requests.at(0);
-  auto const& request1 = actual.Requests.at(1);
-  auto const& request2 = actual.Requests.at(2);
-
-  auto const& response0 = actual.Responses.at(0);
-  auto const& response1 = actual.Responses.at(1);
-  auto const& response2 = actual.Responses.at(2);
-
-  EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
-
-  EXPECT_EQ(
-      request0.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request1.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request2.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&client_id=fedcba98-7654-3210-0123-456789abcdef");
-
-  EXPECT_TRUE(request0.Body.empty());
-  EXPECT_TRUE(request1.Body.empty());
-  EXPECT_TRUE(request2.Body.empty());
-
   {
-    EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [](auto transport) {
+          TokenCredentialOptions options;
+          options.Transport.Transport = transport;
 
-    EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-    EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+          return std::make_unique<ManagedIdentityCredential>(
+              "fedcba98-7654-3210-0123-456789abcdef", options);
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+    EXPECT_EQ(actual.Requests.size(), 3U);
+    EXPECT_EQ(actual.Responses.size(), 3U);
+
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
   }
+  {
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [](auto transport) {
+          ManagedIdentityCredentialOptions options;
+          options.Transport.Transport = transport;
+          options.IdentityType = ManagedIdentityType(
+              ManagedIdentityIdType::ClientId, "fedcba98-7654-3210-0123-456789abcdef");
 
-  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
-  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-  using namespace std::chrono_literals;
-  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+          return std::make_unique<ManagedIdentityCredential>(options);
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
 
-  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
-  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+    EXPECT_EQ(actual.Requests.size(), 3U);
+    EXPECT_EQ(actual.Responses.size(), 3U);
 
-  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
-  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&client_id=fedcba98-7654-3210-0123-456789abcdef");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+  }
 }
 
 TEST(ManagedIdentityCredential, ImdsResourceId)
 {
-  auto const actual = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
-        TokenCredentialOptions options;
-        options.Transport.Transport = transport;
-
-        CredentialTestHelper::EnvironmentOverride const env({
-            {"MSI_ENDPOINT", ""},
-            {"MSI_SECRET", ""},
-            {"IDENTITY_ENDPOINT", ""},
-            {"IMDS_ENDPOINT", ""},
-            {"IDENTITY_HEADER", ""},
-            {"IDENTITY_SERVER_THUMBPRINT", ""},
-        });
-
-        return std::make_unique<ManagedIdentityCredential>(
-            ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
-      },
-      {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
-      std::vector<std::string>{
-          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
-          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
-          "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
-
-  EXPECT_EQ(actual.Requests.size(), 3U);
-  EXPECT_EQ(actual.Responses.size(), 3U);
-
-  auto const& request0 = actual.Requests.at(0);
-  auto const& request1 = actual.Requests.at(1);
-  auto const& request2 = actual.Requests.at(2);
-
-  auto const& response0 = actual.Responses.at(0);
-  auto const& response1 = actual.Responses.at(1);
-  auto const& response2 = actual.Responses.at(2);
-
-  EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
-  EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
-
-  EXPECT_EQ(
-      request0.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-      "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request1.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-      "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
-
-  EXPECT_EQ(
-      request2.AbsoluteUrl,
-      "http://169.254.169.254/metadata/identity/oauth2/token"
-      "?api-version=2018-02-01"
-      "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba");
-
-  EXPECT_TRUE(request0.Body.empty());
-  EXPECT_TRUE(request1.Body.empty());
-  EXPECT_TRUE(request2.Body.empty());
-
   {
-    EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
-    EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [](auto transport) {
+          TokenCredentialOptions options;
+          options.Transport.Transport = transport;
 
-    EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
-    EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-    EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
-    EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+          return std::make_unique<ManagedIdentityCredential>(
+              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"), options);
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
+
+    EXPECT_EQ(actual.Requests.size(), 3U);
+    EXPECT_EQ(actual.Responses.size(), 3U);
+
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
   }
+  {
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [](auto transport) {
+          ManagedIdentityCredentialOptions options;
+          options.Transport.Transport = transport;
+          options.IdentityType = ManagedIdentityType(
+              ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
-  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
-  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
-  EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+          CredentialTestHelper::EnvironmentOverride const env({
+              {"MSI_ENDPOINT", ""},
+              {"MSI_SECRET", ""},
+              {"IDENTITY_ENDPOINT", ""},
+              {"IMDS_ENDPOINT", ""},
+              {"IDENTITY_HEADER", ""},
+              {"IDENTITY_SERVER_THUMBPRINT", ""},
+          });
 
-  using namespace std::chrono_literals;
-  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
-  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+          return std::make_unique<ManagedIdentityCredential>(options);
+        },
+        {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
+        std::vector<std::string>{
+            "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+            "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}",
+            "{\"expires_in\":9999, \"access_token\":\"ACCESSTOKEN3\"}"});
 
-  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
-  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+    EXPECT_EQ(actual.Requests.size(), 3U);
+    EXPECT_EQ(actual.Responses.size(), 3U);
 
-  EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
-  EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+    auto const& request0 = actual.Requests.at(0);
+    auto const& request1 = actual.Requests.at(1);
+    auto const& request2 = actual.Requests.at(2);
+
+    auto const& response0 = actual.Responses.at(0);
+    auto const& response1 = actual.Responses.at(1);
+    auto const& response2 = actual.Responses.at(2);
+
+    EXPECT_EQ(request0.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request1.HttpMethod, HttpMethod::Get);
+    EXPECT_EQ(request2.HttpMethod, HttpMethod::Get);
+
+    EXPECT_EQ(
+        request0.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
+        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request1.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
+        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+
+    EXPECT_EQ(
+        request2.AbsoluteUrl,
+        "http://169.254.169.254/metadata/identity/oauth2/token"
+        "?api-version=2018-02-01"
+        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba");
+
+    EXPECT_TRUE(request0.Body.empty());
+    EXPECT_TRUE(request1.Body.empty());
+    EXPECT_TRUE(request2.Body.empty());
+
+    {
+      EXPECT_NE(request0.Headers.find("Metadata"), request0.Headers.end());
+      EXPECT_EQ(request0.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request1.Headers.find("Metadata"), request1.Headers.end());
+      EXPECT_EQ(request1.Headers.at("Metadata"), "true");
+
+      EXPECT_NE(request2.Headers.find("Metadata"), request2.Headers.end());
+      EXPECT_EQ(request2.Headers.at("Metadata"), "true");
+    }
+
+    EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+    EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+    EXPECT_EQ(response2.AccessToken.Token, "ACCESSTOKEN3");
+
+    using namespace std::chrono_literals;
+    EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+    EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+    EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 3600s);
+    EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 3600s);
+
+    EXPECT_GE(response2.AccessToken.ExpiresOn, response2.EarliestExpiration + 4999s);
+    EXPECT_LE(response2.AccessToken.ExpiresOn, response2.LatestExpiration + 4999s);
+  }
 }
 
 TEST(ManagedIdentityCredential, ImdsObjectId)
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [](auto transport) {
-        TokenCredentialOptions options;
+        ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
+        options.IdentityType = ManagedIdentityType(
+            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2378,9 +2789,7 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
             {"IDENTITY_SERVER_THUMBPRINT", ""},
         });
 
-        return std::make_unique<ManagedIdentityCredential>(
-            Uuid::CreateFromString("abcdef01-2345-6789-0876-543210fedcba"), // cspell:disable-line
-            options);
+        return std::make_unique<ManagedIdentityCredential>(options);
       },
       {{"https://azure.com/.default"}, {"https://outlook.com/.default"}, {}},
       std::vector<std::string>{
