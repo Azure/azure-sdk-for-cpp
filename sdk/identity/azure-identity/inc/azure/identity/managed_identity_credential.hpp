@@ -46,7 +46,7 @@ namespace Azure { namespace Identity {
    * @brief The type of managed identity identifier depending on how the managed identity is
    * configured.
    *
-   * @remark This can either be system assigned, or user assigned which corresponds to an identifier
+   * @remark This can either be system-assigned, or user-assigned which corresponds to an identifier
    * that represents either client ID, resource ID, or object ID, depending on how the managed
    * identity is configured.
    */
@@ -96,7 +96,7 @@ namespace Azure { namespace Identity {
       {
         throw std::invalid_argument(
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
-            "using system assigned managed identity.");
+            "using system-assigned managed identity.");
       }
     }
 
