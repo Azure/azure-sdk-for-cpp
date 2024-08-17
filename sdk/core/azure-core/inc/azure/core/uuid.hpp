@@ -26,6 +26,7 @@ namespace Azure { namespace Core {
     static constexpr size_t UuidSize = 16;
 
     std::array<uint8_t, UuidSize> m_uuid{};
+    std::string m_uuidString = {};
 
   private:
     Uuid(uint8_t const uuid[UuidSize]) { std::memcpy(m_uuid.data(), uuid, UuidSize); }
@@ -35,7 +36,7 @@ namespace Azure { namespace Core {
      * @brief Gets Uuid as a string.
      * @details A string is in canonical format (8-4-4-4-12 lowercase hex and dashes only).
      */
-    std::string ToString() const;
+    std::string ToString();
 
     /**
      * @brief Returns the binary value of the Uuid for consumption by clients who need non-string
