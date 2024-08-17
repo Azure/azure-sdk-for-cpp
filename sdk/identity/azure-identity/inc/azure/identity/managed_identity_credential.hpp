@@ -48,7 +48,7 @@ namespace Azure { namespace Identity {
    *
    * @remark This can either be system assigned, or user assigned which corresponds to an identifier
    * that represents either client ID, resource ID, or object ID, depending on how the managed
-   * identity is configuerd.
+   * identity is configured.
    */
   enum class ManagedIdentityIdType
   {

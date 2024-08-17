@@ -105,33 +105,4 @@ namespace Azure { namespace Core {
     return rv;
   }
 
-  Uuid Uuid::CreateFromString(std::string const& uuid)
-  {
-    if (uuid.size() != 36)
-    {
-      throw std::invalid_argument("Uuid string must be exactly 36 characters long.");
-    }
-    if (uuid[8] != '-' || uuid[13] != '-' || uuid[18] != '-' || uuid[23] != '-')
-    {
-      throw std::invalid_argument("Only the `8-4-4-4-12` Uuid format is supported.");
-    }
-
-    std::array<uint8_t, UuidSize> uuidArray{};
-
-    for (size_t i = 0, j = 0; j < UuidSize && i < uuid.size();)
-    {
-      if (uuid[i] == '-')
-      {
-        i++;
-        continue; // Skip hyphens
-      }
-
-      uuidArray[j] = (HexCharToByte(uuid[i++]) << 4);
-      uuidArray[j] |= HexCharToByte(uuid[i++]);
-      j++;
-    }
-
-    return Uuid::CreateFromArray(uuidArray);
-  }
-
 }} // namespace Azure::Core

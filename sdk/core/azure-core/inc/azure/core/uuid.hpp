@@ -55,12 +55,5 @@ namespace Azure { namespace Core {
      * @details Creates a Uuid from a UUID created in an external scope.
      */
     static Uuid CreateFromArray(std::array<uint8_t, UuidSize> const& uuid);
-
-    /**
-     * @brief Construct a Uuid from an existing UUID represented as a string.
-     * @details Creates a Uuid from a UUID created in an external scope. Only the canonical
-     * 8-4-4-4-12 format is supported.
-     */
-    static Uuid CreateFromString(std::string const& uuid);
   };
 }} // namespace Azure::Core
