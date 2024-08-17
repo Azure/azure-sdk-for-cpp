@@ -846,6 +846,22 @@ std::string DateTime::ToStringRfc1123() const
   return dateString.str();
 }
 
+std::string DateTime::ToString(DateFormat format)
+{
+  if (format == DateFormat::Rfc1123)
+  {
+    if (m_dateTimeRfc1123String[0] != '\0')
+    {
+      return std::string(m_dateTimeRfc1123String.data());
+    }
+    std::string str = DateTime::ToStringRfc1123();
+    std::size_t length = std::min(str.size(), Rfc1123DateTimeMaxSize);
+    std::memcpy(m_dateTimeRfc1123String.data(), str.data(), length);
+    return str;
+  }
+  return ToString(format, TimeFractionFormat::DropTrailingZeros);
+}
+
 std::string DateTime::ToString(DateFormat format) const
 {
   if (format == DateFormat::Rfc1123)
@@ -855,16 +871,8 @@ std::string DateTime::ToString(DateFormat format) const
   return ToString(format, TimeFractionFormat::DropTrailingZeros);
 }
 
-std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
+std::string DateTime::ToStringRfc3339(TimeFractionFormat fractionFormat) const
 {
-  if (format != DateFormat::Rfc3339)
-  {
-    throw std::invalid_argument(
-        "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
-  }
-
-  ThrowIfUnsupportedYear();
-
   int16_t year = 1;
 
   // The values that are not supposed to be read before they are written are set to -123... to avoid
@@ -913,4 +921,66 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
   dateString << 'Z';
 
   return dateString.str();
+}
+
+std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat)
+{
+  if (format != DateFormat::Rfc3339)
+  {
+    throw std::invalid_argument(
+        "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
+  }
+
+  ThrowIfUnsupportedYear();
+
+  switch (fractionFormat)
+  {
+    case TimeFractionFormat::DropTrailingZeros:
+      if (m_dateTimeRfc3339DropTrailingString[0] != '\0')
+      {
+        return std::string(m_dateTimeRfc3339DropTrailingString.data());
+      }
+      break;
+    case TimeFractionFormat::AllDigits:
+      if (m_dateTimeRfc3339AllDigitsString[0] != '\0')
+      {
+        return std::string(m_dateTimeRfc3339AllDigitsString.data());
+      }
+      break;
+    case TimeFractionFormat::Truncate:
+      if (m_dateTimeRfc3339TruncateString[0] != '\0')
+      {
+        return std::string(m_dateTimeRfc3339TruncateString.data());
+      }
+      break;
+  }
+
+  std::string str = DateTime::ToStringRfc3339(fractionFormat);
+  std::size_t length = std::min(str.size(), Rfc3339DateTimeMaxSize);
+  switch (fractionFormat)
+  {
+    case TimeFractionFormat::DropTrailingZeros:
+      std::memcpy(m_dateTimeRfc3339DropTrailingString.data(), str.data(), length);
+      break;
+    case TimeFractionFormat::AllDigits:
+      std::memcpy(m_dateTimeRfc3339AllDigitsString.data(), str.data(), length);
+      break;
+    case TimeFractionFormat::Truncate:
+      std::memcpy(m_dateTimeRfc3339TruncateString.data(), str.data(), length);
+      break;
+  }
+  return str;
+}
+
+std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFormat) const
+{
+  if (format != DateFormat::Rfc3339)
+  {
+    throw std::invalid_argument(
+        "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
+  }
+
+  ThrowIfUnsupportedYear();
+
+  return DateTime::ToStringRfc3339(fractionFormat);
 }

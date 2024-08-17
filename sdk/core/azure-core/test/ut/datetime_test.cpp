@@ -38,6 +38,7 @@ TEST(DateTime, ParseDateBasic)
     auto dt = DateTime::Parse("20130517", DateTime::DateFormat::Rfc3339);
     EXPECT_NE(0, dt.time_since_epoch().count());
     EXPECT_EQ(dt.ToString(), "2013-05-17T00:00:00Z");
+    EXPECT_EQ(dt.ToString(), "2013-05-17T00:00:00Z");
   }
 }
 
@@ -54,6 +55,7 @@ void TestDateTimeRoundtrip(std::string const& str, std::string const& strExpecte
   auto dt = DateTime::Parse(str, DateTime::DateFormat::Rfc3339);
   auto const str2 = dt.ToString(DateTime::DateFormat::Rfc3339, TF);
   EXPECT_EQ(str2, strExpected);
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339, TF), strExpected);
 }
 
 template <DateTime::TimeFractionFormat TF = DateTime::TimeFractionFormat::DropTrailingZeros>
@@ -92,6 +94,9 @@ TEST(DateTime, decimals)
     auto const str2
         = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
+    EXPECT_EQ(
+        dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits),
+        strExpected);
   }
 
   {
@@ -100,6 +105,9 @@ TEST(DateTime, decimals)
     auto const str2
         = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
+    EXPECT_EQ(
+        dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits),
+        strExpected);
   }
 
   {
@@ -108,6 +116,9 @@ TEST(DateTime, decimals)
     auto const str2
         = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     EXPECT_EQ(str2, strExpected);
+    EXPECT_EQ(
+        dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits),
+        strExpected);
   }
 }
 
@@ -119,6 +130,9 @@ TEST(DateTime, noDecimals)
     auto const str2
         = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
+    EXPECT_EQ(
+        dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate),
+        strExpected);
   }
 
   {
@@ -127,6 +141,9 @@ TEST(DateTime, noDecimals)
     auto const str2
         = dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
     EXPECT_EQ(str2, strExpected);
+    EXPECT_EQ(
+        dt.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate),
+        strExpected);
   }
 }
 
@@ -139,7 +156,12 @@ TEST(DateTime, sameResultFromDefaultRfc3339)
         DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::DropTrailingZeros);
     auto const str2 = dt2.ToString(DateTime::DateFormat::Rfc3339);
     EXPECT_EQ(str1, str2);
+    EXPECT_EQ(
+        str1,
+        dt.ToString(
+            DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::DropTrailingZeros));
     EXPECT_EQ(str1, dt2.ToString());
+    EXPECT_EQ(str1, dt2.ToString(DateTime::DateFormat::Rfc3339));
   }
 }
 
@@ -178,6 +200,7 @@ TEST(DateTime, EmittingTimeCorrectDay)
   auto const actual = test.ToString(DateTime::DateFormat::Rfc1123);
   std::string const expected("Mon");
   EXPECT_EQ(actual.substr(0, 3), expected);
+  EXPECT_EQ(test.ToString(DateTime::DateFormat::Rfc1123).substr(0, 3), expected);
 }
 
 namespace {
@@ -467,12 +490,15 @@ TEST(DateTime, ToStringNoArg)
 {
   auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
   EXPECT_EQ(dt.ToString(), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(), "2013-05-17T01:02:03.123Z");
 }
 
 TEST(DateTime, ToStringOneArg)
 {
   auto dt = DateTime::Parse("2013-05-17T01:02:03.1230000Z", DateTime::DateFormat::Rfc3339);
   EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc3339), "2013-05-17T01:02:03.123Z");
+  EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc1123), "Fri, 17 May 2013 01:02:03 GMT");
   EXPECT_EQ(dt.ToString(DateTime::DateFormat::Rfc1123), "Fri, 17 May 2013 01:02:03 GMT");
 }
 
@@ -900,5 +926,6 @@ TEST(DateTime, Rfc3339Space)
 {
   auto const datetime
       = DateTime::Parse("2022-08-24 00:43:08.0004308Z", DateTime::DateFormat::Rfc3339);
+  EXPECT_EQ(datetime.ToString(DateTime::DateFormat::Rfc3339), "2022-08-24T00:43:08.0004308Z");
   EXPECT_EQ(datetime.ToString(DateTime::DateFormat::Rfc3339), "2022-08-24T00:43:08.0004308Z");
 }

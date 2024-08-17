@@ -10,6 +10,7 @@
 
 #include "azure/core/dll_import_export.hpp"
 
+#include <array>
 #include <chrono>
 #include <ostream>
 #include <string>
@@ -55,6 +56,22 @@ class DateTime final : public _detail::Clock::time_point {
 
 private:
   AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
+
+  // The maximum length of an RFC 1123 compatible datetime is 29.
+  // Day, DD Mon YYYY HH:MM:SS GMT = 3+2+2+1+3+1+4+1+2+1+2+1+2+1+3 = 29
+  // We then add 1 for the null terminator character, to indicate end of string.
+  static constexpr size_t Rfc1123DateTimeMaxSize = 30;
+  std::array<char, Rfc1123DateTimeMaxSize> m_dateTimeRfc1123String = {};
+
+  // The maximum length of an RFC 3339 compatible datetime, with nanosecond precision is 35.
+  // Given Zulu time is referenced by Z, and we always use that smaller form instead of HH:MM, we'll
+  // use that for max length. YYYY-MM-DDTHH:MM:SS.sssssssssZ =
+  // 4+1+2+1+2+1+2+1+2+1+2+1+9+1 = 30
+  // We then add 1 for the null terminator character, to indicate end of string.
+  static constexpr size_t Rfc3339DateTimeMaxSize = 31;
+  std::array<char, Rfc3339DateTimeMaxSize> m_dateTimeRfc3339DropTrailingString = {};
+  std::array<char, Rfc3339DateTimeMaxSize> m_dateTimeRfc3339AllDigitsString = {};
+  std::array<char, Rfc3339DateTimeMaxSize> m_dateTimeRfc3339TruncateString = {};
 
   DateTime(
       int16_t year,
@@ -193,6 +210,15 @@ public:
   /**
    * @brief Get a string representation of the #Azure::DateTime.
    *
+   * @param format The representation format to use, defaulted to use RFC 3339.
+   *
+   * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
+   */
+  std::string ToString(DateFormat format = DateFormat::Rfc3339);
+
+  /**
+   * @brief Get a string representation of the #Azure::DateTime.
+   *
    * @param format The representation format to use.
    * @param fractionFormat The format for the fraction part of the DateTime. Only
    * supported by RFC3339.
@@ -200,6 +226,20 @@ public:
    * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
    */
   std::string ToString(DateFormat format, TimeFractionFormat fractionFormat) const;
+
+  /**
+   * @brief Get a string representation of the #Azure::DateTime.
+   *
+   * @param format The representation format to use.
+   * @param fractionFormat The format for the fraction part of the DateTime. Only
+   * supported by RFC3339.
+   *
+   * @throw std::invalid_argument If year exceeds 9999, or if \p format is not recognized.
+   */
+  std::string ToString(DateFormat format, TimeFractionFormat fractionFormat);
+
+private:
+  std::string ToStringRfc3339(TimeFractionFormat fractionFormat) const;
 };
 
 /** @brief Return the current time. */
