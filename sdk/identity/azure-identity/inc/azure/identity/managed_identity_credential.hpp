@@ -61,7 +61,7 @@ namespace Azure { namespace Identity {
   /**
    * @brief The type of managed identity and its corresponding identifier.
    *
-   * @remark This property holds the type and unique identifier of either a system or user-assigned
+   * @remark This class holds the type and unique identifier for either a system or user-assigned
    * managed identity.
    */
   class ManagedIdentityType final {
