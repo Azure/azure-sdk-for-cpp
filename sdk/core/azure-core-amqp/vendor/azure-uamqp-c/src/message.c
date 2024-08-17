@@ -1103,6 +1103,9 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
             {
               message->body_amqp_data_items = new_body_amqp_data_items;
 
+#if defined(_MSC_VER)
+              __analysis_assume(realloc_size > message->body_amqp_data_count * sizeof(BODY_AMQP_DATA));
+#endif
               if (amqp_data.length == 0)
               {
                 message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes = NULL;
@@ -1114,9 +1117,6 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
               }
               else
               {
-#if defined(_MSC_VER)
-                __analysis_assume(realloc_size > message->body_amqp_data_count * sizeof(BODY_AMQP_DATA));
-#endif
                 message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes
                     = (unsigned char*)malloc(amqp_data.length);
                 if (message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes == NULL)
