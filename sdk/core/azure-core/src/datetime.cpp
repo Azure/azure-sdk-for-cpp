@@ -863,6 +863,15 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
         "Unrecognized date format (" + std::to_string(static_cast<int64_t>(format)) + ").");
   }
 
+  // Casting to unsigned int so that this check covers both positive and negative enum values that
+  // are invalid and out of range.
+  if (static_cast<uint64_t>(fractionFormat) > static_cast<uint64_t>(TimeFractionFormat::Truncate))
+  {
+    throw std::invalid_argument(
+        "Unrecognized time fraction format (" + std::to_string(static_cast<int64_t>(fractionFormat))
+        + ").");
+  }
+
   ThrowIfUnsupportedYear();
 
   int16_t year = 1;
