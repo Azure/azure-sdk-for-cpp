@@ -77,6 +77,18 @@ TEST(ManagedIdentityType, Invalid)
   EXPECT_THROW(
       ManagedIdentityType(ManagedIdentityIdType::SystemAssigned, "clientId"),
       std::invalid_argument);
+
+  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ClientId, ""), std::invalid_argument);
+  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ObjectId, ""), std::invalid_argument);
+  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ResourceId, ""), std::invalid_argument);
+
+  ManagedIdentityCredentialOptions options;
+  options.IdentityType = ManagedIdentityType(static_cast<ManagedIdentityIdType>(99), "");
+  std::unique_ptr<ManagedIdentityCredential const> managedIdentityCredentialWithInvalidOptions;
+  EXPECT_THROW(
+      managedIdentityCredentialWithInvalidOptions
+      = std::make_unique<ManagedIdentityCredential>(options),
+      std::invalid_argument);
 }
 
 TEST(ManagedIdentityCredential, GetCredentialName)

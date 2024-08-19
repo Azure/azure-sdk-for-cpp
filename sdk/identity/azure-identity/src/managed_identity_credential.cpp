@@ -78,6 +78,10 @@ ManagedIdentityCredential::ManagedIdentityCredential(
       m_managedIdentitySource = CreateManagedIdentitySource(
           GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
       break;
+    default:
+      throw std::invalid_argument(
+          "The ManagedIdentityIdType in the options is not set to one of the valid values.");
+      break;
   }
 }
 
