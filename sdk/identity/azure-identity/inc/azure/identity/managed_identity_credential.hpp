@@ -175,17 +175,6 @@ namespace Azure { namespace Identity {
         Azure::Identity::ManagedIdentityCredentialOptions const& options);
 
     /**
-     * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
-     * resource with a user-assigned managed identity.
-     *
-     * @param resourceId The resource ID to authenticate for a user-assigned managed identity.
-     * @param options Options for token retrieval.
-     */
-    explicit ManagedIdentityCredential(
-        ResourceIdentifier const& resourceId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
-
-    /**
      * @brief Constructs a Managed Identity Credential.
      *
      * @param options Options for token retrieval.
