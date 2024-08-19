@@ -11,6 +11,7 @@ namespace {
 std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     std::string const& credentialName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
@@ -19,6 +20,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   static std::unique_ptr<ManagedIdentitySource> (*managedIdentitySourceCreate[])(
       std::string const& credName,
       std::string const& clientId,
+      std::string const& objectId,
       std::string const& resourceId,
       TokenCredentialOptions const& options)
       = {AppServiceV2019ManagedIdentitySource::Create,
@@ -31,7 +33,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   // For that reason, it is not possible to cover that execution branch in tests.
   for (auto create : managedIdentitySourceCreate)
   {
-    if (auto source = create(credentialName, clientId, resourceId, options))
+    if (auto source = create(credentialName, clientId, objectId, resourceId, options))
     {
       return source;
     }
@@ -49,7 +51,34 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource = CreateManagedIdentitySource(GetCredentialName(), clientId, {}, options);
+  m_managedIdentitySource
+      = CreateManagedIdentitySource(GetCredentialName(), clientId, {}, {}, options);
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
+    Azure::Identity::ManagedIdentityCredentialOptions const& options)
+    : TokenCredential("ManagedIdentityCredential")
+{
+  ManagedIdentityIdType idType = options.IdentityType.GetManagedIdentityIdType();
+  switch (idType)
+  {
+    case ManagedIdentityIdType::SystemAssigned:
+      m_managedIdentitySource
+          = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
+      break;
+    case ManagedIdentityIdType::ClientId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), options.IdentityType.GetId(), {}, {}, options);
+      break;
+    case ManagedIdentityIdType::ObjectId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, options.IdentityType.GetId(), {}, options);
+      break;
+    case ManagedIdentityIdType::ResourceId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
+      break;
+  }
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
@@ -58,7 +87,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     : TokenCredential("ManagedIdentityCredential")
 {
   m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, resourceId.ToString(), options);
+      = CreateManagedIdentitySource(GetCredentialName(), {}, {}, resourceId.ToString(), options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

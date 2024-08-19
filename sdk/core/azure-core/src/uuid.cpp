@@ -17,7 +17,7 @@ static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
 #endif
 
 namespace Azure { namespace Core {
-  std::string Uuid::ToString()
+  std::string Uuid::ToString() const
   {
     // Guid is 36 characters
     //  Add one byte for the \0

@@ -10,6 +10,7 @@
 #include "azure_uamqp_c/amqp_definitions.h"
 #include "azure_uamqp_c/message.h"
 #include "azure_uamqp_c/amqpvalue.h"
+#include "azure_c_shared_utility/safe_math.h"
 
 typedef struct BODY_AMQP_DATA_TAG
 {
@@ -245,78 +246,114 @@ MESSAGE_HANDLE message_clone(MESSAGE_HANDLE source_message)
 
             if ((result != NULL) && (source_message->body_amqp_data_count > 0))
             {
-                size_t i;
+              size_t calloc_size = safe_multiply_size_t(source_message->body_amqp_data_count, sizeof(BODY_AMQP_DATA));
+#if defined(_MSC_VER)
+              __analysis_assume(calloc_size == (source_message->body_amqp_data_count+1)*sizeof(BODY_AMQP_DATA));
+#endif
 
-                result->body_amqp_data_items = (BODY_AMQP_DATA*)calloc(1, (source_message->body_amqp_data_count * sizeof(BODY_AMQP_DATA)));
+              if (calloc_size == SIZE_MAX)
+              {
+                LogError("Invalid size for body_amqp_data_items");
+                message_destroy(result);
+                result = NULL;
+              }
+              else
+              {
+                result->body_amqp_data_items = (BODY_AMQP_DATA*)calloc(1, calloc_size);
+
                 if (result->body_amqp_data_items == NULL)
                 {
-                    /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the source message fails, then `message_clone` shall fail and return NULL. ]*/
-                    LogError("Cannot allocate memory for body data sections");
-                    message_destroy(result);
-                    result = NULL;
+                  /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the
+                   * source message fails, then `message_clone` shall fail and return NULL. ]*/
+                  LogError("Cannot allocate memory for body data sections");
+                  message_destroy(result);
+                  result = NULL;
                 }
                 else
                 {
-                    for (i = 0; i < source_message->body_amqp_data_count; i++)
-                    {
-                        result->body_amqp_data_items[i].body_data_section_length = source_message->body_amqp_data_items[i].body_data_section_length;
+                  size_t i;
 
-                        /* Codes_SRS_MESSAGE_01_011: [If an AMQP data has been set as message body on the source message it shall be cloned by allocating memory for the binary payload.] */
-                        result->body_amqp_data_items[i].body_data_section_bytes = (unsigned char*)malloc(source_message->body_amqp_data_items[i].body_data_section_length);
-                        if (result->body_amqp_data_items[i].body_data_section_bytes == NULL)
-                        {
-                            LogError("Cannot allocate memory for body data section %u", (unsigned int)i);
-                            break;
-                        }
-                        else
-                        {
-                            (void)memcpy(result->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_bytes, result->body_amqp_data_items[i].body_data_section_length);
-                        }
-                    }
+                  for (i = 0; i < source_message->body_amqp_data_count; i++)
+                  {
+                    result->body_amqp_data_items[i].body_data_section_length = source_message->body_amqp_data_items[i].body_data_section_length;
 
-                    result->body_amqp_data_count = i;
-                    if (i < source_message->body_amqp_data_count)
+                    /* Codes_SRS_MESSAGE_01_011: [If an AMQP data has been set as message body on
+                     * the source message it shall be cloned by allocating memory for the binary
+                     * payload.] */
+                    result->body_amqp_data_items[i].body_data_section_bytes = (unsigned char*)malloc(source_message->body_amqp_data_items[i].body_data_section_length);
+                    if (result->body_amqp_data_items[i].body_data_section_bytes == NULL)
                     {
-                        /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the source message fails, then `message_clone` shall fail and return NULL. ]*/
-                        message_destroy(result);
-                        result = NULL;
+                      LogError("Cannot allocate memory for body data section %u", (unsigned int)i);
+                      break;
                     }
+                    else
+                    {
+                      (void)memcpy(result->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_bytes, source_message->body_amqp_data_items[i].body_data_section_length);
+                    }
+                  }
+
+                  result->body_amqp_data_count = i;
+                  if (i < source_message->body_amqp_data_count)
+                  {
+                    /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the
+                     * source message fails, then `message_clone` shall fail and return NULL. ]*/
+                    message_destroy(result);
+                    result = NULL;
+                  }
                 }
+              }
             }
 
             if ((result != NULL) && (source_message->body_amqp_sequence_count > 0))
             {
-                size_t i;
+              size_t calloc_size = safe_multiply_size_t(source_message->body_amqp_sequence_count, sizeof(AMQP_VALUE));
+#if defined(_MSC_VER)
+              __analysis_assume(calloc_size == (source_message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
+#endif
 
-                result->body_amqp_sequence_items = (AMQP_VALUE*)calloc(1, (source_message->body_amqp_sequence_count * sizeof(AMQP_VALUE)));
+              if (calloc_size == SIZE_MAX)
+              {
+                LogError("Invalid size for body_amqp_sequence_items");
+                message_destroy(result);
+                result = NULL;
+              }
+              else
+              {
+                result->body_amqp_sequence_items = (AMQP_VALUE*)calloc(1, calloc_size);
                 if (result->body_amqp_sequence_items == NULL)
                 {
-                    /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the source message fails, then `message_clone` shall fail and return NULL. ]*/
-                    LogError("Cannot allocate memory for body AMQP sequences");
-                    message_destroy(result);
-                    result = NULL;
+                  /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the
+                   * source message fails, then `message_clone` shall fail and return NULL. ]*/
+                  LogError("Cannot allocate memory for body AMQP sequences");
+                  message_destroy(result);
+                  result = NULL;
                 }
                 else
                 {
-                    for (i = 0; i < source_message->body_amqp_sequence_count; i++)
-                    {
-                        /* Codes_SRS_MESSAGE_01_160: [ If AMQP sequences are set as AMQP body they shall be cloned by calling `amqpvalue_clone`. ] */
-                        result->body_amqp_sequence_items[i] = amqpvalue_clone(source_message->body_amqp_sequence_items[i]);
-                        if (result->body_amqp_sequence_items[i] == NULL)
-                        {
-                            LogError("Cannot clone AMQP sequence %u", (unsigned int)i);
-                            break;
-                        }
-                    }
+                  size_t i;
 
-                    result->body_amqp_sequence_count = i;
-                    if (i < source_message->body_amqp_sequence_count)
+                  for (i = 0; i < source_message->body_amqp_sequence_count; i++)
+                  {
+                    /* Codes_SRS_MESSAGE_01_160: [ If AMQP sequences are set as AMQP body they shall
+                     * be cloned by calling `amqpvalue_clone`. ] */
+                    result->body_amqp_sequence_items[i] = amqpvalue_clone(source_message->body_amqp_sequence_items[i]);
+                    if (result->body_amqp_sequence_items[i] == NULL)
                     {
-                        /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the source message fails, then `message_clone` shall fail and return NULL. ]*/
-                        message_destroy(result);
-                        result = NULL;
+                      LogError("Cannot clone AMQP sequence %u", (unsigned int)i);
+                      break;
                     }
+                  }
+
+                  result->body_amqp_sequence_count = i;
+                  if (i < source_message->body_amqp_sequence_count)
+                  {
+                    /* Codes_SRS_MESSAGE_01_012: [ If any cloning operation for the members of the
+                     * source message fails, then `message_clone` shall fail and return NULL. ]*/
+                    message_destroy(result);
+                    result = NULL;
+                  }
                 }
+              }
             }
 
             if ((result != NULL) && (source_message->body_amqp_value != NULL))
@@ -1035,46 +1072,71 @@ int message_add_body_amqp_data(MESSAGE_HANDLE message, BINARY_DATA amqp_data)
         }
         else
         {
-            /* Codes_SRS_MESSAGE_01_086: [ `message_add_body_amqp_data` shall add the contents of `amqp_data` to the list of AMQP data values for the body of the message identified by `message`. ]*/
-            BODY_AMQP_DATA* new_body_amqp_data_items = (BODY_AMQP_DATA*)realloc(message->body_amqp_data_items, sizeof(BODY_AMQP_DATA) * (message->body_amqp_data_count + 1));
+          size_t realloc_size = safe_add_size_t(message->body_amqp_data_count, 1);
+          realloc_size = safe_multiply_size_t(sizeof(BODY_AMQP_DATA), realloc_size);
+#if defined(_MSC_VER)
+          __analysis_assume(realloc_size == (message->body_amqp_data_count+1) * sizeof(BODY_AMQP_DATA));
+          __analysis_assume(realloc_size / sizeof(BODY_AMQP_DATA) > message->body_amqp_data_count);
+          __analysis_assume(message->body_amqp_data_count < realloc_size / sizeof(BODY_AMQP_DATA));
+#endif
+
+
+          if (realloc_size == SIZE_MAX)
+          {
+            LogError("Invalid size for new_body_amqp_data_items");
+            result = MU_FAILURE;
+          }
+          else
+          {
+            /* Codes_SRS_MESSAGE_01_086: [ `message_add_body_amqp_data` shall add the contents of
+             * `amqp_data` to the list of AMQP data values for the body of the message identified by
+             * `message`. ]*/
+            BODY_AMQP_DATA* new_body_amqp_data_items = (BODY_AMQP_DATA*)realloc(message->body_amqp_data_items, realloc_size);
             if (new_body_amqp_data_items == NULL)
             {
-                /* Codes_SRS_MESSAGE_01_153: [ If allocating memory to store the added AMQP data fails, `message_add_body_amqp_data` shall fail and return a non-zero value. ]*/
-                LogError("Cannot allocate memory for body AMQP data items");
-                result = MU_FAILURE;
+              /* Codes_SRS_MESSAGE_01_153: [ If allocating memory to store the added AMQP data
+               * fails, `message_add_body_amqp_data` shall fail and return a non-zero value. ]*/
+              LogError("Cannot allocate memory for body AMQP data items");
+              result = MU_FAILURE;
             }
             else
             {
-                message->body_amqp_data_items = new_body_amqp_data_items;
+              message->body_amqp_data_items = new_body_amqp_data_items;
 
-                if (amqp_data.length == 0)
+#if defined(_MSC_VER)
+              __analysis_assume(realloc_size > message->body_amqp_data_count * sizeof(BODY_AMQP_DATA));
+#endif
+              if (amqp_data.length == 0)
+              {
+                message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes = NULL;
+                message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_length = 0;
+                message->body_amqp_data_count++;
+
+                /* Codes_SRS_MESSAGE_01_087: [ On success it shall return 0. ]*/
+                result = 0;
+              }
+              else
+              {
+                message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes
+                    = (unsigned char*)malloc(amqp_data.length);
+                if (message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes == NULL)
                 {
-                    message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes = NULL;
-                    message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_length = 0;
-                    message->body_amqp_data_count++;
-
-                    /* Codes_SRS_MESSAGE_01_087: [ On success it shall return 0. ]*/
-                    result = 0;
+                  /* Codes_SRS_MESSAGE_01_153: [ If allocating memory to store the added AMQP data
+                   * fails, `message_add_body_amqp_data` shall fail and return a non-zero value. ]*/
+                  LogError("Cannot allocate memory for body AMQP data to be added");
+                  result = MU_FAILURE;
                 }
                 else
                 {
-                    message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes = (unsigned char*)malloc(amqp_data.length);
-                    if (message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes == NULL)
-                    {
-                        /* Codes_SRS_MESSAGE_01_153: [ If allocating memory to store the added AMQP data fails, `message_add_body_amqp_data` shall fail and return a non-zero value. ]*/
-                        LogError("Cannot allocate memory for body AMQP data to be added");
-                        result = MU_FAILURE;
-                    }
-                    else
-                    {
-                        message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_length = amqp_data.length;
-                        (void)memcpy(message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes, amqp_data.bytes, amqp_data.length);
-                        message->body_amqp_data_count++;
+                  message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_length = amqp_data.length;
+                  (void)memcpy(message->body_amqp_data_items[message->body_amqp_data_count].body_data_section_bytes, amqp_data.bytes, amqp_data.length);
+                  message->body_amqp_data_count++;
 
-                        /* Codes_SRS_MESSAGE_01_087: [ On success it shall return 0. ]*/
-                        result = 0;
-                    }
+                  /* Codes_SRS_MESSAGE_01_087: [ On success it shall return 0. ]*/
+                  result = 0;
                 }
+              }
+              }
             }
         }
     }
@@ -1195,7 +1257,7 @@ int message_set_body_amqp_value(MESSAGE_HANDLE message, AMQP_VALUE body_amqp_val
                 /* Only free the previous value when cloning is succesfull */
                 if (message->body_amqp_value != NULL)
                 {
-                    amqpvalue_destroy(body_amqp_value);
+                    amqpvalue_destroy(message->body_amqp_value);
                 }
 
                 /* Codes_SRS_MESSAGE_01_101: [ `message_set_body_amqp_value` shall set the contents of body as being the AMQP value indicate by `body_amqp_value`. ]*/
@@ -1268,7 +1330,21 @@ int message_add_body_amqp_sequence(MESSAGE_HANDLE message, AMQP_VALUE sequence_l
         }
         else
         {
-            AMQP_VALUE* new_body_amqp_sequence_items = (AMQP_VALUE*)realloc(message->body_amqp_sequence_items, sizeof(AMQP_VALUE) * (message->body_amqp_sequence_count + 1));
+          size_t realloc_size = safe_add_size_t(message->body_amqp_sequence_count, 1);
+          realloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), realloc_size);
+#if defined(_MSC_VER)
+          __analysis_assume(realloc_size == (message->body_amqp_sequence_count+1) * sizeof(AMQP_VALUE));
+          __analysis_assume(message->body_amqp_sequence_count < realloc_size / sizeof(AMQP_VALUE));
+#endif
+
+          if (realloc_size == SIZE_MAX)
+          {
+            LogError("Invalid size for new_body_amqp_sequence_items");
+            result = MU_FAILURE;
+          }
+          else
+          {
+            AMQP_VALUE* new_body_amqp_sequence_items = (AMQP_VALUE*)realloc(message->body_amqp_sequence_items, realloc_size);
             if (new_body_amqp_sequence_items == NULL)
             {
                 /* Codes_SRS_MESSAGE_01_158: [ If allocating memory in order to store the sequence fails, `message_add_body_amqp_sequence` shall fail and return a non-zero value. ]*/
@@ -1277,25 +1353,35 @@ int message_add_body_amqp_sequence(MESSAGE_HANDLE message, AMQP_VALUE sequence_l
             }
             else
             {
-                message->body_amqp_sequence_items = new_body_amqp_sequence_items;
+              message->body_amqp_sequence_items = new_body_amqp_sequence_items;
 
-                /* Codes_SRS_MESSAGE_01_110: [ `message_add_body_amqp_sequence` shall add the contents of `sequence` to the list of AMQP sequences for the body of the message identified by `message`. ]*/
-                /* Codes_SRS_MESSAGE_01_156: [ The AMQP sequence shall be cloned by calling `amqpvalue_clone`. ]*/
-                message->body_amqp_sequence_items[message->body_amqp_sequence_count] = amqpvalue_clone(sequence_list);
-                if (message->body_amqp_sequence_items[message->body_amqp_sequence_count] == NULL)
-                {
-                    /* Codes_SRS_MESSAGE_01_157: [ If `amqpvalue_clone` fails, `message_add_body_amqp_sequence` shall fail and return a non-zero value. ]*/
-                    LogError("Cloning sequence failed");
-                    result = MU_FAILURE;
-                }
-                else
-                {
-                    /* Codes_SRS_MESSAGE_01_114: [ If adding the AMQP sequence fails, the previous value shall be preserved. ]*/
-                    message->body_amqp_sequence_count++;
+              /* Codes_SRS_MESSAGE_01_110: [ `message_add_body_amqp_sequence` shall add the contents
+               * of `sequence` to the list of AMQP sequences for the body of the message identified
+               * by `message`. ]*/
+              /* Codes_SRS_MESSAGE_01_156: [ The AMQP sequence shall be cloned by calling
+               * `amqpvalue_clone`. ]*/
+#if defined(_MSC_VER)
+              __analysis_assume(realloc_size > message->body_amqp_sequence_count * sizeof(AMQP_VALUE));
+#endif
+              message->body_amqp_sequence_items[message->body_amqp_sequence_count]
+                  = amqpvalue_clone(sequence_list);
+              if (message->body_amqp_sequence_items[message->body_amqp_sequence_count] == NULL)
+              {
+                /* Codes_SRS_MESSAGE_01_157: [ If `amqpvalue_clone` fails,
+                 * `message_add_body_amqp_sequence` shall fail and return a non-zero value. ]*/
+                LogError("Cloning sequence failed");
+                result = MU_FAILURE;
+              }
+              else
+              {
+                /* Codes_SRS_MESSAGE_01_114: [ If adding the AMQP sequence fails, the previous value
+                 * shall be preserved. ]*/
+                message->body_amqp_sequence_count++;
 
-                    /* Codes_SRS_MESSAGE_01_111: [ On success it shall return 0. ]*/
-                    result = 0;
-                }
+                /* Codes_SRS_MESSAGE_01_111: [ On success it shall return 0. ]*/
+                result = 0;
+              }
+            }
             }
         }
     }
