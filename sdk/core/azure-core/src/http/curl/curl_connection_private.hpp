@@ -147,7 +147,7 @@ namespace Azure { namespace Core {
        *
        * @return The usage count
        */
-      const size_t GetUsageCount() { return m_usedCount; }
+      size_t GetUsageCount() const { return m_usedCount; }
     };
 
     /**
@@ -176,7 +176,8 @@ namespace Azure { namespace Core {
       static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
       int SslCtxCallback(CURL* curl, void* sslctx);
       int VerifyCertificateError(int ok, X509_STORE_CTX* storeContext);
-      Azure::Core::Http::_detail::KeepAliveOptions ParseKeepAliveHeader(std::string const& keepAlive);
+      Azure::Core::Http::_detail::KeepAliveOptions ParseKeepAliveHeader(
+          std::string const& keepAlive);
       Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> m_keepAliveOptions;
 
     public:

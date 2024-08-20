@@ -2220,6 +2220,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         {
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
+        // if the connection is expired do not return it, let the code flow and return a new one.
         if (!connection->IsExpired())
         {
           connection->IncreaseUsageCount();
@@ -2230,7 +2231,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         else
         {
           Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Connection expired. Discarding.");
-        } 
+        }
       }
     }
   }
@@ -2355,7 +2356,7 @@ CurlConnection::CurlConnection(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_easy_init returned Null"));
   }
-  
+
   CURLcode result;
 
   if (request.GetHeader("connection").HasValue() && request.GetHeader("keep-alive").HasValue())
