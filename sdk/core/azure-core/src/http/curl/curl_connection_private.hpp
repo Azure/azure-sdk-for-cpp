@@ -29,7 +29,9 @@
 
 /// From openssl/x509.h.  Avoids needing to include openssl headers
 typedef struct x509_store_ctx_st X509_STORE_CTX;
-
+namespace Azure { namespace Core { namespace Test {
+  class CurlConnectionTest_ParseKeepAliveHeader_Test;
+}}} // namespace Azure::Core::Test
 namespace Azure { namespace Core {
   namespace _detail {
     /**
@@ -155,6 +157,8 @@ namespace Azure { namespace Core {
      *
      */
     class CurlConnection final : public CurlNetworkConnection {
+      friend class Azure::Core::Test::CurlConnectionTest_ParseKeepAliveHeader_Test;
+
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       curl_socket_t m_curlSocket;
@@ -176,9 +180,9 @@ namespace Azure { namespace Core {
       static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
       int SslCtxCallback(CURL* curl, void* sslctx);
       int VerifyCertificateError(int ok, X509_STORE_CTX* storeContext);
+      Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> m_keepAliveOptions;
       Azure::Core::Http::_detail::KeepAliveOptions ParseKeepAliveHeader(
           std::string const& keepAlive);
-      Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> m_keepAliveOptions;
 
     public:
       /**

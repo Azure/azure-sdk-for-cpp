@@ -30,7 +30,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
   SET(CURL_SESSION_TESTS curl_session_test_test.cpp curl_session_test.hpp)
-  SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp)
+  SET(CURL_CONNECTION_POOL_TESTS curl_connection_pool_test.cpp curl_connection_tests.cpp)
 endif()
 
 if(RUN_LONG_UNIT_TESTS)

@@ -2246,7 +2246,6 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
 Azure::Core::Http::_detail::KeepAliveOptions CurlConnection::ParseKeepAliveHeader(
     std::string const& keepAlive)
 {
-  Azure::Core::Http::_detail::KeepAliveOptions keepAliveOptions;
   // Parse the Keep-Alive header to determine if the connection should be kept alive.
   // The Keep-Alive header is in the format of:
   // Keep-Alive: timeout=5, max=1000
@@ -2255,29 +2254,43 @@ Azure::Core::Http::_detail::KeepAliveOptions CurlConnection::ParseKeepAliveHeade
   // closed.
   // If the header is not present, the connection will be kept alive for the lifetime of the
   // application.
+  Azure::Core::Http::_detail::KeepAliveOptions keepAliveOptions;
   std::string const timeoutKey = "timeout=";
   std::string const maxKey = "max=";
   auto timeoutPos = keepAlive.find(timeoutKey);
   auto maxPos = keepAlive.find(maxKey);
-  if (timeoutPos != std::string::npos)
+  try
   {
-    auto timeoutEnd = keepAlive.find(',', timeoutPos);
-    if (timeoutEnd == std::string::npos)
+
+    if (timeoutPos != std::string::npos)
     {
-      timeoutEnd = keepAlive.size();
+      auto timeoutEnd = keepAlive.find(',', timeoutPos);
+      if (timeoutEnd == std::string::npos)
+      {
+        timeoutEnd = keepAlive.size();
+      }
+
+      keepAliveOptions.ConnectionTimeout = std::chrono::seconds(std::stoi(keepAlive.substr(
+          timeoutPos + timeoutKey.size(), timeoutEnd - timeoutPos - timeoutKey.size())));
     }
-    keepAliveOptions.ConnectionTimeout = std::chrono::seconds(std::stoi(keepAlive.substr(
-        timeoutPos + timeoutKey.size(), timeoutEnd - timeoutPos - timeoutKey.size())));
+
+    if (maxPos != std::string::npos)
+    {
+      auto maxEnd = keepAlive.find(',', maxPos);
+      if (maxEnd == std::string::npos)
+      {
+        maxEnd = keepAlive.size();
+      }
+      keepAliveOptions.MaxRequests
+          = std::stoi(keepAlive.substr(maxPos + maxKey.size(), maxEnd - maxPos - maxKey.size()));
+    }
   }
-  if (maxPos != std::string::npos)
+  catch (std::invalid_argument const&)
   {
-    auto maxEnd = keepAlive.find(',', maxPos);
-    if (maxEnd == std::string::npos)
-    {
-      maxEnd = keepAlive.size();
-    }
-    keepAliveOptions.MaxRequests
-        = std::stoi(keepAlive.substr(maxPos + maxKey.size(), maxEnd - maxPos - maxKey.size()));
+    Log::Write(
+        Logger::Level::Error,
+        "Failed to parse max value / timeout from Keep-Alive header: " + keepAlive);
+    return Azure::Core::Http::_detail::KeepAliveOptions();
   }
   return keepAliveOptions;
 }
@@ -2368,7 +2381,14 @@ CurlConnection::CurlConnection(
 
     if (connectionHeader == "keep-alive")
     {
-      m_keepAliveOptions = ParseKeepAliveHeader(keepAliveHeader);
+      auto keepAliveValue = ParseKeepAliveHeader(keepAliveHeader);
+      // if we have issues parsing this header , or the data in the header is invalid no point in
+      // setting it up
+      if (keepAliveValue.ConnectionTimeout != std::chrono::seconds(0)
+          || keepAliveValue.MaxRequests > 0)
+      {
+        m_keepAliveOptions = keepAliveValue;
+      }
     }
   }
 
