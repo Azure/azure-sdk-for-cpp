@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-//#include "../src/models/private/header_impl.hpp"
+// #include "../src/models/private/header_impl.hpp"
+#include "../src/models/private/header_impl.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
 
 #include <gtest/gtest.h>
@@ -27,6 +28,61 @@ TEST_F(TestHeaders, SimpleCreate)
     EXPECT_EQ(false, header.Durable);
     EXPECT_EQ(false, header.IsFirstAcquirer);
     EXPECT_FALSE(header.TimeToLive.HasValue());
+  }
+
+  {
+    MessageHeader header;
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.DeliveryCount = 123;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.Durable = false;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.Priority = 3;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+  {
+    MessageHeader header;
+
+    header.IsFirstAcquirer = true;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+  {
+    MessageHeader header;
+
+    header.TimeToLive = std::chrono::milliseconds(37);
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
   }
 }
 

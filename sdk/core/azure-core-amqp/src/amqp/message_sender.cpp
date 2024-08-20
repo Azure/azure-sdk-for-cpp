@@ -598,7 +598,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                          RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
       auto result = messagesender_send_async(
           m_messageSender.get(),
-          Models::_detail::AmqpMessageFactory::ToUamqp(message).get(),
+          Models::_detail::AmqpMessageFactory::ToImplementation(message).get(),
           std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
           operation.release(),
           0 /*timeout*/);

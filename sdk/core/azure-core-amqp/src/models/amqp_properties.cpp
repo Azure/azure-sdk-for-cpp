@@ -34,7 +34,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-  MessageProperties _detail::MessagePropertiesFactory::FromUamqp(
+  MessageProperties _detail::MessagePropertiesFactory::FromImplementation(
       UniquePropertiesHandle const& properties)
   {
     MessageProperties rv;
@@ -158,7 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return rv;
   }
 
-  _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToUamqp(
+  _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToImplementation(
       MessageProperties const& properties)
   {
     UniquePropertiesHandle returnValue(properties_create());
@@ -341,7 +341,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
 #if ENABLE_UAMQP
-    auto handle = _detail::MessagePropertiesFactory::ToUamqp(properties);
+    auto handle = _detail::MessagePropertiesFactory::ToImplementation(properties);
     Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
         amqpvalue_create_properties(handle.get())};
     AmqpValue propertiesAsValue{
@@ -364,7 +364,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
-    return _detail::MessagePropertiesFactory::FromUamqp(uniqueHandle);
+    return _detail::MessagePropertiesFactory::FromImplementation(uniqueHandle);
 #else
     (void)data;
     (void)size;

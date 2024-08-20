@@ -411,11 +411,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value.c_str())})}
   {
   }
+
   AmqpValue::AmqpValue(const char* value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
           _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value)})}
   {
   }
+
+  AmqpValue::AmqpValue(AmqpSymbol const& value)
+      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
+  {
+  }
+
 
   AmqpValue::AmqpValue() noexcept
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(

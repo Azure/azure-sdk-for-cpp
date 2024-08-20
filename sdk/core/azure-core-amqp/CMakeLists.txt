@@ -38,7 +38,7 @@ if (USE_RUST_AMQP)
   message(STATUS "Using RUST based AMQP stack")
   set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
 else()
-  set(USE_UAMQP ON)
+  set(USE_UAMQP ON CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
   set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
 endif()
 

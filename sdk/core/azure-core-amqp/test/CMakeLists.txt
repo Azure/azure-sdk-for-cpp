@@ -11,7 +11,7 @@ cmake_minimum_required (VERSION 3.13)
 # General AMQP Unit tests.
 add_subdirectory ("ut")
 
-if (USE_VENDOR_AMQP)
+if (USE_UAMQP)
 # Unit tests which require using the uamqp library.
 add_subdirectory ("ut_uamqp")
 endif()

@@ -9,9 +9,8 @@
 #include <azure/core/nullable.hpp>
 
 #if ENABLE_UAMQP
-#include <azure_uamqp_c/amqp_definitions_milliseconds.h>
+typedef struct HEADER_INSTANCE_TAG* HEADER_HANDLE;
 
-#include <azure_uamqp_c/amqp_definitions_header.h>
 #elif ENABLE_RUST_AMQP
 #include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif

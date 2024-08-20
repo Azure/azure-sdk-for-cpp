@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   struct AmqpDetachFactory
   {
 #if ENABLE_UAMQP
-    static _internal::Performatives::AmqpDetach FromUamqp(DETACH_HANDLE error);
+    static _internal::Performatives::AmqpDetach ToImplementation(DETACH_HANDLE error);
     static UniqueAmqpDetachHandle ToAmqpDetach(_internal::Performatives::AmqpDetach const& error);
 #endif // ENABLE_UAMQP
     AmqpDetachFactory() = delete;
