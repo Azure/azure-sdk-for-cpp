@@ -37,7 +37,8 @@ TEST(Uuid, Transparent)
   auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
 
-  // Repeated calls of ToString() to validate caching results in the exact value.
+  // Repeated calls of ToString() to validate the same values are returned, whether it is cached or
+  // not.
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
   EXPECT_EQ(uuid1.ToString(), uuid1.ToString());
   EXPECT_EQ(uuid2.ToString(), uuid2.ToString());
