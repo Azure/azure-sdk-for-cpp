@@ -134,6 +134,20 @@ namespace Azure { namespace Core {
        * @return `true` is the connection was shut it down; otherwise, `false`.
        */
       bool IsShutdown() const { return m_isShutDown; }
+
+      size_t m_usedCount = 0;
+      /**
+       * @brief Increase the usage count.
+       *
+       */
+      void IncreaseUsageCount() { m_usedCount++; };
+
+      /**
+       * @brief Get the connection usage count.
+       *
+       * @return The usage count
+       */
+      const size_t GetUsageCount() { return m_usedCount; }
     };
 
     /**
@@ -145,6 +159,7 @@ namespace Azure { namespace Core {
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       curl_socket_t m_curlSocket;
       std::chrono::steady_clock::time_point m_lastUseTime;
+      std::chrono::steady_clock::time_point m_firstUseTime = std::chrono::steady_clock::now();
       std::string m_connectionKey;
       // CRL validation is disabled by default to be consistent with WinHTTP behavior
       bool m_enableCrlValidation{false};
@@ -161,6 +176,8 @@ namespace Azure { namespace Core {
       static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
       int SslCtxCallback(CURL* curl, void* sslctx);
       int VerifyCertificateError(int ok, X509_STORE_CTX* storeContext);
+      Azure::Core::Http::_detail::KeepAliveOptions ParseKeepAliveHeader(std::string const& keepAlive);
+      Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> m_keepAliveOptions;
 
     public:
       /**
@@ -201,6 +218,23 @@ namespace Azure { namespace Core {
        */
       bool IsExpired() override
       {
+        // if we have keep alive options and we haven reached the max requests declare expired
+        if (m_keepAliveOptions.HasValue() && m_keepAliveOptions.Value().MaxRequests > 0
+            && m_keepAliveOptions.Value().MaxRequests > m_usedCount)
+        {
+          return true;
+        }
+
+        // if we have keep alive options and we have a connection timeout and the connection time
+        // frame has passed declare expired
+        if (m_keepAliveOptions.HasValue()
+            && m_keepAliveOptions.Value().ConnectionTimeout > std::chrono::seconds(0)
+            && m_firstUseTime + m_keepAliveOptions.Value().ConnectionTimeout
+                < std::chrono::steady_clock::now())
+        {
+          return true;
+        }
+
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
         return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;

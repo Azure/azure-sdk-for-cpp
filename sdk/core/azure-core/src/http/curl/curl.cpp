@@ -2220,10 +2220,17 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         {
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
-
-        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
-        // return connection ref
-        return connection;
+        if (!connection->IsExpired())
+        {
+          connection->IncreaseUsageCount();
+          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
+          // return connection ref
+          return connection;
+        }
+        else
+        {
+          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Connection expired. Discarding.");
+        } 
       }
     }
   }
@@ -2233,6 +2240,45 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
 
   return std::make_unique<CurlConnection>(request, options, hostDisplayName, connectionKey);
+}
+
+Azure::Core::Http::_detail::KeepAliveOptions CurlConnection::ParseKeepAliveHeader(
+    std::string const& keepAlive)
+{
+  Azure::Core::Http::_detail::KeepAliveOptions keepAliveOptions;
+  // Parse the Keep-Alive header to determine if the connection should be kept alive.
+  // The Keep-Alive header is in the format of:
+  // Keep-Alive: timeout=5, max=1000
+  // The timeout is the number of seconds the connection is allowed to be idle before it is closed.
+  // The max is the maximum number of requests that can be made on the connection before it is
+  // closed.
+  // If the header is not present, the connection will be kept alive for the lifetime of the
+  // application.
+  std::string const timeoutKey = "timeout=";
+  std::string const maxKey = "max=";
+  auto timeoutPos = keepAlive.find(timeoutKey);
+  auto maxPos = keepAlive.find(maxKey);
+  if (timeoutPos != std::string::npos)
+  {
+    auto timeoutEnd = keepAlive.find(',', timeoutPos);
+    if (timeoutEnd == std::string::npos)
+    {
+      timeoutEnd = keepAlive.size();
+    }
+    keepAliveOptions.ConnectionTimeout = std::chrono::seconds(std::stoi(keepAlive.substr(
+        timeoutPos + timeoutKey.size(), timeoutEnd - timeoutPos - timeoutKey.size())));
+  }
+  if (maxPos != std::string::npos)
+  {
+    auto maxEnd = keepAlive.find(',', maxPos);
+    if (maxEnd == std::string::npos)
+    {
+      maxEnd = keepAlive.size();
+    }
+    keepAliveOptions.MaxRequests
+        = std::stoi(keepAlive.substr(maxPos + maxKey.size(), maxEnd - maxPos - maxKey.size()));
+  }
+  return keepAliveOptions;
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
@@ -2246,9 +2292,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return; // The server has asked us to not re-use this connection.
   }
 
-  if (connection->IsShutdown())
+  if (connection->IsShutdown() || connection->IsExpired())
   {
-    // Can't re-used a shut down connection
+    // Can't re-used a shut down connection or an expired connection
     return;
   }
 
@@ -2309,7 +2355,21 @@ CurlConnection::CurlConnection(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_easy_init returned Null"));
   }
+  
   CURLcode result;
+
+  if (request.GetHeader("connection").HasValue() && request.GetHeader("keep-alive").HasValue())
+  {
+    auto connectionHeader = Azure::Core::_internal::StringExtensions::ToLower(
+        request.GetHeader("connection").Value());
+    auto keepAliveHeader = Azure::Core::_internal::StringExtensions::ToLower(
+        request.GetHeader("keep-alive").Value());
+
+    if (connectionHeader == "keep-alive")
+    {
+      m_keepAliveOptions = ParseKeepAliveHeader(keepAliveHeader);
+    }
+  }
 
   if (options.EnableCurlTracing)
   {

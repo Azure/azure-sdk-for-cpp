@@ -13,6 +13,7 @@
 #include "azure/core/nullable.hpp"
 
 #include <chrono>
+#include <ctime>
 #include <memory>
 #include <string>
 
@@ -33,8 +34,8 @@ namespace Azure { namespace Core { namespace Http {
      * @remark The keep-alive feature allows the SDK to reuse the same connection to the service for
      * multiple requests.
      */
-    struct KeepAliveOptions
-    {
+    class KeepAliveOptions {
+    public:
       /**
        * @brief The time in seconds that the host will allow an idle connection to remain open
        * before it is closed.
@@ -44,7 +45,7 @@ namespace Azure { namespace Core { namespace Http {
        * attempt to retain a connection for at least timeout seconds.
        *
        */
-      std::chrono::seconds ConnectionTimeout;
+      std::chrono::seconds ConnectionTimeout = std::chrono::seconds(0);
 
       /**
        * @brief The maximum number of requests that a host will allow over a single connection.
@@ -184,7 +185,7 @@ namespace Azure { namespace Core { namespace Http {
      * multiple requests. This field is populated if the Keep-Alive header is present in the
      * request.
      */
-    Azure::Nullable<_detail::KeepAliveOptions> KeepAliveOptions;
+    Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> KeepAliveOptions;
 
     /**
      * @brief This option determines whether libcurl verifies the authenticity of the peer's
