@@ -51,7 +51,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief The maximum number of requests that a host will allow over a single connection.
        *
        */
-      std::size_t MaxRequests = (size_t)0;
+      std::size_t MaxRequests = size_t(0);
     };
   } // namespace _detail
 
