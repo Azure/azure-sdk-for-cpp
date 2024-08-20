@@ -171,6 +171,16 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
+    {
+      auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=x, max=10");
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
+    }
+    {
+      auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5, max=n");
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
+    }
   }
 
   TEST(CurlConnectionTest, IsExpiredNot)
