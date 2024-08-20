@@ -513,7 +513,50 @@ impl AmqpMessage {
         self.body = body.into();
     }
 
-    #[allow(unused_variables)]
+    pub fn set_application_properties(
+        &mut self,
+        application_properties: impl Into<AmqpApplicationProperties>,
+    ) {
+        self.application_properties = Some(application_properties.into());
+    }
+
+    pub fn set_delivery_annotations(&mut self, delivery_annotations: impl Into<AmqpAnnotations>) {
+        self.delivery_annotations = Some(delivery_annotations.into());
+    }
+
+    pub fn set_footer(&mut self, footer: impl Into<AmqpAnnotations>) {
+        self.footer = Some(footer.into());
+    }
+
+    pub fn add_message_body_binary(&mut self, body: &Vec<u8>) {
+        match &mut self.body {
+            AmqpMessageBody::Binary(bodies) => {
+                bodies.push(body.clone());
+            }
+            AmqpMessageBody::Empty => {
+                self.body = AmqpMessageBody::Binary(vec![body.clone()]);
+            }
+            _ => {
+                panic!("Cannot add binary body to non-binary body");
+            }
+        }
+    }
+
+    pub fn add_message_body_sequence(&mut self, body: AmqpList) {
+        match &mut self.body {
+            AmqpMessageBody::Sequence(bodies) => {
+                bodies.push(body);
+            }
+            AmqpMessageBody::Empty => {
+                self.body = AmqpMessageBody::Sequence(vec![body]);
+            }
+            _ => {
+                panic!("Cannot add sequence body to non-sequence body");
+            }
+        }
+    }
+
+    //    #[allow(unused_variables)]
     pub fn serialize(message: AmqpMessage) -> Result<Vec<u8>> {
         #[cfg(all(feature = "fe2o3-amqp", not(target_arch = "wasm32")))]
         {

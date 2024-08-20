@@ -7,9 +7,10 @@
 #include "azure/core/amqp/models/amqp_properties.hpp"
 
 #if ENABLE_UAMQP
-#include <azure_uamqp_c/amqp_definitions_sequence_no.h>
-
-#include <azure_uamqp_c/amqp_definitions_properties.h>
+extern "C"
+{
+  typedef struct PROPERTIES_INSTANCE_TAG* PROPERTIES_HANDLE;
+}
 #elif ENABLE_RUST_AMQP
 #include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif // ENABLE_UAMQP
@@ -45,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessagePropertiesFactory() = delete;
 
   public:
-    static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
-    static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
+    static MessageProperties FromImplementation(UniquePropertiesHandle const& properties);
+    static UniquePropertiesHandle ToImplementation(MessageProperties const& properties);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

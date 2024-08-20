@@ -267,6 +267,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     explicit AmqpValue(std::string const& value);
 
+    /** @brief Construct an AMQP Symbol value, a UTF-8 encoded sequence of characters.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.21](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-symbol).
+     * * @param value to be set.
+     *
+     */
+    AmqpValue(AmqpSymbol const& value);
+
     /** @brief Construct an AMQP string value, a UTF-8 encoded sequence of characters.
      *
      * Defined in [AMQP Core Types
@@ -587,7 +596,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const &() const { return m_value; }
+    explicit operator T const&() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;

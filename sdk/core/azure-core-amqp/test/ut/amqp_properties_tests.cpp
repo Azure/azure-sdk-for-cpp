@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../src/models/private/properties_impl.hpp"
 #include "azure/core/amqp/models/amqp_properties.hpp"
 
 #include <gtest/gtest.h>
@@ -18,6 +19,11 @@ TEST_F(TestProperties, SimpleCreate)
   {
     MessageProperties properties;
     GTEST_LOG_(INFO) << properties;
+
+    auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+    auto round_trip_properties
+        = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+    EXPECT_EQ(properties, round_trip_properties);
   }
 }
 
@@ -33,13 +39,18 @@ TEST_F(TestProperties, SetAbsoluteExpiryTime)
       std::chrono::duration_cast<std::chrono::system_clock::duration>(testTimestampMs)};
 
   // Set the test timestamp and verify that the returned value is accurate to milliseconds.
-  properties.AbsoluteExpiryTime = testTimestamp;
+  properties.AbsoluteExpiryTime = testTimestampToCheck;
 
   MessageProperties properties2{properties};
 
   EXPECT_EQ(properties2.AbsoluteExpiryTime.Value(), properties.AbsoluteExpiryTime.Value());
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetContentEncoding)
@@ -54,6 +65,11 @@ TEST_F(TestProperties, SetContentEncoding)
   EXPECT_EQ(properties.ContentEncoding.Value(), properties2.ContentEncoding.Value());
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetContentType)
@@ -68,6 +84,11 @@ TEST_F(TestProperties, SetContentType)
   EXPECT_EQ(properties.ContentType.Value(), properties2.ContentType.Value());
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetCorrelationId)
@@ -81,6 +102,11 @@ TEST_F(TestProperties, SetCorrelationId)
   EXPECT_EQ(properties2.CorrelationId.Value(), AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetCreationTime)
@@ -92,13 +118,18 @@ TEST_F(TestProperties, SetCreationTime)
   std::chrono::system_clock::time_point testTimestampToCheck{
       std::chrono::duration_cast<std::chrono::system_clock::duration>(testTimestampMs)};
 
-  properties.CreationTime = testTimestamp;
+  properties.CreationTime = testTimestampToCheck;
 
   MessageProperties properties2{properties};
 
   EXPECT_EQ(properties2.CreationTime.Value(), properties.CreationTime.Value());
 
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetGroupId)
@@ -111,6 +142,11 @@ TEST_F(TestProperties, SetGroupId)
 
   EXPECT_EQ(properties.GroupId.Value(), groupId);
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetGroupSequence)
@@ -123,6 +159,11 @@ TEST_F(TestProperties, SetGroupSequence)
 
   EXPECT_EQ(properties2.GroupSequence.Value(), groupSequence);
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetMessageId)
@@ -135,6 +176,11 @@ TEST_F(TestProperties, SetMessageId)
 
   EXPECT_EQ(properties2.MessageId.Value(), AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetReplyTo)
@@ -147,6 +193,11 @@ TEST_F(TestProperties, SetReplyTo)
 
   EXPECT_EQ(properties2.ReplyTo.Value(), AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetReplyToGroupId)
@@ -159,6 +210,11 @@ TEST_F(TestProperties, SetReplyToGroupId)
 
   EXPECT_EQ(properties2.ReplyToGroupId.Value(), replyToGroupId);
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetTo)
@@ -169,6 +225,11 @@ TEST_F(TestProperties, SetTo)
   MessageProperties properties2{properties};
   EXPECT_EQ(properties2.To.Value(), AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetUserId)
@@ -178,6 +239,11 @@ TEST_F(TestProperties, SetUserId)
   MessageProperties properties2{properties};
   EXPECT_EQ(properties2.UserId.Value().size(), 5);
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 TEST_F(TestProperties, SetSubject)
@@ -188,6 +254,11 @@ TEST_F(TestProperties, SetSubject)
   MessageProperties properties2{properties};
   EXPECT_EQ(properties2.Subject.Value(), subject);
   GTEST_LOG_(INFO) << properties;
+
+  auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
+  auto round_trip_properties
+      = _detail::MessagePropertiesFactory::FromImplementation(nativeProperties);
+  EXPECT_EQ(properties, round_trip_properties);
 }
 
 class PropertySerialization : public testing::Test {

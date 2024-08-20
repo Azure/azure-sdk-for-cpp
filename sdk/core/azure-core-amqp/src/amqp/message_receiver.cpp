@@ -265,7 +265,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // the message receiver is open before attempting to process the incoming message.
     if (receiver->m_receiverOpen)
     {
-      auto incomingMessage(Models::_detail::AmqpMessageFactory::FromUamqp(message));
+      auto incomingMessage(Models::_detail::AmqpMessageFactory::FromImplementation(message));
       Models::AmqpValue rv;
       if (receiver->m_eventHandler)
       {
