@@ -137,19 +137,18 @@ namespace Azure { namespace Core {
        */
       bool IsShutdown() const { return m_isShutDown; }
 
-      size_t m_usedCount = 0;
       /**
        * @brief Increase the usage count.
        *
        */
-      void IncreaseUsageCount() { m_usedCount++; };
+      virtual void IncreaseUsageCount(){};
 
       /**
        * @brief Get the connection usage count.
        *
        * @return The usage count
        */
-      size_t GetUsageCount() const { return m_usedCount; }
+      virtual size_t GetUsageCount() const { return 0; };
     };
 
     /**
@@ -169,6 +168,7 @@ namespace Azure { namespace Core {
       bool m_enableCrlValidation{false};
       // Allow the connection to proceed if retrieving the CRL failed.
       bool m_allowFailedCrlRetrieval{true};
+      size_t m_usedCount = size_t(0);
 
       static int CurlLoggingCallback(
           CURL* handle,
@@ -225,7 +225,7 @@ namespace Azure { namespace Core {
       {
         // if we have keep alive options and we haven reached the max requests declare expired
         if (m_keepAliveOptions.HasValue() && m_keepAliveOptions.Value().MaxRequests > 0
-            && m_keepAliveOptions.Value().MaxRequests > m_usedCount)
+            && m_keepAliveOptions.Value().MaxRequests <= m_usedCount)
         {
           return true;
         }
@@ -270,6 +270,19 @@ namespace Azure { namespace Core {
        */
       CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
           override;
+
+      /**
+       * @brief Increase the usage count.
+       *
+       */
+      void IncreaseUsageCount() override { m_usedCount++; };
+
+      /**
+       * @brief Get the connection usage count.
+       *
+       * @return The usage count
+       */
+      size_t GetUsageCount() const override { return m_usedCount; }
     };
   } // namespace Http
 }} // namespace Azure::Core
