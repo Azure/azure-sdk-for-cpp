@@ -38,11 +38,11 @@ namespace Azure { namespace Core { namespace Test {
     // Simulate a request to be sent
     Azure::Core::Url url("http://microsoft.com");
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
     // Move the curlMock to build a session and then send the request
     // The session will get the response we mock before, so it will pass for this GET
     Azure::Core::Http::CurlTransportOptions transportOptions;
     transportOptions.HttpKeepAlive = true;
-    
     auto session = std::make_unique<Azure::Core::Http::CurlSession>(
         request, std::move(uniqueCurlMock), transportOptions);
 
