@@ -3,6 +3,8 @@
 
 #include "azure/core/uuid.hpp"
 
+#include "azure/core/azure_assert.hpp"
+
 #include <cstdio>
 #include <random>
 
@@ -20,10 +22,16 @@ namespace {
 static char ByteToHexChar(uint8_t byte)
 {
   if (byte <= 9)
+  {
     return '0' + byte;
-  if (byte >= 10 && byte <= 15)
-    return 'a' + (byte - 10);
-  throw std::out_of_range("Byte value out of range for hexadecimal character.");
+  }
+
+  AZURE_ASSERT_MSG(
+      byte >= 10 && byte <= 15,
+      "It is expected, for a valid Uuid, to have byte values, where each of the two nibbles fit "
+      "into a hexadecimal character");
+
+  return 'a' + (byte - 10);
 }
 } // namespace
 
