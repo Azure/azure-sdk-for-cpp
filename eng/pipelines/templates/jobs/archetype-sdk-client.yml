@@ -139,7 +139,9 @@ jobs:
               ne(variables['Build.Reason'],'PullRequest'),
               eq(variables['System.TeamProject'], 'internal')
             )
-
+        - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+          Artifacts: ${{ parameters.Artifacts }}
+          condition: succeeded()
     - job: GenerateReleaseArtifacts
       pool:
         name: $(WINDOWSPOOL)
