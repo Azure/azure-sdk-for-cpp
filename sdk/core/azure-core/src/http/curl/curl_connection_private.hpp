@@ -231,7 +231,8 @@ namespace Azure { namespace Core {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds || IsKeepAliveExpired();
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds
+            || IsKeepAliveExpired();
       }
 
       /**
