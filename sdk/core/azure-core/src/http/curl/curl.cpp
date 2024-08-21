@@ -2221,7 +2221,7 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
         // if the connection is expired do not return it, let the code flow and return a new one.
-        if (!connection->IsExpired())
+        if (!connection->IsKeepAliveExpired())
         {
           connection->IncreaseUsageCount();
           Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
@@ -2306,7 +2306,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return; // The server has asked us to not re-use this connection.
   }
 
-  if (connection->IsShutdown() || connection->IsExpired())
+  if (connection->IsShutdown() || connection->IsKeepAliveExpired())
   {
     // Can't re-used a shut down connection or an expired connection
     return;

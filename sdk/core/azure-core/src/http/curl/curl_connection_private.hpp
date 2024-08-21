@@ -108,6 +108,12 @@ namespace Azure { namespace Core {
       virtual bool IsExpired() = 0;
 
       /**
+       * @brief Checks whether this CURL connection is expired due to keep-alive settings.
+       *
+       */
+      virtual bool IsKeepAliveExpired() { return false; };
+
+      /**
        * @brief This function is used when working with streams to pull more data from the wire.
        * Function will try to keep pulling data from socket until the buffer is all written or until
        * there is no more data to get from the socket.
@@ -223,6 +229,17 @@ namespace Azure { namespace Core {
        */
       bool IsExpired() override
       {
+        auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - this->m_lastUseTime);
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds || IsKeepAliveExpired();
+      }
+
+      /**
+       * @brief Checks whether this CURL connection is expired due to keep-alive settings.
+       * @return `true` if this connection is considered expired; otherwise, `false`.
+       */
+      bool IsKeepAliveExpired() override
+      {
         // if we have keep alive options and we haven reached the max requests declare expired
         if (m_keepAliveOptions.HasValue() && m_keepAliveOptions.Value().MaxRequests > 0
             && m_keepAliveOptions.Value().MaxRequests <= m_usedCount)
@@ -240,9 +257,7 @@ namespace Azure { namespace Core {
           return true;
         }
 
-        auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
+        return false;
       }
 
       /**
