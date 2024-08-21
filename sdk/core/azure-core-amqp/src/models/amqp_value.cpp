@@ -390,11 +390,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
-      : m_impl
-  {
-    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
-        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
-  }
+      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
+          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
+              static_cast<const unsigned char*>(uuid.AsArray().data())))})}
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -423,7 +421,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
   {
   }
-
 
   AmqpValue::AmqpValue() noexcept
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
@@ -799,9 +796,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     };
 #endif
 
+#if ENABLE_UAMQP
     class AmqpValueDeserializer final {
     public:
-#if ENABLE_UAMQP
       AmqpValueDeserializer() : m_decoder{amqpvalue_decoder_create(OnAmqpValueDecoded, this)} {}
 
       AmqpValue operator()(std::uint8_t const* data, size_t size) const
@@ -812,39 +809,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         return m_decodedValue;
       }
-#endif
+
     private:
-#if ENABLE_UAMQP
-      _detail::UniqueAmqpDecoderHandle m_decoder;
       AmqpValue m_decodedValue;
+      _detail::UniqueAmqpDecoderHandle m_decoder;
       static void OnAmqpValueDecoded(void* context, AMQP_VALUE value)
       {
         auto deserializer = static_cast<AmqpValueDeserializer*>(context);
         deserializer->m_decodedValue = _detail::AmqpValueFactory::FromImplementation(
             _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
       }
-#endif
     };
+
     class AmqpValueSerializer final {
     public:
       AmqpValueSerializer() = default;
 
       std::vector<uint8_t> operator()(AmqpValue const& value)
       {
-#if ENABLE_UAMQP
         if (amqpvalue_encode(
                 _detail::AmqpValueFactory::ToImplementation(value), OnAmqpValueEncoded, this))
         {
           throw std::runtime_error("Could not encode object");
         }
-#endif
         (void)value;
         return m_encodedValue;
       }
 
     private:
       std::vector<uint8_t> m_encodedValue;
-#if ENABLE_UAMQP
 
       // The OnAmqpValueEncoded callback appends the array provided to the existing encoded
       // value, extending as needed.
@@ -856,8 +849,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         serializer->m_encodedValue.insert(serializer->m_encodedValue.end(), bytes, bytes + length);
         return 0;
       }
-#endif
     };
+#endif
 
   } // namespace
   AmqpValueType AmqpValue::GetType() const
@@ -886,10 +879,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     return AmqpValueDeserializer{}(data, size);
-#else
-    (void)data;
-    (void)size;
-    return AmqpValue{};
+#elif ENABLE_RUST_AMQP
+    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
+    if (amqpvalue_decode_bytes(data, size, &value))
+    {
+      throw std::runtime_error("Could not decode object");
+    }
+    return _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{value});
 #endif
   }
 
@@ -897,14 +893,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     return AmqpValueSerializer{}(value);
-#else
-    (void)value;
-    return {};
+#elif ENABLE_RUST_AMQP
+    size_t encodedSize;
+    if (amqpvalue_get_encoded_size(
+            _detail::AmqpValueFactory::ToImplementation(value), &encodedSize))
+    {
+      throw std::runtime_error("Could not get encoded size for value.");
+    }
+    std::vector<uint8_t> encodedValue(encodedSize);
+    if (amqpvalue_encode(
+            _detail::AmqpValueFactory::ToImplementation(value),
+            encodedValue.data(),
+            encodedValue.size()))
+    {
+      throw std::runtime_error("Could not encode object");
+    }
+    return encodedValue;
 #endif
   }
+
   size_t AmqpValue::GetSerializedSize(AmqpValue const& value)
   {
-#if ENABLE_UAMQP
     size_t encodedSize;
     if (amqpvalue_get_encoded_size(
             _detail::AmqpValueFactory::ToImplementation(value), &encodedSize))
@@ -912,10 +921,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error("Could not get encoded size for value.");
     }
     return encodedSize;
-#else
-    (void)value;
-    return {};
-#endif
   }
 
   AmqpValue _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle const& value)

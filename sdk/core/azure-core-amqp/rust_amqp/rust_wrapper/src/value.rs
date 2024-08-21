@@ -3,9 +3,12 @@
 
 // cspell: words amqp amqpvalue repr
 
-use azure_core_amqp::value::{
-    AmqpComposite, AmqpDescribed, AmqpDescriptor, AmqpList, AmqpOrderedMap, AmqpSymbol,
-    AmqpTimestamp, AmqpValue,
+use azure_core_amqp::{
+    value::{
+        AmqpComposite, AmqpDescribed, AmqpDescriptor, AmqpList, AmqpOrderedMap, AmqpSymbol,
+        AmqpTimestamp, AmqpValue,
+    },
+    Deserializable, Serializable,
 };
 
 use std::ffi::{c_char, CString};
@@ -906,5 +909,47 @@ pub extern "C" fn amqpvalue_get_composite_item_in_place(
             0
         }
         _ => -1,
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn amqpvalue_get_encoded_size(value: *const RustAmqpValue, size: *mut usize) -> u32 {
+    let value = unsafe { &*value };
+    unsafe {
+        *size = Serializable::encoded_size(&value.inner);
+    }
+    0
+}
+
+#[no_mangle]
+pub extern "C" fn amqpvalue_encode(
+    value: *const RustAmqpValue,
+    buffer: *mut u8,
+    size: usize,
+) -> i32 {
+    let value = unsafe { &*value };
+    let buffer = unsafe { std::slice::from_raw_parts_mut(buffer, size) };
+    match Serializable::serialize(&value.inner, buffer) {
+        Ok(_) => 0,
+        Err(_) => -1,
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn amqpvalue_decode_bytes(
+    buffer: *const u8,
+    size: usize,
+    value: *mut *mut RustAmqpValue,
+) -> i32 {
+    let buffer = unsafe { std::slice::from_raw_parts(buffer, size) };
+    match <AmqpValue as Deserializable<AmqpValue>>::decode(buffer) {
+        Ok(v) => {
+            let amqp_value = RustAmqpValue { inner: v };
+            unsafe {
+                *value = Box::into_raw(Box::new(amqp_value));
+            }
+            0
+        }
+        Err(_) => -1,
     }
 }
