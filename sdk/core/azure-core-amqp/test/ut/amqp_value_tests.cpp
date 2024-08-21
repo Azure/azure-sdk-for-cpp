@@ -460,6 +460,7 @@ TEST_F(TestValues, TestSymbol)
     EXPECT_EQ(value, "timeNow");
     EXPECT_FALSE(value < AmqpSymbol("timeNow"));
     AmqpValue av{value.AsAmqpValue()};
+    AmqpValue av2{value};
     TEST_OSTREAM_INSERTER(av, "Symbol");
   }
   {
