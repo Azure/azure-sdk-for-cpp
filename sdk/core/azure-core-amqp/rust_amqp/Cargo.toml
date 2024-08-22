@@ -1,9 +1,6 @@
 [workspace]
 resolver = "2"
-members = [
-  "azure_core_amqp",
-  "rust_wrapper",
-]
+members = ["azure_core_amqp", "rust_wrapper"]
 
 [workspace.package]
 authors = ["Microsoft"]
@@ -19,7 +16,7 @@ path = "azure_core_amqp"
 
 [workspace.dependencies]
 azure_core = { version = "0.18" }
-azure_identity="0.18"
+azure_identity = "0.18"
 async-lock = "3.0"
 async-process = "2.0"
 async-std = { version = "1.12", features = ["attributes"] }
@@ -29,11 +26,11 @@ bytes = "1.0"
 cbindgen = "0.26.0"
 clap = { version = "4.4.16", features = ["derive"] }
 dyn-clone = "1.0"
-fe2o3-amqp = { version = "0.11", features = ["native-tls", "tracing", "uuid"] }
-fe2o3-amqp-ext = { version = "0.11", features = [] }
-fe2o3-amqp-management = { version = "0.11" }
-fe2o3-amqp-cbs = { version = "0.11" }
-fe2o3-amqp-types = { version = "0.11" }
+fe2o3-amqp = { version = "0.12", features = ["native-tls", "tracing", "uuid"] }
+fe2o3-amqp-ext = { version = "0.12", features = [] }
+fe2o3-amqp-management = { version = "0.12" }
+fe2o3-amqp-cbs = { version = "0.12" }
+fe2o3-amqp-types = { version = "0.12" }
 futures = "0.3"
 getrandom = { version = "0.2", features = ["js"] }
 hmac = { version = "0.12" }
@@ -51,7 +48,7 @@ reqwest = { version = "0.12", features = [
 ], default-features = false }
 rustc_version = "0.4"
 serde = { version = "1.0", features = ["derive"] }
-serde_amqp = { version = "0.11", features = ["uuid"] }
+serde_amqp = { version = "0.12.1", features = ["uuid"] }
 serde_bytes = { version = "0.11" }
 serde_json = "1.0"
 serde_test = "1"

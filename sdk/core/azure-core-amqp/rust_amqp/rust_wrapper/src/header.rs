@@ -3,8 +3,13 @@
 
 // cspell: words amqp amqpvalue repr
 
-use azure_core_amqp::messaging::AmqpMessageHeader;
+use azure_core_amqp::{
+    messaging::AmqpMessageHeader,
+    value::{AmqpComposite, AmqpDescriptor, AmqpValue},
+};
 use std::mem;
+
+use crate::value::RustAmqpValue;
 
 pub struct RustMessageHeader {
     pub(crate) inner: AmqpMessageHeader,
@@ -131,4 +136,52 @@ extern "C" fn header_set_delivery_count(
     let header = unsafe { &mut *header };
     header.inner.set_delivery_count(delivery_count);
     0
+}
+
+#[no_mangle]
+extern "C" fn amqpvalue_get_header(
+    value: *const RustAmqpValue,
+    header: &mut *mut RustMessageHeader,
+) -> u32 {
+    let value = unsafe { &*value };
+    match &value.inner {
+        AmqpValue::Described(value) => match value.descriptor() {
+            AmqpDescriptor::Code(0x70) => {
+                let h = value.value();
+                match h {
+                    AmqpValue::Composite(c) => {
+                        *header = Box::into_raw(Box::new(RustMessageHeader {
+                            inner: AmqpMessageHeader::from(c),
+                        }));
+                        0
+                    }
+                    AmqpValue::List(c) => {
+                        *header = Box::into_raw(Box::new(RustMessageHeader {
+                            inner: AmqpMessageHeader::from(c.clone()),
+                        }));
+                        0
+                    }
+                    _ => {
+                        *header = std::ptr::null_mut();
+                        1
+                    }
+                }
+            }
+            _ => {
+                *header = std::ptr::null_mut();
+                1
+            }
+        },
+        _ => 1,
+    }
+}
+
+#[no_mangle]
+extern "C" fn amqpvalue_create_header(header: *const RustMessageHeader) -> *mut RustAmqpValue {
+    let header = unsafe { &*header };
+    let value = AmqpValue::Composite(Box::new(AmqpComposite::new(
+        AmqpDescriptor::Code(0x70),
+        header.inner.clone(),
+    )));
+    Box::into_raw(Box::new(RustAmqpValue { inner: value }))
 }
