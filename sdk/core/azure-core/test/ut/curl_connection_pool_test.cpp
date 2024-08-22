@@ -39,7 +39,7 @@ inline std::string CreateConnectionKey(
 
 namespace Azure { namespace Core { namespace Test {
 
-             /***********************  Unique Tests for Libcurl   ********************************/
+  /***********************  Unique Tests for Libcurl   ********************************/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 
   TEST(CurlConnectionPool, connectionPoolTest)
