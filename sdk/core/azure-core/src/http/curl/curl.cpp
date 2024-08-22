@@ -404,7 +404,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
   // if the server supports keep alive the headers should be present in the reponse. If they are
-  // they shoud be the same as the request headers.
+  // they should be the same as the request headers.
   if (response->GetHeaders().find("Connection") != response->GetHeaders().end()
       && request.GetHeaders().find("Connection") != request.GetHeaders().end()
       // just in case the server sends the connection header in a different case
