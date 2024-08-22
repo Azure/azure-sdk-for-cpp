@@ -18,6 +18,10 @@ azure_identity = { workspace = true }
 azure_core = { workspace = true }
 uuid = { workspace = true }
 
+[dev-dependencies]
+serde_amqp = { workspace = true }
+fe2o3-amqp-types = { workspace = true }
+
 [lints]
 workspace = true
 

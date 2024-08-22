@@ -340,24 +340,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::vector<uint8_t> MessageProperties::Serialize(MessageProperties const& properties)
   {
-#if ENABLE_UAMQP
     auto handle = _detail::MessagePropertiesFactory::ToImplementation(properties);
     Models::_detail::UniqueAmqpValueHandle propertiesAsuAMQPValue{
         amqpvalue_create_properties(handle.get())};
     AmqpValue propertiesAsValue{
         _detail::AmqpValueFactory::FromImplementation(propertiesAsuAMQPValue)};
     return Models::AmqpValue::Serialize(propertiesAsValue);
-#else
-    (void)properties;
-    return {};
-#endif
   }
 
   MessageProperties MessageProperties::Deserialize(uint8_t const* data, size_t size)
   {
-#if ENABLE_UAMQP
     AmqpValue value{AmqpValue::Deserialize(data, size)};
-    PROPERTIES_HANDLE handle;
+    Azure::Core::Amqp::_detail::PropertiesImplementation* handle;
     if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &handle))
     {
       throw std::runtime_error("Could not convert value to AMQP Properties.");
@@ -365,11 +359,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
     return _detail::MessagePropertiesFactory::FromImplementation(uniqueHandle);
-#else
-    (void)data;
-    (void)size;
-    return {};
-#endif
   }
 
   namespace {

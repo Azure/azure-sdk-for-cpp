@@ -5,7 +5,7 @@
 
 use azure_core_amqp::{
     messaging::{AmqpMessageId, AmqpMessageProperties},
-    value::{AmqpTimestamp, AmqpValue},
+    value::{AmqpComposite, AmqpDescriptor, AmqpTimestamp, AmqpValue},
 };
 use std::mem;
 use std::time::UNIX_EPOCH;
@@ -434,4 +434,58 @@ extern "C" fn properties_set_reply_to_group_id(
     };
     properties.inner.set_reply_to_group_id(reply_to_group_id);
     0
+}
+
+#[no_mangle]
+extern "C" fn amqpvalue_get_properties(
+    value: *const RustAmqpValue,
+    header: &mut *mut RustMessageProperties,
+) -> u32 {
+    let value = unsafe { &*value };
+    match &value.inner {
+        AmqpValue::Described(value) => match value.descriptor() {
+            AmqpDescriptor::Code(0x73) => {
+                let h = value.value();
+                match h {
+                    AmqpValue::Composite(c) => {
+                        *header = Box::into_raw(Box::new(RustMessageProperties {
+                            inner: AmqpMessageProperties::from(c),
+                        }));
+                        0
+                    }
+                    AmqpValue::List(c) => {
+                        *header = Box::into_raw(Box::new(RustMessageProperties {
+                            inner: AmqpMessageProperties::from(c.clone()),
+                        }));
+                        0
+                    }
+                    _ => {
+                        *header = std::ptr::null_mut();
+                        1
+                    }
+                }
+            }
+            _ => {
+                println!("Unexpected properties descriptor code: {:?}", value);
+                *header = std::ptr::null_mut();
+                1
+            }
+        },
+        _ => {
+            println!("Unexpected properties type: {:?}", value.inner);
+            1
+        }
+    }
+}
+
+#[no_mangle]
+extern "C" fn amqpvalue_create_properties(
+    header: *const RustMessageProperties,
+) -> *mut RustAmqpValue {
+    let header = unsafe { &*header };
+    let value = AmqpValue::Composite(Box::new(AmqpComposite::new(
+        AmqpDescriptor::Code(0x73),
+        header.inner.clone(),
+    )));
+    Box::into_raw(Box::new(RustAmqpValue { inner: value }))
 }

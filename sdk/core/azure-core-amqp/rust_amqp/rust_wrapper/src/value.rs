@@ -950,6 +950,43 @@ pub extern "C" fn amqpvalue_decode_bytes(
             }
             0
         }
-        Err(_) => -1,
+        Err(e) => {
+            println!("Decode error: {:?}", e);
+            -1
+        }
     }
+}
+
+#[test]
+fn test_decode_bytes() {
+    //    let encoded = vec![0xe0, 0x02, 0x00, 0x40];
+    let value_to_encode = fe2o3_amqp_types::primitives::Value::Array(
+        fe2o3_amqp_types::primitives::Array::from(vec![]),
+    );
+    let buffer = serde_amqp::to_vec(&value_to_encode).unwrap();
+
+    //    let encoded = vec![0xe0, 1, 0x00];
+    //    assert_eq!(buffer, encoded);
+
+    let value: Result<fe2o3_amqp_types::primitives::Value, serde_amqp::error::Error> =
+        serde_amqp::from_slice(buffer.as_slice());
+
+    if value.is_err() {
+        println!("Error: {:?}", value);
+    }
+    assert!(value.is_ok());
+
+    match value.unwrap() {
+        fe2o3_amqp_types::primitives::Value::Array(a) => assert_eq!(a.len(), 0),
+        _ => panic!("Invalid value"),
+    }
+
+    //    assert_eq!(buffer, encoded);
+
+    let value: Result<fe2o3_amqp_types::primitives::Value, serde_amqp::error::Error> =
+        serde_amqp::from_slice(buffer.as_slice());
+
+    assert!(value.is_ok());
+
+    assert_eq!(value.unwrap(), value_to_encode);
 }
