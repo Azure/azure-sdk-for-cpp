@@ -174,7 +174,7 @@ namespace Azure { namespace Core {
       bool m_enableCrlValidation{false};
       // Allow the connection to proceed if retrieving the CRL failed.
       bool m_allowFailedCrlRetrieval{true};
-      size_t m_usedCount = size_t(0);
+      size_t m_usedCount = size_t(1);
 
       static int CurlLoggingCallback(
           CURL* handle,
