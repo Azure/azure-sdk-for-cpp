@@ -70,7 +70,7 @@ namespace Azure { namespace Core {
     constexpr bool operator==(Uuid const& other) const
     {
       // std::array::operator==() is not a constexpr until C++20
-      for (auto i = 0; i < m_uuid.size(); ++i)
+      for (size_t i = 0; i < m_uuid.size(); ++i)
       {
         if (m_uuid[i] != other.m_uuid[i])
         {
@@ -89,7 +89,7 @@ namespace Azure { namespace Core {
      */
     constexpr bool IsNil() const
     {
-      for (auto i = 0; i < m_uuid.size(); ++i)
+      for (size_t i = 0; i < m_uuid.size(); ++i)
       {
         if (m_uuid[i] != 0)
         {
