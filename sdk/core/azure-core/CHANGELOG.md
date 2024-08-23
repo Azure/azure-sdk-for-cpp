@@ -5,10 +5,13 @@
 ### Features Added
 
 - Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
+- Added default constructor, `Parse()`, and comparison operators to `Azure::Core::Uuid`.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- `Azure::Core::Uuid::ToString()` is now `const`.
 
 ### Other Changes
 
