@@ -4,7 +4,7 @@
 // cspell: words amqp amqpvalue repr
 
 use azure_core_amqp::{
-    messaging::AmqpMessageHeader,
+    messaging::{builders::AmqpMessageHeaderBuilder, AmqpMessageHeader},
     value::{AmqpComposite, AmqpDescriptor, AmqpValue},
 };
 use std::mem;
@@ -12,14 +12,17 @@ use std::mem;
 use crate::value::RustAmqpValue;
 
 pub struct RustMessageHeader {
-    pub(crate) inner: AmqpMessageHeader,
+    inner: AmqpMessageHeader,
 }
 
-#[no_mangle]
-extern "C" fn header_create() -> *mut RustMessageHeader {
-    Box::into_raw(Box::new(RustMessageHeader {
-        inner: Default::default(),
-    }))
+impl RustMessageHeader {
+    pub(crate) fn new(header: AmqpMessageHeader) -> Self {
+        Self { inner: header }
+    }
+
+    pub(crate) fn get(&self) -> &AmqpMessageHeader {
+        &self.inner
+    }
 }
 
 #[no_mangle]
@@ -95,46 +98,78 @@ extern "C" fn header_get_delivery_count(
     }
 }
 
+pub struct RustMessageHeaderBuilder {
+    inner: AmqpMessageHeaderBuilder,
+}
+
 #[no_mangle]
-extern "C" fn header_set_durable(header: *mut RustMessageHeader, durable: bool) -> u32 {
-    let header = unsafe { &mut *header };
-    header.inner.set_durable(durable);
+extern "C" fn header_builder_create() -> *mut RustMessageHeaderBuilder {
+    Box::into_raw(Box::new(RustMessageHeaderBuilder {
+        inner: AmqpMessageHeader::builder(),
+    }))
+}
+
+#[no_mangle]
+extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
+    unsafe {
+        mem::drop(Box::from_raw(builder));
+    }
+}
+
+#[no_mangle]
+extern "C" fn header_set_durable(builder: *mut RustMessageHeaderBuilder, durable: bool) -> u32 {
+    let builder = unsafe { &mut *builder };
+    builder.inner.with_durable(durable);
     0
 }
 
 #[no_mangle]
-extern "C" fn header_set_priority(header: *mut RustMessageHeader, priority: u8) -> u32 {
-    let header = unsafe { &mut *header };
-    header.inner.set_priority(priority);
+extern "C" fn header_set_priority(builder: *mut RustMessageHeaderBuilder, priority: u8) -> u32 {
+    let builder = unsafe { &mut *builder };
+    builder.inner.with_priority(priority);
     0
 }
 
 #[no_mangle]
-extern "C" fn header_set_ttl(header: *mut RustMessageHeader, time_to_live: u64) -> u32 {
-    let header = unsafe { &mut *header };
-    header
+extern "C" fn header_set_ttl(builder: *mut RustMessageHeaderBuilder, time_to_live: u64) -> u32 {
+    let builder = unsafe { &mut *builder };
+    builder
         .inner
-        .set_time_to_live(std::time::Duration::from_millis(time_to_live));
+        .with_time_to_live(std::time::Duration::from_millis(time_to_live));
     0
 }
 
 #[no_mangle]
 extern "C" fn header_set_first_acquirer(
-    header: *mut RustMessageHeader,
+    builder: *mut RustMessageHeaderBuilder,
     first_acquirer: bool,
 ) -> u32 {
-    let header = unsafe { &mut *header };
-    header.inner.set_first_acquirer(first_acquirer);
+    let builder = unsafe { &mut *builder };
+    builder.inner.with_first_acquirer(first_acquirer);
     0
 }
 
 #[no_mangle]
 extern "C" fn header_set_delivery_count(
-    header: *mut RustMessageHeader,
+    builder: *mut RustMessageHeaderBuilder,
     delivery_count: u32,
 ) -> u32 {
-    let header = unsafe { &mut *header };
-    header.inner.set_delivery_count(delivery_count);
+    let builder = unsafe { &mut *builder };
+    builder.inner.with_delivery_count(delivery_count);
+    0
+}
+
+#[no_mangle]
+extern "C" fn header_build(
+    builder: *mut RustMessageHeaderBuilder,
+    header: *mut *mut RustMessageHeader,
+) -> u32 {
+    let builder = unsafe { &mut *builder };
+    unsafe {
+        *header = Box::into_raw(Box::new(RustMessageHeader {
+            inner: builder.inner.build(),
+        }))
+    };
     0
 }
 

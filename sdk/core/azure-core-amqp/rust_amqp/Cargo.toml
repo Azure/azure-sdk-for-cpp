@@ -48,7 +48,7 @@ reqwest = { version = "0.12", features = [
 ], default-features = false }
 rustc_version = "0.4"
 serde = { version = "1.0", features = ["derive"] }
-serde_amqp = { version = "0.12.1", features = ["uuid"] }
+serde_amqp = { version = "0.12.2", features = ["uuid"] }
 serde_bytes = { version = "0.11" }
 serde_json = "1.0"
 serde_test = "1"
