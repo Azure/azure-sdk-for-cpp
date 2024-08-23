@@ -3,7 +3,6 @@
 
 #include "azure/core/uuid.hpp"
 
-#include "azure/core/azure_assert.hpp"
 #include "azure/core/internal/strings.hpp"
 
 #include <cstdio>
@@ -24,40 +23,104 @@ static thread_local std::mt19937_64 randomGenerator(std::random_device{}());
 using Azure::Core::_internal::StringExtensions;
 
 namespace {
-static char ByteToHexChar(uint8_t byte)
+/*
+"00000000-0000-0000-0000-000000000000"
+         ^    ^    ^    ^
+ 000000000011111111112222222222333333
+ 012345678901234567890123456789012345
+ \______________ = 36 ______________/
+*/
+constexpr size_t UuidStringLength = 36;
+constexpr bool IsDashIndex(size_t i) { return i == 8 || i == 13 || i == 18 || i == 23; }
+
+constexpr std::uint8_t HexToNibble(char c) // does not check for errors
 {
-  if (byte <= 9)
+  if (c >= 'a')
   {
-    return '0' + byte;
+    return 10 + (c - 'a');
   }
 
-  AZURE_ASSERT_MSG(
-      byte >= 10 && byte <= 15,
-      "It is expected, for a valid Uuid, to have byte values, where each of the two nibbles fit "
-      "into a hexadecimal character");
+  if (c >= 'A')
+  {
+    return 10 + (c - 'A');
+  }
 
-  return 'a' + (byte - 10);
+  return c - '0';
+}
+
+char NibbleToHex(std::uint8_t nibble) // does not check for errors
+{
+  if (nibble <= 9)
+  {
+    return '0' + nibble;
+  }
+
+  return 'a' + (nibble - 10);
 }
 } // namespace
 
 namespace Azure { namespace Core {
   std::string Uuid::ToString() const
   {
-    std::string s(36, '-');
+    std::string s(UuidStringLength, '-');
 
-    for (size_t i = 0, j = 0; j < s.size() && i < UuidSize; i++)
+    for (size_t bi = 0, si = 0; bi < m_uuid.size(); ++bi)
     {
-      if (i == 4 || i == 6 || i == 8 || i == 10)
+      if (IsDashIndex(si))
       {
-        j++; // Add hyphens at the appropriate places
+        ++si;
       }
 
-      uint8_t highNibble = (m_uuid[i] >> 4) & 0x0F;
-      uint8_t lowNibble = m_uuid[i] & 0x0F;
-      s[j++] = ByteToHexChar(highNibble);
-      s[j++] = ByteToHexChar(lowNibble);
+      const std::uint8_t b = m_uuid[bi];
+      s[si] = NibbleToHex((b >> 4) & 0x0F);
+      s[si + 1] = NibbleToHex(b & 0x0F);
+      si += 2;
     }
+
     return s;
+  }
+
+  Uuid Uuid::Parse(std::string const& s)
+  {
+    bool parseError = false;
+    Uuid result;
+    if (s.size() != UuidStringLength)
+    {
+      parseError = true;
+    }
+    else
+    {
+      for (size_t si = 0, bi = 0; si < UuidStringLength; ++si)
+      {
+        const auto c = s[si];
+        if (IsDashIndex(si))
+        {
+          if (c != '-')
+          {
+            parseError = true;
+            break;
+          }
+        }
+        else
+        {
+          const auto c2 = s[si + 1];
+          if (!StringExtensions::IsHexDigit(c) || !StringExtensions::IsHexDigit(c2))
+          {
+            parseError = true;
+            break;
+          }
+
+          result.m_uuid[bi] = (HexToNibble(c) << 4) | HexToNibble(c2);
+          ++si;
+          ++bi;
+        }
+      }
+    }
+
+    return parseError ? throw std::invalid_argument(
+               "Error parsing Uuid: '" + s
+               + "' is not in the '00112233-4455-6677-8899-aAbBcCdDeEfF' format.")
+                      : result;
   }
 
   Uuid Uuid::CreateUuid()
@@ -105,68 +168,4 @@ namespace Azure { namespace Core {
 
     return result;
   }
-
-  namespace {
-    constexpr size_t UuidStringLength = 36; // 00000000-0000-0000-0000-000000000000
-    constexpr bool IsDashIndex(size_t i) { return i == 8 || i == 13 || i == 18 || i == 23; }
-
-    constexpr std::uint8_t HexToNibble(char c) // does not check for errors
-    {
-      if (c >= 'a')
-      {
-        return 10 + (c - 'a');
-      }
-
-      if (c >= 'A')
-      {
-        return 10 + (c - 'A'); 
-      }
-
-      return c - '0';
-    }
-  } // namespace
-
-  Uuid Uuid::Parse(std::string const& s)
-  {
-    bool parseError = false;
-    Uuid result;
-    if (s.size() != UuidStringLength)
-    {
-      parseError = true;
-    }
-    else
-    {
-      for (size_t i = 0, j = 0; i < UuidStringLength; ++i)
-      {
-        const auto c = s[i];
-        if (IsDashIndex(i))
-        {
-          if (c != '-')
-          {
-            parseError = true;
-            break;
-          }
-        }
-        else
-        {
-          const auto c2 = s[i + 1];
-          if (!StringExtensions::IsHexDigit(c) || !StringExtensions::IsHexDigit(c2))
-          {
-            parseError = true;
-            break;
-          }
-
-          result.m_uuid[j] = (HexToNibble(c) << 4) | HexToNibble(c2);
-          ++i;
-          ++j;
-        }
-      }
-    }
-
-    return parseError ? throw std::invalid_argument(
-               "Error parsing Uuid: '" + s
-               + "' is not in the '00112233-4455-6677-8899-aAbBcCdDeEfF' format.")
-                      : result;
-  }
-
 }} // namespace Azure::Core
