@@ -87,6 +87,17 @@ namespace Azure { namespace Core {
      * @brief Checks if the value represents a Nil UUID (`00000000-0000-0000-0000-000000000000`).
      *
      */
-    constexpr bool IsNil() const { return *this == Uuid{}; }
+    constexpr bool IsNil() const
+    {
+      for (auto i = 0; i < m_uuid.size(); ++i)
+      {
+        if (m_uuid[i] != 0)
+        {
+          return false;
+        }
+      }
+
+      return true;
+    }
   };
 }} // namespace Azure::Core
