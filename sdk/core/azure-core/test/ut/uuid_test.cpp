@@ -16,12 +16,32 @@ TEST(Uuid, Basic)
   EXPECT_EQ(uuid.ToString().length(), 36);
 }
 
+TEST(Uuid, Roundtrip)
+{
+  std::array<uint8_t, 16U> uuidArray
+      = {97, 126, 195, 45, 41, 178, 70, 23, 142, 131, 221, 245, 20, 45, 215, 15};
+
+  auto uuid = Uuid::CreateFromArray(uuidArray);
+  std::string uuidString = uuid.ToString();
+  std::string expectedString = "617ec32d-29b2-4617-8e83-ddf5142dd70f";
+  EXPECT_EQ(expectedString, uuidString);
+
+  auto roundTrip = uuid.AsArray();
+  EXPECT_EQ(uuidArray, roundTrip);
+}
+
 TEST(Uuid, Transparent)
 {
   auto uuid1 = Uuid::CreateUuid();
   auto arrayUuid1(uuid1.AsArray());
   auto uuid2 = Azure::Core::Uuid::CreateFromArray(arrayUuid1);
   EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+
+  // Repeated calls of ToString() to validate the same values are returned, whether it is cached or
+  // not.
+  EXPECT_EQ(uuid1.ToString(), uuid2.ToString());
+  EXPECT_EQ(uuid1.ToString(), uuid1.ToString());
+  EXPECT_EQ(uuid2.ToString(), uuid2.ToString());
 }
 
 TEST(Uuid, Randomness)
