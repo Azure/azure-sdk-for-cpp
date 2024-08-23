@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstring>
 #include <random>
+#include <stdexcept>
 #include <type_traits>
 
 #if defined(AZ_PLATFORM_POSIX)
