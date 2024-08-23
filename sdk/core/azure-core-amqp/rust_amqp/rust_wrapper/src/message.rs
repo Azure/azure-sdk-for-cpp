@@ -49,11 +49,7 @@ extern "C" fn message_get_header(
         return 0;
     }
     let header = message.inner.header().unwrap();
-    unsafe {
-        *message_header = Box::into_raw(Box::new(RustMessageHeader {
-            inner: header.clone(),
-        }))
-    }
+    unsafe { *message_header = Box::into_raw(Box::new(RustMessageHeader::new(header.clone()))) }
     //    let header = message.inner.header();
     //    match header {
     //        Some(h) => unsafe {
@@ -317,7 +313,7 @@ extern "C" fn message_set_header(
 ) -> u32 {
     let message = unsafe { &mut *message };
     let header = unsafe { &*message_header };
-    message.inner.set_header(header.inner.clone());
+    message.inner.set_header(header.get().clone());
     0
 }
 

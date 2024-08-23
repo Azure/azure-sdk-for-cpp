@@ -31,9 +31,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     properties_destroy(value);
   }
   // @endcond
+#if ENABLE_RUST_AMQP
+
+  using PropertiesBuilderImplementation
+      = Azure::Core::Amqp::_detail::RustInterop::RustMessagePropertiesBuilder;
+
+  template <> struct UniqueHandleHelper<PropertiesBuilderImplementation>
+  {
+    static void FreeAmqpPropertiesBuilder(PropertiesBuilderImplementation* obj);
+
+    using type
+        = Core::_internal::BasicUniqueHandle<PropertiesBuilderImplementation, FreeAmqpPropertiesBuilder>;
+  };
+  void UniqueHandleHelper<PropertiesBuilderImplementation>::FreeAmqpPropertiesBuilder(
+      PropertiesBuilderImplementation* obj)
+  {
+    properties_builder_destroy(obj);
+  }
+
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
+#if ENABLE_RUST_AMQP
+  namespace _detail {
+    using UniqueMessagePropertiesBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
+        Azure::Core::Amqp::_detail::PropertiesBuilderImplementation>;
+  }
+#endif
   MessageProperties _detail::MessagePropertiesFactory::FromImplementation(
       UniquePropertiesHandle const& properties)
   {
@@ -161,7 +186,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToImplementation(
       MessageProperties const& properties)
   {
+      #if ENABLE_UAMQP
     UniquePropertiesHandle returnValue(properties_create());
+#elif ENABLE_RUST_AMQP
+    _detail::UniqueMessagePropertiesBuilderHandle returnValue{properties_builder_create()};
+#endif
+
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
@@ -294,7 +324,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
+    #if ENABLE_RUST_AMQP
+    // Now that we've set all the builder parameters, actually build the header.
+    Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
+    if (properties_build(returnValue.get(), &implementation))
+    {
+      throw std::runtime_error("Could not build header.");
+    }
+    return _detail::UniquePropertiesHandle{implementation};
+#elif ENABLE_UAMQP
     return returnValue;
+#endif
   }
 
   namespace {
