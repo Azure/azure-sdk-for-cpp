@@ -18,6 +18,10 @@ namespace Azure { namespace Core {
    */
   class Uuid final {
   public:
+    /**
+     * @brief Represents a byte array where the UUID value can be stored.
+     *
+     */
     using ValueArray = std::array<std::uint8_t, 16>;
 
   private:
@@ -67,6 +71,12 @@ namespace Azure { namespace Core {
      */
     static Uuid Parse(std::string const& s);
 
+    /**
+     * @brief Compares with another instance of Uuid for equality.
+     * @param other another instance of Uuid.
+     * @return `true` if values of two Uuids are equal, `false` otherwise.
+     * 
+     */
     constexpr bool operator==(Uuid const& other) const
     {
       // std::array::operator==() is not a constexpr until C++20
@@ -81,6 +91,12 @@ namespace Azure { namespace Core {
       return true;
     }
 
+    /**
+     * @brief Compares with another instance of Uuid for inequality.
+     * @param other another instance of Uuid.
+     * @return `true` if values of two Uuids are not equal, `false` otherwise.
+     *
+     */
     constexpr bool operator!=(Uuid const& other) const { return !(*this == other); }
 
     /**
