@@ -127,3 +127,81 @@ TEST(Uuid, validChars)
       uuidKey,
       4);
 }
+
+TEST(Uuid, nilAndDefault)
+{
+  Uuid uuid;
+  ASSERT_TRUE(uuid.IsNil());
+  ASSERT_EQ(uuid.ToString(), "00000000-0000-0000-0000-000000000000");
+  ASSERT_EQ(uuid, Uuid{});
+  ASSERT_EQ(uuid.AsArray(), Uuid::ValueArray({0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}));
+}
+
+TEST(Uuid, parse)
+{
+  Uuid uuid1 = Uuid::Parse("00112233-4455-6677-8899-aAbBcCdDeEfF");
+
+  ASSERT_FALSE(uuid1.IsNil());
+  ASSERT_EQ(uuid1.ToString(), "00112233-4455-6677-8899-aabbccddeeff");
+  ASSERT_NE(uuid1, Uuid{});
+  ASSERT_EQ(
+      uuid1.AsArray(),
+      Uuid::ValueArray(
+          {0x00,
+           0x11,
+           0x22,
+           0x33,
+           0x44,
+           0x55,
+           0x66,
+           0x77,
+           0x88,
+           0x99,
+           0xAA,
+           0xBB,
+           0xCC,
+           0xDD,
+           0xEE,
+           0xFF}));
+
+  // Empty string
+  ASSERT_THROW(Uuid::Parse(""), std::invalid_argument);
+
+  // Special characters - make sure we're not treating them as byte array
+  ASSERT_THROW(Uuid::Parse("\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a\a"), std::invalid_argument);
+
+  // Spaces before, after, and both.
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-000000000000 "), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse(" 00000000-0000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-00000000000"), std::invalid_argument);
+
+  // Valid characters, but in places where dashes should be
+  ASSERT_THROW(Uuid::Parse("00000000a0000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000a0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000a0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000a000000000000"), std::invalid_argument);
+
+  // Another ToString() formats
+  // (https://learn.microsoft.com/dotnet/api/system.guid.tostring?view=net-8.0)
+  ASSERT_THROW(Uuid::Parse("00000000000000000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("{00000000-0000-0000-0000-000000000000}"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("(00000000-0000-0000-0000-000000000000)"), std::invalid_argument);
+  ASSERT_THROW(
+      Uuid::Parse("{0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}"),
+      std::invalid_argument);
+
+  // Correct length, invalid characters
+  ASSERT_THROW(Uuid::Parse("o000000000-0000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("0000000000-0000-0000-0000-00000000000o"), std::invalid_argument);
+
+  // Incorrect length, incorrect caracters
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-0000000000G"), std::invalid_argument);
+
+  // Less dashes
+  ASSERT_THROW(Uuid::Parse("00000000-000000000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-00000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000000000000000"), std::invalid_argument);
+
+  // Just a string of text
+  ASSERT_THROW(Uuid::Parse("The quick brown fox jumps over the lazy dog."), std::invalid_argument);
+}
