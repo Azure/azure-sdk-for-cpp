@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "azure/core/platform.hpp"
-
 #include <array>
 #include <cstdint>
 #include <string>
@@ -33,6 +31,8 @@ namespace Azure { namespace Core {
      * @brief Constructs a Nil UUID (`00000000-0000-0000-0000-000000000000`).
      *
      */
+    // Nil UUID, per RFC9562, consists of all zeros:
+    // https://www.rfc-editor.org/rfc/rfc9562.html#name-nil-uuid
     constexpr explicit Uuid() : m_uuid{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} {}
 
     /**
@@ -89,6 +89,8 @@ namespace Azure { namespace Core {
      */
     constexpr bool IsNil() const
     {
+      // Nil UUID, per RFC9562, consists of all zeros:
+      // https://www.rfc-editor.org/rfc/rfc9562.html#name-nil-uuid
       for (size_t i = 0; i < m_uuid.size(); ++i)
       {
         if (m_uuid[i] != 0)

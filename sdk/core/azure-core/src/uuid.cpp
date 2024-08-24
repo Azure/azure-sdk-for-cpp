@@ -4,7 +4,9 @@
 #include "azure/core/uuid.hpp"
 
 #include "azure/core/internal/strings.hpp"
+#include "azure/core/platform.hpp"
 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <random>
@@ -72,6 +74,8 @@ namespace Azure { namespace Core {
         ++si;
       }
 
+      assert((si < UuidStringLength) && (si + 1 < UuidStringLength));
+
       const std::uint8_t b = m_uuid[bi];
       s[si] = NibbleToHex((b >> 4) & 0x0F);
       s[si + 1] = NibbleToHex(b & 0x0F);
@@ -104,6 +108,8 @@ namespace Azure { namespace Core {
         }
         else
         {
+          assert(si + 1 < UuidStringLength && bi < result.m_uuid.size());
+
           const auto c2 = s[si + 1];
           if (!StringExtensions::IsHexDigit(c) || !StringExtensions::IsHexDigit(c2))
           {
@@ -128,6 +134,7 @@ namespace Azure { namespace Core {
   {
     Uuid result{};
 
+    // Using RngResultType and RngResultSize to highlight the places where the same type is used.
     using RngResultType = std::uint32_t;
     static_assert(sizeof(RngResultType) == 4, "sizeof(RngResultType) must be 4.");
     constexpr size_t RngResultSize = 4;
@@ -154,8 +161,8 @@ namespace Azure { namespace Core {
 
     // The variant field consists of a variable number of the most significant bits of octet 8 of
     // the UUID.
-    // https://www.rfc-editor.org/rfc/rfc4122.html#section-4.1.1
-    // For setting the variant to conform to RFC4122, the high bits need to be of the form 10xx,
+    // https://www.rfc-editor.org/rfc/rfc9562.html#name-variant-field
+    // For setting the variant to conform to RFC9562, the high bits need to be of the form 10xx,
     // which means the hex value of the first 4 bits can only be either 8, 9, A|a, B|b. The 0-7
     // values are reserved for backward compatibility. The C|c, D|d values are reserved for
     // Microsoft, and the E|e, F|f values are reserved for future use.
@@ -163,6 +170,7 @@ namespace Azure { namespace Core {
     result.m_uuid.data()[8] = (result.m_uuid.data()[8] & 0x3F) | 0x80;
 
     {
+      // https://www.rfc-editor.org/rfc/rfc9562.html#name-version-field
       constexpr std::uint8_t Version = 4; // Version 4: Pseudo-random number
       result.m_uuid.data()[6] = (result.m_uuid.data()[6] & 0xF) | (Version << 4);
     }
