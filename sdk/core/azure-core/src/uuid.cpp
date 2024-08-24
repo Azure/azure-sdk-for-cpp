@@ -51,7 +51,7 @@ constexpr std::uint8_t HexToNibble(char c) // does not check for errors
   return c - '0';
 }
 
-char NibbleToHex(std::uint8_t nibble) // does not check for errors
+constexpr char NibbleToHex(std::uint8_t nibble) // does not check for errors
 {
   if (nibble <= 9)
   {

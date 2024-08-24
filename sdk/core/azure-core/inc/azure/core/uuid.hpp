@@ -75,7 +75,7 @@ namespace Azure { namespace Core {
      * @brief Compares with another instance of Uuid for equality.
      * @param other another instance of Uuid.
      * @return `true` if values of two Uuids are equal, `false` otherwise.
-     * 
+     *
      */
     constexpr bool operator==(Uuid const& other) const
     {
