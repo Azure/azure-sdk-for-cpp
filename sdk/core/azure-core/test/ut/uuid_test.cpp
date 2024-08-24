@@ -167,6 +167,14 @@ TEST(Uuid, parse)
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-000000000000 "), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-00000000000"), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("00000000a0000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000a0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000a0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000a000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000000000000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-000000000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-00000000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-0000000000G"), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("00000000-0000b0000-0000-000000000000"), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000c0000-000000000000"), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000d000000000000"), std::invalid_argument);
