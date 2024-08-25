@@ -239,5 +239,21 @@ namespace Azure { namespace Core {
      * @return Absolute URL with URL-encoded query parameters.
      */
     std::string GetAbsoluteUrl() const;
+
+    /**
+     * @brief Compares with another instance of Url for equality.
+     * @param other another instance of Url.
+     * @return `true` if values of two Url instances are equal, `false` otherwise.
+     *
+     */
+    bool operator==(Url const& other) const { return GetAbsoluteUrl() == other.GetAbsoluteUrl(); }
+
+    /**
+     * @brief Compares with another instance of Url for inequality.
+     * @param other another instance of Url.
+     * @return `true` if values of two Url instances are not equal, `false` otherwise.
+     *
+     */
+    bool operator!=(Url const& other) const { return !(*this == other); }
   };
 }} // namespace Azure::Core

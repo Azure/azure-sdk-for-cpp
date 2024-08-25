@@ -378,4 +378,77 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_EQ(url1.GetAbsoluteUrl(), "https://www.microsoft.com/path");
     }
   }
+
+  TEST(URL, equality)
+  {
+    {
+      Core::Url const a("https://www.microsoft.com");
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_TRUE(a == b);
+      EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com");
+      Core::Url const b("https://www.azure.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com");
+      Core::Url const b("https://www.microsoft.com/");
+      EXPECT_TRUE(a == b);
+      EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com");
+      Core::Url const b("https://www.microsoft.com:443");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com/path");
+      Core::Url const b("https://www.microsoft.com/");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com/path?query=value");
+      Core::Url const b("https://www.microsoft.com/path?query=value");
+      EXPECT_TRUE(a == b);
+      EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com/path?query=value");
+      Core::Url const b("https://www.microsoft.com/path");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com?query=value");
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com/path?query=value");
+      Core::Url const b("https://www.microsoft.com/path?query=value2");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com/path?query2=value");
+      Core::Url const b("https://www.microsoft.com/path?query=value");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+  }
 }}} // namespace Azure::Core::Test
