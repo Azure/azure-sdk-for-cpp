@@ -403,35 +403,33 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
-  /* // if the server supports keep alive the headers should be present in the response. If they
-       // are
+  // if the server supports keep alive the headers should be present in the response. If they are
   // they should be the same as the request headers.
   if (response->GetHeaders().find("Connection") != response->GetHeaders().end()
-      && request.GetHeaders().find("Connection") != request.GetHeaders().end()
+      && request.GetHeader("Connection").HasValue()
       && response->GetHeaders().find("Keep-Alive") != response->GetHeaders().end()
-      && request.GetHeaders().find("Keep-Alive") != request.GetHeaders().end())
+      && request.GetHeader("Keep-Alive").HasValue()
+      // just in case the server sends the headers in a different case
+      && Azure::Core::_internal::StringExtensions::ToLower(
+             response->GetHeaders().find("Connection")->second)
+          == Azure::Core::_internal::StringExtensions::ToLower(
+              request.GetHeader("Connection").Value())
+      // just in case the server sends the keep-alive header in a different case
+      && Azure::Core::_internal::StringExtensions::ToLower(
+             response->GetHeaders().find("Keep-Alive")->second)
+          == Azure::Core::_internal::StringExtensions::ToLower(
+              request.GetHeader("Keep-Alive").Value()))
   {
-    // just in case the server sends the headers in a different case
-    if (Azure::Core::_internal::StringExtensions::ToLower(
-            response->GetHeaders().find("Connection")->second)
-            == Azure::Core::_internal::StringExtensions::ToLower(
-                request.GetHeaders().find("Connection")->second)
-        // just in case the server sends the keep-alive header in a different case
-        && Azure::Core::_internal::StringExtensions::ToLower(
-               response->GetHeaders().find("Keep-Alive")->second)
-            == Azure::Core::_internal::StringExtensions::ToLower(
-                request.GetHeaders().find("Keep-Alive")->second))
-    {
-      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Response has same keep-alive settings");
-    }
-    else
-    {
-      // cleanup keep-alive header in the request since they don't match up the response from the
-      // server.
-      request.RemoveHeader("Keep-Alive");
-      m_options.KeepAliveOptions.Reset();
-    }
-  }*/
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Response has same keep-alive settings");
+  }
+  else
+  {
+    // cleanup keep-alive header in the request since they don't match up the response from
+    // the server.
+    request.RemoveHeader("Keep-Alive");
+    m_options.KeepAliveOptions.Reset();
+  }
+
   return response;
 }
 
