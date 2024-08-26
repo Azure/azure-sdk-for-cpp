@@ -382,10 +382,31 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, equality)
   {
     {
+      Core::Url const a;
+      Core::Url const b("");
+      EXPECT_TRUE(a == b);
+      EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a;
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
+    }
+
+    {
       Core::Url const a("https://www.microsoft.com");
       Core::Url const b("https://www.microsoft.com");
       EXPECT_TRUE(a == b);
       EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a("http://www.microsoft.com");
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_TRUE(a != b);
     }
 
     {
@@ -449,6 +470,23 @@ namespace Azure { namespace Core { namespace Test {
       Core::Url const b("https://www.microsoft.com/path?query=value");
       EXPECT_FALSE(a == b);
       EXPECT_TRUE(a != b);
+    }
+
+    {
+      Core::Url const a("www.microsoft.com");
+      Core::Url const b("www.microsoft.com");
+      EXPECT_TRUE(a == b);
+      EXPECT_FALSE(a != b);
+    }
+
+    {
+      Core::Url const a("www.microsoft.com");
+      Core::Url const b("http://www.microsoft.com");
+      Core::Url const c("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_FALSE(a == c);
+      EXPECT_TRUE(a != b);
+      EXPECT_TRUE(a != c);
     }
   }
 }}} // namespace Azure::Core::Test
