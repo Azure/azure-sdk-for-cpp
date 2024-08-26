@@ -411,7 +411,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
 void CurlTransport::ValidateKeepAliveHeaders(
     Request& request,
-    std::unique_ptr<RawResponse> &response)
+    std::unique_ptr<RawResponse>& response)
 {
   // if the server supports keep alive the headers should be present in the response. If they are
   // they should be the same as the request headers.
