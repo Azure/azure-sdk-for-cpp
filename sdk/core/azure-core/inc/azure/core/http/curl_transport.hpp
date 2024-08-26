@@ -16,6 +16,9 @@
 #include <ctime>
 #include <memory>
 #include <string>
+namespace Azure { namespace Core { namespace Test {
+  class CurlTransport_VerifyKeepAliveHeaders_Test;
+}}} // namespace Azure::Core::Test
 
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
@@ -236,6 +239,8 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    */
   class CurlTransport : public HttpTransport {
+    friend class Azure::Core::Test::CurlTransport_VerifyKeepAliveHeaders_Test;
+
   private:
     CurlTransportOptions m_options;
 
@@ -245,7 +250,8 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&&){};
 
-    void ValidateKeepAliveHeaders(Request& request, std::unique_ptr<RawResponse> &response);
+    void ValidateKeepAliveHeaders(Request& request, std::unique_ptr<RawResponse>& response);
+
   public:
     /**
      * @brief Construct a new CurlTransport object.
