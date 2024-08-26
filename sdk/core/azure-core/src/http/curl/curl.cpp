@@ -403,6 +403,16 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
+  // check the consistency of the keep alive headers between the request and the response
+  ValidateKeepAliveHeaders(request, response);
+
+  return response;
+}
+
+void CurlTransport::ValidateKeepAliveHeaders(
+    Request& request,
+    std::unique_ptr<RawResponse> &response)
+{
   // if the server supports keep alive the headers should be present in the response. If they are
   // they should be the same as the request headers.
   if (response->GetHeaders().find("Connection") != response->GetHeaders().end()
@@ -429,8 +439,6 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
     request.RemoveHeader("Keep-Alive");
     m_options.KeepAliveOptions.Reset();
   }
-
-  return response;
 }
 
 CURLcode CurlSession::Perform(Context const& context)

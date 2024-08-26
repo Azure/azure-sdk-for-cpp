@@ -245,6 +245,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&&){};
 
+    void ValidateKeepAliveHeaders(Request& request, std::unique_ptr<RawResponse> &response);
   public:
     /**
      * @brief Construct a new CurlTransport object.
