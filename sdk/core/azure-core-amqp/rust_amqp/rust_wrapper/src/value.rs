@@ -80,7 +80,7 @@ pub extern "C" fn amqpvalue_get_type(value: *const RustAmqpValue) -> RustAmqpVal
 }
 
 #[no_mangle]
-pub extern "C" fn amqpvalue_clone(value: *mut RustAmqpValue) -> *mut RustAmqpValue {
+pub extern "C" fn amqpvalue_clone(value: *const RustAmqpValue) -> *mut RustAmqpValue {
     let value = unsafe { &*value };
     let amqp_value = RustAmqpValue {
         inner: value.inner.clone(),

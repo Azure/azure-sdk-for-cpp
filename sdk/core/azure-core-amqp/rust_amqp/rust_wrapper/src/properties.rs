@@ -470,12 +470,6 @@ extern "C" fn amqpvalue_get_properties(
             AmqpDescriptor::Code(0x73) => {
                 let h = value.value();
                 match h {
-                    AmqpValue::Composite(c) => {
-                        *header = Box::into_raw(Box::new(RustMessageProperties {
-                            inner: AmqpMessageProperties::from(c),
-                        }));
-                        0
-                    }
                     AmqpValue::List(c) => {
                         *header = Box::into_raw(Box::new(RustMessageProperties {
                             inner: AmqpMessageProperties::from(c.clone()),
@@ -484,6 +478,7 @@ extern "C" fn amqpvalue_get_properties(
                     }
                     _ => {
                         *header = std::ptr::null_mut();
+                        println!("Unexpected properties value: {:?}", value);
                         1
                     }
                 }
@@ -503,12 +498,12 @@ extern "C" fn amqpvalue_get_properties(
 
 #[no_mangle]
 extern "C" fn amqpvalue_create_properties(
-    header: *const RustMessageProperties,
+    properties: *const RustMessageProperties,
 ) -> *mut RustAmqpValue {
-    let header = unsafe { &*header };
+    let properties = unsafe { &*properties };
     let value = AmqpValue::Composite(Box::new(AmqpComposite::new(
         AmqpDescriptor::Code(0x73),
-        header.inner.clone(),
+        properties.inner.clone(),
     )));
     Box::into_raw(Box::new(RustAmqpValue { inner: value }))
 }

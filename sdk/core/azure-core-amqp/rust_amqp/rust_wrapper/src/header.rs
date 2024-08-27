@@ -184,12 +184,6 @@ extern "C" fn amqpvalue_get_header(
             AmqpDescriptor::Code(0x70) => {
                 let h = value.value();
                 match h {
-                    AmqpValue::Composite(c) => {
-                        *header = Box::into_raw(Box::new(RustMessageHeader {
-                            inner: AmqpMessageHeader::from(c),
-                        }));
-                        0
-                    }
                     AmqpValue::List(c) => {
                         *header = Box::into_raw(Box::new(RustMessageHeader {
                             inner: AmqpMessageHeader::from(c.clone()),
@@ -198,6 +192,7 @@ extern "C" fn amqpvalue_get_header(
                     }
                     _ => {
                         *header = std::ptr::null_mut();
+                        println!("Invalid header type: {:?}", h);
                         1
                     }
                 }
