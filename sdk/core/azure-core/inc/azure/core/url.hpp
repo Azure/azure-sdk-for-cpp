@@ -248,6 +248,7 @@ namespace Azure { namespace Core {
      * @note Two instances are considered equal if their string representation would match.
      *
      */
+    // See also https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.1
     bool operator==(Url const& other) const
     {
       // This metod is written to go from the least expensive comparisons to more complex ones.
