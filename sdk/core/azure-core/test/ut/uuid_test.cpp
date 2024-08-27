@@ -205,3 +205,60 @@ TEST(Uuid, parse)
   // Just a string of text
   ASSERT_THROW(Uuid::Parse("The quick brown fox jumps over the lazy dog."), std::invalid_argument);
 }
+
+TEST(Uuid, equality)
+{
+  {
+    Uuid const a;
+    EXPECT_TRUE(a == a);
+    EXPECT_FALSE(a != a);
+  }
+
+  {
+    Uuid const a = Uuid::Parse("00000000-0000-0000-0000-000000000000");
+    EXPECT_TRUE(a == a);
+    EXPECT_FALSE(a != a);
+  }
+
+  {
+    Uuid const a = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
+    EXPECT_TRUE(a == a);
+    EXPECT_FALSE(a != a);
+  }
+
+  {
+    Uuid const a;
+    Uuid const b;
+    EXPECT_TRUE(a == b);
+    EXPECT_TRUE(b == a);
+    EXPECT_FALSE(a != b);
+    EXPECT_FALSE(b != a);
+  }
+
+  {
+    Uuid const a;
+    Uuid const b = Uuid::Parse("00000000-0000-0000-0000-000000000000");
+    EXPECT_TRUE(a == b);
+    EXPECT_TRUE(b == a);
+    EXPECT_FALSE(a != b);
+    EXPECT_FALSE(b != a);
+  }
+
+  {
+    Uuid const a;
+    Uuid const b = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
+    EXPECT_FALSE(a == b);
+    EXPECT_FALSE(b == a);
+    EXPECT_TRUE(a != b);
+    EXPECT_TRUE(b != a);
+  }
+
+  {
+    Uuid const a = Uuid::Parse("ffeeddcc-bbaa-9988-7766-554433221100");
+    Uuid const b = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
+    EXPECT_FALSE(a == b);
+    EXPECT_FALSE(b == a);
+    EXPECT_TRUE(a != b);
+    EXPECT_TRUE(b != a);
+  }
+}
