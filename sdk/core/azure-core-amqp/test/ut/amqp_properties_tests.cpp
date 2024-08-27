@@ -397,7 +397,6 @@ TEST_F(PropertySerialization, SerializePropertyUserId)
 
     auto reserialized = MessageProperties::Serialize(deserialized);
     EXPECT_EQ(reserialized, testValue);
-
   }
 }
 
@@ -1146,11 +1145,8 @@ TEST_F(PropertySerialization, SerializePropertyGroupSequence)
     EXPECT_EQ(32767, deserialized.GroupSequence.Value());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
 
-    
     auto reserialized = MessageProperties::Serialize(deserialized);
     EXPECT_EQ(reserialized, testValue);
-
-
   }
 }
 
@@ -1227,7 +1223,5 @@ TEST_F(PropertySerialization, SerializePropertyReplyToGroupId)
 
     auto reserialized = MessageProperties::Serialize(deserialized);
     EXPECT_EQ(reserialized, testValue);
-
-
   }
 }

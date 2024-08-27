@@ -1127,7 +1127,7 @@ TEST_F(TestValueSerialization, SerializeBinary)
     EXPECT_EQ(value.AsBinary().size(), MAX_BINARY_LENGTH);
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(MAX_BINARY_LENGTH+2, val.size());
+    EXPECT_EQ(MAX_BINARY_LENGTH + 2, val.size());
     EXPECT_EQ(0xa0, val[0]);
     EXPECT_EQ(MAX_BINARY_LENGTH, val[1]);
   }
@@ -1194,7 +1194,7 @@ TEST_F(TestValueSerialization, SerializeString)
     EXPECT_EQ(stringValue, static_cast<std::string>(value));
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(val.size(), MAX_STRING_LENGTH+2);
+    EXPECT_EQ(val.size(), MAX_STRING_LENGTH + 2);
     EXPECT_EQ(val[0], 0xa1);
     EXPECT_EQ(val[1], MAX_STRING_LENGTH);
     EXPECT_EQ(val[2], 'A');
@@ -1261,7 +1261,7 @@ TEST_F(TestValueSerialization, SerializeSymbol)
     EXPECT_EQ(AmqpSymbol(stringValue), value.AsSymbol());
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(val.size(), MAX_SYMBOL_LENGTH+2);
+    EXPECT_EQ(val.size(), MAX_SYMBOL_LENGTH + 2);
     EXPECT_EQ(val[0], 0xa3);
     EXPECT_EQ(val[1], MAX_SYMBOL_LENGTH);
     EXPECT_EQ(val[2], 'A');

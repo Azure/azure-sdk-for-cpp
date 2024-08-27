@@ -205,7 +205,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-    operator Azure::Core::Amqp::_detail::AmqpSourceImplementation*() const { return m_source.get(); }
+    operator Azure::Core::Amqp::_detail::AmqpSourceImplementation*() const
+    {
+      return m_source.get();
+    }
     Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::AmqpSourceImplementation> m_source;
 
     // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.

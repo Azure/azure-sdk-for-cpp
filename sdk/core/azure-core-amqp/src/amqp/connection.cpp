@@ -44,10 +44,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       ConnectionEvents* eventHandler,
       ConnectionEndpointEvents* endpointEventHandler)
       : m_impl{std::make_shared<_detail::ConnectionImpl>(
-          transport.GetImpl(),
-          options,
-          eventHandler,
-          endpointEventHandler)}
+            transport.GetImpl(),
+            options,
+            eventHandler,
+            endpointEventHandler)}
   {
     m_impl->FinishConstruction();
   }
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       ConnectionOptions const& options,
       ConnectionEvents* eventHandler)
       : m_impl{
-          std::make_shared<_detail::ConnectionImpl>(hostName, credential, options, eventHandler)}
+            std::make_shared<_detail::ConnectionImpl>(hostName, credential, options, eventHandler)}
   {
     m_impl->FinishConstruction();
   }
