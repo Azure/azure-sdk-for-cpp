@@ -245,17 +245,19 @@ namespace Azure { namespace Core {
      * @param other another instance of Url.
      * @return `true` if values of two Url instances are equal, `false` otherwise.
      *
+     * @note Two instances are considered equal if their string representation would match.
+     *
      */
     bool operator==(Url const& other) const
     {
+      // This metod is written to go from the least expensive comparisons to more complex ones.
       if (this == &other)
       {
         return true;
       }
 
       if (m_port != other.m_port
-          || m_encodedQueryParameters.size() != other.m_encodedQueryParameters.size()
-          || m_scheme != other.m_scheme || m_host != other.m_host)
+          || m_encodedQueryParameters.size() != other.m_encodedQueryParameters.size())
       {
         return false;
       }
@@ -263,10 +265,17 @@ namespace Azure { namespace Core {
       size_t const lhsPathLength = m_encodedPath.length();
       size_t const rhsPathLength = other.m_encodedPath.length();
 
+      // ToString() would insert a leading '/', if m_encodedPath does not have it, so we're
+      // basically doing the reverse of that logic here.
       size_t const lhsPathStart = (lhsPathLength > 0 && m_encodedPath[0] == '/') ? 1 : 0;
       size_t const rhsPathStart = (rhsPathLength > 0 && other.m_encodedPath[0] == '/') ? 1 : 0;
 
       if ((lhsPathLength - lhsPathStart) != (rhsPathLength - rhsPathStart))
+      {
+        return false;
+      }
+
+      if (m_scheme != other.m_scheme || m_host != other.m_host)
       {
         return false;
       }
@@ -286,6 +295,8 @@ namespace Azure { namespace Core {
      * @brief Compares with another instance of Url for inequality.
      * @param other another instance of Url.
      * @return `true` if values of two Url instances are not equal, `false` otherwise.
+     *
+     * @note Two instances are considered inequal if their string representation would not match.
      *
      */
     bool operator!=(Url const& other) const { return !(*this == other); }
