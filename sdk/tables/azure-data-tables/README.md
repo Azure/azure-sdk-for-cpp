@@ -9,7 +9,7 @@ The Azure Tables client can be used to access Azure Storage or Cosmos accounts.
 ## Getting started
 
 ### Prerequisites
-- [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) for package acquisition and dependency management
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management
 - [CMake](https://cmake.org/download/) for project build
 - An [Azure subscription][azure_sub]
 - An existing Azure \<Service-Name> If you need to create an Azure \<Service-Name>, you can use the Azure Portal or [Azure CLI][azure_cli].
