@@ -400,102 +400,139 @@ namespace Azure { namespace Core { namespace Test {
       Core::Url const a;
       Core::Url const b("https://www.microsoft.com");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com");
       Core::Url const b("https://www.microsoft.com");
       EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
       EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
 
     {
       Core::Url const a("http://www.microsoft.com");
       Core::Url const b("https://www.microsoft.com");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com");
       Core::Url const b("https://www.azure.com");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com");
       Core::Url const b("https://www.microsoft.com/");
       EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
       EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com");
       Core::Url const b("https://www.microsoft.com:443");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com/path");
       Core::Url const b("https://www.microsoft.com/");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com/path?query=value");
       Core::Url const b("https://www.microsoft.com/path?query=value");
       EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
       EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com/path?query=value");
       Core::Url const b("https://www.microsoft.com/path");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com?query=value");
       Core::Url const b("https://www.microsoft.com");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com/path?query=value");
       Core::Url const b("https://www.microsoft.com/path?query=value2");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("https://www.microsoft.com/path?query2=value");
       Core::Url const b("https://www.microsoft.com/path?query=value");
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
     }
 
     {
       Core::Url const a("www.microsoft.com");
       Core::Url const b("www.microsoft.com");
       EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
       EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
 
     {
       Core::Url const a("www.microsoft.com");
       Core::Url const b("http://www.microsoft.com");
       Core::Url const c("https://www.microsoft.com");
+
       EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
       EXPECT_FALSE(a == c);
+      EXPECT_FALSE(c == a);
+
       EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
       EXPECT_TRUE(a != c);
-      EXPECT_TRUE(b != c);      
+      EXPECT_TRUE(c != a);
+
+      EXPECT_FALSE(b == c);
+      EXPECT_FALSE(c == b);
+
+      EXPECT_TRUE(b != c);
+      EXPECT_TRUE(c != b);
     }
 
     {
