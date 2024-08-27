@@ -1499,9 +1499,9 @@ TEST_F(TestValueSerialization, SerializeArray)
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
     EXPECT_EQ(testVector, val);
   }
-  // Second form, serialized as first form.
+  // Second form, serialized as first form, empty array
   {
-    std::vector<uint8_t> testVector{0xf0, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00, 0x40};
+    std::vector<uint8_t> testVector{0xf0, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
     AmqpArray array(value.AsArray());

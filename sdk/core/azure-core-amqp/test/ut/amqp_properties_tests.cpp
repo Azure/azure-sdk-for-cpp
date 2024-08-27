@@ -328,6 +328,9 @@ TEST_F(PropertySerialization, SerializePropertyMessageId)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -391,6 +394,10 @@ TEST_F(PropertySerialization, SerializePropertyUserId)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
+
   }
 }
 
@@ -458,6 +465,9 @@ TEST_F(PropertySerialization, SerializePropertyTo)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -524,6 +534,9 @@ TEST_F(PropertySerialization, SerializePropertySubject)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -559,7 +572,7 @@ TEST_F(PropertySerialization, SerializePropertyReplyTo)
         0x73, // Descriptor is for a message properties
               // (http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties).
         0xc0, // List
-        0x0d, // 15 bytes long.
+        0x0e, // 15 bytes long.
         0x05, // 5 elements.
         0x40, // NIL
         0x40, // NIL
@@ -591,6 +604,9 @@ TEST_F(PropertySerialization, SerializePropertyReplyTo)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -667,6 +683,9 @@ TEST_F(PropertySerialization, SerializePropertyCorrelationId)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -739,6 +758,9 @@ TEST_F(PropertySerialization, SerializePropertyContentType)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -807,6 +829,9 @@ TEST_F(PropertySerialization, SerializePropertyContentEncoding)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -887,6 +912,9 @@ TEST_F(PropertySerialization, SerializePropertyAbsoluteExpiryTime)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -968,6 +996,9 @@ TEST_F(PropertySerialization, SerializePropertyCreationTime)
     EXPECT_FALSE(deserialized.GroupId.HasValue());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -1041,6 +1072,9 @@ TEST_F(PropertySerialization, SerializePropertyGroupdId)
     EXPECT_EQ("GroupId", deserialized.GroupId.Value());
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -1111,6 +1145,12 @@ TEST_F(PropertySerialization, SerializePropertyGroupSequence)
     // EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     EXPECT_EQ(32767, deserialized.GroupSequence.Value());
     EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
+
+    
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
+
+
   }
 }
 
@@ -1146,7 +1186,7 @@ TEST_F(PropertySerialization, SerializePropertyReplyToGroupId)
         0x73, // Descriptor is for a message properties
               // (http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-properties).
         0xc0, // List
-        0x12, // 0x14 bytes long.
+        0x14, // 0x14 bytes long.
         0x0d, // 13 elements.
         0x40, // NIL
         0x40, // NIL
@@ -1184,5 +1224,10 @@ TEST_F(PropertySerialization, SerializePropertyReplyToGroupId)
     EXPECT_FALSE(deserialized.GroupSequence.HasValue());
     // EXPECT_FALSE(deserialized.ReplyToGroupId.HasValue());
     EXPECT_EQ("32767", deserialized.ReplyToGroupId.Value());
+
+    auto reserialized = MessageProperties::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
+
+
   }
 }

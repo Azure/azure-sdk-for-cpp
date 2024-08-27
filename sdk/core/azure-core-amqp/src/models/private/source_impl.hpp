@@ -16,20 +16,25 @@
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
 #include <azure_uamqp_c/amqp_definitions_source.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif
 
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<std::remove_pointer<SOURCE_HANDLE>::type>
-  {
-    static void FreeMessageSource(SOURCE_HANDLE obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type, FreeMessageSource>;
-  };
+  using AmqpSourceImplementation = std::remove_pointer<SOURCE_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using AmqpSourceImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSource;
 #endif
+
+  template <> struct UniqueHandleHelper<AmqpSourceImplementation>
+  {
+    static void FreeMessageSource(AmqpSourceImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<AmqpSourceImplementation, FreeMessageSource>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
@@ -200,10 +205,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-#if ENABLE_UAMQP
-    operator SOURCE_HANDLE() const { return m_source.get(); }
-    Amqp::_detail::UniqueHandle<std::remove_pointer<SOURCE_HANDLE>::type> m_source;
-#endif
+    operator Azure::Core::Amqp::_detail::AmqpSourceImplementation*() const { return m_source.get(); }
+    Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::AmqpSourceImplementation> m_source;
 
     // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
     friend std::ostream& operator<<(std::ostream&, MessageSourceImpl const&);
