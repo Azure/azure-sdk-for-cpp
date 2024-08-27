@@ -4,23 +4,61 @@ Azure Data Tables is a NoSQL data storage service that can be accessed from anyw
 Tables scales as needed to support the amount of data inserted, and allows for the storing of data with non-complex accessing.
 The Azure Tables client can be used to access Azure Storage or Cosmos accounts.
 
-[Source code][source_code] | [API reference documentation][source_code]
-
+[Source code][source_code] | [Package (vcpkg)](https://vcpkg.io/en/package/azure-data-tables-cpp) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-data-tables/latest/index.html) | [Product documentation](https://learn.microsoft.com/azure/storage/tables/) | [Samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables/samples)
 
 ## Getting started
-The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
 ### Prerequisites
+- [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub]
+- An existing Azure \<Service-Name> If you need to create an Azure \<Service-Name>, you can use the Azure Portal or [Azure CLI][azure_cli].
 * You must have an [Azure subscription][azure_subscription] and either
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].
 
-#### Create account
+If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-<service-name>-name>` with your own, unique names:
+
+```PowerShell
+az login
+az <service-name> create --resource-group <your-resource-group-name> --name <your-<service-name>-name>
+```
+### Create account
 * To create a new Storage account, you can use [Azure Portal][azure_portal_create_account], [Azure PowerShell][azure_powershell_create_account], or [Azure CLI][azure_cli_create_account]:
 * To create a new Cosmos storage account, you can use the [Azure CLI][azure_cli_create_cosmos] or [Azure Portal][azure_portal_create_cosmos].
 
+### Install the package
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
 
-#### Create the client
+```batch
+vcpkg new --application
+```
+
+To install the Azure \<Service-Name> package via vcpkg:
+To add the Azure \<Service-Name> package to your vcpkg enter the following command (We'll also add the Azure Identity library for authentication):
+
+```batch
+vcpkg add port azure-<service-name>-cpp azure-identity-cpp
+```
+
+Then, add the following in your CMake file:
+
+```CMake
+find_package(azure-<service-name>-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-<service-name> Azure::azure-identity)
+```
+
+Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` argument.
+
+There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
+
+### Create the client
 The Azure Tables library allows you to interact with two types of resources:
 * the tables in your account
 * the entities within those tables.
@@ -31,6 +69,30 @@ Interaction with these resources starts with an instance of a [client](#clients)
 az login
 # Get the table service URL for the account
 az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
+```
+
+### Client (Instantiation & List of any Sub-Clients)
+
+We'll be using the `DefaultAzureCredential` to authenticate which will pick up the credentials we used when logging in with the Azure CLI earlier. `DefaultAzureCredential` can pick up on a number of Credential types from your environment and is ideal when getting started and developing. Check out our section on [DefaultAzureCredentials](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential) to learn more.
+
+```cpp
+// Add all necessary includes for client creation and samples below
+#include <azure/identity.hpp> 
+#include <azure/<service-name>.hpp
+
+// Add all using statements for client creation and samples below
+using namespace Azure::<Service::Name>;
+
+int main (){
+  // Add all variables that are needed for creating the client
+  static const char* url = "AZURE_SERVICENAME_URL";
+
+  // Use Azure Default Credential wherever possible
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+
+   // Create client code. Try to avoid using auto on the first use of any type from our libraries that a customer might not be familiar with. 
+   AzureClientType client = clientCtor(url, credential); 
+}
 ```
 
 ## Key concepts
@@ -63,13 +125,6 @@ Entities are similar to rows. An entity has a set of properties, including a **`
 
 ## Examples
 
-The following sections provide several code snippets covering some of the most common Table tasks, including:
-
-* [Creating and deleting a table](#creating-and-deleting-a-table "Creating and deleting a table")
-* [Manipulating entities](#manipulating-entities "Manipulating entities")
-* [Table Service Operations](#table-service-operations "Table Service Operations")
-* [Table Transactions Success](#table-transactions-success "Table Transactions Success")
-* [Table Transactions Error](#table-transactions-error "Table Transactions Error")
 ### Creating and deleting a table
 
 In order to Create/Delete a table we need to create a TablesClient first.
@@ -248,6 +303,15 @@ The output of the sample contains the error message:
 ```text
 Transaction failed with error: 1:The batch request contains multiple changes with same row key. An entity can appear only once in a batch request.
 ```
+## Next steps
+
+The following sections provide several code snippets covering some of the most common Table tasks, including:
+
+* [Creating and deleting a table](#creating-and-deleting-a-table "Creating and deleting a table")
+* [Manipulating entities](#manipulating-entities "Manipulating entities")
+* [Table Service Operations](#table-service-operations "Table Service Operations")
+* [Table Transactions Success](#table-transactions-success "Table Transactions Success")
+* [Table Transactions Error](#table-transactions-error "Table Transactions Error")
 
 ## Contributing
 
