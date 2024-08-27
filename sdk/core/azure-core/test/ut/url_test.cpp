@@ -495,6 +495,7 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_FALSE(a == c);
       EXPECT_TRUE(a != b);
       EXPECT_TRUE(a != c);
+      EXPECT_TRUE(b != c);      
     }
 
     {
