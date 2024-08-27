@@ -246,7 +246,41 @@ namespace Azure { namespace Core {
      * @return `true` if values of two Url instances are equal, `false` otherwise.
      *
      */
-    bool operator==(Url const& other) const { return GetAbsoluteUrl() == other.GetAbsoluteUrl(); }
+    bool operator==(Url const& other) const
+    {
+      if (this == &other)
+      {
+        return true;
+      }
+
+      if (m_port != other.m_port
+          || m_encodedQueryParameters.size() != other.m_encodedQueryParameters.size()
+          || m_scheme != other.m_scheme || m_host != other.m_host)
+      {
+        return false;
+      }
+
+      size_t const lhsPathLength = m_encodedPath.length();
+      size_t const rhsPathLength = other.m_encodedPath.length();
+
+      size_t const lhsPathStart = (lhsPathLength > 0 && m_encodedPath[0] == '/') ? 1 : 0;
+      size_t const rhsPathStart = (rhsPathLength > 0 && other.m_encodedPath[0] == '/') ? 1 : 0;
+
+      if ((lhsPathLength - lhsPathStart) != (rhsPathLength - rhsPathStart))
+      {
+        return false;
+      }
+
+      for (size_t l = lhsPathStart, r = rhsPathStart; l < lhsPathLength; ++l, ++r)
+      {
+        if (m_encodedPath[l] != other.m_encodedPath[r])
+        {
+          return false;
+        }
+      }
+
+      return m_encodedQueryParameters == other.m_encodedQueryParameters;
+    }
 
     /**
      * @brief Compares with another instance of Url for inequality.

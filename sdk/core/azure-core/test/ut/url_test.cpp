@@ -382,10 +382,18 @@ namespace Azure { namespace Core { namespace Test {
   TEST(URL, equality)
   {
     {
+      Core::Url const a("https://www.microsoft.com");
+      EXPECT_TRUE(a == a);
+      EXPECT_FALSE(a != a);
+    }
+
+    {
       Core::Url const a;
       Core::Url const b("");
       EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
       EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
 
     {
@@ -487,6 +495,19 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_FALSE(a == c);
       EXPECT_TRUE(a != b);
       EXPECT_TRUE(a != c);
+    }
+
+    {
+      Core::Url a("www.microsoft.com");
+      Core::Url b("www.microsoft.com");
+
+      a.AppendPath("/path");
+      b.AppendPath("path");
+
+      EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
+      EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
     }
   }
 }}} // namespace Azure::Core::Test
