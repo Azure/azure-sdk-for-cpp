@@ -173,7 +173,7 @@ TEST(Uuid, parse)
   // Spaces before, after, and both.
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-000000000000 "), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse(" 00000000-0000-0000-0000-000000000000"), std::invalid_argument);
-  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-00000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse(" 00000000-0000-0000-0000-000000000000 "), std::invalid_argument);
 
   // Valid characters, but in places where dashes should be
   ASSERT_THROW(Uuid::Parse("00000000a0000-0000-0000-000000000000"), std::invalid_argument);
@@ -190,11 +190,18 @@ TEST(Uuid, parse)
       Uuid::Parse("{0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}"),
       std::invalid_argument);
 
+  // Correct characters, incorrect length.
+  ASSERT_THROW(Uuid::Parse("0000000-0000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-000-0000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-000-0000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-000-000000000000"), std::invalid_argument);
+  ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-00000000000"), std::invalid_argument);
+
   // Correct length, invalid characters
   ASSERT_THROW(Uuid::Parse("o000000000-0000-0000-0000-000000000000"), std::invalid_argument);
   ASSERT_THROW(Uuid::Parse("0000000000-0000-0000-0000-00000000000o"), std::invalid_argument);
 
-  // Incorrect length, incorrect caracters
+  // Incorrect length, incorrect characters
   ASSERT_THROW(Uuid::Parse("00000000-0000-0000-0000-0000000000G"), std::invalid_argument);
 
   // Less dashes
@@ -245,12 +252,30 @@ TEST(Uuid, equality)
   }
 
   {
+    Uuid const a = Uuid::Parse("00000000-0000-0000-0000-000000000000");
+    Uuid const b = Uuid::Parse("00000000-0000-0000-0000-000000000000");
+    EXPECT_TRUE(a == b);
+    EXPECT_TRUE(b == a);
+    EXPECT_FALSE(a != b);
+    EXPECT_FALSE(b != a);
+  }
+
+  {
     Uuid const a;
     Uuid const b = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
     EXPECT_FALSE(a == b);
     EXPECT_FALSE(b == a);
     EXPECT_TRUE(a != b);
     EXPECT_TRUE(b != a);
+  }
+
+  {
+    Uuid const a = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
+    Uuid const b = Uuid::Parse("00112233-4455-6677-8899-aabbccddeeff");
+    EXPECT_TRUE(a == b);
+    EXPECT_TRUE(b == a);
+    EXPECT_FALSE(a != b);
+    EXPECT_FALSE(b != a);
   }
 
   {
