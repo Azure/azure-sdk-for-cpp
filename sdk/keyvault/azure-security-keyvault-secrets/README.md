@@ -4,26 +4,53 @@ Azure Security Keyvault Secrets Package client library for C++ (`azure-security-
 
 The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
-[Source code][secrets_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
+[Source code][secrets_client_src] | [Package (vcpkg)](https://vcpkg.io/en/package/azure-security-keyvault-secrets-cpp) | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-secrets/samples)
 
 ## Getting started
 
-### Install the package
-Install the Azure Key Vault secrets client library for C++ with vcpkg:
-
-```cmd
-vcpkg install azure-security-keyvault-secrets-cpp
-```
-
 ### Prerequisites
-* An [Azure subscription][azure_sub].
-* An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
+- [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub].
+- An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
 
 If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
 ```PowerShell
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
+
+### Install the package
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
+
+```batch
+vcpkg new --application
+```
+
+To install the Azure \<Service-Name> package via vcpkg:
+To add the Azure \<Service-Name> package to your vcpkg enter the following command (We'll also add the Azure Identity library for authentication):
+
+```batch
+vcpkg add port azure-security-keyvault-secrets-cpp azure-identity-cpp
+```
+
+Then, add the following in your CMake file:
+
+```CMake
+find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-secrets Azure::azure-identity)
+```
+
+Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` argument.
+
+There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
+
 
 ## Key concepts
 
@@ -43,7 +70,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations) |
 <!-- CLIENT COMMON BAR -->
 
-## Examples
+## SecretClient
 
 For detailed samples please review the samples provided.
 
