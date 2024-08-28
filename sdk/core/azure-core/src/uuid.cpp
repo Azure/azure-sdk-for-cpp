@@ -85,19 +85,20 @@ namespace Azure { namespace Core {
     return s;
   }
 
-  Uuid Uuid::Parse(std::string const& s)
+  Uuid Uuid::Parse(std::string const& uuidString)
   {
     bool parseError = false;
     Uuid result;
-    if (s.size() != UuidStringLength)
+    if (uuidString.size() != UuidStringLength)
     {
       parseError = true;
     }
     else
     {
+      // si = string index, bi = byte index
       for (size_t si = 0, bi = 0; si < UuidStringLength; ++si)
       {
-        const auto c = s[si];
+        const auto c = uuidString[si];
         if (IsDashIndex(si))
         {
           if (c != '-')
@@ -110,7 +111,7 @@ namespace Azure { namespace Core {
         {
           assert(si + 1 < UuidStringLength && bi < result.m_uuid.size());
 
-          const auto c2 = s[si + 1];
+          const auto c2 = uuidString[si + 1];
           if (!StringExtensions::IsHexDigit(c) || !StringExtensions::IsHexDigit(c2))
           {
             parseError = true;
@@ -125,7 +126,7 @@ namespace Azure { namespace Core {
     }
 
     return parseError ? throw std::invalid_argument(
-               "Error parsing Uuid: '" + s
+               "Error parsing Uuid: '" + uuidString
                + "' is not in the '00112233-4455-6677-8899-aAbBcCdDeEfF' format.")
                       : result;
   }
