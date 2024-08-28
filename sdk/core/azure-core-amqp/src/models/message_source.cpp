@@ -169,6 +169,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   using UniqueAmqpMessageSourceBuilder = Azure::Core::Amqp::_detail::UniqueHandle<
       Azure::Core::Amqp::_detail::AmqpSourceBuilderImplementation>;
 #endif
+
   MessageSourceImpl::MessageSourceImpl(Models::AmqpValue const& source)
   {
     if (source.IsNull())
@@ -239,10 +240,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not create source.");
     }
 
-    if (m_source == nullptr)
-    {
-      throw std::runtime_error("Could not create source.");
-    }
     if (source_set_address(
             source.get(), _detail::UniqueAmqpValueHandle{amqpvalue_create_string(address)}.get()))
     {
