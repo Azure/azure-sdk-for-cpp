@@ -250,7 +250,7 @@ We guarantee that all client instance methods are thread-safe and independent of
 
 The Azure.Security.KeyVault.Keys package supports synchronous APIs.
 
-The following section provides several code snippets using the `client` [created above](#create-keyclient), covering some of the most common Azure Key Vault key service related tasks:
+The following section provides several code snippets using the `client` [created above](#keyclient), covering some of the most common Azure Key Vault key service related tasks:
 
 ### Examples
 
