@@ -21,6 +21,7 @@ The library allows client libraries to expose common functionality in a consiste
 To create a Managed HSM resource, run the following CLI command:
 
 ```PowerShell
+az login 
 az keyvault create --hsm-name <your-key-vault-name> --resource-group <your-resource-group-name> --administrators <your-user-object-id> --location <your-azure-location>
 ```
 

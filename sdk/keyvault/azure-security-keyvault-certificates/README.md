@@ -17,6 +17,7 @@ The Azure Key Vault certificates client library enables programmatically managin
 If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
 
 ```PowerShell
+az login 
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
 ### Install the package

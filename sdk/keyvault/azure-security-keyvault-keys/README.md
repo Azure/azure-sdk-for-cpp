@@ -145,6 +145,7 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 If you are creating a standard Key Vault resource, use the following CLI command:
 
 ```PowerShell
+az login 
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
 
