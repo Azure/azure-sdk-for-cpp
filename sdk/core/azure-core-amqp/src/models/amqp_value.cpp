@@ -1156,6 +1156,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     UniqueAmqpValueHandle symbol{amqpvalue_create_symbol(m_value.c_str())};
     return symbol;
   }
+
   template <> AmqpValue _detail::AmqpCollectionBase<std::string, AmqpSymbol>::AsAmqpValue() const
   {
     return _detail::AmqpValueFactory::FromImplementation(_detail::AmqpValueImpl{*this});
@@ -1485,4 +1486,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     return !m_impl || !m_impl->m_value || (GetType() == AmqpValueType::Null);
   }
+
+  AmqpValue::AmqpValue(AmqpSymbol const& value)
+      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
+  {
+  }
+
 }}}} // namespace Azure::Core::Amqp::Models

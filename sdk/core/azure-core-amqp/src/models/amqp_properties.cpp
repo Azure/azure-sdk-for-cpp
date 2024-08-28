@@ -40,8 +40,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     static void FreeAmqpPropertiesBuilder(PropertiesBuilderImplementation* obj);
 
-    using type
-        = Core::_internal::BasicUniqueHandle<PropertiesBuilderImplementation, FreeAmqpPropertiesBuilder>;
+    using type = Core::_internal::
+        BasicUniqueHandle<PropertiesBuilderImplementation, FreeAmqpPropertiesBuilder>;
   };
   void UniqueHandleHelper<PropertiesBuilderImplementation>::FreeAmqpPropertiesBuilder(
       PropertiesBuilderImplementation* obj)
@@ -186,7 +186,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToImplementation(
       MessageProperties const& properties)
   {
-      #if ENABLE_UAMQP
+#if ENABLE_UAMQP
     UniquePropertiesHandle returnValue(properties_create());
 #elif ENABLE_RUST_AMQP
     _detail::UniqueMessagePropertiesBuilderHandle returnValue{properties_builder_create()};
@@ -324,7 +324,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    #if ENABLE_RUST_AMQP
+#if ENABLE_RUST_AMQP
     // Now that we've set all the builder parameters, actually build the header.
     Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
     if (properties_build(returnValue.get(), &implementation))

@@ -134,10 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_create()
-  }
+      : m_target{target_create()}
 #endif
   {
 #if ENABLE_UAMQP
@@ -157,10 +154,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   }
   MessageTargetImpl::MessageTargetImpl(char const* address)
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_create()
-  }
+      : m_target{target_create()}
 #endif
   {
 #if ENABLE_UAMQP
@@ -180,20 +174,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl()
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_create()
-  }
+      : m_target{target_create()}
 #endif
   {
   }
 
   MessageTargetImpl::MessageTargetImpl(MessageTargetImpl const& that)
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_clone(that)
-  }
+      : m_target{target_clone(that)}
 #endif
   {
     (void)that;

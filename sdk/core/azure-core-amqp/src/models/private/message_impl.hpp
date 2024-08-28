@@ -47,7 +47,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpMessageFactory() = delete;
 
   public:
-    static std::shared_ptr<AmqpMessage> FromImplementation(Azure::Core::Amqp::_detail::MessageImplementation* message);
+    static std::shared_ptr<AmqpMessage> FromImplementation(
+        Azure::Core::Amqp::_detail::MessageImplementation* message);
     static UniqueMessageHandle ToImplementation(AmqpMessage const& message);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

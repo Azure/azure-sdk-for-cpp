@@ -5485,6 +5485,7 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                             {
                                 AMQP_VALUE described_value;
                                 internal_decoder_destroy(inner_decoder);
+                                internal_decoder_data->inner_decoder = NULL;
 
                                 described_value = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
                                 if (described_value == NULL)

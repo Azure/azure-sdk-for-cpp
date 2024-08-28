@@ -37,7 +37,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
    * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
    * code will NOT take ownership of the underlying ERROR_HANDLE object.
    */
-  _internal::Performatives::AmqpDetach AmqpDetachFactory::ToImplementation(DETACH_HANDLE detachHandle)
+  _internal::Performatives::AmqpDetach AmqpDetachFactory::ToImplementation(
+      DETACH_HANDLE detachHandle)
   {
     _internal::Performatives::AmqpDetach rv;
     handle handle_value;

@@ -98,6 +98,16 @@ namespace Azure { namespace Identity {
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
             "using system-assigned managed identity.");
       }
+
+      if (id.empty()
+          && (idType == ManagedIdentityIdType::ClientId || idType == ManagedIdentityIdType::ObjectId
+              || idType == ManagedIdentityIdType::ResourceId))
+      {
+        throw std::invalid_argument(
+            "Provide the value of the client, object, or resource ID corresponding to the "
+            "ManagedIdentityIdType specified. The provided ID should not be empty in the case of "
+            "user-assigned managed identity.");
+      }
     }
 
     /**
@@ -163,17 +173,6 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         Azure::Identity::ManagedIdentityCredentialOptions const& options);
-
-    /**
-     * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
-     * resource with a user-assigned managed identity.
-     *
-     * @param resourceId The resource ID to authenticate for a user-assigned managed identity.
-     * @param options Options for token retrieval.
-     */
-    explicit ManagedIdentityCredential(
-        ResourceIdentifier const& resourceId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
