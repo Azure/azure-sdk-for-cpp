@@ -1156,9 +1156,9 @@ TEST_F(TestValueSerialization, SerializeBinary)
 TEST_F(TestValueSerialization, SerializeString)
 {
 #if ENABLE_UAMQP // FE2O3 encodes strings of length 0xff using the long form, not the short form.
-  constexpr size_t MAX_STRING_LENGTH = 0xff;
+  constexpr int MAX_STRING_LENGTH = 0xff;
 #else
-  constexpr size_t MAX_STRING_LENGTH = 0xfe;
+  constexpr int MAX_STRING_LENGTH = 0xfe;
 #endif
 
   // First form, serialized as first form.
@@ -1225,9 +1225,9 @@ TEST_F(TestValueSerialization, SerializeString)
 TEST_F(TestValueSerialization, SerializeSymbol)
 {
 #if ENABLE_UAMQP // FE2O3 encodes strings of length 0xff using the long form, not the short form.
-  constexpr size_t MAX_SYMBOL_LENGTH = 0xff;
+  constexpr int MAX_SYMBOL_LENGTH = 0xff;
 #else
-  constexpr size_t MAX_SYMBOL_LENGTH = 0xfe;
+  constexpr int MAX_SYMBOL_LENGTH = 0xfe;
 #endif
   // First form, serialized as first form.
   {
