@@ -112,20 +112,19 @@ use of a dedicated client object.
 
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
-1. **`TableClient`** -
-    * Interacts with a specific table (which need not exist yet).
-    * Create, delete, query, and upsert entities within the specified table.
-    * Submit transactional batch operations.
-2. **`TableServiceClient`** -
+1. **`TableServiceClient`** -
     * Get and set account settings
     * Query tables within the account.
     * Create or delete the specified table.
-### Entities
-Entities are similar to rows. An entity has a set of properties, including a **`PartitionKey`** and **`RowKey`** which form the primary key of the entity. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
+2. **`TableClient`** -
+    * Interacts with a specific table (which need not exist yet).
+    * Create, delete, query, and upsert entities within the specified table.
+    * Submit transactional batch operations.
 
-## Examples
 
-### Creating and deleting a table
+#### TableServiceClient
+
+###### Creating and deleting a table
 
 In order to Create/Delete a table we need to create a TablesClient first.
 
@@ -146,52 +145,7 @@ In order to Delete a table we need to call the delete method on the previously c
 // delete existing table
 tableServiceClient.DeleteTable(TableName);
 ```
-
-### Manipulating entities
-
-In order to Create/Update/Merge/Delete entities we need to create a TablesClient first.
-
-```cpp
-#include <azure/data/tables.hpp>
-...
-using namespace Azure::Data::Tables;
-const std::string TableName = "sample1";
-...
-auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableServiceClient.CreateTable(TableName);
-```
-
-Then we initialize and populate an entity.
-```cpp
- // init new entity
-  Models::TableEntity entity;
-  entity.SetPartitionKey("P1");
-  entity.SetRowKey("R1");
-  entity.Properties["Name"] = TableEntityProperty("Azure");
-  entity.Properties["Product"] = TableEntityProperty("Tables");
-```
-
-To create the entity on the server we call the CreateEntity method on the table client.
-```cpp
-  tableClient.AddEntity(entity);
-```
-
-To update the entity, assume we made some changes to the entity, we call the UpdateEntity method on the table client.
-```cpp
-  tableClient.UpdateEntity(entity);
-```
-
-To merge the entity, assume we made some changes to the entity, we call the MergeEntity method on the table client.
-```cpp
-  tableClient.MergeEntity(entity);
-```
-
-To delete the entity, we call the DeleteEntity method on the table client.
-```cpp
-  tableClient.DeleteEntity(entity);
-```
-
-### Table Service Operations
+##### Table Service Operations
 
 In order to get the service properties we need to create a TableServiceClient first.
 
@@ -238,6 +192,55 @@ tableServiceClient.CreateTable(TableName);
 auto tableClient = tableServiceClient.GetTableClient(TableName);
 ```
 N.B. Here we are obtaining the table client from the table service client using the credentials that were passed to the table service client.
+#### TableClient
+The TableClient is used to interact with table entities and perform operations on them.
+##### Entities
+Entities are similar to rows. An entity has a set of properties, including a **`PartitionKey`** and **`RowKey`** which form the primary key of the entity. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
+
+##### Manipulating entities
+
+In order to Create/Update/Merge/Delete entities we need to create a TablesClient first.
+
+```cpp
+#include <azure/data/tables.hpp>
+...
+using namespace Azure::Data::Tables;
+const std::string TableName = "sample1";
+...
+auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
+tableServiceClient.CreateTable(TableName);
+```
+
+Then we initialize and populate an entity.
+```cpp
+ // init new entity
+  Models::TableEntity entity;
+  entity.SetPartitionKey("P1");
+  entity.SetRowKey("R1");
+  entity.Properties["Name"] = TableEntityProperty("Azure");
+  entity.Properties["Product"] = TableEntityProperty("Tables");
+```
+
+To create the entity on the server we call the CreateEntity method on the table client.
+```cpp
+  tableClient.AddEntity(entity);
+```
+
+To update the entity, assume we made some changes to the entity, we call the UpdateEntity method on the table client.
+```cpp
+  tableClient.UpdateEntity(entity);
+```
+
+To merge the entity, assume we made some changes to the entity, we call the MergeEntity method on the table client.
+```cpp
+  tableClient.MergeEntity(entity);
+```
+
+To delete the entity, we call the DeleteEntity method on the table client.
+```cpp
+  tableClient.DeleteEntity(entity);
+```
+
 
 We initialize and populate the entities.
 ```cpp
