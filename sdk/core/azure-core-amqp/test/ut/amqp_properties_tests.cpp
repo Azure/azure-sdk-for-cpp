@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell: words reserialized
+
 #include "../src/models/private/properties_impl.hpp"
 #include "azure/core/amqp/models/amqp_properties.hpp"
 
