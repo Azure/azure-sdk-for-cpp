@@ -1,4 +1,4 @@
-# Azure Key Vault key client library for C++
+# Azure Key Vault Key client library for C++
 
 Azure Key Vault is a cloud service that provides secure storage of keys for encrypting your data.
 Multiple keys, and multiple versions of the same key, can be kept in the Azure Key Vault.
@@ -9,11 +9,53 @@ you to safeguard cryptographic keys for your cloud applications using FIPS 140-2
 
 The Azure Key Vault keys library client supports RSA keys and Elliptic Curve (EC) keys, each with corresponding support in hardware security modules (HSM). It offers operations to create, retrieve, update, delete, purge, backup, restore, and list the keys and its versions.
 
-[Source code][key_client_src] | [VCPKG][key_client_vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples][key_client_samples]
+[Source code][key_client_src] | [Package (vcpkg)][key_client_vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples][key_client_samples]
 
 ## Getting started
 
-### Include the package
+
+### Prerequisites
+
+- [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub].
+- An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
+
+See the final two steps in the next section for details on creating the Key Vault with the Azure CLI.
+
+### Install the package
+
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
+
+```batch
+vcpkg new --application
+```
+
+To install the azure-security-keyvault-keys-cpp package via vcpkg:
+To add the azure-security-keyvault-keys-cpp package to your vcpkg enter the following command (We'll also add the Azure Identity library for authentication):
+
+```batch
+vcpkg add port azure-security-keyvault-keys-cpp azure-identity-cpp
+```
+
+Then, add the following in your CMake file:
+
+```CMake
+find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys Azure::azure-identity)
+```
+
+Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` argument.
+
+There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
+
+
 
 The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
 
@@ -29,13 +71,6 @@ Then, use in your CMake file:
 find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys)
 ```
-
-### Prerequisites
-
-- An [Azure subscription][azure_sub].
-- An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the Azure Portal or [Azure CLI][azure_cli].
-
-See the final two steps in the next section for details on creating the Key Vault with the Azure CLI.
 
 ### Authenticate the client
 
@@ -147,8 +182,21 @@ The example below uses 3 RSA key pairs (only public keys are needed for this com
 ```PowerShell
 az keyvault security-domain download --hsm-name <your-key-vault-name> --sd-wrapping-keys ./certs/cert_0.cer ./certs/cert_1.cer ./certs/cert_2.cer --sd-quorum 2 --security-domain-file ContosoMHSM-SD.json
 ```
+## Key concepts
 
-#### Create KeyClient
+### KeyVaultKey
+
+Azure Key Vault supports multiple key types and algorithms, and enables the use of hardware security modules (HSM) for high value keys.
+
+### KeyClient
+
+A `KeyClient` providing synchronous operations exists in the SDK. Once you've initialized a `KeyClient`, you can interact with the primary resource types in Azure Key Vault.
+
+### CryptographyClient
+
+A `CryptographyClient` providing synchronous operations exists in the SDK. Once you've initialized a `CryptographyClient`, you can use it to perform cryptographic operations with keys stored in Azure Key Vault.
+
+### KeyClient
 
 Once you've replaced **your-vault-url** with the above returned URI, you can create the [KeyClient][key_client_class]:
 
@@ -176,19 +224,7 @@ auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 CryptographyClient cryptoClient(key.Id, credential);
 ```
 
-## Key concepts
 
-### KeyVaultKey
-
-Azure Key Vault supports multiple key types and algorithms, and enables the use of hardware security modules (HSM) for high value keys.
-
-### KeyClient
-
-A `KeyClient` providing synchronous operations exists in the SDK. Once you've initialized a `KeyClient`, you can interact with the primary resource types in Azure Key Vault.
-
-### CryptographyClient
-
-A `CryptographyClient` providing synchronous operations exists in the SDK. Once you've initialized a `CryptographyClient`, you can use it to perform cryptographic operations with keys stored in Azure Key Vault.
 
 #### Note 
 Microsoft recommends you not use CBC without first ensuring the integrity of the cipher text using an HMAC, for example. See https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
