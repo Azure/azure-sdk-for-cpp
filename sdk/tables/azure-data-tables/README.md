@@ -58,6 +58,21 @@ Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` arg
 
 There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
 
+## Key concepts
+Common uses of the table service include:
+* Storing TBs of structured data capable of serving web scale applications
+* Storing datasets that do not require complex joins, foreign keys, or stored procedures and can be de-normalized for fast access
+* Quickly querying data using a clustered index
+* Accessing data using the OData protocol filter expressions
+
+The following components make up the Azure Tables Service:
+* The account
+* A table within the account, which contains a set of entities
+* An entity within a table, as a dictionary
+
+The Azure Tables client library for C++ allows you to interact with each of these components through the
+use of a dedicated client object.
+
 ### Create the client
 The Azure Tables library allows you to interact with two types of resources:
 * the tables in your account
@@ -95,21 +110,6 @@ int main (){
 }
 ```
 
-## Key concepts
-Common uses of the table service include:
-* Storing TBs of structured data capable of serving web scale applications
-* Storing datasets that do not require complex joins, foreign keys, or stored procedures and can be de-normalized for fast access
-* Quickly querying data using a clustered index
-* Accessing data using the OData protocol filter expressions
-
-The following components make up the Azure Tables Service:
-* The account
-* A table within the account, which contains a set of entities
-* An entity within a table, as a dictionary
-
-The Azure Tables client library for C++ allows you to interact with each of these components through the
-use of a dedicated client object.
-
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
 1. **`TableServiceClient`** -
@@ -124,7 +124,7 @@ Two different clients are provided to interact with the various components of th
 
 #### TableServiceClient
 
-###### Creating and deleting a table
+##### Creating and deleting a table
 
 In order to Create/Delete a table we need to create a TablesClient first.
 
@@ -172,7 +172,7 @@ To get the statistics of the account we call the GetStatistics method on the tab
   auto statistics = tableServiceClient.GetStatistics();
 ```
 
-### Table Transactions Success
+##### Table Transactions Success
 
 In order to get the service properties we need to create a TableServiceClient first.
 
@@ -192,6 +192,7 @@ tableServiceClient.CreateTable(TableName);
 auto tableClient = tableServiceClient.GetTableClient(TableName);
 ```
 N.B. Here we are obtaining the table client from the table service client using the credentials that were passed to the table service client.
+
 #### TableClient
 The TableClient is used to interact with table entities and perform operations on them.
 ##### Entities
@@ -284,7 +285,7 @@ The output of this sample is:
 Transaction completed successfully.
 ```
 
-### Table Transactions Error
+##### Table Transactions Error
 
 The difference from the previous example is that we are trying to add two entities  with the same PartitionKey and RowKey.
 ```cpp
