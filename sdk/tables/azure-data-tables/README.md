@@ -343,7 +343,8 @@ additional questions or comments.
 [coc_contact]: mailto:opencode@microsoft.com
 [source_code]:https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/
 [Tables_product_doc]:https://docs.microsoft.com/azure/cosmos-db/table-introduction
-
+[azure_sub]: https://azure.microsoft.com/free/
+[azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_subscription]:https://azure.microsoft.com/free/
 [azure_storage_account]:https://docs.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
 [azure_cosmos_account]:https://docs.microsoft.com/azure/cosmos-db/create-cosmosdb-resources-portal
