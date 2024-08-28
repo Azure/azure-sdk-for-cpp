@@ -30,11 +30,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
   } // namespace
 
-  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
-      : m_eventHandler{eventHandler}
+  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler) : m_eventHandler
+  {
+    eventHandler
+  }
 #if ENABLE_UAMQP
-        ,
-        m_socket{socketlistener_create(port)}
+  , m_socket { socketlistener_create(port) }
 #endif
   {
     EnsureGlobalStateInitialized();
@@ -87,54 +88,54 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 // instead.
 #pragma warning(disable : 4996)
 #endif
-      throw std::runtime_error(
-          "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
-          + "\".");
+            throw std::runtime_error(
+                "Could not start listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+                + "\".");
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-    }
-    m_started = true;
+          }
+          m_started = true;
 #else
     throw std::runtime_error("Not Implemented");
 #endif
-  }
+        }
 
-  void SocketListener::Stop()
-  {
-    if (m_started)
-    {
+        void SocketListener::Stop()
+        {
+          if (m_started)
+          {
 #if ENABLE_UAMQP
-      if (socketlistener_stop(m_socket))
-      {
-        auto err = errno;
+            if (socketlistener_stop(m_socket))
+            {
+              auto err = errno;
 #ifdef _MSC_VER
 #pragma warning(push)
 // warning C4996: 'strerror': This function or variable may be unsafe. Consider using gmtime_s
 // instead.
 #pragma warning(disable : 4996)
 #endif
-        throw std::runtime_error(
-            "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
-            + "\".");
+              throw std::runtime_error(
+                  "Could not stop listener. errno=" + std::to_string(err) + ", \"" + strerror(err)
+                  + "\".");
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-      }
+            }
 #endif
-    }
-    else
-    {
-      throw std::runtime_error("Socket listener not started.");
-    }
-    m_started = false;
-  }
+          }
+          else
+          {
+            throw std::runtime_error("Socket listener not started.");
+          }
+          m_started = false;
+        }
 
-  void SocketListener::Poll() const
-  {
+        void SocketListener::Poll() const
+        {
 #if ENABLE_UAMQP
-    socketlistener_dowork(m_socket);
+          socketlistener_dowork(m_socket);
 #endif
-  }
+        }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

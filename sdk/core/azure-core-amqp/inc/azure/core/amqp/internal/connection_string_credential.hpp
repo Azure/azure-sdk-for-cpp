@@ -113,8 +113,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * std::shared_ptr and thus should never be directly constructed.
      */
     ServiceBusSasConnectionStringCredential(
-        ServiceBusSasConnectionStringCredential&& other) noexcept
-        = delete;
+        ServiceBusSasConnectionStringCredential&& other) noexcept = delete;
 
     /** @brief Move assignment operator
      *
@@ -122,8 +121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * std::shared_ptr and thus should never be directly constructed.
      */
     ServiceBusSasConnectionStringCredential& operator=(
-        ServiceBusSasConnectionStringCredential&& other) noexcept
-        = delete;
+        ServiceBusSasConnectionStringCredential&& other) noexcept = delete;
 
     /** @brief Destroy a SAS connection string credential. */
     ~ServiceBusSasConnectionStringCredential() override = default;

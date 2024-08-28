@@ -218,39 +218,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         };
 #endif
 
-  bool TransportImpl::Send(
-      unsigned char* buffer,
-      size_t size,
-      Network::_internal::Transport::TransportSendCompleteFn sendComplete) const
-  {
+        bool TransportImpl::Send(
+            unsigned char* buffer,
+            size_t size,
+            Network::_internal::Transport::TransportSendCompleteFn sendComplete) const
+        {
 #if ENABLE_UAMQP
-    auto operation{std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
-        decltype(sendComplete),
-        SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
-    if (xio_send(
-            m_xioInstance.get(),
-            buffer,
-            size,
-            std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
-            operation.release()))
-    {
-      return false;
-    }
+          auto operation{std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
+              decltype(sendComplete),
+              SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
+          if (xio_send(
+                  m_xioInstance.get(),
+                  buffer,
+                  size,
+                  std::remove_pointer<decltype(operation)::element_type>::type::OnOperationFn,
+                  operation.release()))
+          {
+            return false;
+          }
 #else
-    (void)size;
-    (void)buffer;
-    (void)sendComplete;
+          (void)size;
+          (void)buffer;
+          (void)sendComplete;
 #endif
-    return true;
-  }
+          return true;
+        }
 
-  void TransportImpl::Poll() const
-  {
+        void TransportImpl::Poll() const
+        {
 #if ENABLE_UAMQP
-    if (m_xioInstance)
-    {
-      xio_dowork(m_xioInstance.get());
-    }
+          if (m_xioInstance)
+          {
+            xio_dowork(m_xioInstance.get());
+          }
 #endif
-  }
+        }
 }}}}} // namespace Azure::Core::Amqp::Network::_detail

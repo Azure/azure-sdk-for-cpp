@@ -734,160 +734,161 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 // source_get_default_outcome does not reference the value returned, we reference it so it can
 // be put into a UniqueAmqpValueHandle.
 #if ENABLE_UAMQP
-    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
-    if (source_get_default_outcome(m_source.get(), &value))
-    {
-      throw std::runtime_error("Could not get default outcome.");
-    }
-    return _detail::AmqpValueFactory::FromImplementation(
-        _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
+          Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
+          if (source_get_default_outcome(m_source.get(), &value))
+          {
+            throw std::runtime_error("Could not get default outcome.");
+          }
+          return _detail::AmqpValueFactory::FromImplementation(
+              _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)});
 #elif ENABLE_RUST_AMQP
-    RustDeliveryOutcome value;
-    if (source_get_default_outcome(m_source.get(), &value))
-    {
-      throw std::runtime_error("Could not get default outcome.");
-    }
-    return AmqpValue{};
+          RustDeliveryOutcome value;
+          if (source_get_default_outcome(m_source.get(), &value))
+          {
+            throw std::runtime_error("Could not get default outcome.");
+          }
+          return AmqpValue{};
 //          return _detail::AmqpValueFactory::FromImplementation(
 //              _detail::UniqueAmqpValueHandle{value});
 #endif
-  }
+        }
 
-  AmqpArray MessageSourceImpl::GetOutcomes() const
-  {
-    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
-    if (source_get_outcomes(m_source.get(), &value))
-    {
-      throw std::runtime_error("Could not get outcomes.");
-    }
-    return _detail::AmqpValueFactory::FromImplementation(
-               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
-        .AsArray();
-  }
+        AmqpArray MessageSourceImpl::GetOutcomes() const
+        {
+          Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
+          if (source_get_outcomes(m_source.get(), &value))
+          {
+            throw std::runtime_error("Could not get outcomes.");
+          }
+          return _detail::AmqpValueFactory::FromImplementation(
+                     _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+              .AsArray();
+        }
 
-  AmqpArray MessageSourceImpl::GetCapabilities() const
-  {
-    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
-    if (source_get_capabilities(m_source.get(), &value))
-    {
-      throw std::runtime_error("Could not get capabilities.");
-    }
+        AmqpArray MessageSourceImpl::GetCapabilities() const
+        {
+          Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
+          if (source_get_capabilities(m_source.get(), &value))
+          {
+            throw std::runtime_error("Could not get capabilities.");
+          }
 #if ENABLE_UAMQP
-    return _detail::AmqpValueFactory::FromImplementation(
-               _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
+          return _detail::AmqpValueFactory::FromImplementation(
+                     _detail::UniqueAmqpValueHandle{amqpvalue_clone(value)})
 #elif ENABLE_RUST_AMQP
-    return _detail::AmqpValueFactory::FromImplementation(_detail::UniqueAmqpValueHandle{value})
+          return _detail::AmqpValueFactory::FromImplementation(
+                     _detail::UniqueAmqpValueHandle{value})
 #endif
-        .AsArray();
-  }
-  // const char* StringFromTerminusDurability(_internal::TerminusDurability durability)
-  //{
-  //   switch (durability)
-  //   {
-  //     case _internal::TerminusDurability::None:
-  //       return "None";
-  //     case _internal::TerminusDurability::Configuration:
-  //       return "Configuration";
-  //     case _internal::TerminusDurability::UnsettledState:
-  //       return "Unsettled State";
-  //   }
-  //   throw std::runtime_error("Unknown terminus durability");
-  // }
+              .AsArray();
+        }
+        // const char* StringFromTerminusDurability(_internal::TerminusDurability durability)
+        //{
+        //   switch (durability)
+        //   {
+        //     case _internal::TerminusDurability::None:
+        //       return "None";
+        //     case _internal::TerminusDurability::Configuration:
+        //       return "Configuration";
+        //     case _internal::TerminusDurability::UnsettledState:
+        //       return "Unsettled State";
+        //   }
+        //   throw std::runtime_error("Unknown terminus durability");
+        // }
 
-  std::ostream& operator<<(std::ostream& os, MessageSourceImpl const& source)
-  {
-    os << "Source{ ";
+        std::ostream& operator<<(std::ostream& os, MessageSourceImpl const& source)
+        {
+          os << "Source{ ";
 #if ENABLE_UAMQP
-    {
-      AMQP_VALUE value;
-      if (!source_get_address(source, &value))
-      {
-        os << "Address: " << source.GetAddress();
-      }
-    }
-    {
-      uint32_t value;
-      if (!source_get_durable(source, &value))
-      {
-        os << ", Durable: " << StringFromTerminusDurability(source.GetTerminusDurability());
-      }
-    }
-    {
-      terminus_expiry_policy policy;
-      if (!source_get_expiry_policy(source, &policy))
-      {
-        os << ", Expiry Policy: " << policy;
-      }
-    }
-    {
-      seconds timeout;
-      if (!source_get_timeout(source, &timeout))
-      {
-        os << ", Timeout: " << source.GetTimeout().time_since_epoch().count();
-      }
-    }
-    {
-      bool dynamic;
-      if (!source_get_dynamic(source, &dynamic))
-      {
-        os << ", Dynamic: " << std::boolalpha << dynamic;
-      }
-    }
-    {
-      AMQP_VALUE dynamicProperties;
-      if (!source_get_dynamic_node_properties(source, &dynamicProperties))
-      {
-        os << ", Dynamic Node Properties: " << source.GetDynamicNodeProperties();
-      }
-    }
-    {
-      AMQP_VALUE capabilities;
-      if (!source_get_capabilities(source, &capabilities))
-      {
-        os << ", Capabilities: " << source.GetCapabilities();
-      }
-    }
-    {
-      const char* distributionMode;
-      if (!source_get_distribution_mode(source, &distributionMode))
-        os << ", Distribution Mode: " << distributionMode;
-    }
+          {
+            AMQP_VALUE value;
+            if (!source_get_address(source, &value))
+            {
+              os << "Address: " << source.GetAddress();
+            }
+          }
+          {
+            uint32_t value;
+            if (!source_get_durable(source, &value))
+            {
+              os << ", Durable: " << StringFromTerminusDurability(source.GetTerminusDurability());
+            }
+          }
+          {
+            terminus_expiry_policy policy;
+            if (!source_get_expiry_policy(source, &policy))
+            {
+              os << ", Expiry Policy: " << policy;
+            }
+          }
+          {
+            seconds timeout;
+            if (!source_get_timeout(source, &timeout))
+            {
+              os << ", Timeout: " << source.GetTimeout().time_since_epoch().count();
+            }
+          }
+          {
+            bool dynamic;
+            if (!source_get_dynamic(source, &dynamic))
+            {
+              os << ", Dynamic: " << std::boolalpha << dynamic;
+            }
+          }
+          {
+            AMQP_VALUE dynamicProperties;
+            if (!source_get_dynamic_node_properties(source, &dynamicProperties))
+            {
+              os << ", Dynamic Node Properties: " << source.GetDynamicNodeProperties();
+            }
+          }
+          {
+            AMQP_VALUE capabilities;
+            if (!source_get_capabilities(source, &capabilities))
+            {
+              os << ", Capabilities: " << source.GetCapabilities();
+            }
+          }
+          {
+            const char* distributionMode;
+            if (!source_get_distribution_mode(source, &distributionMode))
+              os << ", Distribution Mode: " << distributionMode;
+          }
 
-    {
-      AMQP_VALUE filter;
-      if (!source_get_filter(source, &filter))
-      {
-        os << ", Filter: " << source.GetFilter();
-      }
-    }
-    {
-      AMQP_VALUE outcome;
-      if (!source_get_default_outcome(source, &outcome))
-      {
-        // source_get_default_outcome does not reference the value returned, we reference it
-        // so it can be put into a UniqueAmqpValueHandle.
-        os << ", Default Outcome: "
-           << _detail::AmqpValueFactory::FromImplementation(
-                  Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcome)});
-      }
-    }
-    {
-      AMQP_VALUE outcomes;
-      if (!source_get_outcomes(source, &outcomes))
-      {
-        // Most of the time, source_get_outcomes does not reference its input. However, if the
-        // composite value at location 9 is a symbol, it does reference it. As a consequence,
-        // this will leak an AMQPSymbol if the value at location 9 is a symbol (as opposed to
-        // being an array).
-        os << ", Outcomes: "
-           << _detail::AmqpValueFactory::FromImplementation(
-                  Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcomes)});
-      }
-    }
+          {
+            AMQP_VALUE filter;
+            if (!source_get_filter(source, &filter))
+            {
+              os << ", Filter: " << source.GetFilter();
+            }
+          }
+          {
+            AMQP_VALUE outcome;
+            if (!source_get_default_outcome(source, &outcome))
+            {
+              // source_get_default_outcome does not reference the value returned, we reference it
+              // so it can be put into a UniqueAmqpValueHandle.
+              os << ", Default Outcome: "
+                 << _detail::AmqpValueFactory::FromImplementation(
+                        Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcome)});
+            }
+          }
+          {
+            AMQP_VALUE outcomes;
+            if (!source_get_outcomes(source, &outcomes))
+            {
+              // Most of the time, source_get_outcomes does not reference its input. However, if the
+              // composite value at location 9 is a symbol, it does reference it. As a consequence,
+              // this will leak an AMQPSymbol if the value at location 9 is a symbol (as opposed to
+              // being an array).
+              os << ", Outcomes: "
+                 << _detail::AmqpValueFactory::FromImplementation(
+                        Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcomes)});
+            }
+          }
 #else
-    (void)source;
+          (void)source;
 #endif
-    os << "}";
-    return os;
-  }
+          os << "}";
+          return os;
+        }
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

@@ -390,9 +390,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
-              static_cast<const unsigned char*>(uuid.AsArray().data())))})}
+      : m_impl
+  {
+    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
+        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -413,12 +415,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::AmqpValue(const char* value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
           _detail::UniqueAmqpValueHandle{amqpvalue_create_string(value)})}
-  {
-  }
-
-  AmqpValue::AmqpValue(AmqpSymbol const& value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
   {
   }
 
@@ -1162,6 +1158,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return _detail::AmqpValueFactory::FromImplementation(_detail::AmqpValueImpl{*this});
   }
 
+  // Moved below AmqpSymbol::AsAmqpValue.
+  AmqpValue::AmqpValue(AmqpSymbol const& value)
+      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
+  {
+  }
+
   AmqpSymbol::AmqpSymbol(AmqpValue const& value)
   {
     if (value.GetType() != AmqpValueType::Symbol)
@@ -1485,12 +1488,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool AmqpValue::IsNull() const
   {
     return !m_impl || !m_impl->m_value || (GetType() == AmqpValueType::Null);
-  }
-
-  AmqpValue::AmqpValue(AmqpSymbol const& value)
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_clone(*value.AsAmqpValue().m_impl)})}
-  {
   }
 
 }}}} // namespace Azure::Core::Amqp::Models
