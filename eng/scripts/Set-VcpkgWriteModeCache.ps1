@@ -30,8 +30,8 @@ $ctx = New-AzStorageContext `
     -StorageAccountName $StorageAccountName `
     -UseConnectedAccount
 
-$vcpkgBinarySourceSas = New-AzStorageContainerSASToken  `
-    -Name $StorageAccountName
+$vcpkgBinarySourceSas = New-AzStorageContainerSASToken `
+    -Name $StorageAccountName `
     -Permission "rwc" `
     -Context $ctx `
     -ExpiryTime (Get-Date).AddHours(1)
