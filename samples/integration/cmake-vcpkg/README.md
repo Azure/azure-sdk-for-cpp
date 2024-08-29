@@ -5,7 +5,7 @@
 1. Any Text Editor
 2. A terminal
 3. A C++ compiler
-    - Windows: [MSVC](https://learn.microsoft.com/en-us/cpp/build/vscpp-step-0-installation?view=msvc-170)
+    - Windows: [MSVC](https://learn.microsoft.com/cpp/build/vscpp-step-0-installation?view=msvc-170)
 4. [git](https://git-scm.com/downloads)
 
 ## Steps
@@ -268,7 +268,7 @@ target_link_libraries(azure_sample PRIVATE
 
 - To create an Azure Key Vault resource you'll need an [Azure subscription][azure_sub].
 - We'll use the [Azure CLI][azure_cli] to create our Key Vault resource and authenticate to Azure.
-- Go to the [Azure CLI Install page](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) for instructions on how to install the Azure CLI on your dev environment.
+- Go to the [Azure CLI Install page](https://learn.microsoft.com/cli/azure/install-azure-cli) for instructions on how to install the Azure CLI on your dev environment.
 - Use the following command to authenticate with the Azure CLI
 
 ```bash
