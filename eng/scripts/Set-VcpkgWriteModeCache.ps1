@@ -1,6 +1,5 @@
 param(
-    [string] $StorageAccountName = 'cppvcpkgcache',
-    [string] $ResourceGroupName = 'cpp'
+    [string] $StorageAccountName = 'cppvcpkgcache'
 )
 
 
@@ -31,17 +30,11 @@ $ctx = New-AzStorageContext `
     -StorageAccountName $StorageAccountName `
     -UseConnectedAccount
 
-$token = New-AzStorageAccountSASToken `
-    -Service Blob `
-    -ResourceType Object `
+$vcpkgBinarySourceSas = New-AzStorageContainerSASToken  `
+    -Name $StorageAccountName
     -Permission "rwc" `
     -Context $ctx `
     -ExpiryTime (Get-Date).AddHours(1)
-
-$vcpkgBinarySourceSas = $token
-if ($token.StartsWith('?')) {
-    $vcpkgBinarySourceSas = $token.Substring(1)
-}
 
 Write-Host "Ensure redaction of SAS tokens in logs" 
 Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SAS_TOKEN;issecret=true;]$vcpkgBinarySourceSas"
