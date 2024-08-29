@@ -118,7 +118,23 @@ jobs:
 
         - task: Powershell@2
           inputs:
-            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
+            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Prepare-APIReview.ps1
+            arguments: >
+              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
+              -OutPath $(Build.ArtifactStagingDirectory)
+              -ApiKey "$(azuresdk-apiview-apikey)"
+              -SourceBranch $(Build.SourceBranchName)
+              -DefaultBranch $(DefaultBranch)
+              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+              -BuildId $(Build.BuildId)
+              -RepoName "$(Build.Repository.Name)"
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Create-APIReview.ps1
             arguments: >
               -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
               -OutPath $(Build.ArtifactStagingDirectory)

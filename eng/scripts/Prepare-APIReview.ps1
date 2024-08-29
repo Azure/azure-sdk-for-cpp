@@ -46,7 +46,3 @@ foreach ($artifact in $ArtifactList)
 		exit 1
 	}
 }
-
-$createReviewScript = (Join-Path $PSScriptRoot .. common scripts Create-APIReview.ps1)
-Write-Host "Running script to create review for all artifacts."
-&($createReviewScript) -ArtifactList $ArtifactList -ArtifactPath $OutPath -APIKey $ApiKey -SourceBranch $SourceBranch -DefaultBranch $DefaultBranch -RepoName $RepoName -BuildId $BuildId
