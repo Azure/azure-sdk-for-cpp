@@ -506,7 +506,7 @@ TEST_F(TestSourceTarget, SourceProperties)
 
 #endif
 
-  #if ENABLE_UAMQP
+#if ENABLE_UAMQP
   {
     MessageSourceOptions options;
     options.Outcomes.push_back(AmqpSymbol("Test").AsAmqpValue());
@@ -516,7 +516,7 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "Test");
     GTEST_LOG_(INFO) << "Source: " << source;
   }
-  #elif ENABLE_RUST_AMQP
+#elif ENABLE_RUST_AMQP
   {
     MessageSourceOptions options;
     options.Outcomes.push_back(AmqpSymbol("amqp:rejected:list").AsAmqpValue());

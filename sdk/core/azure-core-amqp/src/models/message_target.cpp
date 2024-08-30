@@ -159,7 +159,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_UAMQP
@@ -223,7 +226,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl()
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -652,14 +658,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       }
     }
     {
-        try
-        {
-          auto capabilities = target.GetCapabilities();
-          os << ", Capabilities: " << capabilities;
-        }
-        catch (std::runtime_error&)
-        {
-        }
+      try
+      {
+        auto capabilities = target.GetCapabilities();
+        os << ", Capabilities: " << capabilities;
+      }
+      catch (std::runtime_error&)
+      {
+      }
     }
     os << "}";
     return os;
