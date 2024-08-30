@@ -13,7 +13,7 @@
 ### Install CMake
 
 - Go to the [CMake Downloads page](https://cmake.org/download/) to download an installer for your OS. The installer approach is recommended for simplicity. Optionally you can download the latest version of the CMake source instead. When asked, select the option to add CMake to your PATH.
-- Once you've downloaded and run through the installer program run the following command to verify CMake has been installed properly:
+- After installing CMake, run the following command to verify CMake has been installed properly:
 
 ```bash
 cmake --version
