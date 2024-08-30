@@ -788,7 +788,7 @@
         "rust-amqp"
       ],
       "displayName": "Linux c++ Debug+Tests, samples, Rust AMQP"
-    }
+    },
     {
       "name": "linux-g++-11-debug",
       "displayName": "Linux g++-11 Debug",
