@@ -596,7 +596,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const &() const { return m_value; }
+    explicit operator T const&() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;
@@ -733,6 +733,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return m_value.operator[](std::move(keyVal));
     }
 
+    /**
+     * @brief Find a value in the AMQP value map.
+     *
+     * @param keyVal The key to search for in the map.
+     * @returns An iterator to the found element, or the end iterator if the key is not found.
+     */
     decltype(m_value)::iterator find(const decltype(m_value)::key_type& keyVal)
     {
       return m_value.find(keyVal);

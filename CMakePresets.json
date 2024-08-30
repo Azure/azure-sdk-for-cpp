@@ -361,7 +361,6 @@
         "x86-static",
         "release-build"
       ]
-
     },
     {
       "name": "x64-debug-tests",
@@ -493,7 +492,6 @@
         "winhttp-transport",
         "curl-transport"
       ]
-
     },
     {
       "name": "x64-static-release-perftests-asan",
@@ -699,26 +697,43 @@
     {
       "name": "linux-gcc11-debug",
       "displayName": "Linux GCC 11 Debug",
-      "inherits": [ "linux-basic-gcc11", "debug-build" ]
+      "inherits": [
+        "linux-basic-gcc11",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-gcc11-debug-tests",
-      "inherits": [ "linux-basic-gcc11", "debug-build", "enable-tests" ],
+      "inherits": [
+        "linux-basic-gcc11",
+        "debug-build",
+        "enable-tests"
+      ],
       "displayName": "Linux GCC 11 Debug+Tests"
     },
     {
       "name": "linux-clang-11-debug",
       "displayName": "Linux clang 11 Debug",
-      "inherits": [ "linux-basic-clang-11", "debug-build" ]
+      "inherits": [
+        "linux-basic-clang-11",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-clang-11-debug-tests",
       "displayName": "Linux clang 11 Debug+tests",
-      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
+      "inherits": [
+        "linux-basic-clang-11",
+        "debug-build",
+        "enable-tests"
+      ]
     },
     {
       "name": "linux-clang-13-debug",
-      "inherits": [ "linux-basic-clang-13", "debug-build" ],
+      "inherits": [
+        "linux-basic-clang-13",
+        "debug-build"
+      ],
       "displayName": "Linux clang 13 Debug"
     },
     {
@@ -766,6 +781,14 @@
       ],
       "displayName": "Linux c++ Debug+Tests, samples"
     },
+    {
+      "name": "linux-g++-rust-debug-tests-samples",
+      "inherits": [
+        "linux-g++-debug-tests-samples",
+        "rust-amqp"
+      ],
+      "displayName": "Linux c++ Debug+Tests, samples, Rust AMQP"
+    }
     {
       "name": "linux-g++-11-debug",
       "displayName": "Linux g++-11 Debug",
