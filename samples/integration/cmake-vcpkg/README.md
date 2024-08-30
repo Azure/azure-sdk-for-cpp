@@ -29,7 +29,7 @@ cmake version 3.30.2
 
 ### Install vcpkg
 
-- To install vcpkg you'll first need to clone the vcpkg repo. I recommend cloning vcpkg to a central location on your development environment and not in your C++ Project directory. In this example I'll clone vcpkg to my home dir.
+- To install vcpkg you'll first need to clone the vcpkg repo. The recommended approach is to clone vcpkg to a central location on your development environment and not in your C++ Project directory. In this example vcpkg is cloned to the home dir.
 
 ```bash
 cd ~
