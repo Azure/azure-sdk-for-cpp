@@ -33,8 +33,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     static void FreeMessageTarget(AmqpTargetImplementation* obj);
 
-    using type = Core::_internal::
-        BasicUniqueHandle<AmqpTargetImplementation, FreeMessageTarget>;
+    using type = Core::_internal::BasicUniqueHandle<AmqpTargetImplementation, FreeMessageTarget>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
@@ -167,7 +166,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   private:
     _detail::UniqueMessageTargetHandle m_target;
 
-    operator Azure::Core::Amqp::_detail::AmqpTargetImplementation*() const { return m_target.get(); }
+    operator Azure::Core::Amqp::_detail::AmqpTargetImplementation*() const
+    {
+      return m_target.get();
+    }
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTargetImpl const&);

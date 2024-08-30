@@ -107,10 +107,10 @@ extern "C" fn target_get_address(
         }));
         0
     } else {
+        println!("No address found: {:?}", target.inner);
         *address = std::ptr::null_mut();
         1
-    };
-    1
+    }
 }
 
 #[no_mangle]
@@ -133,7 +133,9 @@ extern "C" fn target_get_durable(
         }
         0
     } else {
-        1
+        // If durable isn't set, we still return a value, but it's None
+        *durable = RustTerminusDurability::None;
+        0
     }
 }
 
@@ -160,7 +162,9 @@ extern "C" fn target_get_expiry_policy(
         }
         0
     } else {
-        1
+        // If expiry_policy isn't set, we still return a value, but it's Never
+        *expiry_policy = RustExpiryPolicy::SessionEnd;
+        0
     }
 }
 
@@ -180,8 +184,10 @@ extern "C" fn target_get_dynamic(target: *const RustAmqpTarget, dynamic: *mut bo
     if let Some(dynamic_val) = target.inner.dynamic() {
         unsafe { *dynamic = *dynamic_val };
         return 0;
+    } else {
+        unsafe { *dynamic = false };
+        0
     }
-    1
 }
 
 #[no_mangle]

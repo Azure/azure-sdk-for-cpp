@@ -733,6 +733,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return m_value.operator[](std::move(keyVal));
     }
 
+    decltype(m_value)::iterator find(const decltype(m_value)::key_type& keyVal)
+    {
+      return m_value.find(keyVal);
+    }
+
     /** @brief Insert a new key/value pair into the map.
      *
      * @return std::pair<iterator, bool> - a pair containing an iterator to the inserted element,

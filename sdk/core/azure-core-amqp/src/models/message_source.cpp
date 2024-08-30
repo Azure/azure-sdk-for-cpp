@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
     return m_impl->GetDynamicNodeProperties();
   }
-  std::string MessageSource::GetDistributionMode() const { return m_impl->GetDistributionMode(); }
+  AmqpSymbol MessageSource::GetDistributionMode() const { return m_impl->GetDistributionMode(); }
 
   AmqpMap MessageSource::GetFilter() const { return m_impl->GetFilter(); }
 
@@ -282,6 +282,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       : m_source(source_create())
 #endif
   {
+#if ENABLE_RUST_AMQP
+    _detail::UniqueAmqpMessageSourceBuilder sourceBuilder{source_builder_create()};
+    if (!sourceBuilder)
+    {
+      throw std::runtime_error("Could not create source builder.");
+    }
+    Azure::Core::Amqp::_detail::AmqpSourceImplementation* source;
+    if (source_builder_build(sourceBuilder.get(), &source))
+    {
+      throw std::runtime_error("Could not build source.");
+    }
+    m_source.reset(source);
+#endif
   }
 
   MessageSourceImpl::MessageSourceImpl(_internal::MessageSourceOptions const& options)
@@ -422,16 +435,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::runtime_error("Could not set distribution mode.");
       }
 #elif ENABLE_RUST_AMQP
-      uint8_t mode = 0xff;
-      if (options.DistributionMode.Value() == "Move")
-      {
-        mode = 0;
-      }
-      else if (options.DistributionMode.Value() == "Copy")
-      {
-        mode = 1;
-      }
-      if (source_set_distribution_mode(source.get(), mode))
+
+      if (source_set_distribution_mode(
+              source.get(),
+              _detail::AmqpValueFactory::ToImplementation(
+                  options.DistributionMode.Value().AsAmqpValue())))
       {
         throw std::runtime_error("Could not set distribution mode.");
       }
@@ -594,10 +602,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     terminus_expiry_policy value;
+#elif ENABLE_RUST_AMQP
+    RustExpiryPolicy value;
+#endif
     if (source_get_expiry_policy(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get expiry policy from source.");
     }
+#if ENABLE_UAMQP
     if (std::strcmp(value, terminus_expiry_policy_connection_close) == 0)
     {
       return _internal::TerminusExpiryPolicy::ConnectionClose;
@@ -616,13 +628,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     throw std::logic_error(std::string("Unknown terminus expiry policy: ") + value);
 #elif ENABLE_RUST_AMQP
-    RustExpiryPolicy expiryPolicy;
-    if (source_get_expiry_policy(m_source.get(), &expiryPolicy))
-    {
-      throw std::runtime_error("Could not get expiry policy from source.");
-    }
-
-    switch (expiryPolicy)
+    switch (value)
     {
       case RustExpiryPolicy::ConnectionClose:
         return _internal::TerminusExpiryPolicy::ConnectionClose;
@@ -667,7 +673,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
     if (source_get_dynamic_node_properties(m_source.get(), &value))
     {
-      throw std::runtime_error("Could not get dynamic.");
+      throw std::runtime_error("Could not get dynamic node properties.");
     }
 #if ENABLE_UAMQP
     return _detail::AmqpValueFactory::FromImplementation(
@@ -678,7 +684,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         .AsMap();
   }
 
-  std::string MessageSourceImpl::GetDistributionMode() const
+  AmqpSymbol MessageSourceImpl::GetDistributionMode() const
   {
 #if ENABLE_UAMQP
     const char* value = {};
@@ -688,23 +694,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return value;
 #elif ENABLE_RUST_AMQP
-    int8_t value;
+    Azure::Core::Amqp::_detail::AmqpValueImplementation* value;
     if (source_get_distribution_mode(m_source.get(), &value))
     {
       throw std::runtime_error("Could not get distribution mode.");
     }
-    if (value == 0)
-    {
-      return "Move";
-    }
-    else if (value == 1)
-    {
-      return "Copy";
-    }
-    else
-    {
-      return "Unknown";
-    }
+    UniqueAmqpValueHandle handle{value};
+    return _detail::AmqpValueFactory::FromImplementation(handle);
 #endif
   }
 
@@ -742,9 +738,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
           {
             throw std::runtime_error("Could not get default outcome.");
           }
-          return AmqpValue{};
-//          return _detail::AmqpValueFactory::FromImplementation(
-//              _detail::UniqueAmqpValueHandle{value});
+          switch (value)
+          {
+            case RustDeliveryOutcome::Accepted:
+              return AmqpSymbol{"amqp:accepted:list"};
+            case RustDeliveryOutcome::Rejected:
+              return AmqpSymbol{"amqp:rejected:list"};
+            case RustDeliveryOutcome::Released:
+              return AmqpSymbol{"amqp:released:list"};
+            case RustDeliveryOutcome::Modified:
+              return AmqpSymbol{"amqp:modified:list"};
+            default:
+              throw std::runtime_error("Unknown default outcome.");
+          }
 #endif
         }
 
@@ -776,47 +782,74 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #endif
               .AsArray();
         }
-        // const char* StringFromTerminusDurability(_internal::TerminusDurability durability)
-        //{
-        //   switch (durability)
-        //   {
-        //     case _internal::TerminusDurability::None:
-        //       return "None";
-        //     case _internal::TerminusDurability::Configuration:
-        //       return "Configuration";
-        //     case _internal::TerminusDurability::UnsettledState:
-        //       return "Unsettled State";
-        //   }
-        //   throw std::runtime_error("Unknown terminus durability");
-        // }
+#if ENABLE_RUST_AMQP
+        std::ostream& operator<<(std::ostream& os, RustExpiryPolicy policy)
+        {
+          switch (policy)
+          {
+            case RustExpiryPolicy::ConnectionClose:
+              os << "ConnectionClose";
+              break;
+            case RustExpiryPolicy::LinkDetach:
+              os << "LinkDetach";
+              break;
+            case RustExpiryPolicy::Never:
+              os << "Never";
+              break;
+            case RustExpiryPolicy::SessionEnd:
+              os << "SessionEnd";
+              break;
+            default:
+              os << "Unknown expiry policy";
+          }
+          return os;
+        }
+#endif
 
         std::ostream& operator<<(std::ostream& os, MessageSourceImpl const& source)
         {
           os << "Source{ ";
-#if ENABLE_UAMQP
           {
-            AMQP_VALUE value;
-            if (!source_get_address(source, &value))
+            try
             {
-              os << "Address: " << source.GetAddress();
+              auto address{source.GetAddress()};
+              if (!address.IsNull())
+              {
+                os << "Address: " << address;
+              }
+            }
+            catch (std::runtime_error const&)
+            {
             }
           }
           {
+#if ENABLE_UAMQP
             uint32_t value;
+#elif ENABLE_RUST_AMQP
+            RustTerminusDurability value;
+#endif
             if (!source_get_durable(source, &value))
             {
               os << ", Durable: " << StringFromTerminusDurability(source.GetTerminusDurability());
             }
           }
           {
+#if ENABLE_UAMQP
             terminus_expiry_policy policy;
+#elif ENABLE_RUST_AMQP
+            RustExpiryPolicy policy;
+#endif
             if (!source_get_expiry_policy(source, &policy))
             {
               os << ", Expiry Policy: " << policy;
             }
           }
           {
+#if ENABLE_UAMQP
             seconds timeout;
+#elif ENABLE_RUST_AMQP
+            uint32_t timeout;
+#endif
             if (!source_get_timeout(source, &timeout))
             {
               os << ", Timeout: " << source.GetTimeout().time_since_epoch().count();
@@ -830,60 +863,88 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
             }
           }
           {
-            AMQP_VALUE dynamicProperties;
-            if (!source_get_dynamic_node_properties(source, &dynamicProperties))
+            try
             {
-              os << ", Dynamic Node Properties: " << source.GetDynamicNodeProperties();
+              auto nodeProperties = source.GetDynamicNodeProperties();
+              if (!nodeProperties.empty())
+              {
+                os << ", Dynamic Node Properties: " << nodeProperties;
+              }
+            }
+            catch (std::runtime_error const&)
+            {
             }
           }
           {
-            AMQP_VALUE capabilities;
-            if (!source_get_capabilities(source, &capabilities))
+            try
             {
-              os << ", Capabilities: " << source.GetCapabilities();
+              auto capabilities = source.GetCapabilities();
+              if (!capabilities.empty())
+              {
+                os << ", Capabilities: " << capabilities;
+              }
+            }
+            catch (std::runtime_error const&)
+            {
             }
           }
           {
+#if ENABLE_UAMQP
             const char* distributionMode;
+#elif ENABLE_RUST_AMQP
+            Azure::Core::Amqp::_detail::AmqpValueImplementation* distributionMode;
+#endif
             if (!source_get_distribution_mode(source, &distributionMode))
+            {
+#if ENABLE_UAMQP
               os << ", Distribution Mode: " << distributionMode;
+#elif ENABLE_RUST_AMQP
+              UniqueAmqpValueHandle handle{distributionMode};
+              os << ", Distribution Mode: " << handle;
+#endif
+            }
           }
 
           {
-            AMQP_VALUE filter;
-            if (!source_get_filter(source, &filter))
+            try
             {
-              os << ", Filter: " << source.GetFilter();
+              auto filter = source.GetFilter();
+              if (!filter.empty())
+              {
+                os << ", Filter: " << filter;
+              }
+            }
+            catch (std::runtime_error const&)
+            {
             }
           }
           {
-            AMQP_VALUE outcome;
-            if (!source_get_default_outcome(source, &outcome))
+            try
             {
-              // source_get_default_outcome does not reference the value returned, we reference it
-              // so it can be put into a UniqueAmqpValueHandle.
-              os << ", Default Outcome: "
-                 << _detail::AmqpValueFactory::FromImplementation(
-                        Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcome)});
+              auto outcome = source.GetDefaultOutcome();
+              if (!outcome.IsNull())
+              {
+                os << ", Default Outcome: " << outcome;
+              }
+            }
+            catch (std::runtime_error const&)
+            {
             }
           }
           {
-            AMQP_VALUE outcomes;
-            if (!source_get_outcomes(source, &outcomes))
+            try
             {
-              // Most of the time, source_get_outcomes does not reference its input. However, if the
-              // composite value at location 9 is a symbol, it does reference it. As a consequence,
-              // this will leak an AMQPSymbol if the value at location 9 is a symbol (as opposed to
-              // being an array).
-              os << ", Outcomes: "
-                 << _detail::AmqpValueFactory::FromImplementation(
-                        Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(outcomes)});
+              auto outcomes = source.GetOutcomes();
+              if (!outcomes.empty())
+              {
+                os << ", Outcomes: " << outcomes;
+              }
             }
+            catch (std::runtime_error const&)
+            {
+            }
+            os << "}";
+            return os;
           }
-#else
-          (void)source;
-#endif
-          os << "}";
-          return os;
         }
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

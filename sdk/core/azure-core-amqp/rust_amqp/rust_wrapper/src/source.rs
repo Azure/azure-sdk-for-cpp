@@ -6,7 +6,7 @@
 use crate::value::RustAmqpValue;
 use azure_core_amqp::{
     messaging::{builders::AmqpSourceBuilder, AmqpSource},
-    value::{AmqpComposite, AmqpDescriptor, AmqpList, AmqpOrderedMap, AmqpSymbol, AmqpValue},
+    value::{AmqpComposite, AmqpDescriptor, AmqpOrderedMap, AmqpSymbol, AmqpValue},
 };
 use tracing::warn;
 
@@ -98,7 +98,7 @@ extern "C" fn source_get_durable(
         0
     } else {
         *durable = RustTerminusDurability::None;
-        1
+        0
     }
 }
 
@@ -114,7 +114,7 @@ extern "C" fn source_get_expiry_policy(
                 *expiry_policy = RustExpiryPolicy::LinkDetach;
             }
             azure_core_amqp::messaging::TerminusExpiryPolicy::SessionEnd => {
-                *expiry_policy = RustExpiryPolicy::LinkDetach;
+                *expiry_policy = RustExpiryPolicy::SessionEnd;
             }
             azure_core_amqp::messaging::TerminusExpiryPolicy::ConnectionClose => {
                 *expiry_policy = RustExpiryPolicy::ConnectionClose;
@@ -125,7 +125,8 @@ extern "C" fn source_get_expiry_policy(
         }
         0
     } else {
-        1
+        *expiry_policy = RustExpiryPolicy::SessionEnd;
+        0
     }
 }
 
@@ -137,7 +138,7 @@ extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u3
         0
     } else {
         *timeout = 0;
-        1
+        0
     }
 }
 
@@ -149,7 +150,7 @@ extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bo
         0
     } else {
         *dynamic = false;
-        1
+        0
     }
 }
 
@@ -158,21 +159,25 @@ extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bo
 #[no_mangle]
 extern "C" fn source_get_distribution_mode(
     source: *const RustAmqpSource,
-    distribution_mode: &mut i8,
+    distribution_mode: &mut *mut RustAmqpValue,
 ) -> u32 {
     let source = unsafe { &*source };
     if let Some(distribution_mode_value) = &source.inner.distribution_mode {
         match distribution_mode_value {
             azure_core_amqp::messaging::DistributionMode::Move => {
-                *distribution_mode = 0;
+                *distribution_mode = Box::into_raw(Box::new(RustAmqpValue {
+                    inner: AmqpValue::Symbol(AmqpSymbol("move".to_string())),
+                }));
             }
             azure_core_amqp::messaging::DistributionMode::Copy => {
-                *distribution_mode = 1;
+                *distribution_mode = Box::into_raw(Box::new(RustAmqpValue {
+                    inner: AmqpValue::Symbol(AmqpSymbol("copy".to_string())),
+                }));
             }
         }
         0
     } else {
-        *distribution_mode = 0;
+        *distribution_mode = std::ptr::null_mut();
         1
     }
 }
@@ -255,13 +260,13 @@ extern "C" fn source_get_outcomes(
 ) -> u32 {
     let source = unsafe { &*source };
     if let Some(source_outcomes) = &source.inner.outcomes {
-        let list: AmqpList = source_outcomes
+        let list: Vec<AmqpValue> = source_outcomes
             .clone()
             .into_iter()
             .map(|f| AmqpValue::from(f))
             .collect();
         *outcomes = Box::into_raw(Box::new(RustAmqpValue {
-            inner: AmqpValue::List(list),
+            inner: AmqpValue::Array(list),
         }));
         0
     } else {
@@ -329,6 +334,20 @@ extern "C" fn amqpvalue_get_source(
                         1
                     }
                 }
+            }
+            _ => {
+                println!("Unexpected source descriptor code: {:?}", value);
+                *source = std::ptr::null_mut();
+                1
+            }
+        },
+        AmqpValue::Composite(value) => match value.descriptor() {
+            AmqpDescriptor::Code(0x28) => {
+                let h = value.value();
+                *source = Box::into_raw(Box::new(RustAmqpSource {
+                    inner: AmqpSource::from(h.clone()),
+                }));
+                0
             }
             _ => {
                 println!("Unexpected source descriptor code: {:?}", value);
@@ -469,24 +488,34 @@ extern "C" fn source_set_dynamic(builder: *mut RustAmqpSourceBuilder, dynamic: b
 #[no_mangle]
 extern "C" fn source_set_distribution_mode(
     builder: *mut RustAmqpSourceBuilder,
-    distribution_mode: i8,
+    distribution_mode: *const RustAmqpValue,
 ) -> u32 {
     let builder = unsafe { &mut *builder };
-    match distribution_mode {
-        0 => {
-            builder
-                .inner
-                .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Move);
-            0
-        }
-        1 => {
-            builder
-                .inner
-                .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Copy);
-            0
-        }
+    let distribution_mode = unsafe { &*distribution_mode };
+    match &distribution_mode.inner {
+        AmqpValue::Symbol(s) => match s.0.as_str() {
+            "move" => {
+                builder
+                    .inner
+                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Move);
+                0
+            }
+            "copy" => {
+                builder
+                    .inner
+                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Copy);
+                0
+            }
+            _ => {
+                warn!("Invalid distribution mode: {}", s.0);
+                1
+            }
+        },
         _ => {
-            warn!("Invalid distribution mode: {}", distribution_mode);
+            warn!(
+                "Invalid distribution mode type: {:?}",
+                distribution_mode.inner
+            );
             1
         }
     }
@@ -562,7 +591,18 @@ extern "C" fn source_set_dynamic_node_properties(
             let map: AmqpOrderedMap<AmqpSymbol, AmqpValue> = properties
                 .clone()
                 .into_iter()
-                .map(|f| (f.0.into(), f.1.clone()))
+                .map(|f| {
+                    (
+                        match f.0 {
+                            AmqpValue::Symbol(f) => f,
+                            _ => {
+                                warn!("Invalid dynamic node properties key: {:?}", f.0);
+                                AmqpSymbol("invalid".to_string())
+                            }
+                        },
+                        f.1.clone(),
+                    )
+                })
                 .collect();
             builder.inner.with_dynamic_node_properties(map);
             0
@@ -588,6 +628,21 @@ extern "C" fn source_set_outcomes(
         AmqpValue::List(outcomes) => {
             let list: Vec<azure_core_amqp::value::AmqpSymbol> = outcomes
                 .0
+                .clone()
+                .into_iter()
+                .map(|f| match f {
+                    AmqpValue::Symbol(f) => f.clone(),
+                    _ => {
+                        warn!("Invalid outcome type: {:?}", f);
+                        AmqpSymbol("invalid".to_string())
+                    }
+                })
+                .collect();
+            builder.inner.with_outcomes(list);
+            0
+        }
+        AmqpValue::Array(outcomes) => {
+            let list: Vec<azure_core_amqp::value::AmqpSymbol> = outcomes
                 .clone()
                 .into_iter()
                 .map(|f| match f {

@@ -226,6 +226,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       : m_target{target_create()}
 #endif
   {
+#if ENABLE_RUST_AMQP
+    UniqueMessageTargetBuilderHandle target{target_builder_create()};
+    if (!target)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+    Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
+    target_builder_build(target.get(), &targetHandle);
+    m_target.reset(targetHandle);
+
+#endif
   }
 
   MessageTargetImpl::MessageTargetImpl(MessageTargetImpl const& that) : m_target{target_clone(that)}
@@ -420,7 +431,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     Azure::Core::Amqp::_detail::AmqpValueImplementation* address;
     if (target_get_address(m_target.get(), &address))
     {
-      throw std::runtime_error("Could not retrieve address from source.");
+      throw std::runtime_error("Could not retrieve address from target.");
     }
     // target_get_address does not reference the underlying address so we need to addref it here so
     // it gets freed properly.
@@ -573,33 +584,51 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         .AsArray();
   }
 
+#if ENABLE_RUST_AMQP
+  extern std::ostream& operator<<(std::ostream& os, RustExpiryPolicy value);
+#endif
+
   std::ostream& operator<<(std::ostream& os, MessageTargetImpl const& target)
   {
-#if ENABLE_UAMQP
     os << "Target{ ";
     {
-      AMQP_VALUE value;
-      if (!target_get_address(target, &value))
+      try
       {
         os << "Address: " << target.GetAddress();
       }
+      catch (std::runtime_error const&)
+      {
+      }
     }
     {
+#if ENABLE_UAMQP
       uint32_t value;
+#elif ENABLE_RUST_AMQP
+      RustTerminusDurability value;
+#endif
       if (!target_get_durable(target, &value))
       {
         os << ", Durable: " << StringFromTerminusDurability(target.GetTerminusDurability());
       }
     }
     {
+#if ENABLE_AMQP
       terminus_expiry_policy policy;
+#elif ENABLE_RUST_AMQP
+      RustExpiryPolicy policy;
+#endif
       if (!target_get_expiry_policy(target, &policy))
       {
         os << ", Expiry Policy: " << policy;
       }
     }
+
     {
+#if ENABLE_AMQP
       seconds timeout;
+#elif ENABLE_RUST_AMQP
+      uint32_t timeout;
+#endif
       if (!target_get_timeout(target, &timeout))
       {
         os << ", Timeout: " << target.GetTimeout().time_since_epoch().count();
@@ -613,22 +642,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       }
     }
     {
-      AMQP_VALUE dynamicProperties;
-      if (!target_get_dynamic_node_properties(target, &dynamicProperties))
+      try
       {
-        os << ", Dynamic Node Properties: " << target.GetDynamicNodeProperties();
+        auto dynamicProperties = target.GetDynamicNodeProperties();
+        os << ", Dynamic Node Properties: " << dynamicProperties;
+      }
+      catch (std::runtime_error&)
+      {
       }
     }
     {
-      AMQP_VALUE capabilities;
-      if (!target_get_capabilities(target, &capabilities))
-      {
-        os << ", Capabilities: " << target.GetCapabilities();
-      }
+        try
+        {
+          auto capabilities = target.GetCapabilities();
+          os << ", Capabilities: " << capabilities;
+        }
+        catch (std::runtime_error&)
+        {
+        }
     }
-#else
-    (void)target;
-#endif
     os << "}";
     return os;
   }

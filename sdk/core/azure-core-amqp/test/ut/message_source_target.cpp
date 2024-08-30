@@ -449,28 +449,45 @@ TEST_F(TestSourceTarget, SourceProperties)
     dynamicMap["Key"] = 23;
 
     MessageSourceOptions options;
-    options.DynamicNodeProperties["Key"] = 23;
+    options.DynamicNodeProperties[AmqpSymbol{"Key"}] = 23;
     MessageSource source(options);
 
     auto map2(source.GetDynamicNodeProperties());
-    EXPECT_EQ(map2["Key"], AmqpValue(23));
+    auto val = map2.find(AmqpSymbol("Key"));
+    EXPECT_NE(map2.end(), val);
+    EXPECT_EQ(val->second, AmqpValue(23));
+    //    EXPECT_EQ(map2.at("Key"), AmqpValue(23));
     GTEST_LOG_(INFO) << "Source: " << source;
   }
+  // uAMQP allows arbitrary distribution modes, the Rust implementation does not.
+#if ENABLE_UAMQP
   {
     MessageSourceOptions options;
     options.DistributionMode = "A different mode";
     MessageSource source(options);
 
-    EXPECT_EQ("A different mode", source.GetDistributionMode());
+    EXPECT_EQ(AmqpSymbol{"A different mode"}, source.GetDistributionMode());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
+#else
   {
     MessageSourceOptions options;
-    options.Filter["Key"] = 23;
+    options.DistributionMode = "copy";
     MessageSource source(options);
-    EXPECT_EQ(source.GetFilter()["Key"], AmqpValue(23));
+
+    EXPECT_EQ(AmqpSymbol{"copy"}, source.GetDistributionMode());
     GTEST_LOG_(INFO) << "Source: " << source;
   }
+
+#endif
+  {
+    MessageSourceOptions options;
+    options.Filter[AmqpSymbol{"Key"}] = 23;
+    MessageSource source(options);
+    EXPECT_EQ(source.GetFilter()[AmqpSymbol{"Key"}], AmqpValue(23));
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+#if ENABLE_UAMQP
   {
     MessageSourceOptions options;
     options.DefaultOutcome = "Default outcome";
@@ -478,7 +495,18 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(source.GetDefaultOutcome(), "Default outcome");
     GTEST_LOG_(INFO) << "Source: " << source;
   }
+#else
+  {
+    MessageSourceOptions options;
+    options.DefaultOutcome = AmqpSymbol{"amqp:accepted:list"};
+    MessageSource source(options);
+    EXPECT_EQ(source.GetDefaultOutcome(), AmqpSymbol{"amqp:accepted:list"});
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
 
+#endif
+
+  #if ENABLE_UAMQP
   {
     MessageSourceOptions options;
     options.Outcomes.push_back(AmqpSymbol("Test").AsAmqpValue());
@@ -488,6 +516,17 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "Test");
     GTEST_LOG_(INFO) << "Source: " << source;
   }
+  #elif ENABLE_RUST_AMQP
+  {
+    MessageSourceOptions options;
+    options.Outcomes.push_back(AmqpSymbol("amqp:rejected:list").AsAmqpValue());
+    MessageSource source(options);
+    EXPECT_EQ(1, source.GetOutcomes().size());
+    EXPECT_EQ(AmqpValueType::Symbol, source.GetOutcomes().at(0).GetType());
+    EXPECT_EQ(source.GetOutcomes().at(0).AsSymbol(), "amqp:rejected:list");
+    GTEST_LOG_(INFO) << "Source: " << source;
+  }
+#endif
 
   {
     MessageSource source("address1");
