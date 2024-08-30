@@ -54,14 +54,14 @@ git clone https://github.com/microsoft/vcpkg.git
 - After bootstrapping vcpkg, add it to your path so you can access the vcpkg executable from your project directory. Remember to replace the path in the command example with the path to the vcpkg directory you cloned earlier.
   - On Windows Powershell, enter:
   
-  ```bash
+  ```pwsh
   $env:Path = "$env:Path;C:\path\to\vcpkg"
   ```
 
   - On MacOS or Linux systems, enter:
   
   ```bash
-  PATH=$PATH:/path/to/vcpkg
+  export PATH=$PATH:/path/to/vcpkg
   ```
 
 - Traverse back to your project directory and run the following to verify the vcpkg directory was added to your path:
@@ -70,7 +70,7 @@ git clone https://github.com/microsoft/vcpkg.git
 vcpkg --version
 ```
 
-- You should get an output resembling the following (The hash at the end of the line does not need to match exactly):
+- You should get an output resembling the following (The hash at the end of the line will most likely not match as a new version has probably released):
 
 ```bash
 vcpkg package management program version 2024-08-01-fd884a0d390d12783076341bd43d77c3a6a15658
@@ -184,7 +184,7 @@ vcpkg new --application
   {}
   ```
 
-  - `vcpkg-configuration.json` *It's okay if the hash on the `baseline` property doesn't match exactly.*
+  - `vcpkg-configuration.json` *It's okay if the hash on the `baseline` property doesn't match.*
   
   ```json
   {
@@ -447,7 +447,7 @@ target_link_libraries(azure_sample PRIVATE
         "binaryDir": "${sourceDir}/build/",
         "cacheVariables": {
           "CMAKE_BUILD_TYPE": "Debug",
-          "CMAKE_TOOLCHAIN_FILE": "path/to/vcpkg/root/scripts/buildsystems/vcpkg.cmake"
+          "CMAKE_TOOLCHAIN_FILE": "/path/to/vcpkg/root/scripts/buildsystems/vcpkg.cmake"
         }
       }
     ],
