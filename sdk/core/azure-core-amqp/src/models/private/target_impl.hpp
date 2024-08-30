@@ -15,6 +15,8 @@
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
 #include <azure_uamqp_c/amqp_definitions_target.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #endif
 
 #include <string>
@@ -22,21 +24,23 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<std::remove_pointer<TARGET_HANDLE>::type>
+  using AmqpTargetImplementation = std::remove_pointer<SOURCE_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using AmqpTargetImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpTarget;
+#endif
+
+  template <> struct UniqueHandleHelper<AmqpTargetImplementation>
   {
-    static void FreeMessageTarget(TARGET_HANDLE obj);
+    static void FreeMessageTarget(AmqpTargetImplementation* obj);
 
     using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<TARGET_HANDLE>::type, FreeMessageTarget>;
+        BasicUniqueHandle<AmqpTargetImplementation, FreeMessageTarget>;
   };
-#endif // ENABLE_UAMQP
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueMessageTargetHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<TARGET_HANDLE>::type>;
-#endif
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::AmqpTargetImplementation>;
 
   class MessageTargetImpl final {
   public:
@@ -161,11 +165,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
-#if ENABLE_UAMQP
     _detail::UniqueMessageTargetHandle m_target;
 
-    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
-#endif
+    operator Azure::Core::Amqp::_detail::AmqpTargetImplementation*() const { return m_target.get(); }
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTargetImpl const&);

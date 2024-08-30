@@ -306,6 +306,43 @@ extern "C" fn amqpvalue_create_source(
     0
 }
 
+#[no_mangle]
+extern "C" fn amqpvalue_get_source(
+    value: *const RustAmqpValue,
+    source: &mut *mut RustAmqpSource,
+) -> i32 {
+    let value = unsafe { &*value };
+    match &value.inner {
+        AmqpValue::Described(value) => match value.descriptor() {
+            AmqpDescriptor::Code(0x28) => {
+                let h = value.value();
+                match h {
+                    AmqpValue::List(c) => {
+                        *source = Box::into_raw(Box::new(RustAmqpSource {
+                            inner: AmqpSource::from(c.clone()),
+                        }));
+                        0
+                    }
+                    _ => {
+                        *source = std::ptr::null_mut();
+                        println!("Unexpected source value: {:?}", value);
+                        1
+                    }
+                }
+            }
+            _ => {
+                println!("Unexpected source descriptor code: {:?}", value);
+                *source = std::ptr::null_mut();
+                1
+            }
+        },
+        _ => {
+            println!("Unexpected source type: {:?}", value.inner);
+            1
+        }
+    }
+}
+
 pub struct RustAmqpSourceBuilder {
     inner: AmqpSourceBuilder,
 }

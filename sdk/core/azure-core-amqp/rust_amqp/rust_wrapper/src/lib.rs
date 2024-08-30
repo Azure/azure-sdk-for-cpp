@@ -11,6 +11,7 @@ pub mod header;
 pub mod message;
 pub mod properties;
 pub mod source;
+pub mod target;
 pub mod value;
 
 #[no_mangle]

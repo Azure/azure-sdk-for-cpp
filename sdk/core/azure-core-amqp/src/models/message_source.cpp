@@ -176,7 +176,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::invalid_argument("source cannot be null");
     }
-#if ENABLE_UAMQP
     {
       Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
       if (amqpvalue_get_source(_detail::AmqpValueFactory::ToImplementation(source), &sourceHandle))
@@ -185,7 +184,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       }
       m_source.reset(sourceHandle);
     }
-#endif
   }
 
   /* Note: This constructor should NOT be marked as explicit, because we want to enable the

@@ -507,3 +507,217 @@ extern "C" fn amqpvalue_create_properties(
     )));
     Box::into_raw(Box::new(RustAmqpValue { inner: value }))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::ffi::CString;
+    use std::ptr;
+
+    fn create_test_properties() -> *mut RustMessageProperties {
+        let properties = AmqpMessageProperties::builder()
+            .with_message_id(AmqpMessageId::String("test_message_id".to_string()))
+            .with_correlation_id(AmqpMessageId::String("test_correlation_id".to_string()))
+            .with_user_id(vec![1, 2, 3, 4])
+            .with_to("test_to".to_string())
+            .with_subject("test_subject".to_string())
+            .with_reply_to("test_reply_to".to_string())
+            .with_content_type("test_content_type".to_string())
+            .with_content_encoding("test_content_encoding".to_string())
+            .with_absolute_expiry_time(AmqpTimestamp(
+                UNIX_EPOCH + std::time::Duration::from_secs(1000),
+            ))
+            .with_creation_time(AmqpTimestamp(
+                UNIX_EPOCH + std::time::Duration::from_secs(500),
+            ))
+            .with_group_id("test_group_id".to_string())
+            .with_group_sequence(42)
+            .with_reply_to_group_id("test_reply_to_group_id".to_string())
+            .build();
+        Box::into_raw(Box::new(RustMessageProperties { inner: properties }))
+    }
+
+    #[test]
+    fn test_properties_get_message_id() {
+        let properties = create_test_properties();
+        let mut message_id: *mut RustAmqpValue = ptr::null_mut();
+        let result = properties_get_message_id(properties, &mut message_id);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                (*message_id).inner,
+                AmqpValue::String("test_message_id".to_string())
+            );
+            drop(Box::from_raw(message_id));
+        }
+        unsafe {
+            drop(Box::from_raw(properties));
+        }
+    }
+
+    #[test]
+    fn test_properties_get_correlation_id() {
+        let properties = create_test_properties();
+        let mut correlation_id: *mut RustAmqpValue = ptr::null_mut();
+        let result = properties_get_correlation_id(properties, &mut correlation_id);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                (*correlation_id).inner,
+                AmqpValue::String("test_correlation_id".to_string())
+            );
+            drop(Box::from_raw(correlation_id));
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_user_id() {
+        let properties = create_test_properties();
+        let mut value: *const u8 = ptr::null();
+        let mut size: u32 = 0;
+        let result = properties_get_user_id(properties, &mut value, &mut size);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                std::slice::from_raw_parts(value, size as usize),
+                &[1, 2, 3, 4]
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_to() {
+        let properties = create_test_properties();
+        let mut value: *mut RustAmqpValue = ptr::null_mut();
+        let result = properties_get_to(properties, &mut value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!((*value).inner, AmqpValue::String("test_to".to_string()));
+            drop(Box::from_raw(value));
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_subject() {
+        let properties = create_test_properties();
+        let mut string_value: *const std::os::raw::c_char = ptr::null();
+        let result = properties_get_subject(properties, &mut string_value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                CString::from_raw(string_value as *mut _).to_str().unwrap(),
+                "test_subject"
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_reply_to() {
+        let properties = create_test_properties();
+        let mut value: *mut RustAmqpValue = ptr::null_mut();
+        let result = properties_get_reply_to(properties, &mut value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                (*value).inner,
+                AmqpValue::String("test_reply_to".to_string())
+            );
+            drop(Box::from_raw(value));
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_content_type() {
+        let properties = create_test_properties();
+        let mut string_value: *const std::os::raw::c_char = ptr::null();
+        let result = properties_get_content_type(properties, &mut string_value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                CString::from_raw(string_value as *mut _).to_str().unwrap(),
+                "test_content_type"
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_content_encoding() {
+        let properties = create_test_properties();
+        let mut string_value: *const std::os::raw::c_char = ptr::null();
+        let result = properties_get_content_encoding(properties, &mut string_value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                CString::from_raw(string_value as *mut _).to_str().unwrap(),
+                "test_content_encoding"
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_absolute_expiry_time() {
+        let properties = create_test_properties();
+        let mut expiry_time: u64 = 0;
+        let result = properties_get_absolute_expiry_time(properties, &mut expiry_time);
+        assert_eq!(result, 0);
+        assert_eq!(expiry_time, 1000 * 1000);
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_creation_time() {
+        let properties = create_test_properties();
+        let mut creation_time: u64 = 0;
+        let result = properties_get_creation_time(properties, &mut creation_time);
+        assert_eq!(result, 0);
+        assert_eq!(creation_time, 500 * 1000);
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_group_id() {
+        let properties = create_test_properties();
+        let mut string_value: *const std::os::raw::c_char = ptr::null();
+        let result = properties_get_group_id(properties, &mut string_value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                CString::from_raw(string_value as *mut _).to_str().unwrap(),
+                "test_group_id"
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_group_sequence() {
+        let properties = create_test_properties();
+        let mut group_sequence: u32 = 0;
+        let result = properties_get_group_sequence(properties, &mut group_sequence);
+        assert_eq!(result, 0);
+        assert_eq!(group_sequence, 42);
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+
+    #[test]
+    fn test_properties_get_reply_to_group_id() {
+        let properties = create_test_properties();
+        let mut string_value: *const std::os::raw::c_char = ptr::null();
+        let result = properties_get_reply_to_group_id(properties, &mut string_value);
+        assert_eq!(result, 0);
+        unsafe {
+            assert_eq!(
+                CString::from_raw(string_value as *mut _).to_str().unwrap(),
+                "test_reply_to_group_id"
+            );
+        }
+        unsafe { drop(Box::from_raw(properties)) };
+    }
+}
