@@ -430,7 +430,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (options.DistributionMode.HasValue())
     {
 #if ENABLE_UAMQP
-      if (source_set_distribution_mode(source.get(), options.DistributionMode.Value().c_str()))
+      if (source_set_distribution_mode(source.get(), options.DistributionMode.Value().data()))
       {
         throw std::runtime_error("Could not set distribution mode.");
       }

@@ -618,7 +618,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       }
     }
     {
-#if ENABLE_AMQP
+#if ENABLE_UAMQP
       terminus_expiry_policy policy;
 #elif ENABLE_RUST_AMQP
       RustExpiryPolicy policy;
@@ -630,7 +630,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
 
     {
-#if ENABLE_AMQP
+#if ENABLE_UAMQP
       seconds timeout;
 #elif ENABLE_RUST_AMQP
       uint32_t timeout;
