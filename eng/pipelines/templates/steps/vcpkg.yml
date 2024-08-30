@@ -8,7 +8,7 @@ steps:
     - task: AzurePowerShell@5
       displayName: Set Vcpkg Write-mode Cache
       inputs:
-        azureSubscription: 'cpp Resource Group'
+        azureSubscription: 'Azure SDK Artifacts'
         ScriptType: FilePath
         ScriptPath: eng/scripts/Set-VcpkgWriteModeCache.ps1
         azurePowerShellVersion: LatestVersion
