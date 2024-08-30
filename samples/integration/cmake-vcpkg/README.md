@@ -12,8 +12,8 @@
 
 ### Install CMake
 
-- Go to the [CMake Downloads page](https://cmake.org/download/) where you can either download the latest version of the CMake source or an installer for your OS. I'd recommend using the installer for simplicity. When asked select the option to add CMake to your PATH.
-- Once you've downloaded and run through the installer program run the following command to verify CMake has been installed properly:
+- Go to the [CMake Downloads page](https://cmake.org/download/) to download an installer for your OS. The installer approach is recommended for simplicity. Optionally you can download the latest version of the CMake source instead. When asked, select the option to add CMake to your PATH.
+- After installing CMake, run the following command to verify CMake has been installed properly:
 
 ```bash
 cmake --version
@@ -29,7 +29,7 @@ cmake version 3.30.2
 
 ### Install vcpkg
 
-- To install vcpkg you'll first need to clone the vcpkg repo. I recommend cloning vcpkg to a central location on your development environment and not in your C++ Project directory. In this example I'll clone vcpkg to my home dir.
+- To install vcpkg you'll first need to clone the vcpkg repo. The recommended approach is to clone vcpkg to a central location on your development environment and not in your C++ Project directory. In this example vcpkg is cloned to the home dir.
 
 ```bash
 cd ~
