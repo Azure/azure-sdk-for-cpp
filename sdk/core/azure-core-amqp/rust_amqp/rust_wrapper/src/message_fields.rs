@@ -62,7 +62,7 @@ extern "C" fn amqpvalue_create_application_properties(
         _ => return std::ptr::null_mut(),
     };
 
-    let application_properties = AmqpDescribed::new(0x73, AmqpValue::Map(properties.clone()));
+    let application_properties = AmqpDescribed::new(0x74, AmqpValue::Map(properties.clone()));
     Box::into_raw(Box::new(RustAmqpValue {
         inner: AmqpValue::Described(Box::new(application_properties)),
     }))
