@@ -51,6 +51,11 @@ if (MSVC)
   target_compile_options(azure-core-amqp-tests PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
+if (USE_UAMQP)
+  target_compile_definitions(azure-core-amqp-tests PRIVATE ENABLE_UAMQP)
+endif()
+
+
 target_include_directories(azure-core-amqp-tests PRIVATE Azure::azure-core-amqp)
 # Disable the localtime is unsafe warning.
 target_compile_definitions(azure-core-amqp-tests PRIVATE _CRT_SECURE_NO_WARNINGS)
