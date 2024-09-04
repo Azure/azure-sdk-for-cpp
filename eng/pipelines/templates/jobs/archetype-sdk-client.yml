@@ -112,8 +112,7 @@ jobs:
               and(
                 succeeded(),
                 ne(variables['Skip.CreateApiReview'], 'true'),
-                ne(variables['Build.Reason'],'PullRequest'),
-                eq(variables['System.TeamProject'], 'internal')
+                ne(variables['Build.Reason'],'PullRequest')
               )
 
         - task: Powershell@2
