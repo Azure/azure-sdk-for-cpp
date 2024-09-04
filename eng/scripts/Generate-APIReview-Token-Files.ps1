@@ -4,19 +4,9 @@ Param(
     [Parameter(Mandatory=$True)]
     [string] $OutPath,
     [Parameter(Mandatory=$True)]
-    [string] $ApiKey,
-    [Parameter(Mandatory=$True)]
-    [string] $SourceBranch,
-    [Parameter(Mandatory=$True)]
-    [string] $DefaultBranch,
-    [Parameter(Mandatory=$True)]
     [string] $ParserPath,
     [Parameter(Mandatory=$True)]
-    [string] $ServicePath,
-    [Parameter(Mandatory=$True)]
-    [string] $RepoName,
-    [Parameter(Mandatory=$True)]
-    [string] $BuildId
+    [string] $ServicePath
 )
 
 Write-Host "$PSScriptRoot"

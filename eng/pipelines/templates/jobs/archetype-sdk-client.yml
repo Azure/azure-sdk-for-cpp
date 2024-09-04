@@ -118,17 +118,12 @@ jobs:
 
         - task: Powershell@2
           inputs:
-            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Prepare-APIReview.ps1
+            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-APIReview-Token-Files.ps1
             arguments: >
               -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
               -OutPath $(Build.ArtifactStagingDirectory)
-              -ApiKey "$(azuresdk-apiview-apikey)"
-              -SourceBranch $(Build.SourceBranchName)
-              -DefaultBranch $(DefaultBranch)
               -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
               -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-              -BuildId $(Build.BuildId)
-              -RepoName "$(Build.Repository.Name)"
             pwsh: true
             workingDirectory: $(Pipeline.Workspace)
     - job: GenerateReleaseArtifacts
@@ -353,10 +348,11 @@ jobs:
               ne(variables['Build.Reason'],'PullRequest'),
               eq(variables['System.TeamProject'], 'internal')
             )
-        - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
-          parameters:
-            Artifacts: ${{ parameters.Artifacts }}
-            condition: succeeded()
+        - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+            parameters:
+              Artifacts: ${{ parameters.Artifacts }}
+              condition: succeeded()
 
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
