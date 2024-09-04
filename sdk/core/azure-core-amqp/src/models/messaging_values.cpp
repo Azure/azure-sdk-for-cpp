@@ -22,7 +22,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
-    return {};
+    throw std::runtime_error("Delivery Accepted Not implemented");
 #endif
   }
 
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return _detail::AmqpValueFactory::FromImplementation(rv);
 #else
-    return {};
+    throw std::runtime_error("Delivery Released Not implemented");
 
 #endif
   }
@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #else
     (void)sectionNumber;
     (void)sectionOffset;
-    return {};
+    throw std::runtime_error("Delivery Received Not implemented");
 #endif
   }
   AmqpValue Messaging::DeliveryRejected(
@@ -75,7 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     (void)errorCondition;
     (void)errorDescription;
     (void)errorInfo;
-    return {};
+    throw std::runtime_error("Delivery Rejected Not implemented");
 #endif
   }
   AmqpValue Messaging::DeliveryModified(
@@ -97,7 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     (void)deliveryFailed;
     (void)undeliverableHere;
     (void)annotations;
-    return {};
+    throw std::runtime_error("Delivery Modified Not implemented");
 #endif
   }
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

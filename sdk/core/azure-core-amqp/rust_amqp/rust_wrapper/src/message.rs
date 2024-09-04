@@ -9,8 +9,10 @@ use azure_core_amqp::{
         AmqpAnnotationKey, AmqpAnnotations, AmqpApplicationProperties, AmqpMessage, AmqpMessageBody,
     },
     value::{AmqpOrderedMap, AmqpValue},
+    Deserializable,
 };
 use std::mem;
+use tracing::warn;
 
 #[repr(C)]
 enum RustAmqpMessageBodyType {
@@ -50,18 +52,6 @@ extern "C" fn message_get_header(
     }
     let header = message.inner.header().unwrap();
     unsafe { *message_header = Box::into_raw(Box::new(RustMessageHeader::new(header.clone()))) }
-    //    let header = message.inner.header();
-    //    match header {
-    //        Some(h) => unsafe {
-    //            *message_header = Box::into_raw(Box::new(RustMessageHeader { inner: h.clone() }))
-    //        },
-    //        None => unsafe { *message_header = std::ptr::null_mut() },
-    //    }
-    //    let header = header.map(|h| Box::new(RustMessageHeader { inner: h.clone() }));
-    //match header {
-    //    Some(h) => unsafe { *message_header = Box::into_raw(h) },
-    //    None => unsafe { *message_header = std::ptr::null_mut() },
-    //}
     0
 }
 
@@ -464,4 +454,27 @@ extern "C" fn message_set_body_amqp_value(
     let data = unsafe { &*data };
     message.inner.set_message_body(data.inner.clone());
     0
+}
+
+#[no_mangle]
+extern "C" fn message_deserialize(
+    data: *const u8,
+    count: usize,
+    message: *mut *mut RustAmqpMessage,
+) -> u32 {
+    let data = unsafe { std::slice::from_raw_parts(data, count) };
+    let val = AmqpMessage::decode(data);
+    match val {
+        Ok(m) => {
+            unsafe {
+                *message = Box::into_raw(Box::new(RustAmqpMessage { inner: m }));
+            }
+            0
+        }
+        Err(err) => {
+            warn!("Failed to deserialize message: {:?}", err);
+            println!("Failed to deserialize message: {:?}", err);
+            1
+        }
+    }
 }

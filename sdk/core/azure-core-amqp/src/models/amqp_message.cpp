@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle deliveryAnnotations(annotationsVal);
         auto deliveryMap
-            = Models::_detail::AmqpValueFactory::FromImplementation(deliveryAnnotations).AsMap();
+            = Models::_detail::AmqpValueFactory::FromImplementation(deliveryAnnotations).AsAnnotations();
         rv->DeliveryAnnotations = deliveryMap;
       }
     }
@@ -107,7 +107,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromImplementation(
                                      UniqueAmqpValueHandle{messageAnnotations})
-                                     .AsMap();
+                                     .AsAnnotations();
       }
     }
     {
@@ -203,7 +203,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle footerAnnotations(footerVal);
         footerVal = nullptr;
-        auto footerMap = _detail::AmqpValueFactory::FromImplementation(footerAnnotations).AsMap();
+        auto footerMap = _detail::AmqpValueFactory::FromImplementation(footerAnnotations).AsAnnotations();
         rv->Footer = footerMap;
       }
     }
@@ -489,7 +489,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   std::vector<uint8_t> AmqpMessage::Serialize(AmqpMessage const& message)
   {
-#if ENABLE_UAMQP
     std::vector<uint8_t> rv;
 
     // Append the message Header to the serialized message.
@@ -591,10 +590,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 
     return rv;
-#else
-    (void)message;
-    throw std::runtime_error("AMQP library is not enabled.");
-#endif
   }
 
 #if ENABLE_UAMQP
@@ -825,10 +820,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     return AmqpMessageDeserializer{}(buffer, size);
-#else
-    (void)buffer;
-    (void)size;
-    throw std::runtime_error("AMQP library is not enabled.");
+#elif ENABLE_RUST_AMQP
+    Azure::Core::Amqp::_detail::MessageImplementation* message;
+    
+    if (message_deserialize(buffer, size, &message))
+    {
+      throw std::runtime_error("Could not deserialize message.");
+    }
+
+    std::shared_ptr<AmqpMessage> messagePointer = _detail::AmqpMessageFactory::FromImplementation(message);
+    AmqpMessage rv= *messagePointer;
+    messagePointer.reset();
+    return rv;
+
 #endif
   }
 

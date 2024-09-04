@@ -88,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   class AmqpArray;
   class AmqpMap;
+  class AmqpAnnotations;
   class AmqpList;
   class AmqpBinaryData;
   class AmqpSymbol;
@@ -486,6 +487,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     AmqpMap AsMap() const;
 
+    /** @brief convert the current AMQP Value to an AmqpAnnotations.
+     *
+     * @returns the value as an AmqpAnnotations.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not a map of Symbols to Values.
+     */
+    AmqpAnnotations AsAnnotations() const;
+
     /** @brief convert the current AMQP Value to an AmqpArray.
      *
      * @returns the value as an AmqpArray.
@@ -596,7 +605,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const &() const { return m_value; }
+    explicit operator T const&() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;
@@ -876,6 +885,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Move Assignment operator */
     AmqpSymbol& operator=(AmqpSymbol&& other) noexcept = default;
 
+    AmqpValueType GetType() const { return AmqpValueType::Symbol; }
+
     /** @brief Construct a new AmqpSymbol object from an existing uAMQP AMQP_VALUE item
      *
      * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
@@ -905,6 +916,86 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
   };
   std::ostream& operator<<(std::ostream& os, AmqpSymbol const& value);
+
+  /** @brief An AmqpAnnotations represents AMQP Message Annotations.
+   *
+   * An AMQP Map is a polymorphic map of AMQP Symbol keys to values.
+   *
+   */
+  class AmqpAnnotations final
+      : public _detail::AmqpCollectionBase<std::map<AmqpSymbol, AmqpValue>, AmqpAnnotations> {
+
+  public:
+    /** @brief Construct a new AmqpMap object. */
+    AmqpAnnotations() : AmqpCollectionBase(){};
+
+    /** @brief Construct a new AmqpArray object with an initializer list. */
+    AmqpAnnotations(
+        std::initializer_list<std::map<AmqpSymbol, AmqpValue>::value_type> const& values)
+        : AmqpCollectionBase(values)
+    {
+    }
+
+    /** @brief Move Constructor */
+    AmqpAnnotations(AmqpAnnotations&& other) noexcept = default;
+
+    /** @brief Move assignment operator */
+    AmqpAnnotations& operator=(AmqpAnnotations&& other) noexcept = default;
+
+    /** @brief Copy Constructor */
+    AmqpAnnotations(const AmqpAnnotations& other) = default;
+
+    /** @brief Copy assignment operator */
+    AmqpAnnotations& operator=(const AmqpAnnotations& other) = default;
+
+    /** @brief Construct a new AmqpMap object from an existing uAMQP AMQP_VALUE item
+     * @remarks Note that this does NOT capture the passed in AMQP_VALUE object, the caller is
+     * responsible for freeing that object.
+     *
+     * @remarks This is an internal accessor and should never be used by code outside the AMQP
+     * implementation.
+     *
+     * @param value - the AMQP array value to capture.
+     */
+    AmqpAnnotations(AmqpValue const& value);
+
+    virtual ~AmqpAnnotations() = default;
+
+    /** @brief Access an element in the map.
+     *
+     * @return a reference to the value associated with the specified key.
+     */
+    decltype(m_value)::mapped_type& operator[](decltype(m_value)::key_type&& keyVal)
+    {
+      return m_value.operator[](std::move(keyVal));
+    }
+
+    /**
+     * @brief Find a value in the AMQP value map.
+     *
+     * @param keyVal The key to search for in the map.
+     * @returns An iterator to the found element, or the end iterator if the key is not found.
+     */
+    decltype(m_value)::iterator find(const decltype(m_value)::key_type& keyVal)
+    {
+      return m_value.find(keyVal);
+    }
+
+    /** @brief Insert a new key/value pair into the map.
+     *
+     * @return std::pair<iterator, bool> - a pair containing an iterator to the inserted element,
+     * or an iterator to the element that prevented the insertion, and a bool indicating whether
+     * the insertion took place.
+     */
+    template <class... ValueTypes>
+    std::pair<decltype(m_value)::iterator, bool> emplace(ValueTypes&&... values)
+    {
+      return m_value.emplace(std::forward<ValueTypes>(values)...);
+    }
+
+    bool operator==(AmqpAnnotations const& that) const { return m_value == that.m_value; }
+  };
+  std::ostream& operator<<(std::ostream& os, AmqpAnnotations const& value);
 
   /** @brief An AMQP timestamp value.
    *

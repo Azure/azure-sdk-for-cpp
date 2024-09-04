@@ -9,6 +9,7 @@ use std::{
 };
 pub mod header;
 pub mod message;
+pub mod message_fields;
 pub mod properties;
 pub mod source;
 pub mod target;

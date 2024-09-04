@@ -900,7 +900,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
               os << ", Distribution Mode: " << distributionMode;
 #elif ENABLE_RUST_AMQP
               UniqueAmqpValueHandle handle{distributionMode};
-              os << ", Distribution Mode: " << handle;
+              os << ", Distribution Mode: " << handle.get();
 #endif
             }
           }

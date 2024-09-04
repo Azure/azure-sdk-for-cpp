@@ -15,6 +15,7 @@ use std::ffi::{c_char, CString};
 use std::mem;
 use std::ptr::null;
 
+#[derive(Debug, Clone)]
 pub struct RustAmqpValue {
     pub(crate) inner: AmqpValue,
 }

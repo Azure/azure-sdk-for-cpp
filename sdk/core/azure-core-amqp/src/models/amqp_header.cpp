@@ -68,40 +68,43 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     MessageHeader rv;
     bool boolValue;
-    if (!header_get_durable(handle.get(), &boolValue))
+    if (handle)
     {
-      rv.Durable = boolValue;
-    }
+      if (!header_get_durable(handle.get(), &boolValue))
+      {
+        rv.Durable = boolValue;
+      }
 
-    uint8_t uint8Value;
-    if (!header_get_priority(handle.get(), &uint8Value))
-    {
-      rv.Priority = uint8Value;
-    }
+      uint8_t uint8Value;
+      if (!header_get_priority(handle.get(), &uint8Value))
+      {
+        rv.Priority = uint8Value;
+      }
 
 #if ENABLE_UAMQP
-    milliseconds millisecondsValue;
-    if (!header_get_ttl(handle.get(), &millisecondsValue))
-    {
-      rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
-    }
+      milliseconds millisecondsValue;
+      if (!header_get_ttl(handle.get(), &millisecondsValue))
+      {
+        rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
+      }
 #else
-    uint64_t millisecondsValue;
-    if (!header_get_ttl(handle.get(), &millisecondsValue))
-    {
-      rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
-    }
+      uint64_t millisecondsValue;
+      if (!header_get_ttl(handle.get(), &millisecondsValue))
+      {
+        rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
+      }
 #endif
 
-    if (!header_get_first_acquirer(handle.get(), &boolValue))
-    {
-      rv.IsFirstAcquirer = boolValue;
-    }
+      if (!header_get_first_acquirer(handle.get(), &boolValue))
+      {
+        rv.IsFirstAcquirer = boolValue;
+      }
 
-    uint32_t uint32Value;
-    if (!header_get_delivery_count(handle.get(), &uint32Value))
-    {
-      rv.DeliveryCount = uint32Value;
+      uint32_t uint32Value;
+      if (!header_get_delivery_count(handle.get(), &uint32Value))
+      {
+        rv.DeliveryCount = uint32Value;
+      }
     }
     return rv;
   }
