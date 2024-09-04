@@ -66,10 +66,10 @@ namespace Azure { namespace Core {
 
     /**
      * @brief Construct a Uuid by parsing its representation.
-     * @param s a string in `8-4-4-4-12` hex characters format.
-     * @throw `std::invalid_argument` if \p s cannot be parsed.
+     * @param uuidString a string in `8-4-4-4-12` hex characters format.
+     * @throw `std::invalid_argument` if \p uuidString cannot be parsed.
      */
-    static Uuid Parse(std::string const& s);
+    static Uuid Parse(std::string const& uuidString);
 
     /**
      * @brief Compares with another instance of Uuid for equality.

@@ -6,5 +6,5 @@ extends:
     Repository: $(Build.Repository.Name)
     Prefix: cpp
     CIConventionOptions: ''
-    UPConventionOptions: '--variablegroups 58 76 64 93 117'
+    UPConventionOptions: '--variablegroups 58 76 64 93'
     TestsConventionOptions: ''
