@@ -28,7 +28,8 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class CurlConnectionTest : public ::testing::Test {};
+  class CurlConnectionTest : public ::testing::Test {
+  };
 
   TEST(CurlConnectionTest, ParseKeepAliveHeader)
   {
