@@ -108,11 +108,7 @@ jobs:
             vstsFeedPackage: 'parseazuresdkcpp'
             downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
             vstsPackageVersion: 0.13.0 
-          condition: >-
-              and(
-                succeeded(),
-                ne(variables['Build.Reason'],'PullRequest')
-              )
+          condition: succeeded()
 
         - task: Powershell@2
           inputs:
