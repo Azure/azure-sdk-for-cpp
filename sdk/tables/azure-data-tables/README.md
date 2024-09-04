@@ -21,7 +21,7 @@ If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-<servi
 
 ```PowerShell
 az login
-az <service-name> create --resource-group <your-resource-group-name> --name <your-<service-name>-name>
+az storage table create create --resource-group <your-resource-group-name> --name <your-<service-name>-name>
 ```
 ### Create account
 * To create a new Storage account, you can use [Azure Portal][azure_portal_create_account], [Azure PowerShell][azure_powershell_create_account], or [Azure CLI][azure_cli_create_account]:
@@ -38,14 +38,14 @@ To install the Azure \<Service-Name> package via vcpkg:
 To add the Azure \<Service-Name> package to your vcpkg enter the following command (We'll also add the Azure Identity library for authentication):
 
 ```batch
-vcpkg add port azure-<service-name>-cpp azure-identity-cpp
+vcpkg add port azure-data-tables-cpp azure-identity-cpp
 ```
 
 Then, add the following in your CMake file:
 
 ```CMake
-find_package(azure-<service-name>-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-<service-name> Azure::azure-identity)
+find_package(azure-data-tables-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-data-tables Azure::azure-identity)
 ```
 
 Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
@@ -86,17 +86,17 @@ az login
 az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
 ```
 
-### Client (Instantiation & List of any Sub-Clients)
+### Credentials
 
 We'll be using the `DefaultAzureCredential` to authenticate which will pick up the credentials we used when logging in with the Azure CLI earlier. `DefaultAzureCredential` can pick up on a number of Credential types from your environment and is ideal when getting started and developing. Check out our section on [DefaultAzureCredentials](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential) to learn more.
 
 ```cpp
 // Add all necessary includes for client creation and samples below
 #include <azure/identity.hpp> 
-#include <azure/<service-name>.hpp
+#include <azure/data/tables.hpp>
 
 // Add all using statements for client creation and samples below
-using namespace Azure::<Service::Name>;
+using namespace Azure::Data::Tables;
 
 int main (){
   // Add all variables that are needed for creating the client
@@ -307,15 +307,6 @@ The output of the sample contains the error message:
 ```text
 Transaction failed with error: 1:The batch request contains multiple changes with same row key. An entity can appear only once in a batch request.
 ```
-## Next steps
-
-The following sections provide several code snippets covering some of the most common Table tasks, including:
-
-* [Creating and deleting a table](#creating-and-deleting-a-table "Creating and deleting a table")
-* [Manipulating entities](#manipulating-entities "Manipulating entities")
-* [Table Service Operations](#table-service-operations "Table Service Operations")
-* [Table Transactions Success](#table-transactions-success "Table Transactions Success")
-* [Table Transactions Error](#table-transactions-error "Table Transactions Error")
 
 ## Contributing
 
