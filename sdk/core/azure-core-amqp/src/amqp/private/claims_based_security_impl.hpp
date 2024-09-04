@@ -7,23 +7,26 @@
 #include "azure/core/amqp/internal/management.hpp"
 #include "unique_handle.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/cbs.h>
-
+#endif
 struct CBS_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-
+#if ENABLE_UAMQP
   template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
   {
     static void FreeAmqpCbs(CBS_HANDLE obj);
 
     using type = Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
   };
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
-
+#endif // ENABLE_UAMQP
   class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
 
   public:
