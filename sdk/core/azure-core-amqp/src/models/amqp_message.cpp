@@ -756,10 +756,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             break;
           }
           case AmqpDescriptors::DeliveryAnnotations:
-            m_decodedValue.DeliveryAnnotations = describedType.GetValue().AsMap();
+            m_decodedValue.DeliveryAnnotations = describedType.GetValue().AsAnnotations();
             break;
           case AmqpDescriptors::MessageAnnotations:
-            m_decodedValue.MessageAnnotations = describedType.GetValue().AsMap();
+            m_decodedValue.MessageAnnotations = describedType.GetValue().AsAnnotations();
             break;
           case AmqpDescriptors::Properties: {
             UniquePropertiesHandle properties;
@@ -806,7 +806,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             m_decodedValue.SetBody(describedType.GetValue().AsBinary());
             break;
           case AmqpDescriptors::Footer:
-            m_decodedValue.Footer = describedType.GetValue().AsMap();
+            m_decodedValue.Footer = describedType.GetValue().AsAnnotations();
             break;
           default:
             throw std::runtime_error("Unknown message descriptor.");
