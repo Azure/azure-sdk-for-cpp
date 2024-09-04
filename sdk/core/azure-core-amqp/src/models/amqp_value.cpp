@@ -393,9 +393,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   }
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
-      : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-          _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
-              static_cast<const unsigned char*>(uuid.AsArray().data())))})}
+      : m_impl
+  {
+    std::make_unique<_detail::AmqpValueImpl>(_detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
+        const_cast<unsigned char*>(static_cast<const unsigned char*>(uuid.AsArray().data())))})
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -1081,7 +1083,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-    template <>
+  template <>
   _detail::AmqpCollectionBase<std::map<AmqpSymbol, AmqpValue>, AmqpAnnotations>::operator _detail::
       AmqpValueImpl() const
   {
@@ -1099,13 +1101,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-    template <>
+  template <>
   AmqpValue
   _detail::AmqpCollectionBase<std::map<AmqpSymbol, AmqpValue>, AmqpAnnotations>::AsAmqpValue() const
   {
     return _detail::AmqpValueFactory::FromImplementation(_detail::AmqpValueImpl{*this});
   }
-
 
   template <>
   AmqpValue _detail::AmqpCollectionBase<std::map<AmqpValue, AmqpValue>, AmqpMap>::AsAmqpValue()
@@ -1133,7 +1134,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       push_back(_detail::AmqpValueFactory::FromImplementation(item));
     }
   }
-
 
   template <>
   _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList>::operator _detail::AmqpValueImpl()

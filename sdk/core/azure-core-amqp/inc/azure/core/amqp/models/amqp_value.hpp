@@ -605,7 +605,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const&() const { return m_value; }
+    explicit operator T const &() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;

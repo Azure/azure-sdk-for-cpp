@@ -96,7 +96,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle deliveryAnnotations(annotationsVal);
         auto deliveryMap
-            = Models::_detail::AmqpValueFactory::FromImplementation(deliveryAnnotations).AsAnnotations();
+            = Models::_detail::AmqpValueFactory::FromImplementation(deliveryAnnotations)
+                  .AsAnnotations();
         rv->DeliveryAnnotations = deliveryMap;
       }
     }
@@ -203,7 +204,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         UniqueAmqpValueHandle footerAnnotations(footerVal);
         footerVal = nullptr;
-        auto footerMap = _detail::AmqpValueFactory::FromImplementation(footerAnnotations).AsAnnotations();
+        auto footerMap
+            = _detail::AmqpValueFactory::FromImplementation(footerAnnotations).AsAnnotations();
         rv->Footer = footerMap;
       }
     }
@@ -822,14 +824,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return AmqpMessageDeserializer{}(buffer, size);
 #elif ENABLE_RUST_AMQP
     Azure::Core::Amqp::_detail::MessageImplementation* message;
-    
+
     if (message_deserialize(buffer, size, &message))
     {
       throw std::runtime_error("Could not deserialize message.");
     }
 
-    std::shared_ptr<AmqpMessage> messagePointer = _detail::AmqpMessageFactory::FromImplementation(message);
-    AmqpMessage rv= *messagePointer;
+    std::shared_ptr<AmqpMessage> messagePointer
+        = _detail::AmqpMessageFactory::FromImplementation(message);
+    AmqpMessage rv = *messagePointer;
     messagePointer.reset();
     return rv;
 
