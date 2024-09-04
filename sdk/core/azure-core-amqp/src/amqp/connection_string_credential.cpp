@@ -9,9 +9,11 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/url.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_c_shared_utility/sastoken.h>
 #include <azure_c_shared_utility/strings.h>
 #include <azure_c_shared_utility/urlencode.h>
+#endif
 
 #include <algorithm>
 #include <iterator>
@@ -153,6 +155,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   std::string ServiceBusSasConnectionStringCredential::GenerateSasToken(
       std::chrono::system_clock::time_point const& expirationTime) const
   {
+#if ENABLE_UAMQP
     // For now, create the SAS token using the azure-c-shared-utility functions for SAS token
     // creations. In the future (when we've integrated into Azure Core), move this to the Azure Core
     // APIs.
@@ -190,5 +193,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     STRING_delete(sasKeyName);
     STRING_delete(encodedResourceUri);
     return rv;
+#else
+    (void)expirationTime;
+    return std::string();
+#endif // ENABLE_UAMQP
   }
 }}}} // namespace Azure::Core::Amqp::_internal

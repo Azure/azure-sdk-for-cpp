@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-//#include "../src/models/private/header_impl.hpp"
+// cspell: words reserialized
+
+// #include "../src/models/private/header_impl.hpp"
+#include "../src/models/private/header_impl.hpp"
 #include "azure/core/amqp/models/amqp_header.hpp"
 
 #include <gtest/gtest.h>
@@ -27,6 +30,61 @@ TEST_F(TestHeaders, SimpleCreate)
     EXPECT_EQ(false, header.Durable);
     EXPECT_EQ(false, header.IsFirstAcquirer);
     EXPECT_FALSE(header.TimeToLive.HasValue());
+  }
+
+  {
+    MessageHeader header;
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.DeliveryCount = 123;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.Durable = false;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+
+  {
+    MessageHeader header;
+
+    header.Priority = 3;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+  {
+    MessageHeader header;
+
+    header.IsFirstAcquirer = true;
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
+  }
+  {
+    MessageHeader header;
+
+    header.TimeToLive = std::chrono::milliseconds(37);
+
+    auto nativeHeader = _detail::MessageHeaderFactory::ToImplementation(header);
+    auto round_trip_header = _detail::MessageHeaderFactory::FromImplementation(nativeHeader);
+    EXPECT_EQ(header, round_trip_header);
   }
 }
 
@@ -70,6 +128,9 @@ TEST_F(HeaderSerialization, SerializeHeaderDurable)
     EXPECT_EQ(true, deserialized.Durable);
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
+
+    auto reserialized = MessageHeader::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 TEST_F(HeaderSerialization, SerializeHeaderPriority)
@@ -109,6 +170,9 @@ TEST_F(HeaderSerialization, SerializeHeaderPriority)
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
     EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
+
+    auto reserialized = MessageHeader::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -153,6 +217,10 @@ TEST_F(HeaderSerialization, SerializeHeaderTtl)
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_EQ(deserialized.TimeToLive.Value(), std::chrono::milliseconds(12345));
     EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
+
+    auto reserialized = MessageHeader::Serialize(deserialized);
+    EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -179,8 +247,8 @@ TEST_F(HeaderSerialization, SerializeHeaderFirstAcquirer)
         0x70, // Descriptor is for a message header
               // (http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-header).
         0xc0, // List
-        0x09, // 8 bytes long.
-        0x04, // 3 elements.
+        0x05, // 5 bytes long.
+        0x04, // 4 elements.
         0x40, // First element Nil.
         0x40, // Second element Nil.
         0x40, // Third element Nil.
@@ -194,6 +262,9 @@ TEST_F(HeaderSerialization, SerializeHeaderFirstAcquirer)
     EXPECT_EQ(true, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
     EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
+
+    auto reserialized = MessageHeader::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
 
@@ -236,5 +307,9 @@ TEST_F(HeaderSerialization, SerializeHeaderDeliveryCount)
     EXPECT_EQ(false, deserialized.Durable);
     EXPECT_EQ(false, deserialized.IsFirstAcquirer);
     EXPECT_FALSE(deserialized.TimeToLive.HasValue());
+    EXPECT_EQ(MessageHeader::GetSerializedSize(deserialized), testValue.size());
+
+    auto reserialized = MessageHeader::Serialize(deserialized);
+    EXPECT_EQ(reserialized, testValue);
   }
 }
