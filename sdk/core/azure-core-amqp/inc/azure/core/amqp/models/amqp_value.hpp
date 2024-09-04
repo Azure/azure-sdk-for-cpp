@@ -605,7 +605,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const &() const { return m_value; }
+    explicit operator T const&() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;
@@ -885,6 +885,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief Move Assignment operator */
     AmqpSymbol& operator=(AmqpSymbol&& other) noexcept = default;
 
+    /**
+     * @brief Get the type of the AMQP value.
+     *
+     * @returns The type of the AMQP value as an AmqpValueType enum.
+     */
     AmqpValueType GetType() const { return AmqpValueType::Symbol; }
 
     /** @brief Construct a new AmqpSymbol object from an existing uAMQP AMQP_VALUE item
@@ -993,6 +998,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       return m_value.emplace(std::forward<ValueTypes>(values)...);
     }
 
+    /**
+     * @brief Equality comparison operator for AmqpAnnotations.
+     *
+     * @param that The AmqpAnnotations object to compare to this object.
+     * @returns true if the given AmqpAnnotations object is equal to this object, false otherwise.
+     */
     bool operator==(AmqpAnnotations const& that) const { return m_value == that.m_value; }
   };
   std::ostream& operator<<(std::ostream& os, AmqpAnnotations const& value);
