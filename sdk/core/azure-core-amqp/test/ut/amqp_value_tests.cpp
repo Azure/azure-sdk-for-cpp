@@ -32,13 +32,20 @@ protected:
     EXPECT_EQ(EXPECTED, ss.str()); \
   }
 
-TEST_F(TestValues, SimpleCreate)
+TEST_F(TestValues, SimpleCreateNull)
 {
   {
     AmqpValue value;
     EXPECT_EQ(AmqpValueType::Null, value.GetType());
   }
-
+  {
+    AmqpValue value{};
+    EXPECT_TRUE(value.IsNull());
+    TEST_OSTREAM_INSERTER(value, "Null");
+  }
+}
+TEST_F(TestValues, SimpleCreateBool)
+{
   {
     AmqpValue value{true};
     EXPECT_EQ(AmqpValueType::Bool, value.GetType());
@@ -57,11 +64,9 @@ TEST_F(TestValues, SimpleCreate)
   {
     EXPECT_LT(AmqpValue(false), AmqpValue(true));
   }
-  {
-    AmqpValue value{};
-    EXPECT_TRUE(value.IsNull());
-    TEST_OSTREAM_INSERTER(value, "Null");
-  }
+}
+TEST_F(TestValues, SimpleCreateByte)
+{
 
   {
     AmqpValue value{static_cast<int8_t>(-17)};
@@ -83,17 +88,6 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<std::string>(value));
     EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
   }
-
-  {
-    AmqpValue value{static_cast<uint8_t>(255)};
-    EXPECT_EQ(AmqpValueType::Ubyte, value.GetType());
-    TEST_OSTREAM_INSERTER(value, "Ubyte");
-    EXPECT_EQ(255, static_cast<uint8_t>(value));
-    EXPECT_TRUE(AmqpValue() < value);
-    EXPECT_ANY_THROW((void)static_cast<bool>(value));
-    EXPECT_LT(AmqpValue{static_cast<uint8_t>(254)}, value);
-  }
-
   {
     AmqpValue value{'D'};
     EXPECT_EQ(AmqpValueType::Byte, value.GetType());
@@ -105,7 +99,22 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue('B'), value);
   }
+}
+TEST_F(TestValues, SimpleCreateUByte)
+{
 
+  {
+    AmqpValue value{static_cast<uint8_t>(255)};
+    EXPECT_EQ(AmqpValueType::Ubyte, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Ubyte");
+    EXPECT_EQ(255, static_cast<uint8_t>(value));
+    EXPECT_TRUE(AmqpValue() < value);
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_LT(AmqpValue{static_cast<uint8_t>(254)}, value);
+  }
+}
+TEST_F(TestValues, SimpleCreateUShort)
+{
   {
     AmqpValue value{static_cast<uint16_t>(65535)};
     EXPECT_EQ(AmqpValueType::Ushort, value.GetType());
@@ -115,6 +124,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue{static_cast<uint16_t>(65534)}, value);
   }
+}
+TEST_F(TestValues, SimpleCreateShort)
+{
   {
     AmqpValue value{static_cast<int16_t>(32767)};
     EXPECT_EQ(AmqpValueType::Short, value.GetType());
@@ -124,7 +136,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue{static_cast<int16_t>(32766)}, value);
   }
-
+}
+TEST_F(TestValues, SimpleCreateInt)
+{
   {
     AmqpValue value(32);
     EXPECT_EQ(AmqpValueType::Int, value.GetType());
@@ -134,6 +148,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(31), value);
   }
+}
+TEST_F(TestValues, SimpleCreateUInt)
+{
   {
     AmqpValue value(32u);
     EXPECT_EQ(AmqpValueType::Uint, value.GetType());
@@ -143,6 +160,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(31u), value);
   }
+}
+TEST_F(TestValues, SimpleCreateLong)
+{
 
   {
     AmqpValue value(static_cast<int64_t>(32ll));
@@ -153,6 +173,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(static_cast<int64_t>(31ll)), value);
   }
+}
+TEST_F(TestValues, SimpleCreateULong)
+{
   {
     AmqpValue value(static_cast<uint64_t>(39ull));
     EXPECT_EQ(AmqpValueType::Ulong, value.GetType());
@@ -162,6 +185,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(static_cast<uint64_t>(38ull)), value);
   }
+}
+TEST_F(TestValues, SimpleCreateFloat)
+{
 
   {
     AmqpValue value(39.0f);
@@ -172,6 +198,10 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
     EXPECT_LT(AmqpValue(38.0f), value);
   }
+}
+TEST_F(TestValues, SimpleCreateDouble)
+{
+
   {
     AmqpValue value(39.0);
     EXPECT_EQ(AmqpValueType::Double, value.GetType());
@@ -189,6 +219,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_EQ(39.0, d);
     EXPECT_TRUE(AmqpValue() < value);
   }
+}
+TEST_F(TestValues, SimpleCreateString)
+{
 
   {
     AmqpValue value(std::string("Fred"));
@@ -209,7 +242,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
-
+}
+TEST_F(TestValues, SimpleCreateUuid)
+{
   {
     Azure::Core::Uuid uuid = Azure::Core::Uuid::CreateUuid();
     AmqpValue value(uuid);
@@ -219,7 +254,9 @@ TEST_F(TestValues, SimpleCreate)
     EXPECT_TRUE(AmqpValue() < value);
     EXPECT_ANY_THROW((void)static_cast<bool>(value));
   }
-
+}
+TEST_F(TestValues, MoveAmqpValues)
+{
   {
     AmqpValue value1{29};
     AmqpValue value2(std::move(value1));
@@ -292,7 +329,9 @@ TEST_F(TestValues, TestList)
     EXPECT_EQ(AmqpValue('a'), list2.at(3));
     EXPECT_FALSE(list1 < list2);
   }
-
+}
+TEST_F(TestValues, Described)
+{
   {
     AmqpList test;
     AmqpDescribed desc{
@@ -421,6 +460,7 @@ TEST_F(TestValues, TestSymbol)
     EXPECT_EQ(value, "timeNow");
     EXPECT_FALSE(value < AmqpSymbol("timeNow"));
     AmqpValue av{value.AsAmqpValue()};
+    AmqpValue av2{value};
     TEST_OSTREAM_INSERTER(av, "Symbol");
   }
   {
@@ -1072,19 +1112,24 @@ TEST_F(TestValueSerialization, SerializeBinary)
     EXPECT_EQ(0xa0, val[0]);
     EXPECT_EQ(0x10, val[1]);
   }
+#if ENABLE_UAMQP // FE2O3 encodes strings of length 0xff using the long form, not the short form.
+  constexpr size_t MAX_BINARY_LENGTH = 0xff;
+#else
+  constexpr size_t MAX_BINARY_LENGTH = 0xfe;
+#endif
 
   {
-    char values[255]{};
+    char values[MAX_BINARY_LENGTH]{};
     std::vector<uint8_t> testVector{0xa0, sizeof(values)};
     testVector.insert(testVector.end(), values, values + sizeof(values));
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Binary);
-    EXPECT_EQ(value.AsBinary().size(), 255);
+    EXPECT_EQ(value.AsBinary().size(), MAX_BINARY_LENGTH);
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(257, val.size());
+    EXPECT_EQ(MAX_BINARY_LENGTH + 2, val.size());
     EXPECT_EQ(0xa0, val[0]);
-    EXPECT_EQ(0xff, val[1]);
+    EXPECT_EQ(MAX_BINARY_LENGTH, val[1]);
   }
   {
     char values[256]{};
@@ -1110,18 +1155,25 @@ TEST_F(TestValueSerialization, SerializeBinary)
 // The second is as a variable width value in the form of 0xb1/<4 byte length>/<binary data>
 TEST_F(TestValueSerialization, SerializeString)
 {
+#if ENABLE_UAMQP // FE2O3 encodes strings of length 0xff using the long form, not the short form.
+  constexpr int MAX_STRING_LENGTH = 0xff;
+#else
+  constexpr int MAX_STRING_LENGTH = 0xfe;
+#endif
+
   // First form, serialized as first form.
   {
     std::string stringValue;
-    for (int i = 0; i < 255; i += 1)
+
+    for (int i = 0; i < MAX_STRING_LENGTH; i += 1)
     {
       stringValue.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i % 25]);
     }
-    std::vector<uint8_t> testVector{0xa1, 0xff};
+    std::vector<uint8_t> testVector{0xa1, MAX_STRING_LENGTH};
     testVector.insert(testVector.end(), stringValue.begin(), stringValue.end());
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::String);
-    EXPECT_EQ(static_cast<std::string>(value).size(), 255);
+    EXPECT_EQ(static_cast<std::string>(value).size(), MAX_STRING_LENGTH);
     EXPECT_EQ(stringValue, static_cast<std::string>(value));
 
     auto val = AmqpValue::Serialize(value);
@@ -1130,21 +1182,21 @@ TEST_F(TestValueSerialization, SerializeString)
   // Second form, serialized as first form.
   {
     std::string stringValue;
-    for (int i = 0; i < 255; i += 1)
+    for (int i = 0; i < MAX_STRING_LENGTH; i += 1)
     {
       stringValue.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i % 26]);
     }
-    std::vector<uint8_t> testVector{0xb1, 0x00, 0x00, 0x00, 0xff};
+    std::vector<uint8_t> testVector{0xb1, 0x00, 0x00, 0x00, MAX_STRING_LENGTH};
     testVector.insert(testVector.end(), stringValue.begin(), stringValue.end());
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::String);
-    EXPECT_EQ(static_cast<std::string>(value).size(), 255);
+    EXPECT_EQ(static_cast<std::string>(value).size(), MAX_STRING_LENGTH);
     EXPECT_EQ(stringValue, static_cast<std::string>(value));
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(val.size(), 257);
+    EXPECT_EQ(val.size(), MAX_STRING_LENGTH + 2);
     EXPECT_EQ(val[0], 0xa1);
-    EXPECT_EQ(val[1], 0xff);
+    EXPECT_EQ(val[1], MAX_STRING_LENGTH);
     EXPECT_EQ(val[2], 'A');
   }
   // Second form, serialized as second form.
@@ -1172,18 +1224,23 @@ TEST_F(TestValueSerialization, SerializeString)
 // The second is as a variable width value in the form of 0xb3/<4 byte length>/<binary data>
 TEST_F(TestValueSerialization, SerializeSymbol)
 {
+#if ENABLE_UAMQP // FE2O3 encodes strings of length 0xff using the long form, not the short form.
+  constexpr int MAX_SYMBOL_LENGTH = 0xff;
+#else
+  constexpr int MAX_SYMBOL_LENGTH = 0xfe;
+#endif
   // First form, serialized as first form.
   {
     std::string stringValue;
-    for (int i = 0; i < 255; i += 1)
+    for (int i = 0; i < MAX_SYMBOL_LENGTH; i += 1)
     {
       stringValue.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i % 25]);
     }
-    std::vector<uint8_t> testVector{0xa3, 0xff};
+    std::vector<uint8_t> testVector{0xa3, MAX_SYMBOL_LENGTH};
     testVector.insert(testVector.end(), stringValue.begin(), stringValue.end());
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Symbol);
-    EXPECT_EQ(value.AsSymbol().size(), 255);
+    EXPECT_EQ(value.AsSymbol().size(), MAX_SYMBOL_LENGTH);
     EXPECT_EQ(AmqpSymbol(stringValue), value.AsSymbol());
 
     auto val = AmqpValue::Serialize(value);
@@ -1192,21 +1249,21 @@ TEST_F(TestValueSerialization, SerializeSymbol)
   // Second form, serialized as first form.
   {
     std::string stringValue;
-    for (int i = 0; i < 255; i += 1)
+    for (int i = 0; i < MAX_SYMBOL_LENGTH; i += 1)
     {
       stringValue.push_back("ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i % 26]);
     }
-    std::vector<uint8_t> testVector{0xb3, 0x00, 0x00, 0x00, 0xff};
+    std::vector<uint8_t> testVector{0xb3, 0x00, 0x00, 0x00, MAX_SYMBOL_LENGTH};
     testVector.insert(testVector.end(), stringValue.begin(), stringValue.end());
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Symbol);
-    EXPECT_EQ(value.AsSymbol().size(), 255);
+    EXPECT_EQ(value.AsSymbol().size(), MAX_SYMBOL_LENGTH);
     EXPECT_EQ(AmqpSymbol(stringValue), value.AsSymbol());
 
     auto val = AmqpValue::Serialize(value);
-    EXPECT_EQ(val.size(), 257);
+    EXPECT_EQ(val.size(), MAX_SYMBOL_LENGTH + 2);
     EXPECT_EQ(val[0], 0xa3);
-    EXPECT_EQ(val[1], 0xff);
+    EXPECT_EQ(val[1], MAX_SYMBOL_LENGTH);
     EXPECT_EQ(val[2], 'A');
   }
   // Second form, serialized as second form.
@@ -1431,7 +1488,7 @@ TEST_F(TestValueSerialization, SerializeList)
 // values> for list elements with a total size less than 2^32 octets.
 TEST_F(TestValueSerialization, SerializeArray)
 {
-  // First form, serialized as first form.
+  // First form, serialized as first form - an array of 0 values.
   {
     std::vector<uint8_t> testVector{0xe0, 0x01, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
@@ -1442,9 +1499,9 @@ TEST_F(TestValueSerialization, SerializeArray)
     std::vector<uint8_t> val = AmqpValue::Serialize(value);
     EXPECT_EQ(testVector, val);
   }
-  // Second form, serialized as first form.
+  // Second form, serialized as first form, empty array
   {
-    std::vector<uint8_t> testVector{0xf0, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00};
+    std::vector<uint8_t> testVector{0xf0, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x00, 0x00};
     AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
     EXPECT_EQ(value.GetType(), AmqpValueType::Array);
     AmqpArray array(value.AsArray());
@@ -1456,7 +1513,6 @@ TEST_F(TestValueSerialization, SerializeArray)
     EXPECT_EQ(0x01, val[1]);
     EXPECT_EQ(0x00, val[2]);
   }
-
   // Second form, serialized as first form.
   {
     constexpr size_t valueCount = 0x10;
