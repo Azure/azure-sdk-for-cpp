@@ -6,27 +6,35 @@
 #include "../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/models/amqp_properties.hpp"
 
-#include <azure_uamqp_c/amqp_definitions_sequence_no.h>
-
-#include <azure_uamqp_c/amqp_definitions_properties.h>
-
+#if ENABLE_UAMQP
+extern "C"
+{
+  typedef struct PROPERTIES_INSTANCE_TAG* PROPERTIES_HANDLE;
+}
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#endif // ENABLE_UAMQP
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  template <> struct UniqueHandleHelper<std::remove_pointer<PROPERTIES_HANDLE>::type>
+#if ENABLE_UAMQP
+  using PropertiesImplementation = std::remove_pointer<PROPERTIES_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using PropertiesImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageProperties;
+#endif
+
+  template <> struct UniqueHandleHelper<PropertiesImplementation>
   {
-    static void FreeAmqpProperties(PROPERTIES_HANDLE obj);
+    static void FreeAmqpProperties(PropertiesImplementation* obj);
 
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<PROPERTIES_HANDLE>::type, FreeAmqpProperties>;
+    using type = Core::_internal::BasicUniqueHandle<PropertiesImplementation, FreeAmqpProperties>;
   };
-
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-  using UniquePropertiesHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<PROPERTIES_HANDLE>::type>;
 
+  using UniquePropertiesHandle
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::PropertiesImplementation>;
   /**
    * @brief uAMQP interoperability functions to convert a MessageProperties to a uAMQP
    * PROPERTIES_HANDLE and back.
@@ -38,7 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     MessagePropertiesFactory() = delete;
 
   public:
-    static MessageProperties FromUamqp(UniquePropertiesHandle const& properties);
-    static UniquePropertiesHandle ToUamqp(MessageProperties const& properties);
+    static MessageProperties FromImplementation(UniquePropertiesHandle const& properties);
+    static UniquePropertiesHandle ToImplementation(MessageProperties const& properties);
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
