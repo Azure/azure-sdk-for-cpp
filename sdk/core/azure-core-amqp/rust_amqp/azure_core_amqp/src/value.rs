@@ -2,8 +2,10 @@
 // Licensed under the MIT license.
 // cspell: words amqp
 
+#[cfg(feature = "cplusplus")]
 use azure_core::Result;
 
+#[cfg(feature = "cplusplus")]
 use crate::{Deserializable, Serializable};
 
 #[derive(Debug, PartialEq, Clone, Default, Eq)]
@@ -182,6 +184,7 @@ pub enum AmqpValue {
     Unknown,
 }
 
+#[cfg(feature = "cplusplus")]
 impl Serializable for AmqpValue {
     fn encoded_size(&self) -> usize {
         #[cfg(all(feature = "fe2o3-amqp", not(target_arch = "wasm32")))]
@@ -214,6 +217,7 @@ impl Serializable for AmqpValue {
     }
 }
 
+#[cfg(feature = "cplusplus")]
 impl Deserializable<AmqpValue> for AmqpValue {
     #[allow(unused_variables)]
     fn decode(data: &[u8]) -> azure_core::Result<AmqpValue> {

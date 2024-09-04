@@ -1059,9 +1059,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         throw std::runtime_error("Annotation key MUST be a symbol.");
       }
-      m_value.emplace(std::make_pair(
-          _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{key}),
-          _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{val})));
     }
   }
 
