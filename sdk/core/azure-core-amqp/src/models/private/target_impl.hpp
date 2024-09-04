@@ -5,7 +5,7 @@
 
 #include "../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/models/message_target.hpp"
-
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
 #include <azure_uamqp_c/amqp_definitions_terminus_durability.h>
@@ -15,23 +15,31 @@
 #include <azure_uamqp_c/amqp_definitions_node_properties.h>
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
 #include <azure_uamqp_c/amqp_definitions_target.h>
+#elif ENABLE_RUST_AMQP
+#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#endif
 
 #include <string>
 #include <type_traits>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  template <> struct UniqueHandleHelper<std::remove_pointer<TARGET_HANDLE>::type>
-  {
-    static void FreeMessageTarget(TARGET_HANDLE obj);
+#if ENABLE_UAMQP
+  using AmqpTargetImplementation = std::remove_pointer<TARGET_HANDLE>::type;
+#elif ENABLE_RUST_AMQP
+  using AmqpTargetImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpTarget;
+#endif
 
-    using type = Core::_internal::
-        BasicUniqueHandle<std::remove_pointer<TARGET_HANDLE>::type, FreeMessageTarget>;
+  template <> struct UniqueHandleHelper<AmqpTargetImplementation>
+  {
+    static void FreeMessageTarget(AmqpTargetImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<AmqpTargetImplementation, FreeMessageTarget>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageTargetHandle
-      = Amqp::_detail::UniqueHandle<std::remove_pointer<TARGET_HANDLE>::type>;
+      = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::AmqpTargetImplementation>;
 
   class MessageTargetImpl final {
   public:
@@ -158,7 +166,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   private:
     _detail::UniqueMessageTargetHandle m_target;
 
-    operator TARGET_INSTANCE_TAG*() const { return m_target.get(); }
+    operator Azure::Core::Amqp::_detail::AmqpTargetImplementation*() const
+    {
+      return m_target.get();
+    }
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTargetImpl const&);

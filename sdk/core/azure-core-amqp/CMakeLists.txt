@@ -1,12 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# cspell: words rustup ncrypt secur
+
 # setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
 cmake_minimum_required (VERSION 3.13)
+
 project(azure-core-amqp LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 14)
@@ -30,8 +33,16 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
-if (VENDOR_UAMQP)
+
+if (USE_RUST_AMQP)
+  message(STATUS "Using RUST based AMQP stack")
+  set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
+else()
+  set(USE_UAMQP ON CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
+  set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
+endif()
+
+if (USE_UAMQP)
   message(STATUS "Using vendored uamqp")
   set(use_installed_dependencies ON CACHE BOOL "Use vcpkg dependencies." FORCE)
   set(skip_samples ON CACHE BOOL "Skip building samples" FORCE)
@@ -48,14 +59,29 @@ if (VENDOR_UAMQP)
   else()
     target_compile_options(uamqp PUBLIC -Wno-pedantic -Wno-implicit-fallthrough -Wno-strict-aliasing)
   endif()
-else()
-  message(STATUS "Using vcpkg uamqp")
-  find_package(uamqp CONFIG REQUIRED)
+
+  find_package(umock_c CONFIG REQUIRED)
+  find_package(azure_macro_utils_c CONFIG REQUIRED)
+  find_package(azure_c_shared_utility CONFIG REQUIRED)
 endif()
 
-find_package(umock_c CONFIG REQUIRED)
-find_package(azure_macro_utils_c CONFIG REQUIRED)
-find_package(azure_c_shared_utility CONFIG REQUIRED)
+if (USE_RUST_AMQP)
+
+  include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
+  install_rustup()
+
+  include(FetchContent)
+  FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.5 # Optionally specify a commit hash, version tag or branch here
+  )
+  FetchContent_MakeAvailable(Corrosion)
+
+  # Import targets defined in a package or workspace manifest `Cargo.toml` file
+  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_amqp/rust_wrapper/Cargo.toml)
+endif()
+
 
 
 set (AZURE_CORE_AMQP_HEADER
@@ -146,9 +172,13 @@ set(AZURE_CORE_AMQP_SOURCE
 )
 
 
+if (USE_UAMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
+elseif(USE_RUST_AMQP)
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+endif()
 
-if (VENDOR_UAMQP)
+if (USE_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 endif()
 
@@ -159,22 +189,42 @@ target_include_directories(
       $<INSTALL_INTERFACE:include>
 )
 
-target_compile_definitions(azure-core-amqp PRIVATE _azure_BUILDING_SDK)
-		
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
+if(USE_UAMQP)
+  add_compile_definitions(ENABLE_UAMQP)
+elseif(USE_RUST_AMQP)
+  add_compile_definitions(ENABLE_RUST_AMQP)
+endif()
+
+target_compile_definitions(azure-core-amqp PRIVATE _azure_BUILDING_SDK)
+		
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(core azure-core-amqp azure-core-amqp-tests "tests?/*;samples?/*")
 create_code_coverage(core azure-core-amqp-uamqp azure-core-amqp-uamqp-tests "tests?/*;samples?/*")
 
+if (USE_UAMQP)
 # cspell:words aziotsharedutil
 # uAMQP's headers require the manual addition of umock_c, azure_macro_utils_c, and aziotsharedutil to the target link libraries. 
-target_link_libraries(azure-core-amqp PRIVATE
+  target_link_libraries(azure-core-amqp PRIVATE
     umock_c
     azure_macro_utils_c
     aziotsharedutil
     PUBLIC Azure::azure-core)
+elseif(USE_RUST_AMQP)
+  target_link_libraries(azure-core-amqp 
+    PRIVATE rust_wrapper-static
+    PUBLIC Azure::azure-core)
+
+  if (MSVC)
+    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
+  endif()
+else()
+  target_link_libraries(azure-core-amqp 
+    PRIVATE 
+    PUBLIC Azure::azure-core)
+endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
