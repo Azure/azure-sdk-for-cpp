@@ -49,7 +49,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       {
         continue;
       }
-      auto key = item.first.AsSymbol();
+      auto key = item.first;
       if (key == _detail::EnqueuedTimeAnnotation)
       {
         auto timePoint = static_cast<std::chrono::milliseconds>(item.second.AsTimestamp());
