@@ -8,22 +8,28 @@
 #include "connection_impl.hpp"
 #include "unique_handle.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/session.h>
+#endif
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
   {
     static void FreeAmqpSession(SESSION_HANDLE obj);
 
     using type = Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
   };
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   using UniqueAmqpSession = UniqueHandle<SESSION_INSTANCE_TAG>;
+#endif
 
   class SessionFactory final {
   public:
@@ -58,7 +64,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl& operator=(SessionImpl const&) = delete;
     SessionImpl(SessionImpl&&) noexcept = delete;
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
+#if ENABLE_UAMQP
     operator SESSION_HANDLE() const { return m_session.get(); }
+#endif
 
     std::shared_ptr<_detail::ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
 
@@ -79,10 +87,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_connectionAsyncStarted{false};
     bool m_isBegun{false};
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
+#if ENABLE_UAMQP
     UniqueAmqpSession m_session;
+#endif
     _internal::SessionOptions m_options;
     _internal::SessionEvents* m_eventHandler{};
 
+#if ENABLE_UAMQP
     static bool OnLinkAttachedFn(
         void* context,
         LINK_ENDPOINT_HANDLE newLinkEndpoint,
@@ -91,5 +102,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         AMQP_VALUE source,
         AMQP_VALUE target,
         AMQP_VALUE properties);
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail
