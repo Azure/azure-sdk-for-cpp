@@ -29,9 +29,11 @@
 
 /// From openssl/x509.h.  Avoids needing to include openssl headers
 typedef struct x509_store_ctx_st X509_STORE_CTX;
+#if defined(_azure_TESTING_BUILD)
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionTest_ParseKeepAliveHeader_Test;
 }}} // namespace Azure::Core::Test
+#endif
 namespace Azure { namespace Core {
   namespace _detail {
     /**
@@ -162,8 +164,9 @@ namespace Azure { namespace Core {
      *
      */
     class CurlConnection final : public CurlNetworkConnection {
+#if defined(_azure_TESTING_BUILD)
       friend class Azure::Core::Test::CurlConnectionTest_ParseKeepAliveHeader_Test;
-
+#endif
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       curl_socket_t m_curlSocket;

@@ -16,10 +16,11 @@
 #include <ctime>
 #include <memory>
 #include <string>
+#if defined(_azure_TESTING_BUILD)
 namespace Azure { namespace Core { namespace Test {
   class CurlTransport_VerifyKeepAliveHeaders_Test;
 }}} // namespace Azure::Core::Test
-
+#endif
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
 
@@ -54,7 +55,7 @@ namespace Azure { namespace Core { namespace Http {
        * @brief The maximum number of requests that a host will allow over a single connection.
        *
        */
-      std::size_t MaxRequests = size_t(0);
+      std::size_t MaxRequests = size_t(1);
     };
   } // namespace _detail
 
@@ -239,8 +240,9 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    */
   class CurlTransport : public HttpTransport {
+#if defined(_azure_TESTING_BUILD)
     friend class Azure::Core::Test::CurlTransport_VerifyKeepAliveHeaders_Test;
-
+#endif
   private:
     CurlTransportOptions m_options;
 

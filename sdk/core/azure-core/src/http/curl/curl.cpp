@@ -404,11 +404,15 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
   // check the consistency of the keep alive headers between the request and the response
+  // as suggested by RFC 7230 section 6.3 (https://tools.ietf.org/html/rfc7230#section-6.3)
   ValidateKeepAliveHeaders(request, response);
 
   return response;
 }
 
+// Check if the server supports keep alive and if the headers are consistent between the request and
+// the response. If they are not consistent, the keep alive header in the request is removed.and the
+// calculated options are reset in order to prevent the wrongful caching of the keep alive settings.
 void CurlTransport::ValidateKeepAliveHeaders(
     Request& request,
     std::unique_ptr<RawResponse>& response)
@@ -419,7 +423,9 @@ void CurlTransport::ValidateKeepAliveHeaders(
       && request.GetHeader("Connection").HasValue()
       && response->GetHeaders().find("Keep-Alive") != response->GetHeaders().end()
       && request.GetHeader("Keep-Alive").HasValue()
-      // just in case the server sends the headers in a different case
+      // just in case the server sends the headers in a different case, the case sensitivity of the
+      // map is guaranteed for keys not values. So we need to ensure we compare the values in a case
+      // insensitive way.
       && Azure::Core::_internal::StringExtensions::ToLower(
              response->GetHeaders().find("Connection")->second)
           == Azure::Core::_internal::StringExtensions::ToLower(

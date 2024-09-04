@@ -17,15 +17,6 @@
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) // !_MSC_VER
-#pragma GCC diagnostic push
-#elif defined(__clang__) // !_MSC_VER !__clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-#endif // _MSC_VER
-
 #include <azure/core/http/curl_transport.hpp>
 
 #include <chrono>
@@ -37,8 +28,7 @@
 
 namespace Azure { namespace Core { namespace Test {
 
-  class CurlConnectionTest : public ::testing::Test {
-  };
+  class CurlConnectionTest : public ::testing::Test {};
 
   TEST(CurlConnectionTest, ParseKeepAliveHeader)
   {
@@ -69,7 +59,7 @@ namespace Azure { namespace Core { namespace Test {
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(5));
     }
     {
@@ -79,7 +69,7 @@ namespace Azure { namespace Core { namespace Test {
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
@@ -99,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5,  extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(5));
     }
     {
@@ -109,77 +99,77 @@ namespace Azure { namespace Core { namespace Test {
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader(", , extra=1, ");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=,  extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout= ,  extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("max=,  extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("max= ,  extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=, max=10, extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5, max=, extra=1,");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout= , max= , extra=1,  ");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout= , max=10, extra=1");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5, max= ,  extra=1,");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout= , max= , extra=1,  ");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5 max= ,  extra=1,");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout= , max= 10 extra=1,  ");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=x, max=10");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
     {
       auto parsedHeader = curlConnection.ParseKeepAliveHeader("timeout=5, max=n");
-      EXPECT_EQ(parsedHeader.MaxRequests, size_t(0));
+      EXPECT_EQ(parsedHeader.MaxRequests, size_t(1));
       EXPECT_EQ(parsedHeader.ConnectionTimeout, std::chrono::seconds(0));
     }
   }
