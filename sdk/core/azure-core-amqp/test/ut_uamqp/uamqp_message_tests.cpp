@@ -59,8 +59,8 @@ TEST_F(TestMessageAmqp, TestApplicationProperties)
   // Ensure that ApplicationProperties values round-trip through uAMQP value serialization.
   message.ApplicationProperties["Blah"] = 19532;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
-  auto message2(_detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
 
   EXPECT_EQ(message2->ApplicationProperties["Blah"], AmqpValue(19532));
 
@@ -72,8 +72,8 @@ TEST_F(TestMessageAmqp, TestDeliveryAnnotations)
   AmqpMessage message;
   message.DeliveryAnnotations["12345"] = 19532;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
-  auto message2(_detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
   EXPECT_EQ(AmqpValue{19532}, message2->DeliveryAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
@@ -83,8 +83,8 @@ TEST_F(TestMessageAmqp, TestAnnotations)
   AmqpMessage message;
   message.MessageAnnotations["12345"] = 19532;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
-  auto message2(_detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
   EXPECT_EQ(AmqpValue{19532}, message2->MessageAnnotations["12345"]);
   GTEST_LOG_(INFO) << message;
 }
@@ -94,9 +94,9 @@ TEST_F(TestMessageAmqp, TestFooter)
   AmqpMessage message;
   message.Footer["12345"] = 37.2;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
   std::shared_ptr<AmqpMessage> message2(
-      _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+      _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
   EXPECT_EQ(AmqpValue{37.2}, message2->Footer["12345"]);
 
   GTEST_LOG_(INFO) << message;
@@ -107,9 +107,9 @@ TEST_F(TestMessageAmqp, TestHeader)
   AmqpMessage message;
   message.Header.DeliveryCount = 1;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
   std::shared_ptr<AmqpMessage> message2(
-      _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+      _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
 
   // Ensure that message values survive across round-trips through MESSAGE.
   EXPECT_EQ(message2->Header.DeliveryCount, 1);
@@ -123,9 +123,9 @@ TEST_F(TestMessageAmqp, TestProperties)
   properties.Subject = "Message subject.";
   message.Properties = properties;
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
   std::shared_ptr<AmqpMessage> message2(
-      _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+      _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
 
   auto newProperties{message2->Properties};
   EXPECT_EQ(newProperties.Subject.Value(), properties.Subject.Value());
@@ -144,9 +144,9 @@ TEST_F(TestMessageAmqp, TestBodyAmqpSequence)
     EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[0].at(1)));
     EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
 
-    auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+    auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
     std::shared_ptr<AmqpMessage> message2(
-        _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+        _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
     EXPECT_EQ(1, message2->GetBodyAsAmqpList().size());
     EXPECT_EQ(message, *message2);
     EXPECT_EQ("Test", static_cast<std::string>(message2->GetBodyAsAmqpList()[0].at(0)));
@@ -162,9 +162,9 @@ TEST_F(TestMessageAmqp, TestBodyAmqpSequence)
     EXPECT_EQ("Test", static_cast<std::string>(message.GetBodyAsAmqpList()[1].at(0)));
     EXPECT_EQ(95, static_cast<int32_t>(message.GetBodyAsAmqpList()[2].at(1)));
     EXPECT_EQ(message.BodyType, MessageBodyType::Sequence);
-    auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+    auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
     std::shared_ptr<AmqpMessage> message2(
-        _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+        _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
     EXPECT_EQ(3, message2->GetBodyAsAmqpList().size());
     EXPECT_EQ("Test", static_cast<std::string>(message2->GetBodyAsAmqpList()[2].at(0)));
     EXPECT_EQ(95, static_cast<int32_t>(message2->GetBodyAsAmqpList()[2].at(1)));
@@ -186,9 +186,9 @@ TEST_F(TestMessageAmqp, TestBodyAmqpData)
 
   EXPECT_EQ(message.BodyType, MessageBodyType::Data);
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToUamqp(message);
+  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
   std::shared_ptr<AmqpMessage> message2(
-      _detail::AmqpMessageFactory::FromUamqp(messageInstance.get()));
+      _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
   EXPECT_EQ(message2->GetBodyAsBinary().size(), 1);
 
   auto const& body2 = message2->GetBodyAsBinary()[0];

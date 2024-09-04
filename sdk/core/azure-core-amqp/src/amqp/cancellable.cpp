@@ -3,7 +3,9 @@
 
 #include "azure/core/amqp/internal/cancellable.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/async_operation.h>
+#endif // ENABLE_UAMQP
 
 #include <memory>
 #if 0
@@ -12,7 +14,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     if (m_operation)
     {
+#if ENABLE_UAMQP
       async_operation_destroy(m_operation);
+#endif
       m_operation = nullptr;
     }
   }

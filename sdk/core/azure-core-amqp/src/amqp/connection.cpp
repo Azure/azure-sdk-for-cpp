@@ -17,16 +17,19 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/uuid.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/connection.h>
+#endif
 
 #include <memory>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   void UniqueHandleHelper<CONNECTION_INSTANCE_TAG>::FreeAmqpConnection(CONNECTION_HANDLE value)
   {
     connection_destroy(value);
   }
-
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -235,7 +238,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_eventHandler = nullptr;
     }
 
+#if ENABLE_UAMQP
     m_connection.reset();
+#endif
     lock.unlock();
   }
 
@@ -247,6 +252,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       containerId = Azure::Core::Uuid::CreateUuid().ToString();
     }
     m_containerId = containerId;
+#if ENABLE_UAMQP
 
     m_connection.reset(connection_create2(
         *m_transport,
@@ -277,10 +283,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (connection_set_properties(
             m_connection.get(),
-            Models::_detail::AmqpValueFactory::ToUamqp(m_options.Properties.AsAmqpValue())))
+            Models::_detail::AmqpValueFactory::ToImplementation(
+                m_options.Properties.AsAmqpValue())))
     {
       throw std::runtime_error("Failed to set connection properties.");
     }
+#endif
   }
 
   void ConnectionImpl::Poll()
@@ -293,15 +301,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_isClosing)
     {
+#if ENABLE_UAMQP
       if (m_connection)
       {
         connection_dowork(m_connection.get());
       }
+#endif
     }
   }
 
   namespace {
-
+#if ENABLE_UAMQP
     const std::map<CONNECTION_STATE, _internal::ConnectionState> UamqpToAmqpConnectionStateMap{
         {CONNECTION_STATE_START, _internal::ConnectionState::Start},
         {CONNECTION_STATE_CLOSE_PIPE, _internal::ConnectionState::ClosePipe},
@@ -339,8 +349,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {CONNECTION_STATE_ERROR, "CONNECTION_STATE_ERROR"},
 
     };
+#endif
   } // namespace
 
+#if ENABLE_UAMQP
   std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state)
   {
     auto val{UamqpConnectionStateToStringMap.find(state)};
@@ -425,7 +437,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
-
+#endif
   void ConnectionImpl::EnableAsyncOperation(bool enable)
   {
     m_enableAsyncOperation = enable;
@@ -476,10 +488,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Verbose)
           << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
     }
+#if ENABLE_UAMQP
     if (connection_open(m_connection.get()))
     {
       throw std::runtime_error("Could not open connection.");
     }
+#endif
     m_connectionOpened = true;
     EnableAsyncOperation(true);
   }
@@ -488,10 +502,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Listen: " << this << " ID: " << m_containerId;
+#if ENABLE_UAMQP
     if (connection_listen(m_connection.get()))
     {
       throw std::runtime_error("Could not listen on connection.");
     }
+#endif
     m_connectionOpened = true;
 
     EnableAsyncOperation(true);
@@ -504,6 +520,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
+#if ENABLE_UAMQP
     if (!m_connection)
     {
       throw std::logic_error("Connection not opened.");
@@ -520,73 +537,96 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               m_connection.get(),
               (condition.empty() ? nullptr : condition.c_str()),
               (description.empty() ? nullptr : description.c_str()),
-              Models::_detail::AmqpValueFactory::ToUamqp(info)))
+              Models::_detail::AmqpValueFactory::ToImplementation(info)))
       {
         throw std::runtime_error("Could not close connection.");
       }
     }
+#else
+    (void)condition;
+    (void)description;
+    (void)info;
+#endif
     m_connectionOpened = false;
   }
 
   uint32_t ConnectionImpl::GetMaxFrameSize() const
   {
-    uint32_t maxSize;
+    uint32_t maxSize = {};
+#if ENABLE_UAMQP
     if (connection_get_max_frame_size(m_connection.get(), &maxSize))
     {
       throw std::runtime_error("Could not get max frame size.");
     }
+#endif
     return maxSize;
   }
 
   uint16_t ConnectionImpl::GetMaxChannel() const
   {
-    uint16_t maxChannel;
+    uint16_t maxChannel = {};
+#if ENABLE_UAMQP
     if (connection_get_channel_max(m_connection.get(), &maxChannel))
     {
       throw std::runtime_error("Could not get channel max.");
     }
+#endif
     return maxChannel;
   }
 
   std::chrono::milliseconds ConnectionImpl::GetIdleTimeout() const
   {
+#if ENABLE_UAMQP
     milliseconds ms;
     if (connection_get_idle_timeout(m_connection.get(), &ms))
     {
       throw std::runtime_error("Could not set max frame size.");
     }
     return std::chrono::milliseconds(ms);
+#else
+    return {};
+#endif
   }
 
   Models::AmqpMap ConnectionImpl::GetProperties() const
   {
+#if ENABLE_UAMQP
     AMQP_VALUE value;
     if (connection_get_properties(m_connection.get(), &value))
     {
       throw std::runtime_error("Could not get properties.");
     }
-    return Models::_detail::AmqpValueFactory::FromUamqp(
+    return Models::_detail::AmqpValueFactory::FromImplementation(
                Models::_detail::UniqueAmqpValueHandle{value})
         .AsMap();
+#else
+    return {};
+#endif
   }
 
   uint32_t ConnectionImpl::GetRemoteMaxFrameSize() const
   {
-    uint32_t maxFrameSize;
+    uint32_t maxFrameSize = {};
+#if ENABLE_UAMQP
     if (connection_get_remote_max_frame_size(m_connection.get(), &maxFrameSize))
     {
       throw std::runtime_error("Could not get remote max frame size.");
     }
+#endif
     return maxFrameSize;
   }
 
   void ConnectionImpl::SetIdleEmptyFrameSendPercentage(double ratio)
   {
     std::unique_lock<LockType> lock(m_amqpMutex);
+#if ENABLE_UAMQP
     if (connection_set_remote_idle_timeout_empty_frame_send_ratio(m_connection.get(), ratio))
     {
       throw std::runtime_error("Could not set remote idle timeout send frame ratio.");
     }
+#else
+    (void)ratio;
+#endif
   }
 
   bool ConnectionImpl::IsSasCredential() const
