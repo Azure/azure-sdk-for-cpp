@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           vectorElement2.LastModified = DateTime::Parse(
               var0["lastModified"].get<std::string>(), Azure::DateTime::DateFormat::Rfc1123);
           vectorElement2.FileSize = var0["contentLength"].is_number_integer()
-              ? var0["contentLength"].get<int64_t>()
+              ? var0["contentLength"].get<std::int64_t>()
               : std::stoll(var0["contentLength"].get<std::string>());
           vectorElement2.Owner = var0["owner"].get<std::string>();
           vectorElement2.Group = var0["group"].get<std::string>();
@@ -504,13 +504,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
         response.NumberOfSuccessfulDirectories
             = jsonRoot["directoriesSuccessful"].is_number_integer()
-            ? jsonRoot["directoriesSuccessful"].get<int32_t>()
+            ? jsonRoot["directoriesSuccessful"].get<std::int32_t>()
             : std::stoi(jsonRoot["directoriesSuccessful"].get<std::string>());
         response.NumberOfSuccessfulFiles = jsonRoot["filesSuccessful"].is_number_integer()
-            ? jsonRoot["filesSuccessful"].get<int32_t>()
+            ? jsonRoot["filesSuccessful"].get<std::int32_t>()
             : std::stoi(jsonRoot["filesSuccessful"].get<std::string>());
         response.NumberOfFailures = jsonRoot["failureCount"].is_number_integer()
-            ? jsonRoot["failureCount"].get<int32_t>()
+            ? jsonRoot["failureCount"].get<std::int32_t>()
             : std::stoi(jsonRoot["failureCount"].get<std::string>());
         for (const auto& var0 :
              jsonRoot.count("failedEntries") != 0 && jsonRoot["failedEntries"].is_array()

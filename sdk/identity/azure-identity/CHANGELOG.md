@@ -1,14 +1,25 @@
 # Release History
 
-## 1.9.0-beta.3 (Unreleased)
+## 1.10.0-beta.1 (Unreleased)
 
 ### Features Added
 
+- Added support for providing an object ID to `ManagedIdentityCredential`.
+
 ### Breaking Changes
+
+- Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.9.0 (2024-08-06)
+
+### Features Added
+
+- Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
 
 ## 1.9.0-beta.2 (2024-07-22)
 

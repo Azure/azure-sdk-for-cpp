@@ -642,19 +642,59 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(FileShareClientTest, OAuth_PLAYBACKONLY_)
   {
-    // Create from client secret credential.
     std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
+    std::string shareName = LowercaseRandomString();
     auto serviceClient
         = Files::Shares::ShareServiceClient(m_shareServiceClient->GetUrl(), credential, options);
-    auto shareClient = serviceClient.GetShareClient(m_shareName);
+    auto shareClient = serviceClient.GetShareClient(shareName);
+    std::string leaseId1 = RandomUUID();
+    Files::Shares::ShareLeaseClient leaseClient(shareClient, leaseId1);
 
+    // Create
+    EXPECT_NO_THROW(shareClient.Create());
+
+    // Get Properties
+    EXPECT_NO_THROW(shareClient.GetProperties());
+
+    // Set Properties
+    EXPECT_NO_THROW(shareClient.SetProperties());
+
+    // Acquire
+    EXPECT_NO_THROW(leaseClient.Acquire(Files::Shares::ShareLeaseClient::InfiniteLeaseDuration));
+
+    // Renew
+    EXPECT_NO_THROW(leaseClient.Renew());
+
+    // Change
+    std::string leaseId2 = RandomUUID();
+    EXPECT_NO_THROW(leaseClient.Change(leaseId2));
+
+    // Break
+    EXPECT_NO_THROW(leaseClient.Break());
+
+    // Release
+    EXPECT_NO_THROW(leaseClient.Release());
+
+    // SetMetadata
+    EXPECT_NO_THROW(shareClient.SetMetadata(RandomMetadata()));
+
+    // Create Snapshot
+    EXPECT_NO_THROW(shareClient.CreateSnapshot());
+
+    // Set Access Policy
+    std::vector<Files::Shares::Models::SignedIdentifier> identifiers;
+    EXPECT_NO_THROW(shareClient.SetAccessPolicy(identifiers));
+
+    // Get Access Policy
+    EXPECT_NO_THROW(shareClient.GetAccessPolicy());
+
+    // Set/Get Permission
     std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
                              "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
                              "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
-
     Files::Shares::Models::CreateSharePermissionResult created;
     EXPECT_NO_THROW(created = shareClient.CreatePermission(permission).Value);
     EXPECT_NO_THROW(shareClient.GetPermission(created.FilePermissionKey));
@@ -662,7 +702,12 @@ namespace Azure { namespace Storage { namespace Test {
     // OAuth Constructor
     auto shareClient1
         = Files::Shares::ShareClient(m_shareClient->GetUrl(), GetTestCredential(), options);
-    EXPECT_NO_THROW(shareClient1.GetPermission(created.FilePermissionKey));
+    EXPECT_NO_THROW(shareClient1.GetProperties());
+
+    // Delete
+    Azure::Storage::Files::Shares::DeleteShareOptions deleteOptions;
+    deleteOptions.DeleteSnapshots = true;
+    EXPECT_NO_THROW(shareClient.Delete(deleteOptions));
   }
 
   TEST_F(FileShareClientTest, WithSnapshot)
@@ -734,5 +779,47 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(
         properties.EnableSnapshotVirtualDirectoryAccess.HasValue()
         && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
+  }
+
+  TEST_F(FileShareClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto binaryPermission = "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+                            "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAA"
+                            "AABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+                            "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+    // sddl format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      Files::Shares::CreateSharePermissionOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      auto permissionKey
+          = m_shareClient->CreatePermission(sddlPermission, options).Value.FilePermissionKey;
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+      getOptions.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+    }
+    // binary format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      Files::Shares::CreateSharePermissionOptions options;
+      options.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto permissionKey
+          = m_shareClient->CreatePermission(binaryPermission, options).Value.FilePermissionKey;
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+      getOptions.FilePermissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermission, permission);
+    }
   }
 }}} // namespace Azure::Storage::Test

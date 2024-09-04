@@ -1278,11 +1278,12 @@ int amqpvalue_set_list_item_count(AMQP_VALUE value, uint32_t list_size)
                 AMQP_VALUE* new_list;
 
                 /* Codes_SRS_AMQPVALUE_01_152: [amqpvalue_set_list_item_count shall resize an AMQP list.] */
-                new_list = (AMQP_VALUE*)realloc(value_data->value.list_value.items, list_size * sizeof(AMQP_VALUE));
-                if (new_list == NULL)
+                size_t realloc_size = safe_multiply_size_t(list_size, sizeof(AMQP_VALUE));
+                if (realloc_size == SIZE_MAX ||
+                    (new_list = (AMQP_VALUE*)realloc(value_data->value.list_value.items, realloc_size)) == NULL)
                 {
                     /* Codes_SRS_AMQPVALUE_01_154: [If allocating memory for the list according to the new size fails, then amqpvalue_set_list_item_count shall return a non-zero value, while preserving the existing list contents.] */
-                    LogError("Could not reallocate list memory");
+                    LogError("Could not reallocate list memory, size:%zu", realloc_size);
                     result = MU_FAILURE;
                 }
                 else
@@ -1415,11 +1416,18 @@ int amqpvalue_set_list_item(AMQP_VALUE value, uint32_t index, AMQP_VALUE list_it
             {
                 if (index >= value_data->value.list_value.count)
                 {
-                    AMQP_VALUE* new_list = (AMQP_VALUE*)realloc(value_data->value.list_value.items, ((size_t)index + 1) * sizeof(AMQP_VALUE));
-                    if (new_list == NULL)
+                    AMQP_VALUE* new_list;
+                    size_t realloc_size = safe_add_size_t((size_t)index, 1);
+                    realloc_size = safe_multiply_size_t(realloc_size, sizeof(AMQP_VALUE));
+#if defined(_MSC_VER)
+                    __analysis_assume(realloc_size == ((size_t) index + 1) * sizeof(AMQP_VALUE));
+#endif
+
+                    if (realloc_size == SIZE_MAX ||
+                        (new_list = (AMQP_VALUE*)realloc(value_data->value.list_value.items, realloc_size)) == NULL)
                     {
                         /* Codes_SRS_AMQPVALUE_01_170: [When amqpvalue_set_list_item fails due to not being able to clone the item or grow the list, the list shall not be altered.] */
-                        LogError("Could not reallocate list storage");
+                        LogError("Could not reallocate list storage, size:%zu", realloc_size);
                         amqpvalue_destroy(cloned_item);
                         result = MU_FAILURE;
                     }
@@ -1428,9 +1436,17 @@ int amqpvalue_set_list_item(AMQP_VALUE value, uint32_t index, AMQP_VALUE list_it
                         uint32_t i;
 
                         value_data->value.list_value.items = new_list;
+#if defined(_MSC_VER)
+                        __analysis_assume(value_data->value.list_value.count < index);
+                        __analysis_assume(value_data->value.list_value.count < index);
+                        __analysis_assume((realloc_size / sizeof(AMQP_VALUE)) > index);
+#endif
 
                         for (i = value_data->value.list_value.count; i < index; i++)
                         {
+#if defined(_MSC_VER)
+                          __analysis_assume(i < index);
+#endif
                             new_list[i] = amqpvalue_create_null();
                             if (new_list[i] == NULL)
                             {
@@ -1642,13 +1658,16 @@ int amqpvalue_set_map_value(AMQP_VALUE map, AMQP_VALUE key, AMQP_VALUE value)
                     }
                     else
                     {
-                        AMQP_MAP_KEY_VALUE_PAIR* new_pairs = (AMQP_MAP_KEY_VALUE_PAIR*)realloc(value_data->value.map_value.pairs, ((size_t)value_data->value.map_value.pair_count + 1) * sizeof(AMQP_MAP_KEY_VALUE_PAIR));
-                        if (new_pairs == NULL)
+                        AMQP_MAP_KEY_VALUE_PAIR* new_pairs;
+                        size_t realloc_size = safe_add_size_t((size_t)value_data->value.map_value.pair_count, 1);
+                        realloc_size = safe_multiply_size_t(realloc_size, sizeof(AMQP_MAP_KEY_VALUE_PAIR));
+                        if (realloc_size == SIZE_MAX ||
+                            (new_pairs = (AMQP_MAP_KEY_VALUE_PAIR*)realloc(value_data->value.map_value.pairs, realloc_size)) == NULL)
                         {
                             /* Codes_SRS_AMQPVALUE_01_186: [If allocating memory to hold a new key/value pair fails, amqpvalue_set_map_value shall fail and return a non-zero value.] */
                             amqpvalue_destroy(cloned_key);
                             amqpvalue_destroy(cloned_value);
-                            LogError("Could not reallocate memory for map");
+                            LogError("Could not reallocate memory for new_pairs map, size:%zu", realloc_size);
                             result = MU_FAILURE;
                         }
                         else
@@ -1947,13 +1966,16 @@ int amqpvalue_add_array_item(AMQP_VALUE value, AMQP_VALUE array_item_value)
                 }
                 else
                 {
-                    AMQP_VALUE* new_array = (AMQP_VALUE*)realloc(value_data->value.array_value.items, ((size_t)value_data->value.array_value.count + 1) * sizeof(AMQP_VALUE));
-                    if (new_array == NULL)
+                    AMQP_VALUE* new_array;
+                    size_t realloc_size = safe_add_size_t((size_t)value_data->value.array_value.count, 1);
+                    realloc_size = safe_multiply_size_t(realloc_size, sizeof(AMQP_VALUE));
+                    if (realloc_size == SIZE_MAX ||
+                        (new_array = (AMQP_VALUE*)realloc(value_data->value.array_value.items, realloc_size)) == NULL)
                     {
                         /* Codes_SRS_AMQPVALUE_01_423: [ When `amqpvalue_add_array_item` fails due to not being able to clone the item or grow the array, the array shall not be altered. ] */
                         /* Codes_SRS_AMQPVALUE_01_424: [ If growing the array fails, then `amqpvalue_add_array_item` shall fail and return a non-zero value. ] */
                         amqpvalue_destroy(cloned_item);
-                        LogError("Cannot resize array");
+                        LogError("Cannot resize array, size:%zu", realloc_size);
                         result = MU_FAILURE;
                     }
                     else
@@ -5463,6 +5485,7 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                             {
                                 AMQP_VALUE described_value;
                                 internal_decoder_destroy(inner_decoder);
+                                internal_decoder_data->inner_decoder = NULL;
 
                                 described_value = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
                                 if (described_value == NULL)
@@ -6389,10 +6412,11 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                             else
                             {
                                 uint32_t i;
-                                internal_decoder_data->decode_to_value->value.list_value.items = (AMQP_VALUE*)calloc(1, (sizeof(AMQP_VALUE) * internal_decoder_data->decode_to_value->value.list_value.count));
-                                if (internal_decoder_data->decode_to_value->value.list_value.items == NULL)
+                                size_t calloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), internal_decoder_data->decode_to_value->value.list_value.count);
+                                if (calloc_size == SIZE_MAX ||
+                                    (internal_decoder_data->decode_to_value->value.list_value.items = (AMQP_VALUE*)calloc(1, calloc_size)) == NULL)
                                 {
-                                    LogError("Could not allocate memory for decoded list value");
+                                    LogError("Could not allocate memory for decoded list value, size:%zu", calloc_size);
                                     result = MU_FAILURE;
                                 }
                                 else
@@ -6855,10 +6879,11 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                             else
                             {
                                 uint32_t i;
-                                internal_decoder_data->decode_to_value->value.array_value.items = (AMQP_VALUE*)calloc(1, (sizeof(AMQP_VALUE) * internal_decoder_data->decode_to_value->value.array_value.count));
-                                if (internal_decoder_data->decode_to_value->value.array_value.items == NULL)
+                                size_t calloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), internal_decoder_data->decode_to_value->value.array_value.count);
+                                if (calloc_size == SIZE_MAX ||
+                                    (internal_decoder_data->decode_to_value->value.array_value.items = (AMQP_VALUE*)calloc(1, calloc_size)) == NULL)
                                 {
-                                    LogError("Could not allocate memory for array items");
+                                    LogError("Could not allocate memory for array items, size:%zu", calloc_size);
                                     result = MU_FAILURE;
                                 }
                                 else
@@ -6889,10 +6914,11 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                                 else
                                 {
                                     uint32_t i;
-                                    internal_decoder_data->decode_to_value->value.array_value.items = (AMQP_VALUE*)calloc(1, (sizeof(AMQP_VALUE) * internal_decoder_data->decode_to_value->value.array_value.count));
-                                    if (internal_decoder_data->decode_to_value->value.array_value.items == NULL)
+                                    size_t calloc_size = safe_multiply_size_t(sizeof(AMQP_VALUE), internal_decoder_data->decode_to_value->value.array_value.count);
+                                    if (calloc_size == SIZE_MAX ||
+                                        (internal_decoder_data->decode_to_value->value.array_value.items = (AMQP_VALUE*)calloc(1, calloc_size)) == NULL)
                                     {
-                                        LogError("Could not allocate memory for array items");
+                                        LogError("Could not allocate memory for array items, size:%zu", calloc_size);
                                         result = MU_FAILURE;
                                     }
                                     else

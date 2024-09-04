@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-08-04/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-11-04/file.json
 ```
 
 ## ModelFour Options
@@ -79,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"]
+        "enum": ["2024-11-04"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum[0] = "2024-11-04";
 ```
 
 ### Rename Operations
@@ -470,6 +470,9 @@ directive:
       $["x-ms-enabled-protocols"]["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $["x-ms-enabled-protocols"]["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
       $["x-ms-enable-snapshot-virtual-directory-access"]["x-nullable"] = true;
+      $["x-ms-share-paid-bursting-enabled"]["x-nullable"] = true;
+      $["x-ms-share-paid-bursting-max-iops"]["x-nullable"] = true;
+      $["x-ms-share-paid-bursting-max-bandwidth-mibps"]["x-nullable"] = true;
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
@@ -1069,6 +1072,9 @@ directive:
       $.ShareItemDetails.properties["RootSquash"].description = "Root squash to set on the share.  Only valid for NFS shares.";
       $.ShareItemDetails.properties["Last-Modified"].description = "The date and time the share was last modified.";
       $.ShareItemDetails.properties["EnableSnapshotVirtualDirectoryAccess"].description = "Version 2023-08-03 and newer. Specifies whether the snapshot virtual directory should be accessible at the root of share mount point when NFS is enabled. This header is only returned for shares, not for snapshots.";
+      $.ShareItemDetails.properties["PaidBurstingEnabled"].description = "Optional. Boolean. Default if not specified is false. This property enables paid bursting.";
+      $.ShareItemDetails.properties["PaidBurstingMaxIops"].description = "Optional. Integer. Default if not specified is the maximum IOPS the file share can support. Current maximum for a file share is 102,400 IOPS.";
+      $.ShareItemDetails.properties["PaidBurstingMaxBandwidthMibps"].description = "Optional. Integer. Default if not specified is the maximum throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.";
       $.ShareItemInternal.properties["Name"].description = "The name of the share.";
       $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
       $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";

@@ -87,4 +87,24 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
+  std::string QueueSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
+  {
+    std::string canonicalName = "/queue/" + credential.AccountName + "/" + QueueName;
+
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
+        + SasVersion;
+  }
+
 }}} // namespace Azure::Storage::Sas

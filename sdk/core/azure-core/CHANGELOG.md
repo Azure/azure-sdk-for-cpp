@@ -1,6 +1,21 @@
 # Release History
 
-## 1.14.0-beta.1 (Unreleased)
+## 1.14.0-beta.2 (Unreleased)
+
+### Features Added
+
+- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
+- Added default constructor, `Parse()`, and equality comparison operators to `Azure::Core::Uuid`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- `Azure::Core::Uuid::ToString()` is now `const`.
+
+### Other Changes
+
+## 1.14.0-beta.1 (2024-08-01)
 
 ### Features Added
 
@@ -12,8 +27,6 @@
 - Deprecated the `Azure::Core::Context::ApplicationContext` object. 
   - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
   wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(deadline)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(deadline)`.
-
-### Bugs Fixed
 
 ### Other Changes
 

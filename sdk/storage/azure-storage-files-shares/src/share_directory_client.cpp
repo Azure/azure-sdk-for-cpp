@@ -209,6 +209,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.DirectoryPermissionFormat;
     auto result = _detail::DirectoryClient::Create(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::CreateDirectoryResult ret;
@@ -294,6 +295,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FileContentType = options.ContentType;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
 
     auto response = _detail::FileClient::Rename(
         *m_pipeline, destinationFileUrl, protocolLayerOptions, context);
@@ -356,6 +358,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
 
     auto response = _detail::DirectoryClient::Rename(
         *m_pipeline, destinationDirectoryUrl, protocolLayerOptions, context);
@@ -466,6 +469,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     return _detail::DirectoryClient::SetProperties(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
   }
