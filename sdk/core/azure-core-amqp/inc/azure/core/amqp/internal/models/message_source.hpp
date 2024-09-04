@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     Nullable<std::chrono::system_clock::time_point> Timeout;
     Nullable<bool> Dynamic;
     AmqpMap DynamicNodeProperties;
-    Nullable<std::string> DistributionMode;
+    Nullable<AmqpSymbol> DistributionMode;
     AmqpMap Filter;
     AmqpValue DefaultOutcome;
     AmqpArray Outcomes;
@@ -170,7 +170,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    std::string GetDistributionMode() const;
+    AmqpSymbol GetDistributionMode() const;
 
     /** @brief Gets the filter of the source.
      *

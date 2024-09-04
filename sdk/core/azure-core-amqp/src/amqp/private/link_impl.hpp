@@ -11,8 +11,10 @@
 #include "azure/core/amqp/internal/models/message_target.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/link.h>
 
+#endif
 #include <memory>
 #include <string>
 #include <vector>
@@ -64,7 +66,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     LinkImpl(LinkImpl&&) noexcept = delete;
     LinkImpl& operator=(LinkImpl&&) noexcept = delete;
 
+#if ENABLE_UAMQP
     operator LINK_HANDLE() const { return m_link; }
+#endif
 
     void SetSenderSettleMode(_internal::SenderSettleMode senderSettleMode);
     _internal::SenderSettleMode GetSenderSettleMode() const;
@@ -92,7 +96,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::string GetName() const;
 
+#if ENABLE_UAMQP
     LINK_HANDLE GetUnderlyingLink() const { return m_link; };
+#endif
 
     Models::_internal::MessageTarget const& GetTarget() const;
     Models::_internal::MessageSource const& GetSource() const;
@@ -116,7 +122,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Context const& context);
 
   private:
+#if ENABLE_UAMQP
     LINK_HANDLE m_link;
+#endif
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageSource m_source;
     Models::_internal::MessageTarget m_target;
@@ -124,6 +132,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_transferCompleteQueue;
     OnLinkDetachEvent m_onLinkDetachEvent;
     LinkImplEvents* m_eventHandler;
+#if ENABLE_UAMQP
     ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
 
     static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
@@ -134,7 +143,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         TRANSFER_HANDLE transfer,
         uint32_t payload_size,
         const unsigned char* payload_bytes);
-
+#endif
     // Inherited via Pollable
     void Poll() override;
   };
