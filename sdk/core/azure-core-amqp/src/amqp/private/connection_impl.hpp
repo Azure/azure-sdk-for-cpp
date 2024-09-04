@@ -9,9 +9,9 @@
 #include "unique_handle.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
-
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/connection.h>
-
+#endif
 #include <chrono>
 #include <memory>
 #include <string>
@@ -23,19 +23,22 @@
 #endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
   {
     static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
     using type = Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
   };
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   using UniqueAmqpConnection = UniqueHandle<CONNECTION_INSTANCE_TAG>;
 
   std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state);
-
+#endif
   class ClaimsBasedSecurity;
 
   class ConnectionFactory final {
@@ -87,8 +90,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * ConnectionImpl, the shared_ptr will not have been fully constructed, causing a crash.
      */
     void FinishConstruction();
-
+#if ENABLE_UAMQP
     operator CONNECTION_HANDLE() const { return m_connection.get(); }
+#endif
 
     void Open();
     void Listen();
@@ -122,11 +126,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audience,
         Azure::Core::Context const& context);
 
-    //    Credentials::AccessToken GetSecurityToken(std::string const& audience,
-    //    Azure::Core::Context const& context)
-    //        const;
-    //    void SetToken(std::string const& audience, Credentials::AccessToken const& token);
-
     using LockType = std::recursive_mutex;
 
     _azure_ACQUIRES_LOCK(m_amqpMutex) std::unique_lock<LockType> Lock()
@@ -136,9 +135,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
+#if ENABLE_UAMQP
     UniqueAmqpConnection m_connection{};
+#endif
     std::string m_hostName;
-    uint16_t m_port;
+    uint16_t m_port{};
     std::string m_containerId;
     _internal::ConnectionOptions m_options;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
@@ -164,7 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ConnectionOptions const& options);
 
     void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
-
+#if ENABLE_UAMQP
     static void OnConnectionStateChangedFn(
         void* context,
         CONNECTION_STATE newState,
@@ -172,5 +173,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // Note: We cannot take ownership of this instance tag.
     static bool OnNewEndpointFn(void* context, ENDPOINT_HANDLE endpoint);
     static void OnIOErrorFn(void* context);
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail
