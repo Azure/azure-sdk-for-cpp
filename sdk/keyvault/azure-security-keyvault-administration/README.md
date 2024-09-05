@@ -75,7 +75,7 @@ Please read [best practices][best_practices] for properly securing your managed 
 
 ### Install the package
 
-he easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
 
 ```batch
 vcpkg new --application
@@ -91,6 +91,7 @@ vcpkg add port azure-security-keyvault-administration-cpp azure-identity-cpp
 Then, add the following in your CMake file:
 
 ```CMake
+find_package(azure-identity-cpp CONFIG REQUIRED)
 find_package(azure-security-keyvault-administration-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-administration Azure::azure-identity)
 ```

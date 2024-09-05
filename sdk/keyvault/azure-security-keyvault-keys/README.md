@@ -41,6 +41,7 @@ vcpkg add port azure-security-keyvault-keys-cpp azure-identity-cpp
 Then, add the following in your CMake file:
 
 ```CMake
+find_package(azure-identity-cpp CONFIG REQUIRED)
 find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys Azure::azure-identity)
 ```
