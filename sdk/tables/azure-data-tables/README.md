@@ -17,11 +17,11 @@ The Azure Tables client can be used to access Azure Storage or Cosmos accounts.
     * an [Azure Storage account][azure_storage_account] or
     * an [Azure Cosmos Account][azure_cosmos_account].
 
-If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-<service-name>-name>` with your own, unique names:
+If you use the Azure CLI, replace `<your-resource-group-name>` and `<your-tables-name>` with your own, unique names:
 
 ```PowerShell
 az login
-az storage table create create --resource-group <your-resource-group-name> --name <your-<service-name>-name>
+az storage table create create --resource-group <your-resource-group-name> --name <your-tables-name>
 ```
 ### Create account
 * To create a new Storage account, you can use [Azure Portal][azure_portal_create_account], [Azure PowerShell][azure_powershell_create_account], or [Azure CLI][azure_cli_create_account]:
@@ -45,6 +45,7 @@ Then, add the following in your CMake file:
 
 ```CMake
 find_package(azure-data-tables-cpp CONFIG REQUIRED)
+find_package(azure-identity-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-data-tables Azure::azure-identity)
 ```
 
@@ -80,35 +81,13 @@ The Azure Tables library allows you to interact with two types of resources:
 Interaction with these resources starts with an instance of a [client](#clients). To create a client object, you will need the account's table service endpoint URL and a credential that allows you to access the account. The `endpoint` can be found on the page for your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or by running the following Azure CLI command:
 
 ```bash
-# Log in to Azure CLI first, this opens a browser window
-az login
 # Get the table service URL for the account
-az storage account show -n mystorageaccount -g MyResourceGroup --query "primaryEndpoints.table"
+az storage account show -n <your-storage-account> -g <your-resource-group-name> --query "primaryEndpoints.table"
 ```
 
 ### Credentials
 
 We'll be using the `DefaultAzureCredential` to authenticate which will pick up the credentials we used when logging in with the Azure CLI earlier. `DefaultAzureCredential` can pick up on a number of Credential types from your environment and is ideal when getting started and developing. Check out our section on [DefaultAzureCredentials](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential) to learn more.
-
-```cpp
-// Add all necessary includes for client creation and samples below
-#include <azure/identity.hpp> 
-#include <azure/data/tables.hpp>
-
-// Add all using statements for client creation and samples below
-using namespace Azure::Data::Tables;
-
-int main (){
-  // Add all variables that are needed for creating the client
-  static const char* url = "AZURE_SERVICENAME_URL";
-
-  // Use Azure Default Credential wherever possible
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-
-   // Create client code. Try to avoid using auto on the first use of any type from our libraries that a customer might not be familiar with. 
-   AzureClientType client = clientCtor(url, credential); 
-}
-```
 
 ### Clients
 Two different clients are provided to interact with the various components of the Table Service:
@@ -147,16 +126,6 @@ tableServiceClient.DeleteTable(TableName);
 ```
 ##### Table Service Operations
 
-In order to get the service properties we need to create a TableServiceClient first.
-
-```cpp
-#include <azure/data/tables.hpp>
-...
-using namespace Azure::Data::Tables;
-...
-auto tableServiceClient = TableServiceClient::CreateFromConnectionString(...);
-```
-
 To get the service properties we call the GetProperties method on the table service client.
 ```cpp
   auto properties = tableServiceClient.GetProperties();
@@ -172,18 +141,11 @@ To get the statistics of the account we call the GetStatistics method on the tab
   auto statistics = tableServiceClient.GetStatistics();
 ```
 
-##### Table Transactions Success
+#### TableClient
 
-In order to get the service properties we need to create a TableServiceClient first.
+The TableClient is used to interact with table entities and perform operations on them.
 
-```cpp
-#include <azure/data/tables.hpp>
-...
-using namespace Azure::Data::Tables;
-...
-auto tableServiceClient = TableServiceClient::CreateFromConnectionString(...);
-```
-
+##### Get the table client from the service client
 We create a table on which we run the transaction and get a table client. 
 ```cpp
 // create table
@@ -193,13 +155,7 @@ auto tableClient = tableServiceClient.GetTableClient(TableName);
 ```
 N.B. Here we are obtaining the table client from the table service client using the credentials that were passed to the table service client.
 
-#### TableClient
-The TableClient is used to interact with table entities and perform operations on them.
-##### Entities
-Entities are similar to rows. An entity has a set of properties, including a **`PartitionKey`** and **`RowKey`** which form the primary key of the entity. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
-
-##### Manipulating entities
-
+##### Create a client with a connection string
 In order to Create/Update/Merge/Delete entities we need to create a TablesClient first.
 
 ```cpp
@@ -209,8 +165,12 @@ using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
 auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
-tableServiceClient.CreateTable(TableName);
 ```
+
+##### Entities
+Entities are similar to rows. An entity has a set of properties, including a **`PartitionKey`** and **`RowKey`** which form the primary key of the entity. A property is a name value pair, similar to a column. Every entity in a table does not need to have the same properties. 
+
+##### Manipulating entities
 
 Then we initialize and populate an entity.
 ```cpp
