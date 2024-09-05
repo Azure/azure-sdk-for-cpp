@@ -20,6 +20,7 @@
 ### Features Added
 
 - Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
+- Added an `Azure::Core::ResourceIdentifier` type.
  
 ### Breaking Changes
 
