@@ -39,6 +39,7 @@ Then, add the following in your CMake file:
 
 ```CMake
 find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
+find_package(azure-identity-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-secrets Azure::azure-identity)
 ```
 

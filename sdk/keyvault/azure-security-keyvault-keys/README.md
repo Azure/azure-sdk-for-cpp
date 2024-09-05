@@ -70,6 +70,7 @@ Then, use in your CMake file:
 
 ```CMake
 find_package(azure-security-keyvault-keys-cpp CONFIG REQUIRED)
+find_package(azure-identity-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-keys)
 ```
 
@@ -95,6 +96,7 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 
 - Create a service principal and configure its access to Azure resources:
   ```PowerShell
+  az login 
   az ad sp create-for-rbac -n <your-application-name> --skip-assignment
   ```
   Output:
@@ -146,7 +148,6 @@ Use the [Azure CLI][azure_cli] snippet below to create/get client secret credent
 If you are creating a standard Key Vault resource, use the following CLI command:
 
 ```PowerShell
-az login 
 az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
 ```
 
