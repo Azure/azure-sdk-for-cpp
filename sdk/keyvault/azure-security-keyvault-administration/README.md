@@ -75,7 +75,7 @@ Please read [best practices][best_practices] for properly securing your managed 
 
 ### Install the package
 
-he easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
 
 ```batch
 vcpkg new --application
