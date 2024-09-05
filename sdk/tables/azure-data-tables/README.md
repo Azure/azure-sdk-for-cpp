@@ -222,7 +222,7 @@ We create a transaction batch and add the operations to the transaction.
 ```cpp
 // Create a transaction with two steps
 std::vector<TransactionStep> steps;
-steps.emplace_back(TransactionStep{TransactionActionType::Add, entity});
+steps.emplace_back(TransactionStep{TransactionActionType::Add, entity1});
 steps.emplace_back(TransactionStep{TransactionActionType::Add, entity2});
 ```
 
@@ -250,7 +250,7 @@ Transaction completed successfully.
 The difference from the previous example is that we are trying to add two entities  with the same PartitionKey and RowKey.
 ```cpp
 // Create two table entities
-TableEntity entity;
+TableEntity entity1;
 TableEntity entity2;
 entity.SetPartitionKey("P1");
 entity.SetRowKey("R1");
