@@ -1,6 +1,5 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/secrets.hpp>
-
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -14,8 +13,9 @@ int main()
     // Set Key Vault URL string
     auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
 
-    // Create Default Azure Credential to Authenticate. I will pick up on our AzureCLI login
-    auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+    // Create Default Azure Credential to Authenticate.
+    // It will pick up on our AzureCLI login
+    auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
     // Create Key Vault Secret Client
     SecretClient secretClient(keyVaultUrl, credential);
