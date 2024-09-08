@@ -18,6 +18,9 @@ azure_identity = { workspace = true }
 azure_core = { workspace = true }
 uuid = { workspace = true }
 tracing = { workspace = true }
+tokio = { workspace = true }
+url = { workspace = true }
+time = { workspace = true }
 
 [dev-dependencies]
 serde_amqp = { workspace = true }
