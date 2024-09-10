@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 
-- Throw std::invalid_argument if the `TimeFractionFormat` enum passed in to DateTime `ToString()` is invalid.
+- Throw `std::invalid_argument` if the value of `TimeFractionFormat` enum passed in to `DateTime::ToString()` is invalid.
 - `Azure::Core::Uuid::ToString()` is now `const`.
 
 ### Other Changes
