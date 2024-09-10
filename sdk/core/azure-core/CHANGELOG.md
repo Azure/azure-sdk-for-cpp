@@ -6,6 +6,7 @@
 
 - Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
 - Added default constructor, `Parse()`, and equality comparison operators to `Azure::Core::Uuid`.
+- Added an `Azure::Core::ResourceIdentifier` type.
 
 ### Breaking Changes
 
@@ -21,7 +22,6 @@
 ### Features Added
 
 - Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
-- Added an `Azure::Core::ResourceIdentifier` type.
  
 ### Breaking Changes
 
