@@ -12,6 +12,7 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
+#include <type_traits>
 
 using namespace Azure;
 
@@ -872,7 +873,9 @@ std::string DateTime::ToString(DateFormat format, TimeFractionFormat fractionFor
     default:
       throw std::invalid_argument(
           "Unrecognized time fraction format ("
-          + std::to_string(static_cast<int64_t>(fractionFormat)) + ").");
+          + std::to_string(
+              static_cast<std::underlying_type<TimeFractionFormat>::type>(fractionFormat))
+          + ").");
   }
 
   ThrowIfUnsupportedYear();
