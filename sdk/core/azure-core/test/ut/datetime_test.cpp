@@ -494,6 +494,13 @@ TEST(DateTime, ToStringInvalid)
   EXPECT_THROW(
       dt.ToString(DateTime::DateFormat::Rfc1123, static_cast<DateTime::TimeFractionFormat>(3)),
       std::invalid_argument);
+
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc3339, static_cast<DateTime::TimeFractionFormat>(3)),
+      std::invalid_argument);
+  EXPECT_THROW(
+      dt.ToString(DateTime::DateFormat::Rfc3339, static_cast<DateTime::TimeFractionFormat>(-3)),
+      std::invalid_argument);
 }
 
 TEST(DateTime, ParseTimeInvalid2)
