@@ -392,7 +392,7 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
     }
     else if (is_flow_type_by_descriptor(descriptor))
     {
-        FLOW_HANDLE flow_handle=NULL;
+        FLOW_HANDLE flow_handle;
         if (amqpvalue_get_flow(performative, &flow_handle) != 0)
         {
             LogError("Cannot get flow performative");
@@ -425,6 +425,7 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     }
                 }
             }
+
             flow_destroy(flow_handle);
         }
     }
@@ -470,7 +471,6 @@ static void link_frame_received(void* context, AMQP_VALUE performative, uint32_t
                     if ((link_instance->received_payload_size > 0) || more)
                     {
                         unsigned char* new_received_payload;;
-                      
                         size_t realloc_size = safe_add_size_t((size_t)link_instance->received_payload_size, payload_size);
                         if (realloc_size == SIZE_MAX ||
                             (new_received_payload = (unsigned char*)realloc(link_instance->received_payload, realloc_size)) == NULL)

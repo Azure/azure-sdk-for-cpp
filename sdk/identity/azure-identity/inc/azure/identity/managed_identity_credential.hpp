@@ -10,6 +10,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/resource_identifier.hpp>
 
 #include <memory>
 #include <string>
@@ -18,29 +19,6 @@ namespace Azure { namespace Identity {
   namespace _detail {
     class ManagedIdentitySource;
   }
-
-  // This will move to Azure::Core.
-  /**
-   * @brief An Azure Resource Manager resource identifier.
-   */
-  class ResourceIdentifier final {
-    std::string m_resourceId;
-
-  public:
-    /**
-     * @brief Constructs a resource identifier.
-     *
-     * @param resourceId The id string to create the ResourceIdentifier from.
-     */
-    explicit ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId){};
-
-    /**
-     * @brief The string representation of this resource identifier.
-     *
-     * @return The resource identifier string.
-     */
-    std::string ToString() const { return m_resourceId; }
-  };
 
   /**
    * @brief The type of managed identity identifier depending on how the managed identity is
@@ -97,6 +75,16 @@ namespace Azure { namespace Identity {
         throw std::invalid_argument(
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
             "using system-assigned managed identity.");
+      }
+
+      if (id.empty()
+          && (idType == ManagedIdentityIdType::ClientId || idType == ManagedIdentityIdType::ObjectId
+              || idType == ManagedIdentityIdType::ResourceId))
+      {
+        throw std::invalid_argument(
+            "Provide the value of the client, object, or resource ID corresponding to the "
+            "ManagedIdentityIdType specified. The provided ID should not be empty in the case of "
+            "user-assigned managed identity.");
       }
     }
 
@@ -163,17 +151,6 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         Azure::Identity::ManagedIdentityCredentialOptions const& options);
-
-    /**
-     * @brief Constructs an instance of ManagedIdentityCredential capable of authenticating a
-     * resource with a user-assigned managed identity.
-     *
-     * @param resourceId The resource ID to authenticate for a user-assigned managed identity.
-     * @param options Options for token retrieval.
-     */
-    explicit ManagedIdentityCredential(
-        ResourceIdentifier const& resourceId,
-        Azure::Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
