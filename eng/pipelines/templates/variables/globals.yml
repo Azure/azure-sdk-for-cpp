@@ -2,12 +2,7 @@ variables:
   # True if 'Enable system diagnostics' is checked when running a pipeline manually
   IsDebug: $[coalesce(variables['System.Debug'], 'false')]
 
-  skipComponentGovernanceDetection: true
-  DisableDockerDetector: true
-  Package.EnableSBOMSigning: true
-
-  # Disable CodeQL injections except for where we specifically enable it
-  Codeql.SkipTaskAutoInjection: true
-
-  # Disable warning for tools that are disabled for forked builds
-  GDN_SUPPRESS_FORKED_BUILD_WARNING: true
+  ${{ if and(eq(variables['Build.Reason'],'PullRequest'), eq(variables['System.PullRequest.IsFork'], 'True')) }}:
+    # Disable warning for tools that are disabled for forked builds
+    GDN_SUPPRESS_FORKED_BUILD_WARNING: true
+    Package.EnableSBOMSigning: false
