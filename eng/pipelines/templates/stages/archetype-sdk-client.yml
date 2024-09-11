@@ -133,6 +133,7 @@ extends:
     stages:
       - stage: CMakeGeneration
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         jobs:
           - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml@self
@@ -148,6 +149,7 @@ extends:
       # Integration can launch immediately without awaiting more build and test jobs
       - stage: PrePublishBuild
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:
@@ -172,6 +174,7 @@ extends:
 
       - stage: Build
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:
