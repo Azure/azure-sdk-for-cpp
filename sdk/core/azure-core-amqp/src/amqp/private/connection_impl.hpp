@@ -57,19 +57,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>,
-                               public Common::_detail::Pollable {
+#if ENABLE_UAMQP
+                               public Common::_detail::Pollable
+#endif
+  {
   public:
     ConnectionImpl(
         std::shared_ptr<Network::_detail::TransportImpl> transport,
-        _internal::ConnectionOptions const& options,
+        _internal::ConnectionOptions const& options
+#if ENABLE_UAMQP
+        ,
         _internal::ConnectionEvents* eventHandler,
-        _internal::ConnectionEndpointEvents* endpointEvents);
+        _internal::ConnectionEndpointEvents* endpointEvents
+#endif
+    );
 
     ConnectionImpl(
         std::string const& hostName,
         std::shared_ptr<Credentials::TokenCredential> tokenCredential,
-        _internal::ConnectionOptions const& options,
-        _internal::ConnectionEvents* eventHandler);
+        _internal::ConnectionOptions const& options
+#if ENABLE_UAMQP
+        ,
+        _internal::ConnectionEvents* eventHandler
+#endif
+    );
 
     virtual ~ConnectionImpl();
 
@@ -95,14 +106,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
 
     void Open();
+#if ENABLE_UAMQP
     void Listen();
+#endif
 
     void Close(
         std::string const& condition = {},
         std::string const& description = {},
         Models::AmqpValue info = {});
 
+#if ENABLE_UAMQP
     void Poll() override;
+#endif
 
     std::string GetHost() const { return m_hostName; }
     uint16_t GetPort() const { return m_port; }
@@ -144,9 +159,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ConnectionOptions m_options;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
+#if ENABLE_UAMQP
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionEndpointEvents* m_endpointEvents{};
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
+#endif
 
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
@@ -164,8 +181,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ConnectionEvents* eventHandler,
         _internal::ConnectionOptions const& options);
 
-    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
 #if ENABLE_UAMQP
+    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
     static void OnConnectionStateChangedFn(
         void* context,
         CONNECTION_STATE newState,

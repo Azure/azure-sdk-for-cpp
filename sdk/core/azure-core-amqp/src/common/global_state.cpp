@@ -104,7 +104,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     // Integrate AMQP logging with Azure Core logging.
     xlogging_set_log_function(AmqpLogFunction);
-#endif
 
     m_pollingThread = std::thread([this]() {
       do
@@ -132,16 +131,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } while (!m_stopped);
     });
+#endif
   }
 
   GlobalStateHolder::~GlobalStateHolder()
   {
+#if ENABLE_UAMQP
     m_stopped = true;
     if (m_pollingThread.joinable())
     {
       m_pollingThread.join();
     }
-#if ENABLE_UAMQP
     platform_deinit();
 #if defined(GB_DEBUG_ALLOC)
     gballoc_deinit();
@@ -149,6 +149,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 #endif
   }
 
+#if ENABLE_UAMQP
   /**
    * @brief Adds a pollable object to the list of objects to be polled.
    *
@@ -199,6 +200,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     while (m_activelyPolling.load())
       ;
   }
+#endif
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {

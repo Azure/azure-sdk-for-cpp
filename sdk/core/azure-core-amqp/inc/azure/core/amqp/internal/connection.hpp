@@ -24,11 +24,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(_azure_TESTING_BUILD)
 // Define the test classes dependant on this class here.
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+#if ENABLE_UAMQP
   namespace MessageTests {
     class AmqpServerMock;
     class MessageListenerEvents;
   } // namespace MessageTests
-
+#endif
   class TestConnections_ConnectionAttributes_Test;
   class TestConnections_ConnectionOpenClose_Test;
   class TestConnections_ConnectionListenClose_Test;
@@ -62,6 +63,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief The default port to use to connect to an AMQP server using TLS. */
   constexpr uint16_t AmqpTlsPort = 5671;
 
+#if ENABLE_UAMQP
   /**
    * @brief The state of the connection.
    *
@@ -205,6 +207,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) = 0;
   };
+#endif
 
   /** @brief Options used to create a connection. */
   struct ConnectionOptions final
@@ -286,8 +289,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Connection(
         std::string const& hostName,
         std::shared_ptr<Credentials::TokenCredential> credential,
-        ConnectionOptions const& options,
-        ConnectionEvents* eventHandler = nullptr);
+        ConnectionOptions const& options
+#if ENABLE_UAMQP
+        ,
+        ConnectionEvents* eventHandler = nullptr
+#endif
+    );
 
     /** @brief Construct a new AMQP Connection.
      *
@@ -300,9 +307,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Connection(
         Network::_internal::Transport const& transport,
-        ConnectionOptions const& options,
+        ConnectionOptions const& options
+#if ENABLE_UAMQP
+        ,
         ConnectionEvents* eventHandler,
-        ConnectionEndpointEvents* endpointEvents);
+        ConnectionEndpointEvents* endpointEvents
+#endif
+    );
 
     /** @brief Destroy an AMQP connection */
     ~Connection();
@@ -318,6 +329,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Session CreateSession(SessionOptions const& options = {}, SessionEvents* eventHandler = nullptr)
         const;
+
+#if ENABLE_UAMQP
 
     /** @brief Construct a new session associated with the specified connection over the specified
      * endpoint.
@@ -335,8 +348,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         SessionEvents* eventHandler = nullptr) const;
 
     void Poll();
-
+#endif
+#if ENABLE_RUST_AMQP
   private:
+#endif
     /** @brief Opens the current connection.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
@@ -380,7 +395,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& condition = {},
         std::string const& description = {},
         Models::AmqpValue info = {});
-
+#if ENABLE_RUST_AMQP
+  private:
+#endif
     /** @brief Gets host configured by the connection.
      *
      * @return The host used in the connection.
@@ -453,8 +470,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
 #if _azure_TESTING_BUILD
+#if ENABLE_UAMQP
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+#endif
     friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
     friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
     friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionAttributes_Test;
@@ -468,8 +487,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
 
 #endif // _azure_TESTING_BUILD
+#if ENABLE_UAMQP
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();
 #endif // SAMPLES_BUILD
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_internal

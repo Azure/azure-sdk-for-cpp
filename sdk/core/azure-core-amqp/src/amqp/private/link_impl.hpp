@@ -38,8 +38,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     virtual ~LinkImplEvents() = default;
   };
 
-  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>,
-                         public Common::_detail::Pollable {
+  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>
+#if ENABLE_UAMQP
+      ,
+                         public Common::_detail::Pollable
+#endif
+  {
 
     using OnLinkDetachEvent = std::function<void(Models::_internal::AmqpError)>;
 

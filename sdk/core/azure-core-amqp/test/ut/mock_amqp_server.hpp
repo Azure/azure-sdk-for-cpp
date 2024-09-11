@@ -22,6 +22,8 @@
 
 #define NEW_MOCK_SERVER 1
 
+#if ENABLE_UAMQP
+
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   extern uint16_t FindAvailableSocket();
@@ -55,8 +57,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -781,3 +783,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     };
   } // namespace MessageTests
 }}}} // namespace Azure::Core::Amqp::Tests
+#endif // ENABLE_UAMQP

@@ -5,6 +5,7 @@
 use std::{
     ffi::{c_char, CStr},
     mem,
+    ptr::null,
 };
 use time::Duration;
 
@@ -60,7 +61,14 @@ pub extern "C" fn amqpconnection_open(
     let url = unsafe { CStr::from_ptr(url) };
     let url = url.to_str();
     let container_id = unsafe { CStr::from_ptr(container_id) };
-    let options = unsafe { &*options };
+    let default_options: RustAmqpConnectionOptions = RustAmqpConnectionOptions {
+        inner: Default::default(),
+    };
+    let options = if options != null() {
+        unsafe { &*options }
+    } else {
+        &default_options
+    };
 
     if url.is_err() {
         error!("Failed to convert URL to string: {:?}", url.err());
@@ -249,7 +257,11 @@ pub extern "C" fn amqpconnectionbuilder_set_properties(
             })
         })
         .collect::<Vec<(&str, &str)>>();
+
+    // Apply the code block changes
     builder.inner.with_properties(properties);
+
+    // Return the result
     0
 }
 
@@ -261,4 +273,177 @@ pub extern "C" fn amqpconnectionbuilder_set_buffer_size(
     let builder = unsafe { &mut *builder };
     builder.inner.with_buffer_size(buffer_size);
     0
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::ffi::CString;
+    use std::ptr;
+
+    fn create_runtime_context() -> *mut RuntimeContext {
+        // Mock implementation for creating a runtime context
+        Box::into_raw(Box::new(RuntimeContext::new().unwrap()))
+    }
+
+    #[test]
+    fn test_amqpconnection_create_and_destroy() {
+        let connection = amqpconnection_create();
+        assert!(!connection.is_null());
+        amqpconnection_destroy(connection);
+    }
+
+    #[test]
+    fn test_amqpconnection_open_and_close() {
+        let ctx = create_runtime_context();
+        let connection = amqpconnection_create();
+        let url = CString::new("amqp://localhost:25672").unwrap();
+        let container_id = CString::new("test_container").unwrap();
+        let options = ptr::null();
+
+        let open_result = amqpconnection_open(
+            ctx,
+            connection,
+            url.as_ptr(),
+            container_id.as_ptr(),
+            options,
+        );
+        assert_eq!(open_result, 0);
+
+        let close_result = amqpconnection_close(ctx, connection);
+        assert_eq!(close_result, 0);
+
+        amqpconnection_destroy(connection);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_create_and_destroy() {
+        let builder = amqpconnectionbuilder_create();
+        assert!(!builder.is_null());
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_idle_timeout() {
+        let builder = amqpconnectionbuilder_create();
+        let result = amqpconnectionbuilder_set_idle_timeout(builder, 30);
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_max_frame_size() {
+        let builder = amqpconnectionbuilder_create();
+        let result = amqpconnectionbuilder_set_max_frame_size(builder, 65536);
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_channel_max() {
+        let builder = amqpconnectionbuilder_create();
+        let result = amqpconnectionbuilder_set_channel_max(builder, 256);
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_outgoing_locales() {
+        let builder = amqpconnectionbuilder_create();
+        let locales = vec![
+            CString::new("en-US").unwrap(),
+            CString::new("fr-FR").unwrap(),
+        ];
+        let locale_ptrs: Vec<*const c_char> =
+            locales.iter().map(|locale| locale.as_ptr()).collect();
+        let result = amqpconnectionbuilder_set_outgoing_locales(
+            builder,
+            locale_ptrs.as_ptr(),
+            locale_ptrs.len(),
+        );
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_incoming_locales() {
+        let builder = amqpconnectionbuilder_create();
+        let locales = vec![
+            CString::new("en-US").unwrap(),
+            CString::new("fr-FR").unwrap(),
+        ];
+        let locale_ptrs: Vec<*const c_char> =
+            locales.iter().map(|locale| locale.as_ptr()).collect();
+        let result = amqpconnectionbuilder_set_incoming_locales(
+            builder,
+            locale_ptrs.as_ptr(),
+            locale_ptrs.len(),
+        );
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_offered_capabilities() {
+        let builder = amqpconnectionbuilder_create();
+        let capabilities = vec![
+            CString::new("capability1").unwrap(),
+            CString::new("capability2").unwrap(),
+        ];
+        let capability_ptrs: Vec<*const c_char> =
+            capabilities.iter().map(|cap| cap.as_ptr()).collect();
+        let result = amqpconnectionbuilder_set_offered_capabilities(
+            builder,
+            capability_ptrs.as_ptr(),
+            capability_ptrs.len(),
+        );
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_desired_capabilities() {
+        let builder = amqpconnectionbuilder_create();
+        let capabilities = vec![
+            CString::new("capability1").unwrap(),
+            CString::new("capability2").unwrap(),
+        ];
+        let capability_ptrs: Vec<*const c_char> =
+            capabilities.iter().map(|cap| cap.as_ptr()).collect();
+        let result = amqpconnectionbuilder_set_desired_capabilities(
+            builder,
+            capability_ptrs.as_ptr(),
+            capability_ptrs.len(),
+        );
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_properties() {
+        let builder = amqpconnectionbuilder_create();
+        let keys = vec![CString::new("key1").unwrap(), CString::new("key2").unwrap()];
+        let values = vec![
+            CString::new("value1").unwrap(),
+            CString::new("value2").unwrap(),
+        ];
+        let key_ptrs: Vec<*const c_char> = keys.iter().map(|key| key.as_ptr()).collect();
+        let value_ptrs: Vec<*const c_char> = values.iter().map(|value| value.as_ptr()).collect();
+        let result = amqpconnectionbuilder_set_properties(
+            builder,
+            key_ptrs.as_ptr(),
+            value_ptrs.as_ptr(),
+            key_ptrs.len(),
+        );
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
+
+    #[test]
+    fn test_amqpconnectionbuilder_set_buffer_size() {
+        let builder = amqpconnectionbuilder_create();
+        let result = amqpconnectionbuilder_set_buffer_size(builder, 1024);
+        assert_eq!(result, 0);
+        amqpconnectionbuilder_destroy(builder);
+    }
 }

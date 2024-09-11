@@ -38,6 +38,7 @@ using namespace Azure::Core::Diagnostics;
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   // Create a connection with an existing networking Transport.
+#if ENABLE_UAMQP
   Connection::Connection(
       Network::_internal::Transport const& transport,
       ConnectionOptions const& options,
@@ -51,15 +52,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->FinishConstruction();
   }
+#endif
 
   // Create a connection with a request URI and options.
   Connection::Connection(
       std::string const& hostName,
       std::shared_ptr<Credentials::TokenCredential> credential,
-      ConnectionOptions const& options,
-      ConnectionEvents* eventHandler)
-      : m_impl{
-          std::make_shared<_detail::ConnectionImpl>(hostName, credential, options, eventHandler)}
+      ConnectionOptions const& options
+#if ENABLE_UAMQP
+      ,
+      ConnectionEvents* eventHandler
+#endif
+      )
+      : m_impl
+  {
+    std::make_shared<_detail::ConnectionImpl>(
+        hostName,
+        credential,
+        options
+#if ENABLE_UAMQP
+
+        ,
+        eventHandler
+#endif
+    )
+  }
   {
     m_impl->FinishConstruction();
   }
@@ -74,6 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::make_shared<_detail::SessionImpl>(m_impl, sessionOptions, sessionEvents));
   }
 
+#if ENABLE_UAMQP
   Session Connection::CreateSession(
       Endpoint& endpoint,
       SessionOptions const& sessionOptions,
@@ -82,10 +100,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return Azure::Core::Amqp::_detail::SessionFactory::CreateFromInternal(
         std::make_shared<_detail::SessionImpl>(m_impl, endpoint, sessionOptions, sessionEvents));
   }
-
   void Connection::Poll() { m_impl->Poll(); }
 
   void Connection::Listen() { m_impl->Listen(); }
+#endif // ENABLE_UAMQP
   void Connection::Open() { m_impl->Open(); }
   void Connection::Close(
       std::string const& condition,
@@ -105,6 +123,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->SetIdleEmptyFrameSendPercentage(ratio);
   }
+#if ENABLE_UAMQP
   std::ostream& operator<<(std::ostream& stream, ConnectionState state)
   {
     switch (state)
@@ -157,7 +176,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
     return stream;
   }
-
+#endif
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace {
@@ -174,6 +193,7 @@ void EnsureGlobalStateInitialized()
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   // Create a connection with an existing networking Transport.
+#if ENABLE_UAMQP
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,
       _internal::ConnectionOptions const& options,
@@ -185,15 +205,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     EnsureGlobalStateInitialized();
     m_transport = transport;
   }
+#endif
 
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
       std::string const& hostName,
       std::shared_ptr<Credentials::TokenCredential> credential,
-      _internal::ConnectionOptions const& options,
-      _internal::ConnectionEvents* eventHandler)
+      _internal::ConnectionOptions const& options
+#if ENABLE_UAMQP
+      ,
+      _internal::ConnectionEvents* eventHandler
+#endif
+      )
       : m_hostName{hostName}, m_port{options.Port}, m_options{options},
-        m_eventHandler{eventHandler}, m_credential{credential}
+#if ENABLE_UAMQP
+        m_eventHandler{eventHandler},
+#endif
+        m_credential{credential}
   {
     EnsureGlobalStateInitialized();
 
@@ -231,14 +259,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::_internal::AzureNoReturnPath("Connection is being destroyed while open.");
     }
     m_isClosing = true;
-
+#if ENABLE_UAMQP
     // If the connection is going away, we don't want to generate any more events on it.
     if (m_eventHandler)
     {
       m_eventHandler = nullptr;
     }
 
-#if ENABLE_UAMQP
     m_connection.reset();
 #endif
     lock.unlock();
@@ -291,6 +318,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
   }
 
+#if ENABLE_UAMQP
   void ConnectionImpl::Poll()
   {
     std::unique_lock<LockType> lock(m_amqpMutex);
@@ -309,6 +337,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
     }
   }
+#endif
 
   namespace {
 #if ENABLE_UAMQP
@@ -498,6 +527,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     EnableAsyncOperation(true);
   }
 
+#if ENABLE_UAMQP
   void ConnectionImpl::Listen()
   {
     Log::Stream(Logger::Level::Verbose)
@@ -512,6 +542,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     EnableAsyncOperation(true);
   }
+#endif
 
   void ConnectionImpl::Close(
       const std::string& condition,
