@@ -13,7 +13,7 @@ $versionFileLocation = Get-VersionHppLocation `
     -PackageName $PackageName
 
 if (!$versionFileLocation) {
-    LogWarning "Failed to retrieve package version for '$ServiceDirectory/$PackageName'. No version file found."
+    Write-Verbose "Didn't find a version file for '$ServiceDirectory/$PackageName', so assuming it is not a package."
     return $null
 }
 
