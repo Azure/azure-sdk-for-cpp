@@ -2,9 +2,9 @@
 
 ## 1.0.0-beta.11 (2024-09-12)
 
-### Other Changes
+### Bugs Fixed
 
-- Updated the internal AMQP implementation with the latest fixes and improvements.
+- Updated vendored copy of uAMQP to reflect upstream changes.
 
 ## 1.0.0-beta.10 (2024-06-06)
 
