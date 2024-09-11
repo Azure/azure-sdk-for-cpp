@@ -2,6 +2,8 @@
 
 ## 12.4.0 (2024-09-17)
 
+### Features Added
+
 - New features in `12.4.0-beta.1` are now generally available.
 
 ## 12.4.0-beta.1 (2024-08-07)
