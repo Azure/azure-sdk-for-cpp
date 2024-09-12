@@ -132,7 +132,6 @@ extends:
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
-    sdl.sbom.enabled, true
 
     stages:
       - stage: CMakeGeneration
