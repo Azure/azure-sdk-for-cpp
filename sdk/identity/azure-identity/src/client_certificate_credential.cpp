@@ -383,6 +383,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& clientCertificatePath,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
+    bool sendCertificateChain,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ClientCertificateCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
@@ -448,9 +449,16 @@ ClientCertificateCredential::ClientCertificateCredential(
     thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
   }
 
+  std::string x5cHeaderParam{};
+  if (sendCertificateChain)
+  {
+    x5cHeaderParam = ",\"x5c\":[";
+    x5cHeaderParam += "]";
+  }
+
   // Form a JWT token:
   const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str + "\",\"kid\":\""
-      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"" + x5cHeaderParam + "}";
 
   const auto tokenHeaderVec
       = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
@@ -469,6 +477,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         options.AuthorityHost,
         options.AdditionallyAllowedTenants,
+        options.SendCertificateChain,
         options)
 {
 }
@@ -484,6 +493,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         ClientCertificateCredentialOptions{}.AuthorityHost,
         ClientCertificateCredentialOptions{}.AdditionallyAllowedTenants,
+        false, // By default, we dont send the x5c property
         options)
 {
 }
