@@ -1,16 +1,10 @@
 # Release History
 
-## 1.0.0-beta.11 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.11 (2024-09-12)
 
 ### Bugs Fixed
 
 - Updated vendored copy of uAMQP to reflect upstream changes.
-
-### Other Changes
 
 ## 1.0.0-beta.10 (2024-06-06)
 

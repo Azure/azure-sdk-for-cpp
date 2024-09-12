@@ -1,6 +1,6 @@
 # Release History
 
-## 1.14.0-beta.2 (Unreleased)
+## 1.14.0-beta.2 (2024-09-12)
 
 ### Features Added
 
@@ -8,14 +8,10 @@
 - Added default constructor, `Parse()`, and equality comparison operators to `Azure::Core::Uuid`.
 - Added an `Azure::Core::ResourceIdentifier` type.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Throw `std::invalid_argument` if the value of `TimeFractionFormat` enum passed in to `DateTime::ToString()` is invalid.
 - `Azure::Core::Uuid::ToString()` is now `const`.
-
-### Other Changes
 
 ## 1.14.0-beta.1 (2024-08-01)
 
