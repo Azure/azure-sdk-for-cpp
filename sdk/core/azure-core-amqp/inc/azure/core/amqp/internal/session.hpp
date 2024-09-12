@@ -138,8 +138,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     MessageSender CreateMessageSender(
         Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options,
-        MessageSenderEvents* events) const;
+        MessageSenderOptions const& options
+#if ENABLE_UAMQP
+        ,
+        MessageSenderEvents* events = nullptr
+#endif
+    ) const;
 
     /** @brief Creates a MessageReceiver
      *
@@ -222,11 +226,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use by AMQP listeners.
      *
      */
+#if ENABLE_UAMQP
     MessageSender CreateMessageSender(
         LinkEndpoint& endpoint,
         Models::_internal::MessageTarget const& target,
         MessageSenderOptions const& options,
-        MessageSenderEvents* events) const;
+        MessageSenderEvents* events = nullptr) const;
+#endif
 
     /** @brief Creates a MessageReceiver for use in a message listener.
      *

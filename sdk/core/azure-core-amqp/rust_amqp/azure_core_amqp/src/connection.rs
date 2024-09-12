@@ -31,6 +31,34 @@ impl AmqpConnectionOptions {
     pub fn builder() -> builders::AmqpConnectionOptionsBuilder {
         builders::AmqpConnectionOptionsBuilder::new()
     }
+
+    pub fn max_frame_size(&self) -> Option<u32> {
+        self.max_frame_size
+    }
+    pub fn channel_max(&self) -> Option<u16> {
+        self.channel_max
+    }
+    pub fn idle_timeout(&self) -> Option<Duration> {
+        self.idle_timeout
+    }
+    pub fn outgoing_locales(&self) -> Option<Vec<String>> {
+        self.outgoing_locales.clone()
+    }
+    pub fn incoming_locales(&self) -> Option<Vec<String>> {
+        self.incoming_locales.clone()
+    }
+    pub fn offered_capabilities(&self) -> Option<Vec<AmqpSymbol>> {
+        self.offered_capabilities.clone()
+    }
+    pub fn desired_capabilities(&self) -> Option<Vec<AmqpSymbol>> {
+        self.desired_capabilities.clone()
+    }
+    pub fn properties(&self) -> Option<AmqpOrderedMap<AmqpSymbol, AmqpValue>> {
+        self.properties.clone()
+    }
+    pub fn buffer_size(&self) -> Option<usize> {
+        self.buffer_size
+    }
 }
 
 pub trait AmqpConnectionApis {
@@ -41,6 +69,12 @@ pub trait AmqpConnectionApis {
         options: Option<AmqpConnectionOptions>,
     ) -> impl std::future::Future<Output = Result<()>>;
     fn close(&self) -> impl std::future::Future<Output = Result<()>>;
+    fn close_with_error(
+        &self,
+        condition: impl Into<AmqpSymbol>,
+        description: Option<String>,
+        info: Option<AmqpOrderedMap<AmqpSymbol, AmqpValue>>,
+    ) -> impl std::future::Future<Output = Result<()>>;
 }
 
 #[derive(Debug, Default)]
@@ -59,6 +93,15 @@ impl AmqpConnectionApis for AmqpConnection {
     }
     fn close(&self) -> impl std::future::Future<Output = Result<()>> {
         self.implementation.close()
+    }
+    fn close_with_error(
+        &self,
+        condition: impl Into<AmqpSymbol>,
+        description: Option<String>,
+        info: Option<AmqpOrderedMap<AmqpSymbol, AmqpValue>>,
+    ) -> impl std::future::Future<Output = Result<()>> {
+        self.implementation
+            .close_with_error(condition, description, info)
     }
 }
 

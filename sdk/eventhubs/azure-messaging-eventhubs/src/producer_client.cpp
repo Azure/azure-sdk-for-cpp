@@ -181,7 +181,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
 
       Azure::Core::Amqp::_internal::MessageSender sender
-          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions, nullptr);
+          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions);
       auto openResult{sender.Open(context)};
       if (openResult)
       {

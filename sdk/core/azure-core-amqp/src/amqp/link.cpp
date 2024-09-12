@@ -20,6 +20,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(_azure_TESTING_BUILD)
 
+#if ENABLE_UAMQP
   class LinkImplEventsImpl : public LinkImplEvents {
   public:
     LinkImplEventsImpl(LinkEvents* linkEvents) : m_linkEvents(linkEvents) {}
@@ -57,25 +58,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     LinkEvents* m_linkEvents;
   };
+#endif // ENABLE_UAMQP
 
   Link::Link(
       _internal::Session const& session,
       std::string const& name,
       Azure::Core::Amqp::_internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target,
-      LinkEvents* linkEvents)
-      : m_implEvents{std::make_shared<LinkImplEventsImpl>(linkEvents)},
-        m_impl{std::make_shared<LinkImpl>(
-            SessionFactory::GetImpl(session),
-            name,
-            role,
-            source,
-            target,
-            m_implEvents.get())}
+      Models::_internal::MessageTarget const& target
+#if ENABLE_UAMQP
+      ,
+      LinkEvents* linkEvents
+#endif
+      )
+      :
+#if ENABLE_UAMQP
+        m_implEvents{std::make_shared<LinkImplEventsImpl>(linkEvents)},
+#endif
+        m_impl
+  {
+    std::make_shared<LinkImpl>(
+        SessionFactory::GetImpl(session),
+        name,
+        role,
+        source,
+        target
+#if ENABLE_UAMQP
+        ,
+        m_implEvents.get()
+#endif
+    )
+  }
   {
   }
-
+#if ENABLE_UAMQP
   Link::Link(
       _internal::Session const& session,
       _internal::LinkEndpoint& linkEndpoint,
@@ -95,6 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             m_implEvents.get())}
   {
   }
+#endif
 
   Link::~Link() noexcept {}
 
@@ -149,11 +166,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   std::string Link::GetName() const { return m_impl->GetName(); }
 
   uint32_t Link::GetReceivedMessageId() const { return m_impl->GetReceivedMessageId(); }
-
   void Link::Attach()
   {
+#if ENABLE_UAMQP
     Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(
         m_impl);
+#endif
     return m_impl->Attach();
   }
 
@@ -171,8 +189,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpValue const& info)
   {
     m_impl->Detach(close, errorCondition, errorDescription, info);
+#if ENABLE_UAMQP
     Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
         m_impl);
+#endif
   }
 #endif // _azure_TESTING_BUILD
 
@@ -233,9 +253,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& name,
       _internal::SessionRole role,
       Models::_internal::MessageSource const& source,
-      Models::_internal::MessageTarget const& target,
-      LinkImplEvents* events)
-      : m_session{session}, m_source(source), m_target(target), m_eventHandler{events}
+      Models::_internal::MessageTarget const& target
+#if ENABLE_UAMQP
+      ,
+      LinkImplEvents* events
+#endif
+      )
+      : m_session{session}, m_source(source), m_target(target)
+#if ENABLE_UAMQP
+        ,
+        m_eventHandler
+  {
+    events
+  }
+#endif
   {
     Models::AmqpValue sourceValue{source.AsAmqpValue()};
     Models::AmqpValue targetValue(target.AsAmqpValue());
@@ -256,6 +287,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
   }
 
+#if ENABLE_UAMQP
   LinkImpl::LinkImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       _internal::LinkEndpoint& linkEndpoint,
@@ -269,7 +301,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Models::AmqpValue sourceValue(source.AsAmqpValue());
     Models::AmqpValue targetValue(target.AsAmqpValue());
     auto connectionLock{m_session->GetConnection()->Lock()};
-#if ENABLE_UAMQP
     m_link = link_create_from_endpoint(
         *session,
         LinkEndpointFactory::Release(linkEndpoint),
@@ -277,13 +308,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         role == _internal::SessionRole::Sender ? role_sender : role_receiver,
         Models::_detail::AmqpValueFactory::ToImplementation(sourceValue),
         Models::_detail::AmqpValueFactory::ToImplementation(targetValue));
-#else
-    (void)linkEndpoint;
-    (void)name;
-    (void)role;
-
-#endif
   }
+#endif
 
   LinkImpl::~LinkImpl() noexcept
   {
@@ -536,28 +562,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
   }
 
+#if ENABLE_UAMQP
   void LinkImpl::SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetach)
   {
-#if ENABLE_UAMQP
     m_onLinkDetachEvent = std::move(onLinkDetach);
     m_linkSubscriptionHandle
         = link_subscribe_on_link_detach_received(m_link, OnLinkDetachEventFn, this);
-#else
-    (void)onLinkDetach;
-#endif
   }
 
   void LinkImpl::UnsubscribeFromDetachEvent()
   {
-#if ENABLE_UAMQP
     if (m_linkSubscriptionHandle != nullptr)
     {
       link_unsubscribe_on_link_detach_received(m_linkSubscriptionHandle);
       m_linkSubscriptionHandle = nullptr;
     }
-#endif
   }
-#if ENABLE_UAMQP
   void LinkImpl::OnLinkDetachEventFn(void* context, ERROR_HANDLE error)
   {
     LinkImpl* link = static_cast<LinkImpl*>(context);
@@ -629,14 +649,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 #endif
 
+#if ENABLE_UAMQP
   void LinkImpl::Poll()
   {
-#if ENABLE_UAMQP
     // Ensure that the connection hierarchy's state is not modified while polling on the link.
     auto lock{m_session->GetConnection()->Lock()};
     link_dowork(m_link);
-#endif
   }
+#endif
 
   void LinkImpl::ResetLinkCredit(std::uint32_t linkCredit, bool drain)
   {
@@ -661,9 +681,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error("Could not set attach properties.");
       }
     }
-#endif
     // Mark the connection as async so that we can use the async APIs.
     m_session->GetConnection()->EnableAsyncOperation(true);
+#endif
   }
   void LinkImpl::Detach(
       bool close,
@@ -684,13 +704,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error("Could not set attach properties.");
       }
     }
+    m_session->GetConnection()->EnableAsyncOperation(false);
 #else
     (void)close;
     (void)condition;
     (void)description;
     (void)info;
 #endif
-    m_session->GetConnection()->EnableAsyncOperation(false);
   }
 
 #if ENABLE_UAMQP
@@ -791,5 +811,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     throw std::runtime_error("Not implemented.");
 #endif
   }
-
 }}}} // namespace Azure::Core::Amqp::_detail
