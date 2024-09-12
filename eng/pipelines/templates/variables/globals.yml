@@ -5,4 +5,3 @@ variables:
   ${{ if and(eq(variables['Build.Reason'],'PullRequest'), eq(variables['System.PullRequest.IsFork'], 'True')) }}:
     # Disable warning for tools that are disabled for forked builds
     GDN_SUPPRESS_FORKED_BUILD_WARNING: true
-    Package.EnableSBOMSigning: false
