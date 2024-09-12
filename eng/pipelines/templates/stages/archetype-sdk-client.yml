@@ -106,6 +106,9 @@ extends:
     settings:
       skipBuildTagsForGitHubPullRequests: true
     sdl:
+      ${{ if and(eq(variables['Build.Reason'],'PullRequest'), eq(variables['System.PullRequest.IsFork'], 'True')) }}:
+        sbom:
+          enabled: false
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt
@@ -129,6 +132,7 @@ extends:
       binskim:
         enabled: true
         scanOutputDirectoryOnly: true
+    sdl.sbom.enabled, true
 
     stages:
       - stage: CMakeGeneration
