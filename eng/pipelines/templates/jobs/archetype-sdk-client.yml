@@ -338,10 +338,15 @@ jobs:
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
             ArtifactName: packages
+            ${{ if and(eq(variables['Build.Reason'],'PullRequest'), eq(variables['System.PullRequest.IsFork'], 'True')) }}:
+              SbomEnabled: false
 
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/docs
             ArtifactName: docs
+            ${{ if and(eq(variables['Build.Reason'],'PullRequest'), eq(variables['System.PullRequest.IsFork'], 'True')) }}:
+              SbomEnabled: false
+
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
