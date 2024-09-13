@@ -102,13 +102,13 @@ jobs:
 
         - pwsh: |
             az login
-            az artifacts universal download
-            --organization https://dev.azure.com/azure-sdk/
-            --project="public"
-            --scope project
-            --feed azure-sdk-for-cpp
-            --name my-first-package
-            --version 0.0.1
+            az artifacts universal download `
+            --organization https://dev.azure.com/azure-sdk/ `
+            --project="public" `
+            --scope project `
+            --feed azure-sdk-for-cpp `
+            --name my-first-package `
+            --version 0.0.1 `
             --path .     
 
         # - task:  UniversalPackages@0
