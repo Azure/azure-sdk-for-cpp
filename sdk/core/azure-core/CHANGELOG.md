@@ -1,16 +1,27 @@
 # Release History
 
-## 1.14.0-beta.2 (Unreleased)
+## 1.14.0-beta.3 (Unreleased)
 
 ### Features Added
-
-- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.14.0-beta.2 (2024-09-12)
+
+### Features Added
+
+- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
+- Added default constructor, `Parse()`, and equality comparison operators to `Azure::Core::Uuid`.
+- Added an `Azure::Core::ResourceIdentifier` type.
+
+### Bugs Fixed
+
+- Throw `std::invalid_argument` if the value of `TimeFractionFormat` enum passed in to `DateTime::ToString()` is invalid.
+- `Azure::Core::Uuid::ToString()` is now `const`.
 
 ## 1.14.0-beta.1 (2024-08-01)
 

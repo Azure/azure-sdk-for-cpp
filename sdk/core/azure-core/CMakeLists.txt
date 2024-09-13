@@ -108,6 +108,7 @@ set(
     inc/azure/core/paged_response.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
+    inc/azure/core/resource_identifier.hpp
     inc/azure/core/rtti.hpp
     inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
