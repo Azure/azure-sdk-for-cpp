@@ -101,6 +101,7 @@ jobs:
         - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
         - pwsh: |
+            az login
             az artifacts universal download
             --organization https://dev.azure.com/azure-sdk/
             --project="public"
