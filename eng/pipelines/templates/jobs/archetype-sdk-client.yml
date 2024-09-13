@@ -100,15 +100,25 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
-        - task:  UniversalPackages@0
-          displayName: Download ApiView Parser.
-          inputs:
-            command: download
-            vstsFeed: 'public/azure-sdk-for-cpp'
-            vstsFeedPackage: 'parseazuresdkcpp'
-            downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-            vstsPackageVersion: 0.3.0
-          condition: succeeded()
+        - pwsh: |
+            az artifacts universal download
+            --organization https://dev.azure.com/azure-sdk/
+            --project="public"
+            --scope project
+            --feed azure-sdk-for-cpp
+            --name my-first-package
+            --version 0.0.1
+            --path .     
+
+        # - task:  UniversalPackages@0
+        #   displayName: Download ApiView Parser.
+        #   inputs:
+        #     command: download
+        #     vstsFeed: 'public/azure-sdk-for-cpp'
+        #     vstsFeedPackage: 'parseazuresdkcpp'
+        #     downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
+        #     vstsPackageVersion: 0.3.0
+        #   condition: succeeded()
 
         - task: Powershell@2
           inputs:
