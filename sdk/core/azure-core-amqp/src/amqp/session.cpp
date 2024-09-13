@@ -92,14 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       MessageSenderEvents* events) const
   {
     return _detail::MessageSenderFactory::CreateFromInternal(
-        std::make_shared<_detail::MessageSenderImpl>(
-            m_impl,
-            endpoint,
-            target,
-            options
-            ,
-            events
-            ));
+        std::make_shared<_detail::MessageSenderImpl>(m_impl, endpoint, target, options, events));
   }
 #endif
 
@@ -196,7 +189,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::ConnectionImpl> connection,
       _internal::SessionOptions const& options
 #if ENABLE_UAMQP
-      , _internal::SessionEvents* eventHandler
+      ,
+      _internal::SessionEvents* eventHandler
 #endif
       )
       : m_connectionToPoll(connection),
