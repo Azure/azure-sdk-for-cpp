@@ -64,6 +64,9 @@
 # PRLabel: %EngSys
 /sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter
 
+# ServiceLabel: %Operator Nexus - Network Cloud
+#/<NotInRepo>/           @Azure/azure-sdk-write-networkcloud
+
 ###########
 # Eng Sys
 ###########

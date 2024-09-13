@@ -1595,9 +1595,7 @@ CONNECTION_HANDLE connection_create2(XIO_HANDLE xio, const char* hostname, const
                                     {
                                         connection->last_frame_sent_time = connection->last_frame_received_time;
 
-                                        /* Codes_S_R_S_CONNECTION_01_072: [When connection_create
-                                         * succeeds, the state of the connection shall be
-                                         * CONNECTION_STATE_START.] */
+                                        /* Codes_S_R_S_CONNECTION_01_072: [When connection_create succeeds, the state of the connection shall be CONNECTION_STATE_START.] */
                                         connection_set_state(connection, CONNECTION_STATE_START);
                                     }
                                 }

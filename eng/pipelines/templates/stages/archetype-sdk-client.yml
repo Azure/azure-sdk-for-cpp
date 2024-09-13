@@ -106,10 +106,16 @@ extends:
     settings:
       skipBuildTagsForGitHubPullRequests: true
     sdl:
+      ${{ if and(eq(variables['Build.DefinitionName'], 'cpp - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
+        autobaseline:
+          isMainPipeline: true
+          enableForGitHub: true
       sourceAnalysisPool:
         name: azsdk-pool-mms-win-2022-general
         image: azsdk-pool-mms-win-2022-1espt
         os: windows
+      # Turn off the build warnings caused by disabling some sdl checks
+      createAdoIssuesForJustificationsForDisablement: false
       eslint:
         enabled: false
         justificationForDisabling: 'ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=3499746'
@@ -131,6 +137,7 @@ extends:
     stages:
       - stage: CMakeGeneration
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         jobs:
           - template: /eng/pipelines/templates/jobs/cmake-generate-jobs.yml@self
@@ -146,6 +153,7 @@ extends:
       # Integration can launch immediately without awaiting more build and test jobs
       - stage: PrePublishBuild
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:
@@ -170,6 +178,7 @@ extends:
 
       - stage: Build
         variables:
+          - template: /eng/pipelines/templates/variables/globals.yml@self
           - template: /eng/pipelines/templates/variables/image.yml@self
         dependsOn: []
         jobs:

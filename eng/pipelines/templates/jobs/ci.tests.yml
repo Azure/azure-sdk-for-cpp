@@ -162,7 +162,7 @@ jobs:
           echo Validate that the files in the repo contain only ASCII characters, saved as UTF-8, without a BOM at the start.
 
           # Run grep recursive excluding git folder and known expected files and save a file with results.
-          grep -I -P -n "[^\x00-\x7F]" -r --exclude-dir ".git" --exclude-dir ".github" --exclude-dir "vcpkg_installed" --exclude-dir "_deps" --exclude-dir "vendor" --exclude-dir "nlohmann-json-test" --exclude "grepResults" . > grepResults
+          grep -I -P -n "[^\x00-\x7F]" -r --exclude-dir ".git" --exclude-dir ".github" --exclude-dir "eng" --exclude-dir "vcpkg_installed" --exclude-dir "_deps" --exclude-dir "vendor" --exclude-dir "nlohmann-json-test" --exclude "grepResults" . > grepResults
           
           # Display results to console.
           cat grepResults
@@ -270,14 +270,13 @@ jobs:
           displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: PublishCodeCoverageResults@1
+        - task: PublishCodeCoverageResults@2
           inputs:
-            codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+        - task: BuildQualityChecks@9
           displayName: Check line coverage
           inputs:
             checkCoverage: true
@@ -287,15 +286,16 @@ jobs:
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
-          displayName: Check branch coverage
-          inputs:
-            checkCoverage: true
-            coverageFailOption: fixed
-            coverageType: branches
-            # Minimum baseline for branch coverage
-            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+#  Disabling branch coverage check until newer tasks can support it see issue https://github.com/microsoft/azure-pipelines-tasks/issues/19669 tracking that request.
+#        - task: BuildQualityChecks@9
+#          displayName: Check branch coverage
+#          inputs:
+#            checkCoverage: true
+#            coverageFailOption: fixed
+#            coverageType: branches
+#            # Minimum baseline for branch coverage
+#            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
+#          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       - task: Powershell@2
         inputs:
