@@ -77,11 +77,21 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
-std::string FindPemCertificateContent(std::string const& path)
+std::string FindPemCertificateContent(
+    std::string const& path,
+    std::vector<uint8_t> clientCertificate)
 {
-  auto pemContent{FileBodyStream(path).ReadToEnd()};
-  std::string pem{pemContent.begin(), pemContent.end()};
-  pemContent = {};
+  std::string pem{};
+  if (clientCertificate.empty())
+  {
+    auto pemContent{FileBodyStream(path).ReadToEnd()};
+    pem = std::string{pemContent.begin(), pemContent.end()};
+    pemContent = {};
+  }
+  else
+  {
+    pem = std::string{clientCertificate.begin(), clientCertificate.end()};
+  }
 
   const std::string beginHeader = std::string("-----BEGIN CERTIFICATE-----");
   auto headerStart = pem.find(beginHeader);
@@ -113,7 +123,11 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
-std::string GetJwtToken(CertificateThumbprint mdVec, bool sendCertificateChain)
+std::string GetJwtToken(
+    CertificateThumbprint mdVec,
+    bool sendCertificateChain,
+    std::string const& clientCertificatePath,
+    std::vector<uint8_t> clientCertificate = {})
 {
   std::string thumbprintHexStr;
   std::string thumbprintBase64Str;
@@ -138,7 +152,7 @@ std::string GetJwtToken(CertificateThumbprint mdVec, bool sendCertificateChain)
     // Since there is only one base64 encoded cert string, it can be written as a JSON string rather
     // than a JSON array of strings.
     x5cHeaderParam = ",\"x5c\":\"";
-    std::string certContent = FindPemCertificateContent(clientCertificatePath);
+    std::string certContent = FindPemCertificateContent(clientCertificatePath, clientCertificate);
     x5cHeaderParam += certContent;
     x5cHeaderParam += "\"";
   }
@@ -572,7 +586,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         std::string("Identity: ClientCertificateCredential: ") + e.what());
   }
 
-  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain);
+  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain, clientCertificatePath);
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
@@ -610,7 +624,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         std::string("Identity: ClientCertificateCredential: ") + e.what());
   }
 
-  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain);
+  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain, {}, clientCertificate);
 }
 
 ClientCertificateCredential::ClientCertificateCredential(

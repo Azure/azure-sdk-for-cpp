@@ -47,6 +47,45 @@ class GetCredentialName : public ::testing::TestWithParam<CertFormat> {
   TempCertFile m_certFile{GetParam()};
 };
 
+class GetTokenFromCertInMemory : public ::testing::TestWithParam<bool> {
+public:
+  bool GetSendCertChain() { return GetParam(); }
+
+  std::string GetHeader()
+  {
+    // cspell:disable
+    std::string x5t = "\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\"";
+    std::string kid = "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\"";
+    std::string x5c
+        = "\"MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+"
+          "XRkzANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYw"
+          "NloYDzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MIIBIjANBgkqhkiG9w"
+          "0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gU"
+          "GEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/"
+          "QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/"
+          "0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/"
+          "IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/"
+          "0fWeD87bmqP6m0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFB"
+          "wMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0OBBYEFCoJ5tInmafyNuR0tGxZOz522jl"
+          "WMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpwXmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfB"
+          "Keln0dEcfYiJyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/Em96sm/"
+          "NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+"
+          "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
+          "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
+          "6O\"";
+    // cspell:enable
+
+    if (GetSendCertChain())
+    {
+      return "{\"x5t\":" + x5t + ",\"kid\":" + kid
+          + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
+            "\"x5c\":"
+          + x5c + "}";
+    }
+    return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+  }
+};
+
 class GetToken : public ::testing::TestWithParam<std::tuple<TestType, CertFormat, bool>> {
 public:
   TestType GetTestType() { return std::get<0>(GetParam()); }
@@ -129,6 +168,7 @@ public:
           "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
           "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
           "6O\"";
+    // cspell:enable
 
     if (GetSendCertChain())
     {
@@ -269,12 +309,13 @@ TEST(ClientCertificateCredential, GetOptionsFromEnvironment)
   }
 }
 
-TEST(ClientCertificateCredential, GetTokenFromCertInMemory)
+TEST_P(GetTokenFromCertInMemory, )
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
       [this](auto transport) {
         ClientCertificateCredentialOptions options;
         options.Transport.Transport = transport;
+        options.SendCertificateChain = GetSendCertChain();
 
         std::vector<uint8_t> pkey{
             48,  130, 4,   164, 2,   1,   0,   2,   130, 1,   1,   0,   207, 118, 110, 41,  186,
@@ -406,19 +447,20 @@ TEST(ClientCertificateCredential, GetTokenFromCertInMemory)
       "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
 
   {
+    // cspell:disable
     std::string expectedStr1
         = "grant_type=client_credentials"
           "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-"
           "bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
           "&scope=https%3A%2F%2Fazure.com%2F.default"
-          "&client_assertion="; // cspell:enable
+          "&client_assertion=";
 
     std::string expectedStr2
         = "grant_type=client_credentials"
           "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
           "&client_id=fedcba98-7654-3210-0123-456789abcdef"
-          "&client_assertion=";
+          "&client_assertion="; // cspell:enable
 
     auto expectedBodyStart0 = expectedStr1;
     auto expectedBodyStart1 = expectedStr2;
@@ -466,9 +508,7 @@ TEST(ClientCertificateCredential, GetTokenFromCertInMemory)
       const auto payload0 = ToString(payload0Vec);
       const auto payload1 = ToString(payload1Vec);
 
-      std::string ExpectedHeader
-          = "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
-            "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+      std::string ExpectedHeader = GetHeader();
 
       EXPECT_EQ(header0, ExpectedHeader);
       EXPECT_EQ(header1, ExpectedHeader);
@@ -623,6 +663,11 @@ INSTANTIATE_TEST_SUITE_P(
     ClientCertificateCredential,
     GetCredentialName,
     testing::Values(RsaPkcs, RsaRaw));
+
+INSTANTIATE_TEST_SUITE_P(
+    ClientCertificateCredential,
+    GetTokenFromCertInMemory,
+    testing::Values(true, false));
 
 INSTANTIATE_TEST_SUITE_P(
     ClientCertificateCredential,
