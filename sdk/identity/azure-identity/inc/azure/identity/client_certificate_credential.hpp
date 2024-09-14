@@ -145,7 +145,6 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath Client certificate path.
      * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
      * exactly one certificate which is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
