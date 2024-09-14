@@ -21,7 +21,7 @@ enum CertFormat
 {
   RsaPkcs,
   RsaRaw,
-  RsaRawCertChain
+  RsaRawReverse
 };
 
 enum TestType
@@ -109,21 +109,59 @@ public:
 
   std::string GetHeader()
   {
+    // cspell:disable
     std::string x5t = "\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\"";
     std::string kid = "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\"";
-    if (GetCertFormat() == RsaRawCertChain)
+    std::string x5c
+        = "\"MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+"
+          "XRkzANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYw"
+          "NloYDzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MIIBIjANBgkqhkiG9w"
+          "0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gU"
+          "GEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/"
+          "QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/"
+          "0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/"
+          "IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/"
+          "0fWeD87bmqP6m0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFB"
+          "wMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0OBBYEFCoJ5tInmafyNuR0tGxZOz522jl"
+          "WMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpwXmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfB"
+          "Keln0dEcfYiJyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/Em96sm/"
+          "NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+"
+          "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
+          "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
+          "6O\"";
+    if (GetCertFormat() == RsaRawReverse)
     {
       x5t = "\"p9oEWkxGpqXnMIswfxzUPBnwMdY\"";
       kid = "\"A7DA045A4C46A6A5E7308B307F1CD43C19F031D6\"";
+      x5c = "\"MIID7zCCAdcCAQEwDQYJKoZIhvcNAQEFBQAwPjELMAkGA1UEBhMCVVMxDDAKBgNVBAoMA3h5ejEMMAoGA1UE"
+            "CwwDYWJjMRMwEQYDVQQDDApJTlRFUklNLUNOMCAXDTIwMDgyMTE3MTA0M1oYDzMzODkwODA0MTcxMDQzWjA7MQ"
+            "swCQYDVQQGEwJVUzEMMAoGA1UECgwDeHl6MQwwCgYDVQQLDANhYmMxEDAOBgNVBAMMB1VTRVItQ04wggEiMA0G"
+            "CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC6eQYdbIFhsinob3t3AV4yEH/tz/"
+            "LVI+UAGLpxQnqGnuAV5GY3CXiAO8GZjx7y3oA1DGfe+/"
+            "cc6n9BmYWXsKvxpKO8PQkBPYIFtD878uDNv7kVoZG8EVsEngBxd4efMniKWwKtMle0hZ+"
+            "jj3u4Ad49DsXcC0L28uV/eQ6hzsQiR0nTQJ/"
+            "4QqNNtThSGAFSr7Oo8xzxBNTJhe+"
+            "BvwDE8JMkCS0v22JWmy2GYrRKw4RlSKxwv9QZr83gSicKSUPUACBYfJ7RuXSQOHOMlIcC4oGtDrMshGzr704Ho"
+            "+DiByYf5G6nkfZ1I7T039gEKKIllNKWqhyQHejKba3nP163ZKI3AgMBAAEwDQYJKoZIhvcNAQEFBQADggIBADf"
+            "itSfjlYa2inBKlpWN8VT0DPm5uw8EHuwLymCMWYrQMCuQVE2xYoqCSmXj6KLFt8ycgxHsthdkAzXxDhawaKjz2"
+            "UFp6nszmUA4xfvSmxLSajwzK/KMBkjdFL7TM+TTBJ1bleDbmoJvDiUeQwisbb1Uh8b3v/"
+            "jpBwoiamm8Y4Ca5A15SeBUvAt0/Mc4XJfZ/"
+            "Ts+LBAPevI9ZyU7C5JZky1q41KPklEHfFZKQRfPcTyTYYvlPoq57C8XPDs6r50EV3B6Z8MN21OB6MVGi8BOY/"
+            "c7a2h1ZOhxNyBnJuQXw4meJthoKcHUnAs8YCrEoQKayMqPH0Vdhaii/"
+            "gx4jAgh4PNyIZz5cAst+ybPtQj4i7LFEWjxis+"
+            "NLQMHhyE4fIGIkEjzU0uGDugifheIwKALqYEgMDrcoolwvGMdPxGoQps7tkad5vZV9d9+tTbI+DMB16Y51S04/"
+            "u1dGFz3jSrDVF08PznJc99VB69OReiCK17n8Xyox/"
+            "VAaYsRFbOAJpLRWwcnotDpFQbgiLrmXxNOoiWPNbQsQzaQx7cR9okQv5RTpFAkrdjadhMsXFFiQh+"
+            "axlaGD368ZGAj5ZoyOiXkV88tNCtyP/RDgW5ftQQ7fdv05bNXhDfLgEgQvVSDfClDL1hKukLmLQS3ILfB4FlM/"
+            "XmE+FW/qgo9aSx2XIbxE4ie\"";
     }
     if (GetSendCertChain())
     {
-      // cspell:disable
       return "{\"x5t\":" + x5t + ",\"kid\":" + kid
           + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
-            "\"x5c\":[]}";
+            "\"x5c\":"
+          + x5c + "}";
     }
-    // cspell:disable
     return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
 
@@ -381,7 +419,7 @@ INSTANTIATE_TEST_SUITE_P(
     GetToken,
     testing::Combine(
         testing::Values(Regular, AzureStack, Authority),
-        testing::Values(RsaPkcs, RsaRaw, RsaRawCertChain),
+        testing::Values(RsaPkcs, RsaRaw, RsaRawReverse),
         testing::Values(true, false)));
 
 namespace {
@@ -511,8 +549,32 @@ TempCertFile::TempCertFile(CertFormat format)
   // cspell:enable
   // Borrowed from
   // https://github.com/Azure/azure-sdk-for-go/blob/139b3a3e151f6452a7c2714b0ebeb835036b1a06/sdk/azidentity/testdata/certificate-with-chain.pem#L1
-  else if (format == RsaRawCertChain)
+  else if (format == RsaRawReverse)
     cert << // cspell:disable
+        "-----BEGIN CERTIFICATE-----\n"
+        "MIID7zCCAdcCAQEwDQYJKoZIhvcNAQEFBQAwPjELMAkGA1UEBhMCVVMxDDAKBgNV\n"
+        "BAoMA3h5ejEMMAoGA1UECwwDYWJjMRMwEQYDVQQDDApJTlRFUklNLUNOMCAXDTIw\n"
+        "MDgyMTE3MTA0M1oYDzMzODkwODA0MTcxMDQzWjA7MQswCQYDVQQGEwJVUzEMMAoG\n"
+        "A1UECgwDeHl6MQwwCgYDVQQLDANhYmMxEDAOBgNVBAMMB1VTRVItQ04wggEiMA0G\n"
+        "CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC6eQYdbIFhsinob3t3AV4yEH/tz/LV\n"
+        "I+UAGLpxQnqGnuAV5GY3CXiAO8GZjx7y3oA1DGfe+/cc6n9BmYWXsKvxpKO8PQkB\n"
+        "PYIFtD878uDNv7kVoZG8EVsEngBxd4efMniKWwKtMle0hZ+jj3u4Ad49DsXcC0L2\n"
+        "8uV/eQ6hzsQiR0nTQJ/4QqNNtThSGAFSr7Oo8xzxBNTJhe+BvwDE8JMkCS0v22JW\n"
+        "my2GYrRKw4RlSKxwv9QZr83gSicKSUPUACBYfJ7RuXSQOHOMlIcC4oGtDrMshGzr\n"
+        "704Ho+DiByYf5G6nkfZ1I7T039gEKKIllNKWqhyQHejKba3nP163ZKI3AgMBAAEw\n"
+        "DQYJKoZIhvcNAQEFBQADggIBADfitSfjlYa2inBKlpWN8VT0DPm5uw8EHuwLymCM\n"
+        "WYrQMCuQVE2xYoqCSmXj6KLFt8ycgxHsthdkAzXxDhawaKjz2UFp6nszmUA4xfvS\n"
+        "mxLSajwzK/KMBkjdFL7TM+TTBJ1bleDbmoJvDiUeQwisbb1Uh8b3v/jpBwoiamm8\n"
+        "Y4Ca5A15SeBUvAt0/Mc4XJfZ/Ts+LBAPevI9ZyU7C5JZky1q41KPklEHfFZKQRfP\n"
+        "cTyTYYvlPoq57C8XPDs6r50EV3B6Z8MN21OB6MVGi8BOY/c7a2h1ZOhxNyBnJuQX\n"
+        "w4meJthoKcHUnAs8YCrEoQKayMqPH0Vdhaii/gx4jAgh4PNyIZz5cAst+ybPtQj4\n"
+        "i7LFEWjxis+NLQMHhyE4fIGIkEjzU0uGDugifheIwKALqYEgMDrcoolwvGMdPxGo\n"
+        "Qps7tkad5vZV9d9+tTbI+DMB16Y51S04/u1dGFz3jSrDVF08PznJc99VB69OReiC\n"
+        "K17n8Xyox/VAaYsRFbOAJpLRWwcnotDpFQbgiLrmXxNOoiWPNbQsQzaQx7cR9okQ\n"
+        "v5RTpFAkrdjadhMsXFFiQh+axlaGD368ZGAj5ZoyOiXkV88tNCtyP/RDgW5ftQQ7\n"
+        "fdv05bNXhDfLgEgQvVSDfClDL1hKukLmLQS3ILfB4FlM/XmE+FW/qgo9aSx2XIbx\n"
+        "E4ie\n"
+        "-----END CERTIFICATE-----\n"
         "-----BEGIN RSA PRIVATE KEY-----\n"
         "MIIEowIBAAKCAQEAunkGHWyBYbIp6G97dwFeMhB/7c/y1SPlABi6cUJ6hp7gFeRm\n"
         "Nwl4gDvBmY8e8t6ANQxn3vv3HOp/QZmFl7Cr8aSjvD0JAT2CBbQ/O/Lgzb+5FaGR\n"
@@ -539,61 +601,7 @@ TempCertFile::TempCertFile(CertFormat format)
         "QzzWpwKBgHzszJ5s6vcWElox4Yc1elQ8xniPpo3RtfXZOLX8xA4eR9yQawah1zd6\n"
         "ChfeYbHVfq007s+RWGTb+KYQ6ic9nkW464qmVxHGBatUo9+MR4Gk8blANoAfHxdV\n"
         "g6JNgT2kIGu9IEwoD6XQldC/v24bvFSesyGRHNdI4mUG+hhU4aNw\n"
-        "-----END RSA PRIVATE KEY-----\n"
-        "-----BEGIN CERTIFICATE-----\n"
-        "MIID7zCCAdcCAQEwDQYJKoZIhvcNAQEFBQAwPjELMAkGA1UEBhMCVVMxDDAKBgNV\n"
-        "BAoMA3h5ejEMMAoGA1UECwwDYWJjMRMwEQYDVQQDDApJTlRFUklNLUNOMCAXDTIw\n"
-        "MDgyMTE3MTA0M1oYDzMzODkwODA0MTcxMDQzWjA7MQswCQYDVQQGEwJVUzEMMAoG\n"
-        "A1UECgwDeHl6MQwwCgYDVQQLDANhYmMxEDAOBgNVBAMMB1VTRVItQ04wggEiMA0G\n"
-        "CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC6eQYdbIFhsinob3t3AV4yEH/tz/LV\n"
-        "I+UAGLpxQnqGnuAV5GY3CXiAO8GZjx7y3oA1DGfe+/cc6n9BmYWXsKvxpKO8PQkB\n"
-        "PYIFtD878uDNv7kVoZG8EVsEngBxd4efMniKWwKtMle0hZ+jj3u4Ad49DsXcC0L2\n"
-        "8uV/eQ6hzsQiR0nTQJ/4QqNNtThSGAFSr7Oo8xzxBNTJhe+BvwDE8JMkCS0v22JW\n"
-        "my2GYrRKw4RlSKxwv9QZr83gSicKSUPUACBYfJ7RuXSQOHOMlIcC4oGtDrMshGzr\n"
-        "704Ho+DiByYf5G6nkfZ1I7T039gEKKIllNKWqhyQHejKba3nP163ZKI3AgMBAAEw\n"
-        "DQYJKoZIhvcNAQEFBQADggIBADfitSfjlYa2inBKlpWN8VT0DPm5uw8EHuwLymCM\n"
-        "WYrQMCuQVE2xYoqCSmXj6KLFt8ycgxHsthdkAzXxDhawaKjz2UFp6nszmUA4xfvS\n"
-        "mxLSajwzK/KMBkjdFL7TM+TTBJ1bleDbmoJvDiUeQwisbb1Uh8b3v/jpBwoiamm8\n"
-        "Y4Ca5A15SeBUvAt0/Mc4XJfZ/Ts+LBAPevI9ZyU7C5JZky1q41KPklEHfFZKQRfP\n"
-        "cTyTYYvlPoq57C8XPDs6r50EV3B6Z8MN21OB6MVGi8BOY/c7a2h1ZOhxNyBnJuQX\n"
-        "w4meJthoKcHUnAs8YCrEoQKayMqPH0Vdhaii/gx4jAgh4PNyIZz5cAst+ybPtQj4\n"
-        "i7LFEWjxis+NLQMHhyE4fIGIkEjzU0uGDugifheIwKALqYEgMDrcoolwvGMdPxGo\n"
-        "Qps7tkad5vZV9d9+tTbI+DMB16Y51S04/u1dGFz3jSrDVF08PznJc99VB69OReiC\n"
-        "K17n8Xyox/VAaYsRFbOAJpLRWwcnotDpFQbgiLrmXxNOoiWPNbQsQzaQx7cR9okQ\n"
-        "v5RTpFAkrdjadhMsXFFiQh+axlaGD368ZGAj5ZoyOiXkV88tNCtyP/RDgW5ftQQ7\n"
-        "fdv05bNXhDfLgEgQvVSDfClDL1hKukLmLQS3ILfB4FlM/XmE+FW/qgo9aSx2XIbx\n"
-        "E4ie\n"
-        "-----END CERTIFICATE-----\n"
-        "-----BEGIN CERTIFICATE-----\n"
-        "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\n"
-        "wOnOIqg0ZZcqfvpxXA==\n"
-        "-----END CERTIFICATE-----";
+        "-----END RSA PRIVATE KEY-----\n";
   // cspell:enable
 }
 
