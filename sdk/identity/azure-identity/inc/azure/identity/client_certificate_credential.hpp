@@ -139,7 +139,7 @@ namespace Azure { namespace Identity {
         std::string const& clientId,
         std::vector<uint8_t> clientCertificate,
         std::vector<uint8_t> privateKey,
-        ClientCertificateCredentialOptions const& options);
+        ClientCertificateCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Client Certificate Credential.
