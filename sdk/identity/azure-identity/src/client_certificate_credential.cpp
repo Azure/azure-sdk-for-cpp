@@ -610,7 +610,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         std::string("Identity: ClientCertificateCredential: ") + e.what());
   }
 
-  m_tokenHeaderEncoded = GetJwtToken(mdVec);
+  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain);
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
