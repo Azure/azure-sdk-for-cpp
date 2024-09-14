@@ -108,7 +108,7 @@ namespace Azure { namespace Identity {
 
   public:
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -124,7 +124,7 @@ namespace Azure { namespace Identity {
         = Core::Credentials::TokenCredentialOptions());
 
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -142,7 +142,7 @@ namespace Azure { namespace Identity {
         ClientCertificateCredentialOptions const& options);
 
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
