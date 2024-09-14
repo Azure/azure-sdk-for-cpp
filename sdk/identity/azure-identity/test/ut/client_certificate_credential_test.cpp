@@ -457,6 +457,7 @@ TEST(ClientCertificateCredential, InvalidContentInFile)
         Azure::Core::Credentials::AuthenticationException);
   }
 
+  // cspell:disable
   std::string invalidContents[]
       = {"a",
          "-----BEGIN CERTIFICATE-----\na",
@@ -467,6 +468,7 @@ TEST(ClientCertificateCredential, InvalidContentInFile)
          "PRIVATE KEY-----\n-----BEGIN "
          "CERTIFICATE-----\nMIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n----"
          "-END CERTIFICATE-----"};
+  // cspell:enable
 
   for (std::string invalidContent : invalidContents)
   {
@@ -511,6 +513,7 @@ TEST(ClientCertificateCredential, InvalidContentInMemory)
           {}),
       Azure::Core::Credentials::AuthenticationException);
 
+  // cspell:disable
   std::string invalidContents[]
       = {"a",
          "-----BEGIN CERTIFICATE-----\na",
@@ -522,6 +525,7 @@ TEST(ClientCertificateCredential, InvalidContentInMemory)
          "PRIVATE KEY-----\n-----BEGIN "
          "CERTIFICATE-----\nMIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n----"
          "-END CERTIFICATE-----"};
+  // cspell:enable
 
   std::vector<uint8_t> validCert(ExampleValidCertString.begin(), ExampleValidCertString.end());
 
