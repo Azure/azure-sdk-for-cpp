@@ -258,10 +258,12 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
 
   try
   {
+    // cspell:disable
     ClientCertificateCredential const cred(
         "01234567-89ab-cdef-fedc-ba8976543210",
         "fedcba98-7654-3210-0123-456789abcdef",
         "noextension");
+    // cspell:enable
 
     EXPECT_TRUE(!"ClientCertificateCredential without an extension is supposed to throw.");
   }

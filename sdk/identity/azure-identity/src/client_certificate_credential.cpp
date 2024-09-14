@@ -437,13 +437,13 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
   UniqueHandle<BIO> bioKey(BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size())));
   if (!bioKey)
   {
-    throw AuthenticationException("Failed to create BIO for the private key.");
+    throw AuthenticationException("Failed to create BIO for the binary private key.");
   }
 
-  UniquePrivateKey pkey{PEM_read_bio_PrivateKey(bioKey.get(), nullptr, nullptr, nullptr)};
+  UniquePrivateKey pkey{d2i_PrivateKey_bio(bioKey.get(), nullptr)};
   if (!pkey)
   {
-    throw AuthenticationException("Failed to read certificate private key.");
+    throw AuthenticationException("Failed to read the binary private key for the certificate.");
   }
 
   // Create a BIO from the client certificate vector data in memory.
