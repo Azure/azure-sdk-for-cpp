@@ -103,6 +103,7 @@ namespace Azure { namespace Identity {
         std::vector<uint8_t> privateKey,
         std::string const& authorityHost,
         std::vector<std::string> additionallyAllowedTenants,
+        bool sendCertificateChain,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:

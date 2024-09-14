@@ -113,7 +113,7 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
-std::string GetJwtToken(CertificateThumbprint mdVec)
+std::string GetJwtToken(CertificateThumbprint mdVec, bool sendCertificateChain)
 {
   std::string thumbprintHexStr;
   std::string thumbprintBase64Str;
@@ -572,7 +572,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         std::string("Identity: ClientCertificateCredential: ") + e.what());
   }
 
-  m_tokenHeaderEncoded = GetJwtToken(mdVec);
+  m_tokenHeaderEncoded = GetJwtToken(mdVec, sendCertificateChain);
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
@@ -582,6 +582,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::vector<uint8_t> privateKey,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
+    bool sendCertificateChain,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ClientCertificateCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
@@ -657,6 +658,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         privateKey,
         options.AuthorityHost,
         options.AdditionallyAllowedTenants,
+        options.SendCertificateChain,
         options)
 {
 }
