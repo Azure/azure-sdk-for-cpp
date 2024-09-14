@@ -529,7 +529,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         ClientCertificateCredentialOptions{}.AuthorityHost,
         ClientCertificateCredentialOptions{}.AdditionallyAllowedTenants,
-        false, // By default, we dont send the x5c property
+        false, // By default, we don't send the x5c property
         options)
 {
 }
