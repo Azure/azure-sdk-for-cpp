@@ -474,7 +474,7 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std
   UniqueHandle<BIO> bio(BIO_new_file(path.c_str(), "r"));
   if (!bio)
   {
-    throw AuthenticationException("Failed to open certificate file.");
+    throw AuthenticationException("Failed to open file for reading. File name: '" + path + "'");
   }
 
   UniquePrivateKey pkey{PEM_read_bio_PrivateKey(bio.get(), nullptr, nullptr, nullptr)};
