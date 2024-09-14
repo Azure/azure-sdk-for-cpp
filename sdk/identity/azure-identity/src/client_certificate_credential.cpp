@@ -77,7 +77,7 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
-static std::string FindPemCertitificateContent(std::string const& path)
+std::string FindPemCertificateContent(std::string const& path)
 {
   auto pemContent{FileBodyStream(path).ReadToEnd()};
   std::string pem{pemContent.begin(), pemContent.end()};
@@ -487,7 +487,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     // Since there is only one base64 encoded cert string, it can be written as a JSON string rather
     // than a JSON array of strings.
     x5cHeaderParam = ",\"x5c\":\"";
-    std::string certContent = FindPemCertitificateContent(clientCertificatePath);
+    std::string certContent = FindPemCertificateContent(clientCertificatePath);
     x5cHeaderParam += certContent;
     x5cHeaderParam += "\"";
   }
