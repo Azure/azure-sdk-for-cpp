@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added support for providing an object ID to `ManagedIdentityCredential`.
+- Added support for sending an x5c parameter in `ClientCertificateCredential`.
 
 ### Breaking Changes
 

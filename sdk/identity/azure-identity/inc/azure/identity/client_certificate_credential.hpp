@@ -60,6 +60,16 @@ namespace Azure { namespace Identity {
      * for any tenant in which the application is installed.
      */
     std::vector<std::string> AdditionallyAllowedTenants;
+
+    /**
+     * @brief SendCertificateChain controls whether the credential sends the public certificate
+     * chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer
+     * (SNI) authentication.
+     *
+     * @note Defaults to false.
+     *
+     */
+    bool SendCertificateChain = false;
   };
 
   /**
@@ -83,6 +93,7 @@ namespace Azure { namespace Identity {
         std::string const& clientCertificatePath,
         std::string const& authorityHost,
         std::vector<std::string> additionallyAllowedTenants,
+        bool sendCertificateChain,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
@@ -91,7 +102,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath Client certificate path.
+     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
+     * exactly one certificate which is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
@@ -106,7 +118,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath Client certificate path.
+     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
+     * exactly one certificate which is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(

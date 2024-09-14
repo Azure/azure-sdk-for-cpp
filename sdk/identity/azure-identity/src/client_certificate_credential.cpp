@@ -77,6 +77,38 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
+std::string FindPemCertificateContent(std::string const& path)
+{
+  auto pemContent{FileBodyStream(path).ReadToEnd()};
+  std::string pem{pemContent.begin(), pemContent.end()};
+  pemContent = {};
+
+  const std::string beginHeader = std::string("-----BEGIN CERTIFICATE-----");
+  auto headerStart = pem.find(beginHeader);
+  if (headerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain certificate.");
+  }
+
+  auto footerStart = pem.find("-----END CERTIFICATE-----", headerStart);
+  if (footerStart == std::string::npos)
+  {
+    throw AuthenticationException("PEM file does not contain a valid end certificate marker.");
+  }
+
+  // Move past the begin marker
+  headerStart += beginHeader.length();
+
+  // Extract the certificate without the end marker
+  std::string certificate = pem.substr(headerStart, footerStart - headerStart);
+
+  // Remove all new lines
+  certificate.erase(std::remove(certificate.begin(), certificate.end(), '\n'), certificate.end());
+  certificate.erase(std::remove(certificate.begin(), certificate.end(), '\r'), certificate.end());
+
+  return certificate;
+}
+
 using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
@@ -383,6 +415,7 @@ ClientCertificateCredential::ClientCertificateCredential(
     std::string const& clientCertificatePath,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
+    bool sendCertificateChain,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ClientCertificateCredential"),
       m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
@@ -448,9 +481,20 @@ ClientCertificateCredential::ClientCertificateCredential(
     thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
   }
 
+  std::string x5cHeaderParam{};
+  if (sendCertificateChain)
+  {
+    // Since there is only one base64 encoded cert string, it can be written as a JSON string rather
+    // than a JSON array of strings.
+    x5cHeaderParam = ",\"x5c\":\"";
+    std::string certContent = FindPemCertificateContent(clientCertificatePath);
+    x5cHeaderParam += certContent;
+    x5cHeaderParam += "\"";
+  }
+
   // Form a JWT token:
   const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str + "\",\"kid\":\""
-      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"" + x5cHeaderParam + "}";
 
   const auto tokenHeaderVec
       = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
@@ -469,6 +513,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         options.AuthorityHost,
         options.AdditionallyAllowedTenants,
+        options.SendCertificateChain,
         options)
 {
 }
@@ -484,6 +529,7 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         ClientCertificateCredentialOptions{}.AuthorityHost,
         ClientCertificateCredentialOptions{}.AdditionallyAllowedTenants,
+        false, // By default, we don't send the x5c property
         options)
 {
 }
