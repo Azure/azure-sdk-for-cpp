@@ -408,7 +408,7 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
     }
   }
 
-  return GetThumbprintAndKey(x509, pkey);
+  return GetThumbprintAndKey(std::move(x509), std::move(pkey));
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std::string& path)
@@ -437,7 +437,7 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std
     }
   }
 
-  return GetThumbprintAndKey(x509, pkey);
+  return GetThumbprintAndKey(std::move(x509), std::move(pkey));
 }
 
 std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
