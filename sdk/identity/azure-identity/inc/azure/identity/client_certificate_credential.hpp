@@ -96,9 +96,19 @@ namespace Azure { namespace Identity {
         bool sendCertificateChain,
         Core::Credentials::TokenCredentialOptions const& options);
 
+    explicit ClientCertificateCredential(
+        std::string tenantId,
+        std::string const& clientId,
+        std::vector<uint8_t> clientCertificate,
+        std::vector<uint8_t> privateKey,
+        std::string const& authorityHost,
+        std::vector<std::string> additionallyAllowedTenants,
+        bool sendCertificateChain,
+        Core::Credentials::TokenCredentialOptions const& options);
+
   public:
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
@@ -114,7 +124,25 @@ namespace Azure { namespace Identity {
         = Core::Credentials::TokenCredentialOptions());
 
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
+     *
+     * @param tenantId Tenant ID.
+     * @param clientId Client ID.
+     * @param clientCertificate The x509 certificate which is used for signing, in base64 string
+     * format, including the begin and end headers.
+     * @param privateKey The binary representation of the corresponding RSA private key of the
+     * certificate.
+     * @param options Options for token retrieval.
+     */
+    explicit ClientCertificateCredential(
+        std::string tenantId,
+        std::string const& clientId,
+        std::vector<uint8_t> clientCertificate,
+        std::vector<uint8_t> privateKey,
+        ClientCertificateCredentialOptions const& options = {});
+
+    /**
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.

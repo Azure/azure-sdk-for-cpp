@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added support for providing an object ID to `ManagedIdentityCredential`.
+- Added support for passing in the x509 certificate and its corresponding private key directly to `ClientCertificateCredential`, rather than reading from a pem file.
 - Added support for sending an x5c parameter in `ClientCertificateCredential`.
 
 ### Breaking Changes
