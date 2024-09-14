@@ -20,7 +20,8 @@ namespace {
 enum CertFormat
 {
   RsaPkcs,
-  RsaRaw
+  RsaRaw,
+  RsaRawReverse
 };
 
 enum TestType
@@ -46,11 +47,13 @@ class GetCredentialName : public ::testing::TestWithParam<CertFormat> {
   TempCertFile m_certFile{GetParam()};
 };
 
-class GetToken : public ::testing::TestWithParam<std::tuple<TestType, CertFormat>> {
+class GetToken : public ::testing::TestWithParam<std::tuple<TestType, CertFormat, bool>> {
 public:
   TestType GetTestType() { return std::get<0>(GetParam()); }
 
   CertFormat GetCertFormat() { return std::get<1>(GetParam()); }
+
+  bool GetSendCertChain() { return std::get<2>(GetParam()); }
 
   std::string GetTenantId()
   {
@@ -105,9 +108,36 @@ public:
   }
 
   std::string GetHeader()
-  { // cspell:disable
-    return "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
-           "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+  {
+    // cspell:disable
+    std::string x5t = "\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\"";
+    std::string kid = "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\"";
+    std::string x5c
+        = "\"MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+"
+          "XRkzANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYw"
+          "NloYDzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MIIBIjANBgkqhkiG9w"
+          "0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gU"
+          "GEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/"
+          "QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/"
+          "0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/"
+          "IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/"
+          "0fWeD87bmqP6m0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFB"
+          "wMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0OBBYEFCoJ5tInmafyNuR0tGxZOz522jl"
+          "WMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpwXmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfB"
+          "Keln0dEcfYiJyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/Em96sm/"
+          "NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+"
+          "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
+          "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
+          "6O\"";
+
+    if (GetSendCertChain())
+    {
+      return "{\"x5t\":" + x5t + ",\"kid\":" + kid
+          + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
+            "\"x5c\":"
+          + x5c + "}";
+    }
+    return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
 
   std::string GetPayloadStart()
@@ -484,6 +514,7 @@ TEST_P(GetToken, )
           options.AuthorityHost = "https://microsoft.com/";
         }
         options.Transport.Transport = transport;
+        options.SendCertificateChain = GetSendCertChain();
 
         return std::make_unique<ClientCertificateCredential>(
             GetTenantId(), "fedcba98-7654-3210-0123-456789abcdef", TempCertFile::Path, options);
@@ -598,7 +629,8 @@ INSTANTIATE_TEST_SUITE_P(
     GetToken,
     testing::Combine(
         testing::Values(Regular, AzureStack, Authority),
-        testing::Values(RsaPkcs, RsaRaw)));
+        testing::Values(RsaPkcs, RsaRaw, RsaRawReverse),
+        testing::Values(true, false)));
 
 namespace {
 const char* const TempCertFile::Path = "azure-identity-test.pem";
@@ -724,6 +756,56 @@ TempCertFile::TempCertFile(CertFormat format)
         "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
         "RrCsEpJsnJXkx/6O\n"
         "-----END CERTIFICATE-----";
+  // cspell:enable
+  else if (format == RsaRawReverse)
+    cert << // cspell:disable
+        "-----BEGIN CERTIFICATE-----\n"
+        "MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n"
+        "MRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYwNloY\n"
+        "DzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0\n"
+        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qO\n"
+        "FSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3h\n"
+        "iwj1WQR4aGPGVhom34QAM6kND/QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTX\n"
+        "EZTLWapp2/0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62\n"
+        "+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkA\n"
+        "vhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m\n"
+        "0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG\n"
+        "CCsGAQUFBwMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0O\n"
+        "BBYEFCoJ5tInmafyNuR0tGxZOz522jlWMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpw\n"
+        "Xmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfBKeln0dEcfYi\n"
+        "Jyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/E\n"
+        "m96sm/NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+6cYVKd\n"
+        "Jg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/c5yJYk\n"
+        "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
+        "RrCsEpJsnJXkx/6O\n"
+        "-----END CERTIFICATE-----\n"
+        "-----BEGIN RSA PRIVATE KEY-----\n"
+        "MIIEpAIBAAKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8Lo\n"
+        "BueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/Qm\n"
+        "tZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/0NCJ9n41xG3ZfOfxmZ\n"
+        "WMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8\n"
+        "/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTX\n"
+        "c7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m0QIDAQABAoIBAQDEGSK6KIk7me7l\n"
+        "QtyWvemNSI8qjoN0EswF50hWSXLlTIuIWsgtNpIZI1VF477SyoNklv/ob0amVFzP\n"
+        "HHwrJtU5MYeP0+zoZ18jJecWoVP7gNCLAvHP8b9qw3cXkbJIfJkHfGJNTLZSCKUY\n"
+        "CHBKqfnscWPhZnZXbZLzUpHFVATcEJ14vqFj4RNoLqNoNQT5NoGxdPtxb0q0PEMB\n"
+        "h4PrkCcK0KSfkgfU8rkBWrhkef8Eqh/d3BR+WAv/r+SO6lumUHtH+6xCkA8mxlc5\n"
+        "AZSichglWJj5+12v8Ca4sLPhWSHx8395tJCYoMSXfx8E65ykoPh/KAYJ4O5WS3QW\n"
+        "FhzBiYQNAoGBAOPJqFu7M3oL3y7lBWtLB38irjcrzr+1rneLGtJcHSjx0vmrcC+k\n"
+        "zVFggBpKJmAAxHt6omIDFw1/VN4ZVus5LWBY9N7Z0YOIgY6fJ3ISwVS391neUz0c\n"
+        "NVSruGVuN8vAUYWFlft2eLNZ8jBAwDRWykZi+ywwdOaFh3STIxSvy+mHAoGBAOko\n"
+        "VeL9kUIl85Fuhh0gWQyFRwnlsLyJXTpRHxu8M2VuHvMDQ4X0jLV8ia832xMlwbVS\n"
+        "qBEnT+jZ5vVu37XMp1veuUveEx7su/qH7x6OiQJvIP9Ll+9MGdui1PKoZCTE1prD\n"
+        "jQTSi8FM5BU+1RrHWgZYmptUS743k1EXUIJ37SLnAoGBAOBWGpk9JNVuG7/zjgK9\n"
+        "QgTUAwATBOuJ4umY9jF2xsEsaLu7PCGwDQW4JHG/1Ut3dgqmHIaqxGlmng6ephvD\n"
+        "lAzvjzprCwyfw/jSheay0fS9ub2oWBI3Vc6t0E0U356rKZ52kd+2Lel1DDC5lJH3\n"
+        "Z/8qPHSoxHjDyUPmJQaanBjBAoGAWa5iGsVdsgvW/AF/JITku6QoBu6KZHqRmXTK\n"
+        "emiRfFo3HVIMDuJZnRUiAHuDkIHdWFlKvA5a9j2aUJ0s/0iQtw2cSEpLIIH+bAcN\n"
+        "Oruoh38nOgthjXHAIHMpZYzPuDTeNvkwrMIvb1KcCG/6mCpFvlsmXMi3uZq212IY\n"
+        "XZazZ9ECgYA3vGkRvjDklE014wFbLGw2NFLPeNxTfdagZmoDag8qMygAKg6Cr3Uc\n"
+        "TNCJSA5zqbY+AH26SdSU4TTiQ2AaVPgM6PFKHnQDYJ3bWdp9dUUo5pUOkxP1hpbI\n"
+        "qxxMaq+sv5e9c56EJtctxNnAK27JsoadD+b+NjysZgMeKUdBIzSrHQ==\n"
+        "-----END RSA PRIVATE KEY-----";
   // cspell:enable
 }
 
