@@ -81,6 +81,35 @@ using CertificateThumbprint = std::vector<unsigned char>;
 using UniquePrivateKey = Azure::Identity::_detail::UniquePrivateKey;
 using PrivateKey = decltype(std::declval<UniquePrivateKey>().get());
 
+std::string GetJwtToken(CertificateThumbprint mdVec)
+{
+  std::string thumbprintHexStr;
+  std::string thumbprintBase64Str;
+
+  // Get thumbprint as hex string:
+  {
+    std::ostringstream thumbprintStream;
+    for (const auto md : mdVec)
+    {
+      thumbprintStream << std::uppercase << std::hex << std::setfill('0') << std::setw(2)
+                       << static_cast<int>(md);
+    }
+    thumbprintHexStr = thumbprintStream.str();
+  }
+
+  // Get thumbprint as Base64:
+  thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
+
+  // Form a JWT token:
+  const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str + "\",\"kid\":\""
+      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+
+  const auto tokenHeaderVec
+      = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
+
+  return Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
+}
+
 #if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
 enum PrivateKeyType
 {
@@ -109,6 +138,18 @@ CertificateThumbprint GetThumbprint(PCCERT_CONTEXT cert)
   THROW_IF_WIN32_BOOL_FALSE(
       CertGetCertificateContextProperty(cert, CERT_SHA1_HASH_PROP_ID, thumbprint.data(), &size));
   return thumbprint;
+}
+
+wil::unique_cert_context ImportPemCertificate(std::vector<uint8_t> clientCertificate)
+{
+  std::string certStr(clientCertificate.begin(), clientCertificate.end());
+  auto certBuffer = PemToBinary(certStr.c_str(), static_cast<DWORD>(certStr.size()));
+  auto cert = CertCreateCertificateContext(
+      X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+      certBuffer.data(),
+      static_cast<DWORD>(certBuffer.size()));
+  THROW_LAST_ERROR_IF_NULL(cert);
+  return wil::unique_cert_context{cert};
 }
 
 wil::unique_cert_context ImportPemCertificate(std::string const& pem)
@@ -229,6 +270,18 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
   throw AuthenticationException("Invalid private key.");
 }
 
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
+    std::vector<uint8_t> clientCertificate,
+    std::vector<uint8_t> privateKey)
+{
+  auto certContext = ImportPemCertificate(clientCertificate);
+
+  // We only support the RSA private key type.
+  return std::make_tuple(
+      GetThumbprint(certContext.get()),
+      ImportRsaPrivateKey(privateKey.data(), static_cast<DWORD>(privateKey.size())));
+}
+
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(std::string const& path)
 {
   auto pemContent{FileBodyStream(path).ReadToEnd()};
@@ -295,6 +348,69 @@ template <> struct UniqueHandleHelper<EVP_MD_CTX>
 template <typename T>
 using UniqueHandle = Azure::Core::_internal::UniqueHandle<T, UniqueHandleHelper>;
 
+std::tuple<CertificateThumbprint, UniquePrivateKey> GetThumbprintAndKey(
+    UniqueHandle<X509> x509,
+    UniquePrivateKey pkey)
+{
+  CertificateThumbprint thumbprint(EVP_MAX_MD_SIZE);
+  // Get certificate thumbprint:
+  unsigned int mdLen = 0;
+  const auto digestResult = X509_digest(x509.get(), EVP_sha1(), thumbprint.data(), &mdLen);
+
+  if (!digestResult)
+  {
+    throw AuthenticationException("Failed to get certificate thumbprint.");
+  }
+
+  // Drop unused buffer space:
+  const auto mdLenSz = static_cast<decltype(thumbprint)::size_type>(mdLen);
+  if (thumbprint.size() > mdLenSz)
+  {
+    thumbprint.resize(mdLenSz);
+  }
+
+  return std::make_tuple(thumbprint, std::move(pkey));
+}
+
+std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
+    std::vector<uint8_t> clientCertificate,
+    std::vector<uint8_t> privateKey)
+{
+  // Create a BIO from the private key vector data in memory.
+  UniqueHandle<BIO> bioKey(BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size())));
+  if (!bioKey)
+  {
+    throw AuthenticationException("Failed to create BIO for the private key.");
+  }
+
+  UniquePrivateKey pkey{PEM_read_bio_PrivateKey(bioKey.get(), nullptr, nullptr, nullptr)};
+  if (!pkey)
+  {
+    throw AuthenticationException("Failed to read certificate private key.");
+  }
+
+  // Create a BIO from the client certificate vector data in memory.
+  UniqueHandle<BIO> bioCert(
+      BIO_new_mem_buf(clientCertificate.data(), static_cast<int>(clientCertificate.size())));
+  if (!bioCert)
+  {
+    throw AuthenticationException("Failed to create BIO for the client certificate.");
+  }
+
+  UniqueHandle<X509> x509{PEM_read_bio_X509(bioCert.get(), nullptr, nullptr, nullptr)};
+  if (!x509)
+  {
+    std::ignore = BIO_seek(bioCert.get(), 0);
+    x509.reset(PEM_read_bio_X509(bioCert.get(), nullptr, nullptr, nullptr));
+    if (!x509)
+    {
+      throw AuthenticationException("Failed to read X509 section.");
+    }
+  }
+
+  return GetThumbprintAndKey(x509, pkey);
+}
+
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std::string& path)
 {
   // Open certificate file, then get private key and X509:
@@ -321,24 +437,7 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std
     }
   }
 
-  CertificateThumbprint thumbprint(EVP_MAX_MD_SIZE);
-  // Get certificate thumbprint:
-  unsigned int mdLen = 0;
-  const auto digestResult = X509_digest(x509.get(), EVP_sha1(), thumbprint.data(), &mdLen);
-
-  if (!digestResult)
-  {
-    throw AuthenticationException("Failed to get certificate thumbprint.");
-  }
-
-  // Drop unused buffer space:
-  const auto mdLenSz = static_cast<decltype(thumbprint)::size_type>(mdLen);
-  if (thumbprint.size() > mdLenSz)
-  {
-    thumbprint.resize(mdLenSz);
-  }
-
-  return std::make_tuple(thumbprint, std::move(pkey));
+  return GetThumbprintAndKey(x509, pkey);
 }
 
 std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, size_t size)
@@ -397,65 +496,76 @@ ClientCertificateCredential::ClientCertificateCredential(
       m_tokenPayloadStaticPart(
           "\",\"iss\":\"" + clientId + "\",\"sub\":\"" + clientId + "\",\"jti\":\"")
 {
-  std::string thumbprintHexStr;
-  std::string thumbprintBase64Str;
-
+  CertificateThumbprint mdVec;
+  try
   {
-    CertificateThumbprint mdVec;
-    try
+    if (clientCertificatePath.empty())
     {
-      if (clientCertificatePath.empty())
-      {
-        throw AuthenticationException("Certificate file path is empty.");
-      }
-
-      using Azure::Core::_internal::StringExtensions;
-      std::string const PemExtension = ".pem";
-      auto const certFileExtensionStart = clientCertificatePath.find_last_of('.');
-      auto const certFileExtension = certFileExtensionStart != std::string::npos
-          ? clientCertificatePath.substr(certFileExtensionStart)
-          : std::string{};
-
-      if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(certFileExtension, PemExtension))
-      {
-        throw AuthenticationException(
-            "Certificate format"
-            + (certFileExtension.empty() ? " " : " ('" + certFileExtension + "') ")
-            + "is not supported. Please convert your certificate to '" + PemExtension + "'.");
-      }
-
-      std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
+      throw AuthenticationException("Certificate file path is empty.");
     }
-    catch (std::exception const& e)
+
+    using Azure::Core::_internal::StringExtensions;
+    std::string const PemExtension = ".pem";
+    auto const certFileExtensionStart = clientCertificatePath.find_last_of('.');
+    auto const certFileExtension = certFileExtensionStart != std::string::npos
+        ? clientCertificatePath.substr(certFileExtensionStart)
+        : std::string{};
+
+    if (!StringExtensions::LocaleInvariantCaseInsensitiveEqual(certFileExtension, PemExtension))
     {
-      // WIL does not throw AuthenticationException.
       throw AuthenticationException(
-          std::string("Identity: ClientCertificateCredential: ") + e.what());
+          "Certificate format"
+          + (certFileExtension.empty() ? " " : " ('" + certFileExtension + "') ")
+          + "is not supported. Please convert your certificate to '" + PemExtension + "'.");
     }
 
-    // Get thumbprint as hex string:
-    {
-      std::ostringstream thumbprintStream;
-      for (const auto md : mdVec)
-      {
-        thumbprintStream << std::uppercase << std::hex << std::setfill('0') << std::setw(2)
-                         << static_cast<int>(md);
-      }
-      thumbprintHexStr = thumbprintStream.str();
-    }
-
-    // Get thumbprint as Base64:
-    thumbprintBase64Str = Base64Url::Base64UrlEncode(ToUInt8Vector(mdVec));
+    std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificatePath);
+  }
+  catch (std::exception const& e)
+  {
+    // WIL does not throw AuthenticationException.
+    throw AuthenticationException(
+        std::string("Identity: ClientCertificateCredential: ") + e.what());
   }
 
-  // Form a JWT token:
-  const auto tokenHeader = std::string("{\"x5t\":\"") + thumbprintBase64Str + "\",\"kid\":\""
-      + thumbprintHexStr + "\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+  m_tokenHeaderEncoded = GetJwtToken(mdVec);
+}
 
-  const auto tokenHeaderVec
-      = std::vector<std::string::value_type>(tokenHeader.begin(), tokenHeader.end());
+ClientCertificateCredential::ClientCertificateCredential(
+    std::string tenantId,
+    std::string const& clientId,
+    std::vector<uint8_t> clientCertificate,
+    std::vector<uint8_t> privateKey,
+    std::string const& authorityHost,
+    std::vector<std::string> additionallyAllowedTenants,
+    Core::Credentials::TokenCredentialOptions const& options)
+    : TokenCredential("ClientCertificateCredential"),
+      m_clientCredentialCore(tenantId, authorityHost, additionallyAllowedTenants),
+      m_tokenCredentialImpl(std::make_unique<TokenCredentialImpl>(options)),
+      m_requestBody(
+          std::string(
+              "grant_type=client_credentials"
+              "&client_assertion_type="
+              "urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer" // cspell:disable-line
+              "&client_id=")
+          + Url::Encode(clientId)),
+      m_tokenPayloadStaticPart(
+          "\",\"iss\":\"" + clientId + "\",\"sub\":\"" + clientId + "\",\"jti\":\"")
+{
 
-  m_tokenHeaderEncoded = Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
+  CertificateThumbprint mdVec;
+  try
+  {
+    std::tie(mdVec, m_pkey) = ReadPemCertificate(clientCertificate, privateKey);
+  }
+  catch (std::exception const& e)
+  {
+    // WIL does not throw AuthenticationException.
+    throw AuthenticationException(
+        std::string("Identity: ClientCertificateCredential: ") + e.what());
+  }
+
+  m_tokenHeaderEncoded = GetJwtToken(mdVec);
 }
 
 ClientCertificateCredential::ClientCertificateCredential(
@@ -484,6 +594,23 @@ ClientCertificateCredential::ClientCertificateCredential(
         clientCertificatePath,
         ClientCertificateCredentialOptions{}.AuthorityHost,
         ClientCertificateCredentialOptions{}.AdditionallyAllowedTenants,
+        options)
+{
+}
+
+ClientCertificateCredential::ClientCertificateCredential(
+    std::string tenantId,
+    std::string const& clientId,
+    std::vector<uint8_t> clientCertificate,
+    std::vector<uint8_t> privateKey,
+    ClientCertificateCredentialOptions const& options)
+    : ClientCertificateCredential(
+        tenantId,
+        clientId,
+        clientCertificate,
+        privateKey,
+        options.AuthorityHost,
+        options.AdditionallyAllowedTenants,
         options)
 {
 }
