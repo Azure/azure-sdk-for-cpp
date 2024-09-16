@@ -127,6 +127,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroys the session object. */
     ~Session() noexcept;
 
+#if ENABLE_UAMQP
     /** @brief Creates a MessageSender
      *
      * @param target - The target to which the message will be sent.
@@ -138,12 +139,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     MessageSender CreateMessageSender(
         Models::_internal::MessageTarget const& target,
-        MessageSenderOptions const& options
-#if ENABLE_UAMQP
-        ,
-        MessageSenderEvents* events = nullptr
+        MessageSenderOptions const& options,
+        MessageSenderEvents* events = nullptr) const;
+#else
+    /** @brief Creates a MessageSender
+     *
+     * @param target - The target to which the message will be sent.
+     * @param options - Options to configure the MessageSender.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageSender CreateMessageSender(
+        Models::_internal::MessageTarget const& target,
+        MessageSenderOptions const& options) const;
+
 #endif
-    ) const;
 
     /** @brief Creates a MessageReceiver
      *

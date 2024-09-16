@@ -285,6 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Connection final {
   public:
+#if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
      * @param hostName The name of the host to connect to.
@@ -296,12 +297,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Connection(
         std::string const& hostName,
         std::shared_ptr<Credentials::TokenCredential> credential,
-        ConnectionOptions const& options
-#if ENABLE_UAMQP
-        ,
-        ConnectionEvents* eventHandler = nullptr
+        ConnectionOptions const& options,
+        ConnectionEvents* eventHandler = nullptr);
+#else
+    /** @brief Construct a new AMQP Connection.
+     *
+     * @param hostName The name of the host to connect to.
+     * @param options The options to use when creating the connection.
+     *
+     * @remarks The requestUri must be a valid AMQP URI.
+     */
+    Connection(
+        std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
+        ConnectionOptions const& options);
 #endif
-    );
 
 #if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
@@ -323,6 +333,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Destroy an AMQP connection */
     ~Connection();
 
+#if ENABLE_UAMQP
     /** @brief Create a session on the current Connection object.
      *
      * An AMQP Session provides a context for sending and receiving messages. A single connection
@@ -332,13 +343,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @param options The options to use when creating the session.
      * @param eventHandler The event handler for the session.
      */
-    Session CreateSession(
-        SessionOptions const& options = {}
-#if ENABLE_UAMQP
-        ,
-        SessionEvents* eventHandler = nullptr
+    Session CreateSession(SessionOptions const& options = {}, SessionEvents* eventHandler = nullptr)
+        const;
+#else
+    /** @brief Create a session on the current Connection object.
+     *
+     * An AMQP Session provides a context for sending and receiving messages. A single connection
+     * may have multiple independent sessions active simultaneously up to the negotiated maximum
+     * channel count.
+     *
+     * @param options The options to use when creating the session.
+     */
+    Session CreateSession(SessionOptions const& options = {}) const;
+
 #endif
-    ) const;
 
 #if ENABLE_UAMQP
     /** @brief Construct a new session associated with the specified connection over the specified
