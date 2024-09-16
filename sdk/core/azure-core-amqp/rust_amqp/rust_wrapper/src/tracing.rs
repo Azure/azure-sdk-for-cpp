@@ -5,6 +5,8 @@
 cspell: words reqwest repr staticlib dylib brotli gzip
 */
 
+use std::ffi::{c_char, CString};
+
 struct RustTracingSubscriber {
     tracing_callback: Option<extern "C" fn(_: *const c_char)>,
 }

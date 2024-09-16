@@ -14,6 +14,7 @@ pub mod amqp;
 pub mod model;
 pub mod runtime_context;
 pub mod rust_error;
+pub mod tracing;
 
 #[no_mangle]
 pub extern "C" fn rust_string_delete(rust_string: *const c_char) {
@@ -21,12 +22,3 @@ pub extern "C" fn rust_string_delete(rust_string: *const c_char) {
         mem::drop(CString::from_raw(rust_string as *mut c_char));
     }
 }
-
-#[no_mangle]
-pub extern "C" fn register_tracing_callback(callback: extern "C" fn(_: *const c_char)) {
-    let message = CString::new("register_tracing_callback").unwrap();
-    callback(message.as_ptr());
-}
-
-#[no_mangle]
-pub extern "C" fn unregister_tracing_callback() {}

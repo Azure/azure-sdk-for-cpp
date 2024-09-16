@@ -13,7 +13,7 @@ crate-type = ["staticlib"]
 
 
 [dependencies]
-azure_core_amqp = { workspace = true, features = ["cplusplus", "cpp-repo"] }
+azure_core_amqp = { workspace = true, features = ["cplusplus", "cpp_repo"] }
 azure_identity.workspace = true
 azure_core.workspace = true
 uuid.workspace = true
