@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corp. All Rights Reserved
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-// cspell: words reqwest repr
+// cspell: words reqwest repr tokio
 
 use crate::rust_error::RustError;
 use azure_core::{error::ErrorKind, Error, Result};

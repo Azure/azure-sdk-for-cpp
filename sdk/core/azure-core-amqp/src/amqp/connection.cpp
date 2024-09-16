@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell: words amqpconnection amqpconnectionoptions amqpconnectionoptionsbuilder
+
 #include "azure/core/amqp/internal/connection.hpp"
 
 #include "../models/private/value_impl.hpp"
