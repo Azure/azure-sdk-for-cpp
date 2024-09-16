@@ -683,7 +683,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     EnableAsyncOperation(true);
 #elif ENABLE_RUST_AMQP
     if (amqpconnection_open(
-            runtime_context_new(),
+            Azure::Core::Amqp::Common::_detail::RustThreadContextInstance.GetRuntimeContext(),
             m_connection.get(),
             m_hostUrl.GetAbsoluteUrl().c_str(),
             m_containerId.c_str(),
@@ -755,7 +755,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else
     {
       if (amqpconnection_close_with_error(
-              runtime_context_new(),
+              Azure::Core::Amqp::Common::_detail::RustThreadContextInstance.GetRuntimeContext(),
               m_connection.get(),
               condition.c_str(),
               description.c_str(),

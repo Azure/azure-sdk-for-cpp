@@ -7,6 +7,7 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/unique_handle.hpp>
 
 #if ENABLE_UAMQP
 #include <azure_c_shared_utility/gballoc.h>
@@ -208,4 +209,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     return &globalState;
   }
 
+#if ENABLE_RUST_AMQP
+  thread_local RustThreadContext RustThreadContextInstance;
+#endif
+
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
+
+#if ENABLE_RUST_AMQP
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  void UniqueHandleHelper<Azure::Core::Amqp::_detail::RustRuntimeContext>::FreeRuntimeContext(
+      RustRuntimeContext* obj)
+  {
+    Azure::Core::Amqp::_detail::RustInterop::runtime_context_delete(obj);
+  }
+}}}} // namespace Azure::Core::Amqp::_detail
+#endif

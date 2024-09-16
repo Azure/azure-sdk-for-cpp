@@ -11,7 +11,15 @@
 #include <mutex>
 #include <thread>
 
+#if ENABLE_RUST_AMQP
+#include "thread_context.hpp"
+#endif
+
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
+
+#if ENABLE_RUST_AMQP
+extern thread_local RustThreadContext RustThreadContextInstance;
+#endif
 
 #if ENABLE_UAMQP
   /**
