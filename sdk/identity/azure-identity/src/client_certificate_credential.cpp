@@ -77,20 +77,14 @@ template <typename T> std::vector<uint8_t> ToUInt8Vector(T const& in)
   return outVec;
 }
 
-std::string FindPemCertificateContent(
-    std::string const& path,
-    std::vector<uint8_t> clientCertificate)
+std::string FindPemCertificateContent(std::string const& path, std::string clientCertificate)
 {
-  std::string pem{};
+  std::string pem = clientCertificate;
   if (clientCertificate.empty())
   {
     auto pemContent{FileBodyStream(path).ReadToEnd()};
     pem = std::string{pemContent.begin(), pemContent.end()};
     pemContent = {};
-  }
-  else
-  {
-    pem = std::string{clientCertificate.begin(), clientCertificate.end()};
   }
 
   const std::string beginHeader = std::string("-----BEGIN CERTIFICATE-----");
@@ -127,7 +121,7 @@ std::string GetJwtToken(
     CertificateThumbprint mdVec,
     bool sendCertificateChain,
     std::string const& clientCertificatePath,
-    std::vector<uint8_t> clientCertificate = {})
+    std::string clientCertificate = {})
 {
   std::string thumbprintHexStr;
   std::string thumbprintBase64Str;
@@ -328,15 +322,13 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
-    std::vector<uint8_t> clientCertificate,
-    std::vector<uint8_t> privateKey)
+    std::string clientCertificate,
+    std::string privateKey)
 {
   auto certContext = ImportPemCertificate(clientCertificate);
 
   // We only support the RSA private key type.
-  return std::make_tuple(
-      GetThumbprint(certContext.get()),
-      ImportRsaPrivateKey(privateKey.data(), static_cast<DWORD>(privateKey.size())));
+  return std::make_tuple(GetThumbprint(certContext.get()), ImportPemPrivateKey(privateKey));
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(std::string const& path)
@@ -592,8 +584,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::vector<uint8_t> clientCertificate,
-    std::vector<uint8_t> privateKey,
+    std::string clientCertificate,
+    std::string privateKey,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
     bool sendCertificateChain,
@@ -662,8 +654,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::vector<uint8_t> clientCertificate,
-    std::vector<uint8_t> privateKey,
+    std::string clientCertificate,
+    std::string privateKey,
     ClientCertificateCredentialOptions const& options)
     : ClientCertificateCredential(
         tenantId,
