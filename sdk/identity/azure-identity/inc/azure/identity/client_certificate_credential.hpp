@@ -99,8 +99,8 @@ namespace Azure { namespace Identity {
     explicit ClientCertificateCredential(
         std::string tenantId,
         std::string const& clientId,
-        std::string clientCertificate,
-        std::string privateKey,
+        std::string const& clientCertificate,
+        std::string const& privateKey,
         std::string const& authorityHost,
         std::vector<std::string> additionallyAllowedTenants,
         bool sendCertificateChain,
@@ -137,8 +137,8 @@ namespace Azure { namespace Identity {
     explicit ClientCertificateCredential(
         std::string tenantId,
         std::string const& clientId,
-        std::string clientCertificate,
-        std::string privateKey,
+        std::string const& clientCertificate,
+        std::string const& privateKey,
         ClientCertificateCredentialOptions const& options = {});
 
     /**
