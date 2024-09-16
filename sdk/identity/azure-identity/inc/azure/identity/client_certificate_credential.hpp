@@ -112,8 +112,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
-     * exactly one certificate which is used for signing along with its corresponding private key.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
@@ -128,10 +128,10 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificate The Privacy Enhanced Mail (PEM) encoded x509 certificate which is
-     * used for signing, in base64 string format, including the begin and end headers.
-     * @param privateKey The Privacy Enhanced Mail (PEM) encoded representation of the corresponding RSA private key of the
-     * certificate.
+     * @param clientCertificate The PEM encoded x509 certificate which is used for signing, in
+     * base64 string format, including the begin and end headers.
+     * @param privateKey The PEM encoded representation of the corresponding
+     * RSA private key of the certificate.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
@@ -146,8 +146,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
-     * exactly one certificate which is used for signing along with its corresponding private key.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
