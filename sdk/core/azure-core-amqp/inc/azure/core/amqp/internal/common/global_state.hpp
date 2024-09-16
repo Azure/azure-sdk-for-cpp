@@ -18,7 +18,7 @@
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
 #if ENABLE_RUST_AMQP
-extern thread_local RustThreadContext RustThreadContextInstance;
+  extern thread_local RustThreadContext RustThreadContextInstance;
 #endif
 
 #if ENABLE_UAMQP

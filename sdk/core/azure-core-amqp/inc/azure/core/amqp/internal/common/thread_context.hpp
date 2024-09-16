@@ -15,23 +15,17 @@
 #include <mutex>
 #include <thread>
 
-namespace Azure {
-namespace Core {
-  namespace Amqp {
-    namespace _detail {
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-      using RustRuntimeContext = RustInterop::RuntimeContext;
+  using RustRuntimeContext = RustInterop::RuntimeContext;
 
-      template <> struct UniqueHandleHelper<RustRuntimeContext>
-      {
-        static void FreeRuntimeContext(RustRuntimeContext* obj);
+  template <> struct UniqueHandleHelper<RustRuntimeContext>
+  {
+    static void FreeRuntimeContext(RustRuntimeContext* obj);
 
-        using type = Core::_internal::BasicUniqueHandle<RustRuntimeContext, FreeRuntimeContext>;
-      };
-    }
-  }
-}
-} // namespace Azure::Core::Amqp::_detail
+    using type = Core::_internal::BasicUniqueHandle<RustRuntimeContext, FreeRuntimeContext>;
+  };
+}}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
@@ -42,7 +36,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     UniqueRustRuntimeContext m_runtimeContext;
 
   public:
-    RustThreadContext() : m_runtimeContext(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new()) {}
+    RustThreadContext()
+        : m_runtimeContext(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new())
+    {
+    }
     Azure::Core::Amqp::_detail::RustRuntimeContext* GetRuntimeContext() const noexcept
     {
       return m_runtimeContext.get();
