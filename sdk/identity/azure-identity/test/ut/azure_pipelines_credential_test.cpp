@@ -660,7 +660,12 @@ TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
     GTEST_SKIP_(message.c_str());
   }
 
-  AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, systemAccessToken);
+  AzurePipelinesCredentialOptions options;
+  options.Log.AllowedHttpHeaders.insert("x-vss-e2eid");
+  options.Log.AllowedHttpHeaders.insert("activityid");
+
+  AzurePipelinesCredential const cred(
+      tenantId, clientId, serviceConnectionId, systemAccessToken, options);
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://vault.azure.net/.default");
