@@ -99,8 +99,8 @@ namespace Azure { namespace Identity {
     explicit ClientCertificateCredential(
         std::string tenantId,
         std::string const& clientId,
-        std::vector<uint8_t> clientCertificate,
-        std::vector<uint8_t> privateKey,
+        std::string clientCertificate,
+        std::string privateKey,
         std::string const& authorityHost,
         std::vector<std::string> additionallyAllowedTenants,
         bool sendCertificateChain,
@@ -112,8 +112,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
-     * exactly one certificate which is used for signing along with its corresponding private key.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
@@ -128,17 +128,17 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificate The x509 certificate which is used for signing, in base64 string
-     * format, including the begin and end headers.
-     * @param privateKey The binary representation of the corresponding RSA private key of the
-     * certificate.
+     * @param clientCertificate The PEM encoded x509 certificate which is used for signing, in
+     * base64 string format, including the begin and end headers.
+     * @param privateKey The PEM encoded representation of the corresponding
+     * RSA private key of the certificate.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
         std::string tenantId,
         std::string const& clientId,
-        std::vector<uint8_t> clientCertificate,
-        std::vector<uint8_t> privateKey,
+        std::string clientCertificate,
+        std::string privateKey,
         ClientCertificateCredentialOptions const& options = {});
 
     /**
@@ -146,8 +146,8 @@ namespace Azure { namespace Identity {
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath The path to a Privacy Enhanced Mail (PEM) file containing
-     * exactly one certificate which is used for signing along with its corresponding private key.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
