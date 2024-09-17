@@ -221,7 +221,7 @@ jobs:
                 Set-Content -Path $outputPath -Value $outputObject
 
                 $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo/${{ artifact.Name }}_cpp.json
-                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo/${{ artifact.Name }}.json
+                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo/${{ artifact.Name }}_cpp.json
                 
                 New-Item -path $packageJsonDest -Force
                 Copy-Item $packageJsonSource $packageJsonDest -Force
