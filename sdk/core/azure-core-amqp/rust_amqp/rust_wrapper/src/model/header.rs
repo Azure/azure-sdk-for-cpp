@@ -9,7 +9,7 @@ use azure_core_amqp::{
 };
 use std::mem;
 
-use crate::value::RustAmqpValue;
+use super::value::RustAmqpValue;
 
 pub struct RustMessageHeader {
     inner: AmqpMessageHeader,
@@ -202,7 +202,7 @@ mod tests {
 
     use azure_core_amqp::Deserializable;
 
-    use crate::value::{amqpvalue_encode, amqpvalue_get_encoded_size};
+    use crate::model::value::{amqpvalue_encode, amqpvalue_get_encoded_size};
 
     use super::*;
 

@@ -9,8 +9,11 @@
 #include "unique_handle.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/url.hpp>
 #if ENABLE_UAMQP
 #include <azure_uamqp_c/connection.h>
+#elif ENABLE_RUST_AMQP
+#include "..\rust_amqp\rust_wrapper\rust_amqp_wrapper.h"
 #endif
 #include <chrono>
 #include <memory>
@@ -23,20 +26,55 @@
 #endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<CONNECTION_INSTANCE_TAG>
-  {
-    static void FreeAmqpConnection(CONNECTION_HANDLE obj);
 
-    using type = Core::_internal::BasicUniqueHandle<CONNECTION_INSTANCE_TAG, FreeAmqpConnection>;
+#if ENABLE_UAMQP
+  using AmqpConnectionImplementation = CONNECTION_INSTANCE_TAG;
+#elif ENABLE_RUST_AMQP
+  using AmqpConnectionImplementation = RustInterop::RustAmqpConnection;
+  using AmqpConnectionOptionsImplementation = RustInterop::RustAmqpConnectionOptions;
+  using AmqpConnectionOptionsBuilderImplementation = RustInterop::RustAmqpConnectionOptionsBuilder;
+#endif
+
+  template <> struct UniqueHandleHelper<AmqpConnectionImplementation>
+  {
+    static void FreeAmqpConnection(AmqpConnectionImplementation* obj);
+
+    using type
+        = Core::_internal::BasicUniqueHandle<AmqpConnectionImplementation, FreeAmqpConnection>;
   };
+
+#if ENABLE_RUST_AMQP
+  template <> struct UniqueHandleHelper<AmqpConnectionOptionsImplementation>
+  {
+    static void FreeAmqpConnectionOptions(AmqpConnectionOptionsImplementation* obj);
+
+    using type = Core::_internal::
+        BasicUniqueHandle<AmqpConnectionOptionsImplementation, FreeAmqpConnectionOptions>;
+  };
+
+  template <> struct UniqueHandleHelper<AmqpConnectionOptionsBuilderImplementation>
+  {
+    static void FreeAmqpConnectionOptionsBuilder(AmqpConnectionOptionsBuilderImplementation* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<
+        AmqpConnectionOptionsBuilderImplementation,
+        FreeAmqpConnectionOptionsBuilder>;
+  };
+
 #endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  using UniqueAmqpConnection = UniqueHandle<CONNECTION_INSTANCE_TAG>;
+  using UniqueAmqpConnection
+      = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionImplementation>;
+#if ENABLE_RUST_AMQP
+  using UniqueAmqpConnectionOptions
+      = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionOptionsImplementation>;
+  using UniqueAmqpConnectionOptionsBuilder
+      = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionOptionsBuilderImplementation>;
+#endif
 
+#if ENABLE_UAMQP
   std::ostream& operator<<(std::ostream& os, CONNECTION_STATE state);
 #endif
   class ClaimsBasedSecurity;
@@ -56,20 +94,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>,
-                               public Common::_detail::Pollable {
+  class ConnectionImpl final : public std::enable_shared_from_this<ConnectionImpl>
+#if ENABLE_UAMQP
+      ,
+                               public Common::_detail::Pollable
+#endif
+  {
   public:
+#if ENABLE_UAMQP
     ConnectionImpl(
         std::shared_ptr<Network::_detail::TransportImpl> transport,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler,
         _internal::ConnectionEndpointEvents* endpointEvents);
+#endif
 
     ConnectionImpl(
         std::string const& hostName,
         std::shared_ptr<Credentials::TokenCredential> tokenCredential,
-        _internal::ConnectionOptions const& options,
-        _internal::ConnectionEvents* eventHandler);
+        _internal::ConnectionOptions const& options
+#if ENABLE_UAMQP
+        ,
+        _internal::ConnectionEvents* eventHandler
+#endif
+    );
 
     virtual ~ConnectionImpl();
 
@@ -95,28 +143,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
 
     void Open();
+#if ENABLE_UAMQP
     void Listen();
+#endif
 
     void Close(
         std::string const& condition = {},
         std::string const& description = {},
         Models::AmqpValue info = {});
 
+#if ENABLE_UAMQP
     void Poll() override;
-
-    std::string GetHost() const { return m_hostName; }
-    uint16_t GetPort() const { return m_port; }
+#endif
+    std::string GetHost() const
+    {
+#if ENABLE_UAMQP
+      return m_hostName;
+#elif ENABLE_RUST_AMQP
+      return m_hostUrl.GetHost();
+#endif
+    }
+    uint16_t GetPort() const
+    {
+#if ENABLE_UAMQP
+      return m_port;
+#elif ENABLE_RUST_AMQP
+      return m_hostUrl.GetPort();
+#endif
+    }
 
     uint32_t GetMaxFrameSize() const;
-    uint32_t GetRemoteMaxFrameSize() const;
     uint16_t GetMaxChannel() const;
     std::chrono::milliseconds GetIdleTimeout() const;
+#if ENABLE_UAMQP
+    uint32_t GetRemoteMaxFrameSize() const;
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
+#endif
 
     Models::AmqpMap GetProperties() const;
     std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
+#if ENABLE_UAMQP
     void EnableAsyncOperation(bool enable);
     bool IsAsyncOperation() { return m_enableAsyncOperation; }
+#endif
     bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
 
@@ -134,19 +203,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
   private:
-    std::shared_ptr<Network::_detail::TransportImpl> m_transport;
 #if ENABLE_UAMQP
-    UniqueAmqpConnection m_connection{};
+    std::shared_ptr<Network::_detail::TransportImpl> m_transport;
 #endif
+    UniqueAmqpConnection m_connection{};
+#if ENABLE_UAMQP
     std::string m_hostName;
     uint16_t m_port{};
+#elif ENABLE_RUST_AMQP
+    Azure::Core::Url m_hostUrl;
+    UniqueAmqpConnectionOptions m_connectionOptions{};
+#endif
     std::string m_containerId;
     _internal::ConnectionOptions m_options;
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<std::unique_ptr<_internal::Session>>
         m_newSessionQueue;
+#if ENABLE_UAMQP
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionEndpointEvents* m_endpointEvents{};
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
+#endif
 
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
@@ -164,8 +240,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ConnectionEvents* eventHandler,
         _internal::ConnectionOptions const& options);
 
-    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
 #if ENABLE_UAMQP
+    void SetState(_internal::ConnectionState newState) { m_connectionState = newState; }
     static void OnConnectionStateChangedFn(
         void* context,
         CONNECTION_STATE newState,

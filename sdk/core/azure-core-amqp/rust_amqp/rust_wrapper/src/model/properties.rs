@@ -10,7 +10,7 @@ use azure_core_amqp::{
 use std::mem;
 use std::time::UNIX_EPOCH;
 
-use crate::value::RustAmqpValue;
+use crate::model::value::RustAmqpValue;
 
 pub struct RustMessageProperties {
     pub(crate) inner: AmqpMessageProperties,
