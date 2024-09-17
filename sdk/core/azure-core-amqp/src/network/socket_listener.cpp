@@ -1,17 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+#if ENABLE_UAMQP
 
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "private/transport_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
 #include <azure_uamqp_c/header_detect_io.h>
 #include <azure_uamqp_c/socket_listener.h>
-#endif
 
 #include <cassert>
 #include <functional>
@@ -30,32 +29,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
   } // namespace
 
-  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler) : m_eventHandler
-  {
-    eventHandler
-  }
-#if ENABLE_UAMQP
-  , m_socket { socketlistener_create(port) }
-#endif
+  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
+      : m_eventHandler{eventHandler}, m_socket{socketlistener_create(port)}
   {
     EnsureGlobalStateInitialized();
-#if ENABLE_UAMQP
-#else
-    (void)port;
-#endif
   }
 
   SocketListener::~SocketListener()
   {
-#if ENABLE_UAMQP
     if (m_socket)
     {
       socketlistener_destroy(m_socket);
       m_socket = nullptr;
     }
-#endif
   }
-#if ENABLE_UAMQP
   void SocketListener::OnSocketAcceptedFn(
       void* context,
       const IO_INTERFACE_DESCRIPTION* interfaceDescription,
@@ -70,14 +57,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       listener->m_eventHandler->OnSocketAccepted(transport);
     }
   }
-#endif
   void SocketListener::Start()
   {
     if (m_started)
     {
       throw std::runtime_error("Already started.");
     }
-#if ENABLE_UAMQP
 
     if (socketlistener_start(m_socket, SocketListener::OnSocketAcceptedFn, this))
     {
@@ -96,16 +81,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 #endif
           }
           m_started = true;
-#else
-    throw std::runtime_error("Not Implemented");
-#endif
         }
 
         void SocketListener::Stop()
         {
           if (m_started)
           {
-#if ENABLE_UAMQP
             if (socketlistener_stop(m_socket))
             {
               auto err = errno;
@@ -122,7 +103,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 #pragma warning(pop)
 #endif
             }
-#endif
           }
           else
           {
@@ -131,11 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           m_started = false;
         }
 
-        void SocketListener::Poll() const
-        {
-#if ENABLE_UAMQP
-          socketlistener_dowork(m_socket);
-#endif
-        }
+        void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
+#endif // ENABLE_UAMQP

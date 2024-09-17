@@ -124,6 +124,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
+#if ENABLE_UAMQP
   std::shared_ptr<Network::_internal::Transport>
   ServiceBusSasConnectionStringCredential::GetTransport() const
   {
@@ -132,6 +133,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return std::make_shared<Network::_internal::Transport>(
         Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
+#endif
 
   Credentials::AccessToken ServiceBusSasConnectionStringCredential::GetToken(
       Credentials::TokenRequestContext const& tokenRequestContext,

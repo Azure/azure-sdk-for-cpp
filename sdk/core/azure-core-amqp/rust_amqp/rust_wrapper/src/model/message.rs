@@ -3,7 +3,9 @@
 
 // cspell: words amqp amqpvalue repr
 
-use crate::{header::RustMessageHeader, properties::RustMessageProperties, value::RustAmqpValue};
+use crate::model::{
+    header::RustMessageHeader, properties::RustMessageProperties, value::RustAmqpValue,
+};
 use azure_core_amqp::{
     messaging::{
         AmqpAnnotationKey, AmqpAnnotations, AmqpApplicationProperties, AmqpMessage, AmqpMessageBody,
