@@ -100,28 +100,8 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
-        # - task: AzurePowerShell@5
-        #   displayName: Download ApiView Parser.
-        #   inputs:
-        #     azureSubscription: 'Azure SDK Artifacts'
-        #     ScriptType: 'InlineScript'
-        #     azurePowerShellVersion: LatestVersion 
-        #     pwsh: true
-        #     Inline: |
         - pwsh: azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
           displayName: Download ApiView Parser.
-          # env:
-          #   AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'   
-
-        # - task:  UniversalPackages@0
-        #   displayName: Download ApiView Parser.
-        #   inputs:
-        #     command: download
-        #     vstsFeed: 'public/azure-sdk-for-cpp'
-        #     vstsFeedPackage: 'parseazuresdkcpp'
-        #     downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-        #     vstsPackageVersion: 0.3.0
-        #   condition: succeeded()
 
         - task: Powershell@2
           inputs:
@@ -222,13 +202,29 @@ jobs:
                 -Name packages/${{ artifact.Name }}
               displayName: Create package info artifact location
 
+            - task: Powershell@2
+              inputs:
+                filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+                arguments: >
+                  -ServiceDirectory ${{parameters.ServiceDirectory}}
+                  -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+                pwsh: true
+                workingDirectory: $(Pipeline.Workspace)
+              displayName: Dump Package properties
+
             - pwsh: |
                 $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
                 $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-                $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
+                $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; ArtifactName = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; DirectoryPath = ""} | ConvertTo-Json
 
                 Set-Content -Path $outputPath -Value $outputObject
+
+                $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo/${{ artifact.Name }}_cpp.json
+                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo/${{ artifact.Name }}.json
+                
+                New-Item -path $packageJsonDest -Force
+                Copy-Item $packageJsonSource $packageJsonDest -Force
 
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
