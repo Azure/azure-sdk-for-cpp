@@ -73,7 +73,9 @@
         "Win2022": {
           "Pool": "env:WINDOWSPOOL",
           "OSVmImage": "env:WINDOWSVMIMAGE",
-          "CMAKE_GENERATOR": "Visual Studio 17 2022"
+          "CMAKE_GENERATOR": "Visual Studio 17 2022",
+          // Temporarily pin to an older image until https://github.com/actions/runner-images/issues/10562 is fixed
+          "1ES.ImageVersionOverride": "147.0.0"
         }
       },
       "BuildConfig": {
