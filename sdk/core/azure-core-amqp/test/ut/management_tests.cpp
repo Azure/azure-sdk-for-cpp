@@ -19,7 +19,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   protected:
     void SetUp() override {}
     void TearDown() override
-    { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+    { // When the test is torn down, the global state MUST be idle. If it is not, something
+      // leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
   };
@@ -53,8 +54,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(openResult, ManagementOpenStatus::Error);
   }
 
+#if ENABLE_UAMQP
   namespace {
-
     class ManagementServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       void SetStatusCode(AmqpValue expectedStatusCode)
@@ -127,8 +128,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           }
           responseMessage.Properties.CorrelationId = requestCorrelationId;
 
-          // Block until the send is completed. Note: Do *not* use the listener context to ensure
-          // that the send is completed.
+          // Block until the send is completed. Note: Do *not* use the listener context to
+          // ensure that the send is completed.
           auto sendResult(GetMessageSender().Send(responseMessage));
           if (std::get<0>(sendResult) != MessageSendStatus::Ok)
           {
@@ -144,9 +145,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::string m_expectedStatusDescriptionName = "statusDescription";
     };
   } // namespace
+#endif
 
   TEST_F(TestManagement, ManagementOpenClose)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
@@ -170,10 +173,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
@@ -202,10 +209,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestManagement, ManagementOpenCloseAuthenticatedFail)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
@@ -245,10 +256,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Caught exception: " << e.what();
     }
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestManagement, ManagementOpenCloseError)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
@@ -272,10 +287,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_THROW(management.Close(), std::runtime_error);
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 #if !defined(AZ_PLATFORM_MAC)
-
+#if ENABLE_UAMQP
   namespace {
 
     class NullResponseManagementServiceEndpoint final : public MessageTests::MockServiceEndpoint {
@@ -296,9 +314,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     };
   } // namespace
+#endif
 
   TEST_F(TestManagement, ManagementRequestResponse)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
@@ -340,9 +360,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
   TEST_F(TestManagement, ManagementRequestResponseSimple)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
         = std::make_shared<ManagementServiceEndpoint>(MessageTests::MockServiceEndpointOptions{});
@@ -373,10 +397,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestManagement, ManagementRequestResponseExpect500)
   {
+#if ENABLE_UAMQP
 
     MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
@@ -411,9 +439,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
   {
+#if ENABLE_UAMQP
     // Send a response with a bogus status code type.
     MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
@@ -429,8 +461,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     options.EnableTrace = true;
     ManagementClient management(session.CreateManagementClient("Test", options));
 
-    // Set the response status code to something other than an int - that will cause the response
-    // to be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the
+    // response to be rejected by the management client.
     managementEndpoint->SetStatusCode(500u);
     managementEndpoint->SetStatusDescription("Bad Things Happened.");
     mockServer.StartListening();
@@ -450,9 +482,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
   {
+#if ENABLE_UAMQP
     // Send a response to the request with a bogus status code name.
     MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
@@ -480,8 +516,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     ManagementClient management(session.CreateManagementClient("Test", options, &managementEvents));
 
-    // Set the response status code to something other than an int - that will cause the response
-    // to be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the
+    // response to be rejected by the management client.
     managementEndpoint->SetStatusCode(500);
     managementEndpoint->SetStatusCodeName("status-code");
     managementEndpoint->SetStatusDescription("Bad Things Happened.");
@@ -504,9 +540,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
   {
+#if ENABLE_UAMQP
     // Send a response to the request with a bogus status code name.
     MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
@@ -524,8 +564,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     ManagementClient management(session.CreateManagementClient("Test", options));
 
-    // Set the response status code to something other than an int - that will cause the response
-    // to be rejected by the management client.
+    // Set the response status code to something other than an int - that will cause the
+    // response to be rejected by the management client.
     managementEndpoint->SetStatusCode(235);
     managementEndpoint->SetStatusCodeName("status-code");
     managementEndpoint->SetStatusDescription("Bad Things Happened..");
@@ -544,10 +584,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestManagement, ManagementRequestResponseUnknownOperationName)
   {
+#if ENABLE_UAMQP
     // Send a management request with an unknown operation name.
     MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
@@ -587,6 +631,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     management.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

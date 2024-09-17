@@ -13,6 +13,13 @@ include(AzureBuildTargetForCI)
 include(GoogleTest)
 
 # Unit Tests
+
+IF (USE_UAMQP)
+set(UAMQP_ONLY_TESTS   
+  transport_tests.cpp
+)
+ENDIF()
+
 add_executable(azure-core-amqp-tests
   amqp_header_tests.cpp
   amqp_message_tests.cpp
@@ -29,8 +36,11 @@ add_executable(azure-core-amqp-tests
   message_source_target.cpp
   mock_amqp_server.hpp
   session_tests.cpp
-  transport_tests.cpp
- "amqp_performative_tests.cpp")
+  amqp_performative_tests.cpp
+  ${UAMQP_ONLY_TESTS}
+)
+
+
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
 target_compile_definitions(azure-core-amqp-tests PRIVATE _azure_BUILDING_TESTS)

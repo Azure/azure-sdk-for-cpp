@@ -118,7 +118,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
   }
-
+#if ENABLE_UAMQP
   class LinkSocketListenerEvents
       : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
         public Azure::Core::Amqp::_internal::ConnectionEvents,
@@ -248,9 +248,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     }
   };
+#endif
 
   TEST_F(TestLinks, LinkAttachDetach)
   {
+#if ENABLE_UAMQP
     LinkSocketListenerEvents events;
 
     uint16_t testPort = FindAvailableSocket();
@@ -276,10 +278,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     events.Cleanup();
     listener.Stop();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestLinks, LinkAttachDetachMultipleOneSession)
   {
+#if ENABLE_UAMQP
     class MySessionListener final : public MessageTests::MockServiceEndpoint {
     public:
       MySessionListener(MessageTests::MockServiceEndpointOptions const& options)
@@ -436,6 +442,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     keepAliveLink.Detach(true, "", "", {});
 
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 #endif // defined(AZ_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests
