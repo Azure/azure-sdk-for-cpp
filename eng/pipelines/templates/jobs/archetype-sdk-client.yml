@@ -322,6 +322,10 @@ jobs:
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
             ArtifactName: packages
+        - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
+            ArtifactName: PackageInfo
         
         - task: Powershell@2
           inputs:
