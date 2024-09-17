@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-
+#if ENABLE_UAMQP
   class LinkImplEvents {
   public:
     virtual Models::AmqpValue OnTransferReceived(
@@ -37,20 +37,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     virtual void OnLinkFlowOn(std::shared_ptr<LinkImpl> const& link) = 0;
     virtual ~LinkImplEvents() = default;
   };
+#endif
 
-  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>,
-                         public Common::_detail::Pollable {
-
+  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>
+#if ENABLE_UAMQP
+      ,
+                         public Common::_detail::Pollable
+#endif
+  {
+#if ENABLE_UAMQP
     using OnLinkDetachEvent = std::function<void(Models::_internal::AmqpError)>;
-
+#endif
   public:
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::string const& name,
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target,
-        _detail::LinkImplEvents* events);
+        Models::_internal::MessageTarget const& target
+#if ENABLE_UAMQP
+        ,
+        _detail::LinkImplEvents* events = nullptr
+#endif
+    );
+#if ENABLE_UAMQP
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& linkEndpoint,
@@ -59,6 +69,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::MessageSource const& source,
         Models::_internal::MessageTarget const& target,
         _detail::LinkImplEvents* events);
+#endif
     ~LinkImpl() noexcept;
 
     LinkImpl(LinkImpl const&) = delete;
@@ -89,11 +100,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SetDesiredCapabilities(Models::AmqpValue desiredCapabilities);
     Models::AmqpValue GetDesiredCapabilities() const;
-
+#if ENABLE_UAMQP
     /** @brief Subscribe to link detach events. */
     void SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetachEvent);
     void UnsubscribeFromDetachEvent();
-
+#endif
     std::string GetName() const;
 
 #if ENABLE_UAMQP
@@ -130,9 +141,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Models::_internal::MessageTarget m_target;
     Common::_internal::AsyncOperationQueue<uint32_t, LinkDeliverySettleReason, Models::AmqpValue>
         m_transferCompleteQueue;
+#if ENABLE_UAMQP
     OnLinkDetachEvent m_onLinkDetachEvent;
     LinkImplEvents* m_eventHandler;
-#if ENABLE_UAMQP
     ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
 
     static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
@@ -143,8 +154,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         TRANSFER_HANDLE transfer,
         uint32_t payload_size,
         const unsigned char* payload_bytes);
-#endif
     // Inherited via Pollable
     void Poll() override;
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail
