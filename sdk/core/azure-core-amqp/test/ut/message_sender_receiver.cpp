@@ -30,7 +30,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   protected:
     void SetUp() override {}
     void TearDown() override
-    { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
+    { // When the test is torn down, the global state MUST be idle. If it is not, something
+      // leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
   };
@@ -93,11 +94,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Session session{connection.CreateSession()};
 
     {
-      MessageSender sender(session.CreateMessageSender("MySource", {}, nullptr));
+      MessageSender sender(session.CreateMessageSender("MySource", {}));
     }
     {
-      MessageSender sender1(session.CreateMessageSender("MySource", {}, nullptr));
-      MessageSender sender2(session.CreateMessageSender("MySource", {}, nullptr));
+      MessageSender sender1(session.CreateMessageSender("MySource", {}));
+      MessageSender sender2(session.CreateMessageSender("MySource", {}));
     }
     GTEST_LOG_(INFO) << _internal::MessageSenderState::Invalid
                      << _internal::MessageSenderState::Closing
@@ -114,12 +115,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       MessageSenderOptions options;
       options.EnableTrace = true;
-      MessageSender sender(session.CreateMessageSender("MySource", options, nullptr));
+      MessageSender sender(session.CreateMessageSender("MySource", options));
     }
   }
 
   TEST_F(TestMessageSendReceive, ReceiverOpenClose)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
 
     ConnectionOptions connectionOptions;
@@ -176,10 +178,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
 
     context.Cancel();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, SenderOpenClose)
   {
+#if ENABLE_UAMQP
     class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
     public:
       SenderLinkEndpoint(
@@ -226,10 +232,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sender.Close();
     }
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, TestLocalhostVsTls)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer(5671);
 
     mockServer.StartListening();
@@ -273,10 +283,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_TRUE(sender.Open());
     }
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, SenderSendAsync)
   {
+#if ENABLE_UAMQP
     class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
     public:
       SenderLinkEndpoint(
@@ -359,10 +373,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     receiveContext.Cancel();
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, SenderSendSync)
   {
+#if ENABLE_UAMQP
     class SenderLinkEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       SenderLinkEndpoint(
@@ -427,10 +445,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     receiveContext.Cancel();
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
+#if ENABLE_UAMQP
     class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
       ReceiverServiceEndpoint(
@@ -491,10 +513,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     sender.Close();
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedSenderAzureToken)
   {
+#if ENABLE_UAMQP
     class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
       Azure::Core::Credentials::AccessToken GetToken(
           const Azure::Core::Credentials::TokenRequestContext& requestContext,
@@ -568,10 +594,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     sender.Close();
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiver)
   {
+#if ENABLE_UAMQP
     class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
       ReceiverServiceEndpoint(
@@ -689,10 +719,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     receiver.Close();
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverAzureToken)
   {
+#if ENABLE_UAMQP
     class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
     public:
       ReceiverServiceEndpoint(
@@ -817,10 +851,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     receiver.Close();
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverTryReceive)
   {
+#if ENABLE_UAMQP
     class ReceiverServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
       ReceiverServiceEndpoint(
@@ -918,6 +956,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     receiver.Close();
     server.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
 #endif // !defined(AZ_PLATFORM_MAC)

@@ -3,7 +3,7 @@
 
 // cspell: words amqp amqpvalue repr
 
-use crate::value::RustAmqpValue;
+use crate::model::value::RustAmqpValue;
 use azure_core_amqp::{
     messaging::{builders::AmqpSourceBuilder, AmqpSource},
     value::{AmqpComposite, AmqpDescriptor, AmqpOrderedMap, AmqpSymbol, AmqpValue},

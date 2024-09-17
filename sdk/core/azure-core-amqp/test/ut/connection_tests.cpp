@@ -46,6 +46,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
     }
+#if ENABLE_UAMQP
     {
       Azure::Core::Amqp::_internal::ConnectionOptions options;
       auto socketTransport{Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
@@ -54,6 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::_internal::Connection connection(
           socketTransport, options, nullptr, nullptr);
     }
+#endif
   }
 
   TEST_F(TestConnections, ConnectionAttributes)
@@ -82,9 +84,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto maxFrameSize = connection.GetMaxFrameSize();
       (void)maxFrameSize;
       EXPECT_EQ(1024 * 64, connection.GetMaxFrameSize());
-
+#if ENABLE_UAMQP
       EXPECT_NO_THROW(
           connection.GetRemoteMaxFrameSize()); // Likely doesn't work unless there's a remote.
+#endif
     }
 
     {
@@ -106,22 +109,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MaxChannelCount = 128;
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
+#if ENABLE_UAMQP
       // Ratio must be a number between 0 and 1.
       EXPECT_NO_THROW(connection.SetIdleEmptyFrameSendPercentage(0.5));
+#endif
     }
 
     {
       Azure::Core::Amqp::_internal::ConnectionOptions options;
       options.MaxChannelCount = 128;
-      options.Properties["test"] = "test";
+      options.Properties[Azure::Core::Amqp::Models::AmqpSymbol{"test"}] = "test";
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
-      EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"test"}, connection.GetProperties()["test"]);
+      GTEST_LOG_(INFO) << connection.GetProperties();
+      EXPECT_EQ(
+          Azure::Core::Amqp::Models::AmqpValue{"test"},
+          connection.GetProperties()[Azure::Core::Amqp::Models::AmqpSymbol{"test"}]);
     }
   }
 
   TEST_F(TestConnections, ConnectionOpenClose)
   {
+#if ENABLE_UAMQP
     class TestListener : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents {
     public:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> WaitForResult(
@@ -174,6 +183,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       connection.Close("xxx", "yyy", {});
       listener.Stop();
     }
+#else
+    // Create a connection
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = 25672;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+
+    // Open the connection
+    connection.Open();
+
+    connection.Close("", "", {});
+
+#endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 

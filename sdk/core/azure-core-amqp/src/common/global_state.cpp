@@ -7,6 +7,7 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/unique_handle.hpp>
 
 #if ENABLE_UAMQP
 #include <azure_c_shared_utility/gballoc.h>
@@ -104,7 +105,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     // Integrate AMQP logging with Azure Core logging.
     xlogging_set_log_function(AmqpLogFunction);
-#endif
 
     m_pollingThread = std::thread([this]() {
       do
@@ -132,16 +132,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } while (!m_stopped);
     });
+#endif
   }
 
   GlobalStateHolder::~GlobalStateHolder()
   {
+#if ENABLE_UAMQP
     m_stopped = true;
     if (m_pollingThread.joinable())
     {
       m_pollingThread.join();
     }
-#if ENABLE_UAMQP
     platform_deinit();
 #if defined(GB_DEBUG_ALLOC)
     gballoc_deinit();
@@ -149,6 +150,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 #endif
   }
 
+#if ENABLE_UAMQP
   /**
    * @brief Adds a pollable object to the list of objects to be polled.
    *
@@ -199,6 +201,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     while (m_activelyPolling.load())
       ;
   }
+#endif
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {
@@ -206,4 +209,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     return &globalState;
   }
 
+#if ENABLE_RUST_AMQP
+  thread_local RustThreadContext RustThreadContextInstance;
+#endif
+
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
+
+#if ENABLE_RUST_AMQP
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  void UniqueHandleHelper<Azure::Core::Amqp::_detail::RustRuntimeContext>::FreeRuntimeContext(
+      RustRuntimeContext* obj)
+  {
+    Azure::Core::Amqp::_detail::RustInterop::runtime_context_delete(obj);
+  }
+}}}} // namespace Azure::Core::Amqp::_detail
+#endif
