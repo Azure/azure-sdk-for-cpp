@@ -48,7 +48,9 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
     EXPECT_EQ("{ACCESS_KEY}=", credential.GetSharedAccessKey());
     {
 #if !defined(AZ_PLATFORM_MAC)
+#if ENABLE_UAMQP
       auto xport = credential.GetTransport();
+#endif
 #endif // !defined(AZ_PLATFORM_MAC)
 
       // Generate a SAS token which expires in 60 seconds.
