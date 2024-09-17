@@ -18,9 +18,9 @@
 #pragma once
 
 #if defined(_MSC_VER)
+#include <codeanalysis\warnings.h>
 #pragma warning(push)
-#pragma warning(disable : 28241)
-#pragma warning(disable : 28285)
+#pragma warning(disable : ALL_CODE_ANALYSIS_WARNINGS)
 #endif
 
 #include <algorithm> // all_of, find, for_each
