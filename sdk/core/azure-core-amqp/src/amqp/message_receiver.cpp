@@ -134,6 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
 #if defined(_azure_TESTING_BUILD)
+#if ENABLE_UAMQP
   void MessageReceiver::EnableLinkPolling()
   {
     if (m_impl)
@@ -145,6 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
       AZURE_ASSERT_FALSE("MessageReceiver::EnableLinkPolling called on moved message receiver.");
     }
   }
+#endif
 #endif
 
 }}}} // namespace Azure::Core::Amqp::_internal
@@ -218,12 +220,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void MessageReceiverImpl::CreateLink()
   {
     m_link = std::make_shared<_detail::LinkImpl>(
-        m_session,
-        m_options.Name,
-        SessionRole::Receiver,
-        m_source,
-        m_options.MessageTarget,
-        nullptr);
+        m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.MessageTarget);
     PopulateLinkProperties();
 
 #if ENABLE_UAMQP
@@ -370,7 +367,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return {};
     }
   }
-
+#if ENABLE_UAMQP
   void MessageReceiverImpl::EnableLinkPolling()
   {
     std::unique_lock<std::mutex> lock{m_mutableState};
@@ -380,6 +377,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_linkPollingEnabled = true;
     }
   }
+#endif
 
   MessageReceiverImpl::~MessageReceiverImpl() noexcept
   {
@@ -564,11 +562,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
       }
+#if ENABLE_UAMQP
 
       // Mark the connection as async so that we can use the async APIs.
       m_session->GetConnection()->EnableAsyncOperation(true);
+#endif
     }
 
+#if ENABLE_UAMQP
     // And add the link to the list of pollable items.
     //
     // Note that you *cannot* hold any connection or link locks when calling AddPollable. This is
@@ -582,6 +583,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       EnableLinkPolling();
     }
+#endif
   }
 
   void MessageReceiverImpl::Close(Context const& context)
@@ -600,12 +602,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       {
         std::unique_lock<std::mutex> lock{m_mutableState};
+#if ENABLE_UAMQP
         if (m_linkPollingEnabled)
         {
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
               m_link); // This will ensure that the link is cleaned up on the next poll()
           m_linkPollingEnabled = false;
         }
+#endif
       }
       {
         auto lock{m_session->GetConnection()->Lock()};
@@ -659,7 +663,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message receiver. Stop async";
       }
+#if ENABLE_UAMQP
       m_session->GetConnection()->EnableAsyncOperation(false);
+#endif
 
       m_receiverOpen = false;
     }

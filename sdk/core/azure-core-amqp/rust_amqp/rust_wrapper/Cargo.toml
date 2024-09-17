@@ -14,10 +14,14 @@ crate-type = ["staticlib"]
 
 [dependencies]
 azure_core_amqp = { workspace = true, features = ["cplusplus"] }
-azure_identity = { workspace = true }
-azure_core = { workspace = true }
-uuid = { workspace = true }
-tracing = { workspace = true }
+azure_identity.workspace = true
+azure_core.workspace = true
+uuid.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tokio.workspace = true
+url.workspace = true
+time.workspace = true
 
 [dev-dependencies]
 serde_amqp = { workspace = true }

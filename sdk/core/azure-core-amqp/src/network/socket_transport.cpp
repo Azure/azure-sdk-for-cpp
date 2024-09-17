@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#if ENABLE_UAMQP
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 
 #include "private/transport_impl.hpp"
@@ -8,10 +9,8 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
-#endif
 
 #include <exception>
 #include <stdexcept>
@@ -28,15 +27,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   {
     Log::Stream(Logger::Level::Verbose)
         << "Create socket transport for host " << host << " port: " << port;
-#if ENABLE_UAMQP
 
     SOCKETIO_CONFIG socketConfig{host.c_str(), port, nullptr};
     return _detail::TransportImpl::CreateFromXioHandle(
         xio_create(socketio_get_interface_description(), &socketConfig), eventHandler);
-#else
-    (void)eventHandler;
-    throw std::runtime_error("Not implemented.");
-#endif // ENABLE_UAMQP
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+#endif // ENABLE_UAMQP
