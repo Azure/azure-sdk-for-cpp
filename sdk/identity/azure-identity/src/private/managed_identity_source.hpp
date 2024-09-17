@@ -197,7 +197,6 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Url const& imdsUrl,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
