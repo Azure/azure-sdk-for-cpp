@@ -28,6 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #elif ENABLE_RUST_AMQP
   using HeaderImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageHeader;
 #endif
+
   template <> struct UniqueHandleHelper<HeaderImplementation>
   {
     static void FreeAmqpHeader(HeaderImplementation* obj);

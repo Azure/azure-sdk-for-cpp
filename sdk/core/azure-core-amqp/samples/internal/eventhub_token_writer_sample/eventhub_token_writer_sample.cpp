@@ -58,7 +58,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session.CreateMessageSender(eventhubsEntity, senderOptions, nullptr));
+      session.CreateMessageSender(eventhubsEntity, senderOptions));
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   if (auto err = sender.Open())

@@ -5,6 +5,7 @@
 // Licensed under the MIT License.
 
 #pragma once
+#if ENABLE_UAMQP
 #include <azure/core/context.hpp>
 
 #include <exception>
@@ -137,3 +138,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     std::shared_ptr<_detail::TransportImpl> m_impl;
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+#endif

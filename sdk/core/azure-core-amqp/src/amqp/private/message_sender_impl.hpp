@@ -41,14 +41,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         Models::_internal::MessageTarget const& target,
-        _internal::MessageSenderOptions const& options,
-        _internal::MessageSenderEvents* events);
+        _internal::MessageSenderOptions const& options
+#if ENABLE_UAMQP
+        ,
+        _internal::MessageSenderEvents* events = nullptr
+#endif
+    );
+#if ENABLE_UAMQP
     MessageSenderImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         _internal::LinkEndpoint& endpoint,
         Models::_internal::MessageTarget const& target,
         _internal::MessageSenderOptions const& options,
         _internal::MessageSenderEvents* events);
+#endif
     virtual ~MessageSenderImpl() noexcept;
 
     MessageSenderImpl(MessageSenderImpl const&) = delete;
