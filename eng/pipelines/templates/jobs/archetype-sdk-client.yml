@@ -100,16 +100,17 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
 
-        - pwsh: |
-            az login
-            az artifacts universal download `
-            --organization https://dev.azure.com/azure-sdk/ `
-            --project="public" `
-            --scope project `
-            --feed azure-sdk-for-cpp `
-            --name my-first-package `
-            --version 0.0.1 `
-            --path .     
+        - task: AzurePowerShell@5
+          displayName: Download ApiView Parser.
+          inputs:
+            azureSubscription: 'Azure SDK Artifacts'
+            ScriptType: 'InlineScript'
+            azurePowerShellVersion: LatestVersion 
+            pwsh: true
+            Inline: |
+              azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser"
+          env:
+            AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'   
 
         # - task:  UniversalPackages@0
         #   displayName: Download ApiView Parser.
