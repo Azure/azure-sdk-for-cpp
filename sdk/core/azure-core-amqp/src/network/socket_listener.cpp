@@ -29,11 +29,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
   } // namespace
 
-  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler) : m_eventHandler
-  {
-    eventHandler
-  }
-  , m_socket { socketlistener_create(port) }
+  SocketListener::SocketListener(uint16_t port, SocketListenerEvents* eventHandler)
+      : m_eventHandler{eventHandler}, m_socket{socketlistener_create(port)}
   {
     EnsureGlobalStateInitialized();
   }
@@ -114,10 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           m_started = false;
         }
 
-        void SocketListener::Poll() const
-        {
-          socketlistener_dowork(m_socket);
-        }
+        void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
 #endif // ENABLE_UAMQP
