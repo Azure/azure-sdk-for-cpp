@@ -22,6 +22,8 @@
 
 #define NEW_MOCK_SERVER 1
 
+#if ENABLE_UAMQP
+
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   extern uint16_t FindAvailableSocket();
@@ -781,3 +783,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     };
   } // namespace MessageTests
 }}}} // namespace Azure::Core::Amqp::Tests
+#endif // ENABLE_UAMQP

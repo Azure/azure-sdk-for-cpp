@@ -165,6 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
   {
+#if ENABLE_UAMQP
     class TestListenerEvents : public Network::_detail::SocketListenerEvents {
     public:
       std::shared_ptr<Network::_internal::Transport> WaitForResult(
@@ -213,11 +214,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     listener.Stop();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestSessions, MultipleSessionBeginEnd)
   {
-
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     mockServer.EnableTrace(false);
     mockServer.StartListening();
@@ -277,6 +281,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     connection.Close();
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 #endif // !AZ_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests
