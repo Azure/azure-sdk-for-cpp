@@ -1,15 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#if ENABLE_UAMQP
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "private/transport_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_uamqp_c/header_detect_io.h>
 #include <azure_uamqp_c/socket_listener.h>
-#endif
 
 #include <exception>
 #include <memory>
@@ -41,3 +40,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+#endif

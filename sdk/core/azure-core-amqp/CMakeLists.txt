@@ -171,7 +171,6 @@ set(AZURE_CORE_AMQP_SOURCE
     src/private/package_version.hpp
 )
 
-
 if (USE_UAMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 elseif(USE_RUST_AMQP)
@@ -193,8 +192,10 @@ target_include_directories(
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
 if(USE_UAMQP)
+#  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_UAMQP)
   add_compile_definitions(ENABLE_UAMQP)
 elseif(USE_RUST_AMQP)
+#  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_RUST_AMQP)
   add_compile_definitions(ENABLE_RUST_AMQP)
 endif()
 
@@ -220,10 +221,6 @@ elseif(USE_RUST_AMQP)
   if (MSVC)
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
   endif()
-else()
-  target_link_libraries(azure-core-amqp 
-    PRIVATE 
-    PUBLIC Azure::azure-core)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
