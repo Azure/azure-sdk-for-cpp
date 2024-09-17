@@ -64,25 +64,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     m_impl->SendDetach(linkEndpoint, closeLink, error);
   }
 
+#if ENABLE_UAMQP
+  MessageSender Session::CreateMessageSender(
+      Models::_internal::MessageTarget const& target,
+      MessageSenderOptions const& options,
+      MessageSenderEvents* events
+  ) const
+      #elif ENABLE_RUST_AMQP
   MessageSender Session::CreateMessageSender(
       Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options
-#if ENABLE_UAMQP
-      ,
-      MessageSenderEvents* events
-#endif
   ) const
+#endif
   {
+      #if ENABLE_UAMQP
+    return _detail::MessageSenderFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageSenderImpl>(
+            m_impl,
+            target,
+            options,
+            events
+            ));
+    #elif ENABLE_RUST_AMQP
     return _detail::MessageSenderFactory::CreateFromInternal(
         std::make_shared<_detail::MessageSenderImpl>(
             m_impl,
             target,
             options
-#if ENABLE_UAMQP
-            ,
-            events
-#endif
             ));
+      #endif
   }
 #if ENABLE_UAMQP
   MessageSender Session::CreateMessageSender(

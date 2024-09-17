@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+#if ENABLE_UAMQP
 
 #include "azure/core/amqp/internal/network/transport.hpp"
 
@@ -7,18 +8,14 @@
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "private/transport_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xio.h>
-#endif // ENABLE_UAMQP
 
 #include <cassert>
 
-#if ENABLE_UAMQP
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<XIO_INSTANCE_TAG>::FreeXio(XIO_HANDLE value) { xio_destroy(value); }
 }}}} // namespace Azure::Core::Amqp::_detail
-#endif // ENABLE_UAMQP
 
 namespace {
 void EnsureGlobalStateInitialized()
@@ -53,9 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
   TransportImpl::TransportImpl(Network::_internal::TransportEvents* eventHandler)
       :
-#if ENABLE_UAMQP
         m_xioInstance(nullptr),
-#endif
         m_eventHandler{eventHandler}
   {
     EnsureGlobalStateInitialized();
@@ -63,7 +58,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
 
 // This constructor is used by the SocketTransport and TlsTransport classes to construct a
 // transport around an already constructed XIO transport.
-#if ENABLE_UAMQP
         TransportImpl::TransportImpl(
             XIO_HANDLE handle,
             Network::_internal::TransportEvents* eventHandler)
@@ -72,7 +66,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           assert(handle != nullptr);
           EnsureGlobalStateInitialized();
         }
-#endif
 
         TransportImpl::~TransportImpl() {}
 
@@ -81,20 +74,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           static void OnOperation(CompleteFn onComplete) { onComplete(); }
         };
 
-#if ENABLE_UAMQP
         void TransportImpl::OnCloseCompleteFn(void* context)
         {
           TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
           transport->m_closeCompleteQueue.CompleteOperation(true);
         }
-#endif
         void TransportImpl::Close(Context const& context)
         {
           if (!m_isOpen)
           {
             throw std::logic_error("Cannot close an unopened transport.");
           }
-#if ENABLE_UAMQP
           if (m_xioInstance)
           {
             if (xio_close(m_xioInstance.get(), OnCloseCompleteFn, this))
@@ -103,7 +93,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
             }
             m_xioInstance = nullptr;
           }
-#endif
           auto result = m_closeCompleteQueue.WaitForPolledResult(context, *this);
           if (!result)
           {
@@ -112,7 +101,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           m_isOpen = false;
         }
 
-#if ENABLE_UAMQP
         void TransportImpl::OnOpenCompleteFn(void* context, IO_OPEN_RESULT ioOpenResult)
         {
           TransportImpl* transport = reinterpret_cast<TransportImpl*>(context);
@@ -159,7 +147,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
             transport->m_eventHandler->OnIOError();
           }
         }
-#endif
 
         _internal::TransportOpenStatus TransportImpl::Open(Context const& context)
         {
@@ -167,7 +154,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           {
             throw std::logic_error("Cannot open an opened transport.");
           }
-#if ENABLE_UAMQP
           if (xio_open(
                   m_xioInstance.get(),
                   OnOpenCompleteFn,
@@ -179,7 +165,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           {
             return _internal::TransportOpenStatus::Error;
           }
-#endif
           m_isOpen = true;
           auto result = m_openCompleteQueue.WaitForPolledResult(context, *this);
           if (result)
@@ -189,7 +174,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           throw Azure::Core::OperationCancelledException("Open operation was cancelled.");
         }
 
-#if ENABLE_UAMQP
         template <typename CompleteFn> struct SendCallbackRewriter
         {
           static void OnOperation(CompleteFn onComplete, IO_SEND_RESULT sendResult)
@@ -216,14 +200,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
             onComplete(result);
           }
         };
-#endif
 
         bool TransportImpl::Send(
             unsigned char* buffer,
             size_t size,
             Network::_internal::Transport::TransportSendCompleteFn sendComplete) const
         {
-#if ENABLE_UAMQP
           auto operation{std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
               decltype(sendComplete),
               SendCallbackRewriter<decltype(sendComplete)>>>(sendComplete)};
@@ -236,21 +218,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
           {
             return false;
           }
-#else
-          (void)size;
-          (void)buffer;
-          (void)sendComplete;
-#endif
           return true;
         }
 
         void TransportImpl::Poll() const
         {
-#if ENABLE_UAMQP
           if (m_xioInstance)
           {
             xio_dowork(m_xioInstance.get());
           }
-#endif
         }
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
+#endif // ENABLE_UAMQP

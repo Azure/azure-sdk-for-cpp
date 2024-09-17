@@ -3,6 +3,7 @@
 
 #pragma once
 
+#if ENABLE_UAMQP
 #include "transport.hpp"
 
 #include <atomic>
@@ -10,7 +11,6 @@
 #include <memory>
 #include <thread>
 
-#if ENABLE_UAMQP
 struct SOCKET_LISTENER_INSTANCE_TAG;
 struct IO_INTERFACE_DESCRIPTION_TAG;
 

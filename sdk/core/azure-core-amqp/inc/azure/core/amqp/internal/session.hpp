@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::_internal::MessageTarget const& target,
         MessageSenderOptions const& options,
         MessageSenderEvents* events = nullptr) const;
-#else
+#elif ENABLE_RUST_AMQP
     /** @brief Creates a MessageSender
      *
      * @param target - The target to which the message will be sent.
@@ -153,7 +153,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     MessageSender CreateMessageSender(
         Models::_internal::MessageTarget const& target,
         MessageSenderOptions const& options) const;
-
 #endif
 
     /** @brief Creates a MessageReceiver

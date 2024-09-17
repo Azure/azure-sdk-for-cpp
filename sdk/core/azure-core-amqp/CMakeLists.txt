@@ -108,6 +108,12 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/internal/models/messaging_values.hpp
     inc/azure/core/amqp/internal/models/performatives/amqp_detach.hpp
     inc/azure/core/amqp/internal/models/performatives/amqp_transfer.hpp
+    inc/azure/core/amqp/internal/network/amqp_header_detect_transport.hpp
+    inc/azure/core/amqp/internal/network/sasl_transport.hpp
+    inc/azure/core/amqp/internal/network/socket_listener.hpp
+    inc/azure/core/amqp/internal/network/socket_transport.hpp
+    inc/azure/core/amqp/internal/network/tls_transport.hpp
+    inc/azure/core/amqp/internal/network/transport.hpp
     inc/azure/core/amqp/internal/session.hpp
     inc/azure/core/amqp/models/amqp_header.hpp
     inc/azure/core/amqp/models/amqp_message.hpp
@@ -154,12 +160,6 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/private/source_impl.hpp
     src/models/private/target_impl.hpp
     src/models/private/value_impl.hpp
-    src/private/package_version.hpp
-)
-
-if(USE_UAMQP)
-# Source files for constructs which are only used when uAMQP is enabled.
-set(AZURE_CORE_UAMQP_SOURCE
     src/network/amqp_header_transport.cpp
     src/network/private/transport_impl.hpp
     src/network/private/transport_impl.hpp
@@ -168,20 +168,11 @@ set(AZURE_CORE_UAMQP_SOURCE
     src/network/socket_transport.cpp
     src/network/tls_transport.cpp
     src/network/transport.cpp
+    src/private/package_version.hpp
 )
-
-set (AZURE_CORE_UAMQP_HEADER
-    inc/azure/core/amqp/internal/network/amqp_header_detect_transport.hpp
-    inc/azure/core/amqp/internal/network/sasl_transport.hpp
-    inc/azure/core/amqp/internal/network/socket_listener.hpp
-    inc/azure/core/amqp/internal/network/socket_transport.hpp
-    inc/azure/core/amqp/internal/network/tls_transport.hpp
-    inc/azure/core/amqp/internal/network/transport.hpp
-)
-endif()
 
 if (USE_UAMQP)
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_UAMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_CORE_UAMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
 elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
 endif()
@@ -201,8 +192,10 @@ target_include_directories(
 add_library(Azure::azure-core-amqp ALIAS azure-core-amqp)
 
 if(USE_UAMQP)
+#  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_UAMQP)
   add_compile_definitions(ENABLE_UAMQP)
 elseif(USE_RUST_AMQP)
+#  target_compile_definitions(azure-core-amqp PRIVATE ENABLE_RUST_AMQP)
   add_compile_definitions(ENABLE_RUST_AMQP)
 endif()
 
@@ -228,10 +221,6 @@ elseif(USE_RUST_AMQP)
   if (MSVC)
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
   endif()
-else()
-  target_link_libraries(azure-core-amqp 
-    PRIVATE 
-    PUBLIC Azure::azure-core)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")

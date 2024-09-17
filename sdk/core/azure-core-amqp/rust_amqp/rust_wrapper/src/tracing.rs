@@ -5,7 +5,10 @@
 cspell: words reqwest repr staticlib dylib brotli gzip
 */
 
-use std::ffi::{c_char, CString};
+use std::{
+    ffi::{c_char, CString},
+    fmt::Debug,
+};
 
 struct RustTracingSubscriber {
     tracing_callback: Option<extern "C" fn(_: *const c_char)>,
@@ -30,32 +33,12 @@ impl RustTracingSubscriber {
     }
 }
 
-impl tracing::Subscriber for RustTracingSubscriber {
-    fn enabled(&self, _metadata: &tracing::Metadata) -> bool {
-        true
+impl Debug for RustTracingSubscriber {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RustTracingSubscriber")
+            .field("tracing_callback", &self.tracing_callback.is_some())
+            .finish()
     }
-
-    fn new_span(&self, span: &tracing::span::Attributes) -> tracing::span::Id {
-        tracing::span::Id::from_u64(span.metadata().id().into_u64())
-    }
-
-    fn record(&self, _span: &tracing::span::Id, _values: &tracing::span::Record) {}
-
-    fn record_follows_from(&self, _span: &tracing::span::Id, _follows: &tracing::span::Id) {}
-
-    fn event(&self, event: &tracing::Event) {
-        self.on_event(event.metadata().name());
-    }
-
-    fn enter(&self, _span: &tracing::span::Id) {}
-
-    fn exit(&self, _span: &tracing::span::Id) {}
-
-    fn clone_span(&self, _span: &tracing::span::Id) -> tracing::span::Id {
-        tracing::span::Id::from_u64(0)
-    }
-
-    fn drop_span(&self, _span: tracing::span::Id) {}
 }
 
 #[no_mangle]
