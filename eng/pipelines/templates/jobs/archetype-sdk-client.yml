@@ -220,12 +220,6 @@ jobs:
 
                 Set-Content -Path $outputPath -Value $outputObject
 
-                $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo/${{ artifact.Name }}_cpp.json
-                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo/${{ artifact.Name }}_cpp.json
-                
-                New-Item -path $packageJsonDest -Force
-                Copy-Item $packageJsonSource $packageJsonDest -Force
-
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
               displayName: Create package info JSON file for ${{ artifact.Name }}
@@ -353,6 +347,12 @@ jobs:
               eq(variables['System.TeamProject'], 'internal')
             )
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          - pwsh: |
+              $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
+              $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+              mkdir $packageJsonDest
+              Copy-Item $packageJsonSource/* $packageJsonDest -Force
+            displayName: Copy PackageJson
           - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
             parameters:
               Artifacts: ${{ parameters.Artifacts }}
