@@ -8,7 +8,7 @@ use azure_core_amqp::{
     value::{AmqpDescribed, AmqpDescriptor, AmqpList, AmqpOrderedMap, AmqpValue},
 };
 
-use crate::{
+use crate::model::{
     source::{RustExpiryPolicy, RustTerminusDurability},
     value::RustAmqpValue,
 };

@@ -77,6 +77,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenNoListener)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
     ConnectionOptions options;
     options.EnableTrace = true;
@@ -89,10 +90,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
     }
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestCbs, CbsOpen)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
 
     mockServer.EnableTrace(false);
@@ -118,10 +123,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     }
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestCbs, CbsCancelledOpen)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
 
     mockServer.EnableTrace(false);
@@ -144,6 +153,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(CbsOpenResult::Cancelled, openResult);
     }
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
 #endif // !defined(AZ_PLATFORM_MAC)
@@ -151,6 +163,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
+#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer;
 
     ConnectionOptions options;
@@ -176,12 +189,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     mockServer.StopListening();
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPutError)
   {
+#if ENABLE_UAMQP
     {
       MessageTests::AmqpServerMock mockServer;
 
@@ -208,10 +225,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       mockServer.StopListening();
     }
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
   TEST_F(TestCbs, CbsOpenAndPutCancelled)
   {
+#if ENABLE_UAMQP
     {
       MessageTests::AmqpServerMock mockServer;
 
@@ -246,6 +267,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       mockServer.StopListening();
     }
+#else
+    EXPECT_TRUE(false);
+#endif
   }
 
 #endif // !defined(AZ_PLATFORM_MAC)
