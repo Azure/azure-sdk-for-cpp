@@ -108,7 +108,8 @@ jobs:
         #     azurePowerShellVersion: LatestVersion 
         #     pwsh: true
         #     Inline: |
-        - pwsh: azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser"
+        - pwsh: azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
+          displayName: Download ApiView Parser.
           # env:
           #   AZCOPY_AUTO_LOGIN_TYPE: 'PSCRED'   
 
