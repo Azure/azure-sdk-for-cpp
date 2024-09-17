@@ -130,12 +130,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::string GetAudience();
 
+#if ENABLE_UAMQP
     /** @brief Return a SASL transport configured for SASL Anonymous which will be used to
      * communicate with the AMQP service.
      *
      * @return A SASL transport configured for SASL Anonymous.
      */
     virtual std::shared_ptr<Network::_internal::Transport> GetTransport() const;
+#endif
 
     std::string const& GetEndpoint() const { return m_connectionParser.GetEndpoint(); }
     std::string const& GetSharedAccessKeyName() const

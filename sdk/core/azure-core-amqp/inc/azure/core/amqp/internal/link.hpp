@@ -97,8 +97,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& name,
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target,
-        LinkEvents* events = nullptr);
+        Models::_internal::MessageTarget const& target
+#if ENABLE_UAMQP
+        ,
+        LinkEvents* events = nullptr
+#endif
+    );
+#if ENABLE_UAMQP
     Link(
         _internal::Session const& session,
         _internal::LinkEndpoint& linkEndpoint,
@@ -107,6 +112,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::MessageSource const& source,
         Models::_internal::MessageTarget const& target,
         LinkEvents* events = nullptr);
+#endif
     ~Link() noexcept;
 
     Link(Link const&) = default;
