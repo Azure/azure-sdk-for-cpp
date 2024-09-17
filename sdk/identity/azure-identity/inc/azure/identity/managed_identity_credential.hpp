@@ -21,14 +21,14 @@ namespace Azure { namespace Identity {
   }
 
   /**
-   * @brief The type of managed identity identifier depending on how the managed identity is
+   * @brief The kind of managed identity identifier depending on how the managed identity is
    * configured.
    *
    * @remark This can either be system-assigned, or user-assigned which corresponds to an identifier
    * that represents either client ID, resource ID, or object ID, depending on how the managed
    * identity is configured.
    */
-  enum class ManagedIdentityIdType
+  enum class ManagedIdentityIdKind
   {
     SystemAssigned,
     ClientId,
@@ -39,12 +39,12 @@ namespace Azure { namespace Identity {
   /**
    * @brief The type of managed identity and its corresponding identifier.
    *
-   * @remark This class holds the type and unique identifier for either a system or user-assigned
+   * @remark This class holds the kind and unique identifier for either a system or user-assigned
    * managed identity.
    */
-  class ManagedIdentityType final {
+  class ManagedIdentityId final {
   private:
-    ManagedIdentityIdType m_idType;
+    ManagedIdentityIdKind m_idKind;
     std::string m_id;
 
   public:
@@ -53,24 +53,24 @@ namespace Azure { namespace Identity {
      *
      * @remark This defaults to ManagedIdentityIdType::SystemAssigned.
      */
-    explicit ManagedIdentityType() : m_idType(ManagedIdentityIdType::SystemAssigned) {}
+    explicit ManagedIdentityId() : m_idKind(ManagedIdentityIdKind::SystemAssigned) {}
 
     /**
      * @brief Constructs the type of managed identity.
      *
-     * @param idType The type of the managed identity identifier.
+     * @param idKind The kind of the managed identity identifier.
      * @param id The value of the managed identity identifier. This can be either a client ID,
      * resource ID, or object ID.
      *
      * @remark For ManagedIdentityIdType::SystemAssigned, the id must be an empty string.
      *
-     * @remark Make sure the type of ID matches the value of the ID. For example, the client
+     * @remark Make sure the kind of ID matches the value of the ID. For example, the client
      * ID and object ID are NOT interchangeable, even though they are both Uuid values.
      */
-    explicit ManagedIdentityType(ManagedIdentityIdType idType, std::string id)
-        : m_idType(idType), m_id(id)
+    explicit ManagedIdentityId(ManagedIdentityIdKind idKind, std::string id)
+        : m_idKind(idKind), m_id(id)
     {
-      if (idType == ManagedIdentityIdType::SystemAssigned && !id.empty())
+      if (idKind == ManagedIdentityIdKind::SystemAssigned && !id.empty())
       {
         throw std::invalid_argument(
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
@@ -78,12 +78,12 @@ namespace Azure { namespace Identity {
       }
 
       if (id.empty()
-          && (idType == ManagedIdentityIdType::ClientId || idType == ManagedIdentityIdType::ObjectId
-              || idType == ManagedIdentityIdType::ResourceId))
+          && (idKind == ManagedIdentityIdKind::ClientId || idKind == ManagedIdentityIdKind::ObjectId
+              || idKind == ManagedIdentityIdKind::ResourceId))
       {
         throw std::invalid_argument(
             "Provide the value of the client, object, or resource ID corresponding to the "
-            "ManagedIdentityIdType specified. The provided ID should not be empty in the case of "
+            "ManagedIdentityIdKind specified. The provided ID should not be empty in the case of "
             "user-assigned managed identity.");
       }
     }
@@ -96,10 +96,10 @@ namespace Azure { namespace Identity {
     std::string const& GetId() const { return m_id; }
 
     /**
-     * @brief Gets the type of identifier used for the managed identity, depending on how it is
+     * @brief Gets the kind of identifier used for the managed identity, depending on how it is
      * configured.
      */
-    ManagedIdentityIdType GetManagedIdentityIdType() const { return m_idType; }
+    ManagedIdentityIdKind GetManagedIdentityIdKind() const { return m_idKind; }
   };
 
   /**
@@ -112,7 +112,7 @@ namespace Azure { namespace Identity {
      * @brief Specifies the type of managed identity and its corresponding identifier, based on how
      * it was configured.
      */
-    ManagedIdentityType IdentityType;
+    ManagedIdentityId IdentityId;
   };
 
   /**

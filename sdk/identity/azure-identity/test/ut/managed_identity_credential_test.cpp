@@ -32,57 +32,55 @@ using Azure::Core::Http::HttpMethod;
 using Azure::Core::Http::HttpStatusCode;
 using Azure::Identity::ManagedIdentityCredential;
 using Azure::Identity::ManagedIdentityCredentialOptions;
-using Azure::Identity::ManagedIdentityIdType;
-using Azure::Identity::ManagedIdentityType;
+using Azure::Identity::ManagedIdentityId;
+using Azure::Identity::ManagedIdentityIdKind;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
-TEST(ManagedIdentityType, Basic)
+TEST(ManagedIdentityId, Basic)
 {
   {
-    ManagedIdentityType const miType;
+    ManagedIdentityId const miType;
     EXPECT_EQ(miType.GetId(), "");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+    EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::SystemAssigned);
   }
   {
-    ManagedIdentityType const miType(ManagedIdentityIdType::SystemAssigned, "");
+    ManagedIdentityId const miType(ManagedIdentityIdKind::SystemAssigned, "");
     EXPECT_EQ(miType.GetId(), "");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+    EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::SystemAssigned);
   }
   {
-    ManagedIdentityType const miType(ManagedIdentityIdType::ClientId, "clientId");
+    ManagedIdentityId const miType(ManagedIdentityIdKind::ClientId, "clientId");
     EXPECT_EQ(miType.GetId(), "clientId");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ClientId);
+    EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ClientId);
   }
   {
-    ManagedIdentityType const miType(ManagedIdentityIdType::ObjectId, "objectId");
+    ManagedIdentityId const miType(ManagedIdentityIdKind::ObjectId, "objectId");
     EXPECT_EQ(miType.GetId(), "objectId");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ObjectId);
+    EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ObjectId);
   }
   {
-    ManagedIdentityType const miType(ManagedIdentityIdType::ResourceId, "resourceId");
+    ManagedIdentityId const miType(ManagedIdentityIdKind::ResourceId, "resourceId");
     EXPECT_EQ(miType.GetId(), "resourceId");
-    EXPECT_EQ(miType.GetManagedIdentityIdType(), ManagedIdentityIdType::ResourceId);
+    EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ResourceId);
   }
   {
     ManagedIdentityCredentialOptions options;
-    EXPECT_EQ(options.IdentityType.GetId(), "");
-    EXPECT_EQ(
-        options.IdentityType.GetManagedIdentityIdType(), ManagedIdentityIdType::SystemAssigned);
+    EXPECT_EQ(options.IdentityId.GetId(), "");
+    EXPECT_EQ(options.IdentityId.GetManagedIdentityIdKind(), ManagedIdentityIdKind::SystemAssigned);
   }
 }
 
-TEST(ManagedIdentityType, Invalid)
+TEST(ManagedIdentityId, Invalid)
 {
   EXPECT_THROW(
-      ManagedIdentityType(ManagedIdentityIdType::SystemAssigned, "clientId"),
-      std::invalid_argument);
+      ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, "clientId"), std::invalid_argument);
 
-  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ClientId, ""), std::invalid_argument);
-  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ObjectId, ""), std::invalid_argument);
-  EXPECT_THROW(ManagedIdentityType(ManagedIdentityIdType::ResourceId, ""), std::invalid_argument);
+  EXPECT_THROW(ManagedIdentityId(ManagedIdentityIdKind::ClientId, ""), std::invalid_argument);
+  EXPECT_THROW(ManagedIdentityId(ManagedIdentityIdKind::ObjectId, ""), std::invalid_argument);
+  EXPECT_THROW(ManagedIdentityId(ManagedIdentityIdKind::ResourceId, ""), std::invalid_argument);
 
   ManagedIdentityCredentialOptions options;
-  options.IdentityType = ManagedIdentityType(static_cast<ManagedIdentityIdType>(99), "");
+  options.IdentityId = ManagedIdentityId(static_cast<ManagedIdentityIdKind>(99), "");
   std::unique_ptr<ManagedIdentityCredential const> managedIdentityCredentialWithInvalidOptions;
   EXPECT_THROW(
       managedIdentityCredentialWithInvalidOptions
@@ -304,8 +302,8 @@ TEST(ManagedIdentityCredential, AppServiceV2019ResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -395,8 +393,8 @@ TEST(ManagedIdentityCredential, AppServiceV2019ObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -768,8 +766,8 @@ TEST(ManagedIdentityCredential, AppServiceV2017ResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -859,8 +857,8 @@ TEST(ManagedIdentityCredential, AppServiceV2017ObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1150,8 +1148,8 @@ TEST(ManagedIdentityCredential, CloudShellResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1182,8 +1180,8 @@ TEST(ManagedIdentityCredential, CloudShellObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1604,8 +1602,8 @@ TEST(ManagedIdentityCredential, AzureArcResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -1637,8 +1635,8 @@ TEST(ManagedIdentityCredential, AzureArcObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2247,7 +2245,7 @@ TEST(ManagedIdentityCredential, Imds)
         [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityType = ManagedIdentityType(ManagedIdentityIdType::SystemAssigned, "");
+          options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, "");
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},
@@ -2516,8 +2514,8 @@ TEST(ManagedIdentityCredential, ImdsClientId)
         [](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityType = ManagedIdentityType(
-              ManagedIdentityIdType::ClientId, "fedcba98-7654-3210-0123-456789abcdef");
+          options.IdentityId = ManagedIdentityId(
+              ManagedIdentityIdKind::ClientId, "fedcba98-7654-3210-0123-456789abcdef");
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},
@@ -2608,8 +2606,8 @@ TEST(ManagedIdentityCredential, ImdsResourceId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ResourceId, "abcdef01-2345-6789-9876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
@@ -2699,8 +2697,8 @@ TEST(ManagedIdentityCredential, ImdsObjectId)
       [](auto transport) {
         ManagedIdentityCredentialOptions options;
         options.Transport.Transport = transport;
-        options.IdentityType = ManagedIdentityType(
-            ManagedIdentityIdType::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
+        options.IdentityId = ManagedIdentityId(
+            ManagedIdentityIdKind::ObjectId, "abcdef01-2345-6789-0876-543210fedcba");
 
         CredentialTestHelper::EnvironmentOverride const env({
             {"MSI_ENDPOINT", ""},
