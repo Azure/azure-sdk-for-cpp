@@ -1,6 +1,6 @@
 # Release History
 
-## 1.10.0-beta.1 (Unreleased)
+## 1.10.0-beta.1 (2024-09-17)
 
 ### Features Added
 
@@ -11,10 +11,6 @@
 ### Breaking Changes
 
 - Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.9.0 (2024-08-06)
 
