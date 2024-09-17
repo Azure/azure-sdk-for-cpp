@@ -17,6 +17,12 @@
 
 #pragma once
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 28241)
+#pragma warning(disable : 28285)
+#endif
+
 #include <algorithm> // all_of, find, for_each
 #include <cstddef> // nullptr_t, ptrdiff_t, size_t
 #include <functional> // hash, less
@@ -29120,3 +29126,7 @@ operator"" _json_pointer; // NOLINT(misc-unused-using-decls,google-global-names-
 #undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT
 #undef _azure_JSON_HEDLEY_WARN_UNUSED_RESULT_MSG
 #undef _azure_JSON_HEDLEY_FALL_THROUGH
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
