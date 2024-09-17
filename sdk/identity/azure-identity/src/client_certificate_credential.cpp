@@ -322,8 +322,8 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
-    std::string clientCertificate,
-    std::string privateKey)
+    std::string const& clientCertificate,
+    std::string const& privateKey)
 {
   auto certContext = ImportPemCertificate(clientCertificate);
 
@@ -422,8 +422,8 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> GetThumbprintAndKey(
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
-    std::string clientCertificate,
-    std::string privateKey)
+    std::string const& clientCertificate,
+    std::string const& privateKey)
 {
   // Create a BIO from the private key vector data in memory.
   UniqueHandle<BIO> bioKey(BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size())));
@@ -585,8 +585,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::string clientCertificate,
-    std::string privateKey,
+    std::string const& clientCertificate,
+    std::string const& privateKey,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
     bool sendCertificateChain,
@@ -655,8 +655,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::string clientCertificate,
-    std::string privateKey,
+    std::string const& clientCertificate,
+    std::string const& privateKey,
     ClientCertificateCredentialOptions const& options)
     : ClientCertificateCredential(
         tenantId,
