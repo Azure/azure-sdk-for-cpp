@@ -67,10 +67,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Invalid
   };
 
-#if defined(_azure_TESTING_BUILD)
 
   // Note that this entire class is a test hook to enable testing of the Link family of apis. It is
   // not exposed to customers because there are no customer scenarios for it.
+#if defined(_azure_TESTING_BUILD)
   class Link;
 #if ENABLE_UAMQP
   class LinkImplEvents;

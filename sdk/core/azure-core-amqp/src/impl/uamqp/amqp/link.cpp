@@ -19,47 +19,6 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-#if ENABLE_UAMQP
-  class LinkImplEventsImpl : public LinkImplEvents {
-  public:
-    LinkImplEventsImpl(LinkEvents* linkEvents) : m_linkEvents(linkEvents) {}
-
-  private:
-    virtual Models::AmqpValue OnTransferReceived(
-        std::shared_ptr<LinkImpl> const& link,
-        Models::_internal::Performatives::AmqpTransfer transfer,
-        uint32_t payloadSize,
-        const unsigned char* payloadBytes) override
-    {
-      if (m_linkEvents)
-      {
-        return m_linkEvents->OnTransferReceived(Link{link}, transfer, payloadSize, payloadBytes);
-      }
-      return Models::AmqpValue{};
-    }
-    virtual void OnLinkStateChanged(
-        std::shared_ptr<LinkImpl> const& link,
-        LinkState newLinkState,
-        LinkState previousLinkState) override
-    {
-      if (m_linkEvents)
-      {
-        m_linkEvents->OnLinkStateChanged(Link{link}, newLinkState, previousLinkState);
-      }
-    }
-    virtual void OnLinkFlowOn(std::shared_ptr<LinkImpl> const& link) override
-    {
-      if (m_linkEvents)
-      {
-        m_linkEvents->OnLinkFlowOn(Link{link});
-      }
-    }
-
-    LinkEvents* m_linkEvents;
-  };
-#endif // ENABLE_UAMQP
-
-
   std::ostream& operator<<(std::ostream& os, LinkState linkState)
   {
     switch (linkState)

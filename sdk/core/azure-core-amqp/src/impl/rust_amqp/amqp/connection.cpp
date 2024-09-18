@@ -18,11 +18,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/uuid.hpp>
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/connection.h>
-#elif ENABLE_RUST_AMQP
 using namespace Azure::Core::Amqp::_detail::RustInterop;
-#endif
 
 #include <memory>
 

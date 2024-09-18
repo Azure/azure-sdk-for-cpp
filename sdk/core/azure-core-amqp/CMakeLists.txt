@@ -251,11 +251,12 @@ add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} 
 endif()
 
 if (USE_UAMQP)
-target_include_directories(azure-core-amqp SYSTEM PRIVATE src/impl/uamqp/amqp/private src/impl/uamqp/amqp/network ${UAMQP_INC_FOLDER})
+target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+target_include_directories(azure-core-amqp PRIVATE src/impl/uamqp/amqp/private src/impl/uamqp/amqp/network ${UAMQP_INC_FOLDER})
 endif()
 
 if (USE_RUST_AMQP)
-target_include_directories(azure-core-amqp SYSTEM PRIVATE src/impl/rust_amqp/amqp/private src/rust_amqp/rust_wrapper)
+target_include_directories(azure-core-amqp PRIVATE src/impl/rust_amqp/amqp/private rust_amqp/rust_wrapper)
 endif()
 
 target_include_directories(
