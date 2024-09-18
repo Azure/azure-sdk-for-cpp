@@ -36,16 +36,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options
-      )
-      :
-        m_session{session}, m_target{target}, m_options{options}
+      _internal::MessageSenderOptions const& options)
+      : m_session{session}, m_target{target}, m_options{options}
   {
   }
 
@@ -148,8 +145,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     throw std::runtime_error("Not implemented");
     (void)context;
   }
-
-
 
   Models::_internal::AmqpError MessageSenderImpl::Send(
       Models::AmqpMessage const& message,

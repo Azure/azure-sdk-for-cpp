@@ -39,7 +39,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   };
 
-  class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl>{
+  class ManagementClientImpl final : public ::std::enable_shared_from_this<ManagementClientImpl> {
   public:
     ManagementClientImpl(
         std::shared_ptr<SessionImpl> session,
@@ -113,6 +113,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::recursive_mutex m_messageQueuesLock;
     std::map<std::string, std::unique_ptr<ManagementOperationQueue>> m_messageQueues;
-
   };
 }}}} // namespace Azure::Core::Amqp::_detail

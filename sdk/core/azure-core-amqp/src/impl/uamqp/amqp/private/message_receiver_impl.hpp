@@ -3,10 +3,10 @@
 
 #pragma once
 
+#include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "link_impl.hpp"
 #include "session_impl.hpp"
-#include "../../../../amqp/private/unique_handle.hpp"
 
 #if ENABLE_UAMQP
 #include <azure_uamqp_c/amqpvalue.h>

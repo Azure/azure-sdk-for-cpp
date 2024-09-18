@@ -17,7 +17,6 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
 
-
 #include <memory>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -33,7 +32,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 #endif
 }}}} // namespace Azure::Core::Amqp::_detail
-
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -80,7 +78,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_link = std::make_shared<_detail::LinkImpl>(
         m_session, m_options.Name, SessionRole::Receiver, m_source, m_options.MessageTarget);
     PopulateLinkProperties();
-
   }
 
   void MessageReceiverImpl::PopulateLinkProperties()
@@ -103,7 +100,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     m_link->SetAttachProperties(m_options.Properties.AsAmqpValue());
   }
-
 
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
@@ -181,7 +177,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_messageQueue.Clear();
   }
 
-
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
     if (m_options.AuthenticationRequired)
@@ -204,7 +199,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
       }
     }
-
   }
 
   void MessageReceiverImpl::Close(Context const& context)

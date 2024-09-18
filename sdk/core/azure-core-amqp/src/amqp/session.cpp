@@ -21,7 +21,6 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   Endpoint::~Endpoint()
   {
@@ -113,4 +112,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
 }}}} // namespace Azure::Core::Amqp::_internal
-

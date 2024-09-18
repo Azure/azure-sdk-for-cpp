@@ -37,7 +37,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   /** Configure the MessageReceiver for receiving messages from a service instance.

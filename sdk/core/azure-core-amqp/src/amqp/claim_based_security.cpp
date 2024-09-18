@@ -4,7 +4,6 @@
 #include "claims_based_security_impl.hpp"
 #include "session_impl.hpp"
 
-
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 

@@ -44,10 +44,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
       // Creating a runtime_context initializes the Rust thread pool, so defer initialization until
       // we actually need the runtime context.
-// if (!m_runtimeContext)
-//      {
-//        m_runtimeContext.reset(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new());
-//      }
+      // if (!m_runtimeContext)
+      //      {
+      //        m_runtimeContext.reset(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new());
+      //      }
       return m_runtimeContext.get();
     }
   };

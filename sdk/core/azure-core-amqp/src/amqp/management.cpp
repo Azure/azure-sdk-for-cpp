@@ -48,4 +48,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         operationToPerform, typeOfOperation, locales, messageToSend, context);
   }
 }}}} // namespace Azure::Core::Amqp::_internal
-

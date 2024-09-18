@@ -51,14 +51,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 
   void MessageSender::Close(Context const& context) { m_impl->Close(context); }
-  #if ENABLE_UAMQP
+#if ENABLE_UAMQP
   std::tuple<MessageSendStatus, Models::_internal::AmqpError> MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)
   {
     return m_impl->Send(message, context);
   }
-  #elif ENABLE_RUST_AMQP
+#elif ENABLE_RUST_AMQP
   Models::_internal::AmqpError MessageSender::Send(
       Models::AmqpMessage const& message,
       Context const& context)

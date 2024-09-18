@@ -27,7 +27,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Network::_internal::SocketTransportFactory::Create(GetHostName(), GetPort()));
   }
 
-
   // Generate a Shared Access Signature token for a ServiceBus client.
   //
   // The spec for a SharedAccessSignature is here:

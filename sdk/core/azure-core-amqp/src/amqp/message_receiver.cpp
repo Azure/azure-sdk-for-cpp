@@ -27,7 +27,6 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
 
-
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   std::ostream& operator<<(std::ostream& stream, ReceiverSettleMode settleMode)
@@ -141,4 +140,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 #endif
 
 }}}} // namespace Azure::Core::Amqp::_internal
-
