@@ -59,28 +59,28 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Identity::ManagedIdentityCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  ManagedIdentityIdType idType = options.IdentityType.GetManagedIdentityIdType();
+  ManagedIdentityIdKind idType = options.IdentityId.GetManagedIdentityIdKind();
   switch (idType)
   {
-    case ManagedIdentityIdType::SystemAssigned:
+    case ManagedIdentityIdKind::SystemAssigned:
       m_managedIdentitySource
           = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
       break;
-    case ManagedIdentityIdType::ClientId:
+    case ManagedIdentityIdKind::ClientId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), options.IdentityType.GetId(), {}, {}, options);
+          GetCredentialName(), options.IdentityId.GetId(), {}, {}, options);
       break;
-    case ManagedIdentityIdType::ObjectId:
+    case ManagedIdentityIdKind::ObjectId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), {}, options.IdentityType.GetId(), {}, options);
+          GetCredentialName(), {}, options.IdentityId.GetId(), {}, options);
       break;
-    case ManagedIdentityIdType::ResourceId:
+    case ManagedIdentityIdKind::ResourceId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), {}, {}, options.IdentityType.GetId(), options);
+          GetCredentialName(), {}, {}, options.IdentityId.GetId(), options);
       break;
     default:
       throw std::invalid_argument(
-          "The ManagedIdentityIdType in the options is not set to one of the valid values.");
+          "The ManagedIdentityIdKind in the options is not set to one of the valid values.");
       break;
   }
 }
