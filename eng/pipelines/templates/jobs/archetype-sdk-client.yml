@@ -358,10 +358,11 @@ jobs:
               eq(variables['System.TeamProject'], 'internal')
             )
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
-            parameters:
-              ArtifactName: ${{ parameters.Artifacts }}
-              condition: succeeded()
+          - ${{ each artifact in parameters.Artifacts }}:
+            - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+              parameters:
+                ArtifactName: ${{ artifact.Name }}
+                condition: succeeded()
 
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
