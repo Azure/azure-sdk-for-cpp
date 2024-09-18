@@ -106,7 +106,7 @@ function SetPackageVersion ($PackageName, $Version, $ServiceDirectory, $ReleaseD
 
 function Find-cpp-Artifacts-For-Apireview($ArtifactPath, $PackageName)
 {
-  $artifact = @(Get-ChildItem -Path (Join-Path "$ArtifactPath/packages" $PackageName) -Filter "*_cpp.json")
+  $artifact = @(Get-ChildItem -Path (Join-Path $ArtifactPath "packages/PackageInfo") -Filter "${PackageName}_cpp.json")
   if ($artifact)
   {
     $packages = @{
