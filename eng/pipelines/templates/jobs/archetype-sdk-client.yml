@@ -220,6 +220,11 @@ jobs:
 
                 Set-Content -Path $outputPath -Value $outputObject
 
+                $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
+                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+                Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
+                Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
+
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
               displayName: Create package info JSON file for ${{ artifact.Name }}
