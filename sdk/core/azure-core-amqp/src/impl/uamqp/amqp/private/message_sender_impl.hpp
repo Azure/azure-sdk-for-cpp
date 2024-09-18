@@ -5,7 +5,7 @@
 
 #include "azure/core/amqp/internal/message_sender.hpp"
 #include "link_impl.hpp"
-#include "unique_handle.hpp"
+#include "../../../../amqp/private/unique_handle.hpp"
 
 #if ENABLE_UAMQP
 #include <azure_uamqp_c/message_sender.h>

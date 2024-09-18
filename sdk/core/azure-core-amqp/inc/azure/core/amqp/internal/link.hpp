@@ -37,6 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class LinkImpl;
 
+#if ENABLE_UAMQP
   enum class LinkState
   {
     Invalid,
@@ -48,6 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   std::ostream& operator<<(std::ostream& stream, LinkState linkState);
+#endif
 
   enum class LinkTransferResult
   {
@@ -70,6 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // Note that this entire class is a test hook to enable testing of the Link family of apis. It is
   // not exposed to customers because there are no customer scenarios for it.
   class Link;
+#if ENABLE_UAMQP
   class LinkImplEvents;
   class LinkImplEventsImpl;
 
@@ -89,6 +92,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     virtual void OnLinkFlowOn(Link const& link) = 0;
     virtual ~LinkEvents() = default;
   };
+#endif
 
   class Link final {
   public:
@@ -165,7 +169,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     friend class LinkImpl;
     friend class LinkImplEventsImpl;
     Link(std::shared_ptr<LinkImpl> impl) : m_impl{impl} {}
+#if ENABLE_UAMQP
     std::shared_ptr<LinkImplEvents> m_implEvents;
+#endif
     std::shared_ptr<LinkImpl> m_impl;
   };
 #endif // _azure_TESTING_BUILD

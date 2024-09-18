@@ -3,9 +3,7 @@
 
 #include "azure/core/amqp/internal/cancellable.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_uamqp_c/async_operation.h>
-#endif // ENABLE_UAMQP
 
 #include <memory>
 #if 0

@@ -40,6 +40,9 @@ add_executable(azure-core-amqp-tests
   ${UAMQP_ONLY_TESTS}
 )
 
+if (USE_UAMQP)
+target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
+endif()
 
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 

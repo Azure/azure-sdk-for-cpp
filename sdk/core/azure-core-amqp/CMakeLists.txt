@@ -123,7 +123,6 @@ set (AZURE_CORE_AMQP_HEADER
 )
 
 set(AZURE_CORE_AMQP_SOURCE
-    src/amqp/cancellable.cpp
     src/amqp/claim_based_security.cpp
     src/amqp/connection.cpp
     src/amqp/connection_string_credential.cpp
@@ -131,13 +130,6 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/management.cpp
     src/amqp/message_receiver.cpp
     src/amqp/message_sender.cpp
-    src/amqp/private/claims_based_security_impl.hpp
-    src/amqp/private/connection_impl.hpp
-    src/amqp/private/link_impl.hpp
-    src/amqp/private/management_impl.hpp
-    src/amqp/private/message_receiver_impl.hpp
-    src/amqp/private/message_sender_impl.hpp
-    src/amqp/private/session_impl.hpp
     src/amqp/private/unique_handle.hpp
     src/amqp/session.cpp
     src/common/global_state.cpp
@@ -160,25 +152,110 @@ set(AZURE_CORE_AMQP_SOURCE
     src/models/private/source_impl.hpp
     src/models/private/target_impl.hpp
     src/models/private/value_impl.hpp
-    src/network/amqp_header_transport.cpp
-    src/network/private/transport_impl.hpp
-    src/network/private/transport_impl.hpp
-    src/network/sasl_transport.cpp
-    src/network/socket_listener.cpp
-    src/network/socket_transport.cpp
-    src/network/tls_transport.cpp
-    src/network/transport.cpp
     src/private/package_version.hpp
 )
 
 if (USE_UAMQP)
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} $<TARGET_OBJECTS:uamqp>)
-elseif(USE_RUST_AMQP)
-add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER})
+set(AZURE_UAMQP_SOURCE
+  src/impl/uamqp/amqp/cancellable.cpp
+  src/impl/uamqp/amqp/claim_based_security.cpp
+  src/impl/uamqp/amqp/connection.cpp
+  src/impl/uamqp/amqp/connection_string_credential.cpp
+  src/impl/uamqp/amqp/link.cpp
+  src/impl/uamqp/amqp/management.cpp
+  src/impl/uamqp/amqp/message_receiver.cpp
+  src/impl/uamqp/amqp/message_sender.cpp
+  src/impl/uamqp/amqp/session.cpp
+  src/impl/uamqp/amqp/private/claims_based_security_impl.hpp
+  src/impl/uamqp/amqp/private/connection_impl.hpp
+  src/impl/uamqp/amqp/private/link_impl.hpp
+  src/impl/uamqp/amqp/private/management_impl.hpp
+  src/impl/uamqp/amqp/private/message_receiver_impl.hpp
+  src/impl/uamqp/amqp/private/message_sender_impl.hpp
+  src/impl/uamqp/amqp/private/session_impl.hpp
+#  src/impl/uamqp/models/amqp_detach.cpp
+#  src/impl/uamqp/models/amqp_error.cpp
+#  src/impl/uamqp/models/amqp_header.cpp
+#  src/impl/uamqp/models/amqp_message.cpp
+#  src/impl/uamqp/models/amqp_properties.cpp
+#  src/impl/uamqp/models/amqp_transfer.cpp
+#  src/impl/uamqp/models/amqp_value.cpp
+#  src/impl/uamqp/models/message_source.cpp
+#  src/impl/uamqp/models/message_target.cpp
+#  src/impl/uamqp/models/messaging_values.cpp
+#  src/impl/uamqp/models/private/error_impl.hpp
+#  src/impl/uamqp/models/private/header_impl.hpp
+#  src/impl/uamqp/models/private/message_impl.hpp
+#  src/impl/uamqp/models/private/performatives
+#  src/impl/uamqp/models/private/properties_impl.hpp
+#  src/impl/uamqp/models/private/source_impl.hpp
+#  src/impl/uamqp/models/private/target_impl.hpp
+#  src/impl/uamqp/models/private/value_impl.hpp
+#  src/impl/uamqp/models/private/performatives/detach_impl.hpp
+#  src/impl/uamqp/models/private/performatives/transfer_impl.hpp
+  src/impl/uamqp/network/amqp_header_transport.cpp
+  src/impl/uamqp/network/sasl_transport.cpp
+  src/impl/uamqp/network/socket_listener.cpp
+  src/impl/uamqp/network/socket_transport.cpp
+  src/impl/uamqp/network/tls_transport.cpp
+  src/impl/uamqp/network/transport.cpp
+  src/impl/uamqp/network/private/transport_impl.hpp
+)
+endif()
+
+if(USE_RUST_AMQP)
+set(AZURE_RUST_AMQP_SOURCE
+  src/impl/rust_amqp/amqp/claim_based_security.cpp
+  src/impl/rust_amqp/amqp/connection.cpp
+  src/impl/rust_amqp/amqp/connection_string_credential.cpp
+  src/impl/rust_amqp/amqp/link.cpp
+  src/impl/rust_amqp/amqp/management.cpp
+  src/impl/rust_amqp/amqp/message_receiver.cpp
+  src/impl/rust_amqp/amqp/message_sender.cpp
+  src/impl/rust_amqp/amqp/session.cpp
+  src/impl/rust_amqp/amqp/private/claims_based_security_impl.hpp
+  src/impl/rust_amqp/amqp/private/connection_impl.hpp
+  src/impl/rust_amqp/amqp/private/link_impl.hpp
+  src/impl/rust_amqp/amqp/private/management_impl.hpp
+  src/impl/rust_amqp/amqp/private/message_receiver_impl.hpp
+  src/impl/rust_amqp/amqp/private/message_sender_impl.hpp
+  src/impl/rust_amqp/amqp/private/session_impl.hpp
+#  src/impl/rust_amqp/models/amqp_detach.cpp
+#  src/impl/rust_amqp/models/amqp_error.cpp
+#  src/impl/rust_amqp/models/amqp_header.cpp
+#  src/impl/rust_amqp/models/amqp_message.cpp
+#  src/impl/rust_amqp/models/amqp_properties.cpp
+#  src/impl/rust_amqp/models/amqp_transfer.cpp
+#  src/impl/rust_amqp/models/amqp_value.cpp
+#  src/impl/rust_amqp/models/message_source.cpp
+#  src/impl/rust_amqp/models/message_target.cpp
+#  src/impl/rust_amqp/models/messaging_values.cpp
+#  src/impl/rust_amqp/models/private/error_impl.hpp
+#  src/impl/rust_amqp/models/private/header_impl.hpp
+#  src/impl/rust_amqp/models/private/message_impl.hpp
+#  src/impl/rust_amqp/models/private/performatives
+#  src/impl/rust_amqp/models/private/properties_impl.hpp
+#  src/impl/rust_amqp/models/private/source_impl.hpp
+#  src/impl/rust_amqp/models/private/target_impl.hpp
+#  src/impl/rust_amqp/models/private/value_impl.hpp
+#  src/impl/rust_amqp/models/private/performatives/detach_impl.hpp
+#  src/impl/rust_amqp/models/private/performatives/transfer_impl.hpp
+)
+
 endif()
 
 if (USE_UAMQP)
-target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_UAMQP_SOURCE} $<TARGET_OBJECTS:uamqp>)
+elseif(USE_RUST_AMQP)
+add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_RUST_AMQP_SOURCE})
+endif()
+
+if (USE_UAMQP)
+target_include_directories(azure-core-amqp SYSTEM PRIVATE src/impl/uamqp/amqp/private src/impl/uamqp/amqp/network ${UAMQP_INC_FOLDER})
+endif()
+
+if (USE_RUST_AMQP)
+target_include_directories(azure-core-amqp SYSTEM PRIVATE src/impl/rust_amqp/amqp/private src/rust_amqp/rust_wrapper)
 endif()
 
 target_include_directories(
