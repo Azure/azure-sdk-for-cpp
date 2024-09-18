@@ -322,8 +322,11 @@ jobs:
             $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
             $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
             mkdir $packageJsonDest
+            ls $packageJsonDest
             Copy-Item $packageJsonSource/* $packageJsonDest -Force
             Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace ".json","_cpp.json"}
+            write-host "after"
+            ls $packageJsonDest
           displayName: Copy PackageJson
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
