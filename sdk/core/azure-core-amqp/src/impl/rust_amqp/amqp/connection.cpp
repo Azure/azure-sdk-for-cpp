@@ -217,7 +217,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
     }
     if (amqpconnection_open(
-            Azure::Core::Amqp::Common::_detail::RustThreadContextInstance.GetRuntimeContext(),
+            Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+                ->GetRuntimeContext(),
             m_connection.get(),
             m_hostUrl.GetAbsoluteUrl().c_str(),
             m_containerId.c_str(),
@@ -248,7 +249,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else
     {
       if (amqpconnection_close_with_error(
-              Azure::Core::Amqp::Common::_detail::RustThreadContextInstance.GetRuntimeContext(),
+              Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+                  ->GetRuntimeContext(),
               m_connection.get(),
               condition.c_str(),
               description.c_str(),

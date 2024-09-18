@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #pragma once
-
 #if ENABLE_RUST_AMQP
 #include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
 #include "../src/amqp/private/unique_handle.hpp"
@@ -36,16 +35,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     UniqueRustRuntimeContext m_runtimeContext;
 
   public:
-    RustThreadContext() {}
+    RustThreadContext()
+        : m_runtimeContext{Azure::Core::Amqp::_detail::RustInterop::runtime_context_new()}
+    {
+    }
 
     Azure::Core::Amqp::_detail::RustRuntimeContext* GetRuntimeContext()
     {
       // Creating a runtime_context initializes the Rust thread pool, so defer initialization until
       // we actually need the runtime context.
-      if (!m_runtimeContext)
-      {
-        m_runtimeContext.reset(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new());
-      }
+// if (!m_runtimeContext)
+//      {
+//        m_runtimeContext.reset(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new());
+//      }
       return m_runtimeContext.get();
     }
   };

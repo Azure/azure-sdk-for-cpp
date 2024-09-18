@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::string LinkImpl::GetName() const
   {
-    const char* name = {};
+    const char* name = "";
     return name;
   }
   _internal::SenderSettleMode LinkImpl::GetSenderSettleMode() const { return {}; }

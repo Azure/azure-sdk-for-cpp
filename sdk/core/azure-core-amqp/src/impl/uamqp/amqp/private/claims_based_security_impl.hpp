@@ -3,13 +3,11 @@
 
 #pragma once
 
+#include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/management.hpp"
-#include "../../../../amqp/private/unique_handle.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_uamqp_c/cbs.h>
-#endif
 struct CBS_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -24,9 +22,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
-#endif // ENABLE_UAMQP
   class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
 
   public:

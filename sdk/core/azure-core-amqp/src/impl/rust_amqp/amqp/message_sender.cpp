@@ -131,50 +131,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->AuthenticateAudience(
           m_session, static_cast<std::string>(m_target.GetAddress()), context);
     }
-    if (m_senderOpen)
-    {
-      throw std::runtime_error("Message sender is already open.");
-    }
-    {
-      auto lock{m_session->GetConnection()->Lock()};
-      if (m_link == nullptr)
-      {
-        CreateLink();
-      }
-      // Mark the connection as async so that we can use the async APIs.
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
-      }
-    }
-    if (!halfOpen)
-    {
-      auto result = m_openQueue.WaitForResult(context);
-      if (!result || std::get<0>(*result))
-      {
-        if (m_options.EnableTrace)
-        {
-          Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
-        }
-        // Clean up from changes made earlier in the open, since the open was not successful.
-        auto lock{m_session->GetConnection()->Lock()};
-        if (!result)
-        {
-          throw Azure::Core::OperationCancelledException(
-              "Message sender open operation cancelled.");
-        }
-        else
-        {
-          rv = std::move(std::get<0>(*result));
-        }
-      }
-    }
-    // If the open was successful, then we're in the open state.
-    if (!rv)
-    {
-      m_senderOpen = true;
-    }
-    return rv;
+    throw std::runtime_error("Not implemented");
+    (void)halfOpen;
   }
 
   void MessageSenderImpl::Close(Context const& context)
@@ -187,6 +145,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       m_senderOpen = false;
     }
+    throw std::runtime_error("Not implemented");
     (void)context;
   }
 
