@@ -4,6 +4,8 @@
 #include "azure/identity/azure_pipelines_credential.hpp"
 #include "credential_test_helper.hpp"
 
+#include <azure/core/diagnostics/logger.hpp>
+
 #include <cstdio>
 #include <fstream>
 
@@ -13,6 +15,7 @@ using Azure::Core::_internal::Environment;
 using Azure::Core::Credentials::AccessToken;
 using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenRequestContext;
+using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Http::HttpMethod;
 using Azure::Identity::AzurePipelinesCredential;
 using Azure::Identity::AzurePipelinesCredentialOptions;
@@ -149,6 +152,73 @@ TEST(AzurePipelinesCredential, InvalidArgs)
     AzurePipelinesCredential const cred(tenantId, clientId, serviceConnectionId, "");
     EXPECT_THROW(cred.GetToken(trc, {}), AuthenticationException);
   }
+}
+
+TEST(AzurePipelinesCredential, RegularExpectedHeadersLogged)
+{
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+  std::map<std::string, std::string> validEnvVars
+      = {{"SYSTEM_OIDCREQUESTURI", "https://localhost/instance"}};
+  CredentialTestHelper::EnvironmentOverride const env(validEnvVars);
+
+  using namespace Azure::Identity::Test::_detail;
+  using Azure::Core::CaseInsensitiveMap;
+  using Azure::Core::Http::HttpStatusCode;
+
+  // The first response is from the OIDC endpoint, the second is from the identity token endpoint.
+  // The x-vss-e2eid header should be logged in the first response, but not in the second.
+  CaseInsensitiveMap responseHeaders;
+  responseHeaders.emplace("x-vss-e2eid", "some id for debugging");
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse response1
+      = {HttpStatusCode::Ok, "{\"oidcToken\":\"abc/d\"}", responseHeaders};
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse response2
+      = {HttpStatusCode::Ok,
+         "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+         responseHeaders};
+
+  std::vector<CredentialTestHelper::TokenRequestSimulationServerResponse> responses
+      = {response1, response2};
+
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        AzurePipelinesCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        std::string tenantId = "01234567-89ab-cdef-fedc-ba8976543210";
+        std::string clientId = "fedcba98-7654-3210-0123-456789abcdef";
+        std::string serviceConnectionId = "a/bc";
+        std::string systemAccessToken = "123";
+
+        return std::make_unique<AzurePipelinesCredential>(
+            tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+      },
+      {{{"https://azure.com/.default"}}},
+      responses);
+
+  auto const& response0 = actual.Responses.at(0);
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+
+  using namespace std::chrono_literals;
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_EQ(log.size(), LogMsgVec::size_type(7));
+  // The first response, from the OIDC endpoint, should have the x-vss-e2eid header logged.
+  EXPECT_TRUE(log[2].second.find("some id for debugging") != std::string::npos);
+
+  // The second response, from the identity token endpoint still has that header redacted, as
+  // expected.
+  EXPECT_TRUE(log[5].second.find("some id for debugging") == std::string::npos);
+  EXPECT_TRUE(log[5].second.find("REDACTED") != std::string::npos);
+
+  Logger::SetListener(nullptr);
 }
 
 TEST(AzurePipelinesCredential, Regular)

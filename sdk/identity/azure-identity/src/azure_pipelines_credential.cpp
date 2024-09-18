@@ -36,9 +36,19 @@ AzurePipelinesCredential::AzurePipelinesCredential(
     std::string systemAccessToken,
     AzurePipelinesCredentialOptions const& options)
     : TokenCredential("AzurePipelinesCredential"), m_serviceConnectionId(serviceConnectionId),
-      m_systemAccessToken(systemAccessToken),
-      m_httpPipeline(HttpPipeline(options, "identity", PackageVersion::ToString(), {}, {}))
+      m_systemAccessToken(systemAccessToken)
 {
+  // Allow x-vss-e2eid header to be logged since that is used for troubleshooting.
+  AzurePipelinesCredentialOptions optionsWithLoggableHeaders = options;
+  optionsWithLoggableHeaders.Log.AllowedHttpHeaders.insert("x-vss-e2eid");
+
+  m_httpPipeline = std::make_unique<HttpPipeline>(
+      optionsWithLoggableHeaders,
+      "identity",
+      PackageVersion::ToString(),
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>{},
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>{});
+
   m_oidcRequestUrl = _detail::DefaultOptionValues::GetOidcRequestUrl();
 
   if (serviceConnectionId.empty())
@@ -158,7 +168,7 @@ AzurePipelinesCredential::~AzurePipelinesCredential() = default;
 std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
 {
   Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
-  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
+  std::unique_ptr<RawResponse> response = m_httpPipeline->Send(oidcRequest, context);
 
   if (!response)
   {
