@@ -187,6 +187,7 @@ jobs:
                 -ItemType directory
                 -Path $(Build.ArtifactStagingDirectory)
                 -Name packages/${{ artifact.Name }}
+                -Force
               displayName: Create package info artifact location
 
             - task: Powershell@2
