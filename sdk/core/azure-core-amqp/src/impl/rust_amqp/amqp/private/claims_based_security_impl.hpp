@@ -7,9 +7,6 @@
 #include "azure/core/amqp/internal/management.hpp"
 #include "unique_handle.hpp"
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/cbs.h>
-#endif
 struct CBS_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {

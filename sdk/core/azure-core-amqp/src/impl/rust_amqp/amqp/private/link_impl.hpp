@@ -11,75 +11,25 @@
 #include "azure/core/amqp/internal/models/message_target.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/link.h>
-
-#endif
 #include <memory>
 #include <string>
 #include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  class LinkImplEvents {
-  public:
-    virtual Models::AmqpValue OnTransferReceived(
-        std::shared_ptr<LinkImpl> const& link,
-        Models::_internal::Performatives::AmqpTransfer transfer,
-        uint32_t payloadSize,
-        const unsigned char* payloadBytes)
-        = 0;
-    virtual void OnLinkStateChanged(
-        std::shared_ptr<LinkImpl> const& link,
-        LinkState newLinkState,
-        LinkState previousLinkState)
-        = 0;
-    virtual void OnLinkFlowOn(std::shared_ptr<LinkImpl> const& link) = 0;
-    virtual ~LinkImplEvents() = default;
-  };
-#endif
-
-  class LinkImpl final : public std::enable_shared_from_this<LinkImpl>
-#if ENABLE_UAMQP
-      ,
-                         public Common::_detail::Pollable
-#endif
-  {
-#if ENABLE_UAMQP
-    using OnLinkDetachEvent = std::function<void(Models::_internal::AmqpError)>;
-#endif
+  class LinkImpl final : public std::enable_shared_from_this<LinkImpl> {
   public:
     LinkImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         std::string const& name,
         _internal::SessionRole role,
         Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target
-#if ENABLE_UAMQP
-        ,
-        _detail::LinkImplEvents* events = nullptr
-#endif
-    );
-#if ENABLE_UAMQP
-    LinkImpl(
-        std::shared_ptr<_detail::SessionImpl> session,
-        _internal::LinkEndpoint& linkEndpoint,
-        std::string const& name,
-        _internal::SessionRole role,
-        Models::_internal::MessageSource const& source,
-        Models::_internal::MessageTarget const& target,
-        _detail::LinkImplEvents* events);
-#endif
+        Models::_internal::MessageTarget const& target);
     ~LinkImpl() noexcept;
 
     LinkImpl(LinkImpl const&) = delete;
     LinkImpl& operator=(LinkImpl const&) = delete;
     LinkImpl(LinkImpl&&) noexcept = delete;
     LinkImpl& operator=(LinkImpl&&) noexcept = delete;
-
-#if ENABLE_UAMQP
-    operator LINK_HANDLE() const { return m_link; }
-#endif
 
     void SetSenderSettleMode(_internal::SenderSettleMode senderSettleMode);
     _internal::SenderSettleMode GetSenderSettleMode() const;
@@ -100,16 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     void SetDesiredCapabilities(Models::AmqpValue desiredCapabilities);
     Models::AmqpValue GetDesiredCapabilities() const;
-#if ENABLE_UAMQP
-    /** @brief Subscribe to link detach events. */
-    void SubscribeToDetachEvent(OnLinkDetachEvent onLinkDetachEvent);
-    void UnsubscribeFromDetachEvent();
-#endif
     std::string GetName() const;
-
-#if ENABLE_UAMQP
-    LINK_HANDLE GetUnderlyingLink() const { return m_link; };
-#endif
 
     Models::_internal::MessageTarget const& GetTarget() const;
     Models::_internal::MessageSource const& GetSource() const;
@@ -133,29 +74,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Context const& context);
 
   private:
-#if ENABLE_UAMQP
-    LINK_HANDLE m_link;
-#endif
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageSource m_source;
     Models::_internal::MessageTarget m_target;
     Common::_internal::AsyncOperationQueue<uint32_t, LinkDeliverySettleReason, Models::AmqpValue>
         m_transferCompleteQueue;
-#if ENABLE_UAMQP
-    OnLinkDetachEvent m_onLinkDetachEvent;
-    LinkImplEvents* m_eventHandler;
-    ON_LINK_DETACH_EVENT_SUBSCRIPTION_HANDLE m_linkSubscriptionHandle{};
-
-    static void OnLinkDetachEventFn(void* context, ERROR_HANDLE error);
-    static void OnLinkFlowOnFn(void* context);
-    static void OnLinkStateChangedFn(void* context, LINK_STATE newState, LINK_STATE oldState);
-    static AMQP_VALUE OnTransferReceivedFn(
-        void* context,
-        TRANSFER_HANDLE transfer,
-        uint32_t payload_size,
-        const unsigned char* payload_bytes);
-    // Inherited via Pollable
-    void Poll() override;
-#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail

@@ -18,10 +18,6 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/session.h>
-#endif
-
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 

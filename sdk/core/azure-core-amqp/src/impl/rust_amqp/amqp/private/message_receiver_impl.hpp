@@ -67,9 +67,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     TryWaitForIncomingMessage();
 
   private:
-#if ENABLE_UAMQP
-    UniqueMessageReceiver m_messageReceiver{};
-#endif
     bool m_receiverOpen{false};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
