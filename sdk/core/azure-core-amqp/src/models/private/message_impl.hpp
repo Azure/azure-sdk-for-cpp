@@ -13,7 +13,7 @@ extern "C"
 }
 //#include <azure_uamqp_c/message.h>
 #elif ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 #endif
 
 #include <type_traits>

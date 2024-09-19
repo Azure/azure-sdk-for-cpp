@@ -67,8 +67,8 @@ endif()
 
 if (USE_RUST_AMQP)
 
-  include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
-  install_rustup()
+#  include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
+#  install_rustup()
 
   include(FetchContent)
   FetchContent_Declare(
@@ -79,7 +79,7 @@ if (USE_RUST_AMQP)
   FetchContent_MakeAvailable(Corrosion)
 
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
-  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/rust_amqp/rust_wrapper/Cargo.toml)
+  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
 endif()
 
 
@@ -256,7 +256,7 @@ target_include_directories(azure-core-amqp PRIVATE src/impl/uamqp/amqp/private s
 endif()
 
 if (USE_RUST_AMQP)
-target_include_directories(azure-core-amqp PRIVATE src/impl/rust_amqp/amqp/private rust_amqp/rust_wrapper)
+target_include_directories(azure-core-amqp PRIVATE src/impl/rust_amqp/amqp/private src/impl/rust_amqp/rust_amqp/rust_wrapper)
 endif()
 
 target_include_directories(

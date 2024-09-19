@@ -43,6 +43,9 @@ add_executable(azure-core-amqp-tests
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
 endif()
+if (USE_RUST_AMQP)
+target_include_directories(azure-core-amqp-tests PRIVATE ../../src/impl/rust_amqp/rust_amqp/rust_wrapper)
+endif()
 
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
