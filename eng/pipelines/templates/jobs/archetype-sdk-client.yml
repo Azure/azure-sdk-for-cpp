@@ -207,6 +207,9 @@ jobs:
                 Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
                 Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
 
+                Write-host "lslslslslslslslsls"
+                ls -recurse $(Build.ArtifactStagingDirectory)/packages
+
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
               displayName: Create package info JSON file for ${{ artifact.Name }}
