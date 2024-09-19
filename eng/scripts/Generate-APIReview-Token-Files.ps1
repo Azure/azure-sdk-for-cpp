@@ -25,7 +25,7 @@ foreach ($artifact in $ArtifactList)
     }
 
     Write-Host "Creating API review artifact for $ArtifactName"
-    New-Item -ItemType Directory -Path "$OutPath/$ArtifactName" -Force
+    New-Item -ItemType Directory -Path "$OutPath/packages/$ArtifactName" -Force
     $parentPath = Split-Path $ParserPath  -Parent
     Write-Host "Contents in ${parentPath}:"
     Get-ChildItem -Path $parentPath -Recurse
