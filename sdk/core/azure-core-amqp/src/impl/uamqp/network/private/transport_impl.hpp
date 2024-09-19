@@ -2,10 +2,8 @@
 // Licensed under the MIT License.
 
 #pragma once
-#if ENABLE_UAMQP
 
 #include "../../../../amqp/private/unique_handle.hpp"
-#include "../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
 #include <azure_c_shared_utility/xio.h>
@@ -25,10 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Network { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueXioHandle = Amqp::_detail::UniqueHandle<XIO_INSTANCE_TAG>;
-
-#endif // ENABLE_UAMQP
 
   struct TransportImpl : public std::enable_shared_from_this<TransportImpl>
   {
@@ -74,4 +69,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     static void OnIOErrorFn(void* context);
   };
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
-#endif // ENABLE_UAMQP
