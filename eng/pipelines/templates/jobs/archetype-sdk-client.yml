@@ -80,46 +80,6 @@ jobs:
 
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
-    - job:
-      displayName: Create API Review
-      pool:
-        name: $(WINDOWSPOOL)
-        image: $(WINDOWSVMIMAGE)
-        os: windows
-      steps:
-        - task: Powershell@2
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-            arguments: >
-              -ServiceDirectory ${{ parameters.ServiceDirectory }}
-              -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-            pwsh: true
-            workingDirectory: $(Pipeline.Workspace)
-          displayName: Dump Package properties
-          condition: succeeded()
-
-        - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-
-        - pwsh: azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
-          displayName: Download ApiView Parser.
-
-        - task: Powershell@2
-          inputs:
-            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-APIReview-Token-Files.ps1
-            arguments: >
-              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
-              -OutPath $(Build.ArtifactStagingDirectory)
-              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
-              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-            pwsh: true
-            workingDirectory: $(Pipeline.Workspace)
-          displayName: Generate APIReview Token Files
-
-        - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-          parameters:
-            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
-            ArtifactName: packages
-
     - job: GenerateReleaseArtifacts
       pool:
         name: $(WINDOWSPOOL)
@@ -129,6 +89,7 @@ jobs:
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
+        - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         - template: /eng/common/pipelines/templates/steps/credscan.yml
           parameters:
             SuppressionFilePath: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
@@ -199,6 +160,21 @@ jobs:
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
+        - pwsh: azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
+          displayName: Download ApiView Parser.
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-APIReview-Token-Files.ps1
+            arguments: >
+              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
+              -OutPath $(Build.ArtifactStagingDirectory)
+              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Generate APIReview Token Files
+
         # Generate package spec JSON files for tagging the repo
         - ${{ each artifact in parameters.Artifacts }}:
             - pwsh: >-
@@ -229,7 +205,6 @@ jobs:
                 $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
                 $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
                 Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
-                Copy-Item $packageJsonSource/${{ artifact.Name }}_cpp.api.json $packageJsonDest -Force
                 Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
 
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
