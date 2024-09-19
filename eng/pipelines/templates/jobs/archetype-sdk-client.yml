@@ -175,6 +175,9 @@ jobs:
             workingDirectory: $(Pipeline.Workspace)
           displayName: Generate APIReview Token Files
 
+        - pwsh: ls -recurse $(Build.ArtifactStagingDirectory)/packages
+          displayName: show current packages folder
+
         # Generate package spec JSON files for tagging the repo
         - ${{ each artifact in parameters.Artifacts }}:
             - pwsh: >-
