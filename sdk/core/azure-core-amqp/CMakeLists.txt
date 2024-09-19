@@ -49,7 +49,7 @@ if (USE_UAMQP)
   set(build_as_object_library ON CACHE BOOL "Produce object library" FORCE)
   set(atomic_refcount ON CACHE BOOL "Use atomic refcount" FORCE)
 
-  add_subdirectory(vendor/azure-uamqp-c SYSTEM)
+  add_subdirectory(src/impl/uamqp/vendor/azure-uamqp-c SYSTEM)
 
   # uAMQP specific compiler settings. Primarily used to disable warnings in the uAMQP codebase.
   if (MSVC)
