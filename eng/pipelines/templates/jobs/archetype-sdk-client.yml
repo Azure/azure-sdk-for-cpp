@@ -114,6 +114,12 @@ jobs:
             pwsh: true
             workingDirectory: $(Pipeline.Workspace)
           displayName: Generate APIReview Token Files
+
+        - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
+            ArtifactName: packages
+
     - job: GenerateReleaseArtifacts
       pool:
         name: $(WINDOWSPOOL)
@@ -223,6 +229,7 @@ jobs:
                 $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
                 $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
                 Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
+                Copy-Item $packageJsonSource/${{ artifact.Name }}_cpp.api.json $packageJsonDest -Force
                 Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
 
                 # Set AZURE_SDK_VERSION for use in Doxygen generation

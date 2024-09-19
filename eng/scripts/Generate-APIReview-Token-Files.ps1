@@ -29,7 +29,7 @@ foreach ($artifact in $ArtifactList)
     $parentPath = Split-Path $ParserPath  -Parent
     Write-Host "Contents in ${parentPath}:"
     Get-ChildItem -Path $parentPath -Recurse
-    & $ParserPath -o "$OutPath/$ArtifactName/${ArtifactName}_cpp.json" $SourcePath
+    & $ParserPath -o "$OutPath/$ArtifactName/${ArtifactName}_cpp.api.json" $SourcePath
     if ($LASTEXITCODE -ne 0)
 	{
 		Write-Host "Failed to generate API review file for $($ArtifactName)"
