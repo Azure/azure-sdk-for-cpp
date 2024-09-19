@@ -5,6 +5,7 @@
 #if ENABLE_UAMQP
 
 #include "../../../../amqp/private/unique_handle.hpp"
+#include "../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 
 #include <azure_c_shared_utility/xio.h>
