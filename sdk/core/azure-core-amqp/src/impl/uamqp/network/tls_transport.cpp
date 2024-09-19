@@ -5,7 +5,6 @@
 
 #include "private/transport_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/tlsio.h>
 
@@ -29,4 +28,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
-#endif

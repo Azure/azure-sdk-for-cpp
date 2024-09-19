@@ -23,9 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueAmqpSession = UniqueHandle<SESSION_INSTANCE_TAG>;
-#endif
 
   class SessionFactory final {
   public:

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#if ENABLE_UAMQP
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "private/transport_impl.hpp"
 
@@ -21,7 +20,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
       std::shared_ptr<Transport> parentTransport,
       TransportEvents* eventHandler)
   {
-#if ENABLE_UAMQP
     HEADER_DETECT_IO_CONFIG detectIoConfig{};
     HEADER_DETECT_ENTRY headerDetectEntries[] = {
         //        {header_detect_io_get_sasl_amqp_header(), nullptr},
@@ -32,12 +30,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     detectIoConfig.header_detect_entries = headerDetectEntries;
     return _detail::TransportImpl::CreateFromXioHandle(
         xio_create(header_detect_io_get_interface_description(), &detectIoConfig), eventHandler);
-#else
-    (void)eventHandler;
-    (void)parentTransport;
-    throw std::runtime_error("Not implemented.");
-#endif
   }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
-#endif

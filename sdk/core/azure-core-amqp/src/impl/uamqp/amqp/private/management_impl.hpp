@@ -13,9 +13,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 
-#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_management.h>
-#endif
 
 #include <memory>
 #include <mutex>

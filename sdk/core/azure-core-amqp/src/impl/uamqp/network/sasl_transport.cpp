@@ -6,17 +6,14 @@
 #include "azure/core/amqp/internal/network/tls_transport.hpp"
 #include "private/transport_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/socketio.h>
 #include <azure_c_shared_utility/tlsio.h>
 #include <azure_uamqp_c/sasl_anonymous.h>
 #include <azure_uamqp_c/sasl_plain.h>
 #include <azure_uamqp_c/saslclientio.h>
-#endif
 
 // cspell: ignore saslclientio
-#if ENABLE_UAMQP
 Azure::Core::Amqp::Network::_internal::Transport
 Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
     std::string const& saslKeyName,
@@ -85,4 +82,3 @@ Azure::Core::Amqp::Network::_internal::SaslTransportFactory::Create(
   return _detail::TransportImpl::CreateFromXioHandle(
       xio_create(saslclientio_get_interface_description(), &saslConfig), eventHandler);
 }
-#endif

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#if ENABLE_UAMQP
 
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 
@@ -114,4 +113,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         void SocketListener::Poll() const { socketlistener_dowork(m_socket); }
 
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
-#endif // ENABLE_UAMQP

@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-#if ENABLE_UAMQP
 
 #include "azure/core/amqp/internal/network/transport.hpp"
 
@@ -221,4 +220,3 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
     }
   }
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
-#endif // ENABLE_UAMQP

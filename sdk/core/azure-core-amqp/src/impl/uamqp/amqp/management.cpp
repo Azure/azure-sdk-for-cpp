@@ -67,14 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         messageSenderOptions.AuthenticationRequired = false;
 
         m_messageSender = std::make_shared<MessageSenderImpl>(
-            m_session,
-            m_options.ManagementNodeName,
-            messageSenderOptions
-#if ENABLE_UAMQP
-            ,
-            this
-#endif
-        );
+            m_session, m_options.ManagementNodeName, messageSenderOptions, this);
       }
       {
         _internal::MessageReceiverOptions messageReceiverOptions;

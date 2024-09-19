@@ -12,9 +12,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     if (m_operation)
     {
-#if ENABLE_UAMQP
       async_operation_destroy(m_operation);
-#endif
       m_operation = nullptr;
     }
   }

@@ -17,9 +17,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
 
-#if ENABLE_UAMQP
 #include <azure_uamqp_c/message_sender.h>
-#endif
 
 #include <memory>
 
@@ -27,13 +25,11 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   void UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
       MESSAGE_SENDER_HANDLE value)
   {
     messagesender_destroy(value);
   }
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -93,20 +89,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
-      _internal::MessageSenderOptions const& options
-#if ENABLE_UAMQP
-      ,
-      _internal::MessageSenderEvents* events
-#endif
-      )
-      :
-#if ENABLE_UAMQP
-        m_events{events},
-#endif
-        m_session{session}, m_target{target}, m_options{options}
+      _internal::MessageSenderOptions const& options,
+      _internal::MessageSenderEvents* events)
+      : m_events{events}, m_session{session}, m_target{target}, m_options{options}
   {
   }
-#if ENABLE_UAMQP
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       _internal::LinkEndpoint& endpoint,
@@ -121,7 +108,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     messagesender_set_trace(m_messageSender.get(), m_options.EnableTrace);
   }
-#endif
 
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
@@ -141,23 +127,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_link)
     {
-#if ENABLE_UAMQP
       // Unsubscribe from any detach events before clearing out the event handler to short-circuit
       // any events firing after the object is destroyed.
       m_link->UnsubscribeFromDetachEvent();
-#endif
 
       m_link.reset();
     }
-#if ENABLE_UAMQP
     if (m_messageSender)
     {
       m_messageSender.reset();
     }
-#endif
   }
 
-#if ENABLE_UAMQP
   void MessageSenderImpl::CreateLink(_internal::LinkEndpoint& endpoint)
   {
     m_link = std::make_shared<_detail::LinkImpl>(
@@ -172,7 +153,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_link->SubscribeToDetachEvent(
         [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
   }
-#endif
 
   void MessageSenderImpl::CreateLink()
   {
@@ -183,10 +163,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_options.MessageSource,
         m_target);
     PopulateLinkProperties();
-#if ENABLE_UAMQP
     m_link->SubscribeToDetachEvent(
         [this](Models::_internal::AmqpError const& error) { OnLinkDetached(error); });
-#endif
   }
 
   /* Populate link properties from options. */
@@ -227,7 +205,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // Return the smaller of the two values
     return (std::min)(linkSize, peerSize);
   }
-#if ENABLE_UAMQP
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {
     switch (lowLevel)
@@ -309,7 +286,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
     }
   }
-#endif
 
   Models::_internal::AmqpError MessageSenderImpl::Open(bool halfOpen, Context const& context)
   {
@@ -336,7 +312,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         CreateLink();
       }
-#if ENABLE_UAMQP
       if (m_messageSender == nullptr)
       {
         m_messageSender.reset(
@@ -355,17 +330,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error(
             "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       }
-#endif
       // Mark the connection as async so that we can use the async APIs.
       if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
       }
-#if ENABLE_UAMQP
       m_session->GetConnection()->EnableAsyncOperation(true);
       // Enable async on the link as well.
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
-#endif
     }
     if (!halfOpen)
     {
@@ -376,12 +348,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
           Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
         }
-#if ENABLE_UAMQP
         m_session->GetConnection()->EnableAsyncOperation(false);
-#endif
         // Clean up from changes made earlier in the open, since the open was not successful.
         auto lock{m_session->GetConnection()->Lock()};
-#if ENABLE_UAMQP
         m_link->UnsubscribeFromDetachEvent();
 
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
@@ -389,7 +358,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         messagesender_close(m_messageSender.get());
         m_link.reset();
         m_messageSender.reset();
-#endif
         if (!result)
         {
           throw Azure::Core::OperationCancelledException(
@@ -417,10 +385,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
       }
-#if ENABLE_UAMQP
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
           m_link); // This will ensure that the link is cleaned up on the next poll()
-#endif
       bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
           || m_currentState == _internal::MessageSenderState::Open;
 
@@ -432,12 +398,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         auto lock{m_session->GetConnection()->Lock()};
 
-#if ENABLE_UAMQP
         if (messagesender_close(m_messageSender.get()))
         {
           throw std::runtime_error("Could not close message sender");
         }
-#endif
       }
       // The message sender (and it's underlying link) is in the half open state. Wait until the
       // link has fully closed.
@@ -472,21 +436,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         if (m_options.EnableTrace)
 
-#if ENABLE_UAMQP
         {
           Log::Stream(Logger::Level::Verbose)
               << "Sender Unsubscribe from link detach event. Link instance: "
               << m_link->GetUnderlyingLink();
         }
         m_link->UnsubscribeFromDetachEvent();
-#endif
 
         // Now that the connection is closed, the link is no longer needed. This will free the link
         m_link.reset();
       }
-#if ENABLE_UAMQP
       m_session->GetConnection()->EnableAsyncOperation(false);
-#endif
 
       m_senderOpen = false;
     }
@@ -518,7 +478,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-#if ENABLE_UAMQP
   template <typename CompleteFn> struct RewriteSendComplete
   {
     static void OnOperation(
@@ -553,7 +512,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               Models::_detail::UniqueAmqpValueHandle{amqpvalue_clone(disposition)}));
     }
   };
-#endif
 
   void MessageSenderImpl::QueueSendInternal(
       Models::AmqpMessage const& message,
@@ -566,7 +524,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // twice, which results in a double free of the underlying operation.
     if (!context.IsCancelled())
     {
-#if ENABLE_UAMQP
       auto operation(std::make_unique<Azure::Core::Amqp::Common::_internal::CompletionOperation<
                          decltype(onSendComplete),
                          RewriteSendComplete<decltype(onSendComplete)>>>(onSendComplete));
@@ -580,12 +537,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         throw std::runtime_error("Could not send message");
       }
-#else
-      (void)message;
-      (void)onSendComplete;
-      (void)context;
-      throw std::runtime_error("Send operation is not supported.");
-#endif
     }
   }
 
@@ -625,7 +576,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                   throw std::runtime_error("Delivery Status list is not of size 1");
                 }
                 Models::AmqpValue firstState{deliveryStatusAsList[0]};
-#if ENABLE_UAMQP
                 ERROR_HANDLE errorHandle;
                 if (!amqpvalue_get_error(
                         Models::_detail::AmqpValueFactory::ToImplementation(firstState),
@@ -635,7 +585,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                       errorHandle}; // This will free the error handle when it goes out of scope.
                   error = Models::_detail::AmqpErrorFactory::FromImplementation(errorHandle);
                 }
-#endif
               }
             }
             else

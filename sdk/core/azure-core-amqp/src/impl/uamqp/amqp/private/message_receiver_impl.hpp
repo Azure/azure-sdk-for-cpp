@@ -8,16 +8,13 @@
 #include "link_impl.hpp"
 #include "session_impl.hpp"
 
-#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqpvalue.h>
 #include <azure_uamqp_c/message.h>
 #include <azure_uamqp_c/message_receiver.h>
-#endif
 
 #include <memory>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   template <> struct UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>
   {
     static void FreeMessageReceiver(MESSAGE_RECEIVER_HANDLE obj);
@@ -25,13 +22,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     using type
         = Core::_internal::BasicUniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG, FreeMessageReceiver>;
   };
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
   using UniqueMessageReceiver = UniqueHandle<MESSAGE_RECEIVER_INSTANCE_TAG>;
-#endif
   class MessageReceiverFactory final {
   public:
     static Azure::Core::Amqp::_internal::MessageReceiver CreateFromInternal(
@@ -60,9 +54,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageReceiverImpl& operator=(MessageReceiverImpl const&) = delete;
     MessageReceiverImpl(MessageReceiverImpl&&) = delete;
     MessageReceiverImpl& operator=(MessageReceiverImpl&&) = delete;
-#if ENABLE_UAMQP
     operator bool() const { return (m_messageReceiver != nullptr); }
-#endif
+
     void Open(Context const& context);
     void Close(Context const& context);
     std::string GetLinkName() const;
@@ -73,13 +66,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
-#if ENABLE_UAMQP
     void EnableLinkPolling();
-#endif
   private:
-#if ENABLE_UAMQP
     UniqueMessageReceiver m_messageReceiver{};
-#endif
     bool m_receiverOpen{false};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageReceiverOptions m_options;
@@ -103,7 +92,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_closeQueue;
 
     _internal::MessageReceiverEvents* m_eventHandler{};
-#if ENABLE_UAMQP
     static AMQP_VALUE OnMessageReceivedFn(const void* context, MESSAGE_HANDLE message);
 
     virtual Models::AmqpValue OnMessageReceived(
@@ -115,7 +103,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         const void* context,
         MESSAGE_RECEIVER_STATE newState,
         MESSAGE_RECEIVER_STATE oldState);
-#endif
 
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
