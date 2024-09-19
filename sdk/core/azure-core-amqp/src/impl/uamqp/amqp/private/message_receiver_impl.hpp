@@ -67,6 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
     TryWaitForIncomingMessage();
     void EnableLinkPolling();
+
   private:
     UniqueMessageReceiver m_messageReceiver{};
     bool m_receiverOpen{false};
