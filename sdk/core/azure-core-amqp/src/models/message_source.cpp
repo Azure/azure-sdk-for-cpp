@@ -18,7 +18,7 @@
 #include <azure_uamqp_c/amqp_definitions_source.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #elif ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif // ENABLE_UAMQP
 

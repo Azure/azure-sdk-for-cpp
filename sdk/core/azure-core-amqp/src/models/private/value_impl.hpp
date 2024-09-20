@@ -10,7 +10,7 @@
 #include <azure_uamqp_c/amqpvalue.h>
 #endif
 #if ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 
 #endif // ENABLE_UAMQP
 
