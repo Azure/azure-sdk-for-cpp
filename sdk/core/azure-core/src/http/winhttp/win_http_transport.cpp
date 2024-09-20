@@ -1043,6 +1043,16 @@ _detail::WinHttpRequest::WinHttpRequest(
     }
   }
 
+  BOOL disableRedirects = TRUE;
+  if (!WinHttpSetOption(
+          m_requestHandle.get(),
+          WINHTTP_DISABLE_REDIRECTS,
+          &disableRedirects,
+          sizeof(disableRedirects)))
+  {
+    GetErrorAndThrow("Error while disabling redirects.");
+  }
+  
   // Set the callback function to be called whenever the state of the request handle changes.
   m_httpAction = std::make_unique<_detail::WinHttpAction>(this);
 
