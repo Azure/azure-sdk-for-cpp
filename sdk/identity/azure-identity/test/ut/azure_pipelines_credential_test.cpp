@@ -519,7 +519,7 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
   std::string baseExpectedMessage
       = "AzurePipelinesCredential : 400 (Test) response from the OIDC endpoint. Check service "
         "connection ID and Pipeline configuration";
-  std::string expectedMessages[4]
+  std::array<std::string, 4> expectedMessages
       = {baseExpectedMessage + "\n\nInvalid response body",
          baseExpectedMessage + "\nx-vss-e2eid:some id for debugging\n\nInvalid response body",
          baseExpectedMessage
@@ -528,7 +528,7 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
              + "\nx-vss-e2eid:some id for debugging\nx-msedge-ref:some AFD impression log "
                "reference\n\nInvalid response body"};
 
-  for (size_t i = 0; i < expectedMessages->size(); i++)
+  for (size_t i = 0; i < expectedMessages.size(); i++)
   {
     try
     {
