@@ -1,8 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
-    "sdk/core/azure-core-amqp/rust_amqp/azure_core_amqp",
-    "sdk/core/azure-core-amqp/rust_amqp/rust_wrapper",
+    "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/azure_core_amqp",
+    "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/rust_wrapper",
 ]
 
 [workspace.package]
@@ -14,7 +14,7 @@ rust-version = "1.76"
 
 
 [workspace.dependencies.azure_core_amqp]
-path = "sdk/core/azure-core-amqp/rust_amqp/azure_core_amqp"
+path = "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/azure_core_amqp"
 
 
 [workspace.dependencies]
