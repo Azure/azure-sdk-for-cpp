@@ -195,7 +195,7 @@ jobs:
                 filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
                 arguments: >
                   -ServiceDirectory ${{parameters.ServiceDirectory}}
-                  -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
+                  -OutDirectory $(Build.ArtifactStagingDirectory)/packages/PackageInfo
                 pwsh: true
                 workingDirectory: $(Pipeline.Workspace)
               displayName: Dump Package properties
@@ -208,10 +208,10 @@ jobs:
 
                 Set-Content -Path $outputPath -Value $outputObject
 
-                $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
-                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
-                Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
-                Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
+                # $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
+                # $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+                # Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
+                # Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
 
                 Write-host "ls -recurse"
                 ls -recurse $(Build.ArtifactStagingDirectory)/packages
