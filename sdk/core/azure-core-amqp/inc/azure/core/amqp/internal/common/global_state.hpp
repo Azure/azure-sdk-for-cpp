@@ -17,10 +17,6 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
-#if ENABLE_RUST_AMQP
-  extern thread_local RustThreadContext RustThreadContextInstance;
-#endif
-
 #if ENABLE_UAMQP
   /**
    * uAMQP and azure-c-shared-util require that the platform_init and platform_uninit
