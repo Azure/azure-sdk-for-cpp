@@ -12,7 +12,7 @@
 typedef struct HEADER_INSTANCE_TAG* HEADER_HANDLE;
 
 #elif ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 #endif
 
 #include <chrono>

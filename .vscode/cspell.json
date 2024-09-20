@@ -42,8 +42,8 @@
     "*nlohmann-json*",
     "eng/docs/api/assets/**/*",
     "eng/CredScanSuppression.json",
-    "sdk/core/azure-core-amqp/vendor/**/*",
-    "sdk/core/azure-core-amqp/rust_amqp/azure_core_amqp/**/*",
+    "sdk/core/azure-core-amqp/**/vendor/**/*",
+    "sdk/core/azure-core-amqp/**/rust_amqp/azure_core_amqp/**/*",
     "*.toml",
     "sdk/storage/*/NOTICE.txt",
     "sdk/tables/*/NOTICE.txt"
