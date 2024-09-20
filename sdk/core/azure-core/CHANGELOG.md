@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Make the HTTP transport behavior consistent between WinHTTP and libCurl by disabling automatically following redirects on Windows.
+
 ### Other Changes
 
 ## 1.14.0-beta.2 (2024-09-12)
