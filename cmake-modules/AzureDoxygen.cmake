@@ -14,8 +14,14 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_PROJECT_NAME ${PROJECT_NAME})
         set(DOXYGEN_PROJECT_NUMBER ${PROJECT_VERSION})
 
+        # Doc assets are needed from the top-level SDK directory.
+        # CMAKE_SOURCE_DIR will not point there if building from a subproject
+        # like sdk/core/azure-core, so use PROJECT_SOURCE_DIR instead.
+        # Subprojects are assumed to always be 3 levels down from the root.
+        set(SDK_ROOT_DIR ${PROJECT_SOURCE_DIR}/../../..)
+
         set(DOXYGEN_OUTPUT_DIRECTORY docs)
-        set(DOXYGEN_LAYOUT_FILE ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/DoxygenLayout.xml)
+        set(DOXYGEN_LAYOUT_FILE ${SDK_ROOT_DIR}/eng/docs/api/assets/DoxygenLayout.xml)
         set(DOXYGEN_RECURSIVE YES)
         if (MSVC)
           set(DOXYGEN_WARN_FORMAT "$file($line) : $text")
@@ -45,10 +51,10 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
             az_
             AZ_
         )
-        set(DOXYGEN_HTML_HEADER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/header.html)
-        set(DOXYGEN_HTML_FOOTER ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/footer.html)
-        set(DOXYGEN_HTML_STYLESHEET ${CMAKE_SOURCE_DIR}/eng/docs/api/assets/style.css)
-        set(DOXYGEN_PROJECT_LOGO ${CMAKE_SOURCE_DIR}/eng/common/docgeneration/assets/logo.svg)
+        set(DOXYGEN_HTML_HEADER ${SDK_ROOT_DIR}/eng/docs/api/assets/header.html)
+        set(DOXYGEN_HTML_FOOTER ${SDK_ROOT_DIR}/eng/docs/api/assets/footer.html)
+        set(DOXYGEN_HTML_STYLESHEET ${SDK_ROOT_DIR}/eng/docs/api/assets/style.css)
+        set(DOXYGEN_PROJECT_LOGO ${SDK_ROOT_DIR}/eng/common/docgeneration/assets/logo.svg)
 
         set(DOXYGEN_GENERATE_XML YES)
         set(DOXYGEN_GENERATE_LATEX NO)
