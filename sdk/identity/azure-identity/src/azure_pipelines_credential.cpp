@@ -103,7 +103,7 @@ Request AzurePipelinesCredential::CreateOidcRequestMessage() const
   Request request = Request(HttpMethod::Post, requestUrl);
   request.SetHeader("content-type", "application/json");
   request.SetHeader("authorization", "Bearer " + m_systemAccessToken);
-  request.SetHeader("X-TFS-FedAuthRedirect", "Suppress");
+  // request.SetHeader("X-TFS-FedAuthRedirect", "Suppress");
 
   return request;
 }
