@@ -6,6 +6,7 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 
+#include <array>
 #include <cstdio>
 #include <fstream>
 
