@@ -181,7 +181,7 @@ public:
 
   /**
    * @brief #Azure::ETag representing everything.
-   * @note The any #Azure::ETag is *, (unquoted).  It is NOT the same as "*".
+   * @note The any #Azure::ETag is *, (unquoted).  It is NOT the same as * in quotes.
    */
   static const ETag& Any();
 };
