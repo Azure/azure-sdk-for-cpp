@@ -38,9 +38,10 @@ AzurePipelinesCredential::AzurePipelinesCredential(
     : TokenCredential("AzurePipelinesCredential"), m_serviceConnectionId(serviceConnectionId),
       m_systemAccessToken(systemAccessToken)
 {
-  // Allow x-vss-e2eid header to be logged since that is used for troubleshooting.
+  // Allow these headers to be logged since they are used for troubleshooting.
   AzurePipelinesCredentialOptions optionsWithLoggableHeaders = options;
   optionsWithLoggableHeaders.Log.AllowedHttpHeaders.insert("x-vss-e2eid");
+  optionsWithLoggableHeaders.Log.AllowedHttpHeaders.insert("x-msedge-ref");
 
   m_httpPipeline = std::make_unique<HttpPipeline>(
       optionsWithLoggableHeaders,

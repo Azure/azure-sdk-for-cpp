@@ -173,6 +173,7 @@ TEST(AzurePipelinesCredential, RegularExpectedHeadersLogged)
   // The x-vss-e2eid header should be logged in the first response, but not in the second.
   CaseInsensitiveMap responseHeaders;
   responseHeaders.emplace("x-vss-e2eid", "some id for debugging");
+  responseHeaders.emplace("x-msedge-ref", "some AFD impression log reference");
 
   CredentialTestHelper::TokenRequestSimulationServerResponse response1
       = {HttpStatusCode::Ok, "{\"oidcToken\":\"abc/d\"}", responseHeaders};
@@ -212,10 +213,12 @@ TEST(AzurePipelinesCredential, RegularExpectedHeadersLogged)
   EXPECT_EQ(log.size(), LogMsgVec::size_type(7));
   // The first response, from the OIDC endpoint, should have the x-vss-e2eid header logged.
   EXPECT_TRUE(log[2].second.find("some id for debugging") != std::string::npos);
+  EXPECT_TRUE(log[2].second.find("some AFD impression log reference") != std::string::npos);
 
   // The second response, from the identity token endpoint still has that header redacted, as
   // expected.
   EXPECT_TRUE(log[5].second.find("some id for debugging") == std::string::npos);
+  EXPECT_TRUE(log[5].second.find("some AFD impression log reference") == std::string::npos);
   EXPECT_TRUE(log[5].second.find("REDACTED") != std::string::npos);
 
   Logger::SetListener(nullptr);
