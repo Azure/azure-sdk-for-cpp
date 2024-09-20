@@ -16,7 +16,7 @@
 #include <azure_uamqp_c/amqp_definitions_seconds.h>
 #include <azure_uamqp_c/amqp_definitions_target.h>
 #elif ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 #endif
 
 #include <string>
