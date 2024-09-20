@@ -34,6 +34,7 @@ add_executable(azure-core-amqp-uamqp-tests
   uamqp_performatives_tests.cpp
   uamqp_value_tests.cpp
 )
+target_include_directories(azure-core-amqp-tests PRIVATE ../../src/impl/uamqp/amqp/private)
 
 target_compile_definitions(azure-core-amqp-uamqp-tests PRIVATE _azure_BUILDING_TESTS)
 
