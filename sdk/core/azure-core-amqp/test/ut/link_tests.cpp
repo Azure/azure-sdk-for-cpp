@@ -45,9 +45,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
-
+#if ENABLE_UAMQP
     GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92)
                      << LinkState::HalfAttachedAttachReceived;
+#endif
   }
 
   TEST_F(TestLinks, LinkProperties)

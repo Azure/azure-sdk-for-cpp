@@ -100,12 +100,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       MessageSender sender1(session.CreateMessageSender("MySource", {}));
       MessageSender sender2(session.CreateMessageSender("MySource", {}));
     }
+#if ENABLE_UAMQP
     GTEST_LOG_(INFO) << _internal::MessageSenderState::Invalid
                      << _internal::MessageSenderState::Closing
                      << _internal::MessageSenderState::Idle
                      << _internal::MessageSenderState::Opening
                      << _internal::MessageSenderState::Open << _internal::MessageSenderState::Error;
     GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993);
+#endif
   }
   TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
