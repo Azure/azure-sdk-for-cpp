@@ -12,14 +12,10 @@
 #include <thread>
 
 #if ENABLE_RUST_AMQP
-#include "thread_context.hpp"
+#include "runtime_context.hpp"
 #endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
-
-#if ENABLE_RUST_AMQP
-  extern thread_local RustThreadContext RustThreadContextInstance;
-#endif
 
 #if ENABLE_UAMQP
   /**
@@ -55,6 +51,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     std::thread m_pollingThread;
     std::atomic<bool> m_activelyPolling;
     bool m_stopped{false};
+#elif ENABLE_RUST_AMQP
+    RustRuntimeContext m_runtimeContext;
 #endif
 
   public:
@@ -70,6 +68,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     void AddPollable(std::shared_ptr<Pollable> pollable);
 
     void RemovePollable(std::shared_ptr<Pollable> pollable);
+#elif ENABLE_RUST_AMQP
+    Azure::Core::Amqp::_detail::RustRuntimeContext* GetRuntimeContext()
+    {
+      return m_runtimeContext.GetRuntimeContext();
+    }
 #endif
 
     void AssertIdle()

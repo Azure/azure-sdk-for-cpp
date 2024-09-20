@@ -12,7 +12,7 @@ extern "C"
   typedef struct PROPERTIES_INSTANCE_TAG* PROPERTIES_HANDLE;
 }
 #elif ENABLE_RUST_AMQP
-#include "../rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 #endif // ENABLE_UAMQP
 #include <type_traits>
 
