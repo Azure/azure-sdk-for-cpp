@@ -349,9 +349,7 @@ jobs:
           condition: >-
             and(
               succeeded(),
-              ne(variables['Skip.CreateApiReview'], 'true'),
-              ne(variables['Build.Reason'],'PullRequest'),
-              eq(variables['System.TeamProject'], 'internal')
+              ne(variables['Skip.CreateApiReview'], 'true')
             )
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           - ${{ each artifact in parameters.Artifacts }}:
