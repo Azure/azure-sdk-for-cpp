@@ -20,7 +20,8 @@ namespace {
 enum CertFormat
 {
   RsaPkcs,
-  RsaRaw
+  RsaRaw,
+  RsaRawReverse
 };
 
 enum TestType
@@ -35,22 +36,117 @@ struct TempCertFile final
   static const char* const Path;
   ~TempCertFile();
   TempCertFile(CertFormat algorithm = RsaPkcs);
+  TempCertFile(std::string content);
 };
 
 std::vector<std::string> SplitString(const std::string& s, char separator);
 
 std::string ToString(std::vector<uint8_t> const& vec);
+
+// cspell:disable
+std::string ExampleValidCertString
+    = "-----BEGIN CERTIFICATE-----\n"
+      "MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n"
+      "MRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYwNloY\n"
+      "DzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0\n"
+      "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qO\n"
+      "FSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3h\n"
+      "iwj1WQR4aGPGVhom34QAM6kND/QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTX\n"
+      "EZTLWapp2/0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62\n"
+      "+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkA\n"
+      "vhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m\n"
+      "0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG\n"
+      "CCsGAQUFBwMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0O\n"
+      "BBYEFCoJ5tInmafyNuR0tGxZOz522jlWMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpw\n"
+      "Xmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfBKeln0dEcfYi\n"
+      "Jyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/E\n"
+      "m96sm/NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+6cYVKd\n"
+      "Jg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/c5yJYk\n"
+      "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
+      "RrCsEpJsnJXkx/6O\n"
+      "-----END CERTIFICATE-----\n";
+
+std::string ExampleValidPrivateKeyString
+    = "-----BEGIN RSA PRIVATE KEY-----\n"
+      "MIIEpAIBAAKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8Lo\n"
+      "BueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/Qm\n"
+      "tZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/0NCJ9n41xG3ZfOfxmZ\n"
+      "WMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8\n"
+      "/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTX\n"
+      "c7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m0QIDAQABAoIBAQDEGSK6KIk7me7l\n"
+      "QtyWvemNSI8qjoN0EswF50hWSXLlTIuIWsgtNpIZI1VF477SyoNklv/ob0amVFzP\n"
+      "HHwrJtU5MYeP0+zoZ18jJecWoVP7gNCLAvHP8b9qw3cXkbJIfJkHfGJNTLZSCKUY\n"
+      "CHBKqfnscWPhZnZXbZLzUpHFVATcEJ14vqFj4RNoLqNoNQT5NoGxdPtxb0q0PEMB\n"
+      "h4PrkCcK0KSfkgfU8rkBWrhkef8Eqh/d3BR+WAv/r+SO6lumUHtH+6xCkA8mxlc5\n"
+      "AZSichglWJj5+12v8Ca4sLPhWSHx8395tJCYoMSXfx8E65ykoPh/KAYJ4O5WS3QW\n"
+      "FhzBiYQNAoGBAOPJqFu7M3oL3y7lBWtLB38irjcrzr+1rneLGtJcHSjx0vmrcC+k\n"
+      "zVFggBpKJmAAxHt6omIDFw1/VN4ZVus5LWBY9N7Z0YOIgY6fJ3ISwVS391neUz0c\n"
+      "NVSruGVuN8vAUYWFlft2eLNZ8jBAwDRWykZi+ywwdOaFh3STIxSvy+mHAoGBAOko\n"
+      "VeL9kUIl85Fuhh0gWQyFRwnlsLyJXTpRHxu8M2VuHvMDQ4X0jLV8ia832xMlwbVS\n"
+      "qBEnT+jZ5vVu37XMp1veuUveEx7su/qH7x6OiQJvIP9Ll+9MGdui1PKoZCTE1prD\n"
+      "jQTSi8FM5BU+1RrHWgZYmptUS743k1EXUIJ37SLnAoGBAOBWGpk9JNVuG7/zjgK9\n"
+      "QgTUAwATBOuJ4umY9jF2xsEsaLu7PCGwDQW4JHG/1Ut3dgqmHIaqxGlmng6ephvD\n"
+      "lAzvjzprCwyfw/jSheay0fS9ub2oWBI3Vc6t0E0U356rKZ52kd+2Lel1DDC5lJH3\n"
+      "Z/8qPHSoxHjDyUPmJQaanBjBAoGAWa5iGsVdsgvW/AF/JITku6QoBu6KZHqRmXTK\n"
+      "emiRfFo3HVIMDuJZnRUiAHuDkIHdWFlKvA5a9j2aUJ0s/0iQtw2cSEpLIIH+bAcN\n"
+      "Oruoh38nOgthjXHAIHMpZYzPuDTeNvkwrMIvb1KcCG/6mCpFvlsmXMi3uZq212IY\n"
+      "XZazZ9ECgYA3vGkRvjDklE014wFbLGw2NFLPeNxTfdagZmoDag8qMygAKg6Cr3Uc\n"
+      "TNCJSA5zqbY+AH26SdSU4TTiQ2AaVPgM6PFKHnQDYJ3bWdp9dUUo5pUOkxP1hpbI\n"
+      "qxxMaq+sv5e9c56EJtctxNnAK27JsoadD+b+NjysZgMeKUdBIzSrHQ==\n"
+      "-----END RSA PRIVATE KEY-----\n";
+// cspell:enable
 } // namespace
 
 class GetCredentialName : public ::testing::TestWithParam<CertFormat> {
   TempCertFile m_certFile{GetParam()};
 };
 
-class GetToken : public ::testing::TestWithParam<std::tuple<TestType, CertFormat>> {
+class GetTokenFromCertInMemory : public ::testing::TestWithParam<bool> {
+public:
+  bool GetSendCertChain() { return GetParam(); }
+
+  std::string GetHeader()
+  {
+    // cspell:disable
+    std::string x5t = "\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\"";
+    std::string kid = "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\"";
+    std::string x5c
+        = "\"MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+"
+          "XRkzANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYw"
+          "NloYDzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MIIBIjANBgkqhkiG9w"
+          "0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gU"
+          "GEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/"
+          "QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/"
+          "0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/"
+          "IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/"
+          "0fWeD87bmqP6m0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFB"
+          "wMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0OBBYEFCoJ5tInmafyNuR0tGxZOz522jl"
+          "WMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpwXmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfB"
+          "Keln0dEcfYiJyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/Em96sm/"
+          "NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+"
+          "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
+          "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
+          "6O\"";
+    // cspell:enable
+
+    if (GetSendCertChain())
+    {
+      return "{\"x5t\":" + x5t + ",\"kid\":" + kid
+          + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
+            "\"x5c\":"
+          + x5c + "}";
+    }
+    return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+  }
+};
+
+class GetToken : public ::testing::TestWithParam<std::tuple<TestType, CertFormat, bool>> {
 public:
   TestType GetTestType() { return std::get<0>(GetParam()); }
 
   CertFormat GetCertFormat() { return std::get<1>(GetParam()); }
+
+  bool GetSendCertChain() { return std::get<2>(GetParam()); }
 
   std::string GetTenantId()
   {
@@ -105,9 +201,37 @@ public:
   }
 
   std::string GetHeader()
-  { // cspell:disable
-    return "{\"x5t\":\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\",\"kid\":"
-           "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
+  {
+    // cspell:disable
+    std::string x5t = "\"V0pIIQwSzNn6vfSTPv-1f7Vt_Pw\"";
+    std::string kid = "\"574A48210C12CCD9FABDF4933EFFB57FB56DFCFC\"";
+    std::string x5c
+        = "\"MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+"
+          "XRkzANBgkqhkiG9w0BAQsFADAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYw"
+          "NloYDzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MIIBIjANBgkqhkiG9w"
+          "0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gU"
+          "GEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/"
+          "QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/"
+          "0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/"
+          "IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/"
+          "0fWeD87bmqP6m0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFB"
+          "wMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0OBBYEFCoJ5tInmafyNuR0tGxZOz522jl"
+          "WMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpwXmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfB"
+          "Keln0dEcfYiJyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/Em96sm/"
+          "NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+"
+          "6cYVKdJg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/"
+          "c5yJYki9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHiRrCsEpJsnJXkx/"
+          "6O\"";
+    // cspell:enable
+
+    if (GetSendCertChain())
+    {
+      return "{\"x5t\":" + x5t + ",\"kid\":" + kid
+          + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
+            "\"x5c\":"
+          + x5c + "}";
+    }
+    return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
 
   std::string GetPayloadStart()
@@ -153,6 +277,23 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
   try
   {
     ClientCertificateCredential const cred(
+        "01234567-89ab-cdef-fedc-ba8976543210",
+        "fedcba98-7654-3210-0123-456789abcdef",
+        "doesnotexist.pem");
+
+    EXPECT_TRUE(!"ClientCertificateCredential with missing file is supposed to throw.");
+  }
+  catch (Azure::Core::Credentials::AuthenticationException const& ex)
+  {
+    EXPECT_EQ(
+        ex.what(),
+        std::string("Identity: ClientCertificateCredential: "
+                    "Failed to open file for reading. File name: 'doesnotexist.pem'"));
+  }
+
+  try
+  {
+    ClientCertificateCredential const cred(
         "01234567-89ab-cdef-fedc-ba8976543210", "fedcba98-7654-3210-0123-456789abcdef", "file.pfx");
 
     EXPECT_TRUE(
@@ -188,10 +329,12 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
 
   try
   {
+    // cspell:disable
     ClientCertificateCredential const cred(
         "01234567-89ab-cdef-fedc-ba8976543210",
         "fedcba98-7654-3210-0123-456789abcdef",
         "noextension");
+    // cspell:enable
 
     EXPECT_TRUE(!"ClientCertificateCredential without an extension is supposed to throw.");
   }
@@ -219,6 +362,154 @@ TEST(ClientCertificateCredential, UnsupportedExtension)
   }
 }
 
+TEST(ClientCertificateCredential, InvalidContentInFile)
+{
+  {
+    TempCertFile certFile{""};
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            TempCertFile::Path),
+        Azure::Core::Credentials::AuthenticationException);
+  }
+  {
+    TempCertFile certFile{ExampleValidPrivateKeyString};
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            TempCertFile::Path),
+        Azure::Core::Credentials::AuthenticationException);
+  }
+  {
+    TempCertFile certFile{ExampleValidCertString};
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            TempCertFile::Path),
+        Azure::Core::Credentials::AuthenticationException);
+  }
+
+  // cspell:disable
+  std::string invalidContents[]
+      = {"a",
+         "-----BEGIN CERTIFICATE-----\na",
+         "-----BEGIN RSA PRIVATE KEY-----\na",
+         "-----BEGIN RSA PRIVATE KEY-----\na-----BEGIN CERTIFICATE-----\na",
+         "-----BEGIN RSA PRIVATE "
+         "KEY-----\nqxxMaq+sv5e9c56EJtctxNnAK27JsoadD+b+NjysZgMeKUdBIzSrHQ==\n-----END RSA "
+         "PRIVATE KEY-----\n-----BEGIN "
+         "CERTIFICATE-----\nMIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n----"
+         "-END CERTIFICATE-----"};
+  // cspell:enable
+
+  for (std::string invalidContent : invalidContents)
+  {
+    {
+      TempCertFile certFile{invalidContent};
+      EXPECT_THROW(
+          ClientCertificateCredential const cred(
+              "01234567-89ab-cdef-fedc-ba8976543210",
+              "fedcba98-7654-3210-0123-456789abcdef",
+              TempCertFile::Path),
+          Azure::Core::Credentials::AuthenticationException);
+    }
+    {
+      TempCertFile certFile{ExampleValidPrivateKeyString + invalidContent};
+      EXPECT_THROW(
+          ClientCertificateCredential const cred(
+              "01234567-89ab-cdef-fedc-ba8976543210",
+              "fedcba98-7654-3210-0123-456789abcdef",
+              TempCertFile::Path),
+          Azure::Core::Credentials::AuthenticationException);
+    }
+    {
+      TempCertFile certFile{ExampleValidCertString + invalidContent};
+      EXPECT_THROW(
+          ClientCertificateCredential const cred(
+              "01234567-89ab-cdef-fedc-ba8976543210",
+              "fedcba98-7654-3210-0123-456789abcdef",
+              TempCertFile::Path),
+          Azure::Core::Credentials::AuthenticationException);
+    }
+  }
+}
+
+TEST(ClientCertificateCredential, InvalidContentInMemory)
+{
+  // Empty string parameters.
+  EXPECT_THROW(
+      ClientCertificateCredential const cred(
+          "01234567-89ab-cdef-fedc-ba8976543210",
+          "fedcba98-7654-3210-0123-456789abcdef",
+          {},
+          {},
+          {}),
+      Azure::Core::Credentials::AuthenticationException);
+
+  EXPECT_THROW(
+      ClientCertificateCredential const cred(
+          "01234567-89ab-cdef-fedc-ba8976543210",
+          "fedcba98-7654-3210-0123-456789abcdef",
+          ExampleValidCertString,
+          {},
+          {}),
+      Azure::Core::Credentials::AuthenticationException);
+
+  EXPECT_THROW(
+      ClientCertificateCredential const cred(
+          "01234567-89ab-cdef-fedc-ba8976543210",
+          "fedcba98-7654-3210-0123-456789abcdef",
+          {},
+          ExampleValidPrivateKeyString),
+      Azure::Core::Credentials::AuthenticationException);
+
+  // cspell:disable
+  std::string invalidContents[]
+      = {"a",
+         "-----BEGIN CERTIFICATE-----\na",
+         "-----BEGIN RSA PRIVATE KEY-----\na",
+         "-----BEGIN RSA PRIVATE KEY-----\na-----BEGIN CERTIFICATE-----\na",
+         "-----BEGIN RSA PRIVATE "
+         "KEY-----\nqxxMaq+sv5e9c56EJtctxNnAK27JsoadD+b+NjysZgMeKUdBIzSrHQ==\n-----END RSA "
+         "PRIVATE KEY-----\n-----BEGIN "
+         "CERTIFICATE-----\nMIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n----"
+         "-END CERTIFICATE-----"};
+  // cspell:enable
+
+  for (std::string invalidContent : invalidContents)
+  {
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            ExampleValidCertString,
+            invalidContent,
+            {}),
+        Azure::Core::Credentials::AuthenticationException);
+
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            invalidContent,
+            ExampleValidPrivateKeyString,
+            {}),
+        Azure::Core::Credentials::AuthenticationException);
+
+    EXPECT_THROW(
+        ClientCertificateCredential const cred(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            invalidContent,
+            invalidContent,
+            {}),
+        Azure::Core::Credentials::AuthenticationException);
+  }
+}
+
 TEST(ClientCertificateCredential, GetOptionsFromEnvironment)
 {
   {
@@ -239,6 +530,144 @@ TEST(ClientCertificateCredential, GetOptionsFromEnvironment)
   }
 }
 
+TEST_P(GetTokenFromCertInMemory, )
+{
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [this](auto transport) {
+        ClientCertificateCredentialOptions options;
+        options.Transport.Transport = transport;
+        options.SendCertificateChain = GetSendCertChain();
+
+        return std::make_unique<ClientCertificateCredential>(
+            "01234567-89ab-cdef-fedc-ba8976543210",
+            "fedcba98-7654-3210-0123-456789abcdef",
+            ExampleValidCertString,
+            ExampleValidPrivateKeyString,
+            options);
+      },
+      {{{"https://azure.com/.default"}}, {{}}},
+      std::vector<std::string>{
+          "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}",
+          "{\"expires_in\":7200, \"access_token\":\"ACCESSTOKEN2\"}"});
+
+  EXPECT_EQ(actual.Requests.size(), 2U);
+  EXPECT_EQ(actual.Responses.size(), 2U);
+
+  auto const& request0 = actual.Requests.at(0);
+  auto const& request1 = actual.Requests.at(1);
+
+  auto const& response0 = actual.Responses.at(0);
+  auto const& response1 = actual.Responses.at(1);
+
+  EXPECT_EQ(request0.HttpMethod, HttpMethod::Post);
+  EXPECT_EQ(request1.HttpMethod, HttpMethod::Post);
+
+  EXPECT_EQ(
+      request0.AbsoluteUrl,
+      "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
+
+  EXPECT_EQ(
+      request1.AbsoluteUrl,
+      "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
+
+  {
+    // cspell:disable
+    std::string expectedStr1
+        = "grant_type=client_credentials"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-"
+          "bearer"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&scope=https%3A%2F%2Fazure.com%2F.default"
+          "&client_assertion=";
+
+    std::string expectedStr2
+        = "grant_type=client_credentials"
+          "&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"
+          "&client_id=fedcba98-7654-3210-0123-456789abcdef"
+          "&client_assertion="; // cspell:enable
+
+    auto expectedBodyStart0 = expectedStr1;
+    auto expectedBodyStart1 = expectedStr2;
+
+    EXPECT_GT(request0.Body.size(), expectedBodyStart0.size());
+    EXPECT_GT(request1.Body.size(), expectedBodyStart1.size());
+
+    EXPECT_EQ(request0.Body.substr(0, expectedBodyStart0.size()), expectedBodyStart0);
+    EXPECT_EQ(request1.Body.substr(0, expectedBodyStart1.size()), expectedBodyStart1);
+
+    EXPECT_NE(request0.Headers.find("Content-Length"), request0.Headers.end());
+    EXPECT_GT(
+        std::stoi(request0.Headers.at("Content-Length")),
+        static_cast<int>(expectedBodyStart0.size()));
+
+    EXPECT_NE(request1.Headers.find("Content-Length"), request1.Headers.end());
+    EXPECT_GT(
+        std::stoi(request1.Headers.at("Content-Length")),
+        static_cast<int>(expectedBodyStart1.size()));
+
+    {
+      using Azure::Core::_internal::Base64Url;
+
+      const auto assertion0 = request0.Body.substr(expectedBodyStart0.size());
+      const auto assertion1 = request1.Body.substr(expectedBodyStart1.size());
+
+      const auto assertion0Parts = SplitString(assertion0, '.');
+      const auto assertion1Parts = SplitString(assertion1, '.');
+
+      EXPECT_EQ(assertion0Parts.size(), 3U);
+      EXPECT_EQ(assertion1Parts.size(), 3U);
+
+      const auto header0Vec = Base64Url::Base64UrlDecode(assertion0Parts[0]);
+      const auto header1Vec = Base64Url::Base64UrlDecode(assertion1Parts[0]);
+
+      const auto payload0Vec = Base64Url::Base64UrlDecode(assertion0Parts[1]);
+      const auto payload1Vec = Base64Url::Base64UrlDecode(assertion1Parts[1]);
+
+      const auto signature0 = assertion0Parts[2];
+      const auto signature1 = assertion1Parts[2];
+
+      const auto header0 = ToString(header0Vec);
+      const auto header1 = ToString(header1Vec);
+
+      const auto payload0 = ToString(payload0Vec);
+      const auto payload1 = ToString(payload1Vec);
+
+      std::string ExpectedHeader = GetHeader();
+
+      EXPECT_EQ(header0, ExpectedHeader);
+      EXPECT_EQ(header1, ExpectedHeader);
+
+      std::string ExpectedPayloadStart
+          = "{\"aud\":\"https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/"
+            "oauth2/v2.0/token\","
+            "\"iss\":\"fedcba98-7654-3210-0123-456789abcdef\","
+            "\"sub\":\"fedcba98-7654-3210-0123-456789abcdef\",\"jti\":\"";
+
+      EXPECT_EQ(payload0.substr(0, ExpectedPayloadStart.size()), ExpectedPayloadStart);
+      EXPECT_EQ(payload1.substr(0, ExpectedPayloadStart.size()), ExpectedPayloadStart);
+
+      EXPECT_EQ(Base64Url::Base64UrlDecode(signature0).size(), 256);
+      EXPECT_EQ(Base64Url::Base64UrlDecode(signature1).size(), 256);
+    }
+  }
+
+  EXPECT_NE(request0.Headers.find("Content-Type"), request0.Headers.end());
+  EXPECT_EQ(request0.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_NE(request1.Headers.find("Content-Type"), request1.Headers.end());
+  EXPECT_EQ(request1.Headers.at("Content-Type"), "application/x-www-form-urlencoded");
+
+  EXPECT_EQ(response0.AccessToken.Token, "ACCESSTOKEN1");
+  EXPECT_EQ(response1.AccessToken.Token, "ACCESSTOKEN2");
+
+  using namespace std::chrono_literals;
+  EXPECT_GE(response0.AccessToken.ExpiresOn, response0.EarliestExpiration + 3600s);
+  EXPECT_LE(response0.AccessToken.ExpiresOn, response0.LatestExpiration + 3600s);
+
+  EXPECT_GE(response1.AccessToken.ExpiresOn, response1.EarliestExpiration + 7200s);
+  EXPECT_LE(response1.AccessToken.ExpiresOn, response1.LatestExpiration + 7200s);
+}
+
 TEST_P(GetToken, )
 {
   auto const actual = CredentialTestHelper::SimulateTokenRequest(
@@ -249,6 +678,7 @@ TEST_P(GetToken, )
           options.AuthorityHost = "https://microsoft.com/";
         }
         options.Transport.Transport = transport;
+        options.SendCertificateChain = GetSendCertChain();
 
         return std::make_unique<ClientCertificateCredential>(
             GetTenantId(), "fedcba98-7654-3210-0123-456789abcdef", TempCertFile::Path, options);
@@ -360,10 +790,16 @@ INSTANTIATE_TEST_SUITE_P(
 
 INSTANTIATE_TEST_SUITE_P(
     ClientCertificateCredential,
+    GetTokenFromCertInMemory,
+    testing::Values(true, false));
+
+INSTANTIATE_TEST_SUITE_P(
+    ClientCertificateCredential,
     GetToken,
     testing::Combine(
         testing::Values(Regular, AzureStack, Authority),
-        testing::Values(RsaPkcs, RsaRaw)));
+        testing::Values(RsaPkcs, RsaRaw, RsaRawReverse),
+        testing::Values(true, false)));
 
 namespace {
 const char* const TempCertFile::Path = "azure-identity-test.pem";
@@ -419,77 +855,18 @@ TempCertFile::TempCertFile(CertFormat format)
         "\n"
         "issuer=CN = azure-identity-test\n"
         "\n"
-        "-----BEGIN CERTIFICATE-----\n"
-        "MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n"
-        "MRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYwNloY\n"
-        "DzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0\n"
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qO\n"
-        "FSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3h\n"
-        "iwj1WQR4aGPGVhom34QAM6kND/QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTX\n"
-        "EZTLWapp2/0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62\n"
-        "+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkA\n"
-        "vhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m\n"
-        "0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG\n"
-        "CCsGAQUFBwMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0O\n"
-        "BBYEFCoJ5tInmafyNuR0tGxZOz522jlWMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpw\n"
-        "Xmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfBKeln0dEcfYi\n"
-        "Jyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/E\n"
-        "m96sm/NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+6cYVKd\n"
-        "Jg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/c5yJYk\n"
-        "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
-        "RrCsEpJsnJXkx/6O\n"
-        "-----END CERTIFICATE-----\n";
+         << ExampleValidCertString;
   // cspell:enable
   else if (format == RsaRaw)
-    cert << // cspell:disable
-        "-----BEGIN RSA PRIVATE KEY-----\n"
-        "MIIEpAIBAAKCAQEAz3ZuKbpDu7oBMfMF65qOFSBKInKe8N0LBCRgNmzMfZxzL8Lo\n"
-        "BueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3hiwj1WQR4aGPGVhom34QAM6kND/Qm\n"
-        "tZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTXEZTLWapp2/0NCJ9n41xG3ZfOfxmZ\n"
-        "WMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8\n"
-        "/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkAvhsybGA28EDmqOVYZPNB+S0bjPTX\n"
-        "c7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m0QIDAQABAoIBAQDEGSK6KIk7me7l\n"
-        "QtyWvemNSI8qjoN0EswF50hWSXLlTIuIWsgtNpIZI1VF477SyoNklv/ob0amVFzP\n"
-        "HHwrJtU5MYeP0+zoZ18jJecWoVP7gNCLAvHP8b9qw3cXkbJIfJkHfGJNTLZSCKUY\n"
-        "CHBKqfnscWPhZnZXbZLzUpHFVATcEJ14vqFj4RNoLqNoNQT5NoGxdPtxb0q0PEMB\n"
-        "h4PrkCcK0KSfkgfU8rkBWrhkef8Eqh/d3BR+WAv/r+SO6lumUHtH+6xCkA8mxlc5\n"
-        "AZSichglWJj5+12v8Ca4sLPhWSHx8395tJCYoMSXfx8E65ykoPh/KAYJ4O5WS3QW\n"
-        "FhzBiYQNAoGBAOPJqFu7M3oL3y7lBWtLB38irjcrzr+1rneLGtJcHSjx0vmrcC+k\n"
-        "zVFggBpKJmAAxHt6omIDFw1/VN4ZVus5LWBY9N7Z0YOIgY6fJ3ISwVS391neUz0c\n"
-        "NVSruGVuN8vAUYWFlft2eLNZ8jBAwDRWykZi+ywwdOaFh3STIxSvy+mHAoGBAOko\n"
-        "VeL9kUIl85Fuhh0gWQyFRwnlsLyJXTpRHxu8M2VuHvMDQ4X0jLV8ia832xMlwbVS\n"
-        "qBEnT+jZ5vVu37XMp1veuUveEx7su/qH7x6OiQJvIP9Ll+9MGdui1PKoZCTE1prD\n"
-        "jQTSi8FM5BU+1RrHWgZYmptUS743k1EXUIJ37SLnAoGBAOBWGpk9JNVuG7/zjgK9\n"
-        "QgTUAwATBOuJ4umY9jF2xsEsaLu7PCGwDQW4JHG/1Ut3dgqmHIaqxGlmng6ephvD\n"
-        "lAzvjzprCwyfw/jSheay0fS9ub2oWBI3Vc6t0E0U356rKZ52kd+2Lel1DDC5lJH3\n"
-        "Z/8qPHSoxHjDyUPmJQaanBjBAoGAWa5iGsVdsgvW/AF/JITku6QoBu6KZHqRmXTK\n"
-        "emiRfFo3HVIMDuJZnRUiAHuDkIHdWFlKvA5a9j2aUJ0s/0iQtw2cSEpLIIH+bAcN\n"
-        "Oruoh38nOgthjXHAIHMpZYzPuDTeNvkwrMIvb1KcCG/6mCpFvlsmXMi3uZq212IY\n"
-        "XZazZ9ECgYA3vGkRvjDklE014wFbLGw2NFLPeNxTfdagZmoDag8qMygAKg6Cr3Uc\n"
-        "TNCJSA5zqbY+AH26SdSU4TTiQ2AaVPgM6PFKHnQDYJ3bWdp9dUUo5pUOkxP1hpbI\n"
-        "qxxMaq+sv5e9c56EJtctxNnAK27JsoadD+b+NjysZgMeKUdBIzSrHQ==\n"
-        "-----END RSA PRIVATE KEY-----\n"
-        "-----BEGIN CERTIFICATE-----\n"
-        "MIIDODCCAiCgAwIBAgIQNqa9U3MBxqBF7ksWk+XRkzANBgkqhkiG9w0BAQsFADAe\n"
-        "MRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0MCAXDTIyMDQyMjE1MDYwNloY\n"
-        "DzIyMjIwMTAxMDcwMDAwWjAeMRwwGgYDVQQDDBNhenVyZS1pZGVudGl0eS10ZXN0\n"
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz3ZuKbpDu7oBMfMF65qO\n"
-        "FSBKInKe8N0LBCRgNmzMfZxzL8LoBueLdeEKX6gUGEFi3i9R5qXA3or1Q/teWV3h\n"
-        "iwj1WQR4aGPGVhom34QAM6kND/QmtZMnY7weLiXBJxf0WLUL+p+jsJnTtcCdtiTX\n"
-        "EZTLWapp2/0NCJ9n41xG3ZfOfxmZWMzEEXcnyNMq4kkQXGFdpINM3lwsX5grwd62\n"
-        "+iNSqaFBR5ZHh7ZHg8JtFR1BLeB8/IIXAdNLSOXktnx9qz5CDUCnOvtEFAtiiAkA\n"
-        "vhsybGA28EDmqOVYZPNB+S0bjPTXc7/n1N5S55LWAoF4C/QF+C/0fWeD87bmqP6m\n"
-        "0QIDAQABo3AwbjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwIG\n"
-        "CCsGAQUFBwMBMB4GA1UdEQQXMBWCE2F6dXJlLWlkZW50aXR5LXRlc3QwHQYDVR0O\n"
-        "BBYEFCoJ5tInmafyNuR0tGxZOz522jlWMA0GCSqGSIb3DQEBCwUAA4IBAQBzLXpw\n"
-        "Xmrg1sQTmzMnS24mREKxj9B3YILmgsdBMrHkH07QUROee7IbQ8gfBKeln0dEcfYi\n"
-        "Jyh42jn+fmg9AR17RP80wPthD2eKOt4WYNkNM3H8U4JEo+0ML0jZyswynpR48h/E\n"
-        "m96sm/NUeKUViD5iVTb1uHL4j8mQAN1IbXcunXvrrek1CzFVn5Rpah0Tn+6cYVKd\n"
-        "Jg531i53udzusgZtV1NPZ82tzYkPQG1vxB//D9vd0LzmcfCvT50MKhz0r/c5yJYk\n"
-        "i9q94DBuzMhe+O9j+Ob2pVQt5akVFJVtIVSfBZzRBAd66u9JeADlT4sxwS4QAUHi\n"
-        "RrCsEpJsnJXkx/6O\n"
-        "-----END CERTIFICATE-----";
-  // cspell:enable
+    cert << ExampleValidPrivateKeyString << ExampleValidCertString;
+  else if (format == RsaRawReverse)
+    cert << ExampleValidCertString << ExampleValidPrivateKeyString;
+}
+
+TempCertFile::TempCertFile(std::string content)
+{
+  std::ofstream cert(Path, std::ios_base::out | std::ios_base::trunc);
+  cert << content;
 }
 
 std::vector<std::string> SplitString(const std::string& s, char separator)

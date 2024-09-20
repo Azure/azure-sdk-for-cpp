@@ -305,8 +305,9 @@ jobs:
     displayName: Generate Code Coverage Data
     condition: and(succeeded(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
-  - task: PublishCodeCoverageResults@2
+  - task: PublishCodeCoverageResults@1
     inputs:
+      codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
     displayName: Publish Code Coverage to DevOps
     condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))

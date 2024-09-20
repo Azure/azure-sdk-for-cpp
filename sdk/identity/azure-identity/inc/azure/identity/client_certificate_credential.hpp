@@ -60,6 +60,16 @@ namespace Azure { namespace Identity {
      * for any tenant in which the application is installed.
      */
     std::vector<std::string> AdditionallyAllowedTenants;
+
+    /**
+     * @brief SendCertificateChain controls whether the credential sends the public certificate
+     * chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer
+     * (SNI) authentication.
+     *
+     * @note Defaults to false.
+     *
+     */
+    bool SendCertificateChain = false;
   };
 
   /**
@@ -83,15 +93,27 @@ namespace Azure { namespace Identity {
         std::string const& clientCertificatePath,
         std::string const& authorityHost,
         std::vector<std::string> additionallyAllowedTenants,
+        bool sendCertificateChain,
+        Core::Credentials::TokenCredentialOptions const& options);
+
+    explicit ClientCertificateCredential(
+        std::string tenantId,
+        std::string const& clientId,
+        std::string const& clientCertificate,
+        std::string const& privateKey,
+        std::string const& authorityHost,
+        std::vector<std::string> additionallyAllowedTenants,
+        bool sendCertificateChain,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath Client certificate path.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
@@ -102,11 +124,30 @@ namespace Azure { namespace Identity {
         = Core::Credentials::TokenCredentialOptions());
 
     /**
-     * @brief Constructs a Client Secret Credential.
+     * @brief Constructs a Client Certificate Credential.
      *
      * @param tenantId Tenant ID.
      * @param clientId Client ID.
-     * @param clientCertificatePath Client certificate path.
+     * @param clientCertificate The PEM encoded x509 certificate which is used for signing, in
+     * base64 string format, including the begin and end headers.
+     * @param privateKey The PEM encoded representation of the corresponding
+     * RSA private key of the certificate.
+     * @param options Options for token retrieval.
+     */
+    explicit ClientCertificateCredential(
+        std::string tenantId,
+        std::string const& clientId,
+        std::string const& clientCertificate,
+        std::string const& privateKey,
+        ClientCertificateCredentialOptions const& options = {});
+
+    /**
+     * @brief Constructs a Client Certificate Credential.
+     *
+     * @param tenantId Tenant ID.
+     * @param clientId Client ID.
+     * @param clientCertificatePath The path to a PEM file containing exactly one certificate which
+     * is used for signing along with its corresponding private key.
      * @param options Options for token retrieval.
      */
     explicit ClientCertificateCredential(
