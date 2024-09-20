@@ -3,8 +3,8 @@
 
 #pragma once
 #if ENABLE_RUST_AMQP
-#include "rust_amqp_wrapper.h"
 #include "../src/amqp/private/unique_handle.hpp"
+#include "rust_amqp_wrapper.h"
 
 #include <azure/core/azure_assert.hpp>
 
@@ -30,24 +30,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   using UniqueRustRuntimeContext = Azure::Core::Amqp::_detail::UniqueHandleHelper<
       Azure::Core::Amqp::_detail::RustRuntimeContext>::type;
-  class RustThreadContext final {
+
+  /**
+   * @brief Represents the an implementation of the rust multithreaded runtime.
+   *
+   * Needed to implement blocking Rust API calls.
+   */
+  class RustRuntimeContext final {
 
     UniqueRustRuntimeContext m_runtimeContext;
 
   public:
-    RustThreadContext()
+    RustRuntimeContext()
         : m_runtimeContext{Azure::Core::Amqp::_detail::RustInterop::runtime_context_new()}
     {
     }
 
     Azure::Core::Amqp::_detail::RustRuntimeContext* GetRuntimeContext()
     {
-      // Creating a runtime_context initializes the Rust thread pool, so defer initialization until
-      // we actually need the runtime context.
-      // if (!m_runtimeContext)
-      //      {
-      //        m_runtimeContext.reset(Azure::Core::Amqp::_detail::RustInterop::runtime_context_new());
-      //      }
       return m_runtimeContext.get();
     }
   };
