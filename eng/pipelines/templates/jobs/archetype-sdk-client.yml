@@ -209,7 +209,7 @@ jobs:
                 Set-Content -Path $outputPath -Value $outputObject
 
                 $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
-                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+                $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) "packages/PackageInfo"
                 Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
                 Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace "${{ artifact.Name }}.json","${{ artifact.Name }}_cpp.json"}
 
@@ -314,13 +314,12 @@ jobs:
               continueOnError: true
               condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true'))
 
-        # - pwsh: |
-        #     $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
-        #     $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
-        #     mkdir $packageJsonDest
-        #     Copy-Item $packageJsonSource/* $packageJsonDest -Force
-        #     Get-ChildItem $packageJsonDest | Rename-Item -NewName {$_ -replace ".json","_cpp.json"}
-        #   displayName: Copy PackageJson
+        - pwsh: |
+            $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+            $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
+            mkdir $packageJsonDest
+            Copy-Item $packageJsonSource/* $packageJsonDest -Force
+          displayName: Copy PackageJson
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
