@@ -528,7 +528,7 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
              + "\nx-vss-e2eid:some id for debugging\nx-msedge-ref:some AFD impression log "
                "reference\n\nInvalid response body"};
 
-  for (auto i = 0; i < expectedMessages->size(); i++)
+  for (size_t i = 0; i < expectedMessages->size(); i++)
   {
     try
     {
