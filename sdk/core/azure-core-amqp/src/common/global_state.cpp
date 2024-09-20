@@ -209,10 +209,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     return &globalState;
   }
 
-#if ENABLE_RUST_AMQP
-  thread_local RustThreadContext RustThreadContextInstance;
-#endif
-
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 
 #if ENABLE_RUST_AMQP
