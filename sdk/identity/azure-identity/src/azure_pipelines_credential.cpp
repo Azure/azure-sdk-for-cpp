@@ -132,8 +132,21 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
         + std::to_string(static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
         + " (" + response->GetReasonPhrase()
         + ") response from the OIDC endpoint. Check service connection ID and Pipeline "
-          "configuration.\n\n"
-        + responseBody;
+          "configuration";
+
+    auto responseHeaders = response->GetHeaders();
+    auto headerValue = responseHeaders.find("x-vss-e2eid");
+    if (headerValue != responseHeaders.end())
+    {
+      message += "\n" + headerValue->first + ":" + headerValue->second;
+    }
+    headerValue = responseHeaders.find("x-msedge-ref");
+    if (headerValue != responseHeaders.end())
+    {
+      message += "\n" + headerValue->first + ":" + headerValue->second;
+    }
+    message += "\n\n" + responseBody;
+
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
     throw AuthenticationException(message);

@@ -495,34 +495,64 @@ TEST(AzurePipelinesCredential, InvalidOidcResponse)
   std::string serviceConnectionId = "a/bc";
   std::string systemAccessToken = "123";
 
+  using Azure::Core::Http::HttpStatusCode;
+
   // Non-OK response
-  try
+  CredentialTestHelper::TokenRequestSimulationServerResponse testResponse0;
+  testResponse0.StatusCode = HttpStatusCode::BadRequest;
+  testResponse0.Body = "Invalid response body";
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse testResponse1 = testResponse0;
+  testResponse1.Headers.emplace("x-vss-e2eid", "some id for debugging");
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse testResponse2 = testResponse0;
+  testResponse2.Headers.emplace("x-msedge-ref", "some AFD impression log reference");
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse testResponse3 = testResponse0;
+  testResponse3.Headers.emplace("x-vss-e2eid", "some id for debugging");
+  testResponse3.Headers.emplace("x-msedge-ref", "some AFD impression log reference");
+  testResponse3.Headers.emplace("foo", "bar"); // won't show up in the exception message
+
+  CredentialTestHelper::TokenRequestSimulationServerResponse testResponses[4]
+      = {testResponse0, testResponse1, testResponse2, testResponse3};
+
+  std::string baseExpectedMessage
+      = "AzurePipelinesCredential : 400 (Test) response from the OIDC endpoint. Check service "
+        "connection ID and Pipeline configuration";
+  std::string expectedMessages[4]
+      = {baseExpectedMessage + "\n\nInvalid response body",
+         baseExpectedMessage + "\nx-vss-e2eid:some id for debugging\n\nInvalid response body",
+         baseExpectedMessage
+             + "\nx-msedge-ref:some AFD impression log reference\n\nInvalid response body",
+         baseExpectedMessage
+             + "\nx-vss-e2eid:some id for debugging\nx-msedge-ref:some AFD impression log "
+               "reference\n\nInvalid response body"};
+
+  for (auto i = 0; i < expectedMessages->size(); i++)
   {
-    using Azure::Core::Http::HttpStatusCode;
-    std::vector<std::string> const testScopes;
-    CredentialTestHelper::TokenRequestSimulationServerResponse testResponse;
-    testResponse.StatusCode = HttpStatusCode::BadRequest;
-    testResponse.Body = "Invalid response body";
+    try
+    {
 
-    static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [&](auto transport) {
-          AzurePipelinesCredentialOptions options;
-          options.Transport.Transport = transport;
+      std::vector<std::string> const testScopes;
+      CredentialTestHelper::TokenRequestSimulationServerResponse testResponse = testResponses[i];
 
-          return std::make_unique<AzurePipelinesCredential>(
-              tenantId, clientId, serviceConnectionId, systemAccessToken, options);
-        },
-        {testScopes},
-        {testResponse}));
+      static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+          [&](auto transport) {
+            AzurePipelinesCredentialOptions options;
+            options.Transport.Transport = transport;
 
-    EXPECT_TRUE(!"AzurePipelinesCredential should throw given the response above.");
-  }
-  catch (AuthenticationException const& ex)
-  {
-    std::string expectedMessage
-        = "AzurePipelinesCredential : 400 (Test) response from the OIDC endpoint. Check service "
-          "connection ID and Pipeline configuration.\n\nInvalid response body";
-    EXPECT_EQ(ex.what(), expectedMessage) << ex.what();
+            return std::make_unique<AzurePipelinesCredential>(
+                tenantId, clientId, serviceConnectionId, systemAccessToken, options);
+          },
+          {testScopes},
+          {testResponse}));
+
+      EXPECT_TRUE(!"AzurePipelinesCredential should throw given the response above.");
+    }
+    catch (AuthenticationException const& ex)
+    {
+      EXPECT_EQ(ex.what(), expectedMessages[i]) << ex.what();
+    }
   }
 
   // Invalid JSON
