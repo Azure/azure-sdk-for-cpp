@@ -644,7 +644,7 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   }
 }
 
-TEST(AzurePipelinesCredential, DISABLED_InvalidSystemAccessToken_LIVEONLY_)
+TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
 {
   std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
   std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
