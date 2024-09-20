@@ -3,7 +3,7 @@
 
 #pragma once
 #if ENABLE_RUST_AMQP
-#include "../../azure-core-amqp/src/impl/rust_amqp/rust_amqp/rust_wrapper/rust_amqp_wrapper.h"
+#include "rust_amqp_wrapper.h"
 #include "../src/amqp/private/unique_handle.hpp"
 
 #include <azure/core/azure_assert.hpp>
