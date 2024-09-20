@@ -79,6 +79,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_producerClientOptions.RetryOptions);
     retryOp.Execute([&]() -> bool {
       auto result = GetSender(eventDataBatch.GetPartitionId()).Send(message, context);
+#if ENABLE_UAMQP
       auto sendStatus = std::get<0>(result);
       if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
       {
@@ -87,6 +88,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // Throw an exception about the error we just received.
       throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
           CreateEventHubsException(std::get<1>(result));
+#elif ENABLE_RUST_AMQP
+      if (result)
+      {
+        throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+            CreateEventHubsException(result);
+      }
+      return true;
+#endif
     });
   }
 

@@ -58,6 +58,7 @@ function(generate_documentation PROJECT_NAME PROJECT_VERSION)
         set(DOXYGEN_REPEAT_BRIEF NO)
 
         doxygen_add_docs(${PROJECT_NAME}-docs
+            ./inc ./README.md
             ALL
             COMMENT "Generate documentation for ${PROJECT_NAME} with Doxygen Version ${DOXYGEN_VERSION}")
     endif()
