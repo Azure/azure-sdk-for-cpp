@@ -31,6 +31,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+#if ENABLE_UAMQP
   enum class MessageSendStatus
   {
     Invalid,
@@ -51,8 +52,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Error,
   };
   std::ostream& operator<<(std::ostream& stream, MessageSenderState state);
-
+#endif
   class MessageSender;
+#if ENABLE_UAMQP
   class MessageSenderEvents {
   protected:
     ~MessageSenderEvents() = default;
@@ -68,6 +70,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::_internal::AmqpError const& error)
         = 0;
   };
+#endif
 
   struct MessageSenderOptions final
   {
@@ -128,9 +131,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class MessageSender final {
   public:
+#if ENABLE_UAMQP
     using MessageSendCompleteCallback
         = std::function<void(MessageSendStatus sendResult, Models::AmqpValue const& deliveryState)>;
-
+#endif
     ~MessageSender() noexcept;
 
     MessageSender(MessageSender const&) = default;
@@ -166,6 +170,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     std::uint64_t GetMaxMessageSize() const;
 
+#if ENABLE_UAMQP
     /** @brief Send a message synchronously to the target of the message sender.
      *
      * @param message The message to send.
@@ -176,7 +181,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     _azure_NODISCARD std::tuple<MessageSendStatus, Models::_internal::AmqpError> Send(
         Models::AmqpMessage const& message,
         Context const& context = {});
+#elif ENABLE_RUST_AMQP
+    _azure_NODISCARD Models::_internal::AmqpError Send(
+        Models::AmqpMessage const& message,
+        Context const& context = {});
 
+#endif
   private:
     // Half-open the message sender (does not block waiting on the Open to complete).
     _azure_NODISCARD Models::_internal::AmqpError HalfOpen(Context const& context = {});
