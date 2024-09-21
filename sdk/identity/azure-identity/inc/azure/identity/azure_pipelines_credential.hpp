@@ -58,7 +58,7 @@ namespace Azure { namespace Identity {
   private:
     std::string m_serviceConnectionId;
     std::string m_systemAccessToken;
-    Azure::Core::Http::_internal::HttpPipeline m_httpPipeline;
+    std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> m_httpPipeline;
     std::string m_oidcRequestUrl;
     std::unique_ptr<_detail::ClientAssertionCredentialImpl> m_clientAssertionCredentialImpl;
 
