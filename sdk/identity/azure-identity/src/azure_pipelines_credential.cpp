@@ -115,6 +115,9 @@ Request AzurePipelinesCredential::CreateOidcRequestMessage() const
   request.SetHeader("content-type", "application/json");
   request.SetHeader("authorization", "Bearer " + m_systemAccessToken);
 
+  // Prevents the service from responding with a redirect HTTP status code (useful for automation).
+  request.SetHeader("X-TFS-FedAuthRedirect", "Suppress");
+
   return request;
 }
 

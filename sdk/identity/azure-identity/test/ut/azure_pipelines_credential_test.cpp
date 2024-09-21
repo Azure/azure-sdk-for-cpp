@@ -748,7 +748,7 @@ TEST(AzurePipelinesCredential, InvalidServiceConnectionId_LIVEONLY_)
   }
 }
 
-TEST(AzurePipelinesCredential, DISABLED_InvalidSystemAccessToken_LIVEONLY_)
+TEST(AzurePipelinesCredential, InvalidSystemAccessToken_LIVEONLY_)
 {
   std::string tenantId = Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID");
   std::string clientId = Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID");
@@ -777,6 +777,7 @@ TEST(AzurePipelinesCredential, DISABLED_InvalidSystemAccessToken_LIVEONLY_)
   }
   catch (AuthenticationException const& ex)
   {
-    EXPECT_TRUE(std::string(ex.what()).find("302 (Found)") != std::string::npos) << ex.what();
+    EXPECT_TRUE(std::string(ex.what()).find("401 (Unauthorized)") != std::string::npos)
+        << ex.what();
   }
 }
