@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Make the HTTP transport behavior consistent between WinHTTP and libCurl by disabling automatically following redirects on Windows.
+- Make the HTTP transport behavior consistent between WinHTTP and libcurl by disabling automatically following redirects on Windows.
 
 ### Other Changes
 
