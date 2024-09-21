@@ -106,15 +106,15 @@ To use a client ID, create a `ManagedIdentityId` with `ManagedIdentityIdKind::Cl
 
 <!-- @insert_snippet: UserAssignedManagedIdentityViaClientId -->
 ```cpp
-    // When deployed to an Azure host, ManagedIdentityCredential will authenticate the specified
-    // user-assigned managed identity.
+// When deployed to an Azure host, ManagedIdentityCredential will authenticate the specified
+// user-assigned managed identity.
 
-    std::string userAssignedClientId = "<your managed identity client ID>";
-    ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ClientId, userAssignedClientId);
+std::string userAssignedClientId = "<your managed identity client ID>";
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ClientId, userAssignedClientId);
 
-    auto credential = std::make_shared<ManagedIdentityCredential>(options);
-    auto blobClient = BlobClient(blobUrl, credential);
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 #### Resource ID
@@ -123,13 +123,13 @@ Similarly, to use a resource ID, create a `ManagedIdentityId` with `ManagedIdent
 
 <!-- @insert_snippet: UserAssignedManagedIdentityViaResourceId -->
 ```cpp
-    std::string userAssignedResourceId = "<your managed identity resource ID>";
-    ManagedIdentityCredentialOptions options;
-    options.IdentityId
-        = ManagedIdentityId(ManagedIdentityIdKind::ResourceId, userAssignedResourceId);
+std::string userAssignedResourceId = "<your managed identity resource ID>";
+ManagedIdentityCredentialOptions options;
+options.IdentityId
+    = ManagedIdentityId(ManagedIdentityIdKind::ResourceId, userAssignedResourceId);
 
-    auto credential = std::make_shared<ManagedIdentityCredential>(options);
-    auto blobClient = BlobClient(blobUrl, credential);
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 #### Object ID
@@ -138,12 +138,12 @@ Similarly, to use an object ID, create a `ManagedIdentityId` with `ManagedIdenti
 
 <!-- @insert_snippet: UserAssignedManagedIdentityViaObjectId -->
 ```cpp
-    std::string userAssignedObjectId = "<your managed identity object ID>";
-    ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ObjectId, userAssignedObjectId);
+std::string userAssignedObjectId = "<your managed identity object ID>";
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ObjectId, userAssignedObjectId);
 
-    auto credential = std::make_shared<ManagedIdentityCredential>(options);
-    auto blobClient = BlobClient(blobUrl, credential);
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 ### Specify a system-assigned managed identity with `ManagedIdentityCredential`
@@ -152,19 +152,19 @@ You can express your intent to use a system-assigned managed identity, explicitl
 
 <!-- @insert_snippet: SystemAssignedManagedIdentity -->
 ```cpp
-    ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, {});
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, {});
 
-    auto credential = std::make_shared<ManagedIdentityCredential>(options);
-    auto blobClient = BlobClient(blobUrl, credential);
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 An alternative way to specify a system-assigned managed identity, implicitly, is by calling the default `ManagedIdentityCredential` constructor. For example:
 
 <!-- @insert_snippet: SystemAssignedManagedIdentityBrief -->
 ```cpp
-    auto credential = std::make_shared<ManagedIdentityCredential>();
-    auto blobClient = BlobClient(blobUrl, credential);
+auto credential = std::make_shared<ManagedIdentityCredential>();
+auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 ## Environment Variables

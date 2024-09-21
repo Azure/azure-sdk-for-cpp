@@ -82,7 +82,28 @@ function ProcessSnippetsInFile {
 
 			# Insert the snippet text.
 			$snippet_text = $snippet_map[$snippet_name]
-			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`r`n``````cpp`r`n$snippet_text`r`n```````r`n`r`n"
+			
+			# Remove leading spaces from each line, by first splitting the text into lines.
+			$lines = $snippet_text -split [Environment]::NewLine
+
+			# Then, find the minimum leading whitespace across all lines.
+			# This is done to trim the minimum amount of leading whitespace from each line while preserving the relative indentation for lines that are already indented.
+			# When calculating the min whitespace, we only consider lines that are not empty.
+			$minWhitespace = ($lines | Where-Object { $_.Trim() -ne '' } | ForEach-Object { $_.IndexOf($_.TrimStart()) }) | Measure-Object -Minimum | Select-Object -ExpandProperty Minimum
+
+			# Trim the minimum whitespace from each line
+			$trimmedLines = $lines | ForEach-Object { 
+				if ($_.Length -gt $minWhitespace) {
+					$_.Substring($minWhitespace)
+				} else {
+					$_
+				}
+			}
+
+			# Join the lines back into a single string
+			$snippet_text_clean = $trimmedLines -join [Environment]::NewLine
+
+			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`r`n``````cpp`r`n$snippet_text_clean`r`n```````r`n`r`n"
 
 		}
 		elseif ($output_file.Extension -eq '.hpp') {
@@ -98,8 +119,8 @@ function ProcessSnippetsInFile {
 
 	}
 	# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
-	$output_file_contents = $output_file_contents -replace "`r`n\s*\Z", "`r`n"
-	$original_contents = $original_file_contents -replace "`r`n\s*\Z", "`r`n"
+	$output_file_contents = $output_file_contents -replace "`r`n\s*\Z", ""
+	$original_contents = $original_file_contents -replace "`r`n\s*\Z", ""
 
 	if ($verify) {
 		if ($output_file_contents -ne $original_contents) {
