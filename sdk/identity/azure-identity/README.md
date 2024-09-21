@@ -102,13 +102,16 @@ Many Azure hosts allow the assignment of a user-assigned managed identity. The f
 
 #### Client ID
 
-To use a client ID, set the `clientId` parameter in the `ManagedIdentityCredential` constructor. For example:
+To use a client ID, create a `ManagedIdentityId` with `ManagedIdentityIdKind::ClientId`, set that as the `IdentityId` in the `ManagedIdentityCredentialOptions`, and pass that to the `ManagedIdentityCredential` constructor. For example:
 
 ```cpp
 // When deployed to an Azure host, ManagedIdentityCredential will authenticate the specified user-assigned managed identity.
 
 std::string userAssignedClientId = "<your managed identity client ID>";
-auto credential = std::make_shared<ManagedIdentityCredential>(userAssignedClientId);
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ClientId, userAssignedClientId);
+
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
 
 std::string blobUrl = "https://myaccount.blob.core.windows.net/mycontainer/myblob";
 auto blobClient = BlobClient(blobUrl, credential);
@@ -116,19 +119,45 @@ auto blobClient = BlobClient(blobUrl, credential);
 
 #### Resource ID
 
-To use a resource ID, call the `ManagedIdentityCredential` constructor that accepts a `ResourceIdentifier`. The resource ID takes the form `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}`. Because resource IDs can be built by convention, they can be more convenient when there are a large number of user-assigned managed identities in your environment. For example:
+Similarly, to use a resource ID, create a `ManagedIdentityId` with `ManagedIdentityIdKind::ResourceId`, set that as the `IdentityId` in the `ManagedIdentityCredentialOptions`, and pass that to the `ManagedIdentityCredential` constructor. The resource ID takes the form `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}`. Because resource IDs can be built by convention, they can be more convenient when there are a large number of user-assigned managed identities in your environment. For example:
 
 ```cpp
 std::string userAssignedResourceId = "<your managed identity resource ID>";
-auto credential
-    = std::make_shared<ManagedIdentityCredential>(ResourceIdentifier(userAssignedResourceId));
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ResourceId, userAssignedResourceId);
+
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+
+auto blobClient = BlobClient(blobUrl, credential);
+```
+
+#### Object ID
+
+Similarly, to use an object ID, create a `ManagedIdentityId` with `ManagedIdentityIdKind::ObjectId`, set that as the `IdentityId` in the `ManagedIdentityCredentialOptions`, and pass that to the `ManagedIdentityCredential` constructor. For example:
+
+```cpp
+std::string userAssignedObjectId = "<your managed identity object ID>";
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ObjectId, userAssignedObjectId);
+
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
 
 auto blobClient = BlobClient(blobUrl, credential);
 ```
 
 ### Specify a system-assigned managed identity with `ManagedIdentityCredential`
 
-By not providing a client ID or resource ID as a constructor parameter to `ManagedIdentityCredential`, you get the system-assigned managed identity. For example:
+You can express your intent to use a system-assigned managed identity, explicitly, by creating a `ManagedIdentityId` with `ManagedIdentityIdKind::SystemAssigned` and an empty ID value, set that as the `IdentityId` in the `ManagedIdentityCredentialOptions`, and pass that to the `ManagedIdentityCredential` constructor. For example: 
+
+```cpp
+ManagedIdentityCredentialOptions options;
+options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, {});
+
+auto credential = std::make_shared<ManagedIdentityCredential>(options);
+auto blobClient = BlobClient(blobUrl, credential);
+```
+
+An alternative way to specify a system-assigned managed identity, implicitly, is by calling the default `ManagedIdentityCredential` constructor. For example:
 
 ```cpp
 auto credential = std::make_shared<ManagedIdentityCredential>();
