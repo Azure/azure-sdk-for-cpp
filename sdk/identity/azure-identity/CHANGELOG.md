@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Allow certain response headers to be logged in `AzurePipelinesCredential` for diagnostics and include them in the exception message.
+
 ## 1.10.0-beta.1 (2024-09-17)
 
 ### Features Added

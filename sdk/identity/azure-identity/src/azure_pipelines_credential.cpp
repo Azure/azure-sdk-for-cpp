@@ -36,9 +36,20 @@ AzurePipelinesCredential::AzurePipelinesCredential(
     std::string systemAccessToken,
     AzurePipelinesCredentialOptions const& options)
     : TokenCredential("AzurePipelinesCredential"), m_serviceConnectionId(serviceConnectionId),
-      m_systemAccessToken(systemAccessToken),
-      m_httpPipeline(HttpPipeline(options, "identity", PackageVersion::ToString(), {}, {}))
+      m_systemAccessToken(systemAccessToken)
 {
+  // Allow these headers to be logged since they are used for troubleshooting.
+  AzurePipelinesCredentialOptions optionsWithLoggableHeaders = options;
+  optionsWithLoggableHeaders.Log.AllowedHttpHeaders.insert("x-vss-e2eid");
+  optionsWithLoggableHeaders.Log.AllowedHttpHeaders.insert("x-msedge-ref");
+
+  m_httpPipeline = std::make_unique<HttpPipeline>(
+      optionsWithLoggableHeaders,
+      "identity",
+      PackageVersion::ToString(),
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>{},
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>{});
+
   m_oidcRequestUrl = _detail::DefaultOptionValues::GetOidcRequestUrl();
 
   if (serviceConnectionId.empty())
@@ -121,8 +132,21 @@ std::string AzurePipelinesCredential::GetOidcTokenResponse(
         + std::to_string(static_cast<std::underlying_type<decltype(statusCode)>::type>(statusCode))
         + " (" + response->GetReasonPhrase()
         + ") response from the OIDC endpoint. Check service connection ID and Pipeline "
-          "configuration.\n\n"
-        + responseBody;
+          "configuration";
+
+    auto responseHeaders = response->GetHeaders();
+    auto headerValue = responseHeaders.find("x-vss-e2eid");
+    if (headerValue != responseHeaders.end())
+    {
+      message += "\n" + headerValue->first + ":" + headerValue->second;
+    }
+    headerValue = responseHeaders.find("x-msedge-ref");
+    if (headerValue != responseHeaders.end())
+    {
+      message += "\n" + headerValue->first + ":" + headerValue->second;
+    }
+    message += "\n\n" + responseBody;
+
     IdentityLog::Write(IdentityLog::Level::Verbose, message);
 
     throw AuthenticationException(message);
@@ -158,7 +182,7 @@ AzurePipelinesCredential::~AzurePipelinesCredential() = default;
 std::string AzurePipelinesCredential::GetAssertion(Context const& context) const
 {
   Azure::Core::Http::Request oidcRequest = CreateOidcRequestMessage();
-  std::unique_ptr<RawResponse> response = m_httpPipeline.Send(oidcRequest, context);
+  std::unique_ptr<RawResponse> response = m_httpPipeline->Send(oidcRequest, context);
 
   if (!response)
   {
