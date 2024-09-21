@@ -98,7 +98,7 @@ The [Managed identity authentication](https://learn.microsoft.com/entra/identity
 
 ### Specify a user-assigned managed identity with `ManagedIdentityCredential`
 
-Many Azure hosts allow the assignment of a user-assigned managed identity. The following examples demonstrate configuring `ManagedIdentityCredential` to authenticate a user-assigned managed identity when deployed to an Azure host. The sample code uses the credential to authenticate a `BlobClient` from the [Azure::Storage::Blobs][blobs_client_library] client library. It also demonstrates how you can specify a user-assigned managed identity either by a client ID, object ID, or a resource ID.
+Many Azure hosts allow the assignment of a user-assigned managed identity. The following examples demonstrate configuring `ManagedIdentityCredential` to authenticate a user-assigned managed identity when deployed to an Azure host. The sample code uses the credential to authenticate a `BlobClient` from the [Azure::Storage::Blobs][blobs_client_library] client library. It also demonstrates how you can specify a user-assigned managed identity either by a client ID, resource ID, or an object ID.
 
 #### Client ID
 
