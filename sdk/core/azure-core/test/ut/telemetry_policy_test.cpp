@@ -58,8 +58,8 @@ TEST(TelemetryPolicy, telemetryString)
           "01234567890123456789abcd azsdk-cpp-storage-blob/11.0.0 ("}};
 
   constexpr auto TelemetryHeader = "user-agent";
-  constexpr auto ClosingBrace = ')';
   constexpr auto OSInfoMinLength = 10;
+  const std::string CppVersionSuffix = " Cpp/-1)";
 
   for (auto const& test : UserAgentTests)
   {
@@ -80,10 +80,34 @@ TEST(TelemetryPolicy, telemetryString)
     EXPECT_NE(telemetryHeader, headers.end());
     auto const actualValue = telemetryHeader->second;
     EXPECT_GE(
-        actualValue.size(), test.expectedPrefix.size() + OSInfoMinLength + sizeof(ClosingBrace));
-    EXPECT_EQ(actualValue[actualValue.size() - 1], ClosingBrace);
+        actualValue.size(),
+        test.expectedPrefix.size() + OSInfoMinLength + CppVersionSuffix.length());
 
     EXPECT_EQ(actualValue.substr(0, test.expectedPrefix.size()), test.expectedPrefix);
+
+    EXPECT_EQ(
+        actualValue.substr(
+            actualValue.length() - CppVersionSuffix.length(), CppVersionSuffix.length()),
+        CppVersionSuffix);
+  }
+}
+
+TEST(TelemetryPolicy, UserAgentCppVer)
+{
+  {
+    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
+
+    EXPECT_GE(ua.length(), 11);
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201402)");
+  }
+
+  {
+    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
+
+    EXPECT_GE(ua.length(), 11);
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201703)");
   }
 }
 

@@ -7,26 +7,21 @@ Azure Security Keyvault Administration Package client library for C++ (`azure-se
 
 The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
 
-[Source code][administration_client_src] | [API reference documentation][api_reference] | [Product documentation][keyvault_docs]
+[Source code][administration_client_src] | [Package (vcpkg)](https://vcpkg.io/en/package/azure-security-keyvault-administration-cpp) | [API reference documentation][api_reference] | [Product documentation][keyvault_docs] | [Samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-administration/samples)
 
 ## Getting started
 
-### Install the package
-Install the Azure Key Vault Administration Setting client library for C++ with vcpkg:
-
-```cmd
-vcpkg install azure-security-keyvault-administration-cpp
-```
-
 ### Prerequisites
-
-* An [Azure subscription][azure_sub].
-* An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the [Azure CLI][azure_cli].
-* Authorization to an existing Azure Key Vault using either [RBAC][rbac_guide] (recommended) or [access control][access_policy].
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub].
+- An existing Azure Key Vault. If you need to create an Azure Key Vault, you can use the [Azure CLI][azure_cli].
+- Authorization to an existing Azure Key Vault using either [RBAC][rbac_guide] (recommended) or [access control][access_policy].
 
 To create a Managed HSM resource, run the following CLI command:
 
 ```PowerShell
+az login 
 az keyvault create --hsm-name <your-key-vault-name> --resource-group <your-resource-group-name> --administrators <your-user-object-id> --location <your-azure-location>
 ```
 
@@ -78,6 +73,39 @@ az keyvault role assignment create --hsm-name <your-managed-hsm-name> --role "Ma
 
 Please read [best practices][best_practices] for properly securing your managed HSM.
 
+### Install the package
+
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
+
+```batch
+vcpkg new --application
+```
+
+To install the Azure \<Service-Name> package via vcpkg:
+To add the Azure \<Service-Name> package to your vcpkg enter the following command (We'll also add the Azure Identity library for authentication):
+
+```batch
+vcpkg add port azure-security-keyvault-administration-cpp azure-identity-cpp
+```
+
+Then, add the following in your CMake file:
+
+```CMake
+find_package(azure-identity-cpp CONFIG REQUIRED)
+find_package(azure-security-keyvault-administration-cpp CONFIG REQUIRED)
+target_link_libraries(<your project name> PRIVATE Azure::azure-security-keyvault-administration Azure::azure-identity)
+```
+
+Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` argument.
+
+There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
+
 ## Key Concepts
 ### Thread safety
 We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
@@ -92,8 +120,10 @@ We guarantee that all client instance methods are thread-safe and independent of
 ## Examples 
 
 For detailed samples please review the code provided. 
+### SettingsClient 
+We'll be using the `DefaultAzureCredential` to authenticate which will pick up the credentials we used when logging in with the Azure CLI earlier. `DefaultAzureCredential` can pick up on a number of Credential types from your environment and is ideal when getting started and developing. Check out our section on [DefaultAzureCredentials](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential) to learn more.
 
-### GetSettings 
+#### GetSettings 
 
 To get all the available settings present on the Keyvault instance we will first create a client : 
 ```cpp
@@ -112,7 +142,7 @@ To get the settings we will call the GetSettings API
   SettingsListResult settingsList = settingsClient.GetSettings().Value;
 ```
 
-### GetSetting
+#### GetSetting
 
 To get a specific setting we will call the GetSetting API bassing the setting name as a string parameter. 
 
@@ -120,7 +150,7 @@ To get a specific setting we will call the GetSetting API bassing the setting na
   Setting setting = settingsClient.GetSetting(settingsList.Value[0].Name).Value;
 ```
 
-### UpdateSetting
+#### UpdateSetting
 
 To update the value of any of the the available settings, we will call the UpdateSettings API as follows:
 ```cpp
@@ -130,6 +160,116 @@ To update the value of any of the the available settings, we will call the Updat
 Setting updatedSetting
    = settingsClient.UpdateSetting(settingsList.Value[0].Name, options).Value;
 ```
+
+### BackupClient
+
+To create a new `BackupClient` to perform these operations, you need the endpoint to an Azure Key Vault HSM and credentials.
+
+Key Vault BackupClient client for C++ currently supports any `TokenCredential` for authenticating.
+
+```cpp
+  auto credential
+      = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+```
+
+Then, in the sample below, you can set `keyVaultUrl` based on an environment variable, configuration setting, or any way that works for your application.
+
+```cpp
+  // create client
+  BackupClient client(std::getenv("AZURE_KEYVAULT_HSM_URL"), credential);
+```
+#### Create the SasTokenParameter
+
+Since these operations require a blob storage for the backup/restore operations, a SAS token is required for the connection between the services(Key Vault and Storage).  
+
+In this sample we rely on a couple of extra environment variables. 
+
+```cpp
+ SasTokenParameter sasTokenParameter;
+ // the backup/restore needs a SAS token to access the storage account
+ sasTokenParameter.Token
+     = Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_TOKEN");
+ // the backup/restore needs a url to a blob storage resource
+ Azure::Core::Url blobUrl
+    = Azure::Core::Url(Azure::Core::_internal::Environment::GetVariable("AZURE_KEYVAULT_BACKUP_URL"));
+```
+
+#### The Backup operation 
+
+Since this is a long running operation the service provides endpoints to determine the status while the opperation is running. 
+
+##### Starting the backup operation
+
+```cpp
+// Create a full backup using a user-provided SAS token to an Azure blob storage container.
+auto backupResponse = client.FullBackup(blobUrl, sasTokenParameter).Value;
+
+std::cout << "Backup Job Id: " << backupResponse.Value().JobId << std::endl
+            << "Backup Status: " << backupResponse.Value().Status << std::endl;
+```
+
+##### Backup operation waiting 
+
+In order to wait for the operation to complete we will call the polling method.
+
+```cpp
+// Wait for the operation to complete.
+auto backupStatus = backupResponse.PollUntilDone(10s);
+
+std::cout << "Backup Job Id: " << backupStatus.Value.JobId << std::endl
+            << "Backup Status: " << backupStatus.Value.Status << std::endl;
+```
+
+#### The FullRestore operation
+
+Similar to the backup operation after we initialize the operation we can check the status. 
+
+#### Starting the restore operation 
+
+the restore operation requires a folder where a backup was previously performed along side the SAS token parameter. 
+```cpp
+// Restore the full backup using a user-provided SAS token to an Azure blob storage container.
+std::cout << "Folder to restore: " << folderToRestore << std::endl;
+auto restoreResponse = client.FullRestore(blobUrl, folderToRestore, sasTokenParameter).Value;
+std::cout << "Restore Job Id: " << restoreResponse.Value().JobId << std::endl
+            << "Restore Status: " << restoreResponse.Value().Status << std::endl;
+```
+
+##### FullRestore operation waiting
+
+```cpp
+// Wait for the operation to complete.
+auto restoreStatus = restoreResponse.PollUntilDone(10s);
+std::cout << "Restore Job Id: " << restoreStatus.Value.JobId << std::endl
+            << "Restore Status: " << restoreStatus.Value.Status << std::endl;
+```
+
+#### The SelectiveRestore operation
+
+Similar to the backup operation after we initialize the operation we can check the status. 
+
+##### Starting the restore operation 
+
+The selective restore operation requires a folder where a backup was previously performed along side the SAS token parameter. 
+
+```cpp
+// Restore the full backup using a user-provided SAS token to an Azure blob storage container.
+std::string folderToRestore = ...;
+std::cout << "Folder to restore: " << restoreBlobDetails.FolderToRestore << std::endl;
+auto selectiveRestore = client.SelectiveKeyRestore("keyName", blobUrl, folderToRestore, sasTokenParameter);
+std::cout << "Restore Job Id: " << restoreResponse.Value.JobId << std::endl
+          << "Restore Status: " << restoreResponse.Value.Status << std::endl;
+```
+
+##### Selective restore operation completion
+
+```cpp
+// Wait for the operation to complete.
+auto selectiveStatus = selectiveRestore.PollUntilDone(10s);
+std::cout << "Selective Restore Job Id: " << selectiveStatus.Value.JobId << std::endl
+            << "Selective Restore Status: " << selectiveStatus.Value.Status << std::endl;
+```
+
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].
@@ -177,3 +317,5 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [rbac_guide]: https://learn.microsoft.com/azure/key-vault/general/rbac-guide
 [best_practices]: https://learn.microsoft.com/azure/key-vault/managed-hsm/best-practices
 [built_in_roles]: https://learn.microsoft.com/azure/key-vault/managed-hsm/built-in-roles
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#getting-started
+[project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration

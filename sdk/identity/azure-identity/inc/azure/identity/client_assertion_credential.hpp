@@ -9,17 +9,15 @@
 #pragma once
 
 #include "azure/identity/detail/client_credential_core.hpp"
-#include "azure/identity/detail/token_cache.hpp"
 
 #include <azure/core/credentials/token_credential_options.hpp>
-#include <azure/core/http/http.hpp>
 
 #include <string>
 #include <vector>
 
 namespace Azure { namespace Identity {
   namespace _detail {
-    class TokenCredentialImpl;
+    class ClientAssertionCredentialImpl;
   } // namespace _detail
 
   /**
@@ -55,11 +53,7 @@ namespace Azure { namespace Identity {
    */
   class ClientAssertionCredential final : public Core::Credentials::TokenCredential {
   private:
-    std::function<std::string(Core::Context const&)> m_assertionCallback;
-    _detail::ClientCredentialCore m_clientCredentialCore;
-    std::unique_ptr<_detail::TokenCredentialImpl> m_tokenCredentialImpl;
-    std::string m_requestBody;
-    _detail::TokenCache m_tokenCache;
+    std::unique_ptr<_detail::ClientAssertionCredentialImpl> m_impl;
 
   public:
     /**

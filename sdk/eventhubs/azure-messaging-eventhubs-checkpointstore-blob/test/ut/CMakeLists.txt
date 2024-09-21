@@ -21,6 +21,8 @@ add_executable (
     eventhubs_test_base.hpp
 )
 
+target_compile_definitions(azure-messaging-eventhubs-blobstore-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-blobstore-test)
 create_map_file(azure-messaging-eventhubs-blobstore-test azure-messaging-eventhubs-blobstore-test.map)
 

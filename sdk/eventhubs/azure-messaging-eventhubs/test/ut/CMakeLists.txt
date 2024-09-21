@@ -32,6 +32,8 @@ add_executable (
     test_checkpoint_store.hpp
 )
 
+target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)
 

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.9.0-beta.3 (Unreleased)
+## 1.10.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,30 @@
 
 ### Bugs Fixed
 
+- Fixed the request sent in `AzurePipelinesCredential` so it doesn't result in a redirect response when an invalid system access token is provided.
+
 ### Other Changes
+
+- Allow certain response headers to be logged in `AzurePipelinesCredential` for diagnostics and include them in the exception message.
+
+## 1.10.0-beta.1 (2024-09-17)
+
+### Features Added
+
+- Added support for providing an object ID to `ManagedIdentityCredential`.
+- Added support for passing in the x509 certificate and its corresponding private key directly to `ClientCertificateCredential`, rather than reading from a pem file.
+- Added support for sending an x5c parameter in `ClientCertificateCredential`.
+
+### Breaking Changes
+
+- Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
+
+## 1.9.0 (2024-08-06)
+
+### Features Added
+
+- Added `AzurePipelinesCredential` for authenticating an Azure Pipelines service connection with workload identity federation.
+- Added `ClientAssertionCredential` to enable applications to authenticate with custom client assertions.
 
 ## 1.9.0-beta.2 (2024-07-22)
 

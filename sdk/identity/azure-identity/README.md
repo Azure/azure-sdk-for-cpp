@@ -161,16 +161,23 @@ Configuration is attempted in the above order. For example, if values for a clie
 
 ## Credential classes
 
-### Authenticate Azure-hosted applications
+### Credential chains
+
 |Credential | Usage
 |-|-
 |`DefaultAzureCredential`|Provides a simplified authentication experience to quickly start developing applications run in Azure.
 |`ChainedTokenCredential`|Allows users to define custom authentication flows composing multiple credentials.
+
+### Authenticate Azure-hosted applications
+
+|Credential | Usage
+|-|-
 |`ManagedIdentityCredential`|Authenticates the managed identity of an Azure resource.
 |`EnvironmentCredential`|Authenticates a service principal or user via credential information specified in environment variables.
 |`WorkloadIdentityCredential`|Authenticate a workload identity on Kubernetes.
 
 ### Authenticate service principals
+
 |Credential | Usage
 |-|-
 |`AzurePipelinesCredential`|Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines.
@@ -179,6 +186,7 @@ Configuration is attempted in the above order. For example, if values for a clie
 |`ClientCertificateCredential`|Authenticates a service principal [using a certificate](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals).
 
 ### Authenticate via development tools
+
 |Credential | Usage
 |-|-
 |`AzureCliCredential`|Authenticates in a development environment [with the Azure CLI](https://learn.microsoft.com/cli/azure/authenticate-azure-cli).

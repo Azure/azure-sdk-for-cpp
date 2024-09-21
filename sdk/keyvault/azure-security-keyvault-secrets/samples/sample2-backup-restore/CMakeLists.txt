@@ -12,6 +12,8 @@ add_executable (
   sample2_backup_restore.cpp
 )
 
+target_compile_definitions(sample2-backup-restore PRIVATE _azure_BUILDING_SAMPLES)
+
 create_per_service_target_build_for_sample(keyvault sample2-backup-restore)
 
 target_link_libraries(sample2-backup-restore PRIVATE azure-security-keyvault-secrets azure-identity get-env-helper)

@@ -81,11 +81,8 @@ stages:
                       - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
                         parameters:
                           FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
-                          BlobName: '$(azure-sdk-docs-prod-blob-name)'
                           TargetLanguage: 'cpp'
                           ArtifactLocation: '$(Pipeline.Workspace)/packages/${{artifact.Name}}'
-                          # we override the regular script path because we have cloned the build tools repo as a separate artifact.
-                          ScriptPath: '$(Build.SourcesDirectory)/eng/common/scripts/copy-docs-to-blobstorage.ps1'
 
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
             - deployment: PublishVcpkg
@@ -268,6 +265,7 @@ stages:
           )
         )
       variables:
+        - template: /eng/pipelines/templates/variables/globals.yml
         - template: /eng/pipelines/templates/variables/image.yml
 
       jobs:

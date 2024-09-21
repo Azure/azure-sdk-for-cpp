@@ -32,7 +32,6 @@ extends:
       LiveTestCtestRegex: azure-security-attestation.*
       LineCoverageTarget: 70
       BranchCoverageTarget: 34
-      UseFederatedAuth: true
       Artifacts:
         - Name: azure-security-attestation
           Path: azure-security-attestation

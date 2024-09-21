@@ -82,6 +82,7 @@ add_executable (
     policy_test.cpp
     request_activity_policy_test.cpp
     request_id_policy_test.cpp
+    resource_identifier_test
     response_t_test.cpp
     retry_policy_test.cpp
     service_tracing_test.cpp
@@ -97,6 +98,8 @@ add_executable (
     url_test.cpp
     uuid_test.cpp
 )
+
+target_compile_definitions(azure-core-test PRIVATE _azure_BUILDING_TESTS)
 
 if (MSVC)
   # Disable warnings:

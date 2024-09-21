@@ -77,6 +77,7 @@ set(
     src/managed_identity_credential.cpp
     src/managed_identity_source.cpp
     src/private/chained_token_credential_impl.hpp
+    src/private/client_assertion_credential_impl.hpp
     src/private/identity_log.hpp
     src/private/managed_identity_source.hpp
     src/private/package_version.hpp
@@ -104,6 +105,8 @@ target_include_directories(
 )
 
 target_link_libraries(azure-identity PUBLIC Azure::azure-core)
+
+target_compile_definitions(azure-identity PRIVATE _azure_BUILDING_SDK)
 
 if(WIN32 AND NOT(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" AND CMAKE_SYSTEM_VERSION STREQUAL "10.0"))
   find_package(wil CONFIG REQUIRED)

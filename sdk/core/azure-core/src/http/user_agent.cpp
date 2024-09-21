@@ -153,7 +153,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   std::string UserAgentGenerator::GenerateUserAgent(
       std::string const& componentName,
       std::string const& componentVersion,
-      std::string const& applicationId)
+      std::string const& applicationId,
+      long cplusplusValue)
   {
     // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
     std::ostringstream telemetryId;
@@ -164,7 +165,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
 
     static std::string const osVer = GetOSVersion();
-    telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << ")";
+    telemetryId << "azsdk-cpp-" << componentName << "/" << componentVersion << " (" << osVer << " "
+                << "Cpp/" << cplusplusValue << ")";
 
     return telemetryId.str();
   }

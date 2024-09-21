@@ -96,8 +96,9 @@ static void remove_link_endpoint(LINK_ENDPOINT_HANDLE link_endpoint)
             }
             else
             {
-                new_endpoints = (LINK_ENDPOINT_INSTANCE**)realloc(session_instance->link_endpoints, sizeof(LINK_ENDPOINT_INSTANCE*) * session_instance->link_endpoint_count);
-                if (new_endpoints != NULL)
+                size_t realloc_size = safe_multiply_size_t(sizeof(LINK_ENDPOINT_INSTANCE*), session_instance->link_endpoint_count);
+                if (realloc_size != SIZE_MAX &&
+                    (new_endpoints = (LINK_ENDPOINT_INSTANCE**)realloc(session_instance->link_endpoints, realloc_size)) != NULL)
                 {
                     session_instance->link_endpoints = new_endpoints;
                 }
@@ -1227,10 +1228,13 @@ LINK_ENDPOINT_HANDLE session_create_link_endpoint(SESSION_HANDLE session, const 
                 (void)memcpy(result->name, name, name_length + 1);
                 result->session = session;
 
-                new_link_endpoints = (LINK_ENDPOINT_INSTANCE**)realloc(session_instance->link_endpoints, sizeof(LINK_ENDPOINT_INSTANCE*) * ((size_t)session_instance->link_endpoint_count + 1));
-                if (new_link_endpoints == NULL)
+                size_t realloc_size = safe_add_size_t((size_t)session_instance->link_endpoint_count, 1);
+                realloc_size = safe_multiply_size_t(realloc_size, sizeof(LINK_ENDPOINT_INSTANCE));
+                if (realloc_size == SIZE_MAX ||
+                    (new_link_endpoints = (LINK_ENDPOINT_INSTANCE**)realloc(session_instance->link_endpoints, realloc_size)) == NULL)
                 {
                     /* Codes_S_R_S_SESSION_01_045: [If allocating memory for the link endpoint fails, session_create_link_endpoint shall fail and return NULL.] */
+                    LogError("Cannot realloc new_link_endpoints, size:%zu", realloc_size);
                     free(result->name);
                     free(result);
                     result = NULL;

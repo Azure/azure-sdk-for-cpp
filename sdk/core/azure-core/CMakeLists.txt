@@ -108,6 +108,7 @@ set(
     inc/azure/core/paged_response.hpp
     inc/azure/core/platform.hpp
     inc/azure/core/response.hpp
+    inc/azure/core/resource_identifier.hpp
     inc/azure/core/rtti.hpp
     inc/azure/core/tracing/tracing.hpp
     inc/azure/core/url.hpp
@@ -160,6 +161,8 @@ target_include_directories(
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
       $<INSTALL_INTERFACE:include>
 )
+
+target_compile_definitions(azure-core PRIVATE _azure_BUILDING_SDK)
 
 # make sure that users can consume the project as a library.
 add_library(Azure::azure-core ALIAS azure-core)

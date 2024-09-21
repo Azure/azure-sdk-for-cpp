@@ -17,4 +17,6 @@ add_library(
 
  target_link_libraries(service PUBLIC azure-core)
 
+ target_compile_definitions(service PRIVATE _azure_BUILDING_SAMPLES)
+
 target_include_directories(service PUBLIC inc)

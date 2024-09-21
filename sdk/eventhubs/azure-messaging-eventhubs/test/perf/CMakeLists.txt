@@ -22,6 +22,9 @@ add_executable (
   azure-messaging-eventhubs-perf
      ${AZURE_EVENTHUBS_PERF_TEST_HEADER} ${AZURE_EVENTHUBS_PERF_TEST_SOURCE}
 )
+
+target_compile_definitions(azure-messaging-eventhubs-perf PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-perf)
 create_map_file(azure-messaging-eventhubs-perf azure-messaging-eventhubs-perf.map)
 

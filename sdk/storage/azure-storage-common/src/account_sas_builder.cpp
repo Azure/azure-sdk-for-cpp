@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2024-08-04";
+    constexpr static const char* SasVersion = "2024-11-04";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)
@@ -142,6 +142,52 @@ namespace Azure { namespace Storage { namespace Sas {
     }
 
     return builder.GetAbsoluteUrl();
+  }
+
+  std::string AccountSasBuilder::GenerateSasStringToSign(
+      const StorageSharedKeyCredential& credential)
+  {
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+
+    std::string services;
+    if ((Services & AccountSasServices::Blobs) == AccountSasServices::Blobs)
+    {
+      services += "b";
+    }
+    if ((Services & AccountSasServices::Queue) == AccountSasServices::Queue)
+    {
+      services += "q";
+    }
+    if ((Services & AccountSasServices::Files) == AccountSasServices::Files)
+    {
+      services += "f";
+    }
+
+    std::string resourceTypes;
+    if ((ResourceTypes & AccountSasResource::Service) == AccountSasResource::Service)
+    {
+      resourceTypes += "s";
+    }
+    if ((ResourceTypes & AccountSasResource::Container) == AccountSasResource::Container)
+    {
+      resourceTypes += "c";
+    }
+    if ((ResourceTypes & AccountSasResource::Object) == AccountSasResource::Object)
+    {
+      resourceTypes += "o";
+    }
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = ExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+
+    return credential.AccountName + "\n" + Permissions + "\n" + services + "\n" + resourceTypes
+        + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + EncryptionScope + "\n";
   }
 
 }}} // namespace Azure::Storage::Sas

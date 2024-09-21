@@ -11,6 +11,7 @@ namespace {
 std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     std::string const& credentialName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
@@ -19,6 +20,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   static std::unique_ptr<ManagedIdentitySource> (*managedIdentitySourceCreate[])(
       std::string const& credName,
       std::string const& clientId,
+      std::string const& objectId,
       std::string const& resourceId,
       TokenCredentialOptions const& options)
       = {AppServiceV2019ManagedIdentitySource::Create,
@@ -31,7 +33,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   // For that reason, it is not possible to cover that execution branch in tests.
   for (auto create : managedIdentitySourceCreate)
   {
-    if (auto source = create(credentialName, clientId, resourceId, options))
+    if (auto source = create(credentialName, clientId, objectId, resourceId, options))
     {
       return source;
     }
@@ -49,16 +51,38 @@ ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource = CreateManagedIdentitySource(GetCredentialName(), clientId, {}, options);
+  m_managedIdentitySource
+      = CreateManagedIdentitySource(GetCredentialName(), clientId, {}, {}, options);
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
-    ResourceIdentifier const& resourceId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    Azure::Identity::ManagedIdentityCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), {}, resourceId.ToString(), options);
+  ManagedIdentityIdKind idType = options.IdentityId.GetManagedIdentityIdKind();
+  switch (idType)
+  {
+    case ManagedIdentityIdKind::SystemAssigned:
+      m_managedIdentitySource
+          = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
+      break;
+    case ManagedIdentityIdKind::ClientId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), options.IdentityId.GetId(), {}, {}, options);
+      break;
+    case ManagedIdentityIdKind::ObjectId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, options.IdentityId.GetId(), {}, options);
+      break;
+    case ManagedIdentityIdKind::ResourceId:
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, {}, options.IdentityId.GetId(), options);
+      break;
+    default:
+      throw std::invalid_argument(
+          "The ManagedIdentityIdKind in the options is not set to one of the valid values.");
+      break;
+  }
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(

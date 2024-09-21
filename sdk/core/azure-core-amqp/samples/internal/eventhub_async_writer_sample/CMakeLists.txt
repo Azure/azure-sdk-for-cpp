@@ -10,6 +10,9 @@ project(eventhub_writer_async_sample)
 add_executable(eventhub_writer_async_sample
     eventhub_async_writer_sample.cpp
 )
+
+target_compile_definitions(eventhub_writer_async_sample PRIVATE _azure_BUILDING_SAMPLES)
+
 add_dependencies(eventhub_writer_async_sample Azure::azure-core-amqp)
 
 # Link test executable against the prototype.

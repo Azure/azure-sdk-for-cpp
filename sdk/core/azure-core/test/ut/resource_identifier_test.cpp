@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/identity/managed_identity_credential.hpp"
+#include "azure/core/resource_identifier.hpp"
 
 #include <string>
 
 #include <gtest/gtest.h>
 
-using namespace Azure::Identity;
+using namespace Azure::Core;
 
 TEST(ResourceIdentifier, Basic)
 {

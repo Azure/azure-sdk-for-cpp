@@ -56,3 +56,24 @@ bool TenantIdResolver::IsAdfs(std::string const& tenantId)
 {
   return StringExtensions::LocaleInvariantCaseInsensitiveEqual(tenantId, "adfs");
 }
+
+bool TenantIdResolver::IsValidTenantId(std::string const& tenantId)
+{
+  const std::string allowedChars = ".-";
+  if (tenantId.empty())
+  {
+    return false;
+  }
+  for (auto const c : tenantId)
+  {
+    if (allowedChars.find(c) != std::string::npos)
+    {
+      continue;
+    }
+    if (!StringExtensions::IsAlphaNumeric(c))
+    {
+      return false;
+    }
+  }
+  return true;
+}

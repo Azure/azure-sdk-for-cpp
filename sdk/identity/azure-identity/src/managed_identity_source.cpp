@@ -140,6 +140,7 @@ template <typename T>
 std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     char const* endpointVarName,
@@ -155,6 +156,7 @@ std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
   {
     return std::unique_ptr<ManagedIdentitySource>(new T(
         clientId,
+        objectId,
         resourceId,
         options,
         ParseEndpointUrl(credName, msiEndpoint, endpointVarName, credSource),
@@ -167,6 +169,7 @@ std::unique_ptr<ManagedIdentitySource> AppServiceManagedIdentitySource::Create(
 
 AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options,
     Azure::Core::Url endpointUrl,
@@ -183,12 +186,18 @@ AppServiceManagedIdentitySource::AppServiceManagedIdentitySource(
 
     url.AppendQueryParameter("api-version", apiVersion);
 
-    // Only one of clientId or resourceId will be set to a non-empty value.
+    // Only one of clientId, objectId, or resourceId will be set to a non-empty value.
     // AppService uses mi_res_id, and not msi_res_id:
     // https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=portal%2Chttp#rest-endpoint-reference
+    // Based on the App Service documentation, using principal_id for the query parameter name here
+    // instead of object_id (which is used as an alias).
     if (!clientId.empty())
     {
       url.AppendQueryParameter(clientIdHeaderName, clientId);
+    }
+    else if (!objectId.empty())
+    {
+      url.AppendQueryParameter("principal_id", objectId);
     }
     else if (!resourceId.empty())
     {
@@ -233,30 +242,41 @@ Azure::Core::Credentials::AccessToken AppServiceManagedIdentitySource::GetToken(
 std::unique_ptr<ManagedIdentitySource> AppServiceV2017ManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Core::Credentials::TokenCredentialOptions const& options)
 {
   return AppServiceManagedIdentitySource::Create<AppServiceV2017ManagedIdentitySource>(
-      credName, clientId, resourceId, options, "MSI_ENDPOINT", "MSI_SECRET", "2017");
+      credName, clientId, objectId, resourceId, options, "MSI_ENDPOINT", "MSI_SECRET", "2017");
 }
 
 std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Core::Credentials::TokenCredentialOptions const& options)
 {
   return AppServiceManagedIdentitySource::Create<AppServiceV2019ManagedIdentitySource>(
-      credName, clientId, resourceId, options, "IDENTITY_ENDPOINT", "IDENTITY_HEADER", "2019");
+      credName,
+      clientId,
+      objectId,
+      resourceId,
+      options,
+      "IDENTITY_ENDPOINT",
+      "IDENTITY_HEADER",
+      "2019");
 }
 
-// Cloud Shell doesn't support user-assigned managed identities
 std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
-    std::string const&,
+    std::string const& objectId,
+    std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  using Azure::Core::Credentials::AuthenticationException;
+
   constexpr auto EndpointVarName = "MSI_ENDPOINT";
   auto msiEndpoint = Environment::GetVariable(EndpointVarName);
 
@@ -264,6 +284,13 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
 
   if (!msiEndpoint.empty())
   {
+    if (!clientId.empty() || !objectId.empty() || !resourceId.empty())
+    {
+      throw AuthenticationException(
+          "User-assigned managed identities are not supported in Cloud Shell environments. Omit "
+          "the clientId, objectId, or resourceId when constructing the ManagedIdentityCredential.");
+    }
+
     return std::unique_ptr<ManagedIdentitySource>(new CloudShellManagedIdentitySource(
         clientId, options, ParseEndpointUrl(credName, msiEndpoint, EndpointVarName, CredSource)));
   }
@@ -278,11 +305,6 @@ CloudShellManagedIdentitySource::CloudShellManagedIdentitySource(
     Azure::Core::Url endpointUrl)
     : ManagedIdentitySource(clientId, endpointUrl.GetHost(), options), m_url(std::move(endpointUrl))
 {
-  using Azure::Core::Url;
-  if (!clientId.empty())
-  {
-    m_body = std::string("client_id=" + Url::Encode(clientId));
-  }
 }
 
 Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
@@ -312,13 +334,9 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
       if (!scopesStr.empty())
       {
         resource = "resource=" + scopesStr;
-        if (!m_body.empty())
-        {
-          resource += "&";
-        }
       }
 
-      auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource + m_body);
+      auto request = std::make_unique<TokenRequest>(HttpMethod::Post, m_url, resource);
       request->HttpRequest.SetHeader("Metadata", "true");
 
       return request;
@@ -329,6 +347,7 @@ Azure::Core::Credentials::AccessToken CloudShellManagedIdentitySource::GetToken(
 std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
@@ -345,12 +364,12 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
     return nullptr;
   }
 
-  if (!clientId.empty() || !resourceId.empty())
+  if (!clientId.empty() || !objectId.empty() || !resourceId.empty())
   {
     throw AuthenticationException(
         "User assigned identity is not supported by the Azure Arc Managed Identity Endpoint. "
-        "To authenticate with the system assigned identity, omit the client or resource ID "
-        "when constructing the ManagedIdentityCredential.");
+        "To authenticate with the system assigned identity, omit the client, object, or resource "
+        "ID when constructing the ManagedIdentityCredential.");
   }
 
   return std::unique_ptr<ManagedIdentitySource>(new AzureArcManagedIdentitySource(
@@ -456,6 +475,7 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
 std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
@@ -476,11 +496,12 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
   imdsUrl.AppendPath("/metadata/identity/oauth2/token");
 
   return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, resourceId, imdsUrl, options));
+      new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
+    std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
@@ -493,12 +514,16 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
 
     url.AppendQueryParameter("api-version", "2018-02-01");
 
-    // Only one of clientId or resourceId will be set to a non-empty value.
+    // Only one of clientId, objectId, or resourceId will be set to a non-empty value.
     // IMDS uses msi_res_id, and not mi_res_id:
     // https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token#get-a-token-using-http
     if (!clientId.empty())
     {
       url.AppendQueryParameter("client_id", clientId);
+    }
+    else if (!objectId.empty())
+    {
+      url.AppendQueryParameter("object_id", objectId);
     }
     else if (!resourceId.empty())
     {

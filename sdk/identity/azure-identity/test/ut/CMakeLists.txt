@@ -28,7 +28,6 @@ add_executable (
     environment_credential_test.cpp
     macro_guard_test.cpp
     managed_identity_credential_test.cpp
-    resource_identifier_test.cpp
     simplified_header_test.cpp
     tenant_id_resolver_test.cpp
     token_cache_test.cpp
@@ -37,6 +36,8 @@ add_executable (
     workload_identity_credential_test.cpp
     )
   
+target_compile_definitions(azure-identity-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(identity azure-identity-test)
 
 create_map_file(azure-identity-test azure-identity-test.map)

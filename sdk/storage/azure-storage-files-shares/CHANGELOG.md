@@ -1,14 +1,20 @@
 # Release History
 
-## 12.11.0-beta.1 (Unreleased)
+## 12.11.0 (2024-09-17)
 
 ### Features Added
 
-### Breaking Changes
+- Features in `12.11.0-beta.1` are now generally available.
 
-### Bugs Fixed
+## 12.11.0-beta.1 (2024-08-07)
 
-### Other Changes
+### Features Added
+
+- Bumped up API version to `2024-11-04`.
+- Added support for token-based authentication for all APIs.
+- Added support for paid bursting on premium file share accounts.
+- Added support for binary format for file permissions.
+- Added ability to retrieve SAS string to sign for debugging purposes.
 
 ## 12.10.0 (2024-07-16)
 

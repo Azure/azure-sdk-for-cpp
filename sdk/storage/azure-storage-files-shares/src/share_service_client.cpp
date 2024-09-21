@@ -133,6 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Prefix = options.Prefix;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto response = _detail::ServiceClient::ListSharesSegment(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
 
@@ -160,6 +161,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ServiceClient::SetServicePropertiesOptions();
     protocolLayerOptions.ShareServiceProperties = std::move(properties);
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ServiceClient::SetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
@@ -170,6 +172,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ServiceClient::GetServicePropertiesOptions();
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     auto result = _detail::ServiceClient::GetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
     Models::ShareServiceProperties ret;

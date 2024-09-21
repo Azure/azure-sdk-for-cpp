@@ -11,6 +11,9 @@ add_executable (
   sample7-key-rotation
   sample7_key_rotation.cpp
 )
+
+target_compile_definitions(sample7-key-rotation PRIVATE _azure_BUILDING_SAMPLES)
+
 create_per_service_target_build_for_sample(keyvault sample7-key-rotation)
 
 target_link_libraries(sample7-key-rotation PRIVATE azure-security-keyvault-keys azure-identity get-env-helper)

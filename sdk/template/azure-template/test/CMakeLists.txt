@@ -16,6 +16,9 @@ add_executable (
      ut/macro_guard.cpp
      ut/template_test.cpp
      )
+
+target_compile_definitions(azure-template-test PRIVATE _azure_BUILDING_TESTS)
+
 create_per_service_target_build(template azure-template-test)
 create_map_file(azure-template-test azure-template-test.map)
 
