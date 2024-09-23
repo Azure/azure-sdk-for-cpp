@@ -7,25 +7,23 @@
 #include "azure/core/amqp/internal/session.hpp"
 #include "connection_impl.hpp"
 #include "unique_handle.hpp"
+#include "rust_amqp_wrapper.h"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<SESSION_INSTANCE_TAG>
+  using AmqpSessionImplementation = Azure::Core::Amqp::_detail::RustAmqpSession;
+  template <> struct UniqueHandleHelper<AmqpSessionImplementation>
   {
-    static void FreeAmqpSession(SESSION_HANDLE obj);
+    static void FreeAmqpSession(AmqpSessionImplementation* obj);
 
-    using type = Core::_internal::BasicUniqueHandle<SESSION_INSTANCE_TAG, FreeAmqpSession>;
+    using type = Core::_internal::BasicUniqueHandle<AmqpSessionImplementation, FreeAmqpSession>;
   };
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  using UniqueAmqpSession = UniqueHandle<SESSION_INSTANCE_TAG>;
-#endif
+  using UniqueAmqpSession = UniqueHandle<AmqpSessionImplementation>;
 
   class SessionFactory final {
   public:
@@ -43,7 +41,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
-  public:
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::SessionOptions const& options);

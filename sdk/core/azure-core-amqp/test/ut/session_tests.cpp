@@ -94,6 +94,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 #endif // !AZ_PLATFORM_MAC
+
+#if ENABLE_UAMQP
+
   uint16_t FindAvailableSocket()
   {
     // Ensure that the global state for the AMQP stack is initialized. Normally this is done by
@@ -161,6 +164,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     throw std::runtime_error("Could not find available test port.");
   }
+#endif
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
@@ -193,7 +197,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     uint16_t testPort = FindAvailableSocket();
     Network::_detail::SocketListener listener(testPort, &events);
     listener.Start();
-
+#elif ENABLE_RUST_AMQP
+    // Port of AZURE_AMQP test broker
+    uint16_t testPort = 25672;
+#endif
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = testPort;
@@ -212,10 +219,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       session.Begin();
       session.End("", "");
     }
-
+#if ENABLE_UAMQP
     listener.Stop();
-#else
-    EXPECT_TRUE(false);
 #endif
   }
 

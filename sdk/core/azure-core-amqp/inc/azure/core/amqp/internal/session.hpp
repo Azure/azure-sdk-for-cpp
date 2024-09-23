@@ -88,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   };
 
   class Session;
+#if ENABLE_UAMQP
   class SessionEvents {
   protected:
     ~SessionEvents() = default;
@@ -103,6 +104,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::AmqpValue const& properties)
         = 0;
   };
+#endif
 
   struct SessionOptions final
   {
@@ -174,6 +176,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ManagementClientOptions const& options,
         ManagementClientEvents* managementEvents = nullptr) const;
 
+    /** @brief Begins operations on the session.
+     *
+     */
+    void Begin();
+
+    /** @brief Ends operations on the session.
+     *
+     */
+    void End(std::string const& condition_value = {}, std::string const& description = {});
+
   private:
     /** @brief Returns the current value of the incoming window.
      *
@@ -191,22 +203,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @returns The current maximum number of links configured.
      */
     uint32_t GetHandleMax() const;
-
-    /** @brief Begins operations on the session.
-     *
-     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
-     * use by AMQP listeners.
-     *
-     */
-    void Begin();
-
-    /** @brief Ends operations on the session.
-     *
-     * @remarks Note that this function is not intended for use by AMQP clients, it is intended for
-     * use by AMQP listeners.
-     *
-     */
-    void End(std::string const& condition_value = {}, std::string const& description = {});
 
     /** @brief Sends a detach message on the specified link endpoint.
      *
