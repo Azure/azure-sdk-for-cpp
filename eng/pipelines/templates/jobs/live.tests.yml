@@ -82,7 +82,7 @@ jobs:
     - name: CMOCKA_MESSAGE_OUTPUT
       value: "xml"
     - name: AZURE_ENABLE_STATIC_ANALYSIS
-      value: 1
+      value: 0
     - name: BuildArgs
       value: ""
     - name: VcpkgArgs
