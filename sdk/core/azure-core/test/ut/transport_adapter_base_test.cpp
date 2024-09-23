@@ -389,6 +389,21 @@ namespace Azure { namespace Core { namespace Test {
     t1.join();
   }
 
+  TEST_P(TransportAdapter, dontAutoFollowRedirects)
+  {
+    // We dont expect the transport adapter to follow redirects automatically to this url.
+    std::string redirectToUrl = AzureSdkHttpbinServer::ResponseHeaders("foo=bar");
+
+    Azure::Core::Http::Request request(
+        Azure::Core::Http::HttpMethod::Get,
+        Azure::Core::Url(AzureSdkHttpbinServer::RedirectTo(redirectToUrl)));
+
+    auto response = m_pipeline->Send(request, Context{});
+    EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Found);
+    EXPECT_TRUE(response->GetHeaders().find("location") != response->GetHeaders().end());
+    EXPECT_EQ(response->GetHeaders().at("location"), redirectToUrl);
+  }
+
   TEST_P(TransportAdapter, cancelRequest)
   {
     Azure::Core::Url hostPath(AzureSdkHttpbinServer::Delay() + "/2"); // 2 seconds delay on server
