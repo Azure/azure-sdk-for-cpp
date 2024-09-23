@@ -389,7 +389,7 @@ namespace Azure { namespace Core { namespace Test {
     t1.join();
   }
 
-  TEST_P(TransportAdapter, dontAutoFollowRedirects)
+  TEST_P(TransportAdapter, redirectsNotFollowed)
   {
     // We dont expect the transport adapter to follow redirects automatically to this url.
     std::string redirectToUrl = AzureSdkHttpbinServer::ResponseHeaders("foo=bar");
