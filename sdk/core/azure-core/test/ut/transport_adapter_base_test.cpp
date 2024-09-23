@@ -391,7 +391,7 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST_P(TransportAdapter, redirectsNotFollowed)
   {
-    // We dont expect the transport adapter to follow redirects automatically to this url.
+    // We don't expect the transport adapter to follow redirects automatically to this url.
     std::string redirectToUrl = AzureSdkHttpbinServer::ResponseHeaders("foo=bar");
 
     Azure::Core::Http::Request request(
