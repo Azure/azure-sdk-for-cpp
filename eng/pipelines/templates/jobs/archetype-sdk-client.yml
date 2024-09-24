@@ -175,11 +175,6 @@ jobs:
             workingDirectory: $(Pipeline.Workspace)
           displayName: Generate APIReview Token Files
 
-        - pwsh: |
-            ls -recurse $(Build.ArtifactStagingDirectory)/packages
-            write-host "ls -recurse $(Build.ArtifactStagingDirectory)/packages"
-          displayName: show current packages folder
-
         # Generate package spec JSON files for tagging the repo
         - ${{ each artifact in parameters.Artifacts }}:
             - pwsh: >-
@@ -204,16 +199,13 @@ jobs:
                 $outputPath = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/${{ artifact.Name }}/package-info.json
 
                 $version = eng/scripts/Get-PkgVersion -ServiceDirectory ${{ parameters.ServiceDirectory }} -PackageName ${{ artifact.Path }}
-                $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; ArtifactName = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; DirectoryPath = ""} | ConvertTo-Json
+                $outputObject = @{ version = $version.ToString(); name = '${{ artifact.Name }}'; packageName = "${{ artifact.Name }}_$version"; } | ConvertTo-Json
 
                 Set-Content -Path $outputPath -Value $outputObject
 
                 $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory)/packages "${{ artifact.Name }}"
                 $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) "packages/PackageInfo"
                 Copy-Item $packageJsonSource/${{ artifact.Name }}.json $packageJsonDest -Force
-
-                Write-host "ls -recurse"
-                ls -recurse $(Build.ArtifactStagingDirectory)/packages
 
                 # Set AZURE_SDK_VERSION for use in Doxygen generation
                 Write-Host "##vso[task.setvariable variable=AZURE_SDK_VERSION]$version"
@@ -318,7 +310,7 @@ jobs:
             $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
             mkdir $packageJsonDest
             Copy-Item $packageJsonSource/* $packageJsonDest -Force
-          displayName: Copy PackageJson
+          displayName: Copy Package Json
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
