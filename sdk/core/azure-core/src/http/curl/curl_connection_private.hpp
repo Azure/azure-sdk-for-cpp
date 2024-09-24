@@ -33,10 +33,9 @@ typedef struct x509_store_ctx_st X509_STORE_CTX;
 namespace Azure { namespace Core {
   namespace _detail {
     /**
-     * @brief  Unique handle for WinHTTP HINTERNET handles.
+     * @brief  Unique handle for CURL handles.
      *
-     * @note HINTERNET is declared as a "void *". This means that this definition subsumes all other
-     * `void *` types when used with Azure::Core::_internal::UniqueHandle.
+     * @note CURL is declared as a "void".
      *
      */
     template <> struct UniqueHandleHelper<CURL>

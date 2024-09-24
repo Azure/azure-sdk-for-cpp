@@ -38,6 +38,14 @@ namespace Azure { namespace Core { namespace Test {
     {
       return Schema() + "://" + Host() + "/status/" + std::to_string(statusCode);
     }
+    inline static std::string ResponseHeaders(std::string responseHeaders)
+    {
+      return Schema() + "://" + Host() + "/response-headers?" + responseHeaders;
+    }
+    inline static std::string RedirectTo(std::string redirectToUrl)
+    {
+      return Schema() + "://" + Host() + "/redirect-to?url=" + redirectToUrl;
+    }
     inline static std::string Host() { return std::string(_detail::AzureSdkHttpbinServer); }
     inline static std::string Schema() { return std::string(_detail::AzureSdkHttpbinServerSchema); }
   };
