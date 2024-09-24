@@ -20,8 +20,24 @@
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Amqp::_detail::RustInterop;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  void UniqueHandleHelper<AmqpSessionImplementation>::FreeAmqpSession(
+      AmqpSessionImplementation* value)
+  {
+    amqpsession_destroy(value);
+  }
+  void UniqueHandleHelper<AmqpSessionOptions>::FreeAmqpSessionOptions(AmqpSessionOptions* value)
+  {
+    amqpsessionoptions_destroy(value);
+  }
+  void UniqueHandleHelper<AmqpSessionOptionsBuilder>::FreeAmqpSessionOptionsBuilder(
+      AmqpSessionOptionsBuilder* value)
+  {
+    amqpsessionoptionsbuilder_destroy(value);
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -41,18 +57,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
       _internal::SessionOptions const& options)
-      : m_connectionToPoll(connection), m_options{options}
+      : m_session{amqpsession_create()}, m_connection(connection), m_options{options}
 
   {
-    if (options.MaximumLinkCount.HasValue())
-    {
-    }
-    if (options.InitialIncomingWindowSize.HasValue())
-    {
-    }
-    if (options.InitialOutgoingWindowSize.HasValue())
-    {
-    }
   }
 
   uint32_t SessionImpl::GetIncomingWindow()
@@ -73,13 +80,54 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return max;
   }
 
-  void SessionImpl::Begin() { m_isBegun = true; }
+  void SessionImpl::Begin()
+  {
+    UniqueAmqpSessionOptionsBuilder optionsBuilder{amqpsessionoptionsbuilder_create()};
+
+    if (m_options.MaximumLinkCount.HasValue())
+    {
+      amqpsessionoptionsbuilder_set_handle_max(
+          optionsBuilder.get(), m_options.MaximumLinkCount.Value());
+    }
+    if (m_options.InitialIncomingWindowSize.HasValue())
+    {
+      amqpsessionoptionsbuilder_set_incoming_window(
+          optionsBuilder.get(), m_options.InitialIncomingWindowSize.Value());
+    }
+    if (m_options.InitialOutgoingWindowSize.HasValue())
+    {
+      amqpsessionoptionsbuilder_set_outgoing_window(
+          optionsBuilder.get(), m_options.InitialOutgoingWindowSize.Value());
+    }
+    if (!m_options.DesiredCapabilities.empty())
+    {
+
+    }
+    UniqueAmqpSessionOptions sessionOptions{amqpsessionoptionsbuilder_build(optionsBuilder.get())};
+    if (amqpsession_begin(
+        m_session.get(),
+        m_connection->GetConnection(),
+        sessionOptions.get(),
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
+    {
+      throw std::runtime_error("Failed to begin session.");
+    }
+    m_isBegun = true;
+  }
   void SessionImpl::End(const std::string& condition, const std::string& description)
   {
     if (!m_isBegun)
     {
       throw std::runtime_error("Session End without corresponding Begin.");
     }
+    if (amqpsession_end(
+            m_session.get(),
+            Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
+    {
+      throw std::runtime_error("Failed to end session.");
+    
+    }
+    m_isBegun = false;
     (void)condition;
     (void)description;
   }

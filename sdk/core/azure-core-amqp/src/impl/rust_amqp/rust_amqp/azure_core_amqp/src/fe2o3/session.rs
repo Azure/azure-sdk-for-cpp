@@ -100,6 +100,14 @@ impl AmqpSessionApis for Fe2o3AmqpSession {
     }
 
     async fn end(&self) -> Result<()> {
-        todo!()
+        self.session
+            .get()
+            .unwrap()
+            .lock()
+            .await
+            .end()
+            .await
+            .map_err(super::error::AmqpSession::from)?;
+        Ok(())
     }
 }

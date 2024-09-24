@@ -299,21 +299,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::shared_ptr<Credentials::TokenCredential> credential,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
-#else
-    /** @brief Construct a new AMQP Connection.
-     *
-     * @param hostName The name of the host to connect to.
-     * @param options The options to use when creating the connection.
-     *
-     * @remarks The requestUri must be a valid AMQP URI.
-     */
-    Connection(
-        std::string const& hostName,
-        std::shared_ptr<Credentials::TokenCredential> credential,
-        ConnectionOptions const& options);
-#endif
 
-#if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
      * @param transport The transport to use for the connection.
@@ -328,6 +314,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler,
         ConnectionEndpointEvents* endpointEvents);
+
+#else
+    /** @brief Construct a new AMQP Connection.
+     *
+     * @param hostName The name of the host to connect to.
+     * @param options The options to use when creating the connection.
+     *
+     * @remarks The requestUri must be a valid AMQP URI.
+     */
+    Connection(
+        std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
+        ConnectionOptions const& options);
 #endif
 
     /** @brief Destroy an AMQP connection */
@@ -377,7 +376,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     void Poll();
 #endif
 #if ENABLE_RUST_AMQP
-  private:
+//  private:
 #endif
     /** @brief Opens the current connection.
      *

@@ -68,6 +68,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Never,
   };
 
+#if ENABLE_UAMQP
   enum class SessionState
   {
     Unmapped,
@@ -79,6 +80,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Discarding,
     Error,
   };
+
+#endif
 
   enum class SessionSendTransferResult
   {
@@ -122,6 +125,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * Control](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#doc-session-flow-control)
      * for more information.*/
     Nullable<uint32_t> MaximumLinkCount;
+
+#if ENABLE_RUST_AMQP
+
+    std::vector<std::string> OfferedCapabilities;
+    std::vector<std::string> DesiredCapabilities;
+    Azure::Core::Amqp::Models::AmqpMap Properties;
+#endif
   };
 
   class Session final {
