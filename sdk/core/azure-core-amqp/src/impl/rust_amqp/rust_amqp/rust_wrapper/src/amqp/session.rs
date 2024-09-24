@@ -221,54 +221,42 @@ mod tests {
     fn test_amqpsession_create() {
         let session = amqpsession_create();
         assert_ne!(session, std::ptr::null_mut());
-        unsafe {
-            amqpsession_destroy(session);
-        }
+        amqpsession_destroy(session);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_create() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         assert_ne!(session_options_builder, std::ptr::null_mut());
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_outgoing_window() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         amqpsessionoptionsbuilder_set_outgoing_window(session_options_builder, 10);
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_incoming_window() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         amqpsessionoptionsbuilder_set_incoming_window(session_options_builder, 10);
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_next_outgoing_id() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         amqpsessionoptionsbuilder_set_next_outgoing_id(session_options_builder, 10);
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_handle_max() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         amqpsessionoptionsbuilder_set_handle_max(session_options_builder, 10);
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
@@ -283,9 +271,7 @@ mod tests {
             session_options_builder,
             &offered_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
         );
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
@@ -298,9 +284,7 @@ mod tests {
             session_options_builder,
             &desired_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
         );
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
@@ -320,18 +304,14 @@ mod tests {
             session_options_builder,
             &properties as *const RustAmqpValue as *mut RustAmqpValue,
         );
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_buffer_size() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         amqpsessionoptionsbuilder_set_buffer_size(session_options_builder, 1024);
-        unsafe {
-            amqpsessionoptionsbuilder_destroy(session_options_builder);
-        }
+        amqpsessionoptionsbuilder_destroy(session_options_builder);
     }
 
     #[test]
@@ -339,9 +319,7 @@ mod tests {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         let session_options = amqpsessionoptionsbuilder_build(session_options_builder);
         assert_ne!(session_options, std::ptr::null_mut());
-        unsafe {
-            amqpsessionoptions_destroy(session_options);
-        }
+        amqpsessionoptions_destroy(session_options);
     }
 
     #[test]
