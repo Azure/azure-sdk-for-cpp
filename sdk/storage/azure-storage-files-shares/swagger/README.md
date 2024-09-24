@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-11-04/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2025-01-05/file.json
 ```
 
 ## ModelFour Options
@@ -214,7 +214,6 @@ directive:
     transform: >
       $.ListSharesInclude.items["x-ms-enum"].name = "ListSharesIncludeFlags";
       $.ListFilesInclude.items["x-ms-enum"].name = "ListFilesIncludeFlags";
-      $.AccessTierOptional.enum.push("Premium");
       $.AccessTierOptional["x-ms-enum"].name = "AccessTier";
       $.AccessTierOptional["x-ms-enum"].modelAsString = false;
       $.DeleteSnapshots["x-ms-enum"].name = "DeleteSnapshotsOption";
@@ -229,6 +228,7 @@ directive:
       delete $.FileChangeTime.format;
       $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
       $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
+      $.FilePermissionFormat["enum"] = ["sddl", "binary"];
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -306,6 +306,7 @@ directive:
         }
       };
       $.SharePermission["x-namespace"] = "_detail";
+      $.SharePermission["properties"]["format"]["enum"] = ["sddl", "binary"];
       $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
       $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
