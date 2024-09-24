@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // Licensed under the MIT License.
-// cspell: words amqp amqpconnection amqpconnectionoptionsbuilder amqpconnectionoptions
+// cspell: words amqp amqpconnection amqpconnectionoptionsbuilder amqpconnectionoptions amqpsession amqpsessionoptions amqpsessionoptionsbuilder
 
 use std::mem;
 
@@ -213,6 +213,8 @@ pub extern "C" fn amqpsessionoptionsbuilder_build(
 
 #[cfg(test)]
 mod tests {
+    use azure_core_amqp::value::AmqpList;
+
     use super::*;
 
     #[test]
@@ -273,7 +275,9 @@ mod tests {
     fn test_amqpsessionoptionsbuilder_set_offered_capabilities() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         let offered_capabilities = RustAmqpValue {
-            inner: AmqpValue::List(vec![AmqpValue::Symbol("test".to_string())]),
+            inner: AmqpValue::List(AmqpList::from(vec![AmqpValue::Symbol(AmqpSymbol::from(
+                "test",
+            ))])),
         };
         amqpsessionoptionsbuilder_set_offered_capabilities(
             session_options_builder,
@@ -288,7 +292,7 @@ mod tests {
     fn test_amqpsessionoptionsbuilder_set_desired_capabilities() {
         let session_options_builder = amqpsessionoptionsbuilder_create();
         let desired_capabilities = RustAmqpValue {
-            inner: AmqpValue::List(vec![AmqpValue::Symbol("test".to_string())].into()),
+            inner: AmqpValue::List(vec![AmqpValue::Symbol(AmqpSymbol::from("test"))].into()),
         };
         amqpsessionoptionsbuilder_set_desired_capabilities(
             session_options_builder,
@@ -344,7 +348,7 @@ mod tests {
     fn test_amqpsession_begin() {
         let session = amqpsession_create();
         let connection = Box::into_raw(Box::new(RustAmqpConnection::new()));
-        let runtime_context = Box::into_raw(Box::new(RuntimeContext::new()));
+        let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
         let result = amqpsession_begin(session, connection, std::ptr::null_mut(), runtime_context);
         assert_eq!(result, std::ptr::null_mut());
         unsafe {
@@ -358,7 +362,7 @@ mod tests {
     fn test_amqpsession_begin_with_options() {
         let session = amqpsession_create();
         let connection = Box::into_raw(Box::new(RustAmqpConnection::new()));
-        let runtime_context = Box::into_raw(Box::new(RuntimeContext::new()));
+        let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
         let session_options_builder = amqpsessionoptionsbuilder_create();
         let session_options = amqpsessionoptionsbuilder_build(session_options_builder);
         let result = amqpsession_begin(session, connection, session_options, runtime_context);
