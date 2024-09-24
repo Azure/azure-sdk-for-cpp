@@ -46,7 +46,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+    options.Port = 25672;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
+
+#if ENABLE_RUST_AMQP
+    connection.Open();
+#endif
     {
       // Create a session
       Session session{connection.CreateSession()};
@@ -206,7 +212,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     connectionOptions.Port = testPort;
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
+    // Open the connection
+    GTEST_LOG_(INFO) << "Open connection.";
+    connection.Open();
+
     {
+      GTEST_LOG_(INFO) << "Create session 1.";
       Session session{connection.CreateSession()};
 
       session.Begin();
@@ -214,6 +225,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 
     {
+      GTEST_LOG_(INFO) << "Create session 2.";
       Session session{connection.CreateSession()};
 
       session.Begin();

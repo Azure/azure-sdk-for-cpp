@@ -31,6 +31,11 @@ pub struct RustAmqpConnection {
 }
 
 impl RustAmqpConnection {
+    pub fn new(connection: AmqpConnection) -> RustAmqpConnection {
+        Self {
+            inner: connection,
+        }
+    }
     pub(crate) fn get_connection(&self) -> &AmqpConnection {
         &self.inner
     }

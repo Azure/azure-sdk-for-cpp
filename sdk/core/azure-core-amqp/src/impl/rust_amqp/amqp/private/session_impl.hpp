@@ -6,24 +6,42 @@
 #include "azure/core/amqp/internal/models/amqp_error.hpp"
 #include "azure/core/amqp/internal/session.hpp"
 #include "connection_impl.hpp"
-#include "unique_handle.hpp"
 #include "rust_amqp_wrapper.h"
+#include "unique_handle.hpp"
 
 #include <memory>
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using AmqpSessionImplementation = Azure::Core::Amqp::_detail::RustAmqpSession;
+  using AmqpSessionImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSession;
+  using AmqpSessionOptions = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSessionOptions;
+  using AmqpSessionOptionsBuilder
+      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSessionOptionsBuilder;
+  
   template <> struct UniqueHandleHelper<AmqpSessionImplementation>
   {
     static void FreeAmqpSession(AmqpSessionImplementation* obj);
 
     using type = Core::_internal::BasicUniqueHandle<AmqpSessionImplementation, FreeAmqpSession>;
   };
+  template <> struct UniqueHandleHelper<AmqpSessionOptions>
+  {
+    static void FreeAmqpSessionOptions(AmqpSessionOptions* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<AmqpSessionOptions, FreeAmqpSessionOptions>;
+  };
+  template <> struct UniqueHandleHelper<AmqpSessionOptionsBuilder>
+  {
+    static void FreeAmqpSessionOptionsBuilder(AmqpSessionOptionsBuilder* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<AmqpSessionOptionsBuilder, FreeAmqpSessionOptionsBuilder>;
+  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpSession = UniqueHandle<AmqpSessionImplementation>;
+  using UniqueAmqpSessionOptions = UniqueHandle<AmqpSessionOptions>;
+  using UniqueAmqpSessionOptionsBuilder = UniqueHandle<AmqpSessionOptionsBuilder>;
 
   class SessionFactory final {
   public:
@@ -41,17 +59,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   };
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
+  public:
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::SessionOptions const& options);
-    ~SessionImpl() noexcept;
 
     SessionImpl(SessionImpl const&) = delete;
     SessionImpl& operator=(SessionImpl const&) = delete;
     SessionImpl(SessionImpl&&) noexcept = delete;
     SessionImpl& operator=(SessionImpl&&) noexcept = delete;
 
-    std::shared_ptr<_detail::ConnectionImpl> GetConnection() const { return m_connectionToPoll; }
+    ~SessionImpl() noexcept;
+    std::shared_ptr<_detail::ConnectionImpl> GetConnection() const { return m_connection; }
 
     uint32_t GetIncomingWindow();
     uint32_t GetOutgoingWindow();
@@ -68,7 +87,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     SessionImpl();
     bool m_isBegun{false};
-    std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
+    UniqueAmqpSession m_session;
+    std::shared_ptr<_detail::ConnectionImpl> m_connection;
     _internal::SessionOptions m_options;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
