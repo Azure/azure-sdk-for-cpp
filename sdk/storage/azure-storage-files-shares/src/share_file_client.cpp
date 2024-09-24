@@ -414,6 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (options.Permission.HasValue())
         {
           protocolLayerOptions.FilePermission = options.Permission;
+          protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
         }
         else if (options.SmbProperties.PermissionKey.HasValue())
         {
@@ -1202,7 +1203,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
-    protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
