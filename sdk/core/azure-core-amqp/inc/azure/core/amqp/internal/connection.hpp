@@ -412,6 +412,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
+     * @param context Context for the operation.
      *
      * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
      * the connection, BEFORE destroying it.
@@ -440,6 +441,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @param context Context for closing the connection.
      * @param description The description for closing the connection.
      * @param info Additional information for closing the connection.
+     * @param context Context for the operation.
      *
      * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
      *
@@ -451,6 +453,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @param condition The condition for closing the connection.
      * @param description The description for closing the connection.
      * @param info Additional information for closing the connection.
+     * @param context Context for the operation.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be closed implicitly by a Session object derived from the connection. It primarily
