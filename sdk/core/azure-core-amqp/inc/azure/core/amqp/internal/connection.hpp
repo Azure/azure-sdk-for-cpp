@@ -266,6 +266,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
 #if ENABLE_RUST_AMQP
+    /** @brief Locales used for outgoing messages.
+   *
+   * @remarks The outgoing locales are the locales that the client can send messages in.
+
+    */
     std::vector<std::string> OutgoingLocales;
     std::vector<std::string> IncomingLocales;
     std::vector<std::string> OfferedCapabilities;
@@ -374,9 +379,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         SessionEvents* eventHandler = nullptr) const;
 
     void Poll();
-#endif
-#if ENABLE_RUST_AMQP
-//  private:
+
+  private:
 #endif
     /** @brief Opens the current connection.
      *
