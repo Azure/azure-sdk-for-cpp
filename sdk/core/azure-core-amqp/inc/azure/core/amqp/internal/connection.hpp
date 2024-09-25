@@ -438,15 +438,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief Closes the current connection.
      *
-     * @param context Context for closing the connection.
-     * @param description The description for closing the connection.
-     * @param info Additional information for closing the connection.
      * @param context Context for the operation.
      *
      * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
      *
      */
-    void Close(Azure::Core::Context const& connection = {});
+    void Close(Azure::Core::Context const& context = {});
 
     /** @brief Closes the current connection.
      *
