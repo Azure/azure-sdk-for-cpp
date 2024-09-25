@@ -64,20 +64,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   uint32_t SessionImpl::GetIncomingWindow()
   {
-    uint32_t window{};
-    return window;
+    if (m_options.InitialIncomingWindowSize.HasValue())
+    {
+      return m_options.InitialIncomingWindowSize.Value();
+    }
+    else
+    {
+      return std::numeric_limits<std::uint32_t>::max();
+    }
   }
 
   uint32_t SessionImpl::GetOutgoingWindow()
   {
-    uint32_t window{};
-    return window;
+    if (m_options.InitialOutgoingWindowSize.HasValue())
+    {
+      return m_options.InitialOutgoingWindowSize.Value();
+    }
+    else
+    {
+      return 1;
+    }
   }
 
   uint32_t SessionImpl::GetHandleMax()
   {
-    uint32_t max{};
-    return max;
+    if (m_options.MaximumLinkCount.HasValue())
+    {
+      return m_options.MaximumLinkCount.Value();
+    }
+    else
+    {
+      return std::numeric_limits<uint32_t>::max();
+    }
   }
 
   void SessionImpl::Begin()
@@ -101,14 +119,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_options.DesiredCapabilities.empty())
     {
-
     }
     UniqueAmqpSessionOptions sessionOptions{amqpsessionoptionsbuilder_build(optionsBuilder.get())};
     if (amqpsession_begin(
-        m_session.get(),
-        m_connection->GetConnection(),
-        sessionOptions.get(),
-        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
+            m_session.get(),
+            m_connection->GetConnection(),
+            sessionOptions.get(),
+            Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
     {
       throw std::runtime_error("Failed to begin session.");
     }
@@ -125,7 +142,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
     {
       throw std::runtime_error("Failed to end session.");
-    
     }
     m_isBegun = false;
     (void)condition;
