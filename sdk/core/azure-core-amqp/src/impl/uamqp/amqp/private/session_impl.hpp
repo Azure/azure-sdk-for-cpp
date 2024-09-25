@@ -65,8 +65,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t GetOutgoingWindow();
     uint32_t GetHandleMax();
 
-    void Begin();
-    void End(std::string const& condition_value, std::string const& description);
+    void Begin(Azure::Core::Context const&);
+    void End(Azure::Core::Context const&);
+    void End(std::string const& condition_value, std::string const& description, Azure::Core::Context const&);
 
     void SendDetach(
         _internal::LinkEndpoint const& linkEndpoint,
