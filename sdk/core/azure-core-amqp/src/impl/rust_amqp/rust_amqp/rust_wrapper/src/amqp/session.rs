@@ -375,8 +375,8 @@ mod tests {
         }
     }
 
-    #[tokio::test]
-    async fn test_amqpsession_begin_with_options() {
+    #[test]
+    fn test_amqpsession_begin_with_options() {
         let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
         let session = amqpsession_create();
         let connection = AmqpConnection::new();
