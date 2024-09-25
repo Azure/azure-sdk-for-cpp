@@ -67,9 +67,9 @@ pub unsafe extern "C" fn runtime_context_delete(ctx: *mut RuntimeContext) {
     mem::drop(Box::from_raw(ctx))
 }
 
-// pub(crate) fn runtime_context_from_ptr<'a>(ctx: *const RuntimeContext) -> &'a RuntimeContext {
-//     unsafe { &*ctx }
-// }
+pub fn runtime_context_from_ptr<'a>(ctx: *const RuntimeContext) -> &'a RuntimeContext {
+    unsafe { &*ctx }
+}
 
 pub(crate) fn runtime_context_from_ptr_mut<'a>(ctx: *mut RuntimeContext) -> &'a mut RuntimeContext {
     unsafe { &mut *ctx }
