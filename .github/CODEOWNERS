@@ -74,3 +74,5 @@
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @ronniegeraghty @Azure/azure-sdk-eng
+
+/.config/1espt/          @benbp @weshaggard
