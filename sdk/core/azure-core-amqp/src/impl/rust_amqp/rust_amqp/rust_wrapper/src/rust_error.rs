@@ -5,6 +5,8 @@
 cspell: words reqwest repr staticlib dylib brotli gzip
 */
 
+use std::ffi::c_char;
+
 pub struct RustError(azure_core::Error);
 
 impl RustError {
@@ -14,7 +16,7 @@ impl RustError {
 }
 
 #[no_mangle]
-pub extern "C" fn rust_error_get_message(error: *const RustError) -> *mut i8 {
+pub extern "C" fn rust_error_get_message(error: *const RustError) -> *mut c_char {
     let error = unsafe { error.as_ref().unwrap() };
     let message = error.0.to_string();
     let c_message = std::ffi::CString::new(message).unwrap();
