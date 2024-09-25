@@ -269,12 +269,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Locales used for outgoing messages.
    *
    * @remarks The outgoing locales are the locales that the client can send messages in.
-
+   * For more information, see: [AMQP
+   Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+   *
     */
     std::vector<std::string> OutgoingLocales;
+    /** @brief Locales used for incoming messages.
+     *
+     * @remarks The incoming locales are the locales that the client can accept messages in.
+     * For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     *
+     */
     std::vector<std::string> IncomingLocales;
+    /** @brief Capabilities offered by the client.
+     * @remarks The offered capabilities are the capabilities that the client can offer to the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
     std::vector<std::string> OfferedCapabilities;
+    /** @brief Capabilities desired by the client.
+     * @remarks The desired capabilities are the capabilities that the client can accept from the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
     std::vector<std::string> DesiredCapabilities;
+
+    /** @brief The buffer size for the connection.
+     *
+     * @remarks The buffer size is the size of the buffer used to read and write data to the
+     * connection.
+     */
     uint32_t BufferSize;
 #endif
 

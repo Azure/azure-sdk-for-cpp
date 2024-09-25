@@ -127,9 +127,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     Nullable<uint32_t> MaximumLinkCount;
 
 #if ENABLE_RUST_AMQP
-
+    /** @brief Represents the offered capabilities for the session.
+     *
+     * See also: [AMQP Session
+     * Begin](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-session-begin)
+     *
+     */
     std::vector<std::string> OfferedCapabilities;
+    /** @brief Represents the desired capabilities for the session.
+     *
+     * See also: [AMQP Session
+     * Begin](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-session-begin)
+     *
+     */
     std::vector<std::string> DesiredCapabilities;
+
+    /** @brief Represents the properties for the session.
+     *
+     * See also: [AMQP Session
+     * Begin](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-session-begin)
+     *
+     */
+
     Azure::Core::Amqp::Models::AmqpMap Properties;
 #endif
   };
