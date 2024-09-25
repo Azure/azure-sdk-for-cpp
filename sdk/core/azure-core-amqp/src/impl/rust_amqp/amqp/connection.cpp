@@ -224,7 +224,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             m_containerId.c_str(),
             m_connectionOptions.get()))
     {
-      throw std::runtime_error("Could not open connection.");
+      auto error = runtime_context_get_error(
+          Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+              ->GetRuntimeContext());
+      auto err = rust_error_get_message(error);
+      std::string errorString{err};
+      rust_string_delete(err);
+      rust_error_delete(error);
+      throw std::runtime_error("Could not open connection:" + errorString);
     }
   }
 

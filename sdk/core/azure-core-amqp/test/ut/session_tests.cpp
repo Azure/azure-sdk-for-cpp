@@ -46,7 +46,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
+    Azure::Core::Amqp::_internal::ConnectionOptions options;
+#if ENABLE_RUST_AMQP
+    options.Port = 25672;
+#endif
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
+
+#if ENABLE_RUST_AMQP
+    connection.Open();
+#endif
     {
       // Create a session
       Session session{connection.CreateSession()};
@@ -94,6 +102,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 #endif // !AZ_PLATFORM_MAC
+
+#if ENABLE_UAMQP
+
   uint16_t FindAvailableSocket()
   {
     // Ensure that the global state for the AMQP stack is initialized. Normally this is done by
@@ -161,6 +172,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     throw std::runtime_error("Could not find available test port.");
   }
+#endif
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
@@ -193,11 +205,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     uint16_t testPort = FindAvailableSocket();
     Network::_detail::SocketListener listener(testPort, &events);
     listener.Start();
-
+#elif ENABLE_RUST_AMQP
+    // Port of AZURE_AMQP test broker
+    uint16_t testPort = 25672;
+#endif
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = testPort;
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+
+#if ENABLE_RUST_AMQP
+    // Open the connection
+    GTEST_LOG_(INFO) << "Open connection.";
+    connection.Open();
+#endif
 
     {
       Session session{connection.CreateSession()};
@@ -212,10 +233,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       session.Begin();
       session.End("", "");
     }
-
+#if ENABLE_UAMQP
     listener.Stop();
-#else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -257,6 +276,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         "localhost", nullptr, connectionOptions, &connectionEvents);
 
     connection.Open();
+#elif ENABLE_RUST_AMQP
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = 25672;
+    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+
+    connection.Open();
+
+#endif
 
     {
       constexpr const size_t sessionCount = 30;
@@ -279,10 +306,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
     }
     connection.Close();
-
+#if ENABLE_UAMQP
     mockServer.StopListening();
-#else
-    EXPECT_TRUE(false);
 #endif
   }
 #endif // !AZ_PLATFORM_MAC
