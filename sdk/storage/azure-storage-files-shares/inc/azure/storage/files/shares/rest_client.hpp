@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-11-04";
+    constexpr static const char* ApiVersion = "2025-01-05";
   } // namespace _detail
   namespace Models {
     /**
@@ -2583,6 +2583,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::map<std::string, std::string> Metadata;
         std::string CopySource;
         Nullable<std::string> FilePermission;
+        Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
         Nullable<Models::PermissionCopyMode> FilePermissionCopyMode;
         Nullable<bool> IgnoreReadOnly;
