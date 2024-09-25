@@ -844,6 +844,8 @@ namespace Azure { namespace Storage { namespace Test {
         options.ProvisionedMaxBandwidthMibps.Value(),
         result.ShareProvisionedBandwidthMibps.Value());
     EXPECT_TRUE(result.ShareIncludedBurstIops.HasValue());
+    EXPECT_TRUE(result.Quota.HasValue());
+    EXPECT_EQ(options.ShareQuotaInGiB.Value(), result.Quota.Value());
 
     // GetProperties
     Files::Shares::Models::ShareProperties properties;
