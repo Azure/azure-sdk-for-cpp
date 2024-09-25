@@ -266,10 +266,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
 #if ENABLE_RUST_AMQP
+    /** @brief Locales used for outgoing messages.
+   *
+   * @remarks The outgoing locales are the locales that the client can send messages in.
+   * For more information, see: [AMQP
+   Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+   *
+    */
     std::vector<std::string> OutgoingLocales;
+    /** @brief Locales used for incoming messages.
+     *
+     * @remarks The incoming locales are the locales that the client can accept messages in.
+     * For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     *
+     */
     std::vector<std::string> IncomingLocales;
+    /** @brief Capabilities offered by the client.
+     * @remarks The offered capabilities are the capabilities that the client can offer to the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
     std::vector<std::string> OfferedCapabilities;
+    /** @brief Capabilities desired by the client.
+     * @remarks The desired capabilities are the capabilities that the client can accept from the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
     std::vector<std::string> DesiredCapabilities;
+
+    /** @brief The buffer size for the connection.
+     *
+     * @remarks The buffer size is the size of the buffer used to read and write data to the
+     * connection.
+     */
     uint32_t BufferSize;
 #endif
 
@@ -299,21 +329,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::shared_ptr<Credentials::TokenCredential> credential,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
-#else
-    /** @brief Construct a new AMQP Connection.
-     *
-     * @param hostName The name of the host to connect to.
-     * @param options The options to use when creating the connection.
-     *
-     * @remarks The requestUri must be a valid AMQP URI.
-     */
-    Connection(
-        std::string const& hostName,
-        std::shared_ptr<Credentials::TokenCredential> credential,
-        ConnectionOptions const& options);
-#endif
 
-#if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
      * @param transport The transport to use for the connection.
@@ -328,6 +344,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler,
         ConnectionEndpointEvents* endpointEvents);
+
+#else
+    /** @brief Construct a new AMQP Connection.
+     *
+     * @param hostName The name of the host to connect to.
+     * @param options The options to use when creating the connection.
+     *
+     * @remarks The requestUri must be a valid AMQP URI.
+     */
+    Connection(
+        std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
+        ConnectionOptions const& options);
 #endif
 
     /** @brief Destroy an AMQP connection */
@@ -375,8 +404,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         SessionEvents* eventHandler = nullptr) const;
 
     void Poll();
-#endif
-#if ENABLE_RUST_AMQP
+
   private:
 #endif
     /** @brief Opens the current connection.
