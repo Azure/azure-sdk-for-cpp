@@ -715,9 +715,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     /**
      * This permission is the security descriptor for the file specified in the Security
-     * Descriptor Definition Language (SDDL). If not specified, 'inherit' is used.
+     * Descriptor Definition Language (SDDL) or base64 encoded
+     * binary format. If not specified, 'inherit' is used.
      */
     Azure::Nullable<std::string> Permission;
+
+    /**
+     * Optional. Available for version 2024-11-04 and later. Specifies
+     * the format in which the permission is returned.If FilePermissionFormat is unspecified or
+     * explicitly set to SDDL format format, the permission will be
+     * returned in SDDL format.
+     */
+    Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
 
     /**
      * SMB properties to set for the destination file.
