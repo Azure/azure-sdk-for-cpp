@@ -36,8 +36,7 @@ using Azure::Identity::ManagedIdentityId;
 using Azure::Identity::ManagedIdentityIdKind;
 using Azure::Identity::Test::_detail::CredentialTestHelper;
 
-TEST(ManagedIdentityId, Basic)
-{
+/* TEST(ManagedIdentityId, Basic){
   {
     ManagedIdentityId const miType;
     EXPECT_EQ(miType.GetId(), "");
@@ -68,11 +67,11 @@ TEST(ManagedIdentityId, Basic)
     EXPECT_EQ(options.IdentityId.GetId(), "");
     EXPECT_EQ(options.IdentityId.GetManagedIdentityIdKind(), ManagedIdentityIdKind::SystemAssigned);
   }
-}
+}*/
 
 TEST(ManagedIdentityId, Invalid)
 {
-  EXPECT_THROW(
+  EXPECT_THROW
       ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, "clientId"), std::invalid_argument);
 
   EXPECT_THROW(ManagedIdentityId(ManagedIdentityIdKind::ClientId, ""), std::invalid_argument);

@@ -43,6 +43,8 @@ namespace Azure { namespace Identity {
    * managed identity.
    */
   class ManagedIdentityId final {
+    friend class ManagedIdentityCredential;
+
   private:
     ManagedIdentityIdKind m_idKind;
     std::string m_id;
@@ -55,6 +57,24 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityId() : m_idKind(ManagedIdentityIdKind::SystemAssigned) {}
 
+    static ManagedIdentityId FromSystemAssigned() { return ManagedIdentityId(); }
+
+    static ManagedIdentityId FromUserAssignedClientId(std::string id)
+    {
+      return ManagedIdentityId(ManagedIdentityIdKind::ClientId, std::move(id));
+    }
+
+    static ManagedIdentityId FromUserAssignedObjectId(std::string id)
+    {
+      return ManagedIdentityId(ManagedIdentityIdKind::ObjectId, std::move(id));
+    }
+
+    static ManagedIdentityId FromUserAssignedResourceId(Azure::Core::ResourceIdentifier id)
+    {
+      return ManagedIdentityId(ManagedIdentityIdKind::ResourceId, std::move(id.ToString()));
+    }
+
+  private:
     /**
      * @brief Constructs the type of managed identity.
      *
