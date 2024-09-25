@@ -6,13 +6,9 @@
 #include "../src/amqp/private/unique_handle.hpp"
 #include "rust_amqp_wrapper.h"
 
-#include <azure/core/azure_assert.hpp>
+#include <azure/core/context.hpp>
 
-#include <atomic>
-#include <list>
 #include <memory>
-#include <mutex>
-#include <thread>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -74,8 +70,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   class CallContext final {
   public:
-    CallContext(Azure::Core::Amqp::_detail::RustInterop::RuntimeContext* runtimeContext)
-        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(runtimeContext)}
+    CallContext(
+        Azure::Core::Amqp::_detail::RustInterop::RuntimeContext* runtimeContext,
+        Azure::Core::Context const& context)
+        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(runtimeContext)},
+          m_context(context)
     {
     }
 
@@ -96,6 +95,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   private:
     UniqueRustCallContext m_callContext;
+    Azure::Core::Context m_context;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail

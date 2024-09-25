@@ -208,12 +208,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     /** @brief Begins operations on the session.
      *
      */
-    void Begin();
+    void Begin(Azure::Core::Context const& context = {});
 
     /** @brief Ends operations on the session.
      *
      */
-    void End(std::string const& condition_value = {}, std::string const& description = {});
+    void End(Azure::Core::Context const& context = {});
+
+    /** @brief Ends operations on the session.
+     *
+     */
+    void End(
+        std::string const& condition_value,
+        std::string const& description,
+        Azure::Core::Context const& context = {});
 
   private:
     /** @brief Returns the current value of the incoming window.

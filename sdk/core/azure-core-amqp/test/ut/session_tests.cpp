@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session1{connection.CreateSession({})};
       Session session2{connection.CreateSession({})};
 
-      EXPECT_ANY_THROW(session1.End("", ""));
+      EXPECT_ANY_THROW(session1.End());
     }
   }
 
@@ -232,6 +232,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       session.Begin();
       session.End("", "");
+    }
+
+    {
+      Session session{connection.CreateSession()};
+
+      session.Begin();
+      session.End("amqp:link:detach-forced", "Forced detach.");
     }
 #if ENABLE_UAMQP
     listener.Stop();

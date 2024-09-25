@@ -417,7 +417,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * the connection, BEFORE destroying it.
      *
      */
-    void Open();
+    void Open(Azure::Core::Context const& context = {});
 
 #if ENABLE_UAMQP
     /** @brief Starts listening for incoming connections.
@@ -437,6 +437,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief Closes the current connection.
      *
+     * @param context Context for closing the connection.
+     * @param description The description for closing the connection.
+     * @param info Additional information for closing the connection.
+     *
+     * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
+     *
+     */
+    void Close(Azure::Core::Context const& connection = {});
+
+    /** @brief Closes the current connection.
+     *
      * @param condition The condition for closing the connection.
      * @param description The description for closing the connection.
      * @param info Additional information for closing the connection.
@@ -449,9 +460,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
     void Close(
-        std::string const& condition = {},
-        std::string const& description = {},
-        Models::AmqpValue info = {});
+        std::string const& condition,
+        std::string const& description,
+        Models::AmqpValue info,
+        Azure::Core::Context const& context = {});
+
 #if ENABLE_RUST_AMQP
   private:
 #endif

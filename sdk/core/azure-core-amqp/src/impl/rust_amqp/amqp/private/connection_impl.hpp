@@ -107,12 +107,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      */
     void FinishConstruction();
 
-    void Open();
+    void Open(Azure::Core::Context const& context);
 
+    void Close(Azure::Core::Context const& context);
     void Close(
-        std::string const& condition = {},
-        std::string const& description = {},
-        Models::AmqpValue info = {});
+        std::string const& condition,
+        std::string const& description,
+        Models::AmqpValue info,
+        Azure::Core::Context const& context);
 
     std::string GetHost() const { return m_hostUrl.GetHost(); }
     uint16_t GetPort() const { return m_hostUrl.GetPort(); }
