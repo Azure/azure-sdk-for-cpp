@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell : words amqpsession amqpsessionoptions amqpsessionoptionsbuilder
+
 #include "azure/core/amqp/internal/session.hpp"
 
 #include "../../../models/private/performatives/detach_impl.hpp"
