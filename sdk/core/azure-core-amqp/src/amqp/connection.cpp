@@ -98,6 +98,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   void Connection::Listen() { m_impl->Listen(); }
 #endif // ENABLE_UAMQP
+
   void Connection::Open() { m_impl->Open(); }
   void Connection::Close(
       std::string const& condition,

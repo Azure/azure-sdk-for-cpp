@@ -139,6 +139,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return std::unique_lock<LockType>(m_amqpMutex);
     }
 
+    _detail::AmqpConnectionImplementation* GetConnection() { return m_connection.get(); }
+
   private:
     UniqueAmqpConnection m_connection{};
     Azure::Core::Url m_hostUrl;
