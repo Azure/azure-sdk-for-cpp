@@ -70,6 +70,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   class CallContext final {
   public:
+    /** Construct a new CallContext object.
+     *
+     * @param runtimeContext - pointer to the Rust runtime for this process.
+     * @param context - Azure Context for this operation.
+     *
+     * @note This class does *NOT* take ownership of the runtime - that is because the lifetime of
+     * all CallContext objects MUST be shorter than the lifetime of the GlobalState object which
+     * actually holds the RustRuntimeContext.
+     *
+     */
+
     CallContext(
         Azure::Core::Amqp::_detail::RustInterop::RuntimeContext* runtimeContext,
         Azure::Core::Context const& context)
