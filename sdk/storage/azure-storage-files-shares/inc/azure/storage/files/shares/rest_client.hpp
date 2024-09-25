@@ -380,6 +380,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * support. Current maximum for a file share is 10,340 MiB/sec.
        */
       Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+      /**
+       * Return the calculated burst IOPS of the share.
+       */
+      Nullable<std::int64_t> IncludedBurstIops;
+      /**
+       * Return the calculated maximum burst credits. This is not the current burst credit level,
+       * but the maximum burst credits the share can have.
+       */
+      Nullable<std::int64_t> MaxBurstCreditsForIops;
+      /**
+       * Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedIopsDowngradeTime;
+      /**
+       * Return timestamp for provisioned throughput following existing rules for provisioned
+       * storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -481,6 +499,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * not affect the last modified time of the share.
        */
       DateTime LastModified;
+      /**
+       * Returns the current share quota in GB.
+       */
+      Nullable<std::int64_t> Quota;
+      /**
+       * The provisioned IOPS of the share. If this is not specified, compute the recommended IOPS
+       * of the share using the formula for a share in this media tier (SSD/HDD as appropriate).
+       */
+      Nullable<std::int64_t> ShareProvisionedIops;
+      /**
+       * The provisioned throughput of the share. If this is not specified, compute the recommended
+       * throughput of the share using the formula for a share in this media tier (SSD/HDD as
+       * appropriate).
+       */
+      Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+      /**
+       * ShareIncludedBurstIops.
+       */
+      Nullable<std::int64_t> ShareIncludedBurstIops;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::GetProperties.
@@ -577,6 +614,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * support. Current maximum for a file share is 10,340 MiB/sec.
        */
       Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+      /**
+       * Return the calculated burst IOPS of the share.
+       */
+      Nullable<std::int64_t> IncludedBurstIops;
+      /**
+       * Returned the calculated maximum burst credits. This is not the current burst credit level,
+       * but the maximum burst credits the share can have.
+       */
+      Nullable<std::int64_t> MaxBurstCreditsForIops;
+      /**
+       * Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedIopsDowngradeTime;
+      /**
+       * Return timestamp for provisioned throughput following existing rules for provisioned
+       * storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -601,6 +656,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Indicates if the share was successfully deleted by this operation.
        */
       bool Deleted = true;
+      /**
+       * The "live share" portion of the data that the customer will be billed for in the
+       * soft-deleted capacity (logical storage size).
+       */
+      Nullable<std::int64_t> ShareUsageBytes;
+      /**
+       * The snapshot share portion of the data that the customer will be billed for in the
+       * soft-deleted capacity (this is the delta, or "physical storage size").
+       */
+      Nullable<std::int64_t> ShareSnapshotUsageBytes;
     };
     namespace _detail {
       /**
@@ -793,6 +858,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * the last modified time of the share.
        */
       DateTime LastModified;
+      /**
+       * Returns the current share quota in GB.
+       */
+      Nullable<std::int64_t> Quota;
+      /**
+       * Returns the current share provisioned ipos.
+       */
+      Nullable<std::int64_t> ProvisionedIops;
+      /**
+       * Returns the current share provisioned bandwidth in megabits per second.
+       */
+      Nullable<std::int64_t> ProvisionedBandwidthMibps;
+      /**
+       * Return the calculated burst IOPS of the share.
+       */
+      Nullable<std::int64_t> IncludedBurstIops;
+      /**
+       * Returned the calculated maximum burst credits. This is not the current burst credit level,
+       * but the maximum burst credits the share can have.
+       */
+      Nullable<std::int64_t> MaxBurstCreditsForIops;
+      /**
+       * Returns the current share next allowed quota downgrade time.
+       */
+      Nullable<DateTime> NextAllowedQuotaDowngradeTime;
+      /**
+       * Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedIopsDowngradeTime;
+      /**
+       * Return timestamp for provisioned throughput following existing rules for provisioned
+       * storage GiB.
+       */
+      Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::SetMetadata.
@@ -2063,6 +2162,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
         Nullable<std::int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::int64_t> ShareProvisionedIops;
+        Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2192,6 +2293,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
         Nullable<std::int64_t> PaidBurstingMaxIops;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::int64_t> ShareProvisionedIops;
+        Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,

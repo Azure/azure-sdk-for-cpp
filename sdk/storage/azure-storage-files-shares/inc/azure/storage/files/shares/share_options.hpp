@@ -199,6 +199,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.
      */
     Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+
+    /**
+     * Optional. Integer. Version 2025-01-05 and newer. The provisioned IOPS of the share. For SSD,
+     * minimum IOPS is 3,000 and maximum is 100,000. For HDD, minimum IOPS is 500 and maximum is
+     * 50,000.
+     */
+    Nullable<std::int64_t> ProvisionedMaxIops;
+
+    /**
+     * Optional. Integer. Version 2025-01-05 and newer. The provisioned throughput of the share. For
+     * SSD, minimum  throughput is 125 MiB/sec and maximum is 10,340 MiB/sec. For HDD, minimum
+     * throughput is 60 MiB/sec and maximum is 5,125 MiB/sec.
+     */
+    Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
   };
 
   /**
@@ -276,6 +290,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.
      */
     Nullable<std::int64_t> PaidBurstingMaxBandwidthMibps;
+
+    /**
+     * Optional. Boolean. Version 2025-01-05 and newer. Sets the max provisioned IOPs for a share.
+     * For SSD, min IOPs is 3,000 and max is 100,000. For HDD, min IOPs is 500 and max is 50,000.
+     */
+    Nullable<std::int64_t> ProvisionedMaxIops;
+
+    /**
+     * Optional. Boolean. Version 2025-01-05 and newer. Sets the max provisioned brandwith for a
+     * share.  For SSD, min bandwidth is 125 MiB/sec and max is 10,340 MiB/sec. For HDD, min
+     * bandwidth is 60 MiB/sec and max is 5,120 MiB/sec.
+     */
+    Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
   };
 
   /**

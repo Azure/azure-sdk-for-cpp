@@ -822,4 +822,65 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(sddlPermission, permission);
     }
   }
+
+  TEST_F(FileShareClientTest, ProvisionedBilling_DISABLED)
+  {
+    auto shareServiceClient = *m_shareServiceClient;
+    auto shareName = LowercaseRandomString();
+    auto shareClient = shareServiceClient.GetShareClient(shareName);
+
+    // Create
+    Files::Shares::CreateShareOptions options;
+    options.AccessTier = Files::Shares::Models::AccessTier::TransactionOptimized;
+    options.ProvisionedMaxIops = 500;
+    options.ProvisionedMaxBandwidthMibps = 125;
+    options.ShareQuotaInGiB = 1;
+    Files::Shares::Models::CreateShareResult result;
+    EXPECT_NO_THROW(result = shareClient.Create(options).Value);
+    EXPECT_TRUE(result.ShareProvisionedIops.HasValue());
+    EXPECT_EQ(options.ProvisionedMaxIops.Value(), result.ShareProvisionedIops.Value());
+    EXPECT_TRUE(result.ShareProvisionedBandwidthMibps.HasValue());
+    EXPECT_EQ(
+        options.ProvisionedMaxBandwidthMibps.Value(),
+        result.ShareProvisionedBandwidthMibps.Value());
+    EXPECT_TRUE(result.ShareIncludedBurstIops.HasValue());
+
+    // GetProperties
+    Files::Shares::Models::ShareProperties properties;
+    EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
+    EXPECT_TRUE(properties.ProvisionedIops.HasValue());
+    EXPECT_EQ(options.ProvisionedMaxIops.Value(), properties.ProvisionedIops.Value());
+    EXPECT_TRUE(properties.ProvisionedBandwidthMBps.HasValue());
+    EXPECT_EQ(
+        options.ProvisionedMaxBandwidthMibps.Value(), properties.ProvisionedBandwidthMBps.Value());
+    EXPECT_TRUE(properties.IncludedBurstIops.HasValue());
+    EXPECT_TRUE(properties.MaxBurstCreditsForIops.HasValue());
+    EXPECT_TRUE(properties.NextAllowedProvisionedIopsDowngradeTime.HasValue());
+    EXPECT_TRUE(properties.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
+
+    // SetProperties
+    Files::Shares::SetSharePropertiesOptions setOptions;
+    setOptions.ProvisionedMaxIops = 500;
+    setOptions.ProvisionedMaxBandwidthMibps = 125;
+    Files::Shares::Models::SetSharePropertiesResult setResult;
+    EXPECT_NO_THROW(setResult = shareClient.SetProperties(setOptions).Value);
+    EXPECT_TRUE(setResult.ProvisionedIops.HasValue());
+    EXPECT_EQ(setOptions.ProvisionedMaxIops.Value(), setResult.ProvisionedIops.Value());
+    EXPECT_TRUE(setResult.ProvisionedBandwidthMibps.HasValue());
+    EXPECT_EQ(
+        setOptions.ProvisionedMaxBandwidthMibps.Value(),
+        setResult.ProvisionedBandwidthMibps.Value());
+    EXPECT_TRUE(setResult.IncludedBurstIops.HasValue());
+    EXPECT_TRUE(setResult.Quota.HasValue());
+    EXPECT_TRUE(setResult.MaxBurstCreditsForIops.HasValue());
+    EXPECT_TRUE(setResult.NextAllowedProvisionedIopsDowngradeTime.HasValue());
+    EXPECT_TRUE(setResult.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
+
+    // Delete
+    Files::Shares::Models::DeleteShareResult deleteResult;
+    EXPECT_NO_THROW(deleteResult = shareClient.Delete().Value);
+    EXPECT_TRUE(deleteResult.Deleted);
+    EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
+    EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
+  }
 }}} // namespace Azure::Storage::Test
