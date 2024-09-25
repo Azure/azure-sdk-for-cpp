@@ -211,27 +211,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void ConnectionImpl::Open()
   {
+    Azure::Core::Amqp::Common::_detail::CallContext callContext{
+        Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+            ->GetRuntimeContext()};
     if (m_options.EnableTrace)
     {
       Log::Stream(Logger::Level::Verbose)
           << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
     }
     if (amqpconnection_open(
-            Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
-                ->GetRuntimeContext(),
+            callContext.GetCallContext(),
             m_connection.get(),
             m_hostUrl.GetAbsoluteUrl().c_str(),
             m_containerId.c_str(),
             m_connectionOptions.get()))
     {
-      auto error = runtime_context_get_error(
-          Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
-              ->GetRuntimeContext());
-      auto err = rust_error_get_message(error);
-      std::string errorString{err};
-      rust_string_delete(err);
-      rust_error_delete(error);
-      throw std::runtime_error("Could not open connection:" + errorString);
+      throw std::runtime_error("Could not open connection:" + callContext.GetError());
     }
   }
 
@@ -240,6 +235,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       const std::string& description,
       Models::AmqpValue info)
   {
+    Azure::Core::Amqp::Common::_detail::CallContext callContext{
+        Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+            ->GetRuntimeContext()};
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (!m_connection)
@@ -248,22 +246,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (condition.empty() && description.empty() && info.IsNull())
     {
-      if (amqpconnection_close(runtime_context_new(), m_connection.get()))
+      if (amqpconnection_close(callContext.GetCallContext(), m_connection.get()))
       {
-        throw std::runtime_error("Could not close connection.");
+        throw std::runtime_error("Could not close connection: " + callContext.GetError());
       }
     }
     else
     {
       if (amqpconnection_close_with_error(
-              Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
-                  ->GetRuntimeContext(),
+              callContext.GetCallContext(),
               m_connection.get(),
               condition.c_str(),
               description.c_str(),
               Models::_detail::AmqpValueFactory::ToImplementation(info)))
       {
-        throw std::runtime_error("Could not close connection.");
+        throw std::runtime_error("Could not close connection: " + callContext.GetError());
       }
     }
     m_connectionOpened = false;

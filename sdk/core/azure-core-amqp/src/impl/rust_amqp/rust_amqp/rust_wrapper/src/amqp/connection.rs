@@ -11,8 +11,8 @@ use std::{
 use time::Duration;
 
 use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
     model::value::RustAmqpValue,
-    runtime_context::{runtime_context_from_ptr_mut, RuntimeContext},
 };
 
 use tracing::error;
@@ -32,9 +32,7 @@ pub struct RustAmqpConnection {
 
 impl RustAmqpConnection {
     pub fn new(connection: AmqpConnection) -> RustAmqpConnection {
-        Self {
-            inner: connection,
-        }
+        Self { inner: connection }
     }
     pub(crate) fn get_connection(&self) -> &AmqpConnection {
         &self.inner
@@ -65,13 +63,13 @@ pub extern "C" fn amqpconnection_destroy(connection: *mut RustAmqpConnection) {
 
 #[no_mangle]
 pub extern "C" fn amqpconnection_open(
-    ctx: *mut RuntimeContext,
+    ctx: *mut RustCallContext,
     connection: *const RustAmqpConnection,
     url: *const c_char,
     container_id: *const c_char,
     options: *const RustAmqpConnectionOptions,
 ) -> u32 {
-    let runtime_context = runtime_context_from_ptr_mut(ctx);
+    let call_context = call_context_from_ptr_mut(ctx);
     let connection = unsafe { &*connection };
     let url = unsafe { CStr::from_ptr(url) };
     let url = url.to_str();
@@ -87,7 +85,7 @@ pub extern "C" fn amqpconnection_open(
 
     if url.is_err() {
         error!("Failed to convert URL to string: {:?}", url.err());
-        runtime_context.set_error(url.err().unwrap().into());
+        call_context.set_error(url.err().unwrap().into());
         return 1;
     }
     let url = url.unwrap();
@@ -96,21 +94,24 @@ pub extern "C" fn amqpconnection_open(
     if url.is_err() {
         let err = url.err().unwrap();
         error!("Failed to parse URL: {:?}", &err);
-        runtime_context.set_error(err.into());
+        call_context.set_error(err.into());
         return 1;
     }
     let url = url.unwrap();
 
-    let result = runtime_context.runtime().block_on(connection.inner.open(
-        container_id.to_str().unwrap(),
-        url,
-        Some(options.inner.clone()),
-    ));
+    let result = call_context
+        .runtime_context()
+        .runtime()
+        .block_on(connection.inner.open(
+            container_id.to_str().unwrap(),
+            url,
+            Some(options.inner.clone()),
+        ));
     match result {
         Ok(_) => 0,
         Err(err) => {
             error!("Failed to open connection: {:?}", err);
-            runtime_context.set_error(err.into());
+            call_context.set_error(err.into());
             1
         }
     }
@@ -118,12 +119,15 @@ pub extern "C" fn amqpconnection_open(
 
 #[no_mangle]
 pub extern "C" fn amqpconnection_close(
-    ctx: *mut RuntimeContext,
+    ctx: *mut RustCallContext,
     connection: *const RustAmqpConnection,
 ) -> u32 {
     let connection = unsafe { &*connection };
-    let runtime_context = runtime_context_from_ptr_mut(ctx);
-    let result = runtime_context.runtime().block_on(connection.inner.close());
+    let runtime_context = call_context_from_ptr_mut(ctx);
+    let result = runtime_context
+        .runtime_context()
+        .runtime()
+        .block_on(connection.inner.close());
     match result {
         Ok(_) => 0,
         Err(err) => {
@@ -136,14 +140,14 @@ pub extern "C" fn amqpconnection_close(
 
 #[no_mangle]
 pub extern "C" fn amqpconnection_close_with_error(
-    ctx: *mut RuntimeContext,
+    ctx: *mut RustCallContext,
     connection: *const RustAmqpConnection,
     condition: *const c_char,
     description: *const c_char,
     info: *const RustAmqpValue,
 ) -> u32 {
     let connection = unsafe { &*connection };
-    let runtime_context = runtime_context_from_ptr_mut(ctx);
+    let call_context = call_context_from_ptr_mut(ctx);
     let condition = unsafe { CStr::from_ptr(condition) };
     let description = unsafe { CStr::from_ptr(description) };
     let info = unsafe { &*info };
@@ -161,18 +165,20 @@ pub extern "C" fn amqpconnection_close_with_error(
                 )
             })
             .collect();
-        let result = runtime_context
-            .runtime()
-            .block_on(connection.inner.close_with_error(
-                condition.to_str().unwrap(),
-                Some(description.to_str().unwrap().into()),
-                Some(info.clone()),
-            ));
+        let result =
+            call_context
+                .runtime_context()
+                .runtime()
+                .block_on(connection.inner.close_with_error(
+                    condition.to_str().unwrap(),
+                    Some(description.to_str().unwrap().into()),
+                    Some(info.clone()),
+                ));
         match result {
             Ok(_) => 0,
             Err(err) => {
                 error!("Failed to close connection with error: {:?}", err);
-                runtime_context.set_error(err.into());
+                call_context.set_error(err.into());
                 1
             }
         }
@@ -412,12 +418,17 @@ pub extern "C" fn amqpconnectionoptionsbuilder_set_buffer_size(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::runtime_context::RuntimeContext;
     use std::ffi::CString;
     use std::ptr;
 
     fn create_runtime_context() -> *mut RuntimeContext {
         // Mock implementation for creating a runtime context
         Box::into_raw(Box::new(RuntimeContext::new().unwrap()))
+    }
+    fn create_call_context(runtime_context: *mut RuntimeContext) -> *mut RustCallContext {
+        // Mock implementation for creating a runtime context
+        Box::into_raw(Box::new(RustCallContext::new(runtime_context)))
     }
 
     #[test]
@@ -430,6 +441,7 @@ mod tests {
     #[test]
     fn test_amqpconnection_open_and_close() {
         let ctx = create_runtime_context();
+        let ctx = create_call_context(ctx);
         let connection = amqpconnection_create();
         let url = CString::new("amqp://localhost:25672").unwrap();
         let container_id = CString::new("test_container").unwrap();

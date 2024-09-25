@@ -7,10 +7,11 @@ cspell: words reqwest repr staticlib dylib brotli gzip
 
 use std::ffi::c_char;
 
-pub struct RustError(azure_core::Error);
+#[derive(Debug)]
+pub struct RustError(Box<dyn std::error::Error + Send + Sync>);
 
 impl RustError {
-    pub fn new(error: azure_core::Error) -> Self {
+    pub fn new(error: Box<dyn std::error::Error + Send + Sync>) -> Self {
         RustError(error)
     }
 }

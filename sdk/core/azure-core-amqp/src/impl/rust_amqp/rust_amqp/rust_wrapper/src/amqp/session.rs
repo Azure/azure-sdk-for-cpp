@@ -4,8 +4,8 @@
 
 use crate::{
     amqp::connection::RustAmqpConnection,
+    call_context::{call_context_from_ptr_mut, RustCallContext},
     model::value::RustAmqpValue,
-    runtime_context::{runtime_context_from_ptr_mut, RuntimeContext},
 };
 use azure_core_amqp::{
     session::{
@@ -44,38 +44,42 @@ pub extern "C" fn amqpsession_destroy(session: *mut RustAmqpSession) {
 
 #[no_mangle]
 pub extern "C" fn amqpsession_begin(
+    call_context: *mut RustCallContext,
     session: *mut RustAmqpSession,
     connection: *mut RustAmqpConnection,
     session_options: *mut RustAmqpSessionOptions,
-    runtime_context: *mut RuntimeContext,
 ) -> u32 {
     let session = unsafe { &mut *session };
     let connection = unsafe { &mut *connection };
-    let runtime_context = runtime_context_from_ptr_mut(runtime_context);
+    let call_context = call_context_from_ptr_mut(call_context);
 
     if session_options.is_null() {
-        let result = runtime_context
+        let result = call_context
+            .runtime_context()
             .runtime()
             .block_on(session.inner.begin(connection.get_connection(), None));
         match result {
             Ok(()) => 0,
             Err(err) => {
                 error!("Failed to open connection with session options: {:?}", err);
-                runtime_context.set_error(err.into());
+                call_context.set_error(err.into());
                 1
             }
         }
     } else {
         let session_options = unsafe { &*session_options };
-        let result = runtime_context.runtime().block_on(session.inner.begin(
-            connection.get_connection(),
-            Some(session_options.inner.clone()),
-        ));
+        let result = call_context
+            .runtime_context()
+            .runtime()
+            .block_on(session.inner.begin(
+                connection.get_connection(),
+                Some(session_options.inner.clone()),
+            ));
         match result {
             Ok(()) => 0,
             Err(err) => {
                 error!("Failed to open connection with session options: {:?}", err);
-                runtime_context.set_error(err.into());
+                call_context.set_error(err.into());
                 1
             }
         }
@@ -84,17 +88,20 @@ pub extern "C" fn amqpsession_begin(
 
 #[no_mangle]
 pub extern "C" fn amqpsession_end(
+    call_context: *mut RustCallContext,
     session: *mut RustAmqpSession,
-    runtime_context: *mut RuntimeContext,
 ) -> u32 {
     let session = unsafe { &*session };
-    let runtime_context = runtime_context_from_ptr_mut(runtime_context);
-    let result = runtime_context.runtime().block_on(session.inner.end());
+    let call_context = call_context_from_ptr_mut(call_context);
+    let result = call_context
+        .runtime_context()
+        .runtime()
+        .block_on(session.inner.end());
     match result {
         Ok(_) => 0,
         Err(err) => {
             error!("Failed to end session: {:?}", err);
-            runtime_context.set_error(err.into());
+            call_context.set_error(err.into());
             1
         }
     }
@@ -238,6 +245,7 @@ pub extern "C" fn amqpsessionoptionsbuilder_build(
 
 #[cfg(test)]
 mod tests {
+    use crate::runtime_context::RuntimeContext;
     use azure_core_amqp::{
         connection::{AmqpConnection, AmqpConnectionApis},
         value::AmqpList,
@@ -353,10 +361,12 @@ mod tests {
     #[test]
     fn test_amqpsession_begin() {
         let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
+        let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
         let session = amqpsession_create();
         let connection = AmqpConnection::new();
 
-        runtime_context_from_ptr_mut(runtime_context)
+        call_context_from_ptr_mut(call_context)
+            .runtime_context()
             .runtime()
             .block_on(connection.open(
                 "testConnection",
@@ -366,7 +376,7 @@ mod tests {
             .unwrap();
 
         let connection = Box::into_raw(Box::new(RustAmqpConnection::new(connection)));
-        let result = amqpsession_begin(session, connection, std::ptr::null_mut(), runtime_context);
+        let result = amqpsession_begin(call_context, session, connection, std::ptr::null_mut());
         assert_eq!(result, 0);
         unsafe {
             drop(Box::from_raw(connection));
@@ -378,10 +388,12 @@ mod tests {
     #[test]
     fn test_amqpsession_begin_with_options() {
         let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
+        let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
         let session = amqpsession_create();
         let connection = AmqpConnection::new();
 
-        runtime_context_from_ptr_mut(runtime_context)
+        call_context_from_ptr_mut(call_context)
+            .runtime_context()
             .runtime()
             .block_on(connection.open(
                 "testConnection",
@@ -394,7 +406,7 @@ mod tests {
 
         let session_options_builder = amqpsessionoptionsbuilder_create();
         let session_options = amqpsessionoptionsbuilder_build(session_options_builder);
-        let result = amqpsession_begin(session, connection, session_options, runtime_context);
+        let result = amqpsession_begin(call_context, session, connection, session_options);
         assert_eq!(result, 0);
         amqpsession_destroy(session);
         unsafe {
