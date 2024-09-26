@@ -498,7 +498,7 @@ namespace Azure { namespace Storage { namespace Test {
     shareClient.DeleteIfExists();
   }
 
-  TEST_F(FileShareServiceClientTest, ListShares_ProvisionedBilling_DISABLED)
+  TEST_F(FileShareServiceClientTest, ListShares_ProvisionedBilling_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_shareServiceClient;
     auto shareName = LowercaseRandomString();
@@ -524,5 +524,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(shareItem.Value().Details.MaxBurstCreditsForIops.HasValue());
     EXPECT_TRUE(shareItem.Value().Details.NextAllowedProvisionedIopsDowngradeTime.HasValue());
     EXPECT_TRUE(shareItem.Value().Details.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
+
+    EXPECT_NO_THROW(shareClient.Delete());
   }
 }}} // namespace Azure::Storage::Test

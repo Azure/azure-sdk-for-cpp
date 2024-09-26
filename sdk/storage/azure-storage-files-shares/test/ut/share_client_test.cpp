@@ -823,7 +823,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, ProvisionedBilling_DISABLED)
+  TEST_F(FileShareClientTest, ProvisionedBilling_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_shareServiceClient;
     auto shareName = LowercaseRandomString();
@@ -831,10 +831,9 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Create
     Files::Shares::CreateShareOptions options;
-    options.AccessTier = Files::Shares::Models::AccessTier::TransactionOptimized;
-    options.ProvisionedMaxIops = 500;
+    options.ProvisionedMaxIops = 10240;
     options.ProvisionedMaxBandwidthMibps = 125;
-    options.ShareQuotaInGiB = 1;
+    options.ShareQuotaInGiB = 32;
     Files::Shares::Models::CreateShareResult result;
     EXPECT_NO_THROW(result = shareClient.Create(options).Value);
     EXPECT_TRUE(result.ShareProvisionedIops.HasValue());
@@ -862,7 +861,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // SetProperties
     Files::Shares::SetSharePropertiesOptions setOptions;
-    setOptions.ProvisionedMaxIops = 500;
+    setOptions.ProvisionedMaxIops = 20480;
     setOptions.ProvisionedMaxBandwidthMibps = 125;
     Files::Shares::Models::SetSharePropertiesResult setResult;
     EXPECT_NO_THROW(setResult = shareClient.SetProperties(setOptions).Value);
@@ -878,11 +877,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(setResult.NextAllowedProvisionedIopsDowngradeTime.HasValue());
     EXPECT_TRUE(setResult.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
 
-    // Delete
-    Files::Shares::Models::DeleteShareResult deleteResult;
-    EXPECT_NO_THROW(deleteResult = shareClient.Delete().Value);
-    EXPECT_TRUE(deleteResult.Deleted);
-    EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
-    EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
+    // Delete (Due to inconsistent between swagger and server, pending response for this test case)
+    // Files::Shares::Models::DeleteShareResult deleteResult;
+    // EXPECT_NO_THROW(deleteResult = shareClient.Delete().Value);
+    // EXPECT_TRUE(deleteResult.Deleted);
+    // EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
+    // EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
   }
 }}} // namespace Azure::Storage::Test

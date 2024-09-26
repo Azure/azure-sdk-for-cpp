@@ -163,6 +163,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Created = true;
     ret.ETag = std::move(result.Value.ETag);
     ret.LastModified = std::move(result.Value.LastModified);
+    ret.ShareProvisionedIops = std::move(result.Value.ShareProvisionedIops);
+    ret.ShareProvisionedBandwidthMibps = std::move(result.Value.ShareProvisionedBandwidthMibps);
+    ret.ShareIncludedBurstIops = std::move(result.Value.ShareIncludedBurstIops);
+    ret.Quota = std::move(result.Value.Quota);
     return Azure::Response<Models::CreateShareResult>(
         std::move(ret), std::move(result.RawResponse));
   }
@@ -201,6 +205,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = _detail::ShareClient::Delete(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::DeleteShareResult ret;
     ret.Deleted = true;
+    ret.ShareUsageBytes = std::move(result.Value.ShareUsageBytes);
+    ret.ShareSnapshotUsageBytes = std::move(result.Value.ShareSnapshotUsageBytes);
     return Azure::Response<Models::DeleteShareResult>(
         std::move(ret), std::move(result.RawResponse));
   }
