@@ -8,10 +8,10 @@ cspell: words reqwest repr staticlib dylib brotli gzip
 use std::ffi::c_char;
 
 #[derive(Debug)]
-pub struct RustError(Box<dyn std::error::Error + Send + Sync>);
+pub struct RustError(Box<dyn std::error::Error>);
 
 impl RustError {
-    pub fn new(error: Box<dyn std::error::Error + Send + Sync>) -> Self {
+    pub fn new(error: Box<dyn std::error::Error>) -> Self {
         RustError(error)
     }
 }
