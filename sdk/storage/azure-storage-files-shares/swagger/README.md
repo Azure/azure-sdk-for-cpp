@@ -1183,4 +1183,8 @@ directive:
     where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=rangelist"].get.responses["200"]
     transform: >
       $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=properties"].put.responses["200"]
+    transform: >
+      $.headers["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
 ```

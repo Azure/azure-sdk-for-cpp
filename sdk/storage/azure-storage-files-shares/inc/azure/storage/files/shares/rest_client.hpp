@@ -863,7 +863,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<std::int64_t> Quota;
       /**
-       * Returns the current share provisioned ipos.
+       * Returns the current share provisioned IOPS.
        */
       Nullable<std::int64_t> ProvisionedIops;
       /**
