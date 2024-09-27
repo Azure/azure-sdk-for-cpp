@@ -313,7 +313,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     bool EnableTrace{false};
   };
 
-  /// @brief
   class Connection final {
   public:
     // Delete copy constructor and copy assignment operator
