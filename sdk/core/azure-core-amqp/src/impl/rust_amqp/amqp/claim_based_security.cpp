@@ -88,10 +88,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     return os;
   }
-
+#if ENABLE_UAMQP
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
   {
     Log::Stream(Logger::Level::Warning) << "AMQP Error processing ClaimsBasedSecurity: " << error;
   }
+#endif
 
 }}}} // namespace Azure::Core::Amqp::_detail
