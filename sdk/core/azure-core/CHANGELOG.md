@@ -12,6 +12,14 @@
 
 ### Other Changes
 
+- [[#6014]], [[#6016]] Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_) 
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- James Le Cuirot _([GitHub](https://github.com/chewi))_
+
 ## 1.14.0-beta.2 (2024-09-12)
 
 ### Features Added
