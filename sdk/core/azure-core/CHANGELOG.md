@@ -12,7 +12,7 @@
 
 ### Other Changes
 
-- [[#6014]], [[#6016]] Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_) 
+- [[#6014]](https://github.com/Azure/azure-sdk-for-cpp/pull/6014), [[#6016]](https://github.com/Azure/azure-sdk-for-cpp/pull/6016) Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_) 
 
 ### Acknowledgments
 
