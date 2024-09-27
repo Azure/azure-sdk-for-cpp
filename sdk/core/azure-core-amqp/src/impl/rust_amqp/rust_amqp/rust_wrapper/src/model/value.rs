@@ -14,6 +14,7 @@ use azure_core_amqp::{
 use std::ffi::{c_char, CString};
 use std::mem;
 use std::ptr::null;
+use tracing::error;
 
 #[derive(Debug, Clone)]
 pub struct RustAmqpValue {
@@ -916,10 +917,16 @@ pub extern "C" fn amqpvalue_get_composite_item_in_place(
 #[no_mangle]
 pub extern "C" fn amqpvalue_get_encoded_size(value: *const RustAmqpValue, size: *mut usize) -> u32 {
     let value = unsafe { &*value };
-    unsafe {
-        *size = Serializable::encoded_size(&value.inner);
+    let encoded_size = Serializable::encoded_size(&value.inner);
+    if encoded_size.is_ok() {
+        unsafe {
+            *size = encoded_size.unwrap();
+        }
+        0
+    } else {
+        error!("Unable to compute encoded size: {:?}", encoded_size.err().unwrap());
+        1
     }
-    0
 }
 
 #[no_mangle]
