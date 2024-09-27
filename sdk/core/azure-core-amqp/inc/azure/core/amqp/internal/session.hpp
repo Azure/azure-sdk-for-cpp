@@ -54,13 +54,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   enum class SessionRole;
   class MessageSender;
   struct MessageSenderOptions;
-  class MessageSenderEvents;
   class MessageReceiver;
   struct MessageReceiverOptions;
-  class MessageReceiverEvents;
   class ManagementClient;
   struct ManagementClientOptions;
+#if ENABLE_UAMQP
+  class MessageSenderEvents;
+  class MessageReceiverEvents;
   class ManagementClientEvents;
+#endif
 
   enum class ExpiryPolicy
   {
@@ -188,6 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderOptions const& options) const;
 #endif
 
+#if ENABLE_UAMQP
     /** @brief Creates a MessageReceiver
      *
      * @param receiverSource - The source from which to receive messages.
@@ -206,7 +209,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& managementInstancePath,
         ManagementClientOptions const& options,
         ManagementClientEvents* managementEvents = nullptr) const;
+#elif ENABLE_RUST_AMQP
+    /** @brief Creates a MessageReceiver
+     *
+     * @param receiverSource - The source from which to receive messages.
+     * @param options - Options to configure the MessageReceiver.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageReceiver CreateMessageReceiver(
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options) const;
 
+    ManagementClient CreateManagementClient(
+        std::string const& managementInstancePath,
+        ManagementClientOptions const& options) const;
+#endif
     /** @brief Begins operations on the session.
      *
      */

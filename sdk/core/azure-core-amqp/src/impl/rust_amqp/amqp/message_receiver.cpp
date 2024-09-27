@@ -35,6 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+#if ENABLE_UAMQP
   /** Configure the MessageReceiver for receiving messages from a service instance.
    */
   MessageReceiverImpl::MessageReceiverImpl(
@@ -66,6 +67,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // do so.
     m_deferLinkPolling = true;
   }
+#elif ENABLE_RUST_AMQP
+  /** Configure the MessageReceiver for receiving messages from a service instance.
+   */
+  MessageReceiverImpl::MessageReceiverImpl(
+      std::shared_ptr<_detail::SessionImpl> session,
+      Models::_internal::MessageSource const& source,
+      MessageReceiverOptions const& options)
+      : m_options{options}, m_source{source}, m_session{session}
+  {
+  }
+
+#endif
 
   void MessageReceiverImpl::CreateLink(LinkEndpoint& endpoint)
   {
@@ -104,6 +117,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
   {
+#if ENABLE_UAMQP
     if (m_eventHandler)
     {
       throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
@@ -125,10 +139,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw Azure::Core::OperationCancelledException("Receive Operation was cancelled.");
     }
+#elif ENABLE_RUST_AMQP
+    throw std::runtime_error("Not implemented");
+    (void)context;
+#endif
   }
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::TryWaitForIncomingMessage()
   {
+#if ENABLE_UAMQP
     if (m_eventHandler)
     {
       throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
@@ -151,6 +170,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // There is no data available, let the caller know that there's nothing happening here.
       return {};
     }
+#elif ENABLE_RUST_AMQP
+    throw std::runtime_error("Not implemented");
+#endif
   }
 
   MessageReceiverImpl::~MessageReceiverImpl() noexcept
@@ -164,12 +186,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           "MessageReceiverImpl is being destroyed while open.");
     }
 
+#if ENABLE_UAMQP
     // If we're registered for events, null out the event handler, so we don't get called back
     // during the destroy.
     if (m_eventHandler)
     {
       m_eventHandler = nullptr;
     }
+#endif
     if (m_link)
     {
       m_link.reset();

@@ -24,35 +24,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   CbsOpenResult ClaimsBasedSecurityImpl::Open(Context const& context)
   {
-    if (!m_management)
-    {
-      ManagementClientOptions managementOptions;
-      managementOptions.EnableTrace = m_session->GetConnection()->IsTraceEnabled();
-      managementOptions.ExpectedStatusCodeKeyName = "status-code";
-      managementOptions.ExpectedStatusDescriptionKeyName = "status-description";
-      managementOptions.ManagementNodeName = "$cbs";
-      m_management
-          = std::make_shared<ManagementClientImpl>(m_session, "$cbs", managementOptions, this);
-
-      auto rv{m_management->Open(context)};
-      switch (rv)
-      {
-        case ManagementOpenStatus::Invalid:
-          return CbsOpenResult::Invalid;
-        case ManagementOpenStatus::Ok:
-          return CbsOpenResult::Ok;
-        case ManagementOpenStatus::Error:
-          return CbsOpenResult::Error;
-        case ManagementOpenStatus::Cancelled:
-          return CbsOpenResult::Cancelled;
-        default:
-          throw std::runtime_error("Unknown return value from Management::Open()");
-      }
-    }
-    else
-    {
-      return CbsOpenResult::Error;
-    }
+    throw std::runtime_error("Not yet implemented.");
+    (void)context;
   }
 
   void ClaimsBasedSecurityImpl::Close(Context const& context) { m_management->Close(context); }
@@ -63,53 +36,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::string const& token,
       Context const& context)
   {
-    Models::AmqpMessage message;
-    message.SetBody(static_cast<Models::AmqpValue>(token));
-
-    message.ApplicationProperties["name"] = static_cast<Models::AmqpValue>(audience);
-
-    auto result = m_management->ExecuteOperation(
-        "put-token",
-        (tokenType == CbsTokenType::Jwt ? "jwt" : "servicebus.windows.net:sastoken"),
-        {},
-        message,
-        context);
-    if (result.Status != ManagementOperationStatus::Ok)
-    {
-      CbsOperationResult cbsResult;
-      switch (result.Status)
-      {
-        case ManagementOperationStatus::Invalid:
-          cbsResult = CbsOperationResult::Invalid;
-          break;
-        case ManagementOperationStatus::Ok:
-          cbsResult = CbsOperationResult::Ok;
-          break;
-        case ManagementOperationStatus::Error:
-          cbsResult = CbsOperationResult::Error;
-          break;
-        case ManagementOperationStatus::FailedBadStatus:
-          cbsResult = CbsOperationResult::Failed;
-          break;
-        case ManagementOperationStatus::InstanceClosed:
-          cbsResult = CbsOperationResult::InstanceClosed;
-          break;
-        case ManagementOperationStatus::Cancelled:
-          cbsResult = CbsOperationResult::Cancelled;
-          break;
-        default:
-          throw std::runtime_error("Unknown management operation status.");
-      }
-      Log::Stream(Logger::Level::Informational)
-          << "CBS PutToken result: " << cbsResult << " status code: " << result.StatusCode
-          << " Error: " << result.Error << ".";
-      return std::make_tuple(cbsResult, result.StatusCode, result.Error.Description);
-    }
-    else
-    {
-      return std::make_tuple(CbsOperationResult::Ok, result.StatusCode, result.Error.Description);
-    }
+    throw std::runtime_error("Not yet implemented.");
+    (void)tokenType;
+    (void)audience;
+    (void)token;
+    (void)context;
   }
+
   std::ostream& operator<<(std::ostream& os, CbsOperationResult operationResult)
   {
     switch (operationResult)

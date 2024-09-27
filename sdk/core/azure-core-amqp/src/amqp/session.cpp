@@ -22,7 +22,7 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
-#if ENABLE_UAMP
+#if ENABLE_UAMQP
   Endpoint::~Endpoint()
   {
     if (m_endpoint)
@@ -87,6 +87,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   }
 #endif
 
+#if ENABLE_UAMQP
   MessageReceiver Session::CreateMessageReceiver(
       Models::_internal::MessageSource const& receiverSource,
       MessageReceiverOptions const& options,
@@ -96,7 +97,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::make_shared<_detail::MessageReceiverImpl>(m_impl, receiverSource, options, events));
   }
 
-#if ENABLE_UAMQP
   MessageReceiver Session::CreateMessageReceiver(
       LinkEndpoint& endpoint,
       Models::_internal::MessageSource const& receiverSource,
@@ -107,8 +107,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::make_shared<_detail::MessageReceiverImpl>(
             m_impl, endpoint, receiverSource, options, events));
   }
-#endif
-
   ManagementClient Session::CreateManagementClient(
       std::string const& entityPath,
       ManagementClientOptions const& options,
@@ -117,5 +115,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return _detail::ManagementClientFactory::CreateFromInternal(
         std::make_shared<_detail::ManagementClientImpl>(m_impl, entityPath, options, events));
   }
+
+#elif ENABLE_RUST_AMQP
+  MessageReceiver Session::CreateMessageReceiver(
+      Models::_internal::MessageSource const& receiverSource,
+      MessageReceiverOptions const& options) const
+  {
+    return _detail::MessageReceiverFactory::CreateFromInternal(
+        std::make_shared<_detail::MessageReceiverImpl>(m_impl, receiverSource, options));
+  }
+
+  ManagementClient Session::CreateManagementClient(
+      std::string const& entityPath,
+      ManagementClientOptions const& options) const
+  {
+    return _detail::ManagementClientFactory::CreateFromInternal(
+        std::make_shared<_detail::ManagementClientImpl>(m_impl, entityPath, options));
+  }
+
+#endif
 
 }}}} // namespace Azure::Core::Amqp::_internal
