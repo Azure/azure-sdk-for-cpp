@@ -38,6 +38,7 @@ pub extern "C" fn runtime_context_new() -> *mut RuntimeContext {
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn runtime_context_delete(ctx: *mut RuntimeContext) {
     mem::drop(Box::from_raw(ctx))

@@ -32,15 +32,19 @@ pub extern "C" fn call_context_new(runtime_context: *mut RuntimeContext) -> *mut
     Box::into_raw(Box::new(RustCallContext::new(runtime_context)))
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn call_context_delete(ctx: *mut RustCallContext) {
+pub unsafe extern "C" fn call_context_delete(ctx: *mut RustCallContext) {
     unsafe {
         drop(Box::from_raw(ctx));
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn call_context_get_error(ctx: *const RustCallContext) -> *mut RustError {
+pub unsafe extern "C" fn call_context_get_error(ctx: *const RustCallContext) -> *mut RustError {
     let ctx = unsafe { &*ctx };
     match &ctx.error {
         Some(err) => Box::into_raw(Box::new(err)).cast(),
@@ -57,7 +61,7 @@ fn test_call_context_get_error() {
     let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
     assert_ne!(runtime_context, std::ptr::null_mut());
     let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
-    let error = call_context_get_error(call_context);
+    let error = unsafe { call_context_get_error(call_context) };
     assert_eq!(error, std::ptr::null_mut());
     unsafe {
         drop(Box::from_raw(call_context));
@@ -73,6 +77,6 @@ fn test_call_context_set_error() {
         azure_core::error::ErrorKind::Other,
         "test",
     )));
-    let error = call_context_get_error(&call_context);
+    let error = unsafe { call_context_get_error(&call_context) };
     assert_ne!(error, std::ptr::null_mut());
 }
