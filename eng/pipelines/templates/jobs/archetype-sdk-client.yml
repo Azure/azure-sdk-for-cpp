@@ -161,7 +161,7 @@ jobs:
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
         - pwsh: |
-            $latestVersion = "0.15.0"
+            $latestVersion = "20240927.2"
             Write-Host "Using apiview parser version $latestVersion"
             azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/$latestVersion/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
           displayName: Download ApiView Parser.
