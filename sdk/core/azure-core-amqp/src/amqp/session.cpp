@@ -22,15 +22,15 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
+#if ENABLE_UAMP
   Endpoint::~Endpoint()
   {
-#if ENABLE_UAMQP
     if (m_endpoint)
     {
       connection_destroy_endpoint(m_endpoint);
     }
-#endif
   }
+#endif
 
   Session::~Session() noexcept {}
 
@@ -47,6 +47,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   {
     m_impl->End(condition_value, description, context);
   }
+
+#if ENABLE_UAMQP
   void Session::SendDetach(
       _internal::LinkEndpoint const& linkEndpoint,
       bool closeLink,
@@ -55,7 +57,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     m_impl->SendDetach(linkEndpoint, closeLink, error);
   }
 
-#if ENABLE_UAMQP
   MessageSender Session::CreateMessageSender(
       Models::_internal::MessageTarget const& target,
       MessageSenderOptions const& options,
@@ -95,6 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::make_shared<_detail::MessageReceiverImpl>(m_impl, receiverSource, options, events));
   }
 
+#if ENABLE_UAMQP
   MessageReceiver Session::CreateMessageReceiver(
       LinkEndpoint& endpoint,
       Models::_internal::MessageSource const& receiverSource,
@@ -105,6 +107,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::make_shared<_detail::MessageReceiverImpl>(
             m_impl, endpoint, receiverSource, options, events));
   }
+#endif
 
   ManagementClient Session::CreateManagementClient(
       std::string const& entityPath,

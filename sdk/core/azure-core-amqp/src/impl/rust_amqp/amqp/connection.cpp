@@ -135,10 +135,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_options.IncomingLocales.empty())
     {
-      std::vector<char*> locales;
+      std::vector<const char*> locales;
       for (auto& locale : m_options.IncomingLocales)
       {
-        locales.push_back(const_cast<char*>(locale.c_str()));
+        locales.push_back(locale.c_str());
       }
 
       if (amqpconnectionoptionsbuilder_set_incoming_locales(
@@ -149,10 +149,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     if (!m_options.OutgoingLocales.empty())
     {
-      std::vector<char*> locales;
-      for (auto& locale : m_options.OutgoingLocales)
+      std::vector<const char*> locales;
+      for (auto const& locale : m_options.OutgoingLocales)
       {
-        locales.push_back(const_cast<char*>(locale.c_str()));
+        locales.push_back(locale.c_str());
       }
 
       if (amqpconnectionoptionsbuilder_set_outgoing_locales(

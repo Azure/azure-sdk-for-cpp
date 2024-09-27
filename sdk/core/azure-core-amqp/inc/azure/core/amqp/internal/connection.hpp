@@ -313,8 +313,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     bool EnableTrace{false};
   };
 
+  /// @brief
   class Connection final {
   public:
+    // Delete copy constructor and copy assignment operator
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
+
+    // Define move constructor and move assignment operator
+    Connection(Connection&&) noexcept = default;
+    Connection& operator=(Connection&&) noexcept = default;
 #if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
@@ -418,7 +426,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * the connection, BEFORE destroying it.
      *
      */
-    void Open(Azure::Core::Context const& context = {});
+    void Open(Azure::Core::Context const& context);
 
 #if ENABLE_UAMQP
     /** @brief Starts listening for incoming connections.
@@ -443,7 +451,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
      *
      */
-    void Close(Azure::Core::Context const& context = {});
+    void Close(Azure::Core::Context const& context);
 
     /** @brief Closes the current connection.
      *
@@ -463,7 +471,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& condition,
         std::string const& description,
         Models::AmqpValue info,
-        Azure::Core::Context const& context = {});
+        Azure::Core::Context const& context);
 
 #if ENABLE_RUST_AMQP
   private:

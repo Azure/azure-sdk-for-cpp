@@ -164,8 +164,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
+#if ENABLE_UAMQP
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,
         _internal::ConnectionOptions const& options);
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail

@@ -182,16 +182,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     (void)description;
   }
 
-  void SessionImpl::SendDetach(
-      _internal::LinkEndpoint const& linkEndpoint,
-      bool closeLink,
-      Models::_internal::AmqpError const& error) const
-  {
-    Models::_internal::Performatives::AmqpDetach detach;
-
-    detach.Closed = closeLink;
-    detach.Error = error;
-    (void)linkEndpoint;
-  }
-
 }}}} // namespace Azure::Core::Amqp::_detail

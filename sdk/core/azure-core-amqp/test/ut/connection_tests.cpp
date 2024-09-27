@@ -190,9 +190,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
     // Open the connection
-    connection.Open();
+    connection.Open({});
 
-    connection.Close("", "", {});
+    connection.Close({});
 
 #endif
   }
