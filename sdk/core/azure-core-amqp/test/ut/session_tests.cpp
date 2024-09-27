@@ -282,15 +282,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::_internal::Connection connection(
         "localhost", nullptr, connectionOptions, &connectionEvents);
 
-    connection.Open();
 #elif ENABLE_RUST_AMQP
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = 25672;
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
-
-    connection.Open({});
-
 #endif
+    connection.Open({});
 
     {
       constexpr const size_t sessionCount = 30;
