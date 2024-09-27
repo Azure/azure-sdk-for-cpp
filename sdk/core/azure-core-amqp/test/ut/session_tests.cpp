@@ -231,7 +231,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession()};
 
       session.Begin({});
-      session.End("", "",{});
+      session.End("", "", {});
     }
 
     {

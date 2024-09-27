@@ -60,7 +60,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     {
       that.m_endpoint = nullptr;
     }
-    ~LinkEndpoint() {};
+    ~LinkEndpoint(){};
 
     LINK_ENDPOINT_INSTANCE_TAG* Get() const { return m_endpoint; }
     std::uint32_t GetHandle() const;

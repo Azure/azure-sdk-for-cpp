@@ -85,6 +85,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     bool EnableTrace{false};
   };
 
+#if ENABLE_RUST_AMQP
   /**
    * @brief Callback event handler for management events such as error.
    */
@@ -100,6 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     virtual void OnError(Models::_internal::AmqpError const& error) = 0;
   };
+#endif
 
   /**
    * @brief Result of a management operation.
