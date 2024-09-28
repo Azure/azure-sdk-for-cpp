@@ -110,7 +110,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 ### Bugs Fixed
 
 - [[#5450]](https://github.com/Azure/azure-sdk-for-cpp/issues/5450) Reverted libcurl connection pool to use more conservative caching strategy.
-- [[#4352]](https://github.com/Azure/azure-sdk-for-cpp/pull/5371) Fixed compilation error on Visual Studio 2017. (A community contribution, courtesy of _[morten-ofstad](https://github.com/morten-ofstad)_)
+- [[#5371]](https://github.com/Azure/azure-sdk-for-cpp/pull/5371) Fix use of namespace qualifiers that have not been explicitly introduced. (A community contribution, courtesy of _[morten-ofstad](https://github.com/morten-ofstad)_)
 
 ### Acknowledgments
 
@@ -122,7 +122,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Bugs Fixed
 
-- [[5244]](https://github.com/Azure/azure-sdk-for-cpp/issues/5244) WinHTTP transport not closing correctly in case of a request timeout.
+- [[#5244]](https://github.com/Azure/azure-sdk-for-cpp/issues/5244) WinHTTP transport not closing correctly in case of a request timeout.
 
 ### Other Changes
 
@@ -161,7 +161,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Other Changes
 
-- [[#4756]] (https://github.com/Azure/azure-sdk-for-cpp/issues/4756) `BearerTokenAuthenticationPolicy` now uses shared mutex lock for read operations.
+- [[#4756]](https://github.com/Azure/azure-sdk-for-cpp/issues/4756) `BearerTokenAuthenticationPolicy` now uses shared mutex lock for read operations.
 
 ### Acknowledgments
 
@@ -504,7 +504,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Bugs Fixed
 
-[2848](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
+- [[#2848]](https://github.com/Azure/azure-sdk-for-cpp/issues/2848) Update the libcurl transport adapter to work with HTTP/1.1 only.
 
 ### Other Changes
 
@@ -515,7 +515,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Bugs Fixed
 
-- [2785](https://github.com/Azure/azure-sdk-for-cpp/issues/2785) Fix to build on g++ 5.5.
+- [[#2785]](https://github.com/Azure/azure-sdk-for-cpp/issues/2785) Fix to build on g++ 5.5.
 
 ### Other Changes
 
@@ -530,8 +530,8 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Bugs Fixed
 
-- [2647](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
-- [2474](https://github.com/Azure/azure-sdk-for-cpp/issues/2474) Fix compiling with MSVC and `/analyze`.
+- [[#2647]](https://github.com/Azure/azure-sdk-for-cpp/issues/2647) Make the curl transport adapter to check the connection close header.
+- [[#2474]](https://github.com/Azure/azure-sdk-for-cpp/issues/2474) Fix compiling with MSVC and `/analyze`.
 - Make WinHTTP transport adapter to NOT use SSL/TLS for unsecured HTTP connections.
 
 ### Other Changes

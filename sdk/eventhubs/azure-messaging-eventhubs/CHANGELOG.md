@@ -30,7 +30,7 @@
 
 ### Bugs Fixed
 
-- Fixed [#5297](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). The actual fix for this was to use a single management client per connection.
+- Fixed [[#5297]](https://github.com/Azure/azure-sdk-for-cpp/issues/5297). The actual fix for this was to use a single management client per connection.
 
 ## 1.0.0-beta.6 (2024-02-06)
 
