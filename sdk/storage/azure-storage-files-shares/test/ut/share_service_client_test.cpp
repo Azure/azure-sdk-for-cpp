@@ -497,4 +497,34 @@ namespace Azure { namespace Storage { namespace Test {
 
     shareClient.DeleteIfExists();
   }
+
+  TEST_F(FileShareServiceClientTest, ListShares_ProvisionedBilling_PLAYBACKONLY_)
+  {
+    auto shareServiceClient = *m_shareServiceClient;
+    auto shareName = LowercaseRandomString();
+    auto shareClient = shareServiceClient.GetShareClient(shareName);
+
+    // Create
+    shareClient.Create();
+
+    // List Shares
+    Azure::Nullable<Files::Shares::Models::ShareItem> shareItem;
+    for (auto page = shareServiceClient.ListShares(); page.HasPage(); page.MoveToNextPage())
+    {
+      for (const auto& share : page.Shares)
+      {
+        if (share.Name == shareName)
+        {
+          shareItem = share;
+        }
+      }
+    }
+    ASSERT_TRUE(shareItem.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.IncludedBurstIops.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.MaxBurstCreditsForIops.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.NextAllowedProvisionedIopsDowngradeTime.HasValue());
+    EXPECT_TRUE(shareItem.Value().Details.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
+
+    EXPECT_NO_THROW(shareClient.Delete());
+  }
 }}} // namespace Azure::Storage::Test

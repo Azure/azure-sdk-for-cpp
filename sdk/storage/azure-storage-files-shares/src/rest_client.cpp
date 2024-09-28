@@ -634,6 +634,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kPaidBurstingEnabled,
           kPaidBurstingMaxIops,
           kPaidBurstingMaxBandwidthMibps,
+          kIncludedBurstIops,
+          kMaxBurstCreditsForIops,
+          kNextAllowedProvisionedIopsDowngradeTime,
+          kNextAllowedProvisionedBandwidthDowngradeTime,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -672,6 +676,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"PaidBurstingEnabled", XmlTagEnum::kPaidBurstingEnabled},
             {"PaidBurstingMaxIops", XmlTagEnum::kPaidBurstingMaxIops},
             {"PaidBurstingMaxBandwidthMibps", XmlTagEnum::kPaidBurstingMaxBandwidthMibps},
+            {"IncludedBurstIops", XmlTagEnum::kIncludedBurstIops},
+            {"MaxBurstCreditsForIops", XmlTagEnum::kMaxBurstCreditsForIops},
+            {"NextAllowedProvisionedIopsDowngradeTime",
+             XmlTagEnum::kNextAllowedProvisionedIopsDowngradeTime},
+            {"NextAllowedProvisionedBandwidthDowngradeTime",
+             XmlTagEnum::kNextAllowedProvisionedBandwidthDowngradeTime},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -924,6 +934,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement1.Details.PaidBurstingMaxBandwidthMibps = std::stoll(node.Value);
             }
             else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kIncludedBurstIops)
+            {
+              vectorElement1.Details.IncludedBurstIops = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kMaxBurstCreditsForIops)
+            {
+              vectorElement1.Details.MaxBurstCreditsForIops = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kNextAllowedProvisionedIopsDowngradeTime)
+            {
+              vectorElement1.Details.NextAllowedProvisionedIopsDowngradeTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kNextAllowedProvisionedBandwidthDowngradeTime)
+            {
+              vectorElement1.Details.NextAllowedProvisionedBandwidthDowngradeTime
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
@@ -1019,6 +1063,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
+      if (options.ShareProvisionedIops.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-provisioned-iops", std::to_string(options.ShareProvisionedIops.Value()));
+      }
+      if (options.ShareProvisionedBandwidthMibps.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-provisioned-bandwidth-mibps",
+            std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1029,6 +1084,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("x-ms-share-quota") != 0)
+      {
+        response.Quota = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-quota"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-iops") != 0)
+      {
+        response.ShareProvisionedIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-provisioned-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-bandwidth-mibps") != 0)
+      {
+        response.ShareProvisionedBandwidthMibps
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-provisioned-bandwidth-mibps"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-included-burst-iops") != 0)
+      {
+        response.ShareIncludedBurstIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-included-burst-iops"));
+      }
       return Response<Models::CreateShareResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::ShareProperties> ShareClient::GetProperties(
@@ -1158,6 +1232,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.PaidBurstingMaxBandwidthMibps = std::stoll(
             pRawResponse->GetHeaders().at("x-ms-share-paid-bursting-max-bandwidth-mibps"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-share-included-burst-iops") != 0)
+      {
+        response.IncludedBurstIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-included-burst-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-max-burst-credits-for-iops") != 0)
+      {
+        response.MaxBurstCreditsForIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-max-burst-credits-for-iops"));
+      }
+      if (pRawResponse->GetHeaders().count(
+              "x-ms-share-next-allowed-provisioned-iops-downgrade-time")
+          != 0)
+      {
+        response.NextAllowedProvisionedIopsDowngradeTime = DateTime::Parse(
+            pRawResponse->GetHeaders().at(
+                "x-ms-share-next-allowed-provisioned-iops-downgrade-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count(
+              "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+          != 0)
+      {
+        response.NextAllowedProvisionedBandwidthDowngradeTime = DateTime::Parse(
+            pRawResponse->GetHeaders().at(
+                "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::DeleteShareResult> ShareClient::Delete(
@@ -1194,6 +1296,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::DeleteShareResult response;
+      if (pRawResponse->GetHeaders().count("x-ms-share-usage-bytes") != 0)
+      {
+        response.ShareUsageBytes
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-usage-bytes"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-snapshot-usage-bytes") != 0)
+      {
+        response.ShareSnapshotUsageBytes
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-snapshot-usage-bytes"));
+      }
       return Response<Models::DeleteShareResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::_detail::AcquireShareLeaseResult> ShareClient::AcquireLease(
@@ -1575,6 +1687,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
+      if (options.ShareProvisionedIops.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-provisioned-iops", std::to_string(options.ShareProvisionedIops.Value()));
+      }
+      if (options.ShareProvisionedBandwidthMibps.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-share-provisioned-bandwidth-mibps",
+            std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1585,6 +1708,54 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("x-ms-share-quota") != 0)
+      {
+        response.Quota = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-quota"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-iops") != 0)
+      {
+        response.ProvisionedIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-provisioned-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-bandwidth-mibps") != 0)
+      {
+        response.ProvisionedBandwidthMibps
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-provisioned-bandwidth-mibps"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-included-burst-iops") != 0)
+      {
+        response.IncludedBurstIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-included-burst-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-max-burst-credits-for-iops") != 0)
+      {
+        response.MaxBurstCreditsForIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-max-burst-credits-for-iops"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-share-next-allowed-quota-downgrade-time") != 0)
+      {
+        response.NextAllowedQuotaDowngradeTime = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-share-next-allowed-quota-downgrade-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count(
+              "x-ms-share-next-allowed-provisioned-iops-downgrade-time")
+          != 0)
+      {
+        response.NextAllowedProvisionedIopsDowngradeTime = DateTime::Parse(
+            pRawResponse->GetHeaders().at(
+                "x-ms-share-next-allowed-provisioned-iops-downgrade-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count(
+              "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+          != 0)
+      {
+        response.NextAllowedProvisionedBandwidthDowngradeTime = DateTime::Parse(
+            pRawResponse->GetHeaders().at(
+                "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
       return Response<Models::SetSharePropertiesResult>(
           std::move(response), std::move(pRawResponse));
     }
