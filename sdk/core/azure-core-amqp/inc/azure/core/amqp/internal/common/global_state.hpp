@@ -41,6 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   };
 
 #endif
+
   class GlobalStateHolder final {
     GlobalStateHolder();
     ~GlobalStateHolder();

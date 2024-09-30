@@ -7,7 +7,9 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
+#if ENABLE_UAMQP
 #include "endpoint.hpp"
+#endif
 #include "models/message_source.hpp"
 #include "models/message_target.hpp"
 
@@ -52,13 +54,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   enum class SessionRole;
   class MessageSender;
   struct MessageSenderOptions;
-  class MessageSenderEvents;
   class MessageReceiver;
   struct MessageReceiverOptions;
-  class MessageReceiverEvents;
   class ManagementClient;
   struct ManagementClientOptions;
+#if ENABLE_UAMQP
+  class MessageSenderEvents;
+  class MessageReceiverEvents;
   class ManagementClientEvents;
+#endif
 
   enum class ExpiryPolicy
   {
@@ -186,6 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         MessageSenderOptions const& options) const;
 #endif
 
+#if ENABLE_UAMQP
     /** @brief Creates a MessageReceiver
      *
      * @param receiverSource - The source from which to receive messages.
@@ -204,16 +209,40 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         std::string const& managementInstancePath,
         ManagementClientOptions const& options,
         ManagementClientEvents* managementEvents = nullptr) const;
+#elif ENABLE_RUST_AMQP
+    /** @brief Creates a MessageReceiver
+     *
+     * @param receiverSource - The source from which to receive messages.
+     * @param options - Options to configure the MessageReceiver.
+     *
+     * @returns A MessageSender object.
+     *
+     */
+    MessageReceiver CreateMessageReceiver(
+        Models::_internal::MessageSource const& receiverSource,
+        MessageReceiverOptions const& options) const;
 
+    ManagementClient CreateManagementClient(
+        std::string const& managementInstancePath,
+        ManagementClientOptions const& options) const;
+#endif
     /** @brief Begins operations on the session.
      *
      */
-    void Begin();
+    void Begin(Azure::Core::Context const& context);
 
     /** @brief Ends operations on the session.
      *
      */
-    void End(std::string const& condition_value = {}, std::string const& description = {});
+    void End(Azure::Core::Context const& context);
+
+    /** @brief Ends operations on the session.
+     *
+     */
+    void End(
+        std::string const& condition_value,
+        std::string const& description,
+        Azure::Core::Context const& context);
 
   private:
     /** @brief Returns the current value of the incoming window.
@@ -233,6 +262,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     uint32_t GetHandleMax() const;
 
+#if ENABLE_UAMQP
     /** @brief Sends a detach message on the specified link endpoint.
      *
      * @param linkEndpoint - Link endpoint to detach.
@@ -261,13 +291,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * use by AMQP listeners.
      *
      */
-#if ENABLE_UAMQP
     MessageSender CreateMessageSender(
         LinkEndpoint& endpoint,
         Models::_internal::MessageTarget const& target,
         MessageSenderOptions const& options,
         MessageSenderEvents* events = nullptr) const;
-#endif
 
     /** @brief Creates a MessageReceiver for use in a message listener.
      *
@@ -283,6 +311,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::_internal::MessageSource const& receiverSource,
         MessageReceiverOptions const& options,
         MessageReceiverEvents* receiverEvents = nullptr) const;
+#endif
 
     friend class _detail::SessionFactory;
 
