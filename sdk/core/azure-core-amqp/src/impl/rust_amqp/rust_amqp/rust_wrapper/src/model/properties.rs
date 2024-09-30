@@ -268,7 +268,7 @@ extern "C" fn properties_set_message_id(
     builder.inner.with_message_id(match &message_id.inner {
         AmqpValue::Binary(id) => AmqpMessageId::Binary(id.clone()),
         AmqpValue::String(id) => AmqpMessageId::String(id.clone()),
-        AmqpValue::Uuid(id) => AmqpMessageId::Uuid(id.clone()),
+        AmqpValue::Uuid(id) => AmqpMessageId::Uuid(*id),
         AmqpValue::ULong(id) => AmqpMessageId::Ulong(*id),
         _ => return -1,
     });
@@ -287,7 +287,7 @@ extern "C" fn properties_set_correlation_id(
         .with_correlation_id(match &correlation_id.inner {
             AmqpValue::Binary(id) => AmqpMessageId::Binary(id.clone()),
             AmqpValue::String(id) => AmqpMessageId::String(id.clone()),
-            AmqpValue::Uuid(id) => AmqpMessageId::Uuid(id.clone()),
+            AmqpValue::Uuid(id) => AmqpMessageId::Uuid(*id),
             AmqpValue::ULong(id) => AmqpMessageId::Ulong(*id),
             _ => return -1,
         });

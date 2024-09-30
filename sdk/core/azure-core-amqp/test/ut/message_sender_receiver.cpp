@@ -49,11 +49,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Session session{connection.CreateSession()};
 
     {
-      MessageReceiver receiver(session.CreateMessageReceiver("MySource", {}, nullptr));
+      MessageReceiver receiver(session.CreateMessageReceiver("MySource", {}));
     }
     {
-      MessageReceiver receiver1(session.CreateMessageReceiver("MySource", {}, nullptr));
-      MessageReceiver receiver2(session.CreateMessageReceiver("MySource", {}, nullptr));
+      MessageReceiver receiver1(session.CreateMessageReceiver("MySource", {}));
+      MessageReceiver receiver2(session.CreateMessageReceiver("MySource", {}));
     }
 
     GTEST_LOG_(INFO) << _internal::MessageReceiverState::Invalid
