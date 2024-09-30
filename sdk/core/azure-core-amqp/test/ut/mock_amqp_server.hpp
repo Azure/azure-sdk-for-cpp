@@ -643,7 +643,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           for (const auto& session : m_sessions)
           {
-            session->End();
+            session->End({});
           }
           // Note: clearing the sessions list destroys the session and calls session_end always, so
           // it does not need to be called here.
@@ -651,7 +651,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         for (const auto& connection : m_connections)
         {
-          connection->Close();
+          connection->Close({});
         }
         m_listening = false;
       }
@@ -714,7 +714,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         auto newSession = std::make_shared<Azure::Core::Amqp::_internal::Session>(
             connection.CreateSession(endpoint, options, this));
         m_sessions.push_back(newSession);
-        newSession->Begin();
+        newSession->Begin({});
         return true;
       }
       virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override
