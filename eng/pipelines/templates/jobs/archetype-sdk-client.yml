@@ -328,7 +328,6 @@ jobs:
               -ApiKey "$(azuresdk-apiview-apikey)"
               -SourceBranch $(Build.SourceBranchName)
               -DefaultBranch $(DefaultBranch)
-              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
               -BuildId $(Build.BuildId)
               -RepoName "$(Build.Repository.Name)"
             pwsh: true
