@@ -324,7 +324,6 @@ jobs:
             filePath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Create-APIReview.ps1
             arguments: >
               -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
-              -OutPath $(Build.ArtifactStagingDirectory)
               -ApiKey "$(azuresdk-apiview-apikey)"
               -SourceBranch $(Build.SourceBranchName)
               -DefaultBranch $(DefaultBranch)
