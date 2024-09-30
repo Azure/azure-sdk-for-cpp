@@ -30,6 +30,14 @@ namespace Azure { namespace Template {
      * @returns the value associated with the key.
      */
     int GetValue(int key, Azure::Core::Context const& context = Azure::Core::Context{}) const;
+    /** @brief Return the value associated with the input key.
+     *
+     * @param key Key to query.
+     * @param context Context for cancelling long running operations.
+     * @returns the value associated with the key.
+     */
+    int GetValue2(int key, Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
 
   private:
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;

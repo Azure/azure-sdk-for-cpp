@@ -64,3 +64,8 @@ int TemplateClient::GetValue(int key, Azure::Core::Context const& context) const
     throw;
   }
 }
+
+int TemplateClient::GetValue2(int key, Azure::Core::Context const& context) const
+{
+  return 0;
+}
