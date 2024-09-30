@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// Just Triggering Testings.
 
 #include "azure/template/template_client.hpp"
 
