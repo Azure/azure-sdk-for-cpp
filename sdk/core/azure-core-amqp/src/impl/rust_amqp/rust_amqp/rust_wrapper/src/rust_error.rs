@@ -7,24 +7,27 @@ cspell: words reqwest repr staticlib dylib brotli gzip
 
 use std::ffi::c_char;
 
-pub struct RustError(azure_core::Error);
+#[derive(Debug)]
+pub struct RustError(Box<dyn std::error::Error>);
 
 impl RustError {
-    pub fn new(error: azure_core::Error) -> Self {
+    pub fn new(error: Box<dyn std::error::Error>) -> Self {
         RustError(error)
     }
 }
 
+/// # Safety
 #[no_mangle]
-pub extern "C" fn rust_error_get_message(error: *const RustError) -> *mut c_char {
+pub unsafe extern "C" fn rust_error_get_message(error: *const RustError) -> *mut c_char {
     let error = unsafe { error.as_ref().unwrap() };
     let message = error.0.to_string();
     let c_message = std::ffi::CString::new(message).unwrap();
     c_message.into_raw()
 }
 
+/// # Safety
 #[no_mangle]
-pub extern "C" fn rust_error_delete(error: *mut RustError) {
+pub unsafe extern "C" fn rust_error_delete(error: *mut RustError) {
     unsafe {
         let _ = Box::from_raw(error);
     }

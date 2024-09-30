@@ -399,7 +399,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::Open()
+  void ConnectionImpl::Open(Azure::Core::Context const&)
   {
     if (m_options.EnableTrace)
     {
@@ -426,11 +426,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     EnableAsyncOperation(true);
   }
+  void ConnectionImpl::Close(Azure::Core::Context const&)
+  {
+    Log::Stream(Logger::Level::Verbose)
+        << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
+    if (!m_connection)
+    {
+      throw std::logic_error("Connection not opened.");
+    }
+
+    // Stop polling on this connection, we're shutting it down.
+    EnableAsyncOperation(false);
+
+    std::unique_lock<LockType> lock(m_amqpMutex);
+
+    if (m_connectionOpened)
+    {
+      if (connection_close(m_connection.get(), nullptr, nullptr, nullptr))
+      {
+        throw std::runtime_error("Could not close connection.");
+      }
+    }
+    m_connectionOpened = false;
+  }
 
   void ConnectionImpl::Close(
       const std::string& condition,
       const std::string& description,
-      Models::AmqpValue info)
+      Models::AmqpValue info,
+      Azure::Core::Context const&)
   {
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
