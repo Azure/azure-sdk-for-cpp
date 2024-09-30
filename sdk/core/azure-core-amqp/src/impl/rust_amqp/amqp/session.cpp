@@ -72,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      return std::numeric_limits<std::uint32_t>::max();
+      return 1;
     }
   }
 
@@ -100,8 +100,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void SessionImpl::Begin()
+  void SessionImpl::Begin(Azure::Core::Context const& context)
   {
+    Azure::Core::Amqp::Common::_detail::CallContext callContext{
+        Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+            ->GetRuntimeContext(),
+        context};
+
     UniqueAmqpSessionOptionsBuilder optionsBuilder{amqpsessionoptionsbuilder_create()};
 
     if (m_options.MaximumLinkCount.HasValue())
@@ -124,42 +129,57 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     UniqueAmqpSessionOptions sessionOptions{amqpsessionoptionsbuilder_build(optionsBuilder.get())};
     if (amqpsession_begin(
+            callContext.GetCallContext(),
             m_session.get(),
             m_connection->GetConnection(),
-            sessionOptions.get(),
-            Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
+            sessionOptions.get()))
     {
-      throw std::runtime_error("Failed to begin session.");
+      throw std::runtime_error("Failed to begin session." + callContext.GetError());
     }
     m_isBegun = true;
   }
-  void SessionImpl::End(const std::string& condition, const std::string& description)
+
+  void SessionImpl::End(Azure::Core::Context const& context)
   {
+    Azure::Core::Amqp::Common::_detail::CallContext callContext{
+        Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+            ->GetRuntimeContext(),
+        context};
+
     if (!m_isBegun)
     {
       throw std::runtime_error("Session End without corresponding Begin.");
     }
-    if (amqpsession_end(
-            m_session.get(),
-            Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext()))
+
+    if (amqpsession_end(callContext.GetCallContext(), m_session.get()))
     {
-      throw std::runtime_error("Failed to end session.");
+      throw std::runtime_error("Failed to end session." + callContext.GetError());
+    }
+    m_isBegun = false;
+  }
+
+  void SessionImpl::End(
+      const std::string& condition,
+      const std::string& description,
+      Azure::Core::Context const& context)
+  {
+    Azure::Core::Amqp::Common::_detail::CallContext callContext{
+        Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
+            ->GetRuntimeContext(),
+        context};
+
+    if (!m_isBegun)
+    {
+      throw std::runtime_error("Session End without corresponding Begin.");
+    }
+
+    if (amqpsession_end(callContext.GetCallContext(), m_session.get()))
+    {
+      throw std::runtime_error("Failed to end session." + callContext.GetError());
     }
     m_isBegun = false;
     (void)condition;
     (void)description;
-  }
-
-  void SessionImpl::SendDetach(
-      _internal::LinkEndpoint const& linkEndpoint,
-      bool closeLink,
-      Models::_internal::AmqpError const& error) const
-  {
-    Models::_internal::Performatives::AmqpDetach detach;
-
-    detach.Closed = closeLink;
-    detach.Error = error;
-    (void)linkEndpoint;
   }
 
 }}}} // namespace Azure::Core::Amqp::_detail

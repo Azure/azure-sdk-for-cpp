@@ -3,6 +3,8 @@
 
 #pragma once
 
+#if ENABLE_UAMQP
+
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "common/async_operation_queue.hpp"
 #include "connection_string_credential.hpp"
@@ -93,6 +95,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return endpoint.Release();
     }
   };
+
   class LinkEndpointFactory final {
   public:
     static _internal::LinkEndpoint CreateLinkEndpoint(LINK_ENDPOINT_INSTANCE_TAG* endpoint);
@@ -101,5 +104,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return linkEndpoint.Release();
     }
   };
-
 }}}} // namespace Azure::Core::Amqp::_detail
+#endif

@@ -263,7 +263,7 @@ extern "C" fn source_get_outcomes(
         let list: Vec<AmqpValue> = source_outcomes
             .clone()
             .into_iter()
-            .map(|f| AmqpValue::from(f))
+            .map(AmqpValue::from)
             .collect();
         *outcomes = Box::into_raw(Box::new(RustAmqpValue {
             inner: AmqpValue::Array(list),
@@ -285,7 +285,7 @@ extern "C" fn source_get_capabilities(
         let list: Vec<AmqpValue> = source_capabilities
             .clone()
             .into_iter()
-            .map(|f| AmqpValue::from(f))
+            .map(AmqpValue::from)
             .collect();
         *capabilities = Box::into_raw(Box::new(RustAmqpValue {
             inner: AmqpValue::Array(list),
