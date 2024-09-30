@@ -315,6 +315,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Connection final {
   public:
+    // Delete copy constructor and copy assignment operator
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
+
+    // Define move constructor and move assignment operator
+    Connection(Connection&&) noexcept = default;
+    Connection& operator=(Connection&&) noexcept = default;
 #if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
@@ -412,12 +419,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
+     * @param context Context for the operation.
      *
      * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
      * the connection, BEFORE destroying it.
      *
      */
-    void Open();
+    void Open(Azure::Core::Context const& context);
 
 #if ENABLE_UAMQP
     /** @brief Starts listening for incoming connections.
@@ -437,9 +445,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
     /** @brief Closes the current connection.
      *
+     * @param context Context for the operation.
+     *
+     * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
+     *
+     */
+    void Close(Azure::Core::Context const& context);
+
+    /** @brief Closes the current connection.
+     *
      * @param condition The condition for closing the connection.
      * @param description The description for closing the connection.
      * @param info Additional information for closing the connection.
+     * @param context Context for the operation.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be closed implicitly by a Session object derived from the connection. It primarily
@@ -449,9 +467,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
     void Close(
-        std::string const& condition = {},
-        std::string const& description = {},
-        Models::AmqpValue info = {});
+        std::string const& condition,
+        std::string const& description,
+        Models::AmqpValue info,
+        Azure::Core::Context const& context);
+
 #if ENABLE_RUST_AMQP
   private:
 #endif

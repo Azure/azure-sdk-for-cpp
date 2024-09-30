@@ -172,7 +172,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
       // Open the connection
-      connection.Open();
+      connection.Open({});
 
       // Ensure that we got an OnComplete callback within 5 seconds.
       auto transport = listenerEvents.WaitForResult(
@@ -180,7 +180,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)});
 
       // Now we can close the connection.
-      connection.Close("xxx", "yyy", {});
+      connection.Close("xxx", "yyy", {}, {});
       listener.Stop();
     }
 #else
@@ -190,9 +190,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
     // Open the connection
-    connection.Open();
+    connection.Open({});
 
-    connection.Close("", "", {});
+    connection.Close({});
 
 #endif
   }

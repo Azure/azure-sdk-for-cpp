@@ -165,7 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sessionOptions.InitialIncomingWindowSize = 10000;
       auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
           connection.CreateSession(endpoint, sessionOptions, this));
-      listeningSession->Begin();
+      listeningSession->Begin({});
       m_session = std::move(listeningSession);
 
       m_listeningSessionQueue.CompleteOperation(true);
@@ -239,12 +239,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       if (m_session)
       {
-        m_session->End();
+        m_session->End({});
         m_session.reset();
       }
       if (m_connection)
       {
-        m_connection->Close();
+        m_connection->Close({});
         m_connection.reset();
       }
     }
