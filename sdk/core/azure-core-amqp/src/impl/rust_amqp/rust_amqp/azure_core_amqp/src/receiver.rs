@@ -83,7 +83,7 @@ pub trait AmqpReceiverApis {
         source: impl Into<AmqpSource>,
         options: Option<AmqpReceiverOptions>,
     ) -> impl std::future::Future<Output = Result<()>>;
-    fn max_message_size(&self) -> impl std::future::Future<Output = Option<u64>>;
+    fn max_message_size(&self) -> impl std::future::Future<Output = Result<Option<u64>>>;
     fn receive(&self) -> impl std::future::Future<Output = Result<AmqpMessage>>;
 }
 
@@ -101,7 +101,7 @@ impl AmqpReceiverApis for AmqpReceiver {
     ) -> Result<()> {
         self.implementation.attach(session, source, options).await
     }
-    async fn max_message_size(&self) -> Option<u64> {
+    async fn max_message_size(&self) -> Result<Option<u64>> {
         self.implementation.max_message_size().await
     }
     async fn receive(&self) -> Result<AmqpMessage> {
@@ -257,7 +257,7 @@ mod tests {
             .with_auto_accept(true)
             .build();
 
-        assert_eq!(receiver_options.auto_accept, true);
+        assert!(receiver_options.auto_accept);
     }
 
     #[test]
@@ -297,6 +297,6 @@ mod tests {
             receiver_options.credit_mode.unwrap(),
             ReceiverCreditMode::Manual
         );
-        assert_eq!(receiver_options.auto_accept, false);
+        assert!(!receiver_options.auto_accept);
     }
 }

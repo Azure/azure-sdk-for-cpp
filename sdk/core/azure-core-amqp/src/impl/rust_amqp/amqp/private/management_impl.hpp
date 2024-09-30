@@ -3,24 +3,15 @@
 
 #pragma once
 
-#include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/management.hpp"
-#include "azure/core/amqp/internal/session.hpp"
-#include "connection_impl.hpp"
 #include "message_receiver_impl.hpp"
 #include "message_sender_impl.hpp"
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/amqp_management.h>
-#endif
-
 #include <memory>
 #include <mutex>
-#include <queue>
-#include <vector>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
@@ -44,8 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ManagementClientImpl(
         std::shared_ptr<SessionImpl> session,
         std::string const& managementEntityName,
-        _internal::ManagementClientOptions const& options,
-        _internal::ManagementClientEvents* managementEvents);
+        _internal::ManagementClientOptions const& options);
 
     ~ManagementClientImpl() noexcept;
 
@@ -101,7 +91,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ManagementClientOptions m_options;
     std::string m_source;
     std::shared_ptr<SessionImpl> m_session;
-    _internal::ManagementClientEvents* m_eventHandler{};
     std::string m_managementEntityPath;
     Azure::Core::Credentials::AccessToken m_accessToken;
 

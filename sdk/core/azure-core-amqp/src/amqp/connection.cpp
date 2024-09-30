@@ -99,13 +99,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   void Connection::Listen() { m_impl->Listen(); }
 #endif // ENABLE_UAMQP
 
-  void Connection::Open() { m_impl->Open(); }
+  void Connection::Open(Azure::Core::Context const& context) { m_impl->Open(context); }
+  void Connection::Close(Azure::Core::Context const& context) { m_impl->Close(context); }
   void Connection::Close(
       std::string const& condition,
       std::string const& description,
-      Models::AmqpValue value)
+      Models::AmqpValue value,
+      Azure::Core::Context const& context)
   {
-    m_impl->Close(condition, description, value);
+    m_impl->Close(condition, description, value, context);
   }
   uint32_t Connection::GetMaxFrameSize() const { return m_impl->GetMaxFrameSize(); }
 #if ENABLE_UAMQP
