@@ -183,7 +183,7 @@ extern "C" fn target_get_dynamic(target: *const RustAmqpTarget, dynamic: *mut bo
     let target = unsafe { &*target };
     if let Some(dynamic_val) = target.inner.dynamic() {
         unsafe { *dynamic = *dynamic_val };
-        return 0;
+        0
     } else {
         unsafe { *dynamic = false };
         0
@@ -267,11 +267,11 @@ extern "C" fn target_set_address(
     match &address.inner {
         AmqpValue::String(value) => {
             builder.inner.with_address(value.clone());
-            return 0;
+            0
         }
         _ => {
             warn!("Expected string value for address");
-            return 1;
+            1
         }
     }
 }

@@ -77,14 +77,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     uint32_t GetOutgoingWindow();
     uint32_t GetHandleMax();
 
-    void Begin();
-    void End(std::string const& condition_value, std::string const& description);
-
+    void Begin(Azure::Core::Context const& context);
+    void End(Azure::Core::Context const& context);
+    void End(
+        std::string const& condition_value,
+        std::string const& description,
+        Azure::Core::Context const& context);
+#if ENABLE_UAMQP
     void SendDetach(
         _internal::LinkEndpoint const& linkEndpoint,
         bool closeLink,
         Models::_internal::AmqpError const& error) const;
-
+#endif
   private:
     SessionImpl();
     bool m_isBegun{false};

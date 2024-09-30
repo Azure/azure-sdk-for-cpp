@@ -96,13 +96,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void FinishConstruction();
     operator CONNECTION_HANDLE() const { return m_connection.get(); }
 
-    void Open();
+    void Open(Azure::Core::Context const&);
     void Listen();
 
+    void Close(Azure::Core::Context const&);
     void Close(
-        std::string const& condition = {},
-        std::string const& description = {},
-        Models::AmqpValue info = {});
+        std::string const& condition,
+        std::string const& description,
+        Models::AmqpValue info,
+        Azure::Core::Context const&);
 
     void Poll() override;
     std::string GetHost() const { return m_hostName; }
