@@ -216,11 +216,14 @@ mod tests {
 
         let mut size: usize = 0;
         assert_eq!(
-            amqpvalue_get_encoded_size(value.clone(), &mut size as *mut usize),
+            unsafe { amqpvalue_get_encoded_size(value.clone(), &mut size as *mut usize) },
             0
         );
         let mut buffer: Vec<u8> = vec![0; size];
-        assert_eq!(amqpvalue_encode(value, buffer.as_mut_ptr(), size), 0);
+        assert_eq!(
+            unsafe { amqpvalue_encode(value, buffer.as_mut_ptr(), size) },
+            0
+        );
 
         let deserialized = <AmqpValue as Deserializable<AmqpValue>>::decode(buffer.as_slice());
         assert!(deserialized.is_ok());

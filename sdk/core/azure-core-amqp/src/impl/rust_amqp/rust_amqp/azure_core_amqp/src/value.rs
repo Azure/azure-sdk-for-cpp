@@ -3,6 +3,13 @@
 // cspell: words amqp
 
 use crate::Uuid;
+
+#[cfg(all(
+    feature = "cplusplus",
+    feature = "fe2o3-amqp",
+    not(target_arch = "wasm32")
+))]
+use crate::fe2o3::error::AmqpSerialization;
 #[cfg(feature = "cplusplus")]
 use crate::{Deserializable, Serializable};
 #[cfg(feature = "cplusplus")]
@@ -186,11 +193,11 @@ pub enum AmqpValue {
 
 #[cfg(feature = "cplusplus")]
 impl Serializable for AmqpValue {
-    fn encoded_size(&self) -> usize {
+    fn encoded_size(&self) -> Result<usize> {
         #[cfg(all(feature = "fe2o3-amqp", not(target_arch = "wasm32")))]
         {
             let fe2o3_value = fe2o3_amqp_types::primitives::Value::from(self.clone());
-            serde_amqp::serialized_size(&fe2o3_value).unwrap()
+            Ok(serde_amqp::serialized_size(&fe2o3_value).map_err(AmqpSerialization::from)?)
         }
         #[cfg(any(not(feature = "fe2o3-amqp"), target_arch = "wasm32"))]
         {
@@ -594,8 +601,7 @@ mod tests {
             let v: AmqpValue = AmqpValue::Null;
             assert_eq!(v, AmqpValue::Null);
             assert_eq!(AmqpValue::Null, v);
-            let b: () = v.into();
-            assert_eq!(b, ());
+            let _: () = v.into();
         }
 
         {
@@ -604,6 +610,7 @@ mod tests {
         }
     }
 
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_amqp_ordered_map() {
         let mut map = AmqpOrderedMap::new();
@@ -621,21 +628,21 @@ mod tests {
         assert_eq!(map.get("key1"), None);
     }
 
+    #[allow(clippy::approx_constant)]
     #[test]
     fn test_amqp_value() {
         // Test AmqpValue::Null
         let null_value: AmqpValue = AmqpValue::Null;
         assert_eq!(null_value, AmqpValue::Null);
         assert_eq!(AmqpValue::Null, null_value);
-        let null_unit: () = null_value.into();
-        assert_eq!(null_unit, ());
+        let _: () = null_value.into();
 
         // Test AmqpValue::Boolean
         let bool_value: AmqpValue = AmqpValue::Boolean(true);
         assert_eq!(bool_value, AmqpValue::Boolean(true));
         assert_eq!(AmqpValue::Boolean(true), bool_value);
         let bool_val: bool = bool_value.into();
-        assert_eq!(bool_val, true);
+        assert!(bool_val);
 
         // Test AmqpValue::UByte
         let ubyte_value: AmqpValue = AmqpValue::UByte(255);

@@ -91,6 +91,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     bool AuthenticationRequired{true};
   };
 
+#if ENABLE_UAMQP
   class MessageReceiverEvents {
   protected:
     ~MessageReceiverEvents() = default;
@@ -110,6 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::_internal::AmqpError const& error)
         = 0;
   };
+#endif
 
   /** @brief MessageReceiver
    *
