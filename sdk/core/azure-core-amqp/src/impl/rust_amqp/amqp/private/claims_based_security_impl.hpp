@@ -24,7 +24,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
 #endif // ENABLE_UAMQP
-  class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
+  class ClaimsBasedSecurityImpl final
+#if ENABLE_UAMQP
+      : public _internal::ManagementClientEvents
+#endif
+  {
 
   public:
     ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);
@@ -47,7 +51,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_detail::ManagementClientImpl> m_management;
+#if ENABLE_UAMQP
     // Inherited via ManagementClientEvents
     void OnError(Models::_internal::AmqpError const& error) override;
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_detail

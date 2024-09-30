@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
 
 #if ENABLE_RUST_AMQP
-    connection.Open();
+    connection.Open({});
 #endif
     {
       // Create a session
@@ -65,7 +65,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session1{connection.CreateSession({})};
       Session session2{connection.CreateSession({})};
 
-      EXPECT_ANY_THROW(session1.End("", ""));
+      EXPECT_ANY_THROW(session1.End({}));
     }
   }
 
@@ -217,21 +217,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if ENABLE_RUST_AMQP
     // Open the connection
     GTEST_LOG_(INFO) << "Open connection.";
-    connection.Open();
+    connection.Open({});
 #endif
 
     {
       Session session{connection.CreateSession()};
 
-      session.Begin();
-      session.End();
+      session.Begin({});
+      session.End({});
     }
 
     {
       Session session{connection.CreateSession()};
 
-      session.Begin();
-      session.End("", "");
+      session.Begin({});
+      session.End("", "", {});
+    }
+
+    {
+      Session session{connection.CreateSession()};
+
+      session.Begin({});
+      session.End("amqp:link:detach-forced", "Forced detach.", {});
     }
 #if ENABLE_UAMQP
     listener.Stop();
@@ -275,15 +282,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::_internal::Connection connection(
         "localhost", nullptr, connectionOptions, &connectionEvents);
 
-    connection.Open();
 #elif ENABLE_RUST_AMQP
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
     connectionOptions.Port = 25672;
     Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
-
-    connection.Open();
-
 #endif
+    connection.Open({});
 
     {
       constexpr const size_t sessionCount = 30;
@@ -292,7 +296,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       for (size_t i = 0; i < sessionCount; i += 1)
       {
         sessions.push_back(connection.CreateSession());
-        sessions.back().Begin();
+        sessions.back().Begin({});
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
 
@@ -301,11 +305,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Closing " << sessionCount << " sessions.";
       for (auto& session : sessions)
       {
-        session.End();
+        session.End({});
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
     }
-    connection.Close();
+    connection.Close({});
 #if ENABLE_UAMQP
     mockServer.StopListening();
 #endif

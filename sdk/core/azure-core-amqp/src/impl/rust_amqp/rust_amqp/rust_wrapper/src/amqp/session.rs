@@ -4,8 +4,8 @@
 
 use crate::{
     amqp::connection::RustAmqpConnection,
+    call_context::{call_context_from_ptr_mut, RustCallContext},
     model::value::RustAmqpValue,
-    runtime_context::{runtime_context_from_ptr_mut, RuntimeContext},
 };
 use azure_core_amqp::{
     session::{
@@ -28,94 +28,115 @@ pub struct RustAmqpSessionOptions {
     inner: AmqpSessionOptions,
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsession_create() -> *mut RustAmqpSession {
+pub unsafe extern "C" fn amqpsession_create() -> *mut RustAmqpSession {
     Box::into_raw(Box::new(RustAmqpSession {
         inner: AmqpSession::new(),
     }))
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsession_destroy(session: *mut RustAmqpSession) {
+pub unsafe extern "C" fn amqpsession_destroy(session: *mut RustAmqpSession) {
     unsafe {
         mem::drop(Box::from_raw(session));
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsession_begin(
+pub unsafe extern "C" fn amqpsession_begin(
+    call_context: *mut RustCallContext,
     session: *mut RustAmqpSession,
     connection: *mut RustAmqpConnection,
     session_options: *mut RustAmqpSessionOptions,
-    runtime_context: *mut RuntimeContext,
 ) -> u32 {
     let session = unsafe { &mut *session };
     let connection = unsafe { &mut *connection };
-    let runtime_context = runtime_context_from_ptr_mut(runtime_context);
+    let call_context = call_context_from_ptr_mut(call_context);
 
     if session_options.is_null() {
-        let result = runtime_context
+        let result = call_context
+            .runtime_context()
             .runtime()
             .block_on(session.inner.begin(connection.get_connection(), None));
         match result {
             Ok(()) => 0,
             Err(err) => {
                 error!("Failed to open connection with session options: {:?}", err);
-                runtime_context.set_error(err.into());
+                call_context.set_error(err.into());
                 1
             }
         }
     } else {
         let session_options = unsafe { &*session_options };
-        let result = runtime_context.runtime().block_on(session.inner.begin(
-            connection.get_connection(),
-            Some(session_options.inner.clone()),
-        ));
+        let result = call_context
+            .runtime_context()
+            .runtime()
+            .block_on(session.inner.begin(
+                connection.get_connection(),
+                Some(session_options.inner.clone()),
+            ));
         match result {
             Ok(()) => 0,
             Err(err) => {
                 error!("Failed to open connection with session options: {:?}", err);
-                runtime_context.set_error(err.into());
+                call_context.set_error(err.into());
                 1
             }
         }
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsession_end(
+pub unsafe extern "C" fn amqpsession_end(
+    call_context: *mut RustCallContext,
     session: *mut RustAmqpSession,
-    runtime_context: *mut RuntimeContext,
 ) -> u32 {
     let session = unsafe { &*session };
-    let runtime_context = runtime_context_from_ptr_mut(runtime_context);
-    let result = runtime_context.runtime().block_on(session.inner.end());
+    let call_context = call_context_from_ptr_mut(call_context);
+    let result = call_context
+        .runtime_context()
+        .runtime()
+        .block_on(session.inner.end());
     match result {
         Ok(_) => 0,
         Err(err) => {
             error!("Failed to end session: {:?}", err);
-            runtime_context.set_error(err.into());
+            call_context.set_error(err.into());
             1
         }
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptions_destroy(session_options: *mut RustAmqpSessionOptions) {
+pub unsafe extern "C" fn amqpsessionoptions_destroy(session_options: *mut RustAmqpSessionOptions) {
     unsafe {
         mem::drop(Box::from_raw(session_options));
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_create() -> *mut RustAmqpSessionOptionsBuilder {
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_create() -> *mut RustAmqpSessionOptionsBuilder {
     Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
         inner: AmqpSessionOptions::builder(),
     }))
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_destroy(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_destroy(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
 ) {
     unsafe {
@@ -123,8 +144,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_destroy(
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_outgoing_window(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_outgoing_window(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     outgoing_window: u32,
 ) {
@@ -134,8 +157,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_outgoing_window(
         .with_outgoing_window(outgoing_window);
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_incoming_window(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_incoming_window(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     incoming_window: u32,
 ) {
@@ -145,8 +170,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_incoming_window(
         .with_incoming_window(incoming_window);
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_next_outgoing_id(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_next_outgoing_id(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     next_outgoing_id: u32,
 ) {
@@ -156,16 +183,21 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_next_outgoing_id(
         .with_next_outgoing_id(next_outgoing_id);
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_handle_max(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_handle_max(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     handle_max: u32,
 ) {
     let session_options_builder = unsafe { &mut *session_options_builder };
     session_options_builder.inner.with_handle_max(handle_max);
 }
+
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_offered_capabilities(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_offered_capabilities(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     offered_capabilities: *mut RustAmqpValue,
 ) {
@@ -181,8 +213,11 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_offered_capabilities(
             .with_offered_capabilities(offered_capabilities);
     }
 }
+
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_desired_capabilities(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_desired_capabilities(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     desired_capabilities: *mut RustAmqpValue,
 ) {
@@ -199,8 +234,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_desired_capabilities(
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_properties(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_properties(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     properties: *mut RustAmqpValue,
 ) {
@@ -209,7 +246,7 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_properties(
     if let AmqpValue::Map(properties) = &properties.inner {
         let properties_map: AmqpOrderedMap<AmqpSymbol, AmqpValue> = properties
             .iter()
-            .map(|(k, v)| (AmqpSymbol::from(k), AmqpValue::from(v)))
+            .map(|(k, v)| (AmqpSymbol::from(k), v))
             .collect();
         session_options_builder
             .inner
@@ -217,8 +254,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_properties(
     }
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_set_buffer_size(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_buffer_size(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     buffer_size: usize,
 ) {
@@ -226,8 +265,10 @@ pub extern "C" fn amqpsessionoptionsbuilder_set_buffer_size(
     session_options_builder.inner.with_buffer_size(buffer_size);
 }
 
+/// # Safety
+///
 #[no_mangle]
-pub extern "C" fn amqpsessionoptionsbuilder_build(
+pub unsafe extern "C" fn amqpsessionoptionsbuilder_build(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
 ) -> *mut RustAmqpSessionOptions {
     let session_options_builder = unsafe { &mut *session_options_builder };
@@ -238,6 +279,7 @@ pub extern "C" fn amqpsessionoptionsbuilder_build(
 
 #[cfg(test)]
 mod tests {
+    use crate::runtime_context::RuntimeContext;
     use azure_core_amqp::{
         connection::{AmqpConnection, AmqpConnectionApis},
         value::AmqpList,
@@ -247,77 +289,81 @@ mod tests {
 
     #[test]
     fn test_amqpsession_create() {
-        let session = amqpsession_create();
+        let session = unsafe { amqpsession_create() };
         assert_ne!(session, std::ptr::null_mut());
-        amqpsession_destroy(session);
+        unsafe { amqpsession_destroy(session) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_create() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
         assert_ne!(session_options_builder, std::ptr::null_mut());
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_outgoing_window() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        amqpsessionoptionsbuilder_set_outgoing_window(session_options_builder, 10);
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        unsafe { amqpsessionoptionsbuilder_set_outgoing_window(session_options_builder, 10) };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_incoming_window() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        amqpsessionoptionsbuilder_set_incoming_window(session_options_builder, 10);
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        unsafe { amqpsessionoptionsbuilder_set_incoming_window(session_options_builder, 10) };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_next_outgoing_id() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        amqpsessionoptionsbuilder_set_next_outgoing_id(session_options_builder, 10);
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        unsafe { amqpsessionoptionsbuilder_set_next_outgoing_id(session_options_builder, 10) };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_handle_max() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        amqpsessionoptionsbuilder_set_handle_max(session_options_builder, 10);
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        unsafe { amqpsessionoptionsbuilder_set_handle_max(session_options_builder, 10) };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_offered_capabilities() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
         let offered_capabilities = RustAmqpValue {
             inner: AmqpValue::List(AmqpList::from(vec![AmqpValue::Symbol(AmqpSymbol::from(
                 "test",
             ))])),
         };
-        amqpsessionoptionsbuilder_set_offered_capabilities(
-            session_options_builder,
-            &offered_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
-        );
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        unsafe {
+            amqpsessionoptionsbuilder_set_offered_capabilities(
+                session_options_builder,
+                &offered_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
+            )
+        };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_desired_capabilities() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
         let desired_capabilities = RustAmqpValue {
             inner: AmqpValue::List(vec![AmqpValue::Symbol(AmqpSymbol::from("test"))].into()),
         };
-        amqpsessionoptionsbuilder_set_desired_capabilities(
-            session_options_builder,
-            &desired_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
-        );
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        unsafe {
+            amqpsessionoptionsbuilder_set_desired_capabilities(
+                session_options_builder,
+                &desired_capabilities as *const RustAmqpValue as *mut RustAmqpValue,
+            )
+        };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_properties() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
         let properties = RustAmqpValue {
             inner: AmqpValue::Map(
                 vec![(
@@ -328,35 +374,39 @@ mod tests {
                 .collect(),
             ),
         };
-        amqpsessionoptionsbuilder_set_properties(
-            session_options_builder,
-            &properties as *const RustAmqpValue as *mut RustAmqpValue,
-        );
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        unsafe {
+            amqpsessionoptionsbuilder_set_properties(
+                session_options_builder,
+                &properties as *const RustAmqpValue as *mut RustAmqpValue,
+            )
+        };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_set_buffer_size() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        amqpsessionoptionsbuilder_set_buffer_size(session_options_builder, 1024);
-        amqpsessionoptionsbuilder_destroy(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        unsafe { amqpsessionoptionsbuilder_set_buffer_size(session_options_builder, 1024) };
+        unsafe { amqpsessionoptionsbuilder_destroy(session_options_builder) };
     }
 
     #[test]
     fn test_amqpsessionoptionsbuilder_build() {
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        let session_options = amqpsessionoptionsbuilder_build(session_options_builder);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        let session_options = unsafe { amqpsessionoptionsbuilder_build(session_options_builder) };
         assert_ne!(session_options, std::ptr::null_mut());
-        amqpsessionoptions_destroy(session_options);
+        unsafe { amqpsessionoptions_destroy(session_options) };
     }
 
     #[test]
     fn test_amqpsession_begin() {
         let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
-        let session = amqpsession_create();
+        let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
+        let session = unsafe { amqpsession_create() };
         let connection = AmqpConnection::new();
 
-        runtime_context_from_ptr_mut(runtime_context)
+        call_context_from_ptr_mut(call_context)
+            .runtime_context()
             .runtime()
             .block_on(connection.open(
                 "testConnection",
@@ -366,7 +416,8 @@ mod tests {
             .unwrap();
 
         let connection = Box::into_raw(Box::new(RustAmqpConnection::new(connection)));
-        let result = amqpsession_begin(session, connection, std::ptr::null_mut(), runtime_context);
+        let result =
+            unsafe { amqpsession_begin(call_context, session, connection, std::ptr::null_mut()) };
         assert_eq!(result, 0);
         unsafe {
             drop(Box::from_raw(connection));
@@ -378,10 +429,12 @@ mod tests {
     #[test]
     fn test_amqpsession_begin_with_options() {
         let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
-        let session = amqpsession_create();
+        let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
+        let session = unsafe { amqpsession_create() };
         let connection = AmqpConnection::new();
 
-        runtime_context_from_ptr_mut(runtime_context)
+        call_context_from_ptr_mut(call_context)
+            .runtime_context()
             .runtime()
             .block_on(connection.open(
                 "testConnection",
@@ -392,15 +445,16 @@ mod tests {
 
         let connection = Box::into_raw(Box::new(RustAmqpConnection::new(connection)));
 
-        let session_options_builder = amqpsessionoptionsbuilder_create();
-        let session_options = amqpsessionoptionsbuilder_build(session_options_builder);
-        let result = amqpsession_begin(session, connection, session_options, runtime_context);
+        let session_options_builder = unsafe { amqpsessionoptionsbuilder_create() };
+        let session_options = unsafe { amqpsessionoptionsbuilder_build(session_options_builder) };
+        let result =
+            unsafe { amqpsession_begin(call_context, session, connection, session_options) };
         assert_eq!(result, 0);
-        amqpsession_destroy(session);
+        unsafe { amqpsession_destroy(session) };
         unsafe {
             drop(Box::from_raw(connection));
             drop(Box::from_raw(runtime_context));
         }
-        amqpsessionoptions_destroy(session_options);
+        unsafe { amqpsessionoptions_destroy(session_options) };
     }
 }

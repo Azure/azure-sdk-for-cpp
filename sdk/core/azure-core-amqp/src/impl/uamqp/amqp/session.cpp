@@ -151,7 +151,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return max;
   }
 
-  void SessionImpl::Begin()
+  void SessionImpl::Begin(Azure::Core::Context const&)
   {
     if (session_begin(m_session.get()))
     {
@@ -164,7 +164,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     GetConnection()->EnableAsyncOperation(true);
     m_connectionAsyncStarted = true;
   }
-  void SessionImpl::End(const std::string& condition, const std::string& description)
+  void SessionImpl::End(Azure::Core::Context const&)
+  {
+    if (!m_isBegun)
+    {
+      throw std::runtime_error("Session End without corresponding Begin.");
+    }
+    // When we end the session, it clears all the links, so we need to ensure that the
+    //    m_newLinkAttachedQueue.Clear();
+    if (session_end(m_session.get(), nullptr, nullptr))
+    {
+      throw std::runtime_error("Could not begin session");
+    }
+    // Mark the connection as async so that we can use the async APIs.
+    GetConnection()->EnableAsyncOperation(false);
+    m_connectionAsyncStarted = false;
+    m_isBegun = false;
+  }
+
+  void SessionImpl::End(
+      const std::string& condition,
+      const std::string& description,
+      Azure::Core::Context const&)
   {
     if (!m_isBegun)
     {
