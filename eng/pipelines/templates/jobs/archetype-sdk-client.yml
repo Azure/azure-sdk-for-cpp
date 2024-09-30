@@ -328,7 +328,6 @@ jobs:
               -ApiKey "$(azuresdk-apiview-apikey)"
               -SourceBranch $(Build.SourceBranchName)
               -DefaultBranch $(DefaultBranch)
-              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
               -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
               -BuildId $(Build.BuildId)
               -RepoName "$(Build.Repository.Name)"
