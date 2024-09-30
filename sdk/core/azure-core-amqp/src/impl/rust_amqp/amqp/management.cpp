@@ -23,15 +23,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ManagementClientImpl::ManagementClientImpl(
       std::shared_ptr<SessionImpl> session,
       std::string const& managementEntityPath,
-      Azure::Core::Amqp::_internal::ManagementClientOptions const& options,
-      Azure::Core::Amqp::_internal::ManagementClientEvents* managementEvents)
-      : m_options{options}, m_session{session}, m_eventHandler{managementEvents},
-        m_managementEntityPath{managementEntityPath}
+      Azure::Core::Amqp::_internal::ManagementClientOptions const& options)
+      : m_options{options}, m_session{session}, m_managementEntityPath{managementEntityPath}
   {
   }
   ManagementClientImpl::~ManagementClientImpl() noexcept
   {
-    m_eventHandler = nullptr;
     if (m_isOpen)
     {
       AZURE_ASSERT_MSG(!m_isOpen, "Management being destroyed while open.");
@@ -215,11 +212,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     Log::Stream(Logger::Level::Warning)
         << "Indicate Management Error: " << condition << " - " << description;
-    if (m_eventHandler)
-    {
-      // Let external callers know that the error was triggered.
-      m_eventHandler->OnError(error);
-    }
     if (!correlationId.empty())
     {
       // Ensure nobody else is messing with the message queues right now.

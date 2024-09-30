@@ -212,7 +212,7 @@ extern "C" fn message_set_delivery_annotations(
             .iter()
             .map(|f| match f.0 {
                 AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
                 _ => panic!("Invalid message annotation key type"),
             })
             .collect();
@@ -236,7 +236,7 @@ extern "C" fn message_set_message_annotations(
             .iter()
             .map(|f| match f.0 {
                 AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
                 _ => panic!("Invalid message annotation key type"),
             })
             .collect();
@@ -288,7 +288,7 @@ extern "C" fn message_set_footer(
             .iter()
             .map(|f| match f.0 {
                 AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
                 _ => panic!("Invalid message annotation key type"),
             })
             .collect();

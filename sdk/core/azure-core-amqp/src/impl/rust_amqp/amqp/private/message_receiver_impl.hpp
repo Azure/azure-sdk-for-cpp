@@ -37,6 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class MessageReceiverImpl final : public std::enable_shared_from_this<MessageReceiverImpl> {
   public:
+#if ENABLE_UAMQP
     MessageReceiverImpl(
         std::shared_ptr<_detail::SessionImpl> session,
         Models::_internal::MessageSource const& receiverSource,
@@ -48,6 +49,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::_internal::MessageSource const& receiverSource,
         _internal::MessageReceiverOptions const& options,
         _internal::MessageReceiverEvents* receiverEvents = nullptr);
+#elif ENABLE_RUST_AMQP
+    MessageReceiverImpl(
+        std::shared_ptr<_detail::SessionImpl> session,
+        Models::_internal::MessageSource const& receiverSource,
+        _internal::MessageReceiverOptions const& options);
+#endif
     ~MessageReceiverImpl() noexcept;
 
     MessageReceiverImpl(MessageReceiverImpl const&) = delete;
@@ -88,9 +95,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // the close operation until the link is fully closed.
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_closeQueue;
-
+#if ENABLE_UAMQP
     _internal::MessageReceiverEvents* m_eventHandler{};
-
+#endif
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
