@@ -10,7 +10,6 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
-#include <azure/core/resource_identifier.hpp>
 
 #include <memory>
 #include <string>

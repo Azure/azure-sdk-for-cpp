@@ -55,7 +55,7 @@ Thank you to our developer community members who helped to make Azure Key Vault 
 
 ### Bugs Fixed
 
-- [3366](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
+- [[#4466]](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
 
 ## 4.4.0-beta.1 (2023-04-11)
 
@@ -65,7 +65,7 @@ Thank you to our developer community members who helped to make Azure Key Vault 
 
 ### Bugs Fixed
 
-- [3366](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
+- [[#4466]](https://github.com/Azure/azure-sdk-for-cpp/issues/4466) Fixed the user-agent string sent to the service to include the "keys" suffix in the value, when using `CryptographyClient`.
 
 ## 4.3.0 (2022-10-11)
 
@@ -88,7 +88,7 @@ Thank you to our developer community members who helped to make Azure Key Vault 
 
 ### Features Added
 
-- [2833](https://github.com/Azure/azure-sdk-for-cpp/issues/2833) Added `GetCryptographyClient()` to `KeyClient` to return a `CryptographyClient` that uses the same options, policies, and pipeline as the `KeyClient` that created it.
+- [[#2833]](https://github.com/Azure/azure-sdk-for-cpp/issues/2833) Added `GetCryptographyClient()` to `KeyClient` to return a `CryptographyClient` that uses the same options, policies, and pipeline as the `KeyClient` that created it.
 
 ## 4.1.0 (2021-09-08)
 
@@ -98,7 +98,7 @@ Thank you to our developer community members who helped to make Azure Key Vault 
 
 ### Bugs Fixed
 
-- [2750](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
+- [[#2750]](https://github.com/Azure/azure-sdk-for-cpp/issues/2750) Support for Azure `managedhsm` cloud and any other non-public Azure cloud.
 
 ## 4.0.0 (2021-08-10)
 

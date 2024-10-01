@@ -110,8 +110,13 @@ The snippet generation tool, located in `eng\scripts\Generate-Snippets.ps1`, is 
 
 ```bash
 pwsh -f eng\scripts\Generate-Snippets.ps1 -source_dir <path to source code containing snippets> -output_dir <path to directory containing output files>
-
 ```
+
+For example, you can run the snippet generation tool for all the packages in the repo, as follows:
+
+```bash
+pwsh -f .\eng\scripts\Generate-Snippets.ps1 -source_dir sdk -output_dir sdk
+ ```
 
 The tool will recursively search the source directory for snippet sources and parse the snippet sources in each 
 source file.

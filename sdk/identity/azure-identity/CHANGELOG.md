@@ -263,7 +263,7 @@ No changes since `1.2.0-beta.1`.
 
 ### Bugs Fixed
 
-- [2741](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
+- [[#2741]](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
 
 ## 1.1.0 (2021-08-10)
 
