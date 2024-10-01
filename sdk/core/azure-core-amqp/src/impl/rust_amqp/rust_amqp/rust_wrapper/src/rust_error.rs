@@ -18,17 +18,17 @@ impl RustError {
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn rust_error_get_message(error: *const RustError) -> *mut c_char {
-    let error = unsafe { error.as_ref().unwrap() };
-    let message = error.0.to_string();
-    let c_message = std::ffi::CString::new(message).unwrap();
-    c_message.into_raw()
+pub unsafe extern "C" fn rust_error_delete(error: *mut RustError) {
+    unsafe {
+        drop(Box::from_raw(error));
+    }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn rust_error_delete(error: *mut RustError) {
-    unsafe {
-        let _ = Box::from_raw(error);
-    }
+pub unsafe extern "C" fn rust_error_get_message(error: *const RustError) -> *mut c_char {
+    let error = unsafe { &*error };
+    let message = format!("{:?}", error.0);
+    let c_message = std::ffi::CString::new(message).unwrap();
+    c_message.into_raw()
 }

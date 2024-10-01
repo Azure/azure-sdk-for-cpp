@@ -27,6 +27,8 @@ pub trait AmqpClaimsBasedSecurityApis {
     ///
     fn attach(&self) -> impl std::future::Future<Output = Result<()>>;
 
+    fn close(self) -> impl std::future::Future<Output = Result<()>>;
+
     /// Asynchronously authorizes an AMQP path using the provided secret.
     ///
     /// The authorization is valid until the specified `expires_on` time. The path is typically a URI that represents an AMQP resource. The secret is typically a SAS token. The `expires_on` time is the time at which the authorization expires.
@@ -51,7 +53,7 @@ pub trait AmqpClaimsBasedSecurityApis {
     ) -> impl std::future::Future<Output = Result<()>>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AmqpClaimsBasedSecurity {
     implementation: CbsImplementation,
 }
@@ -68,15 +70,19 @@ impl AmqpClaimsBasedSecurityApis for AmqpClaimsBasedSecurity {
             .await
     }
 
+    async fn close(self) -> Result<()> {
+        self.implementation.close().await
+    }
+
     async fn attach(&self) -> Result<()> {
         self.implementation.attach().await
     }
 }
 
 impl AmqpClaimsBasedSecurity {
-    pub fn new(session: AmqpSession) -> Result<Self> {
+    pub fn new(session: &AmqpSession) -> Result<Self> {
         Ok(Self {
-            implementation: CbsImplementation::new(session)?,
+            implementation: CbsImplementation::new(&session)?,
         })
     }
 }

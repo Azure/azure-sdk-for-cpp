@@ -5,29 +5,23 @@
 
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/management.hpp"
+#include "rust_amqp_wrapper.h"
 #include "unique_handle.hpp"
 
-struct CBS_INSTANCE_TAG;
-
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<CBS_INSTANCE_TAG>
+  template <> struct UniqueHandleHelper<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>
   {
-    static void FreeAmqpCbs(CBS_HANDLE obj);
+    static void FreeAmqpCbs(
+        Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity* obj);
 
-    using type = Core::_internal::BasicUniqueHandle<CBS_INSTANCE_TAG, FreeAmqpCbs>;
+    using type = Core::_internal::BasicUniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity, FreeAmqpCbs>;
   };
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
-#endif // ENABLE_UAMQP
+  using UniqueAmqpCbsHandle = UniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>;
+
   class ClaimsBasedSecurityImpl final
-#if ENABLE_UAMQP
-      : public _internal::ManagementClientEvents
-#endif
   {
 
   public:
@@ -46,14 +40,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
+        Azure::DateTime const& tokenExpirationTime,
         Context const& context);
 
   private:
     std::shared_ptr<_detail::SessionImpl> m_session;
-    std::shared_ptr<_detail::ManagementClientImpl> m_management;
-#if ENABLE_UAMQP
-    // Inherited via ManagementClientEvents
-    void OnError(Models::_internal::AmqpError const& error) override;
-#endif
+    UniqueAmqpCbsHandle m_claimsBasedSecurity;
   };
 }}}} // namespace Azure::Core::Amqp::_detail

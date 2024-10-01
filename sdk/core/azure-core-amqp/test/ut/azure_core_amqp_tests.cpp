@@ -5,8 +5,9 @@
 #include "azure/core/platform.hpp"
 
 #include <csignal>
-#include <iostream>
-
+#if ENABLE_RUST_AMQP
+#include "rust_amqp_wrapper.h"
+#endif
 #include <gtest/gtest.h>
 
 #if defined(AZ_PLATFORM_WINDOWS)
@@ -43,6 +44,11 @@ int main(int argc, char** argv)
   // End users need to decide if SIGPIPE should be ignored or not.
   signal(SIGPIPE, SIG_IGN);
 #endif
+
+  #if ENABLE_RUST_AMQP
+// Initialize the Rust AMQP logging.
+  Azure::Core::Amqp::_detail::RustInterop::enable_tracing_integration();
+  #endif
 
   // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
   // other OS's as they will print the exception to stderr in their terminate() function.

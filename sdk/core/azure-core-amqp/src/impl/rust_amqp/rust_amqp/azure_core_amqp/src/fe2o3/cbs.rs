@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // cspell:: words amqp servicebus sastoken
 
-use super::error::{AmqpManagement, AmqpManagementAttach};
+use super::error::{AmqpLinkDetach, AmqpManagement, AmqpManagementAttach};
 use crate::{cbs::AmqpClaimsBasedSecurityApis, session::AmqpSession};
 use async_std::sync::Mutex;
 use azure_core::error::Result;
@@ -15,17 +15,17 @@ use std::{
 };
 use tracing::{debug, trace};
 
-#[derive(Debug)]
-pub(crate) struct Fe2o3ClaimsBasedSecurity {
-    cbs: OnceLock<Mutex<fe2o3_amqp_cbs::client::CbsClient>>,
-    session: Arc<Mutex<fe2o3_amqp::session::SessionHandle<()>>>,
+#[derive(Debug, Clone)]
+pub(crate) struct Fe2o3ClaimsBasedSecurity<'a> {
+    cbs: OnceLock<Arc<Mutex<fe2o3_amqp_cbs::client::CbsClient>>>,
+    session: &'a Arc<Mutex<fe2o3_amqp::session::SessionHandle<()>>>,
 }
 
-impl Fe2o3ClaimsBasedSecurity {
-    pub fn new(session: AmqpSession) -> Result<Self> {
+impl<'a> Fe2o3ClaimsBasedSecurity<'a> {
+    pub fn new(session: &'a AmqpSession) -> Result<Self> {
         Ok(Self {
             cbs: OnceLock::new(),
-            session: session.implementation.get()?,
+            session: session.implementation.get()?.clone(),
         })
     }
 }
@@ -46,12 +46,30 @@ impl AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity {
             .attach(session.borrow_mut())
             .await
             .map_err(AmqpManagementAttach::from)?;
-        self.cbs.set(Mutex::new(cbs_client)).map_err(|_| {
-            azure_core::Error::message(
-                azure_core::error::ErrorKind::Other,
-                "Claims Based Security is already set.",
-            )
-        })?;
+        self.cbs
+            .set(Arc::new(Mutex::new(cbs_client)))
+            .map_err(|_| {
+                azure_core::Error::message(
+                    azure_core::error::ErrorKind::Other,
+                    "Claims Based Security is already set.",
+                )
+            })?;
+        Ok(())
+    }
+
+    async fn close(self) -> Result<()> {
+        let cbs = self
+            .cbs
+            .get()
+            .ok_or_else(|| {
+                azure_core::Error::message(
+                    azure_core::error::ErrorKind::Other,
+                    "Claims Based Security was not set.",
+                )
+            })?
+            .lock()
+            .await;
+        cbs.close().await.map_err(AmqpLinkDetach::from)?;
         Ok(())
     }
 

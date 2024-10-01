@@ -64,7 +64,7 @@ extern "C" fn source_clone(source: *const RustAmqpSource) -> *mut RustAmqpSource
 extern "C" fn source_get_address(
     source: *const RustAmqpSource,
     address: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_address) = &source.inner.address {
         *address = Box::into_raw(Box::new(RustAmqpValue {
@@ -81,7 +81,7 @@ extern "C" fn source_get_address(
 extern "C" fn source_get_durable(
     source: *const RustAmqpSource,
     durable: &mut RustTerminusDurability,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(durable_value) = &source.inner.durable {
         match durable_value {
@@ -106,7 +106,7 @@ extern "C" fn source_get_durable(
 extern "C" fn source_get_expiry_policy(
     source: *const RustAmqpSource,
     expiry_policy: &mut RustExpiryPolicy,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(expiry_policy_value) = &source.inner.expiry_policy {
         match expiry_policy_value {
@@ -131,7 +131,7 @@ extern "C" fn source_get_expiry_policy(
 }
 
 #[no_mangle]
-extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u32) -> u32 {
+extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u32) -> i32 {
     let source = unsafe { &*source };
     if let Some(timeout_value) = source.inner.timeout {
         *timeout = timeout_value;
@@ -143,7 +143,7 @@ extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u3
 }
 
 #[no_mangle]
-extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bool) -> u32 {
+extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bool) -> i32 {
     let source = unsafe { &*source };
     if let Some(dynamic_value) = source.inner.dynamic {
         *dynamic = dynamic_value;
@@ -160,7 +160,7 @@ extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bo
 extern "C" fn source_get_distribution_mode(
     source: *const RustAmqpSource,
     distribution_mode: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(distribution_mode_value) = &source.inner.distribution_mode {
         match distribution_mode_value {
@@ -186,7 +186,7 @@ extern "C" fn source_get_distribution_mode(
 extern "C" fn source_get_filter(
     source: *const RustAmqpSource,
     filter: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_filter) = &source.inner.filter {
         let map: AmqpOrderedMap<AmqpValue, AmqpValue> = source_filter
@@ -208,7 +208,7 @@ extern "C" fn source_get_filter(
 extern "C" fn source_get_default_outcome(
     source: *const RustAmqpSource,
     default_outcome: &mut RustDeliveryOutcome,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_default_outcome) = &source.inner.default_outcome {
         match source_default_outcome {
@@ -235,7 +235,7 @@ extern "C" fn source_get_default_outcome(
 extern "C" fn source_get_dynamic_node_properties(
     source: *const RustAmqpSource,
     properties: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_properties) = &source.inner.dynamic_node_properties {
         let map: AmqpOrderedMap<AmqpValue, AmqpValue> = source_properties
@@ -257,7 +257,7 @@ extern "C" fn source_get_dynamic_node_properties(
 extern "C" fn source_get_outcomes(
     source: *const RustAmqpSource,
     outcomes: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_outcomes) = &source.inner.outcomes {
         let list: Vec<AmqpValue> = source_outcomes
@@ -279,7 +279,7 @@ extern "C" fn source_get_outcomes(
 extern "C" fn source_get_capabilities(
     source: *const RustAmqpSource,
     capabilities: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let source = unsafe { &*source };
     if let Some(source_capabilities) = &source.inner.capabilities {
         let list: Vec<AmqpValue> = source_capabilities
@@ -384,7 +384,7 @@ extern "C" fn source_builder_destroy(builder: *mut RustAmqpSourceBuilder) {
 extern "C" fn source_builder_build(
     builder: *mut RustAmqpSourceBuilder,
     source: &mut *mut RustAmqpSource,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     *source = Box::into_raw(Box::new(RustAmqpSource::new(builder.inner.build())));
     0
@@ -394,7 +394,7 @@ extern "C" fn source_builder_build(
 extern "C" fn source_set_address(
     builder: *mut RustAmqpSourceBuilder,
     address: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let address = unsafe { &*address };
     match &address.inner {
@@ -413,7 +413,7 @@ extern "C" fn source_set_address(
 extern "C" fn source_set_durable(
     builder: *mut RustAmqpSourceBuilder,
     durable: RustTerminusDurability,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     match durable {
         RustTerminusDurability::None => {
@@ -441,7 +441,7 @@ extern "C" fn source_set_durable(
 extern "C" fn source_set_expiry_policy(
     builder: *mut RustAmqpSourceBuilder,
     expiry_policy: RustExpiryPolicy,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     match expiry_policy {
         RustExpiryPolicy::LinkDetach => {
@@ -472,14 +472,14 @@ extern "C" fn source_set_expiry_policy(
 }
 
 #[no_mangle]
-extern "C" fn source_set_timeout(builder: *mut RustAmqpSourceBuilder, timeout: u32) -> u32 {
+extern "C" fn source_set_timeout(builder: *mut RustAmqpSourceBuilder, timeout: u32) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_timeout(timeout);
     0
 }
 
 #[no_mangle]
-extern "C" fn source_set_dynamic(builder: *mut RustAmqpSourceBuilder, dynamic: bool) -> u32 {
+extern "C" fn source_set_dynamic(builder: *mut RustAmqpSourceBuilder, dynamic: bool) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_dynamic(dynamic);
     0
@@ -489,7 +489,7 @@ extern "C" fn source_set_dynamic(builder: *mut RustAmqpSourceBuilder, dynamic: b
 extern "C" fn source_set_distribution_mode(
     builder: *mut RustAmqpSourceBuilder,
     distribution_mode: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let distribution_mode = unsafe { &*distribution_mode };
     match &distribution_mode.inner {
@@ -525,7 +525,7 @@ extern "C" fn source_set_distribution_mode(
 extern "C" fn source_set_filter(
     builder: *mut RustAmqpSourceBuilder,
     filter: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let filter = unsafe { &*filter };
     match &filter.inner {
@@ -549,7 +549,7 @@ extern "C" fn source_set_filter(
 extern "C" fn source_set_default_outcome(
     builder: *mut RustAmqpSourceBuilder,
     default_outcome: RustDeliveryOutcome,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     match default_outcome {
         RustDeliveryOutcome::Accepted => {
@@ -583,7 +583,7 @@ extern "C" fn source_set_default_outcome(
 extern "C" fn source_set_dynamic_node_properties(
     builder: *mut RustAmqpSourceBuilder,
     properties: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let properties = unsafe { &*properties };
     match &properties.inner {
@@ -621,7 +621,7 @@ extern "C" fn source_set_dynamic_node_properties(
 extern "C" fn source_set_outcomes(
     builder: *mut RustAmqpSourceBuilder,
     outcomes: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let outcomes = unsafe { &*outcomes };
     match &outcomes.inner {
@@ -667,7 +667,7 @@ extern "C" fn source_set_outcomes(
 extern "C" fn source_set_capabilities(
     builder: *mut RustAmqpSourceBuilder,
     capabilities: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let capabilities = unsafe { &*capabilities };
     match &capabilities.inner {
