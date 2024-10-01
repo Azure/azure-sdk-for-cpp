@@ -13,6 +13,7 @@
 ### Other Changes
 
 - Allow certain response headers to be logged in `AzurePipelinesCredential` for diagnostics and include them in the exception message.
+- In `ClientCertificateCredential`, add the x5c parameter of the JWT token as a JSON array rather than a JSON string.
 
 ## 1.10.0-beta.1 (2024-09-17)
 

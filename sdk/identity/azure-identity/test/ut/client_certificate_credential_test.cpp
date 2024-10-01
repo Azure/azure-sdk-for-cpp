@@ -133,8 +133,8 @@ public:
     {
       return "{\"x5t\":" + x5t + ",\"kid\":" + kid
           + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
-            "\"x5c\":"
-          + x5c + "}";
+            "\"x5c\":["
+          + x5c + "]}";
     }
     return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
@@ -228,8 +228,8 @@ public:
     {
       return "{\"x5t\":" + x5t + ",\"kid\":" + kid
           + ",\"alg\":\"RS256\",\"typ\":\"JWT\","
-            "\"x5c\":"
-          + x5c + "}";
+            "\"x5c\":["
+          + x5c + "]}";
     }
     return "{\"x5t\":" + x5t + ",\"kid\":" + kid + ",\"alg\":\"RS256\",\"typ\":\"JWT\"}";
   }
