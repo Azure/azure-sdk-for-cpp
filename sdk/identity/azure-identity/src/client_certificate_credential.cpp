@@ -146,7 +146,7 @@ std::string GetJwtToken(
     // Even though there is only one base64 encoded cert string, we write the x5c header as a JSON
     // array of strings, following the spec:
     // https://datatracker.ietf.org/doc/html/rfc7517#section-4.7
-    // For historical, legacy reasons, the auth endpoint happens to work with a single string, but
+    // For historical, legacy reasons, the token endpoint happens to work with a single string, but
     // we shouldn't rely on that behavior.
     x5cHeaderParam = ",\"x5c\":[\"";
     std::string certContent = FindPemCertificateContent(clientCertificatePath, clientCertificate);
