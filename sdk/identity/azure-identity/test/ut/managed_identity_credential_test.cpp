@@ -328,12 +328,15 @@ namespace Azure { namespace Identity { namespace Test {
 
   TEST(ManagedIdentityCredential, AppServiceV2019ResourceId)
   {
+    std::string const resourceId
+        = "/subscriptions/abcdef01-2345-6789-9876-543210fedcba/locations/MyLocation";
+
     auto const actual = CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
-              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"));
+          options.IdentityId
+              = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier(resourceId));
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -369,23 +372,17 @@ namespace Azure { namespace Identity { namespace Test {
 
     EXPECT_EQ(
         request0.AbsoluteUrl,
-        "https://visualstudio.com"
-        "?api-version=2019-08-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+        "https://visualstudio.com?api-version=2019-08-01&mi_res_id=" + resourceId
+            + "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request1.AbsoluteUrl,
-        "https://visualstudio.com"
-        "?api-version=2019-08-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+        "https://visualstudio.com?api-version=2019-08-01&mi_res_id=" + resourceId
+            + "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request2.AbsoluteUrl,
-        "https://visualstudio.com"
-        "?api-version=2019-08-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba");
+        "https://visualstudio.com?api-version=2019-08-01&mi_res_id=" + resourceId);
 
     EXPECT_TRUE(request0.Body.empty());
     EXPECT_TRUE(request1.Body.empty());
@@ -792,12 +789,15 @@ namespace Azure { namespace Identity { namespace Test {
 
   TEST(ManagedIdentityCredential, AppServiceV2017ResourceId)
   {
+    std::string const resourceId
+        = "/subscriptions/abcdef01-2345-6789-9876-543210fedcba/locations/MyLocation";
+
     auto const actual = CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
-              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"));
+          options.IdentityId
+              = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier(resourceId));
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -833,23 +833,17 @@ namespace Azure { namespace Identity { namespace Test {
 
     EXPECT_EQ(
         request0.AbsoluteUrl,
-        "https://microsoft.com"
-        "?api-version=2017-09-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+        "https://microsoft.com?api-version=2017-09-01&mi_res_id=" + resourceId
+            + "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request1.AbsoluteUrl,
-        "https://microsoft.com"
-        "?api-version=2017-09-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+        "https://microsoft.com?api-version=2017-09-01&mi_res_id=" + resourceId
+            + "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request2.AbsoluteUrl,
-        "https://microsoft.com"
-        "?api-version=2017-09-01"
-        "&mi_res_id=abcdef01-2345-6789-9876-543210fedcba");
+        "https://microsoft.com?api-version=2017-09-01&mi_res_id=" + resourceId);
 
     EXPECT_TRUE(request0.Body.empty());
     EXPECT_TRUE(request1.Body.empty());
@@ -1174,12 +1168,15 @@ namespace Azure { namespace Identity { namespace Test {
   {
     using Azure::Core::Credentials::AuthenticationException;
 
+    std::string const resourceId
+        = "/subscriptions/abcdef01-2345-6789-9876-543210fedcba/locations/MyLocation";
+
     static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
-              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"));
+          options.IdentityId
+              = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier(resourceId));
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", "https://microsoft.com/"},
@@ -1661,12 +1658,15 @@ namespace Azure { namespace Identity { namespace Test {
     using Azure::Core::Credentials::AccessToken;
     using Azure::Core::Credentials::AuthenticationException;
 
+    std::string const resourceId
+        = "/subscriptions/abcdef01-2345-6789-9876-543210fedcba/locations/MyLocation";
+
     static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
-              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"));
+          options.IdentityId
+              = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier(resourceId));
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},
@@ -2636,12 +2636,15 @@ namespace Azure { namespace Identity { namespace Test {
 
   TEST(ManagedIdentityCredential, ImdsResourceId)
   {
+    std::string const resourceId
+        = "/subscriptions/abcdef01-2345-6789-9876-543210fedcba/locations/MyLocation";
+
     auto const actual = CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&](auto transport) {
           ManagedIdentityCredentialOptions options;
           options.Transport.Transport = transport;
-          options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
-              ResourceIdentifier("abcdef01-2345-6789-9876-543210fedcba"));
+          options.IdentityId
+              = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier(resourceId));
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},
@@ -2677,23 +2680,18 @@ namespace Azure { namespace Identity { namespace Test {
 
     EXPECT_EQ(
         request0.AbsoluteUrl,
-        "http://169.254.169.254/metadata/identity/oauth2/token"
-        "?api-version=2018-02-01"
-        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
+        "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&msi_res_id="
+            + resourceId + "&resource=https%3A%2F%2Fazure.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request1.AbsoluteUrl,
-        "http://169.254.169.254/metadata/identity/oauth2/token"
-        "?api-version=2018-02-01"
-        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba"
-        "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
+        "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&msi_res_id="
+            + resourceId + "&resource=https%3A%2F%2Foutlook.com"); // cspell:disable-line
 
     EXPECT_EQ(
         request2.AbsoluteUrl,
-        "http://169.254.169.254/metadata/identity/oauth2/token"
-        "?api-version=2018-02-01"
-        "&msi_res_id=abcdef01-2345-6789-9876-543210fedcba");
+        "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&msi_res_id="
+            + resourceId);
 
     EXPECT_TRUE(request0.Body.empty());
     EXPECT_TRUE(request1.Body.empty());
