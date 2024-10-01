@@ -111,7 +111,7 @@ To use a client ID, create a `ManagedIdentityId` with `ManagedIdentityIdKind::Cl
 
 std::string userAssignedClientId = "<your managed identity client ID>";
 ManagedIdentityCredentialOptions options;
-options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ClientId, userAssignedClientId);
+options.IdentityId = ManagedIdentityId::FromUserAssignedClientId(userAssignedClientId);
 
 auto credential = std::make_shared<ManagedIdentityCredential>(options);
 auto blobClient = BlobClient(blobUrl, credential);
@@ -125,8 +125,8 @@ Similarly, to use a resource ID, create a `ManagedIdentityId` with `ManagedIdent
 ```cpp
 std::string userAssignedResourceId = "<your managed identity resource ID>";
 ManagedIdentityCredentialOptions options;
-options.IdentityId
-    = ManagedIdentityId(ManagedIdentityIdKind::ResourceId, userAssignedResourceId);
+options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
+    Azure::Core::ResourceIdentifier(userAssignedResourceId));
 
 auto credential = std::make_shared<ManagedIdentityCredential>(options);
 auto blobClient = BlobClient(blobUrl, credential);
@@ -140,7 +140,7 @@ Similarly, to use an object ID, create a `ManagedIdentityId` with `ManagedIdenti
 ```cpp
 std::string userAssignedObjectId = "<your managed identity object ID>";
 ManagedIdentityCredentialOptions options;
-options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ObjectId, userAssignedObjectId);
+options.IdentityId = ManagedIdentityId::FromUserAssignedObjectId(userAssignedObjectId);
 
 auto credential = std::make_shared<ManagedIdentityCredential>(options);
 auto blobClient = BlobClient(blobUrl, credential);
@@ -153,7 +153,7 @@ You can express your intent to use a system-assigned managed identity, explicitl
 <!-- @insert_snippet: SystemAssignedManagedIdentity -->
 ```cpp
 ManagedIdentityCredentialOptions options;
-options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, {});
+options.IdentityId = ManagedIdentityId::SystemAssigned();
 
 auto credential = std::make_shared<ManagedIdentityCredential>(options);
 auto blobClient = BlobClient(blobUrl, credential);

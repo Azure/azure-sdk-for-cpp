@@ -104,8 +104,7 @@ namespace Azure { namespace Identity {
      */
     static ManagedIdentityId FromUserAssignedResourceId(Azure::Core::ResourceIdentifier id)
     {
-      return ManagedIdentityId(
-          _detail::ManagedIdentityIdKind::ResourceId, std::move(id.ToString()));
+      return ManagedIdentityId(_detail::ManagedIdentityIdKind::ResourceId, id.ToString());
     }
 
   private:
