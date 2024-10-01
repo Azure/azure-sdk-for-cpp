@@ -1,24 +1,37 @@
 # Release History
 
-## 1.14.0-beta.3 (Unreleased)
+## 1.14.0 (2024-10-03)
 
 ### Features Added
 
+- Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
+- Request logs to now include the `accept-range`, `content-range`, `range`, `WWW-Authenticate`, `x-ms-date`, `x-ms-error-code`, `x-ms-range`, and `x-ms-version` headers.
+- Added default constructor, `Parse()`, and equality comparison operators to `Azure::Core::Uuid`.
+- Added an `Azure::Core::ResourceIdentifier` type.
+
 ### Breaking Changes
+
+- Deprecated the `Azure::Core::Context::ApplicationContext` object. 
+  - If customer code is using `Azure::Core::Context::ApplicationContext`, the customer should instead create their own root context object which is used
+  wherever the customer would have previously used `Azure::Core::Context::ApplicationContext`, i.e. `Azure::Core::Context(deadline)` instead of `Azure::Core::Context::ApplicationContext.WithDeadline(deadline)`.
 
 ### Bugs Fixed
 
+- Throw `std::invalid_argument` if the value of `TimeFractionFormat` enum passed in to `DateTime::ToString()` is invalid.
+- `Azure::Core::Uuid::ToString()` is now `const`.
 - Make the HTTP transport behavior consistent between WinHTTP and libcurl by disabling automatically following redirects on Windows.
 - Added basic input validation to `Azure::Core::ResourceIdentifier` to ensure the prefix match what is expected.
 
 ### Other Changes
 
+- [[#5851]](https://github.com/Azure/azure-sdk-for-cpp/pull/5851) Remove unneeded `<regex>` includes. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
 - [[#6014]](https://github.com/Azure/azure-sdk-for-cpp/pull/6014), [[#6016]](https://github.com/Azure/azure-sdk-for-cpp/pull/6016) Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_) 
 
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
 
+- Robert Schulze _([GitHub](https://github.com/rschu1ze))_
 - James Le Cuirot _([GitHub](https://github.com/chewi))_
 
 ## 1.14.0-beta.2 (2024-09-12)
