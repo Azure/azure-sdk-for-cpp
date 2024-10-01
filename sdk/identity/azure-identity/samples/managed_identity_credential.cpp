@@ -20,7 +20,7 @@ static void ShowDifferentManagedIdentityApproaches()
 
     std::string userAssignedClientId = "<your managed identity client ID>";
     ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ClientId, userAssignedClientId);
+    options.IdentityId = ManagedIdentityId::FromUserAssignedClientId(userAssignedClientId);
 
     auto credential = std::make_shared<ManagedIdentityCredential>(options);
     auto blobClient = BlobClient(blobUrl, credential);
@@ -30,8 +30,8 @@ static void ShowDifferentManagedIdentityApproaches()
     // @begin_snippet: UserAssignedManagedIdentityViaResourceId
     std::string userAssignedResourceId = "<your managed identity resource ID>";
     ManagedIdentityCredentialOptions options;
-    options.IdentityId
-        = ManagedIdentityId(ManagedIdentityIdKind::ResourceId, userAssignedResourceId);
+    options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
+        Azure::Core::ResourceIdentifier(userAssignedResourceId));
 
     auto credential = std::make_shared<ManagedIdentityCredential>(options);
     auto blobClient = BlobClient(blobUrl, credential);
@@ -41,7 +41,7 @@ static void ShowDifferentManagedIdentityApproaches()
     // @begin_snippet: UserAssignedManagedIdentityViaObjectId
     std::string userAssignedObjectId = "<your managed identity object ID>";
     ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::ObjectId, userAssignedObjectId);
+    options.IdentityId = ManagedIdentityId::FromUserAssignedObjectId(userAssignedObjectId);
 
     auto credential = std::make_shared<ManagedIdentityCredential>(options);
     auto blobClient = BlobClient(blobUrl, credential);
@@ -50,7 +50,7 @@ static void ShowDifferentManagedIdentityApproaches()
   {
     // @begin_snippet: SystemAssignedManagedIdentity
     ManagedIdentityCredentialOptions options;
-    options.IdentityId = ManagedIdentityId(ManagedIdentityIdKind::SystemAssigned, {});
+    options.IdentityId = ManagedIdentityId::SystemAssigned();
 
     auto credential = std::make_shared<ManagedIdentityCredential>(options);
     auto blobClient = BlobClient(blobUrl, credential);

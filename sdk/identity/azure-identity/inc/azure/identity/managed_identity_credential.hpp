@@ -10,30 +10,39 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/credentials/token_credential_options.hpp>
+#include <azure/core/resource_identifier.hpp>
 
 #include <memory>
 #include <string>
 
+#if defined(_azure_TESTING_BUILD)
+// Define the class used from tests
+namespace Azure { namespace Identity { namespace Test {
+  class ManagedIdentityId_Basic_Test;
+  class ManagedIdentityId_Invalid_Test;
+}}} // namespace Azure::Identity::Test
+#endif
+
 namespace Azure { namespace Identity {
   namespace _detail {
     class ManagedIdentitySource;
-  }
 
-  /**
-   * @brief The kind of managed identity identifier depending on how the managed identity is
-   * configured.
-   *
-   * @remark This can either be system-assigned, or user-assigned which corresponds to an identifier
-   * that represents either client ID, resource ID, or object ID, depending on how the managed
-   * identity is configured.
-   */
-  enum class ManagedIdentityIdKind
-  {
-    SystemAssigned,
-    ClientId,
-    ObjectId,
-    ResourceId,
-  };
+    /**
+     * @brief The kind of managed identity identifier depending on how the managed identity is
+     * configured.
+     *
+     * @remark This can either be system-assigned, or user-assigned which corresponds to an
+     * identifier that represents either client ID, resource ID, or object ID, depending on how the
+     * managed identity is configured.
+     */
+    enum class ManagedIdentityIdKind
+    {
+      SystemAssigned,
+      ClientId,
+      ObjectId,
+      ResourceId,
+    };
+  } // namespace _detail
 
   /**
    * @brief The type of managed identity and its corresponding identifier.
@@ -43,34 +52,60 @@ namespace Azure { namespace Identity {
    */
   class ManagedIdentityId final {
     friend class ManagedIdentityCredential;
+#if defined(_azure_TESTING_BUILD)
+    // make tests classes friends to validate ManagedIdentityId behavior
+    friend class Azure::Identity::Test::ManagedIdentityId_Basic_Test;
+    friend class Azure::Identity::Test::ManagedIdentityId_Invalid_Test;
+#endif
 
   private:
-    ManagedIdentityIdKind m_idKind;
+    _detail::ManagedIdentityIdKind m_idKind;
     std::string m_id;
 
   public:
     /**
      * @brief Constructs the type of managed identity.
      *
-     * @remark This defaults to ManagedIdentityIdType::SystemAssigned.
+     * @remark This defaults to a system-assigned managed identity.
      */
-    explicit ManagedIdentityId() : m_idKind(ManagedIdentityIdKind::SystemAssigned) {}
+    explicit ManagedIdentityId() : m_idKind(_detail::ManagedIdentityIdKind::SystemAssigned) {}
 
-    static ManagedIdentityId FromSystemAssigned() { return ManagedIdentityId(); }
+    /**
+     * @brief Create an instance of ManagedIdentityId for a system-assigned managed identity.
+     *
+     */
+    static ManagedIdentityId SystemAssigned() { return ManagedIdentityId(); }
 
+    /**
+     * @brief Create an instance of ManagedIdentityId for a user-assigned managed identity.
+     *
+     * @param id The client ID of the user-assigned managed identity.
+     */
     static ManagedIdentityId FromUserAssignedClientId(std::string id)
     {
-      return ManagedIdentityId(ManagedIdentityIdKind::ClientId, std::move(id));
+      return ManagedIdentityId(_detail::ManagedIdentityIdKind::ClientId, std::move(id));
     }
 
+    /**
+     * @brief Create an instance of ManagedIdentityId for a user-assigned managed identity.
+     *
+     * @param id The object ID of the user-assigned managed identity.
+     */
     static ManagedIdentityId FromUserAssignedObjectId(std::string id)
     {
-      return ManagedIdentityId(ManagedIdentityIdKind::ObjectId, std::move(id));
+      return ManagedIdentityId(_detail::ManagedIdentityIdKind::ObjectId, std::move(id));
     }
 
+    /**
+     * @brief Create an instance of ManagedIdentityId for a user-assigned managed identity.
+     *
+     * @param id The resource ID of the user-assigned managed identity.
+     *
+     */
     static ManagedIdentityId FromUserAssignedResourceId(Azure::Core::ResourceIdentifier id)
     {
-      return ManagedIdentityId(ManagedIdentityIdKind::ResourceId, std::move(id.ToString()));
+      return ManagedIdentityId(
+          _detail::ManagedIdentityIdKind::ResourceId, std::move(id.ToString()));
     }
 
   private:
@@ -86,10 +121,10 @@ namespace Azure { namespace Identity {
      * @remark Make sure the kind of ID matches the value of the ID. For example, the client
      * ID and object ID are NOT interchangeable, even though they are both Uuid values.
      */
-    explicit ManagedIdentityId(ManagedIdentityIdKind idKind, std::string id)
+    explicit ManagedIdentityId(_detail::ManagedIdentityIdKind idKind, std::string id)
         : m_idKind(idKind), m_id(id)
     {
-      if (idKind == ManagedIdentityIdKind::SystemAssigned && !id.empty())
+      if (idKind == _detail::ManagedIdentityIdKind::SystemAssigned && !id.empty())
       {
         throw std::invalid_argument(
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
@@ -97,8 +132,9 @@ namespace Azure { namespace Identity {
       }
 
       if (id.empty()
-          && (idKind == ManagedIdentityIdKind::ClientId || idKind == ManagedIdentityIdKind::ObjectId
-              || idKind == ManagedIdentityIdKind::ResourceId))
+          && (idKind == _detail::ManagedIdentityIdKind::ClientId
+              || idKind == _detail::ManagedIdentityIdKind::ObjectId
+              || idKind == _detail::ManagedIdentityIdKind::ResourceId))
       {
         throw std::invalid_argument(
             "Provide the value of the client, object, or resource ID corresponding to the "
@@ -118,7 +154,7 @@ namespace Azure { namespace Identity {
      * @brief Gets the kind of identifier used for the managed identity, depending on how it is
      * configured.
      */
-    ManagedIdentityIdKind GetManagedIdentityIdKind() const { return m_idKind; }
+    _detail::ManagedIdentityIdKind GetManagedIdentityIdKind() const { return m_idKind; }
   };
 
   /**
