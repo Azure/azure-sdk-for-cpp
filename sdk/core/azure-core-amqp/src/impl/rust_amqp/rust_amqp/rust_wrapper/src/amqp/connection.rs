@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 // cspell: words amqp amqpconnection amqpconnectionoptionsbuilder amqpconnectionoptions
 
+use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
+    model::value::RustAmqpValue,
+};
 use core::panic;
 use std::{
     ffi::{c_char, CStr},
@@ -9,13 +13,7 @@ use std::{
     ptr::{self},
 };
 use time::Duration;
-
-use crate::{
-    call_context::{call_context_from_ptr_mut, RustCallContext},
-    model::value::RustAmqpValue,
-};
-
-use tracing::error;
+use tracing::{error, trace};
 use url::Url;
 
 use azure_core_amqp::{
@@ -85,7 +83,7 @@ pub unsafe extern "C" fn amqpconnection_open(
     let default_options: RustAmqpConnectionOptions = RustAmqpConnectionOptions {
         inner: Default::default(),
     };
-    let options = if options.is_null() {
+    let options = if !options.is_null() {
         unsafe { &*options }
     } else {
         &default_options
