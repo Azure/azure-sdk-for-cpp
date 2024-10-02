@@ -6,19 +6,21 @@
 #include <stdexcept>
 #include <string>
 
+namespace {
+const std::string SubscriptionStart = "/subscriptions/";
+const std::string ProviderStart = "/providers/";
+} // namespace
+
 namespace Azure { namespace Core {
 
   ResourceIdentifier::ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId)
   {
-    const std::string subscriptionStart = "/subscriptions/";
-    const std::string providerStart = "/providers/";
-
     // Validate prefix
-    if (resourceId.find(subscriptionStart) != 0 && resourceId.find(providerStart) != 0)
+    if (resourceId.find(SubscriptionStart) != 0 && resourceId.find(ProviderStart) != 0)
     {
       throw std::invalid_argument(
-          "The ResourceIdentifier must start with " + subscriptionStart + " or " + providerStart
-          + ".");
+          "The ResourceIdentifier must start with '" + SubscriptionStart + "' or '" + ProviderStart
+          + "'.");
     }
   }
 }} // namespace Azure::Core
