@@ -82,7 +82,7 @@ namespace Azure { namespace Identity { namespace Test {
 
       ManagedIdentityId const miTypeFactory = ManagedIdentityId::FromUserAssignedResourceId(
           ResourceIdentifier("/subscriptions/resourceId"));
-      EXPECT_EQ(miTypeFactory.GetId(), "resourceId");
+      EXPECT_EQ(miTypeFactory.GetId(), "/subscriptions/resourceId");
       EXPECT_EQ(miTypeFactory.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ResourceId);
     }
     {
