@@ -30,7 +30,7 @@ parameters:
     default: CMakeGenerate
   - name: TimeoutInMinutes
     type: number
-    default: 120
+    default: 240
   - name: OSName
     type: string
     default: ''

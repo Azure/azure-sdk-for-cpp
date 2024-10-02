@@ -29,7 +29,7 @@ extends:
       ServiceDirectory: keyvault
       CtestRegex: "azure-security-keyvault.*"
       LiveTestCtestRegex: "azure-security-keyvault.*"
-      LiveTestTimeoutInMinutes: 120
+      LiveTestTimeoutInMinutes: 240
       LineCoverageTarget: 81
       BranchCoverageTarget: 42
       Artifacts:

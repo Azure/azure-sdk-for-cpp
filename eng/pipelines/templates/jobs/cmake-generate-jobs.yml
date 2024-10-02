@@ -16,7 +16,7 @@ parameters:
     default: []
   - name: TimeoutInMinutes
     type: number
-    default: 120
+    default: 240
 
 jobs:
 - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml

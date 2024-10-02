@@ -32,7 +32,7 @@ parameters:
     default: 'sdk/*/*/*cov_xml.xml'
   - name: LiveTestTimeoutInMinutes
     type: number
-    default: 120
+    default: 240
   - name: LineCoverageTarget
     type: number
     default: 95
@@ -89,7 +89,7 @@ parameters:
     default: []
   - name: CMakeGenerationTimeoutInMinutes
     type: number
-    default: 120
+    default: 240
   - name: EnvVars
     type: object
     default: {}

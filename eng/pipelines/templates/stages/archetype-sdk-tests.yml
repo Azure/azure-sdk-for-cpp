@@ -13,7 +13,7 @@ parameters:
   default: sdk/*/*/*cov_xml.xml
 - name: TimeoutInMinutes
   type: number
-  default: 120
+  default: 240
 - name: Location
   type: string
   default: ''
