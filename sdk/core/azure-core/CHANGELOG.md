@@ -51,7 +51,7 @@ Thank you to our developer community members who helped to make Azure Core bette
 
 ### Features Added
 
-- Added new constructor for `Azure::Core::Context` that takes a `std::chrono::system_clock::time_point` deadline. This enables creating a new context directly with a deadline.
+- Added a new constructor for `Azure::Core::Context` that takes an `Azue::DateTime` deadline. This enables creating a new context directly with a deadline.
  
 ### Breaking Changes
 
