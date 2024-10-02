@@ -5,6 +5,7 @@
 
 #include "private/managed_identity_source.hpp"
 
+using namespace Azure::Identity::_detail;
 using namespace Azure::Identity;
 
 namespace {
