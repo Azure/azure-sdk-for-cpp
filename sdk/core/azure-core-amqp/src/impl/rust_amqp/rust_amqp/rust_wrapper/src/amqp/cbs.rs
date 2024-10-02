@@ -14,8 +14,8 @@ use std::{
 };
 use tracing::{error, trace};
 
-pub struct RustAmqpClaimsBasedSecurity {
-    inner: AmqpClaimsBasedSecurity,
+pub struct RustAmqpClaimsBasedSecurity<'a> {
+    inner: AmqpClaimsBasedSecurity<'a>,
 }
 
 /// # Safety
@@ -28,7 +28,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_create(
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
     let session = unsafe { (*session).get_session() };
-    let cbs = AmqpClaimsBasedSecurity::new(session.clone());
+    let cbs = AmqpClaimsBasedSecurity::new(&session);
     match cbs {
         Ok(cbs) => {
             *claims_based_security =
@@ -109,5 +109,63 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
         -1
     } else {
         0
+    }
+}
+#[cfg(test)]
+mod tests {
+    use azure_core_amqp::connection::{AmqpConnection, AmqpConnectionApis};
+
+    use crate::amqp::connection::RustAmqpConnection;
+    use crate::amqp::session::{amqpsession_begin, amqpsession_create};
+    use crate::runtime_context::RuntimeContext;
+
+    use super::*;
+    use std::ffi::CString;
+
+    use std::time::{Duration, UNIX_EPOCH};
+
+    #[test]
+    fn test_amqpclaimsbasedsecurity_authorize_path_success() {
+        unsafe {
+            let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
+            let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
+            let session = amqpsession_create();
+            let connection = AmqpConnection::new();
+
+            call_context_from_ptr_mut(call_context)
+                .runtime_context()
+                .runtime()
+                .block_on(connection.open(
+                    "testConnection",
+                    url::Url::parse("amqp://localhost:25672").unwrap(),
+                    None,
+                ))
+                .unwrap();
+
+            let connection = Box::into_raw(Box::new(RustAmqpConnection::new(connection)));
+            let result = amqpsession_begin(call_context, session, connection, std::ptr::null_mut());
+            assert_eq!(result, 0);
+
+            let claims_based_security = Box::into_raw(Box::new(RustAmqpClaimsBasedSecurity {
+                inner: AmqpClaimsBasedSecurity::new(&(*session).get_session()).unwrap(),
+            }));
+
+            let result = amqpclaimsbasedsecurity_attach(call_context, claims_based_security);
+            assert_eq!(result, 0);
+
+            let path = CString::new("test_path").unwrap();
+            let secret = CString::new("test_secret").unwrap();
+            let expires_on = UNIX_EPOCH + Duration::from_secs(1000);
+
+            let result = amqpclaimsbasedsecurity_authorize_path(
+                call_context,
+                claims_based_security,
+                path.as_ptr(),
+                secret.as_ptr(),
+                expires_on.duration_since(UNIX_EPOCH).unwrap().as_secs(),
+            );
+
+            assert_eq!(result, 0);
+        }
     }
 }

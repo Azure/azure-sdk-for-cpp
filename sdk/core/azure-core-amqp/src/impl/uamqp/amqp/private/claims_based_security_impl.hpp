@@ -39,6 +39,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
+        Azure::DateTime const& expirationTime,
         Context const& context);
 
   private:

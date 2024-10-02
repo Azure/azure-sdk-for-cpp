@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 // cspell:: words amqp servicebus sastoken
 
-use super::error::{AmqpLinkDetach, AmqpManagement, AmqpManagementAttach};
+use super::error::{AmqpManagement, AmqpManagementAttach};
 use crate::{cbs::AmqpClaimsBasedSecurityApis, session::AmqpSession};
 use async_std::sync::Mutex;
 use azure_core::error::Result;
@@ -11,65 +11,50 @@ use fe2o3_amqp_types::primitives::Timestamp;
 use std::borrow::BorrowMut;
 use std::{
     fmt::Debug,
-    sync::{Arc, OnceLock},
+    sync::OnceLock,
 };
 use tracing::{debug, trace};
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub(crate) struct Fe2o3ClaimsBasedSecurity<'a> {
-    cbs: OnceLock<Arc<Mutex<fe2o3_amqp_cbs::client::CbsClient>>>,
-    session: &'a Arc<Mutex<fe2o3_amqp::session::SessionHandle<()>>>,
+    cbs: OnceLock<Mutex<fe2o3_amqp_cbs::client::CbsClient>>,
+    session: &'a AmqpSession,
 }
 
 impl<'a> Fe2o3ClaimsBasedSecurity<'a> {
     pub fn new(session: &'a AmqpSession) -> Result<Self> {
         Ok(Self {
             cbs: OnceLock::new(),
-            session: session.implementation.get()?.clone(),
+            session,
         })
     }
 }
 
-impl Fe2o3ClaimsBasedSecurity {}
+impl<'a> Fe2o3ClaimsBasedSecurity<'a> {}
 
-impl Drop for Fe2o3ClaimsBasedSecurity {
+impl<'a> Drop for Fe2o3ClaimsBasedSecurity<'a> {
     fn drop(&mut self) {
         debug!("Dropping Fe2o3ClaimsBasedSecurity.");
     }
 }
 
-impl AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity {
+impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
     async fn attach(&self) -> Result<()> {
-        let mut session = self.session.lock().await;
+        let session = self.session.implementation.get()?;
+        let mut session = session.lock().await;
         let cbs_client = fe2o3_amqp_cbs::client::CbsClient::builder()
             .client_node_addr("rust_amqp_cbs")
             .attach(session.borrow_mut())
             .await
             .map_err(AmqpManagementAttach::from)?;
         self.cbs
-            .set(Arc::new(Mutex::new(cbs_client)))
+            .set(Mutex::new(cbs_client))
             .map_err(|_| {
                 azure_core::Error::message(
                     azure_core::error::ErrorKind::Other,
                     "Claims Based Security is already set.",
                 )
             })?;
-        Ok(())
-    }
-
-    async fn close(self) -> Result<()> {
-        let cbs = self
-            .cbs
-            .get()
-            .ok_or_else(|| {
-                azure_core::Error::message(
-                    azure_core::error::ErrorKind::Other,
-                    "Claims Based Security was not set.",
-                )
-            })?
-            .lock()
-            .await;
-        cbs.close().await.map_err(AmqpLinkDetach::from)?;
         Ok(())
     }
 

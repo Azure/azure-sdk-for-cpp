@@ -243,7 +243,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Open Completed.";
 
       auto putResult = cbs.PutToken(
-          Azure::Core::Amqp::_detail::CbsTokenType::Sas,
+          Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
           "of one",
           "stringizedToken",
           Azure::DateTime::clock::now() + std::chrono::seconds(90),
@@ -298,7 +298,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         mockServer.ForceCbsError(true);
 #endif
         auto putResult = cbs.PutToken(
-            Azure::Core::Amqp::_detail::CbsTokenType::Sas,
+            Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
             "of one",
             "stringizedToken",
             Azure::DateTime::clock::now() + std::chrono::seconds(90),
