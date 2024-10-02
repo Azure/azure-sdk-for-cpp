@@ -123,7 +123,7 @@ Similarly, to use a resource ID, create a `ManagedIdentityId` with `ManagedIdent
 
 <!-- @insert_snippet: UserAssignedManagedIdentityViaResourceId -->
 ```cpp
-std::string userAssignedResourceId = "<your managed identity resource ID>";
+std::string userAssignedResourceId = "/subscriptions/<your managed identity resource ID>";
 ManagedIdentityCredentialOptions options;
 options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
     Azure::Core::ResourceIdentifier(userAssignedResourceId));

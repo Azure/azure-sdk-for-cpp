@@ -28,7 +28,7 @@ static void ShowDifferentManagedIdentityApproaches()
   }
   {
     // @begin_snippet: UserAssignedManagedIdentityViaResourceId
-    std::string userAssignedResourceId = "<your managed identity resource ID>";
+    std::string userAssignedResourceId = "/subscriptions/<your managed identity resource ID>";
     ManagedIdentityCredentialOptions options;
     options.IdentityId = ManagedIdentityId::FromUserAssignedResourceId(
         Azure::Core::ResourceIdentifier(userAssignedResourceId));

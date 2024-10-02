@@ -80,8 +80,8 @@ namespace Azure { namespace Identity { namespace Test {
       EXPECT_EQ(miType.GetId(), "resourceId");
       EXPECT_EQ(miType.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ResourceId);
 
-      ManagedIdentityId const miTypeFactory
-          = ManagedIdentityId::FromUserAssignedResourceId(ResourceIdentifier("resourceId"));
+      ManagedIdentityId const miTypeFactory = ManagedIdentityId::FromUserAssignedResourceId(
+          ResourceIdentifier("/subscriptions/resourceId"));
       EXPECT_EQ(miTypeFactory.GetId(), "resourceId");
       EXPECT_EQ(miTypeFactory.GetManagedIdentityIdKind(), ManagedIdentityIdKind::ResourceId);
     }
