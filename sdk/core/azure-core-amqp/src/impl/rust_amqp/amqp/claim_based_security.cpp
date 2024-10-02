@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
+// cspell: words amqpclaimsbasedsecurity
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/common/runtime_context.hpp"
