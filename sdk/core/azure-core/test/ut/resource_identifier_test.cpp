@@ -35,7 +35,7 @@ INSTANTIATE_TEST_SUITE_P(
         "/subscriptions/0c2f6471-1bf0-4dda-aec3-cb9272f09575/resourceGroups/myRg/providers/"
         "Microsoft.Compute/virtualMachines/myVm",
         "/subscriptions/0c2f6471-1bf0-4dda-aec3-cb9272f09575/resourceGroups/myRg/providers/"
-        "Microsoft.Network/vortualNetworks/myNet/subnets/mySubnet",
+        "Microsoft.Network/virtualNetworks/myNet/subnets/mySubnet",
         "/subscriptions/0c2f6471-1bf0-4dda-aec3-cb9272f09575/resourceGroups/myRg",
         "/subscriptions/0c2f6471-1bf0-4dda-aec3-cb9272f09575/locations/MyLocation",
         "/subscriptions/0c2f6471-1bf0-4dda-aec3-cb9272f09575",
@@ -59,7 +59,7 @@ TEST(ResourceIdentifier, Invalid)
 
   // invalid input
   EXPECT_THROW(ResourceIdentifier(" "), std::invalid_argument);
-  EXPECT_THROW(ResourceIdentifier("asdfghj"), std::invalid_argument);
+  EXPECT_THROW(ResourceIdentifier("asdfghj"), std::invalid_argument); // cspell:disable-line
   EXPECT_THROW(ResourceIdentifier("123456"), std::invalid_argument);
   EXPECT_THROW(ResourceIdentifier("!@#$%^&*/"), std::invalid_argument);
   EXPECT_THROW(
