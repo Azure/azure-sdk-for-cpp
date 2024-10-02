@@ -438,7 +438,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
                     (
                         match f.0 {
                             AmqpValue::Symbol(s) => s,
-                            _ => panic!("Expected symbol"),
+                            _ => panic!("Expected symbol for value, found: {:?}", f.0),
                         },
                         f.1,
                     )

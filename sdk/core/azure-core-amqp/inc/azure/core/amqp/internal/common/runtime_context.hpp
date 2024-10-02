@@ -14,7 +14,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   using RustRuntimeContext = RustInterop::RuntimeContext;
   using RustCallContext = RustInterop::RustCallContext;
-//  using RustAmqpError = RustInterop::RustError;
+  //  using RustAmqpError = RustInterop::RustError;
 
   template <> struct UniqueHandleHelper<RustRuntimeContext>
   {
@@ -28,12 +28,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using type = Core::_internal::BasicUniqueHandle<RustCallContext, FreeCallContext>;
   };
-//  template <> struct UniqueHandleHelper<RustAmqpError>
-//  {
-//    static void FreeRustError(RustAmqpError* obj);//
+  //  template <> struct UniqueHandleHelper<RustAmqpError>
+  //  {
+  //    static void FreeRustError(RustAmqpError* obj);//
 
-//    using type = Core::_internal::BasicUniqueHandle<RustAmqpError, FreeRustError>;
-//  };
+  //    using type = Core::_internal::BasicUniqueHandle<RustAmqpError, FreeRustError>;
+  //  };
 
 }}}} // namespace Azure::Core::Amqp::_detail
 
@@ -44,8 +44,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   using UniqueRustCallContext = Azure::Core::Amqp::_detail::UniqueHandleHelper<
       Azure::Core::Amqp::_detail::RustCallContext>::type;
-//  using UniqueRustError = Azure::Core::Amqp::_detail::UniqueHandleHelper<
-//      Azure::Core::Amqp::_detail::RustAmqpError>::type;
+  //  using UniqueRustError = Azure::Core::Amqp::_detail::UniqueHandleHelper<
+  //      Azure::Core::Amqp::_detail::RustAmqpError>::type;
 
   /**
    * @brief Represents the an implementation of the rust multithreaded runtime.
@@ -96,11 +96,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     std::string GetError() const
     {
-//      UniqueRustError error{call_context_get_error(GetCallContext())};
+      //      UniqueRustError error{call_context_get_error(GetCallContext())};
       auto err = call_context_get_error(GetCallContext());
       if (err)
       {
-//        auto err{rust_error_get_message(error.get())};
+        //        auto err{rust_error_get_message(error.get())};
         std::string errorString{err};
         Azure::Core::Amqp::_detail::RustInterop::rust_string_delete(err);
         return errorString;

@@ -55,6 +55,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
+  void ProducerClient::Close(Azure::Core::Context const& context)
+  {
+    for (auto& sender : m_senders)
+    {
+      sender.second.Close(context);
+    }
+    m_senders.clear();
+
+#if ENABLE_RUST_AMQP
+    for (auto& session : m_sessions)
+    {
+      session.second.End(context);
+    }
+    for (auto& connection : m_connections)
+    {
+      connection.second.Close(context);
+    }
+#endif
+  }
+
   EventDataBatch ProducerClient::CreateBatch(
       EventDataBatchOptions const& options,
       Core::Context const& context)
@@ -124,7 +144,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Send(batch, context);
   }
 
-  Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection() const
+  Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection(
+      Azure::Core::Context const& context) const
   {
     Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
     connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
@@ -138,28 +159,37 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_producerClientOptions.ApplicationID,
         m_producerClientOptions.CppStandardVersion);
 
-    return Azure::Core::Amqp::_internal::Connection{
-        m_fullyQualifiedNamespace, m_credential, connectOptions};
+    auto connection{Azure::Core::Amqp::_internal::Connection{
+        m_fullyQualifiedNamespace, m_credential, connectOptions}};
+
+#if ENABLE_RUST_AMQP
+    connection.Open(context);
+#endif
+    return connection;
   }
-  void ProducerClient::EnsureConnection(std::string const& partitionId)
+  void ProducerClient::EnsureConnection(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
   {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
-      m_connections.emplace(partitionId, CreateConnection());
+      m_connections.emplace(partitionId, CreateConnection(context));
     }
   }
 
-  void ProducerClient::EnsureSession(std::string const& partitionId)
+  void ProducerClient::EnsureSession(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
   {
     // Ensure that a connection has been created for this producer.
-    EnsureConnection(partitionId);
+    EnsureConnection(partitionId, context);
 
     // Ensure that a session has been created for this partition.
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      m_sessions.emplace(partitionId, CreateSession(partitionId));
+      m_sessions.emplace(partitionId, CreateSession(partitionId, context));
     }
   }
 
@@ -176,7 +206,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::mutex> lock(m_sendersLock);
     if (m_senders.find(partitionId) == m_senders.end())
     {
-      EnsureSession(partitionId);
+      EnsureSession(partitionId, context);
 
       std::string targetUrl{m_targetUrl};
       if (!partitionId.empty())
@@ -210,17 +240,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   Azure::Core::Amqp::_internal::Session ProducerClient::CreateSession(
-      std::string const& partitionId)
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
   {
     Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize = (std::numeric_limits<int32_t>::max)();
     sessionOptions.InitialOutgoingWindowSize = (std::numeric_limits<uint16_t>::max)();
-    return m_connections.at(partitionId).CreateSession(sessionOptions);
+    auto session{m_connections.at(partitionId).CreateSession(sessionOptions)};
+#if ENABLE_RUST_AMQP
+    session.Begin(context);
+#endif
+    return session;
   }
-  std::shared_ptr<_detail::EventHubsPropertiesClient> ProducerClient::GetPropertiesClient()
+  std::shared_ptr<_detail::EventHubsPropertiesClient> ProducerClient::GetPropertiesClient(
+      Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_propertiesClientLock);
-    EnsureConnection({});
+    EnsureConnection({}, context);
     if (!m_propertiesClient)
     {
       m_propertiesClient
@@ -231,13 +267,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Models::EventHubProperties ProducerClient::GetEventHubProperties(Core::Context const& context)
   {
-    return GetPropertiesClient()->GetEventHubsProperties(m_eventHub, context);
+    return GetPropertiesClient(context)->GetEventHubsProperties(m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ProducerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    return GetPropertiesClient()->GetEventHubsPartitionProperties(m_eventHub, partitionId, context);
+    return GetPropertiesClient(context)->GetEventHubsPartitionProperties(
+        m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs

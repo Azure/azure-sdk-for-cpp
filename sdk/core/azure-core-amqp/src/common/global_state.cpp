@@ -225,11 +225,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Azure::Core::Amqp::_detail::RustInterop::call_context_delete(obj);
   }
 
-//  void UniqueHandleHelper<Azure::Core::Amqp::_detail::RustAmqpError>::FreeRustError(
-//      RustAmqpError* obj)
-//  {
-//    Azure::Core::Amqp::_detail::RustInterop::rust_error_delete(obj);
-//  }
+  //  void UniqueHandleHelper<Azure::Core::Amqp::_detail::RustAmqpError>::FreeRustError(
+  //      RustAmqpError* obj)
+  //  {
+  //    Azure::Core::Amqp::_detail::RustInterop::rust_error_delete(obj);
+  //  }
 
 }}}} // namespace Azure::Core::Amqp::_detail
 #endif

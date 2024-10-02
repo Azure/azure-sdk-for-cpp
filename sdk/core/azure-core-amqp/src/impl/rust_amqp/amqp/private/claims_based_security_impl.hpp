@@ -9,20 +9,23 @@
 #include "unique_handle.hpp"
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  template <> struct UniqueHandleHelper<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>
+  template <>
+  struct UniqueHandleHelper<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>
   {
     static void FreeAmqpCbs(
         Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity* obj);
 
-    using type = Core::_internal::BasicUniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity, FreeAmqpCbs>;
+    using type = Core::_internal::BasicUniqueHandle<
+        Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity,
+        FreeAmqpCbs>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueAmqpCbsHandle = UniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>;
+  using UniqueAmqpCbsHandle
+      = UniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>;
 
-  class ClaimsBasedSecurityImpl final
-  {
+  class ClaimsBasedSecurityImpl final {
 
   public:
     ClaimsBasedSecurityImpl(std::shared_ptr<_detail::SessionImpl> session);

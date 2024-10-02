@@ -6,7 +6,9 @@
 
 #include <csignal>
 #if ENABLE_RUST_AMQP
-#include "rust_amqp_wrapper.h"
+namespace Azure { namespace Core { namespace Amqp { namespace _detail { namespace RustInterop {
+  extern "C" void enable_tracing_integration();
+}}}}} // namespace Azure::Core::Amqp::_detail::RustInterop
 #endif
 #include <gtest/gtest.h>
 
@@ -69,3 +71,4 @@ int main(int argc, char** argv)
 
   return r;
 }
+
