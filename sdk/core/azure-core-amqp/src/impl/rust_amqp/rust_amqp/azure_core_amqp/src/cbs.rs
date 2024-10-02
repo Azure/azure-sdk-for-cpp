@@ -75,7 +75,7 @@ impl<'a> AmqpClaimsBasedSecurityApis for AmqpClaimsBasedSecurity<'a> {
 impl<'a> AmqpClaimsBasedSecurity<'a> {
     pub fn new(session: &'a AmqpSession) -> Result<Self> {
         Ok(Self {
-            implementation: CbsImplementation::new(&session)?,
+            implementation: CbsImplementation::new(session)?,
         })
     }
 }

@@ -166,6 +166,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     connection.Open(context);
 #endif
     return connection;
+    (void)context;
   }
   void ProducerClient::EnsureConnection(
       std::string const& partitionId,
@@ -251,6 +252,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     session.Begin(context);
 #endif
     return session;
+    (void)context;
   }
   std::shared_ptr<_detail::EventHubsPropertiesClient> ProducerClient::GetPropertiesClient(
       Azure::Core::Context const& context)
