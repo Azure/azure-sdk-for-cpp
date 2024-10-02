@@ -14,7 +14,6 @@ pub mod amqp;
 pub mod call_context;
 pub mod model;
 pub mod runtime_context;
-//pub mod rust_error;
 pub mod tracing;
 
 #[no_mangle]

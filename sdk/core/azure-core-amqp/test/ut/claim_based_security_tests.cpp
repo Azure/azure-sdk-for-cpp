@@ -27,6 +27,70 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
+
+    Azure::Core::Amqp::_internal::Connection CreateConnection(
+        Azure::Core::Context const& context = {})
+    {
+      Azure::Core::Amqp::_internal::ConnectionOptions options;
+#if ENABLE_UAMQP
+      options.Port = m_mockServer.GetPort();
+#elif ENABLE_RUST_AMQP
+      options.Port = 25672;
+#endif
+      auto connection{Azure::Core::Amqp::_internal::Connection("localhost", nullptr, options)};
+
+#if ENABLE_RUST_AMQP
+      connection.Open(context);
+#endif
+      return connection;
+      (void)context;
+    }
+
+    Azure::Core::Amqp::_internal::Session CreateSession(
+        Azure::Core::Amqp::_internal::Connection& connection,
+        Azure::Core::Context const& context = {})
+    {
+      auto session{connection.CreateSession()};
+#if ENABLE_RUST_AMQP
+      session.Begin(context);
+#endif
+      return session;
+      (void)context;
+    }
+
+    void Cleanup(Azure::Core::Amqp::_internal::Connection& connection)
+    {
+#if ENABLE_UAMQP
+#elif ENABLE_RUST_AMQP
+      connection.Close({});
+#endif
+      (void)connection;
+    }
+
+    void Cleanup(Azure::Core::Amqp::_internal::Session& session)
+    {
+#if ENABLE_UAMQP
+#elif ENABLE_RUST_AMQP
+      session.End({});
+#endif
+      (void)session;
+    }
+
+    void StartListening()
+    {
+#if ENABLE_UAMQP
+      m_mockServer.StartListening();
+#endif
+    }
+    void CleanupListening()
+    {
+#if ENABLE_UAMQP
+      m_mockServer.StopListening();
+#endif
+    }
+#if ENABLE_UAMQP
+    MessageTests::AmqpServerMock m_mockServer;
+#endif
   };
 
   using namespace Azure::Core::Amqp;
@@ -44,21 +108,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestCbs, SimpleCbs)
   {
-    ConnectionOptions options;
-#if ENABLE_RUST_AMQP
-    options.Port = 25672;
-#endif
-
-    // Create a connection
-    Connection connection("localhost", nullptr, options);
-    // Create a session
-#if ENABLE_RUST_AMQP
-    connection.Open({});
-#endif
-    Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-    session.Begin({});
-#endif
+    auto connection{CreateConnection()};
+    auto session{CreateSession(connection)};
 
     {
       ClaimsBasedSecurity cbs(session);
@@ -88,10 +139,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "CbsOpens" << static_cast<CbsOpenResult>(32768);
     }
 
-#if ENABLE_RUST_AMQP
-    session.End({});
-    connection.Close({});
-#endif
+    Cleanup(session);
+    Cleanup(connection);
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
@@ -118,30 +167,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestCbs, CbsOpen)
   {
-    ConnectionOptions options;
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
+    auto connection{CreateConnection()};
+    auto session{CreateSession(connection)};
 
-    mockServer.EnableTrace(false);
+    StartListening();
 
-    options.Port = mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-    options.Port = 25672;
-#endif
-    options.EnableTrace = true;
-    options.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
-    Connection connection("localhost", nullptr, options);
-#if ENABLE_RUST_AMQP
-    connection.Open({});
-#endif
-    Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-    session.Begin({});
-#endif
-
-#if ENABLE_UAMQP
-    mockServer.StartListening();
-#endif
     {
       GTEST_LOG_(INFO) << "Create CBS object.";
       ClaimsBasedSecurity cbs(session);
@@ -153,41 +183,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         cbs.Close();
       }
     }
-#if ENABLE_RUST_AMQP
-    session.End({});
-    connection.Close({});
-#endif
-#if ENABLE_UAMQP
-    mockServer.StopListening();
-#endif
+    Cleanup(session);
+    Cleanup(connection);
+    CleanupListening();
   }
 
   TEST_F(TestCbs, CbsCancelledOpen)
   {
-    ConnectionOptions options;
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
-
-    mockServer.EnableTrace(false);
-    options.Port = mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-    options.Port = 25672;
-#endif
-
-    options.EnableTrace = true;
-    options.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->test_case_name();
-    Connection connection("localhost", nullptr, options);
-#if ENABLE_RUST_AMQP
-    connection.Open({});
-#endif
-    Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-    session.Begin({});
-#endif
-
-#if ENABLE_UAMQP
-    mockServer.StartListening();
-#endif
+    auto connection{CreateConnection()};
+    auto session{CreateSession(connection)};
+    StartListening();
 
 #if ENABLE_RUST_CANCEL
     {
@@ -199,14 +204,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(CbsOpenResult::Cancelled, openResult);
     }
 #endif
-
-#if ENABLE_UAMQP
-    mockServer.StopListening();
-#endif
-#if ENABLE_RUST_AMQP
-    session.End({});
-    connection.Close({});
-#endif
+    CleanupListening();
+    Cleanup(session);
+    Cleanup(connection);
   }
 
 #endif // !defined(AZ_PLATFORM_MAC)
@@ -214,27 +214,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
+    auto connection{CreateConnection()};
+    auto session{CreateSession(connection)};
+
+    StartListening();
     ConnectionOptions options;
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
-
-    options.Port = mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-    options.Port = 25672;
-#endif
-    options.EnableTrace = true;
-    Connection connection("localhost", nullptr, options);
-#if ENABLE_RUST_AMQP
-    connection.Open({});
-#endif
-    Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-    session.Begin({});
-#endif
-
-#if ENABLE_UAMQP
-    mockServer.StartListening();
-#endif
 
     {
       ClaimsBasedSecurity cbs(session);
@@ -253,13 +237,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       cbs.Close();
     }
-#if ENABLE_UAMQP
-    mockServer.StopListening();
-#endif
-#if ENABLE_RUST_AMQP
-    session.End({});
-    connection.Close({});
-#endif
+
+    CleanupListening();
+    Cleanup(session);
+    Cleanup(connection);
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
@@ -267,27 +248,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestCbs, CbsOpenAndPutError)
   {
     {
-      ConnectionOptions options;
-#if ENABLE_UAMQP
-      MessageTests::AmqpServerMock mockServer;
-
-      options.Port = mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-      options.Port = 25672;
-#endif
-      options.EnableTrace = true;
-      Connection connection("localhost", nullptr, options);
-#if ENABLE_RUST_AMQP
-      connection.Open({});
-#endif
-      Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-      session.Begin({});
-#endif
-
-#if ENABLE_UAMQP
-      mockServer.StartListening();
-#endif
+      auto connection{CreateConnection()};
+      auto session{CreateSession(connection)};
+      StartListening();
 
       {
         ClaimsBasedSecurity cbs(session);
@@ -295,7 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
         GTEST_LOG_(INFO) << "Open Completed.";
 #if ENABLE_UAMQP
-        mockServer.ForceCbsError(true);
+        m_mockServer.ForceCbsError(true);
 #endif
         auto putResult = cbs.PutToken(
             Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
@@ -306,14 +269,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         EXPECT_EQ(CbsOperationResult::Failed, std::get<0>(putResult));
         cbs.Close();
       }
-#if ENABLE_UAMQP
-      mockServer.StopListening();
-#endif
 
-#if ENABLE_RUST_AMQP
-      session.End({});
-      connection.Close({});
-#endif
+      CleanupListening();
+      Cleanup(session);
+      Cleanup(connection);
     }
   }
 
@@ -322,27 +281,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestCbs, CbsOpenAndPutCancelled)
   {
     {
-      ConnectionOptions options;
-#if ENABLE_UAMQP
-      MessageTests::AmqpServerMock mockServer;
-
-      options.Port = mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-      options.Port = 25672;
-#endif
-      options.EnableTrace = true;
-      Connection connection("localhost", nullptr, options);
-#if ENABLE_RUST_AMQP
-      connection.Open({});
-#endif
-      Session session{connection.CreateSession()};
-#if ENABLE_RUST_AMQP
-      session.Begin({});
-#endif
-
-#if ENABLE_UAMQP
-      mockServer.StartListening();
-#endif
+      auto connection{CreateConnection()};
+      auto session{CreateSession(connection)};
+      StartListening();
 
       {
         ClaimsBasedSecurity cbs(session);
@@ -365,13 +306,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         cbs.Close();
       }
-#if ENABLE_UAMQP
-      mockServer.StopListening();
-#endif
-#if ENABLE_RUST_AMQP
-      session.End({});
-      connection.Close({});
-#endif
+      CleanupListening();
+      Cleanup(session);
+      Cleanup(connection);
     }
   }
 #endif
