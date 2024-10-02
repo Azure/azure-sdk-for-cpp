@@ -24,7 +24,7 @@ namespace Azure { namespace Core {
      *
      * @param resourceId The id string to create the ResourceIdentifier from.
      */
-    explicit ResourceIdentifier(std::string const& resourceId) : m_resourceId(resourceId){};
+    explicit ResourceIdentifier(std::string const& resourceId);
 
     /**
      * @brief The string representation of this resource identifier.

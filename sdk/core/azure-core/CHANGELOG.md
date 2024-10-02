@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Make the HTTP transport behavior consistent between WinHTTP and libcurl by disabling automatically following redirects on Windows.
+- Added basic input validation to `Azure::Core::ResourceIdentifier` to ensure the prefix match what is expected.
 
 ### Other Changes
 
