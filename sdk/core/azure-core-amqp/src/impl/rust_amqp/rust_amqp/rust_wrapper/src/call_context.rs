@@ -3,11 +3,12 @@
 
 // cspell: words reqwest repr tokio
 
-use crate::{runtime_context::RuntimeContext, rust_error::RustError};
+use crate::runtime_context::RuntimeContext;
+use std::ffi::c_char;
 
 pub struct RustCallContext {
     runtime_context: *mut RuntimeContext,
-    error: Option<RustError>,
+    error: Option<String>,
 }
 
 impl RustCallContext {
@@ -23,7 +24,7 @@ impl RustCallContext {
     }
 
     pub fn set_error(&mut self, error: Box<dyn std::error::Error + Send + Sync>) {
-        self.error = Some(RustError::new(error));
+        self.error = Some(format!("{:?}", error));
     }
 }
 
@@ -44,11 +45,14 @@ pub unsafe extern "C" fn call_context_delete(ctx: *mut RustCallContext) {
 /// # Safety
 ///
 #[no_mangle]
-pub unsafe extern "C" fn call_context_get_error(ctx: *const RustCallContext) -> *mut RustError {
-    let ctx = unsafe { &*ctx };
-    match &ctx.error {
-        Some(err) => Box::into_raw(Box::new(err)).cast(),
-        None => std::ptr::null::<RustError>().cast_mut(),
+pub unsafe extern "C" fn call_context_get_error(ctx: *const RustCallContext) -> *mut c_char {
+    let call_context = unsafe { &*ctx };
+    match call_context.error {
+        Some(ref error) => {
+            let c_message = std::ffi::CString::new(error.clone()).unwrap();
+            c_message.into_raw()
+        }
+        None => std::ptr::null_mut(),
     }
 }
 

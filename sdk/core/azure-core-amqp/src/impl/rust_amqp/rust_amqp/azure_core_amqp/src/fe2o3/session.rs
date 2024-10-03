@@ -23,7 +23,7 @@ pub(crate) struct Fe2o3AmqpSession {
 
 impl Drop for Fe2o3AmqpSession {
     fn drop(&mut self) {
-        debug!("Dropping Fe2o3AmqpSession.");
+        debug!("Dropping Fe2o3AmqpSession: {:?}.", self.session);
     }
 }
 

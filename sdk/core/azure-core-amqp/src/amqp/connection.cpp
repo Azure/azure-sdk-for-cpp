@@ -208,6 +208,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
             audienceUrl,
             accessToken.Token,
+            accessToken.ExpiresOn,
             context);
         if (std::get<0>(result) != CbsOperationResult::Ok)
         {
