@@ -17,12 +17,13 @@ SetUpTestProxy("sdk/eventhubs")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
+    azure_messaging_eventhubs_test.cpp
     checkpoint_store_test.cpp
     consumer_client_test.cpp
     event_data_test.cpp
-    eventhubs_admin_client_test.cpp
     eventhubs_admin_client.cpp
     eventhubs_admin_client.hpp
+    eventhubs_admin_client_test.cpp
     eventhubs_test_base.hpp
     processor_load_balancer_test.cpp
     processor_test.cpp
@@ -39,6 +40,13 @@ create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.ma
 
 if (MSVC)
   target_compile_options(azure-messaging-eventhubs-test PUBLIC /wd6326 /wd26495 /wd26812)
+endif()
+
+
+if(USE_RUST_AMQP)
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_RUST_AMQP)
+else()
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_UAMQP)
 endif()
 
 target_link_libraries(
