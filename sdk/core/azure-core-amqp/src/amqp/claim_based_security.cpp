@@ -26,10 +26,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
+      Azure::DateTime const& tokenExpirationTime,
       Context const& context)
 
   {
-    return m_impl->PutToken(tokenType, audience, token, context);
+    return m_impl->PutToken(tokenType, audience, token, tokenExpirationTime, context);
   }
 
 #endif // _azure_TESTING_BUILD

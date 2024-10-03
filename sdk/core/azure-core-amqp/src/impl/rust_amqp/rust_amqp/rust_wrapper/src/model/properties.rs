@@ -449,7 +449,7 @@ extern "C" fn properties_set_reply_to_group_id(
 extern "C" fn properties_build(
     builder: *mut RustMessagePropertiesBuilder,
     header: *mut *mut RustMessageProperties,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     unsafe {
         *header = Box::into_raw(Box::new(RustMessageProperties {
@@ -463,7 +463,7 @@ extern "C" fn properties_build(
 extern "C" fn amqpvalue_get_properties(
     value: *const RustAmqpValue,
     header: &mut *mut RustMessageProperties,
-) -> u32 {
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {
