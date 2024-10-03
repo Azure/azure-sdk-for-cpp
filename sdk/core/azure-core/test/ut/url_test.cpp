@@ -86,6 +86,52 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_FALSE(headers.count("newheader"));
   }
 
+    TEST(TestURL, equality)
+  {
+    {
+      Core::Url const a("https://www.microsoft.com");
+      EXPECT_TRUE(a == a);
+      EXPECT_FALSE(a != a);
+    }
+
+    {
+      Core::Url const a;
+      Core::Url const b("");
+      EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
+      EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
+    }
+
+    {
+      Core::Url const a;
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
+      EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
+    }
+
+    {
+      Core::Url const a("https://www.microsoft.com#foo");
+      Core::Url const b("https://www.microsoft.com#bar");
+      EXPECT_EQ("", a.GetAbsoluteUrl());
+      EXPECT_TRUE(a == b);
+      EXPECT_TRUE(b == a);
+      EXPECT_FALSE(a != b);
+      EXPECT_FALSE(b != a);
+    }
+
+    {
+      Core::Url const a("http://www.microsoft.com");
+      Core::Url const b("https://www.microsoft.com");
+      EXPECT_FALSE(a == b);
+      EXPECT_FALSE(b == a);
+      EXPECT_TRUE(a != b);
+      EXPECT_TRUE(b != a);
+    }
+  }
+
   TEST(TestURL, query_parameter)
   {
     Http::HttpMethod httpMethod = Http::HttpMethod::Put;

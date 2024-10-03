@@ -19,9 +19,9 @@ if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)
   add_subdirectory(azure-core-tracing-opentelemetry)
 endif()
 
-if (BUILD_PERFORMANCE_TESTS) 
+#if (BUILD_PERFORMANCE_TESTS) 
   add_subdirectory(perf)
-endif()
+#endif()
 
 # Playback & record framework (a.k.a. azure-core-test)
 if (BUILD_TESTING)

@@ -327,7 +327,7 @@
       "description": "Windows x86 Debug build with Tests configured",
       "inherits": [
         "x86-static",
-        "debug-build",
+        "release-build",
         "enable-tests"
       ]
     },

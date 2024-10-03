@@ -239,5 +239,67 @@ namespace Azure { namespace Core {
      * @return Absolute URL with URL-encoded query parameters.
      */
     std::string GetAbsoluteUrl() const;
+
+    /**
+     * @brief Compares with another instance of Url for equality.
+     * @param other another instance of Url.
+     * @return `true` if values of two Url instances are equal, `false` otherwise.
+     *
+     * @note Two instances are considered equal if their string representation would match.
+     *
+     */
+    // See also https://datatracker.ietf.org/doc/html/rfc3986#section-6.2.1
+    bool operator==(Url const& other) const
+    {
+      // This method is written to go from the least expensive comparisons to more complex ones.
+      if (this == &other)
+      {
+        return true;
+      }
+
+      if (m_port != other.m_port
+          || m_encodedQueryParameters.size() != other.m_encodedQueryParameters.size())
+      {
+        return false;
+      }
+
+      size_t const lhsPathLength = m_encodedPath.length();
+      size_t const rhsPathLength = other.m_encodedPath.length();
+
+      // ToString() would insert a leading '/', if m_encodedPath does not have it, so we're
+      // basically doing the reverse of that logic here.
+      size_t const lhsPathStart = (lhsPathLength > 0 && m_encodedPath[0] == '/') ? 1 : 0;
+      size_t const rhsPathStart = (rhsPathLength > 0 && other.m_encodedPath[0] == '/') ? 1 : 0;
+
+      if ((lhsPathLength - lhsPathStart) != (rhsPathLength - rhsPathStart))
+      {
+        return false;
+      }
+
+      if (m_scheme != other.m_scheme || m_host != other.m_host)
+      {
+        return false;
+      }
+
+      for (size_t l = lhsPathStart, r = rhsPathStart; l < lhsPathLength; ++l, ++r)
+      {
+        if (m_encodedPath[l] != other.m_encodedPath[r])
+        {
+          return false;
+        }
+      }
+
+      return m_encodedQueryParameters == other.m_encodedQueryParameters;
+    }
+
+    /**
+     * @brief Compares with another instance of Url for inequality.
+     * @param other another instance of Url.
+     * @return `true` if values of two Url instances are not equal, `false` otherwise.
+     *
+     * @note Two instances are considered inequal if their string representation would not match.
+     *
+     */
+    bool operator!=(Url const& other) const { return !(*this == other); }
   };
 }} // namespace Azure::Core

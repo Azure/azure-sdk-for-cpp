@@ -20,6 +20,10 @@ namespace Azure { namespace Core { namespace Test {
    * @brief Measure the Uuid object performance.
    */
   class UuidTest : public Azure::Perf::PerfTest {
+
+    //Azure::Core::Uuid m_uuid = Azure::Core::Uuid::CreateUuid();
+    Azure::DateTime m_dateTime = DateTime::Parse("20130517T00:00:00Z", DateTime::DateFormat::Rfc3339);
+
   public:
     /**
      * @brief Construct a new Uuid test.
@@ -27,6 +31,8 @@ namespace Azure { namespace Core { namespace Test {
      * @param options The test options.
      */
     UuidTest(Azure::Perf::TestOptions options) : PerfTest(options) {}
+
+    //void Setup() override { m_uuid = Azure::Core::Uuid::CreateUuid(); }
 
     /**
      * @brief Use Uuid to assign and read.
@@ -37,7 +43,7 @@ namespace Azure { namespace Core { namespace Test {
       auto const total = m_options.GetMandatoryOption<int>("count");
       for (auto count = 0; count < total; count++)
       {
-        Azure::Core::Uuid::CreateUuid();
+        (void)Azure::Core::Uuid::CreateUuid().ToString();
       }
     }
 
