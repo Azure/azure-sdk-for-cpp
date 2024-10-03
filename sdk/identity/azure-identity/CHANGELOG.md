@@ -1,6 +1,21 @@
 # Release History
 
-## 1.10.0-beta.1 (Unreleased)
+## 1.10.0-beta.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed the request sent in `AzurePipelinesCredential` so it doesn't result in a redirect response when an invalid system access token is provided.
+
+### Other Changes
+
+- Allow certain response headers to be logged in `AzurePipelinesCredential` for diagnostics and include them in the exception message.
+- In `ClientCertificateCredential`, add the x5c parameter of the JWT token as a JSON array rather than a JSON string.
+
+## 1.10.0-beta.1 (2024-09-17)
 
 ### Features Added
 
@@ -11,10 +26,6 @@
 ### Breaking Changes
 
 - Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.9.0 (2024-08-06)
 
@@ -253,7 +264,7 @@ No changes since `1.2.0-beta.1`.
 
 ### Bugs Fixed
 
-- [2741](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
+- [[#2741]](https://github.com/Azure/azure-sdk-for-cpp/issues/2741) Fixed linking problem when Azure SDK is built as DLL.
 
 ## 1.1.0 (2021-08-10)
 

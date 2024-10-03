@@ -45,31 +45,31 @@ An AMQP Message Sender is responsible for sending messages to an AMQP server ove
 
 <!-- @insert_snippet: CreateSender -->
 ```cpp
-  Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
-  senderOptions.Name = "sender-link";
-  senderOptions.MessageSource = "source";
-  senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
-  senderOptions.MaxMessageSize = (std::numeric_limits<uint16_t>::max)();
+Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+senderOptions.Name = "sender-link";
+senderOptions.MessageSource = "source";
+senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Unsettled;
+senderOptions.MaxMessageSize = (std::numeric_limits<uint16_t>::max)();
 
-  Azure::Core::Amqp::_internal::MessageSender sender(
-      session, credentials->GetEntityPath(), senderOptions, nullptr);
+Azure::Core::Amqp::_internal::MessageSender sender(
+    session, credentials->GetEntityPath(), senderOptions, nullptr);
 ```
 
 Once the message sender has been created, it can be used to send messages to the remote server.
 
 <!-- @insert_snippet: SendMessages -->
 ```cpp
-  Azure::Core::Amqp::Models::AmqpMessage message;
-  message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
+Azure::Core::Amqp::Models::AmqpMessage message;
+message.SetBody(Azure::Core::Amqp::Models::AmqpBinaryData{'H', 'e', 'l', 'l', 'o'});
 
-  constexpr int maxMessageSendCount = 5;
+constexpr int maxMessageSendCount = 5;
 
-  int messageSendCount = 0;
-  while (messageSendCount < maxMessageSendCount)
-  {
-    auto result = sender.Send(message);
-    messageSendCount += 1;
-  }
+int messageSendCount = 0;
+while (messageSendCount < maxMessageSendCount)
+{
+  auto result = sender.Send(message);
+  messageSendCount += 1;
+}
 ```
 
 ## Next steps
@@ -106,4 +106,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [cloud_shell_bash]: https://shell.azure.com/bash
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-cpp%2Fsdk%2Fcore%2Fcore-opentelemetry%2FREADME.png)
-

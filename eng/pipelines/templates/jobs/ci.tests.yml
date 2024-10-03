@@ -270,13 +270,14 @@ jobs:
           displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: PublishCodeCoverageResults@2
+        - task: PublishCodeCoverageResults@1
           inputs:
+            codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: BuildQualityChecks@9
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check line coverage
           inputs:
             checkCoverage: true
@@ -286,16 +287,15 @@ jobs:
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
-#  Disabling branch coverage check until newer tasks can support it see issue https://github.com/microsoft/azure-pipelines-tasks/issues/19669 tracking that request.
-#        - task: BuildQualityChecks@9
-#          displayName: Check branch coverage
-#          inputs:
-#            checkCoverage: true
-#            coverageFailOption: fixed
-#            coverageType: branches
-#            # Minimum baseline for branch coverage
-#            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
-#          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+          displayName: Check branch coverage
+          inputs:
+            checkCoverage: true
+            coverageFailOption: fixed
+            coverageType: branches
+            # Minimum baseline for branch coverage
+            coverageThreshold: ${{ parameters.BranchCoverageTarget }}
+          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       - task: Powershell@2
         inputs:

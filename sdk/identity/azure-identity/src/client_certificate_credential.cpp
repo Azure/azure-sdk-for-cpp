@@ -143,12 +143,15 @@ std::string GetJwtToken(
   std::string x5cHeaderParam{};
   if (sendCertificateChain)
   {
-    // Since there is only one base64 encoded cert string, it can be written as a JSON string rather
-    // than a JSON array of strings.
-    x5cHeaderParam = ",\"x5c\":\"";
+    // Even though there is only one base64 encoded cert string, we write the x5c header as a JSON
+    // array of strings, following the spec:
+    // https://datatracker.ietf.org/doc/html/rfc7517#section-4.7
+    // For historical, legacy reasons, the token endpoint happens to work with a single string, but
+    // we shouldn't rely on that behavior.
+    x5cHeaderParam = ",\"x5c\":[\"";
     std::string certContent = FindPemCertificateContent(clientCertificatePath, clientCertificate);
     x5cHeaderParam += certContent;
-    x5cHeaderParam += "\"";
+    x5cHeaderParam += "\"]";
   }
 
   // Form a JWT token:
@@ -322,8 +325,8 @@ UniquePrivateKey ImportPemPrivateKey(std::string const& pem)
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
-    std::string clientCertificate,
-    std::string privateKey)
+    std::string const& clientCertificate,
+    std::string const& privateKey)
 {
   auto certContext = ImportPemCertificate(clientCertificate);
 
@@ -422,8 +425,8 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> GetThumbprintAndKey(
 }
 
 std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
-    std::string clientCertificate,
-    std::string privateKey)
+    std::string const& clientCertificate,
+    std::string const& privateKey)
 {
   // Create a BIO from the private key vector data in memory.
   UniqueHandle<BIO> bioKey(BIO_new_mem_buf(privateKey.data(), static_cast<int>(privateKey.size())));
@@ -585,8 +588,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::string clientCertificate,
-    std::string privateKey,
+    std::string const& clientCertificate,
+    std::string const& privateKey,
     std::string const& authorityHost,
     std::vector<std::string> additionallyAllowedTenants,
     bool sendCertificateChain,
@@ -655,8 +658,8 @@ ClientCertificateCredential::ClientCertificateCredential(
 ClientCertificateCredential::ClientCertificateCredential(
     std::string tenantId,
     std::string const& clientId,
-    std::string clientCertificate,
-    std::string privateKey,
+    std::string const& clientCertificate,
+    std::string const& privateKey,
     ClientCertificateCredentialOptions const& options)
     : ClientCertificateCredential(
         tenantId,
