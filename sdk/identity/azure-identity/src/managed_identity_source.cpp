@@ -21,6 +21,13 @@ using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
+
+// https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
+// IMDS is a REST API that's available at a well-known, non-routable IP address (169.254.169.254).
+// You can only access it from within the VM. Communication between the VM and IMDS never leaves the
+// host.
+std::string const ImdsEndpoint = "http://169.254.169.254/metadata/identity/oauth2/token";
+
 std::string WithSourceMessage(std::string const& credSource)
 {
   return " with " + credSource + " source";
@@ -484,29 +491,17 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
       credName + " will be created" + WithSourceMessage("Azure Instance Metadata Service")
           + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
-  std::string imdsHost = "http://169.254.169.254";
-  std::string customImdsHost = Environment::GetVariable("AZURE_IMDS_CUSTOM_AUTHORITY_HOST");
-  if (!customImdsHost.empty())
-  {
-    IdentityLog::Write(
-        IdentityLog::Level::Informational, "Custom IMDS host is set to: " + customImdsHost);
-    imdsHost = customImdsHost;
-  }
-  Azure::Core::Url imdsUrl(imdsHost);
-  imdsUrl.AppendPath("/metadata/identity/oauth2/token");
-
   return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));
+      new ImdsManagedIdentitySource(clientId, objectId, resourceId, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
-    Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
+      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(ImdsEndpoint))
 {
   {
     using Azure::Core::Url;
