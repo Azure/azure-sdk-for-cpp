@@ -56,7 +56,7 @@ extern "C" fn amqpvalue_create_target(target: *const RustAmqpTarget) -> *mut Rus
 extern "C" fn amqpvalue_get_target(
     value: *const RustAmqpValue,
     target: *mut *mut RustAmqpTarget,
-) -> u32 {
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {
@@ -99,7 +99,7 @@ extern "C" fn amqpvalue_get_target(
 extern "C" fn target_get_address(
     target: *const RustAmqpTarget,
     address: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let target = unsafe { &*target };
     if let Some(s) = target.inner.address() {
         *address = Box::into_raw(Box::new(RustAmqpValue {
@@ -117,7 +117,7 @@ extern "C" fn target_get_address(
 extern "C" fn target_get_durable(
     target: *const RustAmqpTarget,
     durable: &mut RustTerminusDurability,
-) -> u32 {
+) -> i32 {
     let target = unsafe { &*target };
     if let Some(durability) = target.inner.durable() {
         match durability {
@@ -143,7 +143,7 @@ extern "C" fn target_get_durable(
 extern "C" fn target_get_expiry_policy(
     target: *const RustAmqpTarget,
     expiry_policy: &mut RustExpiryPolicy,
-) -> u32 {
+) -> i32 {
     let target = unsafe { &*target };
     if let Some(policy) = target.inner.expiry_policy() {
         match policy {
@@ -169,7 +169,7 @@ extern "C" fn target_get_expiry_policy(
 }
 
 #[no_mangle]
-extern "C" fn target_get_timeout(target: *const RustAmqpTarget, timeout: *mut u32) -> u32 {
+extern "C" fn target_get_timeout(target: *const RustAmqpTarget, timeout: *mut u32) -> i32 {
     let target = unsafe { &*target };
     if let Some(timeout_val) = target.inner.timeout() {
         unsafe { *timeout = *timeout_val };
@@ -179,7 +179,7 @@ extern "C" fn target_get_timeout(target: *const RustAmqpTarget, timeout: *mut u3
 }
 
 #[no_mangle]
-extern "C" fn target_get_dynamic(target: *const RustAmqpTarget, dynamic: *mut bool) -> u32 {
+extern "C" fn target_get_dynamic(target: *const RustAmqpTarget, dynamic: *mut bool) -> i32 {
     let target = unsafe { &*target };
     if let Some(dynamic_val) = target.inner.dynamic() {
         unsafe { *dynamic = *dynamic_val };
@@ -194,7 +194,7 @@ extern "C" fn target_get_dynamic(target: *const RustAmqpTarget, dynamic: *mut bo
 extern "C" fn target_get_capabilities(
     target: *const RustAmqpTarget,
     capabilities: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let target = unsafe { &*target };
     if let Some(c) = target.inner.capabilities() {
         *capabilities = Box::into_raw(Box::new(RustAmqpValue {
@@ -211,7 +211,7 @@ extern "C" fn target_get_capabilities(
 extern "C" fn target_get_dynamic_node_properties(
     target: *const RustAmqpTarget,
     properties: &mut *mut RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let target = unsafe { &*target };
     if let Some(p) = target.inner.dynamic_node_properties() {
         let p: AmqpOrderedMap<AmqpValue, AmqpValue> = p
@@ -251,7 +251,7 @@ extern "C" fn target_builder_destroy(builder: *mut RustAmqpTargetBuilder) {
 extern "C" fn target_builder_build(
     builder: *mut RustAmqpTargetBuilder,
     target: &mut *mut RustAmqpTarget,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     *target = Box::into_raw(Box::new(RustAmqpTarget::new(builder.inner.build())));
     0
@@ -261,7 +261,7 @@ extern "C" fn target_builder_build(
 extern "C" fn target_set_address(
     builder: *mut RustAmqpTargetBuilder,
     address: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let address = unsafe { &*address };
     match &address.inner {
@@ -280,7 +280,7 @@ extern "C" fn target_set_address(
 extern "C" fn target_set_durable(
     builder: *mut RustAmqpTargetBuilder,
     durable: RustTerminusDurability,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     match durable {
         RustTerminusDurability::None => {
@@ -306,7 +306,7 @@ extern "C" fn target_set_durable(
 extern "C" fn target_set_expiry_policy(
     builder: *mut RustAmqpTargetBuilder,
     expiry_policy: RustExpiryPolicy,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     match expiry_policy {
         RustExpiryPolicy::LinkDetach => {
@@ -351,7 +351,7 @@ extern "C" fn target_set_dynamic(builder: *mut RustAmqpTargetBuilder, dynamic: b
 extern "C" fn target_set_capabilities(
     builder: *mut RustAmqpTargetBuilder,
     capabilities: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let capabilities = unsafe { &*capabilities };
     match &capabilities.inner {
@@ -369,7 +369,7 @@ extern "C" fn target_set_capabilities(
 extern "C" fn target_set_dynamic_node_properties(
     builder: *mut RustAmqpTargetBuilder,
     properties: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let properties = unsafe { &*properties };
     match &properties.inner {
