@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 // cspell: words amqp amqpconnection amqpconnectionoptionsbuilder amqpconnectionoptions
 
+use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
+    model::value::RustAmqpValue,
+};
 use core::panic;
 use std::{
     ffi::{c_char, CStr},
@@ -9,13 +13,7 @@ use std::{
     ptr::{self},
 };
 use time::Duration;
-
-use crate::{
-    call_context::{call_context_from_ptr_mut, RustCallContext},
-    model::value::RustAmqpValue,
-};
-
-use tracing::error;
+use tracing::{error, trace};
 use url::Url;
 
 use azure_core_amqp::{
@@ -76,7 +74,7 @@ pub unsafe extern "C" fn amqpconnection_open(
     url: *const c_char,
     container_id: *const c_char,
     options: *const RustAmqpConnectionOptions,
-) -> u32 {
+) -> i32 {
     let call_context = call_context_from_ptr_mut(ctx);
     let connection = unsafe { &*connection };
     let url = unsafe { CStr::from_ptr(url) };
@@ -85,7 +83,7 @@ pub unsafe extern "C" fn amqpconnection_open(
     let default_options: RustAmqpConnectionOptions = RustAmqpConnectionOptions {
         inner: Default::default(),
     };
-    let options = if options.is_null() {
+    let options = if !options.is_null() {
         unsafe { &*options }
     } else {
         &default_options
@@ -133,7 +131,7 @@ pub unsafe extern "C" fn amqpconnection_open(
 pub unsafe extern "C" fn amqpconnection_close(
     ctx: *mut RustCallContext,
     connection: *const RustAmqpConnection,
-) -> u32 {
+) -> i32 {
     let connection = unsafe { &*connection };
     let runtime_context = call_context_from_ptr_mut(ctx);
     let result = runtime_context
@@ -159,7 +157,7 @@ pub unsafe extern "C" fn amqpconnection_close_with_error(
     condition: *const c_char,
     description: *const c_char,
     info: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let connection = unsafe { &*connection };
     let call_context = call_context_from_ptr_mut(ctx);
     let condition = unsafe { CStr::from_ptr(condition) };
@@ -308,7 +306,7 @@ pub unsafe extern "C" fn amqpconnectionoptions_destroy(options: *mut RustAmqpCon
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_idle_timeout(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     idle_timeout: u32,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder
         .inner
@@ -322,7 +320,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_idle_timeout(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_max_frame_size(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     max_frame_size: u32,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_max_frame_size(max_frame_size);
     0
@@ -334,7 +332,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_max_frame_size(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_channel_max(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     channel_max: u16,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_channel_max(channel_max);
     0
@@ -367,7 +365,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_incoming_locales(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     locales: *const *const c_char,
     count: usize,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let locales = unsafe { std::slice::from_raw_parts(locales, count) };
     let locales = locales
@@ -387,7 +385,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_offered_capabilities(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     capabilities: *const *const c_char,
     count: usize,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let capabilities = unsafe { std::slice::from_raw_parts(capabilities, count) };
     let capabilities = capabilities
@@ -407,7 +405,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_desired_capabilities(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     capabilities: *const *const c_char,
     count: usize,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let capabilities = unsafe { std::slice::from_raw_parts(capabilities, count) };
     let capabilities = capabilities
@@ -426,7 +424,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_desired_capabilities(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     properties: *const RustAmqpValue,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     let properties = unsafe { &*properties };
     match &properties.inner {
@@ -438,7 +436,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
                     (
                         match f.0 {
                             AmqpValue::Symbol(s) => s,
-                            _ => panic!("Expected symbol"),
+                            _ => panic!("Expected symbol for value, found: {:?}", f.0),
                         },
                         f.1,
                     )
@@ -457,7 +455,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_buffer_size(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     buffer_size: usize,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_buffer_size(buffer_size);
     0
