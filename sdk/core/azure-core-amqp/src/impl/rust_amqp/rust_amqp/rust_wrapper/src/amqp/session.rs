@@ -28,6 +28,12 @@ pub struct RustAmqpSessionOptions {
     inner: AmqpSessionOptions,
 }
 
+impl RustAmqpSession {
+    pub(crate) fn get_session(&self) -> &AmqpSession {
+        &self.inner
+    }
+}
+
 /// # Safety
 ///
 #[no_mangle]
@@ -54,7 +60,7 @@ pub unsafe extern "C" fn amqpsession_begin(
     session: *mut RustAmqpSession,
     connection: *mut RustAmqpConnection,
     session_options: *mut RustAmqpSessionOptions,
-) -> u32 {
+) -> i32 {
     let session = unsafe { &mut *session };
     let connection = unsafe { &mut *connection };
     let call_context = call_context_from_ptr_mut(call_context);
@@ -98,7 +104,7 @@ pub unsafe extern "C" fn amqpsession_begin(
 pub unsafe extern "C" fn amqpsession_end(
     call_context: *mut RustCallContext,
     session: *mut RustAmqpSession,
-) -> u32 {
+) -> i32 {
     let session = unsafe { &*session };
     let call_context = call_context_from_ptr_mut(call_context);
     let result = call_context

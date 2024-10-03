@@ -11,47 +11,50 @@ use fe2o3_amqp_types::primitives::Timestamp;
 use std::borrow::BorrowMut;
 use std::{
     fmt::Debug,
-    sync::{Arc, OnceLock},
+    sync::OnceLock,
 };
 use tracing::{debug, trace};
 
 #[derive(Debug)]
-pub(crate) struct Fe2o3ClaimsBasedSecurity {
+pub(crate) struct Fe2o3ClaimsBasedSecurity<'a> {
     cbs: OnceLock<Mutex<fe2o3_amqp_cbs::client::CbsClient>>,
-    session: Arc<Mutex<fe2o3_amqp::session::SessionHandle<()>>>,
+    session: &'a AmqpSession,
 }
 
-impl Fe2o3ClaimsBasedSecurity {
-    pub fn new(session: AmqpSession) -> Result<Self> {
+impl<'a> Fe2o3ClaimsBasedSecurity<'a> {
+    pub fn new(session: &'a AmqpSession) -> Result<Self> {
         Ok(Self {
             cbs: OnceLock::new(),
-            session: session.implementation.get()?,
+            session,
         })
     }
 }
 
-impl Fe2o3ClaimsBasedSecurity {}
+impl<'a> Fe2o3ClaimsBasedSecurity<'a> {}
 
-impl Drop for Fe2o3ClaimsBasedSecurity {
+impl<'a> Drop for Fe2o3ClaimsBasedSecurity<'a> {
     fn drop(&mut self) {
         debug!("Dropping Fe2o3ClaimsBasedSecurity.");
     }
 }
 
-impl AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity {
+impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
     async fn attach(&self) -> Result<()> {
-        let mut session = self.session.lock().await;
+        let session = self.session.implementation.get()?;
+        let mut session = session.lock().await;
         let cbs_client = fe2o3_amqp_cbs::client::CbsClient::builder()
             .client_node_addr("rust_amqp_cbs")
             .attach(session.borrow_mut())
             .await
             .map_err(AmqpManagementAttach::from)?;
-        self.cbs.set(Mutex::new(cbs_client)).map_err(|_| {
-            azure_core::Error::message(
-                azure_core::error::ErrorKind::Other,
-                "Claims Based Security is already set.",
-            )
-        })?;
+        self.cbs
+            .set(Mutex::new(cbs_client))
+            .map_err(|_| {
+                azure_core::Error::message(
+                    azure_core::error::ErrorKind::Other,
+                    "Claims Based Security is already set.",
+                )
+            })?;
         Ok(())
     }
 

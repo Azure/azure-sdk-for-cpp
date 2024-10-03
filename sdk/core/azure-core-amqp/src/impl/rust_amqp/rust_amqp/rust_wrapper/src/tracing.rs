@@ -49,3 +49,8 @@ pub extern "C" fn register_tracing_callback(callback: extern "C" fn(_: *const c_
 
 #[no_mangle]
 pub extern "C" fn unregister_tracing_callback() {}
+
+#[no_mangle]
+pub extern "C" fn enable_tracing_integration() {
+    tracing_subscriber::fmt::init();
+}
