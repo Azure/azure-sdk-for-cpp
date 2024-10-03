@@ -60,12 +60,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       CbsTokenType tokenType,
       std::string const& audience,
       std::string const& token,
+      Azure::DateTime const& tokenExpirationTime,
       Context const& context)
   {
     Models::AmqpMessage message;
     message.SetBody(static_cast<Models::AmqpValue>(token));
 
     message.ApplicationProperties["name"] = static_cast<Models::AmqpValue>(audience);
+    message.ApplicationProperties["expiration"]
+        = std::chrono::duration_cast<std::chrono::seconds>(tokenExpirationTime.time_since_epoch())
+              .count();
 
     auto result = m_management->ExecuteOperation(
         "put-token",

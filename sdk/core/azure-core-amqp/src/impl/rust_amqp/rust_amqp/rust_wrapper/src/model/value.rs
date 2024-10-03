@@ -1010,7 +1010,7 @@ pub unsafe extern "C" fn amqpvalue_get_composite_item_in_place(
 pub unsafe extern "C" fn amqpvalue_get_encoded_size(
     value: *const RustAmqpValue,
     size: *mut usize,
-) -> u32 {
+) -> i32 {
     let value = unsafe { &*value };
     let encoded_size = Serializable::encoded_size(&value.inner);
     if encoded_size.is_ok() {
@@ -1023,7 +1023,7 @@ pub unsafe extern "C" fn amqpvalue_get_encoded_size(
             "Unable to compute encoded size: {:?}",
             encoded_size.err().unwrap()
         );
-        1
+        -1
     }
 }
 
