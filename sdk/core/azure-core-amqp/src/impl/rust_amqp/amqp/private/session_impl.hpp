@@ -83,12 +83,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& condition_value,
         std::string const& description,
         Azure::Core::Context const& context);
-#if ENABLE_UAMQP
-    void SendDetach(
-        _internal::LinkEndpoint const& linkEndpoint,
-        bool closeLink,
-        Models::_internal::AmqpError const& error) const;
-#endif
+
+    UniqueAmqpSession const& GetAmqpSession() const { return m_session; }
+
   private:
     SessionImpl();
     bool m_isBegun{false};

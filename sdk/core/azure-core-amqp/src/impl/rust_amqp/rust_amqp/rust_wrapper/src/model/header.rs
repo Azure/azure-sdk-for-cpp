@@ -33,21 +33,21 @@ extern "C" fn header_destroy(header: *mut RustMessageHeader) {
 }
 
 #[no_mangle]
-extern "C" fn header_get_durable(header: *const RustMessageHeader, durable: &mut bool) -> u32 {
+extern "C" fn header_get_durable(header: *const RustMessageHeader, durable: &mut bool) -> i32 {
     let header = unsafe { &*header };
     *durable = header.inner.durable();
     0
 }
 
 #[no_mangle]
-extern "C" fn header_get_priority(header: *const RustMessageHeader, priority: &mut u8) -> u32 {
+extern "C" fn header_get_priority(header: *const RustMessageHeader, priority: &mut u8) -> i32 {
     let header = unsafe { &*header };
     *priority = header.inner.priority();
     0
 }
 
 #[no_mangle]
-extern "C" fn header_get_ttl(header: *const RustMessageHeader, time_to_live: &mut u64) -> u32 {
+extern "C" fn header_get_ttl(header: *const RustMessageHeader, time_to_live: &mut u64) -> i32 {
     let header = unsafe { &*header };
     if let Some(ttl) = header.inner.time_to_live() {
         *time_to_live = ttl.as_millis() as u64;
@@ -62,7 +62,7 @@ extern "C" fn header_get_ttl(header: *const RustMessageHeader, time_to_live: &mu
 extern "C" fn header_get_first_acquirer(
     header: *const RustMessageHeader,
     first_acquirer: &mut bool,
-) -> u32 {
+) -> i32 {
     let header = unsafe { &*header };
 
     *first_acquirer = header.inner.first_acquirer();
@@ -73,7 +73,7 @@ extern "C" fn header_get_first_acquirer(
 extern "C" fn header_get_delivery_count(
     header: *const RustMessageHeader,
     delivery_count: &mut u32,
-) -> u32 {
+) -> i32 {
     let header = unsafe { &*header };
     *delivery_count = header.inner.delivery_count();
     0
@@ -98,21 +98,21 @@ extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
 }
 
 #[no_mangle]
-extern "C" fn header_set_durable(builder: *mut RustMessageHeaderBuilder, durable: bool) -> u32 {
+extern "C" fn header_set_durable(builder: *mut RustMessageHeaderBuilder, durable: bool) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_durable(durable);
     0
 }
 
 #[no_mangle]
-extern "C" fn header_set_priority(builder: *mut RustMessageHeaderBuilder, priority: u8) -> u32 {
+extern "C" fn header_set_priority(builder: *mut RustMessageHeaderBuilder, priority: u8) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_priority(priority);
     0
 }
 
 #[no_mangle]
-extern "C" fn header_set_ttl(builder: *mut RustMessageHeaderBuilder, time_to_live: u64) -> u32 {
+extern "C" fn header_set_ttl(builder: *mut RustMessageHeaderBuilder, time_to_live: u64) -> i32 {
     let builder = unsafe { &mut *builder };
     builder
         .inner
@@ -124,7 +124,7 @@ extern "C" fn header_set_ttl(builder: *mut RustMessageHeaderBuilder, time_to_liv
 extern "C" fn header_set_first_acquirer(
     builder: *mut RustMessageHeaderBuilder,
     first_acquirer: bool,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_first_acquirer(first_acquirer);
     0
@@ -134,7 +134,7 @@ extern "C" fn header_set_first_acquirer(
 extern "C" fn header_set_delivery_count(
     builder: *mut RustMessageHeaderBuilder,
     delivery_count: u32,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     builder.inner.with_delivery_count(delivery_count);
     0
@@ -144,7 +144,7 @@ extern "C" fn header_set_delivery_count(
 extern "C" fn header_build(
     builder: *mut RustMessageHeaderBuilder,
     header: *mut *mut RustMessageHeader,
-) -> u32 {
+) -> i32 {
     let builder = unsafe { &mut *builder };
     unsafe {
         *header = Box::into_raw(Box::new(RustMessageHeader {
@@ -158,7 +158,7 @@ extern "C" fn header_build(
 extern "C" fn amqpvalue_get_header(
     value: *const RustAmqpValue,
     header: &mut *mut RustMessageHeader,
-) -> u32 {
+) -> i32 {
     let value = unsafe { &*value };
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {

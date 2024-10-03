@@ -124,25 +124,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param context Context for the operation can be used for request cancellation.
      */
-    void Close(Azure::Core::Context const& context = {})
-    {
-      for (auto& sender : m_senders)
-      {
-        sender.second.Close(context);
-      }
-      m_senders.clear();
-
-      // Close needs to tear down all outstanding sessions and connections, but the functionality to
-      // tear these down isn't complete yet.
-      //    for (auto& session : m_sessions)
-      //    {
-      // session.second.Close(context);
-      // }
-      //    for (auto& connection : m_connections)
-      //    {
-      // connection.second.Close(context);
-      // }
-    }
+    void Close(Azure::Core::Context const& context = {});
 
     /** @brief Create a new EventDataBatch to be sent to the Event Hub.
      *
@@ -231,19 +213,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_propertiesClientLock;
     std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
-    Azure::Core::Amqp::_internal::Connection CreateConnection() const;
-    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Connection CreateConnection(
+        Azure::Core::Context const& context) const;
+    Azure::Core::Amqp::_internal::Session CreateSession(
+        std::string const& partitionId,
+        Azure::Core::Context const& context);
 
     // Ensure that the connection for this producer has been established.
-    void EnsureConnection(const std::string& partitionId);
+    void EnsureConnection(const std::string& partitionId, Azure::Core::Context const& context);
 
     // Ensure that a session for the specified partition ID has been established.
-    void EnsureSession(std::string const& partitionId);
+    void EnsureSession(std::string const& partitionId, Azure::Core::Context const& context);
 
     // Ensure that a message sender for the specified partition has been created.
-    void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context = {});
+    void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
-    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
+        Azure::Core::Context const& context);
 
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
