@@ -229,6 +229,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not open connection: " + callContext.GetError());
     }
+    m_connectionOpened = true;
   }
   void ConnectionImpl::Close(Azure::Core::Context const& context)
   {
@@ -241,6 +242,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (!m_connection)
     {
       throw std::logic_error("Connection not opened.");
+    }
+    if (!IsOpen())
+    {
+      throw std::runtime_error("Cannot close an unopened connection.");
     }
     if (amqpconnection_close(callContext.GetCallContext(), m_connection.get()))
     {

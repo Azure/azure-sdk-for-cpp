@@ -116,6 +116,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::AmqpValue info,
         Azure::Core::Context const& context);
 
+    bool IsOpen() { return m_connectionOpened; }
+
     std::string GetHost() const { return m_hostUrl.GetHost(); }
     uint16_t GetPort() const { return m_hostUrl.GetPort(); }
 
@@ -156,7 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_enableAsyncOperation = false;
     bool m_isClosing = false;
 
-    bool m_connectionOpened = false;
+    bool m_connectionOpened{false};
     std::atomic<uint32_t> m_openCount{0};
 
     // mutex protecting the token acquisition process.
