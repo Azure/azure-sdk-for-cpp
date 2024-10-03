@@ -21,6 +21,13 @@ using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
+
+// https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
+// IMDS is a REST API that's available at a well-known, non-routable IP address (169.254.169.254).
+// You can only access it from within the VM. Communication between the VM and IMDS never leaves the
+// host.
+std::string const ImdsEndpoint = "http://169.254.169.254/metadata/identity/oauth2/token";
+
 std::string WithSourceMessage(std::string const& credSource)
 {
   return " with " + credSource + " source";
@@ -494,9 +501,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(
-          Azure::Core::Http::HttpMethod::Get,
-          Azure::Core::Url("http://169.254.169.254/metadata/identity/oauth2/token"))
+      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(ImdsEndpoint))
 {
   {
     using Azure::Core::Url;
