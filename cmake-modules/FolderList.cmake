@@ -66,6 +66,8 @@ macro(SetCompileOptions project)
     message ("setting up compile options for ${project}")
     # Compile Options
     SetGlobalOptions()
+    # When the SDK is being consumed via FolderList, an consumption mechanism alternative to vcpkg, do disable treating warnings as errors.
+    SET(WARNINGS_AS_ERRORS OFF)
 endmacro()
 
 macro(DownloadDepVersion DEP_FOLDER DEP_NAME DEP_VERSION)
