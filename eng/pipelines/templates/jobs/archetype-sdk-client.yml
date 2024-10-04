@@ -80,75 +80,17 @@ jobs:
 
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:
-    - job:
-      displayName: Create API Review
-      pool:
-        name: $(WINDOWSPOOL)
-        image: $(WINDOWSVMIMAGE)
-        os: windows
-      steps:
-        - task: Powershell@2
-          inputs:
-            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
-            arguments: >
-              -ServiceDirectory ${{ parameters.ServiceDirectory }}
-              -OutDirectory $(Build.ArtifactStagingDirectory)/PackageInfo
-            pwsh: true
-            workingDirectory: $(Pipeline.Workspace)
-          displayName: Dump Package properties
-          condition: succeeded()
-
-        - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-
-        - task:  UniversalPackages@0
-          displayName: Download ApiView Parser.
-          inputs:
-            command: download
-            vstsFeed: 'internal/AzureSDKForCpp'
-            vstsFeedPackage: 'parseazuresdkcpp'
-            downloadDirectory: '$(System.DefaultWorkingDirectory)/parser'
-            vstsPackageVersion: 0.14.0 
-          condition: >-
-              and(
-                succeeded(),
-                ne(variables['Skip.CreateApiReview'], 'true'),
-                ne(variables['Build.Reason'],'PullRequest'),
-                eq(variables['System.TeamProject'], 'internal')
-              )
-
-        - task: Powershell@2
-          inputs:
-            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Create-APIReview.ps1
-            arguments: >
-              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
-              -OutPath $(Build.ArtifactStagingDirectory)
-              -ApiKey "$(azuresdk-apiview-apikey)"
-              -SourceBranch $(Build.SourceBranchName)
-              -DefaultBranch $(DefaultBranch)
-              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
-              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-              -BuildId $(Build.BuildId)
-              -RepoName "$(Build.Repository.Name)"
-            pwsh: true
-            workingDirectory: $(Pipeline.Workspace)
-          displayName: Create API Review
-          condition: >-
-            and(
-              succeeded(),
-              ne(variables['Skip.CreateApiReview'], 'true'),
-              ne(variables['Build.Reason'],'PullRequest'),
-              eq(variables['System.TeamProject'], 'internal')
-            )
-
     - job: GenerateReleaseArtifacts
       pool:
         name: $(WINDOWSPOOL)
         image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
+        apiviewParserVersion: "20240927.5"
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
+        - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
         - template: /eng/common/pipelines/templates/steps/credscan.yml
           parameters:
             SuppressionFilePath: $(Build.SourcesDirectory)/eng/CredScanSuppression.json
@@ -219,6 +161,33 @@ jobs:
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for docs.microsoft.com
 
+        - pwsh: |
+            Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
+            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
+          displayName: Download ApiView Parser.
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(System.DefaultWorkingDirectory)/eng/scripts/Generate-APIReview-Token-Files.ps1
+            arguments: >
+              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
+              -OutPath $(Build.ArtifactStagingDirectory)
+              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+              -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Generate APIReview Token Files
+
+        - task: Powershell@2
+          inputs:
+            filePath: $(Build.SourcesDirectory)/eng/common/scripts/Save-Package-Properties.ps1
+            arguments: >
+              -ServiceDirectory ${{parameters.ServiceDirectory}}
+              -OutDirectory $(Build.ArtifactStagingDirectory)/packages/PackageInfo
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Dump Package properties
+
         # Generate package spec JSON files for tagging the repo
         - ${{ each artifact in parameters.Artifacts }}:
             - pwsh: >-
@@ -226,6 +195,7 @@ jobs:
                 -ItemType directory
                 -Path $(Build.ArtifactStagingDirectory)
                 -Name packages/${{ artifact.Name }}
+                -Force
               displayName: Create package info artifact location
 
             - pwsh: |
@@ -334,10 +304,47 @@ jobs:
               continueOnError: true
               condition: and(succeeded(), eq(variables['VerifyChangeLogForRelease'], 'true'))
 
+        - pwsh: |
+            $packageJsonDest = Join-Path -Path $(Build.ArtifactStagingDirectory) PackageInfo
+            $packageJsonSource = Join-Path -Path $(Build.ArtifactStagingDirectory) packages/PackageInfo
+            mkdir $packageJsonDest
+            Copy-Item $packageJsonSource/* $packageJsonDest -Force
+          displayName: Copy Package Json
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
             ArtifactName: packages
+        - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
+            ArtifactName: PackageInfo
+        
+        - task: Powershell@2
+          inputs:
+            filePath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Create-APIReview.ps1
+            arguments: >
+              -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
+              -ArtifactPath "$(Build.ArtifactStagingDirectory)/packages"
+              -ApiKey "$(azuresdk-apiview-apikey)"
+              -SourceBranch $(Build.SourceBranchName)
+              -DefaultBranch $(DefaultBranch)
+              -BuildId $(Build.BuildId)
+              -RepoName "$(Build.Repository.Name)"
+            pwsh: true
+            workingDirectory: $(Pipeline.Workspace)
+          displayName: Create API Review
+          condition: >-
+            and(
+              succeeded(),
+              ne(variables['Skip.CreateApiReview'], 'true'),
+              ne(variables['Build.Reason'],'PullRequest'),
+              eq(variables['System.TeamProject'], 'internal')
+            )
+        - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+          - ${{ each artifact in parameters.Artifacts }}:
+            - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
+              parameters:
+                ArtifactPath: $(Build.ArtifactStagingDirectory)\packages
 
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
