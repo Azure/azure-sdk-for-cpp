@@ -38,11 +38,6 @@ namespace Azure { namespace Template { namespace _detail {
     static constexpr int Patch = AZURE_TEMPLATE_VERSION_PATCH;
 
     /**
-     * @brief Patch numeric identifier.
-     */
-    static constexpr int Testing = 1000;
-
-    /**
      * @brief Indicates whether the SDK is in a pre-release state.
      */
     static constexpr bool IsPreRelease = sizeof(AZURE_TEMPLATE_VERSION_PRERELEASE) != sizeof("");
