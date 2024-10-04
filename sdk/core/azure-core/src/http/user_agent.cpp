@@ -170,4 +170,4 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
 
     return telemetryId.str();
   }
-}}}} // namespace Azure::Core::Http::_detail
+}}}} // namespace Azure::Core::Http::_internal
