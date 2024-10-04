@@ -148,7 +148,7 @@ std::string TrimString(std::string s)
 }
 } // namespace
 
-namespace Azure { namespace Core { namespace Http { namespace _detail {
+namespace Azure { namespace Core { namespace Http { namespace _internal {
 
   std::string UserAgentGenerator::GenerateUserAgent(
       std::string const& componentName,

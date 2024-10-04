@@ -1,14 +1,10 @@
 # Release History
 
-## 1.15.0-beta.1 (Unreleased)
+## 1.14.1 (2024-10-10)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- [[#6064]](https://github.com/Azure/azure-sdk-for-cpp/issues/6064) Added internal support for the SDK packages to access more of telemetry features.
 
 ## 1.14.0 (2024-10-03)
 
