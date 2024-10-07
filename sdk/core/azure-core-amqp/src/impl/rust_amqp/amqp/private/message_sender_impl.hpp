@@ -4,24 +4,20 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_sender.hpp"
-#include "link_impl.hpp"
 #include "unique_handle.hpp"
+#include "rust_amqp_wrapper.h"
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
+  template <> struct UniqueHandleHelper<RustInterop::RustAmqpMessageSender>
   {
-    static void FreeMessageSender(MESSAGE_SENDER_HANDLE obj);
+    static void FreeMessageSender(RustInterop::RustAmqpMessageSender* value);
 
-    using type = Core::_internal::BasicUniqueHandle<MESSAGE_SENDER_INSTANCE_TAG, FreeMessageSender>;
+    using type = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpMessageSender, FreeMessageSender>;
   };
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  using UniqueMessageSender = UniqueHandle<MESSAGE_SENDER_INSTANCE_TAG>;
-#endif
+  using UniqueMessageSender = UniqueHandle<_detail::RustInterop::RustAmqpMessageSender>;
 
   class MessageSenderFactory final {
   public:
@@ -45,30 +41,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     MessageSenderImpl(MessageSenderImpl&&) noexcept = delete;
     MessageSenderImpl& operator=(MessageSenderImpl&&) noexcept = delete;
 
-    Models::_internal::AmqpError Open(bool blockingOpen, Context const& context);
+    Models::_internal::AmqpError Open(Context const& context);
     void Close(Context const& context);
     Models::_internal::AmqpError Send(Models::AmqpMessage const& message, Context const& context);
 
     std::uint64_t GetMaxMessageSize() const;
 
-    std::string GetLinkName() const;
-
   private:
-    void CreateLink();
-    void PopulateLinkProperties();
-    void OnLinkDetached(Models::_internal::AmqpError const& error);
-
     bool m_senderOpen{false};
-#if ENABLE_UAMQP
     UniqueMessageSender m_messageSender{};
-#endif
-    std::shared_ptr<_detail::LinkImpl> m_link;
-    Models::_internal::AmqpError m_savedMessageError;
-
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
-        m_openQueue;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
-        m_closeQueue;
 
     std::shared_ptr<_detail::SessionImpl> m_session;
     Models::_internal::MessageTarget m_target;

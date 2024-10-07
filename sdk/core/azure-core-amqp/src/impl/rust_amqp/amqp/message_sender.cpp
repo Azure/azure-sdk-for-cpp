@@ -1,25 +1,25 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Enable declaration of strerror_s.
-#define __STDC_WANT_LIB_EXT1__ 1
+// cspell: words amqpmessagesender amqpmessagesenderoptions
 
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
+#include "../../../models/private/target_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
+#include "azure/core/internal/unique_handle.hpp"
 #include "private/connection_impl.hpp"
 #include "private/message_sender_impl.hpp"
 #include "private/session_impl.hpp"
+#include "rust_amqp_wrapper.h"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/platform.hpp>
 
-#if ENABLE_UAMQP
-#include <azure_uamqp_c/message_sender.h>
-#endif
+using namespace Azure::Core::Amqp::_detail::RustInterop;
 
 #include <memory>
 
@@ -27,78 +27,61 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  void UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>::FreeMessageSender(
-      MESSAGE_SENDER_HANDLE value)
+  void UniqueHandleHelper<RustAmqpMessageSender>::FreeMessageSender(RustAmqpMessageSender* value)
   {
-    messagesender_destroy(value);
+    amqpmessagesender_destroy(value);
   }
-#endif
+
+  template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptions>
+  {
+    static void FreeSenderOptions(RustInterop::RustAmqpSenderOptions* value)
+    {
+      amqpmessagesenderoptions_destroy(value);
+    }
+
+    using type
+        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpSenderOptions, FreeSenderOptions>;
+  };
+  template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptionsBuilder>
+  {
+    static void FreeSenderOptionsBuilder(RustInterop::RustAmqpSenderOptionsBuilder* value)
+    {
+      amqpmessagesenderoptions_builder_destroy(value);
+    }
+
+    using type = Core::_internal::
+        BasicUniqueHandle<RustInterop::RustAmqpSenderOptionsBuilder, FreeSenderOptionsBuilder>;
+  };
+
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueSenderOptions = UniqueHandle<RustInterop::RustAmqpSenderOptions>;
+  using UniqueSenderOptionsBuilder = UniqueHandle<RustInterop::RustAmqpSenderOptionsBuilder>;
 
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_options{options}
+      : m_session{session}, m_target{target}, m_options{options},
+        m_messageSender{amqpmessagesender_create()}
   {
   }
 
   MessageSenderImpl::~MessageSenderImpl() noexcept
   {
-
-    auto lock{m_session->GetConnection()->Lock()};
     if (m_senderOpen)
     {
       AZURE_ASSERT_MSG(m_senderOpen, "MessageSenderImpl is being destroyed while open.");
       Azure::Core::_internal::AzureNoReturnPath("MessageSenderImpl is being destroyed while open.");
     }
-
-    if (m_link)
-    {
-
-      m_link.reset();
-    }
-  }
-
-  void MessageSenderImpl::CreateLink()
-  {
-    m_link = std::make_shared<_detail::LinkImpl>(
-        m_session,
-        m_options.Name,
-        _internal::SessionRole::Sender, // This is the role of the link, not the endpoint.
-        m_options.MessageSource,
-        m_target);
-    PopulateLinkProperties();
-  }
-
-  /* Populate link properties from options. */
-  void MessageSenderImpl::PopulateLinkProperties()
-  {
-    // Populate link options from options.
-    if (m_options.InitialDeliveryCount.HasValue())
-    {
-      m_link->SetInitialDeliveryCount(m_options.InitialDeliveryCount.Value());
-    }
-    if (m_options.MaxMessageSize.HasValue())
-    {
-      m_link->SetMaxMessageSize(m_options.MaxMessageSize.Value());
-    }
-    else
-    {
-      m_link->SetMaxMessageSize((std::numeric_limits<uint64_t>::max)());
-    }
-    if (m_options.MaxLinkCredits != 0)
-    {
-      m_link->SetMaxLinkCredit(m_options.MaxLinkCredits);
-    }
-    m_link->SetSenderSettleMode(m_options.SettleMode);
   }
 
   std::uint64_t MessageSenderImpl::GetMaxMessageSize() const
   {
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+
     if (!m_senderOpen)
     {
       throw std::runtime_error("Message sender is not open.");
@@ -106,15 +89,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // Get the max message size from the link (which is the max frame size for the link
     // endpoint) and the peer (which is the max frame size for the other end of the connection).
     //
-    auto linkSize{m_link->GetMaxMessageSize()};
-    auto peerSize{m_link->GetPeerMaxMessageSize()};
-
-    // Return the smaller of the two values
-    return (std::min)(linkSize, peerSize);
+    uint64_t maxSize;
+    if (amqpmessagesender_get_max_message_size(
+            callContext.GetCallContext(), m_messageSender.get(), &maxSize))
+    {
+      throw std::runtime_error("Failed to get max message size: " + callContext.GetError());
+    }
+    return maxSize;
   }
 
-  Models::_internal::AmqpError MessageSenderImpl::Open(bool halfOpen, Context const& context)
+  Models::_internal::AmqpError MessageSenderImpl::Open(Context const& context)
   {
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+
+    UniqueSenderOptionsBuilder optionsBuilder{amqpmessagesenderoptions_builder_create()};
+
     Models::_internal::AmqpError rv;
     if (m_options.EnableTrace)
     {
@@ -128,8 +118,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->AuthenticateAudience(
           m_session, static_cast<std::string>(m_target.GetAddress()), context);
     }
-    throw std::runtime_error("Not implemented");
-    (void)halfOpen;
+
+    UniqueSenderOptions options{amqpmessagesenderoptions_builder_build(optionsBuilder.get())};
+
+    if (amqpmessagesender_attach(
+            callContext.GetCallContext(),
+            m_messageSender.get(),
+            m_session->GetAmqpSession().get(),
+            m_options.Name.c_str(),
+            Models::_detail::AmqpTargetFactory::ToImplementation(m_target),
+            options.get()))
+    {
+      throw std::runtime_error("Could not open Message Sender: " + callContext.GetError());
+    }
+    return {};
   }
 
   void MessageSenderImpl::Close(Context const& context)
@@ -142,7 +144,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       m_senderOpen = false;
     }
-    throw std::runtime_error("Not implemented");
     (void)context;
   }
 
@@ -154,7 +155,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     (void)context;
     (void)message;
   }
-
-  std::string MessageSenderImpl::GetLinkName() const { return m_link->GetName(); }
 
 }}}} // namespace Azure::Core::Amqp::_detail

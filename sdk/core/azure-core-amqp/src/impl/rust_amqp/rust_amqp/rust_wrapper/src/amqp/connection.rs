@@ -13,7 +13,7 @@ use std::{
     ptr::{self},
 };
 use time::Duration;
-use tracing::{error, trace};
+use tracing::error;
 use url::Url;
 
 use azure_core_amqp::{

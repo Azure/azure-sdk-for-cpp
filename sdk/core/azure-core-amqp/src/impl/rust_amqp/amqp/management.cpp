@@ -82,7 +82,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       SetState(ManagementState::Opening);
       try
       {
+          #if ENABLE_UAMQP
         auto senderResult{m_messageSender->Open(false, context)};
+        #elif ENABLE_RUST_AMQP
+        auto senderResult{m_messageSender->Open(context)};
+#endif
         if (senderResult)
         {
           Log::Stream(Logger::Level::Error)

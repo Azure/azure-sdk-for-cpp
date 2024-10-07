@@ -19,9 +19,9 @@ impl RustAmqpSource {
         Self { inner: source }
     }
 
-    //    pub(crate) fn get(&self) -> &AmqpSource {
-    //        &self.inner
-    //    }
+        pub(crate) fn get(&self) -> &AmqpSource {
+            &self.inner
+        }
 }
 
 #[repr(C)]

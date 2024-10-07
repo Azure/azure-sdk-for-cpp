@@ -12,7 +12,9 @@
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#if ENABLE_RUST_AMQ
 #include "mock_amqp_server.hpp"
+#endif
 
 #include <azure/core/platform.hpp>
 
@@ -23,6 +25,8 @@
 
 // cspell: ignore abcdabcd
 
+using namespace Azure::Core::Amqp::_internal;
+
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   extern uint16_t FindAvailableSocket();
 
@@ -30,10 +34,66 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   protected:
     void SetUp() override {}
     void TearDown() override
-    { // When the test is torn down, the global state MUST be idle. If it is not, something
-      // leaked.
+    { // When the test is torn down, the global state MUST be idle. If it is not,
+      // something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
+
+    auto CreateAmqpConnection(
+        std::string const& containerId
+        = testing::UnitTest::GetInstance()->current_test_info()->name(),
+        bool enableTracing = false,
+        Azure::Core::Context const& context = {})
+    {
+      ConnectionOptions options;
+      options.ContainerId = containerId;
+      options.EnableTrace = enableTracing;
+#if ENABLE_UAMQP
+      options.Port = m_mockServer.GetPort()
+#elif ENABLE_RUST_AMQP
+      options.Port = 25672;
+#endif
+                         auto connection
+          = Connection("localhost", nullptr, options);
+#if ENABLE_RUST_AMQP
+      connection.Open(context);
+#endif
+      return connection;
+    }
+    auto CreateAmqpSession(Connection const& connection, Context const& context = {})
+    {
+      auto session = connection.CreateSession();
+#if ENABLE_RUST_AMQP
+      session.Begin(context);
+#endif
+      return session;
+    }
+
+    void CloseAmqpConnection(Connection& connection, Azure::Core::Context const& context = {})
+    {
+      connection.Close(context);
+    }
+    void EndAmqpSession(Session& session, Azure::Core::Context const& context = {})
+    {
+      session.End(context);
+    }
+
+    void EnableServerListening()
+    {
+#if ENABLE_UAMQP
+      m_mockServer.EnableServerListening();
+#endif
+    }
+
+    void StopServerListening()
+    {
+#if ENABLE_UAMQP
+      m_mockServer.StopListening();
+#endif
+    }
+#if ENABLE_UAMQP
+    MessageTests::AmqpServerMock m_mockServer;
+#endif
   };
 
   using namespace Azure::Core::Amqp::_internal;
@@ -44,9 +104,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 
     // Create a connection
-    Connection connection("localhost", nullptr, {});
-    // Create a session
-    Session session{connection.CreateSession()};
+    auto connection{CreateAmqpConnection({})};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
 
     {
       MessageReceiver receiver(session.CreateMessageReceiver("MySource", {}));
@@ -63,17 +123,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageReceiverState::Open
                      << _internal::MessageReceiverState::Error;
     GTEST_LOG_(INFO) << static_cast<_internal::MessageReceiverState>(5993);
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
   TEST_F(TestMessageSendReceive, ReceiverProperties)
-  { // Create a connection
-    Connection connection("localhost", nullptr, {});
-    Session session{connection.CreateSession()};
+  {
+    // Create a connection
+    auto connection{CreateAmqpConnection({})};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
 
     {
       MessageReceiverOptions options;
       options.EnableTrace = true;
       MessageReceiver receiver(session.CreateMessageReceiver("MyTarget", options));
+#if ENABLE_UAMQP
       EXPECT_ANY_THROW(receiver.GetLinkName());
+#endif
     }
 
     {
@@ -83,15 +149,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto modified{Models::_internal::Messaging::DeliveryModified(true, false, "Annotations")};
       auto received{Models::_internal::Messaging::DeliveryReceived(3, 24)};
     }
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 
   TEST_F(TestMessageSendReceive, SimpleSender)
   {
-
     // Create a connection
-    Connection connection("localhost", nullptr, {});
-    // Create a session
-    Session session{connection.CreateSession()};
+    auto connection{CreateAmqpConnection({})};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
 
     {
       MessageSender sender(session.CreateMessageSender("MySource", {}));
@@ -108,37 +175,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                      << _internal::MessageSenderState::Open << _internal::MessageSenderState::Error;
     GTEST_LOG_(INFO) << static_cast<_internal::MessageSenderState>(5993);
 #endif
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
   TEST_F(TestMessageSendReceive, SenderProperties)
   { // Create a connection
-    Connection connection("localhost", nullptr, {});
-    Session session{connection.CreateSession()};
+    // Create a connection
+    auto connection{CreateAmqpConnection(
+        testing::UnitTest::GetInstance()->current_test_info()->name(), false, {})};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
 
     {
       MessageSenderOptions options;
       options.EnableTrace = true;
       MessageSender sender(session.CreateMessageSender("MySource", options));
     }
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 
   TEST_F(TestMessageSendReceive, ReceiverOpenClose)
   {
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
-
-    ConnectionOptions connectionOptions;
-    //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.EnableTrace = true;
-    connectionOptions.Port = mockServer.GetPort();
-    connectionOptions.ContainerId = testing::UnitTest::GetInstance()->current_test_info()->name();
-    Connection connection("localhost", nullptr, connectionOptions);
-    Session session{connection.CreateSession()};
-
-    mockServer.StartListening();
+    // Create a connection
+    auto connection{
+        CreateAmqpConnection(testing::UnitTest::GetInstance()->current_test_info()->name(), true)};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
 
     Azure::Core::Context context;
 
+    EnableServerListening();
     {
+#if ENABLE_UAMQP
       class ReceiverEvents : public MessageReceiverEvents {
         virtual void OnMessageReceiverStateChanged(
             MessageReceiver const& receiver,
@@ -165,28 +234,43 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
         }
       };
-
       ReceiverEvents receiverEvents;
+#endif
       MessageReceiverOptions options;
       options.Name = "Test Receiver";
-      MessageReceiver receiver(session.CreateMessageReceiver("MyTarget", options, &receiverEvents));
+      MessageReceiver receiver(session.CreateMessageReceiver(
+          "MyTarget",
+          options
+#if ENABLE_UAMQP
+          ,
+          &receiverEvents
+#endif
+          ));
 
       EXPECT_NO_THROW(receiver.Open());
+#if ENABLE_UAMQP
       EXPECT_EQ("Test Receiver", receiver.GetLinkName());
+#endif
 
       receiver.Close();
     }
 
-    mockServer.StopListening();
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
 
     context.Cancel();
-#else
-    EXPECT_TRUE(false);
-#endif
   }
 
   TEST_F(TestMessageSendReceive, SenderOpenClose)
   {
+    // Create a connection
+    //      connectionOptions.IdleTimeout = std::chrono::minutes(5);
+    auto connection{
+        CreateAmqpConnection(testing::UnitTest::GetInstance()->current_test_info()->name(), true)};
+    // Create a session.
+    auto session{CreateAmqpSession(connection, {})};
+
 #if ENABLE_UAMQP
     class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
     public:
@@ -213,35 +297,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         = std::make_shared<SenderLinkEndpoint>("MyTarget", mockServiceEndpointOptions);
     MessageTests::AmqpServerMock mockServer{};
     mockServer.AddServiceEndpoint(senderEndpoint);
+#endif
 
-    mockServer.StartListening();
-
-    ConnectionOptions connectionOptions;
-    connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    connectionOptions.Port = mockServer.GetPort();
-    connectionOptions.EnableTrace = true;
-    connectionOptions.ContainerId = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-
-    Connection connection("localhost", nullptr, connectionOptions);
-    Session session{connection.CreateSession()};
+    EnableServerListening();
 
     {
       MessageSenderOptions options;
       options.MessageSource = "MySource";
 
-      MessageSender sender(session.CreateMessageSender("MyTarget", options, nullptr));
+      MessageSender sender(session.CreateMessageSender("MyTarget", options));
       EXPECT_FALSE(sender.Open());
       sender.Close();
     }
-    mockServer.StopListening();
-#else
-    EXPECT_TRUE(false);
-#endif
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 
+#if ENABLE_UAMQP
   TEST_F(TestMessageSendReceive, TestLocalhostVsTls)
   {
-#if ENABLE_UAMQP
     MessageTests::AmqpServerMock mockServer(5671);
 
     mockServer.StartListening();
@@ -285,10 +360,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_TRUE(sender.Open());
     }
     mockServer.StopListening();
-#else
-    EXPECT_TRUE(false);
-#endif
   }
+#endif
 
   TEST_F(TestMessageSendReceive, SenderSendAsync)
   {
