@@ -308,13 +308,6 @@ Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions
   curlOptions.SslOptions.EnableCertificateRevocationListCheck
       = transportOptions.EnableCertificateRevocationListCheck;
 
-#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
-  if (!transportOptions.ExpectedTlsRootCertificate.empty())
-  {
-    curlOptions.SslOptions.PemEncodedExpectedRootCertificates
-        = PemEncodeFromBase64(transportOptions.ExpectedTlsRootCertificate, "CERTIFICATE");
-  }
-#endif
   curlOptions.SslVerifyPeer = !transportOptions.DisableTlsCertificateValidation;
   return curlOptions;
 }
