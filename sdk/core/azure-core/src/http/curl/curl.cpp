@@ -275,6 +275,9 @@ static void CleanupThread()
   }
 }
 
+// This function is only used when ExpectedTlsRootCertificate transport options is set to non empty.
+// And that capability only impacts the curl transport behavior in versions of libcurl >= 7.77.0.
+#if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
 std::string PemEncodeFromBase64(std::string const& base64, std::string const& pemType)
 {
   std::stringstream rv;
@@ -293,6 +296,7 @@ std::string PemEncodeFromBase64(std::string const& base64, std::string const& pe
   rv << encodedValue << std::endl << "-----END " << pemType << "-----" << std::endl;
   return rv.str();
 }
+#endif
 
 Azure::Core::Http::CurlTransportOptions CurlTransportOptionsFromTransportOptions(
     Azure::Core::Http::Policies::TransportOptions const& transportOptions)
