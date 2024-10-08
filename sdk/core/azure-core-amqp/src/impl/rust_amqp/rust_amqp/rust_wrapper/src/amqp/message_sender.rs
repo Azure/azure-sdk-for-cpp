@@ -59,6 +59,7 @@ pub unsafe extern "C" fn amqpmessagesender_destroy(sender: *mut RustAmqpMessageS
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesender_attach(
     call_context: *mut RustCallContext,
@@ -105,6 +106,7 @@ pub unsafe extern "C" fn amqpmessagesender_attach(
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesender_detach_and_release(
     call_context: *mut RustCallContext,
@@ -132,6 +134,7 @@ pub unsafe extern "C" fn amqpmessagesender_detach_and_release(
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesender_send(
     call_context: *mut RustCallContext,
@@ -172,6 +175,7 @@ pub unsafe extern "C" fn amqpmessagesender_send(
     0
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesender_get_max_message_size(
     call_context: *mut RustCallContext,
@@ -214,6 +218,7 @@ pub struct RustAmqpSendOptions {
     settled: *const bool,
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_create(
 ) -> *mut RustAmqpSenderOptionsBuilder {
@@ -222,6 +227,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_create(
     }))
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_destroy(
     options: *mut RustAmqpSenderOptionsBuilder,
@@ -233,6 +239,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_destroy(
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_destroy(options: *mut RustAmqpSenderOptions) {
     if !options.is_null() {
@@ -242,6 +249,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_destroy(options: *mut RustAmqp
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_build(
     builder: *const RustAmqpSenderOptionsBuilder,
@@ -256,12 +264,13 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_build(
     }))
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_sender_settle_mode(
     builder: *mut RustAmqpSenderOptionsBuilder,
     settle_mode: RustSenderSettleMode,
 ) {
-    let sender_settle_mode = match RustSenderSettleMode::from(settle_mode) {
+    let sender_settle_mode = match settle_mode {
         RustSenderSettleMode::Unsettled => SenderSettleMode::Unsettled,
         RustSenderSettleMode::Settled => SenderSettleMode::Settled,
         RustSenderSettleMode::Mixed => SenderSettleMode::Mixed,
@@ -272,12 +281,13 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_sender_settle_mode
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_receiver_settle_mode(
     builder: *mut RustAmqpSenderOptionsBuilder,
     settle_mode: RustReceiverSettleMode,
 ) {
-    let receiver_settle_mode = match RustReceiverSettleMode::from(settle_mode) {
+    let receiver_settle_mode = match settle_mode {
         RustReceiverSettleMode::First => ReceiverSettleMode::First,
         RustReceiverSettleMode::Second => ReceiverSettleMode::Second,
     };
@@ -290,6 +300,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_receiver_settle_mo
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_source(
     builder: *mut RustAmqpSenderOptionsBuilder,
@@ -302,6 +313,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_source(
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabilities(
     builder: *mut RustAmqpSenderOptionsBuilder,
@@ -315,7 +327,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabiliti
                 let capabilities = array
                     .iter()
                     .map(|c| match c {
-                        AmqpValue::Symbol(symbol) => AmqpSymbol::from(symbol.clone()),
+                        AmqpValue::Symbol(symbol) => symbol.clone(),
                         _ => panic!("Invalid offered capability: {:?}", c),
                     })
                     .collect();
@@ -325,6 +337,8 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabiliti
         }
     }
 }
+
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabilities(
     builder: *mut RustAmqpSenderOptionsBuilder,
@@ -338,7 +352,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabiliti
                 let capabilities = array
                     .iter()
                     .map(|c| match c {
-                        AmqpValue::Symbol(symbol) => AmqpSymbol::from(symbol.clone()),
+                        AmqpValue::Symbol(symbol) => symbol.clone(),
                         _ => panic!("Invalid desired capability: {:?}", c),
                     })
                     .collect();
@@ -352,6 +366,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabiliti
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
     builder: *mut RustAmqpSenderOptionsBuilder,
@@ -373,6 +388,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_initial_delivery_count(
     builder: *mut RustAmqpSenderOptionsBuilder,
@@ -386,6 +402,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_initial_delivery_c
     }
 }
 
+/// # Safety
 #[no_mangle]
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_max_message_size(
     builder: *mut RustAmqpSenderOptionsBuilder,

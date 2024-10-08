@@ -28,7 +28,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_create(
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
     let session = unsafe { (*session).get_session() };
-    let cbs = AmqpClaimsBasedSecurity::new(&session);
+    let cbs = AmqpClaimsBasedSecurity::new(session);
     match cbs {
         Ok(cbs) => {
             *claims_based_security =
@@ -53,8 +53,12 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_destroy(cbs: *mut RustAmqpClaim
     }
 }
 
-/// # Safety
 #[no_mangle]
+/// Attach an AMQP Claims Based Security (CBS) node.
+///
+/// # Safety
+///
+/// This function is unsafe because it dereferences raw pointers.
 pub unsafe extern "C" fn amqpclaimsbasedsecurity_attach(
     call_context: *mut RustCallContext,
     cbs: *mut RustAmqpClaimsBasedSecurity,
