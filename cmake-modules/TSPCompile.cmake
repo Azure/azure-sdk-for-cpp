@@ -3,8 +3,8 @@
 
 find_package(Git)
 
-macro(DownloadTSPFiles TSP_REPO TSP_BRANCH TSP_REPO_PATH TSP_DESTINATION)
-    message ("Downloading TSP files using the following params  TSP_REPO=${TSP_REPO} TSP_BRANCH=${TSP_BRANCH} TSP_REPO_PATH=${TSP_REPO_PATH}  TSP_DESTINATION=${TSP_DESTINATION}")
+macro(DownloadTSPFiles TSP_REPO TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
+    message ("Downloading TSP files using the following params  TSP_REPO=${TSP_REPO} TSP_SHA=${TSP_SHA} TSP_REPO_PATH=${TSP_REPO_PATH}  TSP_DESTINATION=${TSP_DESTINATION}")
 
     if(Git_FOUND)
         message("Git found: ${GIT_EXECUTABLE}")
@@ -33,7 +33,7 @@ macro(DownloadTSPFiles TSP_REPO TSP_BRANCH TSP_REPO_PATH TSP_DESTINATION)
     execute_process(COMMAND ${GIT_EXECUTABLE} fetch
          WORKING_DIRECTORY ${DOWNLOAD_FOLDER})
     #switch branch
-    execute_process(COMMAND ${GIT_EXECUTABLE} checkout ${TSP_BRANCH}
+    execute_process(COMMAND ${GIT_EXECUTABLE} checkout ${TSP_SHA}
           WORKING_DIRECTORY ${DOWNLOAD_FOLDER})
  
     if (NOT ${STATUS_CODE} EQUAL 0)
