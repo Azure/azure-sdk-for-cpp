@@ -2133,4 +2133,53 @@ namespace Azure { namespace Storage { namespace Test {
         = Blobs::BlockBlobClient(m_blockBlobClient->GetUrl(), keyCredential, clientOptions);
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
+
+  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithSnapshot)
+  {
+    const auto ImmutabilityMaxLength = std::chrono::seconds(30);
+
+    auto createSnapshotResult = m_blockBlobClient->CreateSnapshot();
+    auto snapshotClient = m_blockBlobClient->WithSnapshot(createSnapshotResult.Value.Snapshot);
+    Blobs::Models::BlobImmutabilityPolicy policy;
+    policy.ExpiresOn = Azure::DateTime::Parse(
+        Azure::DateTime(std::chrono::system_clock::now() + ImmutabilityMaxLength)
+            .ToString(Azure::DateTime::DateFormat::Rfc1123),
+        Azure::DateTime::DateFormat::Rfc1123);
+    policy.PolicyMode = Blobs::Models::BlobImmutabilityPolicyMode::Unlocked;
+    auto setPolicyResponse = snapshotClient.SetImmutabilityPolicy(policy);
+    EXPECT_EQ(setPolicyResponse.Value.ImmutabilityPolicy, policy);
+    auto blobProperties = snapshotClient.GetProperties().Value;
+    ASSERT_TRUE(blobProperties.ImmutabilityPolicy.HasValue());
+    EXPECT_EQ(blobProperties.ImmutabilityPolicy.Value(), policy);
+
+    auto setLegalHoldResponse = snapshotClient.SetLegalHold(true);
+    EXPECT_TRUE(setLegalHoldResponse.Value.HasLegalHold);
+    blobProperties = snapshotClient.GetProperties().Value;
+    EXPECT_TRUE(blobProperties.HasLegalHold);
+  }
+
+  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithVersion)
+  {
+    const auto ImmutabilityMaxLength = std::chrono::seconds(30);
+    auto versionId
+        = m_blockBlobClient->SetMetadata({{"key1", "value1"}, {"key2", "value2"}}).Value.VersionId;
+    ASSERT_TRUE(versionId.HasValue());
+    auto versionClient = m_blockBlobClient->WithVersionId(versionId.Value());
+    Blobs::Models::BlobImmutabilityPolicy policy;
+    policy.ExpiresOn = Azure::DateTime::Parse(
+        Azure::DateTime(std::chrono::system_clock::now() + ImmutabilityMaxLength)
+            .ToString(Azure::DateTime::DateFormat::Rfc1123),
+        Azure::DateTime::DateFormat::Rfc1123);
+    policy.PolicyMode = Blobs::Models::BlobImmutabilityPolicyMode::Unlocked;
+    auto setPolicyResponse = versionClient.SetImmutabilityPolicy(policy);
+    EXPECT_EQ(setPolicyResponse.Value.ImmutabilityPolicy, policy);
+    auto blobProperties = versionClient.GetProperties().Value;
+    ASSERT_TRUE(blobProperties.ImmutabilityPolicy.HasValue());
+    EXPECT_EQ(blobProperties.ImmutabilityPolicy.Value(), policy);
+
+    auto setLegalHoldResponse = versionClient.SetLegalHold(true);
+    EXPECT_TRUE(setLegalHoldResponse.Value.HasLegalHold);
+    blobProperties = versionClient.GetProperties().Value;
+    EXPECT_TRUE(blobProperties.HasLegalHold);
+  }
 }}} // namespace Azure::Storage::Test
