@@ -1103,6 +1103,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.ShareIncludedBurstIops
             = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-included-burst-iops"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-share-max-burst-credits-for-iops") != 0)
+      {
+        response.MaxBurstCreditsForIops
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-max-burst-credits-for-iops"));
+      }
       return Response<Models::CreateShareResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::ShareProperties> ShareClient::GetProperties(
@@ -1296,15 +1301,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::DeleteShareResult response;
-      if (pRawResponse->GetHeaders().count("x-ms-share-usage-bytes") != 0)
+      if (pRawResponse->GetHeaders().count("x-ms-file-share-usage-bytes") != 0)
       {
         response.ShareUsageBytes
-            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-usage-bytes"));
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-file-share-usage-bytes"));
       }
-      if (pRawResponse->GetHeaders().count("x-ms-share-snapshot-usage-bytes") != 0)
+      if (pRawResponse->GetHeaders().count("x-ms-file-share-snapshot-usage-bytes") != 0)
       {
         response.ShareSnapshotUsageBytes
-            = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-snapshot-usage-bytes"));
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-file-share-snapshot-usage-bytes"));
       }
       return Response<Models::DeleteShareResult>(std::move(response), std::move(pRawResponse));
     }
