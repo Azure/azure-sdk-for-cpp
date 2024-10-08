@@ -843,6 +843,7 @@ namespace Azure { namespace Storage { namespace Test {
         options.ProvisionedMaxBandwidthMibps.Value(),
         result.ShareProvisionedBandwidthMibps.Value());
     EXPECT_TRUE(result.ShareIncludedBurstIops.HasValue());
+    EXPECT_TRUE(result.MaxBurstCreditsForIops.HasValue());
     EXPECT_TRUE(result.Quota.HasValue());
     EXPECT_EQ(options.ShareQuotaInGiB.Value(), result.Quota.Value());
 
@@ -878,10 +879,10 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(setResult.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
 
     // Delete (Due to inconsistent between swagger and server, pending response for this test case)
-    // Files::Shares::Models::DeleteShareResult deleteResult;
-    // EXPECT_NO_THROW(deleteResult = shareClient.Delete().Value);
-    // EXPECT_TRUE(deleteResult.Deleted);
-    // EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
-    // EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
+    Files::Shares::Models::DeleteShareResult deleteResult;
+    EXPECT_NO_THROW(deleteResult = shareClient.Delete().Value);
+    EXPECT_TRUE(deleteResult.Deleted);
+    EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
+    EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
   }
 }}} // namespace Azure::Storage::Test

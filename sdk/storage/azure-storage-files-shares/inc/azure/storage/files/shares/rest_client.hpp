@@ -504,20 +504,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<std::int64_t> Quota;
       /**
-       * The provisioned IOPS of the share. If this is not specified, compute the recommended IOPS
-       * of the share using the formula for a share in this media tier (SSD/HDD as appropriate).
+       * The provisioned IOPS of the share.
        */
       Nullable<std::int64_t> ShareProvisionedIops;
       /**
-       * The provisioned throughput of the share. If this is not specified, compute the recommended
-       * throughput of the share using the formula for a share in this media tier (SSD/HDD as
-       * appropriate).
+       * The provisioned throughput of the share.
        */
       Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
       /**
-       * ShareIncludedBurstIops.
+       * Returns the calculated burst IOPS of the share.
        */
       Nullable<std::int64_t> ShareIncludedBurstIops;
+      /**
+       * Returned the calculated maximum burst credits.
+       */
+      Nullable<std::int64_t> MaxBurstCreditsForIops;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::GetProperties.
@@ -563,7 +564,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       /**
-       * Returns the current share provisioned bandwidth in megabits per second.
+       * Returns the current share provisioned bandwidth in mebibytes per second.
        */
       Nullable<std::int32_t> ProvisionedBandwidthMBps;
       /**
@@ -624,12 +625,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<std::int64_t> MaxBurstCreditsForIops;
       /**
-       * Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.
+       * Returns the current share next allowed provisioned iops downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedIopsDowngradeTime;
       /**
-       * Return timestamp for provisioned throughput following existing rules for provisioned
-       * storage GiB.
+       * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
     };
@@ -657,13 +657,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       bool Deleted = true;
       /**
-       * The "live share" portion of the data that the customer will be billed for in the
-       * soft-deleted capacity (logical storage size).
+       * Returned only for provisioned v2 file shares. Returns an approximate used storage size of
+       * the share, in bytes.
        */
       Nullable<std::int64_t> ShareUsageBytes;
       /**
-       * The snapshot share portion of the data that the customer will be billed for in the
-       * soft-deleted capacity (this is the delta, or "physical storage size").
+       * Returned only for provisioned v2 file shares. Returns an approximate used snapshot storage
+       * size of the share, in bytes.
        */
       Nullable<std::int64_t> ShareSnapshotUsageBytes;
     };
@@ -867,7 +867,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<std::int64_t> ProvisionedIops;
       /**
-       * Returns the current share provisioned bandwidth in megabits per second.
+       * Returns the current share provisioned bandwidth in mebibytes per second.
        */
       Nullable<std::int64_t> ProvisionedBandwidthMibps;
       /**
@@ -884,12 +884,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<DateTime> NextAllowedQuotaDowngradeTime;
       /**
-       * Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.
+       * Returns the current share next allowed provisioned iops downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedIopsDowngradeTime;
       /**
-       * Return timestamp for provisioned throughput following existing rules for provisioned
-       * storage GiB.
+       * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
     };
