@@ -3,5 +3,5 @@
 
 pub mod cbs;
 pub mod connection;
-pub mod session;
 pub mod message_sender;
+pub mod session;
