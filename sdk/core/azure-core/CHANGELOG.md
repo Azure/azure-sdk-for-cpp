@@ -2,7 +2,11 @@
 
 ## 1.14.1 (2024-10-10)
 
-### Features Added
+### Bugs Fixed
+
+- Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
+
+### Other Changes
 
 - [[#6064]](https://github.com/Azure/azure-sdk-for-cpp/issues/6064) Added internal support for the SDK packages to access more of telemetry features.
 

@@ -74,6 +74,7 @@
     "avro",
     "antkmsft",
     "azcmagent",
+    "azcopy",
     "azcore",
     "azsdk",
     "azsdkengsys",

@@ -4,19 +4,9 @@ Param(
     [Parameter(Mandatory=$True)]
     [string] $OutPath,
     [Parameter(Mandatory=$True)]
-    [string] $ApiKey,
-    [Parameter(Mandatory=$True)]
-    [string] $SourceBranch,
-    [Parameter(Mandatory=$True)]
-    [string] $DefaultBranch,
-    [Parameter(Mandatory=$True)]
     [string] $ParserPath,
     [Parameter(Mandatory=$True)]
-    [string] $ServicePath,
-    [Parameter(Mandatory=$True)]
-    [string] $RepoName,
-    [Parameter(Mandatory=$True)]
-    [string] $BuildId
+    [string] $ServicePath
 )
 
 Write-Host "$PSScriptRoot"
@@ -34,19 +24,15 @@ foreach ($artifact in $ArtifactList)
         exit 1
     }
 
-    Write-Host "Creating API review artifact for $($ArtifactName)"
-    New-Item -ItemType Directory -Path $OutPath/$ArtifactName -force
+    Write-Host "Creating API review artifact for $ArtifactName"
+    New-Item -ItemType Directory -Path "$OutPath/packages/$ArtifactName" -Force
     $parentPath = Split-Path $ParserPath  -Parent
-    Write-Host "Contents in $($parentPath)"
+    Write-Host "Contents in ${parentPath}:"
     Get-ChildItem -Path $parentPath -Recurse
-    & $ParserPath -o $OutPath/$ArtifactName/$ArtifactName.json $SourcePath
+    & $ParserPath -o "$OutPath/packages/$ArtifactName/${ArtifactName}_cpp.json" $SourcePath
     if ($LASTEXITCODE -ne 0)
 	{
 		Write-Host "Failed to generate API review file for $($ArtifactName)"
 		exit 1
 	}
 }
-
-$createReviewScript = (Join-Path $PSScriptRoot .. common scripts Create-APIReview.ps1)
-Write-Host "Running script to create review for all artifacts."
-&($createReviewScript) -ArtifactList $ArtifactList -ArtifactPath $OutPath -APIKey $ApiKey -SourceBranch $SourceBranch -DefaultBranch $DefaultBranch -RepoName $RepoName -BuildId $BuildId
