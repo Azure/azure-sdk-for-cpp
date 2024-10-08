@@ -1,7 +1,10 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 find_package(Git)
 
 macro(DownloadTSPFiles TSP_REPO TSP_BRANCH TSP_REPO_PATH TSP_DESTINATION)
-    message ("Downloading TSP files from ${TSP_REPO} branch ${TSP_BRANCH} path ${TSP_REPO_PATH} to ${TSP_DESTINATION}")
+    message ("Downloading TSP files using the following params  TSP_REPO=${TSP_REPO} TSP_BRANCH=${TSP_BRANCH} TSP_REPO_PATH=${TSP_REPO_PATH}  TSP_DESTINATION=${TSP_DESTINATION}")
 
     if(Git_FOUND)
         message("Git found: ${GIT_EXECUTABLE}")
