@@ -85,6 +85,36 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_attach(
 
 /// # Safety
 #[no_mangle]
+pub unsafe extern "C" fn amqpclaimsbasedsecurity_detach_and_release(
+    call_context: *mut RustCallContext,
+    cbs: *mut RustAmqpClaimsBasedSecurity,
+) -> i32 {
+    let call_context = call_context_from_ptr_mut(call_context);
+    if cbs.is_null() {
+        call_context.set_error(Box::new(azure_core::Error::new(
+            azure_core::error::ErrorKind::Other,
+            "CBS is null",
+        )));
+        return -1;
+    }
+    let cbs = Box::from_raw(cbs);
+
+    let result = call_context
+        .runtime_context()
+        .runtime()
+        .block_on(cbs.inner.detach());
+
+    if let Err(e) = result {
+        error!("Failed to detach CBS: {:?}", e);
+        call_context.set_error(Box::new(e));
+        -1
+    } else {
+        0
+    }
+}
+
+/// # Safety
+#[no_mangle]
 pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
     call_context: *mut RustCallContext,
     cbs: *mut RustAmqpClaimsBasedSecurity,

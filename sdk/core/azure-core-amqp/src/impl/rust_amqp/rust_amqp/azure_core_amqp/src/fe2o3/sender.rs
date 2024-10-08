@@ -11,12 +11,15 @@ use std::borrow::BorrowMut;
 use std::sync::OnceLock;
 
 use super::error::{
-    AmqpDeliveryRejected, AmqpNotAccepted, AmqpSenderAttach, AmqpSenderSend, Fe2o3AmqpError
+    AmqpDeliveryRejected, AmqpLinkDetach, AmqpNotAccepted, AmqpSenderAttach, AmqpSenderSend,
+    Fe2o3AmqpError,
 };
 
 #[derive(Debug, Default)]
 pub(crate) struct Fe2o3AmqpSender {
+//    phantom_mutex: Mutex<()>,
     sender: OnceLock<Mutex<fe2o3_amqp::Sender>>,
+//sender: OnceLock<fe2o3_amqp::Sender>,
 }
 
 impl AmqpSenderApis for Fe2o3AmqpSender {
@@ -67,12 +70,27 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
             .attach(session.implementation.get()?.lock().await.borrow_mut())
             .await
             .map_err(AmqpSenderAttach::from)?;
-        self.sender.set(Mutex::new(sender)).map_err(|_| {
-            azure_core::Error::message(
+//        self.sender.set(Mutex::new(sender)).map_err(|_| {
+    self.sender.set(Mutex::new(sender)).map_err(|_| {
+                    azure_core::Error::message(
                 azure_core::error::ErrorKind::Other,
                 "Could not set message sender.",
             )
         })?;
+        Ok(())
+    }
+
+    async fn detach(mut self) -> Result<()> {
+        let sender = self.sender.take().ok_or_else(|| {
+            azure_core::Error::message(
+                azure_core::error::ErrorKind::Other,
+                "Message Sender not set.",
+            )
+        })?;
+        sender.into_inner()
+            .detach()
+            .await
+            .map_err(|e| AmqpLinkDetach::from(e.1))?;
         Ok(())
     }
 
@@ -85,8 +103,7 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
                     azure_core::error::ErrorKind::Other,
                     "Message Sender not set.",
                 )
-            })?
-            .lock_blocking()
+            })?.lock_blocking()
             .max_message_size())
     }
 
@@ -120,9 +137,7 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
                     azure_core::error::ErrorKind::Other,
                     "Message Sender not set.",
                 )
-            })?
-            .lock()
-            .await
+            })?.lock().await.borrow_mut()
             .send(sendable)
             .await
             .map_err(AmqpSenderSend::from)?;
@@ -143,4 +158,5 @@ impl Fe2o3AmqpSender {
             sender: OnceLock::new(),
         }
     }
+
 }

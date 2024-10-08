@@ -131,6 +131,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not open Message Sender: " + callContext.GetError());
     }
+    m_senderOpen = true;
     return {};
   }
 
@@ -142,18 +143,53 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
       }
+      Common::_detail::CallContext callContext(
+          Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+      if (amqpmessagesender_detach_and_release(callContext.GetCallContext(), m_messageSender.release()))
+      {
+        throw std::runtime_error("Could not close Message Sender: " + callContext.GetError());
+      
+      }
       m_senderOpen = false;
     }
-    (void)context;
+    else
+    {
+      throw std::runtime_error("Message sender is not open.");
+    }
   }
 
   Models::_internal::AmqpError MessageSenderImpl::Send(
       Models::AmqpMessage const& message,
       Context const& context)
   {
-    throw std::runtime_error("Not implemented");
-    (void)context;
-    (void)message;
+    if (m_senderOpen)
+    {
+      Common::_detail::CallContext callContext(
+          Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+      RustAmqpSendOptions sendOptions{};
+
+      if (message.MessageFormat != 0)
+      {
+        sendOptions.message_format = &message.MessageFormat;
+      }
+
+      if (amqpmessagesender_send(
+              callContext.GetCallContext(),
+              m_messageSender.get(),
+              Models::_detail::AmqpMessageFactory::ToImplementation(message).get(),
+              &sendOptions))
+      {
+        throw std::runtime_error("Could not send message: " + callContext.GetError());
+      }
+      return {};
+    }
+    else
+    {
+      throw std::runtime_error("Message sender is not open.");
+    }
   }
+
 
 }}}} // namespace Azure::Core::Amqp::_detail

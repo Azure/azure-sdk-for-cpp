@@ -40,6 +40,7 @@ pub trait AmqpSenderApis {
         target: impl Into<AmqpTarget>,
         options: Option<AmqpSenderOptions>,
     ) -> impl std::future::Future<Output = Result<()>>;
+    fn detach(self) -> impl std::future::Future<Output = Result<()>>;
     fn max_message_size(&self) -> Result<Option<u64>>;
     fn send(
         &self,
@@ -64,6 +65,9 @@ impl AmqpSenderApis for AmqpSender {
         self.implementation
             .attach(session, name, target, options)
             .await
+    }
+     async fn detach(self) -> Result<()> {
+        self.implementation.detach().await
     }
 
     fn max_message_size(&self) -> Result<Option<u64>> {
@@ -90,10 +94,10 @@ impl AmqpSender {
 #[derive(Debug, Default, Clone)]
 pub struct AmqpSendOptions {
     /// The message format.
-    pub(crate) message_format: Option<u32>,
+    pub message_format: Option<u32>,
 
     /// The message priority.
-    pub(crate) settled: Option<bool>,
+    pub settled: Option<bool>,
 }
 
 impl AmqpSendOptions {
