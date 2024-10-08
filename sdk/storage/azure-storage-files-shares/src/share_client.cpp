@@ -166,6 +166,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.ShareProvisionedIops = std::move(result.Value.ShareProvisionedIops);
     ret.ShareProvisionedBandwidthMibps = std::move(result.Value.ShareProvisionedBandwidthMibps);
     ret.ShareIncludedBurstIops = std::move(result.Value.ShareIncludedBurstIops);
+    ret.MaxBurstCreditsForIops = std::move(result.Value.MaxBurstCreditsForIops);
     ret.Quota = std::move(result.Value.Quota);
     return Azure::Response<Models::CreateShareResult>(
         std::move(ret), std::move(result.RawResponse));

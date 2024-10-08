@@ -439,6 +439,7 @@ directive:
       $.headers["x-ms-share-provisioned-iops"]["x-nullable"] = true;
       $.headers["x-ms-share-provisioned-bandwidth-mibps"]["x-nullable"] = true;
       $.headers["x-ms-share-included-burst-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "CreateShareResult",
@@ -546,10 +547,10 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].delete.responses["202"]
     transform: >
-      $.headers["x-ms-share-usage-bytes"]["x-ms-client-name"] = "ShareUsageBytes";
-      $.headers["x-ms-share-usage-bytes"]["x-nullable"] = true;
-      $.headers["x-ms-share-snapshot-usage-bytes"]["x-ms-client-name"] = "ShareSnapshotUsageBytes";
-      $.headers["x-ms-share-snapshot-usage-bytes"]["x-nullable"] = true;
+      $.headers["x-ms-file-share-usage-bytes"]["x-ms-client-name"] = "ShareUsageBytes";
+      $.headers["x-ms-file-share-usage-bytes"]["x-nullable"] = true;
+      $.headers["x-ms-file-share-snapshot-usage-bytes"]["x-ms-client-name"] = "ShareSnapshotUsageBytes";
+      $.headers["x-ms-file-share-snapshot-usage-bytes"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "DeleteShareResult",
