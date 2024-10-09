@@ -95,7 +95,7 @@ TEST(TelemetryPolicy, telemetryString)
 TEST(TelemetryPolicy, UserAgentCppVer)
 {
   {
-    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
+    const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
     EXPECT_GE(ua.length(), 11);
@@ -103,7 +103,7 @@ TEST(TelemetryPolicy, UserAgentCppVer)
   }
 
   {
-    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
+    const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
 
     EXPECT_GE(ua.length(), 11);
