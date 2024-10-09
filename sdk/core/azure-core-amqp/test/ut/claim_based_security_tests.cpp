@@ -166,6 +166,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
     ConnectionOptions options;
     options.EnableTrace = true;
+    // Pick a port separate from the one that the listener is normally at so we will fail to connect
+    // to the server.
     options.Port = GetPort() + 10;
     Connection connection("localhost", nullptr, options);
     Session session{connection.CreateSession()};
