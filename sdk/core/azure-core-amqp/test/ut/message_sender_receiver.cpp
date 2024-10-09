@@ -48,6 +48,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
+    std::uint16_t GetPort()
+    {
+#if defined(USE_NATIVE_BROKER)
+      return nativeBrokerPort;
+#else
+      return m_mockServer.GetPort();
+#endif
+    }
     auto CreateAmqpConnection(
         std::string const& containerId
         = testing::UnitTest::GetInstance()->current_test_info()->name(),
@@ -57,11 +65,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ConnectionOptions options;
       options.ContainerId = containerId;
       options.EnableTrace = enableTracing;
-#if defined(USE_NATIVE_BROKER)
-      options.Port = nativeBrokerPort;
-#else
-      options.Port = m_mockServer.GetPort();
-#endif
+      options.Port = GetPort();
+
       auto connection = Connection("localhost", nullptr, options);
 #if ENABLE_RUST_AMQP
       connection.Open(context);
@@ -313,8 +318,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServiceEndpointOptions.EnableTrace = true;
     auto senderEndpoint
         = std::make_shared<SenderLinkEndpoint>("MyTarget", mockServiceEndpointOptions);
-    MessageTests::AmqpServerMock mockServer{};
-    mockServer.AddServiceEndpoint(senderEndpoint);
+    m_mockServer.AddServiceEndpoint(senderEndpoint);
 #endif
 
     StartServerListening();
@@ -418,10 +422,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServiceEndpointOptions.EnableTrace = true;
     auto senderEndpoint
         = std::make_shared<SenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions);
-    MessageTests::AmqpServerMock mockServer{};
-    mockServer.AddServiceEndpoint(senderEndpoint);
+    m_mockServer.AddServiceEndpoint(senderEndpoint);
 
-    GTEST_LOG_(INFO) << "Test port: " << mockServer.GetPort();
+    GTEST_LOG_(INFO) << "Test port: " << GetPort();
 #endif
 
     // Set up a 30 second deadline on the receiver.
@@ -580,13 +583,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         = std::make_shared<ReceiverServiceEndpoint>("testLocation", mockServiceEndpointOptions);
 
     m_mockServer.AddServiceEndpoint(serviceEndpoint);
-    std::uint16_t serverPort = m_mockServer.GetPort();
-#else
-    std::uint16_t serverPort = nativeBrokerPort;
 #endif // !defined(USE_NATIVE_BROKER)
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
-        "Endpoint=amqp://localhost:" + std::to_string(serverPort)
+        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
         + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
     auto connection{CreateAmqpConnection()};
@@ -633,7 +633,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     public:
       AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     };
-
 #if !defined(USE_NATIVE_BROKER)
 
     class ReceiverServiceEndpoint : public MessageTests::MockServiceEndpoint {
@@ -654,24 +653,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
       }
     };
-    MessageTests::AmqpServerMock server;
-
-    auto tokenCredential = std::make_shared<AzureTokenCredential>();
-    uint16_t port = m_mockServer.GetPort();
-#else
-    uint16_t port = nativeBrokerPort;
 #endif
+    auto tokenCredential = std::make_shared<AzureTokenCredential>();
     std::string hostName = "localhost";
     std::string entityPath = "testLocation";
 
-    std::string endpoint = "amqp://" + hostName + ":" + std::to_string(port) + "/" + entityPath;
+    std::string endpoint
+        = "amqp://" + hostName + ":" + std::to_string(GetPort()) + "/" + entityPath;
 
 #if !defined(USE_NATIVE_BROKER)
     MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
     mockServiceEndpointOptions.EnableTrace = false;
     auto serviceEndpoint
         = std::make_shared<ReceiverServiceEndpoint>(endpoint, mockServiceEndpointOptions);
-    server.AddServiceEndpoint(serviceEndpoint);
+    m_mockServer.AddServiceEndpoint(serviceEndpoint);
 #endif
 
     auto connection{CreateAmqpConnection({})};
@@ -752,13 +747,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         "amqp://localhost:" + std::to_string(m_mockServer.GetPort()) + "/testLocation",
         MessageTests::MockServiceEndpointOptions{});
     m_mockServer.AddServiceEndpoint(serviceEndpoint);
-    uint16_t serverPort = m_mockServer.GetPort();
-#else
-    uint16_t serverPort = nativeBrokerPort;
 #endif
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
-        "Endpoint=amqp://localhost:" + std::to_string(serverPort)
+        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
         + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
     ConnectionOptions connectionOptions;
