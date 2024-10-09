@@ -414,6 +414,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (options.Permission.HasValue())
         {
           protocolLayerOptions.FilePermission = options.Permission;
+          protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
         }
         else if (options.SmbProperties.PermissionKey.HasValue())
         {

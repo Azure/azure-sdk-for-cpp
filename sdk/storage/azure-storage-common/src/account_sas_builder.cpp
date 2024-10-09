@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2024-11-04";
+    constexpr static const char* SasVersion = "2025-01-05";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)

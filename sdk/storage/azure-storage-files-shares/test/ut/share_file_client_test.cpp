@@ -1993,4 +1993,98 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(binaryPermissionNoControlFlag, permission);
     }
   }
+
+  TEST_F(FileShareFileClientTest, FilePermissionFormatForCopy_PLAYBACKONLY_)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)S:NO_ACCESS_CONTROL";
+    auto sddlPermissionNoControlFlag
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)";
+    auto binaryPermission
+        = "AQAEgIgAAACUAAAAAAAAABQAAAACAHQABQAAAAAAGAD/AR8AAQIAAAAAAAUgAAAAIAIAAAAAFAD/"
+          "AR8AAQEAAAAAAAUSAAAAAAAYAKkAEgABAgAAAAAABSAAAAAhAgAAAAAUAL8BEwABAQAAAAAABQsAAAAAABQA/"
+          "wEfAAEBAAAAAAAFEgAAAAEBAAAAAAAFEgAAAAEBAAAAAAAFEgAAAA==";
+    auto binaryPermissionNoControlFlag
+        = "AQAEgGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/"
+          "AR8AAQEAAAAAAAUSAAAAAAAYAP8BHwABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJd"
+          "JWRjOwuMmS4AAQUAAAAAAAUVAAAAoGXPfnhLm1/nfIdwr/"
+          "1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=";
+
+    size_t fileSize = 128;
+    // source client
+    auto sourceClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "1");
+    sourceClient.Create(fileSize);
+
+    // sddl format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Sddl;
+      auto fileClient
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+
+      Files::Shares::StartFileCopyOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      options.Permission = sddlPermission;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      auto copyOperation = fileClient.StartCopy(sourceClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto fileProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(fileProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      auto permissionKey = fileProperties.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(sddlPermissionNoControlFlag, permission);
+    }
+    // binary format
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+
+      Files::Shares::StartFileCopyOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      options.Permission = binaryPermissionNoControlFlag;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      auto copyOperation = fileClient.StartCopy(sourceClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto fileProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(fileProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      auto permissionKey = fileProperties.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermissionNoControlFlag, permission);
+    }
+
+    // source mode
+    std::string permissionKey;
+    {
+      auto permissionFormat = Files::Shares::Models::FilePermissionFormat::Binary;
+      auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+
+      Files::Shares::StartFileCopyOptions options;
+      options.FilePermissionFormat = permissionFormat;
+      // Permission and PermissionFormat are ignored when PermissionCopyMode is Source.
+      options.Permission = binaryPermission;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Source;
+      auto copyOperation = fileClient.StartCopy(sourceClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto fileProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(fileProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      permissionKey = fileProperties.SmbProperties.PermissionKey.Value();
+      Files::Shares::GetSharePermissionOptions getOptions;
+      getOptions.FilePermissionFormat = permissionFormat;
+      auto permission = m_shareClient->GetPermission(permissionKey, getOptions).Value;
+      EXPECT_EQ(binaryPermission, permission);
+    }
+  }
 }}} // namespace Azure::Storage::Test

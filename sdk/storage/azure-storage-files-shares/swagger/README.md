@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2024-11-04/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2025-01-05/file.json
 ```
 
 ## ModelFour Options
@@ -79,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-11-04"]
+        "enum": ["2025-01-05"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-11-04";
+      $.ApiVersionParameter.enum[0] = "2025-01-05";
 ```
 
 ### Rename Operations
@@ -214,7 +214,6 @@ directive:
     transform: >
       $.ListSharesInclude.items["x-ms-enum"].name = "ListSharesIncludeFlags";
       $.ListFilesInclude.items["x-ms-enum"].name = "ListFilesIncludeFlags";
-      $.AccessTierOptional.enum.push("Premium");
       $.AccessTierOptional["x-ms-enum"].name = "AccessTier";
       $.AccessTierOptional["x-ms-enum"].modelAsString = false;
       $.DeleteSnapshots["x-ms-enum"].name = "DeleteSnapshotsOption";
@@ -229,6 +228,7 @@ directive:
       delete $.FileChangeTime.format;
       $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
       $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
+      $.FilePermissionFormat["enum"] = ["sddl", "binary"];
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -306,6 +306,7 @@ directive:
         }
       };
       $.SharePermission["x-namespace"] = "_detail";
+      $.SharePermission["properties"]["format"]["enum"] = ["sddl", "binary"];
       $.ShareEnabledProtocols["enum"] = ["Smb", "Nfs"];
       $.ShareEnabledProtocols["x-ms-enum"] = {"name": "ShareProtocols", "modelAsString": false};
       $.ShareEnabledProtocols["x-ms-enum"]["values"] = [{"value": "SMB", "name": "Smb"},{"value": "NFS", "name": "Nfs"}];
@@ -434,6 +435,11 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].put.responses["201"]
     transform: >
+      $.headers["x-ms-share-quota"]["x-nullable"] = true;
+      $.headers["x-ms-share-provisioned-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-provisioned-bandwidth-mibps"]["x-nullable"] = true;
+      $.headers["x-ms-share-included-burst-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "CreateShareResult",
@@ -442,6 +448,23 @@ directive:
           "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
+```
+
+### SetShareProperties
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=properties"].put.responses["200"]
+    transform: >
+      $.headers["x-ms-share-quota"]["x-nullable"] = true;
+      $.headers["x-ms-share-provisioned-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-provisioned-bandwidth-mibps"]["x-nullable"] = true;
+      $.headers["x-ms-share-included-burst-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
+      $.headers["x-ms-share-next-allowed-quota-downgrade-time"]["x-nullable"] = true;
+      $.headers["x-ms-share-next-allowed-provisioned-iops-downgrade-time"]["x-nullable"] = true;
+      $.headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"]["x-nullable"] = true;
 ```
 
 ### GetShareProperties
@@ -473,6 +496,10 @@ directive:
       $["x-ms-share-paid-bursting-enabled"]["x-nullable"] = true;
       $["x-ms-share-paid-bursting-max-iops"]["x-nullable"] = true;
       $["x-ms-share-paid-bursting-max-bandwidth-mibps"]["x-nullable"] = true;
+      $["x-ms-share-included-burst-iops"]["x-nullable"] = true;
+      $["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
+      $["x-ms-share-next-allowed-provisioned-iops-downgrade-time"]["x-nullable"] = true;
+      $["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"]["x-nullable"] = true;
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
@@ -520,6 +547,10 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].delete.responses["202"]
     transform: >
+      $.headers["x-ms-file-share-usage-bytes"]["x-ms-client-name"] = "ShareUsageBytes";
+      $.headers["x-ms-file-share-usage-bytes"]["x-nullable"] = true;
+      $.headers["x-ms-file-share-snapshot-usage-bytes"]["x-ms-client-name"] = "ShareSnapshotUsageBytes";
+      $.headers["x-ms-file-share-snapshot-usage-bytes"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "DeleteShareResult",
@@ -1075,6 +1106,10 @@ directive:
       $.ShareItemDetails.properties["PaidBurstingEnabled"].description = "Optional. Boolean. Default if not specified is false. This property enables paid bursting.";
       $.ShareItemDetails.properties["PaidBurstingMaxIops"].description = "Optional. Integer. Default if not specified is the maximum IOPS the file share can support. Current maximum for a file share is 102,400 IOPS.";
       $.ShareItemDetails.properties["PaidBurstingMaxBandwidthMibps"].description = "Optional. Integer. Default if not specified is the maximum throughput the file share can support. Current maximum for a file share is 10,340 MiB/sec.";
+      $.ShareItemDetails.properties["IncludedBurstIops"].description = "Return the calculated burst IOPS of the share.";
+      $.ShareItemDetails.properties["MaxBurstCreditsForIops"].description = "Return the calculated maximum burst credits. This is not the current burst credit level, but the maximum burst credits the share can have.";
+      $.ShareItemDetails.properties["NextAllowedProvisionedIopsDowngradeTime"].description = "Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.";
+      $.ShareItemDetails.properties["NextAllowedProvisionedBandwidthDowngradeTime"].description = "Return timestamp for provisioned throughput following existing rules for provisioned storage GiB.";
       $.ShareItemInternal.properties["Name"].description = "The name of the share.";
       $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
       $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";
@@ -1149,4 +1184,8 @@ directive:
     where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?comp=rangelist"].get.responses["200"]
     transform: >
       $.schema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=properties"].put.responses["200"]
+    transform: >
+      $.headers["x-ms-share-provisioned-iops"].description = "Returns the current share provisioned IOPS.";
 ```
