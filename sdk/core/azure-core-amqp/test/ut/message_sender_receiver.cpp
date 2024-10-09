@@ -14,7 +14,7 @@
 #include "azure/core/amqp/internal/session.hpp"
 
 #if ENABLE_UAMQP
-#define USE_NATIVE_BROKER
+#undef USE_NATIVE_BROKER
 #elif ENABLE_RUST_AMQP
 #define USE_NATIVE_BROKER
 #endif
