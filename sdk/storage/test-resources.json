@@ -180,6 +180,9 @@
                             ]
                         }
                     ]
+                },
+                "immutableStorageWithVersioning": {
+                    "enabled": true
                 }
             },
             "dependsOn": [

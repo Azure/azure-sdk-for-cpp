@@ -478,7 +478,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Permissions.HasValue());
   }
 
-   // Test account's aad tenant in pipeline may be not the same as UserPrincipalName aad tenant.
+  // Test account's aad tenant in pipeline may be not the same as UserPrincipalName aad tenant.
   TEST_F(DataLakePathClientTest, GetPropertiesWithUserPrincipalName_PLAYBACKONLY_)
   {
     std::string userPrincipalName = "kat@microsoft.com";
