@@ -42,7 +42,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
 #if defined(USE_NATIVE_BROKER)
       return nativeBrokerPort;
-#else ENABLE_RUST_AMQP
+#else
       return m_mockServer.GetPort();
 #endif
     }
