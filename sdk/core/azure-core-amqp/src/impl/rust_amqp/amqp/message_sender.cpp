@@ -63,8 +63,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_options{options},
-        m_messageSender{amqpmessagesender_create()}
+      : m_session{session}, m_target{target}, m_options{options}, m_messageSender{
+                                                                      amqpmessagesender_create()}
   {
   }
 
@@ -146,10 +146,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-      if (amqpmessagesender_detach_and_release(callContext.GetCallContext(), m_messageSender.release()))
+      if (amqpmessagesender_detach_and_release(
+              callContext.GetCallContext(), m_messageSender.release()))
       {
         throw std::runtime_error("Could not close Message Sender: " + callContext.GetError());
-      
       }
       m_senderOpen = false;
     }
@@ -190,6 +190,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Message sender is not open.");
     }
   }
-
 
 }}}} // namespace Azure::Core::Amqp::_detail

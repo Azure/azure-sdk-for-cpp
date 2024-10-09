@@ -4,15 +4,16 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_sender.hpp"
-#include "unique_handle.hpp"
 #include "rust_amqp_wrapper.h"
+#include "unique_handle.hpp"
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<RustInterop::RustAmqpMessageSender>
   {
     static void FreeMessageSender(RustInterop::RustAmqpMessageSender* value);
 
-    using type = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpMessageSender, FreeMessageSender>;
+    using type
+        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpMessageSender, FreeMessageSender>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
