@@ -142,10 +142,6 @@
             "type": "microsoft.storage/storageaccounts/blobServices",
             "apiVersion": "2019-06-01",
             "properties": {
-                "restorePolicy": {
-                    "enabled": true,
-                    "days": 6
-                },
                 "deleteRetentionPolicy": {
                     "enabled": true,
                     "days": 7
