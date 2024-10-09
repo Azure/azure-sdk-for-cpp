@@ -129,7 +129,10 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "accessTier": "Hot",
-                "minimumTlsVersion": "TLS1_2"
+              "minimumTlsVersion": "TLS1_2",
+              "immutableStorageWithVersioning": {
+                  "enabled": true
+              }
             },
             "dependsOn": [],
             "tags": {}
@@ -180,9 +183,6 @@
                             ]
                         }
                     ]
-                },
-                "immutableStorageWithVersioning": {
-                    "enabled": true
                 }
             },
             "dependsOn": [
