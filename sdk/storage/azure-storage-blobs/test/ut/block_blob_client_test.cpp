@@ -2134,7 +2134,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 
-  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithSnapshot)
+  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithSnapshot_PLAYBACKONLY_)
   {
     const auto ImmutabilityMaxLength = std::chrono::seconds(30);
 
@@ -2158,7 +2158,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
 
-  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithVersion)
+  TEST_F(BlockBlobClientTest, ImmutabilityPolicyLegalHoldWithVersion_PLAYBACKONLY_)
   {
     const auto ImmutabilityMaxLength = std::chrono::seconds(30);
     auto versionId
