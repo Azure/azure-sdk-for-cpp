@@ -31,7 +31,7 @@ include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
-option(TSP_GEN "Generate from TypeSpec" OFF)
+option(TSP_GEN "Generate from TypeSpec" ON)
 
 if(TSP_GEN)
     include(TSPCompile) 
@@ -40,8 +40,12 @@ if(TSP_GEN)
     set(TSP_REPO "https://github.com/Azure/azure-rest-api-specs.git")
     set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
     set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
+    set(CODEGEN_REPO "https://github.com/Azure/autorest.cpp.git")
+    set(CODEGEN_SHA "b4107ff1b9ce83aedf1d299a63575b6c27434de0")
+    set(CODEGEN_DESTINATION "autorest.cpp")
 
     DownloadTSPFiles(${TSP_REPO} ${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
+    DownloadCodeGenerator(${CODEGEN_REPO} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
 endif()
 
 if(FETCH_SOURCE_DEPS)
