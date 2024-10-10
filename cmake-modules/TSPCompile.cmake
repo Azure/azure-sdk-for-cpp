@@ -34,7 +34,7 @@ macro(DownloadTSPFiles TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
     execute_process(COMMAND ${GIT_EXECUTABLE} sparse-checkout set ${TSP_REPO_PATH}
              WORKING_DIRECTORY ${DOWNLOAD_TSP_FOLDER})
     else()
-        message("Repo detected at ${TSP_DESTINATION}. Jumping aheat to checkout.") 
+        message("Repo detected at ${TSP_DESTINATION}. Jumping ahead to checkout.") 
     endif()
     #fetch
     execute_process(COMMAND ${GIT_EXECUTABLE} fetch
@@ -69,7 +69,7 @@ macro (DownloadCodeGenerator CODEGEN_SHA CODEGEN_DESTINATION)
         #init git in folder
         execute_process(COMMAND ${GIT_EXECUTABLE} clone ${CODEGEN_REPO} ${DOWNLOAD_CODEGEN_FOLDER})
     else()
-        message("Repo detected at  ${TSP_DESTINATION}. Jumping aheat to checkout.") 
+        message("Repo detected at  ${TSP_DESTINATION}. Jumping ahead to checkout.") 
     endif()
 
     #checkout SHA
