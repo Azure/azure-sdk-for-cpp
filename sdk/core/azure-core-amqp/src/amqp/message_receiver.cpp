@@ -96,7 +96,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     }
   }
 
+#if ENABLE_UAMQP
   std::string MessageReceiver::GetLinkName() const { return m_impl->GetLinkName(); }
+#endif
   std::ostream& operator<<(std::ostream& stream, _internal::MessageReceiverState state)
   {
     switch (state)

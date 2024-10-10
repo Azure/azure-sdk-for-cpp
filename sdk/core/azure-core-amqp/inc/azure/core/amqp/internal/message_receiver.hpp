@@ -155,12 +155,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     void Close(Context const& context = {});
 
+#if ENABLE_UAMQP
     /** @brief Gets the name of the underlying link.
      *
      * @return The name of the underlying link object.
      */
     std::string GetLinkName() const;
-
+#endif
     /** @brief Gets the Address of the message receiver's source node.
      *
      * @return The name of the source node.
