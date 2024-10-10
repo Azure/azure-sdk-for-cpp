@@ -54,7 +54,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
 
     set(CODEGEN_SHA "b4107ff1b9ce83aedf1d299a63575b6c27434de0")
-    set(CODEGEN_DESTINATION "autorest.cpp")
+    set(CODEGEN_DESTINATION "typespec-cpp")
     set(CODEGEN_PATH "packages/typespec-cpp/samples/keyvault/secrets")
 
     DownloadTSPFiles(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})

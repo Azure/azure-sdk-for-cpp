@@ -83,7 +83,8 @@ endmacro()
 
 macro(GenerateCodeFromTSP TSP_DESTINATION TSP_REPO_PATH CODEGEN_DESTINATION CODEGEN_PATH)
     message("Generating code using the following params  TSP_DESTINATION=${TSP_DESTINATION} TSP_REPO_PATH=${TSP_REPO_PATH} CODEGEN_DESTINATION=${CODEGEN_DESTINATION}")
-
+    message("Remeber to Download the typspec-cpp emitter from npmjs.org")
+    #TODO : https://github.com/Azure/azure-sdk-for-cpp/issues/6071
     set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH})
     set(DOWNLOAD_TSP_FOLDER ${CMAKE_SOURCE_DIR}/build/${TSP_DESTINATION}/${TSP_REPO_PATH})
     set(CODEGEN_CPP_FOLDER ${DOWNLOAD_CODEGEN_FOLDER}/../../../codegen.cpp)
