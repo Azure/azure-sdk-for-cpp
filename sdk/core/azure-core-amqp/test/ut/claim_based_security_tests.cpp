@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "mock_amqp_server.hpp"
-
 #include <azure/core/amqp/internal/claims_based_security.hpp>
 #include <azure/core/amqp/internal/common/global_state.hpp>
 #include <azure/core/amqp/internal/connection.hpp>
@@ -12,6 +10,18 @@
 #include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>
+
+#if ENABLE_RUST_AMQP
+#define USE_NATIVE_BROKER
+#elif ENABLE_UAMQP
+#undef USE_NATIVE_BROKER
+#endif
+
+#if defined(USE_NATIVE_BROKER)
+constexpr const uint16_t nativeBrokerPort = 25672;
+#else
+#include "mock_amqp_server.hpp"
+#endif
 
 #if ENABLE_UAMQP
 #define ENABLE_RUST_CANCEL 1
@@ -28,15 +38,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
+    std::uint16_t GetPort()
+    {
+#if defined(USE_NATIVE_BROKER)
+      return nativeBrokerPort;
+#else
+      return m_mockServer.GetPort();
+#endif
+    }
+
     Azure::Core::Amqp::_internal::Connection CreateConnection(
         Azure::Core::Context const& context = {})
     {
       Azure::Core::Amqp::_internal::ConnectionOptions options;
-#if ENABLE_UAMQP
-      options.Port = m_mockServer.GetPort();
-#elif ENABLE_RUST_AMQP
-      options.Port = 25672;
-#endif
+      options.Port = GetPort();
+      options.EnableTrace = true;
       auto connection{Azure::Core::Amqp::_internal::Connection("localhost", nullptr, options)};
 
 #if ENABLE_RUST_AMQP
@@ -60,8 +76,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     void Cleanup(Azure::Core::Amqp::_internal::Connection& connection)
     {
-#if ENABLE_UAMQP
-#elif ENABLE_RUST_AMQP
+#if ENABLE_RUST_AMQP
       connection.Close({});
 #endif
       (void)connection;
@@ -69,8 +84,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     void Cleanup(Azure::Core::Amqp::_internal::Session& session)
     {
-#if ENABLE_UAMQP
-#elif ENABLE_RUST_AMQP
+#if ENABLE_RUST_AMQP
       session.End({});
 #endif
       (void)session;
@@ -78,17 +92,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     void StartListening()
     {
-#if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
       m_mockServer.StartListening();
 #endif
     }
     void CleanupListening()
     {
-#if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
       m_mockServer.StopListening();
 #endif
     }
-#if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
     MessageTests::AmqpServerMock m_mockServer;
 #endif
   };
@@ -151,9 +165,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestCbs, CbsOpenNoListener)
   {
     ConnectionOptions options;
-    MessageTests::AmqpServerMock mockServer;
     options.EnableTrace = true;
-    options.Port = mockServer.GetPort();
+    // Pick a port separate from the one that the listener is normally at so we will fail to connect
+    // to the server.
+    options.Port = GetPort() + 10;
     Connection connection("localhost", nullptr, options);
     Session session{connection.CreateSession()};
     {
@@ -257,7 +272,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         EXPECT_EQ(CbsOpenResult::Ok, cbs.Open());
         GTEST_LOG_(INFO) << "Open Completed.";
-#if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
         m_mockServer.ForceCbsError(true);
 #endif
         auto putResult = cbs.PutToken(

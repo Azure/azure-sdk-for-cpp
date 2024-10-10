@@ -261,9 +261,21 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   } // namespace
 
+#if ENABLE_UAMQP
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProducerClientTest,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString /*, AuthType::Emulator*/),
+      ::testing::Values(
+          AuthType::Key,
+          AuthType::ConnectionString
+          /*, AuthType::Emulator*/),
       GetSuffix);
+#else
+  INSTANTIATE_TEST_SUITE_P(
+      EventHubs,
+      ProducerClientTest,
+      ::testing::Values(AuthType::Key
+                        /*, AuthType::Emulator*/),
+      GetSuffix);
+#endif
 }}}} // namespace Azure::Messaging::EventHubs::Test

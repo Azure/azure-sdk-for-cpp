@@ -54,7 +54,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return CbsOpenResult::Ok;
     }
   }
-  void ClaimsBasedSecurityImpl::Close(Context const& context) { (void)context; }
+  void ClaimsBasedSecurityImpl::Close(Context const& context)
+  {
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+    if (amqpclaimsbasedsecurity_detach_and_release(
+            callContext.GetCallContext(), m_claimsBasedSecurity.release()))
+    {
+      throw std::runtime_error("Could not close claims based security: " + callContext.GetError());
+    }
+  }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurityImpl::PutToken(
       CbsTokenType tokenType,
@@ -131,11 +141,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     return os;
   }
-#if ENABLE_UAMQP
-  void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
-  {
-    Log::Stream(Logger::Level::Warning) << "AMQP Error processing ClaimsBasedSecurity: " << error;
-  }
-#endif
-
 }}}} // namespace Azure::Core::Amqp::_detail

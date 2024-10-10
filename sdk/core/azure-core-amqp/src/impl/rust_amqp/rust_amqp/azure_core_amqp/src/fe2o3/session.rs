@@ -14,7 +14,7 @@ use std::{
     borrow::BorrowMut,
     sync::{Arc, OnceLock},
 };
-use tracing::debug;
+use tracing::{debug, trace};
 
 #[derive(Debug, Clone, Default)]
 pub(crate) struct Fe2o3AmqpSession {
@@ -119,11 +119,17 @@ impl AmqpSessionApis for Fe2o3AmqpSession {
     }
 
     async fn end(&self) -> Result<()> {
-        self.session
+        let mut session = self
+            .session
             .get()
             .ok_or_else(|| Error::message(ErrorKind::Other, "Session Handle was not set"))?
             .lock()
-            .await
+            .await;
+        if session.is_ended() {
+            trace!("Session already ended, returning.");
+            return Ok(());
+        }
+        session
             .end()
             .await
             .map_err(super::error::AmqpSession::from)?;
