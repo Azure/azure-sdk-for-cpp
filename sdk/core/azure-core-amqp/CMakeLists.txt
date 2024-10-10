@@ -97,7 +97,6 @@ set (AZURE_CORE_AMQP_HEADER
     inc/azure/core/amqp/internal/connection_string_credential.hpp
     inc/azure/core/amqp/internal/doxygen_pragma.hpp
     inc/azure/core/amqp/internal/endpoint.hpp
-    inc/azure/core/amqp/internal/link.hpp
     inc/azure/core/amqp/internal/management.hpp
     inc/azure/core/amqp/internal/message_receiver.hpp
     inc/azure/core/amqp/internal/message_sender.hpp
@@ -126,7 +125,6 @@ set(AZURE_CORE_AMQP_SOURCE
     src/amqp/claim_based_security.cpp
     src/amqp/connection.cpp
     src/amqp/connection_string_credential.cpp
-    src/amqp/link.cpp
     src/amqp/management.cpp
     src/amqp/message_receiver.cpp
     src/amqp/message_sender.cpp
@@ -157,6 +155,9 @@ set(AZURE_CORE_AMQP_SOURCE
 
 if (USE_UAMQP)
 set(AZURE_UAMQP_SOURCE
+  src/amqp/link.cpp
+  inc/azure/core/amqp/internal/link.hpp
+
   src/impl/uamqp/amqp/cancellable.cpp
   src/impl/uamqp/amqp/claim_based_security.cpp
   src/impl/uamqp/amqp/connection.cpp
@@ -173,26 +174,6 @@ set(AZURE_UAMQP_SOURCE
   src/impl/uamqp/amqp/private/message_receiver_impl.hpp
   src/impl/uamqp/amqp/private/message_sender_impl.hpp
   src/impl/uamqp/amqp/private/session_impl.hpp
-#  src/impl/uamqp/models/amqp_detach.cpp
-#  src/impl/uamqp/models/amqp_error.cpp
-#  src/impl/uamqp/models/amqp_header.cpp
-#  src/impl/uamqp/models/amqp_message.cpp
-#  src/impl/uamqp/models/amqp_properties.cpp
-#  src/impl/uamqp/models/amqp_transfer.cpp
-#  src/impl/uamqp/models/amqp_value.cpp
-#  src/impl/uamqp/models/message_source.cpp
-#  src/impl/uamqp/models/message_target.cpp
-#  src/impl/uamqp/models/messaging_values.cpp
-#  src/impl/uamqp/models/private/error_impl.hpp
-#  src/impl/uamqp/models/private/header_impl.hpp
-#  src/impl/uamqp/models/private/message_impl.hpp
-#  src/impl/uamqp/models/private/performatives
-#  src/impl/uamqp/models/private/properties_impl.hpp
-#  src/impl/uamqp/models/private/source_impl.hpp
-#  src/impl/uamqp/models/private/target_impl.hpp
-#  src/impl/uamqp/models/private/value_impl.hpp
-#  src/impl/uamqp/models/private/performatives/detach_impl.hpp
-#  src/impl/uamqp/models/private/performatives/transfer_impl.hpp
   src/impl/uamqp/network/amqp_header_transport.cpp
   src/impl/uamqp/network/sasl_transport.cpp
   src/impl/uamqp/network/socket_listener.cpp
@@ -208,38 +189,16 @@ set(AZURE_RUST_AMQP_SOURCE
   src/impl/rust_amqp/amqp/claim_based_security.cpp
   src/impl/rust_amqp/amqp/connection.cpp
   src/impl/rust_amqp/amqp/connection_string_credential.cpp
-  src/impl/rust_amqp/amqp/link.cpp
   src/impl/rust_amqp/amqp/management.cpp
   src/impl/rust_amqp/amqp/message_receiver.cpp
   src/impl/rust_amqp/amqp/message_sender.cpp
   src/impl/rust_amqp/amqp/session.cpp
   src/impl/rust_amqp/amqp/private/claims_based_security_impl.hpp
   src/impl/rust_amqp/amqp/private/connection_impl.hpp
-  src/impl/rust_amqp/amqp/private/link_impl.hpp
   src/impl/rust_amqp/amqp/private/management_impl.hpp
   src/impl/rust_amqp/amqp/private/message_receiver_impl.hpp
   src/impl/rust_amqp/amqp/private/message_sender_impl.hpp
   src/impl/rust_amqp/amqp/private/session_impl.hpp
-#  src/impl/rust_amqp/models/amqp_detach.cpp
-#  src/impl/rust_amqp/models/amqp_error.cpp
-#  src/impl/rust_amqp/models/amqp_header.cpp
-#  src/impl/rust_amqp/models/amqp_message.cpp
-#  src/impl/rust_amqp/models/amqp_properties.cpp
-#  src/impl/rust_amqp/models/amqp_transfer.cpp
-#  src/impl/rust_amqp/models/amqp_value.cpp
-#  src/impl/rust_amqp/models/message_source.cpp
-#  src/impl/rust_amqp/models/message_target.cpp
-#  src/impl/rust_amqp/models/messaging_values.cpp
-#  src/impl/rust_amqp/models/private/error_impl.hpp
-#  src/impl/rust_amqp/models/private/header_impl.hpp
-#  src/impl/rust_amqp/models/private/message_impl.hpp
-#  src/impl/rust_amqp/models/private/performatives
-#  src/impl/rust_amqp/models/private/properties_impl.hpp
-#  src/impl/rust_amqp/models/private/source_impl.hpp
-#  src/impl/rust_amqp/models/private/target_impl.hpp
-#  src/impl/rust_amqp/models/private/value_impl.hpp
-#  src/impl/rust_amqp/models/private/performatives/detach_impl.hpp
-#  src/impl/rust_amqp/models/private/performatives/transfer_impl.hpp
 )
 
 endif()

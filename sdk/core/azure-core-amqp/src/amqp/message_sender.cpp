@@ -42,13 +42,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   Models::_internal::AmqpError MessageSender::Open(Context const& context)
   {
+#if ENABLE_UAMQP
     return m_impl->Open(false, context);
+#elif ENABLE_RUST_AMQP
+    return m_impl->Open(context);
+#endif
   }
 
+#if ENABLE_UAMQP
   Models::_internal::AmqpError MessageSender::HalfOpen(Context const& context)
   {
     return m_impl->Open(true, context);
   }
+#endif
 
   void MessageSender::Close(Context const& context) { m_impl->Close(context); }
 #if ENABLE_UAMQP
@@ -68,7 +74,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 #endif
 
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
+#if ENABLE_UAMQP
   std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
+#endif
   MessageSender::~MessageSender() noexcept {}
 
 }}}} // namespace Azure::Core::Amqp::_internal

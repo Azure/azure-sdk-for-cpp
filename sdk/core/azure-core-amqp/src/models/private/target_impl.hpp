@@ -164,6 +164,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     AmqpArray GetCapabilities() const;
 
   private:
+    friend class AmqpTargetFactory;
+
     _detail::UniqueMessageTargetHandle m_target;
 
     operator Azure::Core::Amqp::_detail::AmqpTargetImplementation*() const
@@ -173,6 +175,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTargetImpl const&);
+  };
+  class AmqpTargetFactory final {
+  public:
+    // Returns the internal AMQP value handle, without referencing it.
+    static Azure::Core::Amqp::_detail::AmqpTargetImplementation* ToImplementation(
+        Azure::Core::Amqp::Models::_internal::MessageTarget const& value);
   };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
