@@ -31,6 +31,18 @@ include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
+option(TSP_GEN "Generate from TypeSpec" OFF)
+
+if(TSP_GEN)
+    include(TSPCompile) 
+
+    set(TSP_DESTINATION "keyvault_secrets")
+    set(TSP_REPO "https://github.com/Azure/azure-rest-api-specs.git")
+    set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
+    set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
+
+    DownloadTSPFiles(${TSP_REPO} ${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
+endif()
 
 option(AZURE_TSP_KV_SECRETS_GEN "Generate from TypeSpec" OFF)
 message("KeyVault Secrets TSP Generation ${az_TSP_KV_SECRETS_GEN}")

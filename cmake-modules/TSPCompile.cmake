@@ -20,18 +20,18 @@ macro(DownloadTSPFiles TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
     message("First time setting up the ${TSP_DESTINATION} repo.")
         #make folder
         make_directory(${DOWNLOAD_TSP_FOLDER})
-    
-        #init git in folder
-        execute_process(COMMAND ${GIT_EXECUTABLE} init
+
+    #init git in folder
+    execute_process(COMMAND ${GIT_EXECUTABLE} init
             WORKING_DIRECTORY ${DOWNLOAD_TSP_FOLDER})
-        #add remote
-        execute_process(COMMAND ${GIT_EXECUTABLE} remote add origin ${TSP_REPO}
+    #add remote
+    execute_process(COMMAND ${GIT_EXECUTABLE} remote add origin ${TSP_REPO}
              WORKING_DIRECTORY ${DOWNLOAD_TSP_FOLDER})
-        #set sparse-checkout
-        execute_process(COMMAND ${GIT_EXECUTABLE} sparse-checkout init --cone
+    #set sparse-checkout
+    execute_process(COMMAND ${GIT_EXECUTABLE} sparse-checkout init --cone
              WORKING_DIRECTORY ${DOWNLOAD_TSP_FOLDER})
-        #set sparse-checkout folder
-        execute_process(COMMAND ${GIT_EXECUTABLE} sparse-checkout set ${TSP_REPO_PATH}
+    #set sparse-checkout folder
+    execute_process(COMMAND ${GIT_EXECUTABLE} sparse-checkout set ${TSP_REPO_PATH}
              WORKING_DIRECTORY ${DOWNLOAD_TSP_FOLDER})
     else()
         message("Repo detected at ${TSP_DESTINATION}. Jumping aheat to checkout.") 
@@ -75,7 +75,7 @@ macro (DownloadCodeGenerator CODEGEN_SHA CODEGEN_DESTINATION)
     #checkout SHA
     execute_process(COMMAND ${GIT_EXECUTABLE} checkout ${CODEGEN_SHA}
           WORKING_DIRECTORY ${DOWNLOAD_CODEGEN_FOLDER})
-
+ 
     if(NOT ${STATUS_CODE} EQUAL 0)
         message(FATAL_ERROR "CODEGEN download failed.")
     endif()

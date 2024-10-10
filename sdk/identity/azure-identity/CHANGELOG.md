@@ -1,10 +1,26 @@
 # Release History
 
-## 1.10.0-beta.2 (Unreleased)
+## 1.11.0-beta.1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.10.0 (2024-10-08)
+
+### Features Added
+
+- Added support for providing an object ID or a resource ID to `ManagedIdentityCredential`.
+- Added support for passing in the x509 certificate and its corresponding private key directly to `ClientCertificateCredential`, rather than reading from a pem file.
+- Added support for sending an x5c parameter in `ClientCertificateCredential`.
+
+### Breaking Changes
+
+- Previously, if a clientId was specified for Cloud Shell managed identity, which is not supported, the clientId was passed into the request body. Now, an exception will be thrown if a clientId is specified for Cloud Shell managed identity.
 
 ### Bugs Fixed
 

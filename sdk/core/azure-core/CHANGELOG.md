@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
+
 ### Other Changes
 
 ## 1.14.0 (2024-10-03)
