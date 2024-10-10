@@ -28,7 +28,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_create(
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
     let session = unsafe { (*session).get_session() };
-    let cbs = AmqpClaimsBasedSecurity::new(&session);
+    let cbs = AmqpClaimsBasedSecurity::new(session);
     match cbs {
         Ok(cbs) => {
             *claims_based_security =
@@ -53,8 +53,12 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_destroy(cbs: *mut RustAmqpClaim
     }
 }
 
-/// # Safety
 #[no_mangle]
+/// Attach an AMQP Claims Based Security (CBS) node.
+///
+/// # Safety
+///
+/// This function is unsafe because it dereferences raw pointers.
 pub unsafe extern "C" fn amqpclaimsbasedsecurity_attach(
     call_context: *mut RustCallContext,
     cbs: *mut RustAmqpClaimsBasedSecurity,
@@ -76,6 +80,36 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_attach(
 
     if let Err(e) = result {
         error!("Failed to attach CBS: {:?}", e);
+        call_context.set_error(Box::new(e));
+        -1
+    } else {
+        0
+    }
+}
+
+/// # Safety
+#[no_mangle]
+pub unsafe extern "C" fn amqpclaimsbasedsecurity_detach_and_release(
+    call_context: *mut RustCallContext,
+    cbs: *mut RustAmqpClaimsBasedSecurity,
+) -> i32 {
+    let call_context = call_context_from_ptr_mut(call_context);
+    if cbs.is_null() {
+        call_context.set_error(Box::new(azure_core::Error::new(
+            azure_core::error::ErrorKind::Other,
+            "CBS is null",
+        )));
+        return -1;
+    }
+    let cbs = Box::from_raw(cbs);
+
+    let result = call_context
+        .runtime_context()
+        .runtime()
+        .block_on(cbs.inner.detach());
+
+    if let Err(e) = result {
+        error!("Failed to detach CBS: {:?}", e);
         call_context.set_error(Box::new(e));
         -1
     } else {

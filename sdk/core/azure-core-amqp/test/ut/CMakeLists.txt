@@ -17,6 +17,7 @@ include(GoogleTest)
 IF (USE_UAMQP)
 set(UAMQP_ONLY_TESTS   
   transport_tests.cpp
+  link_tests.cpp
 )
 ENDIF()
 
@@ -30,7 +31,6 @@ add_executable(azure-core-amqp-tests
   claim_based_security_tests.cpp
   connection_string_tests.cpp
   connection_tests.cpp
-  link_tests.cpp
   management_tests.cpp
   message_sender_receiver.cpp
   message_source_target.cpp
@@ -39,6 +39,7 @@ add_executable(azure-core-amqp-tests
   amqp_performative_tests.cpp
   ${UAMQP_ONLY_TESTS}
 )
+
 
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
