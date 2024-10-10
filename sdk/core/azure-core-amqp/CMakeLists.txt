@@ -177,6 +177,7 @@ target_link_libraries(azure-core-amqp PRIVATE
     PUBLIC Azure::azure-core)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-core-amqp PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-core-amqp ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

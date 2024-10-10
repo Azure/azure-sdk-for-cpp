@@ -78,6 +78,7 @@ add_library(Azure::azure-template ALIAS azure-template)
 create_code_coverage(template azure-template azure-template-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-template PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-template ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

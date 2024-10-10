@@ -138,6 +138,7 @@ target_compile_definitions(azure-security-keyvault-keys PRIVATE _azure_BUILDING_
 create_code_coverage(keyvault azure-security-keyvault-keys azure-security-keyvault-keys-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-security-keyvault-keys PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
