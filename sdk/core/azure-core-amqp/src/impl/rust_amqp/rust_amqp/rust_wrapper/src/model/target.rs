@@ -23,9 +23,9 @@ impl RustAmqpTarget {
         Self { inner: target }
     }
 
-    //    pub(crate) fn get(&self) -> &AmqpTarget {
-    //        &self.inner
-    //    }
+        pub(crate) fn get(&self) -> &AmqpTarget {
+            &self.inner
+        }
 }
 
 #[no_mangle]

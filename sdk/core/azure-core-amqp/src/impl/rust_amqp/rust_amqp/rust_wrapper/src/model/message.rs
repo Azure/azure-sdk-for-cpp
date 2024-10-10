@@ -28,6 +28,12 @@ pub struct RustAmqpMessage {
     inner: AmqpMessage,
 }
 
+impl RustAmqpMessage {
+    pub fn get(&self) -> &AmqpMessage {
+        &self.inner
+    }
+}
+
 #[no_mangle]
 extern "C" fn message_create() -> *mut RustAmqpMessage {
     Box::into_raw(Box::new(RustAmqpMessage {
