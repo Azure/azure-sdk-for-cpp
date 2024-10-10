@@ -3,7 +3,7 @@
 
 find_package(Git)
 
-macro(DownloadTSPFiles TSP_REPO TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
+macro(DownloadTSPFiles TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
     message ("Downloading TSP files using the following params  TSP_REPO=${TSP_REPO} TSP_SHA=${TSP_SHA} TSP_REPO_PATH=${TSP_REPO_PATH}  TSP_DESTINATION=${TSP_DESTINATION}")
 
     if(Git_FOUND)
@@ -12,6 +12,7 @@ macro(DownloadTSPFiles TSP_REPO TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
         message(FATAL_ERROR "Git not found")
     endif()
     
+    set(TSP_REPO "https://github.com/Azure/azure-rest-api-specs.git")
     set(DOWNLOAD_TSP_FOLDER ${CMAKE_SOURCE_DIR}/build/${TSP_DESTINATION})
     # if we have the git folder, we don't need to download it again
     # this also saves times on incremental builds
@@ -47,7 +48,7 @@ macro(DownloadTSPFiles TSP_REPO TSP_SHA TSP_REPO_PATH TSP_DESTINATION)
     endif()
 endmacro()
 
-macro (DownloadCodeGenerator CODEGEN_REPO CODEGEN_SHA CODEGEN_DESTINATION)
+macro (DownloadCodeGenerator CODEGEN_SHA CODEGEN_DESTINATION)
     message("Downloading CODEGEN files using the following params  CODEGEN_REPO=${CODEGEN_REPO} CODEGEN_SHA=${CODEGEN_SHA} CODEGEN_DESTINATION=${CODEGEN_DESTINATION}")
 
     if(Git_FOUND)
@@ -55,7 +56,8 @@ macro (DownloadCodeGenerator CODEGEN_REPO CODEGEN_SHA CODEGEN_DESTINATION)
     else()
         message(FATAL_ERROR "Git not found")
     endif()
-    
+
+    set(CODEGEN_REPO "https://github.com/Azure/autorest.cpp.git")
     set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION})
 
     # if we have the git folder, we don't need to download it again
