@@ -4,7 +4,9 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
+#if ENABLE_UAMQP
 #include "link_impl.hpp"
+#endif
 #include "session_impl.hpp"
 #include "unique_handle.hpp"
 
@@ -64,7 +66,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /** Open the receiver. */
     void Open(Context const& context);
     void Close(Context const& context);
-    std::string GetLinkName() const;
     std::string GetSourceName() const { return static_cast<std::string>(m_source.GetAddress()); }
 
     std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
@@ -95,11 +96,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // the close operation until the link is fully closed.
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_closeQueue;
-#if ENABLE_UAMQP
-    _internal::MessageReceiverEvents* m_eventHandler{};
-#endif
-    void CreateLink();
-    void CreateLink(_internal::LinkEndpoint& endpoint);
-    void PopulateLinkProperties();
   };
 }}}} // namespace Azure::Core::Amqp::_detail
