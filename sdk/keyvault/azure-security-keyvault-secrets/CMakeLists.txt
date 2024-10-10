@@ -31,7 +31,7 @@ include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
-option(TSP_GEN "Generate from TypeSpec" ON)
+option(TSP_GEN "Generate from TypeSpec" OFF)
 
 if(TSP_GEN)
     include(TSPCompile) 
@@ -43,9 +43,10 @@ if(TSP_GEN)
     set(CODEGEN_REPO "https://github.com/Azure/autorest.cpp.git")
     set(CODEGEN_SHA "b4107ff1b9ce83aedf1d299a63575b6c27434de0")
     set(CODEGEN_DESTINATION "autorest.cpp")
-
+    set(CODEGEN_PATH "packages/typespec-cpp/samples/keyvault/secrets")
     DownloadTSPFiles(${TSP_REPO} ${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
     DownloadCodeGenerator(${CODEGEN_REPO} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
+    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_REPO_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
 endif()
 
 if(FETCH_SOURCE_DEPS)
