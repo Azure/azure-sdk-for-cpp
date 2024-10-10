@@ -49,18 +49,23 @@ message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
-
+    #typespec related repo infoermation
     set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
     set(TSP_SHA "1124d1074d262dc20a010c2a9d366f8e7a452927")
     set(TSP_DESTINATION "keyvault_secrets")
-
+    
+    #codegen related repo information
     set(CODEGEN_SHA "b4107ff1b9ce83aedf1d299a63575b6c27434de0")
     set(CODEGEN_DESTINATION "typespec-cpp")
     set(CODEGEN_PATH "packages/typespec-cpp/samples/keyvault/secrets")
-
+    
+    #destination folders
     set(INCLUDE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/secrets")
     set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+    #generate code from typespec
     GenarateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
+    #update code files
     UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${CODEGEN_PATH} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
 endif()
 
