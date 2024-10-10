@@ -80,6 +80,7 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-core-tracing-opentelemetry VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-core-tracing-opentelemetry ${AZ_LIBRARY_VERSION})
 
 if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
