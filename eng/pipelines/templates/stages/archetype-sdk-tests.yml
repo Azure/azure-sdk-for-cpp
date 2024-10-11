@@ -60,12 +60,12 @@ stages:
               OsVmImage: $(LINUXVMIMAGE)
               Pool: $(LINUXPOOL)
               CloudConfig:
+                Cloud: ${{ cloud.key }}
+                Location: ${{ coalesce(cloud.value.Location, parameters.Location) }}
+                ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
                 SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
                 SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
-                Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
-                Cloud: ${{ cloud.key }}
                 SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
-                ServiceConnection: ${{ cloud.value.ServiceConnection }}
               AdditionalParameters:
                 Location: ${{ parameters.Location}}
                 ServiceDirectory: ${{ parameters.ServiceDirectory}}

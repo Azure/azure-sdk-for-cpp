@@ -31,8 +31,6 @@ extends:
       LineCoverageTarget: 77
       BranchCoverageTarget: 42
       LiveTestCtestRegex: azure-data
-      Clouds: Preview
-      SupportedClouds: Preview
       Artifacts:
         - Name: azure-data-tables
           Path: azure-data-tables
