@@ -728,7 +728,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(downloadResult.Details.Permissions.HasValue());
   }
 
-  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName)
+  // Test account's aad tenant in pipeline may be not the same as UserPrincipalName aad tenant.
+  TEST_F(DataLakeFileClientTest, FileDownloadWithUserPrincipalName_PLAYBACKONLY_)
   {
     std::string userPrincipalName = "kat@microsoft.com";
     std::string userObjectId = "72a3f86f-271f-439e-b031-25678907d381";
