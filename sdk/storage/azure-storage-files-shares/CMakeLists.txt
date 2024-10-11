@@ -88,6 +88,7 @@ target_include_directories(
 target_link_libraries(azure-storage-files-shares PUBLIC Azure::azure-storage-common)
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-storage-files-shares PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-storage-files-shares ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

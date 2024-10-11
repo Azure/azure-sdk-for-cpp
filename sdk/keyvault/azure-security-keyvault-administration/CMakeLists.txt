@@ -95,6 +95,7 @@ target_compile_definitions(azure-security-keyvault-administration PRIVATE _azure
 create_code_coverage(keyvault azure-security-keyvault-administration azure-security-keyvault-administration-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-security-keyvault-administration PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-security-keyvault-administration ${AZ_LIBRARY_VERSION})
 if(BUILD_TESTING)
 
