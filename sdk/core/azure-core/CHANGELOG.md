@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#6087]](https://github.com/Azure/azure-sdk-for-cpp/pull/6087) Set version property for the compiled SDK binary files. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -11,6 +13,12 @@
 - Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
 
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- James Le Cuirot _([GitHub](https://github.com/chewi))_
 
 ## 1.14.0 (2024-10-03)
 
@@ -37,7 +45,7 @@
 ### Other Changes
 
 - [[#5851]](https://github.com/Azure/azure-sdk-for-cpp/pull/5851) Remove unneeded `<regex>` includes. (A community contribution, courtesy of _[rschu1ze](https://github.com/rschu1ze)_)
-- [[#6014]](https://github.com/Azure/azure-sdk-for-cpp/pull/6014), [[#6016]](https://github.com/Azure/azure-sdk-for-cpp/pull/6016) Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_) 
+- [[#6014]](https://github.com/Azure/azure-sdk-for-cpp/pull/6014), [[#6016]](https://github.com/Azure/azure-sdk-for-cpp/pull/6016) Fixes for Doxygen generation. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
 
 ### Acknowledgments
 
