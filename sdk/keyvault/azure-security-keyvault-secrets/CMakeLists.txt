@@ -45,16 +45,15 @@ if(AZURE_TSP_KV_SECRETS_GEN2)
     #codegen related repo information
     set(CODEGEN_SHA "1a9e3b7a337d5553603b8326dd3be5024d53b28a")
     set(CODEGEN_DESTINATION "typespec-cpp")
-    set(CODEGEN_PATH "packages/typespec-cpp/samples/keyvault/secrets")
-    
+       
     #destination folders
     set(INCLUDE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/secrets")
     set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
     #generate code from typespec
-    GenarateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
+    GenerateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
     #update code files
-    UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${CODEGEN_PATH} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
+    UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
 endif()
 
 if(FETCH_SOURCE_DEPS)

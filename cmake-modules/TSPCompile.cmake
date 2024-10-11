@@ -3,10 +3,10 @@
 
 find_package(Git)
 
-macro(GenarateCodeFromTypeSpec TSP_SHA TSP_REPO_PATH TSP_DESTINATION CODEGEN_SHA CODEGEN_DESTINATION  CODEGEN_PATH)
+macro(GenerateCodeFromTypeSpec TSP_SHA TSP_REPO_PATH TSP_DESTINATION CODEGEN_SHA CODEGEN_DESTINATION  )
 
-    message("Generating code using the following params TSP_SHA=${TSP_SHA} TSP_REPO_PATH=${TSP_REPO_PATH} TSP_DESTINATION=${TSP_DESTINATION} CODEGEN_SHA=${CODEGEN_SHA} CODEGEN_DESTINATION=${CODEGEN_DESTINATION} CODEGEN_PATH=${CODEGEN_PATH}")
-
+    message("Generating code using the following params TSP_SHA=${TSP_SHA} TSP_REPO_PATH=${TSP_REPO_PATH} TSP_DESTINATION=${TSP_DESTINATION} CODEGEN_SHA=${CODEGEN_SHA} CODEGEN_DESTINATION=${CODEGEN_DESTINATION}")
+    set(CODEGEN_PATH packages/typespec-cpp)
     DownloadTSPFiles(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
     DownloadCodeGenerator(${CODEGEN_SHA} ${CODEGEN_DESTINATION})
     GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_REPO_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
@@ -94,29 +94,31 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_REPO_PATH CODEGEN_DESTINATION CODE
     message("Generating code using the following params  TSP_DESTINATION=${TSP_DESTINATION} TSP_REPO_PATH=${TSP_REPO_PATH} CODEGEN_DESTINATION=${CODEGEN_DESTINATION}")
     message("Remember to Download the typspec-cpp emitter from npmjs.org")
     #TODO : https://github.com/Azure/azure-sdk-for-cpp/issues/6071
-    set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH})
+    set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH}/specs/)
     set(DOWNLOAD_TSP_FOLDER ${CMAKE_SOURCE_DIR}/build/${TSP_DESTINATION}/${TSP_REPO_PATH})
+    set(SCRIPTS_FOLDER ${CMAKE_SOURCE_DIR}/eng/scripts/typespec/)
     message("Will copy tsp files from ${DOWNLOAD_TSP_FOLDER} to ${DOWNLOAD_CODEGEN_FOLDER}")
     #copy tsp files to the codegen folder
     file(COPY ${DOWNLOAD_TSP_FOLDER} 
     DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
-
-    execute_process(COMMAND npm install -g @azure-tools/typespec-client-generator-cli
-    WORKING_DIRECTORY ${DOWNLOAD_CODEGEN_FOLDER})
+    message("Will copy tsp generation scripts from ${SCRIPTS_FOLDER} to ${DOWNLOAD_CODEGEN_FOLDER}")
+    file(COPY ${SCRIPTS_FOLDER}
+    DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
     
-    execute_process(COMMAND npm install -g @azure-tools/typespec-azure-rulesets
-    WORKING_DIRECTORY ${DOWNLOAD_CODEGEN_FOLDER})
-    #generate code
+    #build codegen
+    message("Building codegen in folder ${DOWNLOAD_CODEGEN_FOLDER}")
     execute_process(COMMAND pwsh Build-Codegen.ps1
     WORKING_DIRECTORY ${DOWNLOAD_CODEGEN_FOLDER})
     
+    #generate code
+    message("Use codegen in folder ${DOWNLOAD_CODEGEN_FOLDER}")
     execute_process(COMMAND pwsh Generate-Code.ps1
     WORKING_DIRECTORY ${DOWNLOAD_CODEGEN_FOLDER})
 endmacro()
 
-macro(UpdateCodeFilesFromGenerated CODEGEN_DESTINATION CODEGEN_PATH INCLUDE_DESTINATION SOURCE_DESTINATION)
-    message("Updating code files using the following params CODEGEN_DESTINATION=${CODEGEN_DESTINATION} CODEGEN_PATH=${CODEGEN_PATH} INCLUDE_DESTINATION=${INCLUDE_DESTINATION} SOURCE_DESTINATION=${SOURCE_DESTINATION}")
-   
+macro(UpdateCodeFilesFromGenerated CODEGEN_DESTINATION INCLUDE_DESTINATION SOURCE_DESTINATION)
+    message("Updating code files using the following params CODEGEN_DESTINATION=${CODEGEN_DESTINATION} INCLUDE_DESTINATION=${INCLUDE_DESTINATION} SOURCE_DESTINATION=${SOURCE_DESTINATION}")
+    set(CODEGEN_PATH packages/typespec-cpp/specs)
     set(INCLUDE_SRC ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH}/generated/inc/)
     set(SOURCE_SRC ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH}/generated/src/)
 
