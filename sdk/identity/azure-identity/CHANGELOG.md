@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+- [[#6086]](https://github.com/Azure/azure-sdk-for-cpp/pull/6086) Correct minimum version specification for the Azure Core dependency. (A community contribution, courtesy of _[jdblischak](https://github.com/jdblischak)_)
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- John Blischak _([GitHub](https://github.com/jdblischak))_
+
 ## 1.10.0 (2024-10-08)
 
 ### Features Added
