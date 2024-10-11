@@ -37,7 +37,7 @@ message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
-    #typespec related repo infoermation
+    #typespec related repo information
     set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
     set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
     set(TSP_DESTINATION "keyvault_secrets")
@@ -52,7 +52,8 @@ if(AZURE_TSP_KV_SECRETS_GEN)
 
     #generate code from typespec
     GenerateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    #update code files
+    #update code files left this as a separate step as generating and moving result around
+    #conceptually are two different steps
     UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
 endif()
 
