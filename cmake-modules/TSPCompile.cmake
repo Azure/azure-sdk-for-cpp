@@ -96,8 +96,6 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_REPO_PATH CODEGEN_DESTINATION CODE
     #TODO : https://github.com/Azure/azure-sdk-for-cpp/issues/6071
     set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH})
     set(DOWNLOAD_TSP_FOLDER ${CMAKE_SOURCE_DIR}/build/${TSP_DESTINATION}/${TSP_REPO_PATH})
-    set(CODEGEN_CPP_FOLDER ${DOWNLOAD_CODEGEN_FOLDER}/../../../codegen.cpp)
-    set(CODEGEN_CPP_FOLDER ${DOWNLOAD_CODEGEN_FOLDER}/../../../codegen.cpp)
     message("Will copy tsp files from ${DOWNLOAD_TSP_FOLDER} to ${DOWNLOAD_CODEGEN_FOLDER}")
     #copy tsp files to the codegen folder
     file(COPY ${DOWNLOAD_TSP_FOLDER} 
