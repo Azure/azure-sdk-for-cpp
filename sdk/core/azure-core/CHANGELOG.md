@@ -4,8 +4,6 @@
 
 ### Features Added
 
-- [[#6087]](https://github.com/Azure/azure-sdk-for-cpp/pull/6087) Set version property for the compiled SDK binary files. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
-
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -13,6 +11,8 @@
 - Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
 
 ### Other Changes
+
+- [[#6087]](https://github.com/Azure/azure-sdk-for-cpp/pull/6087) Set version property for the compiled SDK binary files. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
 
 ### Acknowledgments
 
