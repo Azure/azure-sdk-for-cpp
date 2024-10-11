@@ -8,12 +8,6 @@
 - Added support for the provisioned V2 billing model.
 - Added support for specifying the binary file permission format for `ShareFileClient::StartCopy()`.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 12.11.0 (2024-09-17)
 
 ### Features Added
