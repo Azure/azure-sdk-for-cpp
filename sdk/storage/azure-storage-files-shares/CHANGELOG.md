@@ -1,14 +1,12 @@
 # Release History
 
-## 12.12.0-beta.1 (Unreleased)
+## 12.12.0-beta.1 (2024-10-15)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2025-01-05`.
+- Added support for the provisioned V2 billing model.
+- Added support for specifying the binary file permission format for `ShareFileClient::StartCopy()`.
 
 ## 12.11.0 (2024-09-17)
 

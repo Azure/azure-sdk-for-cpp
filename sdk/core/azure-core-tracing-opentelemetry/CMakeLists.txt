@@ -83,6 +83,8 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 generate_documentation(azure-core-tracing-opentelemetry ${AZ_LIBRARY_VERSION})
 
 if(BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
+  set_target_properties(azure-core-tracing-opentelemetry PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
+
   az_vcpkg_export(
     azure-core-tracing-opentelemetry
     CORE_TRACING_OPENTELEMETRY

@@ -192,6 +192,7 @@ if(BUILD_TRANSPORT_WINHTTP)
 endif()
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-core PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-core ${AZ_LIBRARY_VERSION})
 
 az_vcpkg_export(

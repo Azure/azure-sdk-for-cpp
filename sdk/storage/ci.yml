@@ -31,8 +31,6 @@ extends:
       LineCoverageTarget: 81
       BranchCoverageTarget: 47
       LiveTestCtestRegex: azure-storage
-      Clouds: Preview
-      SupportedClouds: Preview
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common
