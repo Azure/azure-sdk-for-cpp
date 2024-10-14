@@ -4,11 +4,10 @@
 #pragma once
 
 #include "azure/core/amqp/internal/management.hpp"
+#include "rust_amqp_wrapper.h"
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
-
-#include "rust_amqp_wrapper.h"
 
 #include <memory>
 #include <mutex>
@@ -77,6 +76,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string m_managementEntityPath;
 
     Azure::Core::Credentials::AccessToken m_accessToken;
-
   };
 }}}} // namespace Azure::Core::Amqp::_detail

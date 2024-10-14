@@ -203,7 +203,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-
     // Protects m_senders and m_connection.
     std::mutex m_sendersLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};

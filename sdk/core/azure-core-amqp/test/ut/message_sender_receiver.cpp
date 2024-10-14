@@ -684,9 +684,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
     auto result = sender.Send(message);
-    #if ENABLE_UAMQP
+#if ENABLE_UAMQP
     EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(result));
-    #endif
+#endif
 
     sender.Close();
 

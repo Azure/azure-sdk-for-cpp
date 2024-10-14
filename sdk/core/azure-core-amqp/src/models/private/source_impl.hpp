@@ -216,7 +216,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     friend class AmqpSourceFactory;
   };
 
-    class AmqpSourceFactory final {
+  class AmqpSourceFactory final {
   public:
     // Returns the internal AMQP value handle, without referencing it.
     static Azure::Core::Amqp::_detail::AmqpSourceImplementation* ToImplementation(

@@ -61,8 +61,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_options{options},
-        m_messageSender{amqpmessagesender_create()}
+      : m_session{session}, m_target{target}, m_options{options}, m_messageSender{
+                                                                      amqpmessagesender_create()}
   {
   }
 
@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         optionsBuilder.release(),
         Models::_detail::AmqpSourceFactory::ToImplementation(m_options.MessageSource)));
 
-    RustSenderSettleMode senderSettleMode=RustSenderSettleMode::Settled;
+    RustSenderSettleMode senderSettleMode = RustSenderSettleMode::Settled;
     switch (m_options.SettleMode)
     {
       case _internal::SenderSettleMode::Mixed:
@@ -153,8 +153,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     optionsBuilder.reset(amqpmessagesenderoptions_builder_set_sender_settle_mode(
-        optionsBuilder.release(),
-        senderSettleMode));
+        optionsBuilder.release(), senderSettleMode));
 
     UniqueSenderOptions options{amqpmessagesenderoptions_builder_build(optionsBuilder.get())};
 
