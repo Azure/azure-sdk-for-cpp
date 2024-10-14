@@ -5,9 +5,8 @@
 
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
+#include "../../../models/private/source_impl.hpp"
 #include "../../../models/private/target_impl.hpp"
-#include "../../../models/private/value_impl.hpp"
-#include "azure/core/amqp/internal/common/completion_operation.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "azure/core/internal/unique_handle.hpp"
 #include "private/connection_impl.hpp"
@@ -17,7 +16,6 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/platform.hpp>
 
 using namespace Azure::Core::Amqp::_detail::RustInterop;
 
@@ -63,8 +61,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_options{options}, m_messageSender{
-                                                                      amqpmessagesender_create()}
+      : m_session{session}, m_target{target}, m_options{options},
+        m_messageSender{amqpmessagesender_create()}
   {
   }
 
@@ -118,6 +116,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->AuthenticateAudience(
           m_session, static_cast<std::string>(m_target.GetAddress()), context);
     }
+
+    if (m_options.InitialDeliveryCount)
+    {
+      optionsBuilder.reset(amqpmessagesenderoptions_builder_set_initial_delivery_count(
+          optionsBuilder.release(), m_options.InitialDeliveryCount.Value()));
+    }
+
+    if (m_options.MaxLinkCredits)
+    {
+      //        optionsBuilder.reset(amqpmesagesenderoptions_builder_set_)
+    }
+
+    if (m_options.MaxMessageSize)
+    {
+      optionsBuilder.reset(amqpmessagesenderoptions_builder_set_max_message_size(
+          optionsBuilder.release(), m_options.MaxMessageSize.Value()));
+    }
+
+    optionsBuilder.reset(amqpmessagesenderoptions_builder_set_source(
+        optionsBuilder.release(),
+        Models::_detail::AmqpSourceFactory::ToImplementation(m_options.MessageSource)));
+
+    RustSenderSettleMode senderSettleMode=RustSenderSettleMode::Settled;
+    switch (m_options.SettleMode)
+    {
+      case _internal::SenderSettleMode::Mixed:
+        senderSettleMode = RustSenderSettleMode::Mixed;
+        break;
+      case _internal::SenderSettleMode::Settled:
+        senderSettleMode = RustSenderSettleMode::Settled;
+        break;
+      case _internal::SenderSettleMode::Unsettled:
+        senderSettleMode = RustSenderSettleMode::Unsettled;
+        break;
+    }
+
+    optionsBuilder.reset(amqpmessagesenderoptions_builder_set_sender_settle_mode(
+        optionsBuilder.release(),
+        senderSettleMode));
 
     UniqueSenderOptions options{amqpmessagesenderoptions_builder_build(optionsBuilder.get())};
 

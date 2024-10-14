@@ -197,16 +197,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ProducerClientOptions m_producerClientOptions{};
 
-    // Protects m_senders and m_connection.
-    std::mutex m_sendersLock;
-    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
-    std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+    std::mutex m_propertiesClientLock;
+    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
     std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-    std::mutex m_propertiesClientLock;
-    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
+
+    // Protects m_senders and m_connection.
+    std::mutex m_sendersLock;
+    std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
+    std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
 
     Azure::Core::Amqp::_internal::Connection CreateConnection(
         Azure::Core::Context const& context) const;
