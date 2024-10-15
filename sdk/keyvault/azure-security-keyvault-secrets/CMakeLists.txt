@@ -31,35 +31,30 @@ include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
-option(TSP_GEN "Generate from TypeSpec" OFF)
 
-if(TSP_GEN)
-    include(TSPCompile) 
+option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
+message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
-    set(TSP_DESTINATION "keyvault_secrets")
-    set(TSP_REPO "https://github.com/Azure/azure-rest-api-specs.git")
-    set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
-    set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
-
-    DownloadTSPFiles(${TSP_REPO} ${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
-endif()
-
-option(AZURE_TSP_KV_SECRETS_GEN "Generate from TypeSpec" OFF)
-message("KeyVault Secrets TSP Generation ${az_TSP_KV_SECRETS_GEN}")
 if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
-
+    #typespec related repo information
     set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
-    set(TSP_SHA "1124d1074d262dc20a010c2a9d366f8e7a452927")
+    set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
     set(TSP_DESTINATION "keyvault_secrets")
-
-    set(CODEGEN_SHA "b4107ff1b9ce83aedf1d299a63575b6c27434de0")
+    
+    #codegen related repo information
+    set(CODEGEN_SHA "1a9e3b7a337d5553603b8326dd3be5024d53b28a")
     set(CODEGEN_DESTINATION "typespec-cpp")
-    set(CODEGEN_PATH "packages/typespec-cpp/samples/keyvault/secrets")
+       
+    #destination folders
+    set(INCLUDE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/secrets")
+    set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-    DownloadTSPFiles(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION})
-    DownloadCodeGenerator(${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_REPO_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
+    #generate code from typespec
+    GenerateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
+    #update code files left this as a separate step as generating and moving result around
+    #conceptually are two different steps
+    UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
 endif()
 
 if(FETCH_SOURCE_DEPS)
