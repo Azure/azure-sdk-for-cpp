@@ -123,6 +123,7 @@ endif()
 create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")
 
 get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
+set_target_properties(azure-messaging-eventhubs PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-messaging-eventhubs ${AZ_LIBRARY_VERSION})
 
 add_subdirectory(test)

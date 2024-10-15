@@ -1722,6 +1722,20 @@ directive:
       };
       $.headers["x-ms-immutability-policy-until-date"]["x-ms-client-path"] = "ImmutabilityPolicy.ExpiresOn";
       $.headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "ImmutabilityPolicy.PolicyMode";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=immutabilityPolicies"].put.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || (!p["$ref"].endsWith("#/parameters/Snapshot") && !p["$ref"].endsWith("#/parameters/VersionId")));
+```
+
+### DeleteBlobImmutabilityPolicy
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=immutabilityPolicies"].delete.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || (!p["$ref"].endsWith("#/parameters/Snapshot") && !p["$ref"].endsWith("#/parameters/VersionId")));
 ```
 
 ### SetLegalHold
@@ -1732,6 +1746,10 @@ directive:
     where: $["x-ms-paths"]["/{containerName}/{blob}?comp=legalhold"].put.responses["200"].headers
     transform: >
       $["x-ms-legal-hold"]["x-ms-client-name"] = "HasLegalHold";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=legalhold"].put.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || (!p["$ref"].endsWith("#/parameters/Snapshot") && !p["$ref"].endsWith("#/parameters/VersionId")));
 ```
 
 
