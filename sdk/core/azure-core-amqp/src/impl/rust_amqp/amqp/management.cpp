@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell: words amqpmanagement
+
 #include "azure/core/amqp/internal/management.hpp"
 
 #include "../../../models/private/value_impl.hpp"

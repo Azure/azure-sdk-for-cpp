@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// cspell: words amqpmessagesender amqpmessagesenderoptions
+// cspell: words amqpmessagesender amqpmesagesenderoptions
 
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
