@@ -207,7 +207,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             GTEST_LOG_(INFO) << "Thread started for partition: " << partition << ".\n";
             GTEST_LOG_(INFO) << "Start " << threadsPerPartition
                              << " threads to retrieve properties.";
-            for (int i = 0; i < threadsPerPartition; i++)
+            for (size_t i = 0; i < threadsPerPartition; i++)
             {
               std::vector<std::thread> partitionThreads;
               partitionThreads.emplace_back(
