@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// cspell: words amqpmessagesender amqpmesagesenderoptions
+// cspell: words amqpmessagesender amqpmessagesenderoptions
 
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
@@ -125,7 +125,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaxLinkCredits)
     {
-      //        optionsBuilder.reset(amqpmesagesenderoptions_builder_set_)
+      //        optionsBuilder.reset(amqpmessagesenderoptions_builder_set_)
     }
 
     if (m_options.MaxMessageSize)
