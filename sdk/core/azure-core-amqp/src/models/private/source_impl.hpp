@@ -213,5 +213,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     // Declared as friend so it can access the private operator SOURCE_INSTANCE_TAG member.
     friend std::ostream& operator<<(std::ostream&, MessageSourceImpl const&);
+    friend class AmqpSourceFactory;
   };
+
+  class AmqpSourceFactory final {
+  public:
+    // Returns the internal AMQP value handle, without referencing it.
+    static Azure::Core::Amqp::_detail::AmqpSourceImplementation* ToImplementation(
+        Azure::Core::Amqp::Models::_internal::MessageSource const& value);
+  };
+
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

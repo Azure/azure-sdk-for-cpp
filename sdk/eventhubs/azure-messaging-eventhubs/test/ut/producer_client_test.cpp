@@ -123,6 +123,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto result = client->GetEventHubProperties();
     EXPECT_EQ(result.Name, GetEventHubName());
     EXPECT_TRUE(result.PartitionIds.size() > 0);
+    client->Close();
   }
 
   TEST_P(ProducerClientTest, GetPartitionProperties_LIVEONLY_)
@@ -185,50 +186,61 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
+  constexpr size_t threadsPerPartition = 20;
+
   TEST_P(ProducerClientTest, GetPartitionProperties_Multithreaded_LIVEONLY_)
   {
     Azure::Messaging::EventHubs::ProducerClientOptions options;
     options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
 
     options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
-    auto client{CreateConsumerClient()};
+    auto client{CreateProducerClient()};
 
     auto ehProperties = client->GetEventHubProperties();
+    std::mutex iterationLock;
     std::vector<std::thread> threads;
-    std::vector<size_t> iterationsPerThread;
+    std::map<std::thread::id, size_t> iterationsPerThread;
     for (const auto& partition : ehProperties.PartitionIds)
     {
-      threads.emplace_back(std::thread([&client, partition, ehProperties, &iterationsPerThread]() {
-        GTEST_LOG_(INFO) << "Thread started for partition: " << partition << ".\n";
-        for (int i = 0; i < 20; i++)
-        {
-          std::vector<std::thread> partitionThreads;
-          partitionThreads.emplace_back(
-              [&client, &partition, ehProperties, &iterationsPerThread]() {
-                size_t iterations = 0;
-                std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
-                std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
-                while ((std::chrono::system_clock::now() - start) <= timeout)
-                {
-                  Azure::Messaging::EventHubs::Models::EventHubPartitionProperties result;
-                  ASSERT_NO_THROW(result = client->GetPartitionProperties(partition));
-                  EXPECT_EQ(result.Name, ehProperties.Name);
-                  EXPECT_EQ(result.PartitionId, partition);
-                  std::this_thread::yield();
-                  iterations++;
-                }
-                iterationsPerThread.push_back(iterations);
-              });
-          for (auto& t : partitionThreads)
-          {
-            if (t.joinable())
+      threads.emplace_back(
+          std::thread([&client, partition, ehProperties, &iterationsPerThread, &iterationLock]() {
+            GTEST_LOG_(INFO) << "Thread started for partition: " << partition << ".\n";
+            GTEST_LOG_(INFO) << "Start " << threadsPerPartition
+                             << " threads to retrieve properties.";
+            for (size_t i = 0; i < threadsPerPartition; i++)
             {
-              t.join();
+              std::vector<std::thread> partitionThreads;
+              partitionThreads.emplace_back(
+                  [&client, &partition, ehProperties, &iterationsPerThread, &iterationLock]() {
+                    size_t iterations = 0;
+                    auto threadId = std::this_thread::get_id();
+                    std::chrono::system_clock::duration timeout = std::chrono::seconds(3);
+                    std::chrono::system_clock::time_point start = std::chrono::system_clock::now();
+
+                    while ((std::chrono::system_clock::now() - start) <= timeout)
+                    {
+                      Azure::Messaging::EventHubs::Models::EventHubPartitionProperties result;
+                      ASSERT_NO_THROW(result = client->GetPartitionProperties(partition));
+                      EXPECT_EQ(result.Name, ehProperties.Name);
+                      EXPECT_EQ(result.PartitionId, partition);
+                      std::this_thread::yield();
+                      iterations++;
+                    }
+                    {
+                      std::unique_lock<std::mutex> lock(iterationLock);
+                      iterationsPerThread.emplace(threadId, iterations);
+                    }
+                  });
+              for (auto& t : partitionThreads)
+              {
+                if (t.joinable())
+                {
+                  t.join();
+                }
+              }
             }
-          }
-        }
-        GTEST_LOG_(INFO) << "Thread finished for partition: " << partition << ".\n";
-      }));
+            GTEST_LOG_(INFO) << "Threads finished for partition: " << partition << ".\n";
+          }));
     }
     GTEST_LOG_(INFO) << "Waiting for threads to finish.";
     for (auto& t : threads)
@@ -238,7 +250,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         t.join();
       }
     }
+    GTEST_LOG_(INFO) << "Threads finished.";
     GTEST_LOG_(INFO) << iterationsPerThread.size() << " threads finished.";
+    for (const auto i : iterationsPerThread)
+    {
+      GTEST_LOG_(INFO) << "Thread iterations: " << i.second;
+    }
   }
 
   namespace {
