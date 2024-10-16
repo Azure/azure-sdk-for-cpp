@@ -1079,64 +1079,87 @@ impl AmqpMessage {
         self.footer.as_ref()
     }
 
-    // pub fn set_header(&mut self, header: AmqpMessageHeader) {
-    //     self.header = Some(header);
-    // }
+    /// Set the message ID for the message.
+    ///
+    /// This will overwrite any existing message ID on the message.
+    ///
+    /// # Arguments
+    ///
+    /// * `message_id` - The message ID to set on the message.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use azure_core_amqp::messaging::AmqpMessage;
+    ///
+    /// let mut message = AmqpMessage::default();
+    /// message.set_message_id(uuid::Uuid::new_v4());
+    /// message.set_message_id("This is a message ID");
+    /// ```
+    ///
+    pub fn set_message_id(&mut self, message_id: impl Into<AmqpMessageId>) {
+        if let Some(properties) = self.properties.as_mut() {
+            properties.set_message_id(message_id);
+            self.properties = Some(properties.clone());
+        } else {
+            self.properties = Some(
+                AmqpMessageProperties::builder()
+                    .with_message_id(message_id)
+                    .build(),
+            );
+        }
+    }
 
-    // pub fn set_properties(&mut self, properties: AmqpMessageProperties) {
-    //     self.properties = Some(properties);
-    // }
+    /// Adds a message annotation for the message.
+    /// If the message annotations already exist, the annotation will be added to the existing annotations.
+    /// If the message annotations do not exist, a new message annotations map will be created with the annotation.
+    /// # Arguments
+    /// * `name` - The name of the annotation to add.
+    /// * `value` - The value of the annotation to add.
+    /// # Example
+    /// ```
+    /// use azure_core_amqp::messaging::AmqpMessage;
+    /// let mut message = AmqpMessage::default();
+    /// message.add_message_annotation("key", "value");
+    /// ```
+    ///
+    pub fn add_message_annotation(
+        &mut self,
+        name: impl Into<AmqpSymbol>,
+        value: impl Into<AmqpValue>,
+    ) {
+        if let Some(annotations) = self.message_annotations.as_mut() {
+            annotations.insert(name.into(), value.into());
+            self.message_annotations = Some(annotations.clone());
+        } else {
+            let mut annotations = AmqpAnnotations::new();
+            annotations.insert(name.into(), value.into());
+            self.message_annotations = Some(annotations);
+        }
+    }
 
-    // pub fn set_message_annotations(&mut self, message_annotations: impl Into<AmqpAnnotations>) {
-    //     self.message_annotations = Some(message_annotations.into());
-    // }
-
-    // pub fn set_message_body(&mut self, body: impl Into<AmqpMessageBody>) {
-    //     self.body = body.into();
-    // }
-
-    // pub fn set_application_properties(
-    //     &mut self,
-    //     application_properties: impl Into<AmqpApplicationProperties>,
-    // ) {
-    //     self.application_properties = Some(application_properties.into());
-    // }
-
-    // pub fn set_delivery_annotations(&mut self, delivery_annotations: impl Into<AmqpAnnotations>) {
-    //     self.delivery_annotations = Some(delivery_annotations.into());
-    // }
-
-    // pub fn set_footer(&mut self, footer: impl Into<AmqpAnnotations>) {
-    //     self.footer = Some(footer.into());
-    // }
-
-    // pub fn add_message_body_binary(&mut self, body: &[u8]) {
-    //     match &mut self.body {
-    //         AmqpMessageBody::Binary(bodies) => {
-    //             bodies.push(body.to_owned());
-    //         }
-    //         AmqpMessageBody::Empty => {
-    //             self.body = AmqpMessageBody::Binary(vec![body.to_owned()]);
-    //         }
-    //         _ => {
-    //             panic!("Cannot add binary body to non-binary body");
-    //         }
-    //     }
-    // }
-
-    // pub fn add_message_body_sequence(&mut self, body: AmqpList) {
-    //     match &mut self.body {
-    //         AmqpMessageBody::Sequence(bodies) => {
-    //             bodies.push(body);
-    //         }
-    //         AmqpMessageBody::Empty => {
-    //             self.body = AmqpMessageBody::Sequence(vec![body]);
-    //         }
-    //         _ => {
-    //             panic!("Cannot add sequence body to non-sequence body");
-    //         }
-    //     }
-    // }
+    /// Replaces the message body on an existing message.
+    ///
+    /// This will overwrite any existing message body on the message.
+    ///
+    /// # Arguments
+    ///
+    /// * `body` - The new message body to set on the message.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use azure_core_amqp::messaging::AmqpMessage;
+    /// use azure_core_amqp::messaging::AmqpMessageBody;
+    ///
+    /// let mut message = AmqpMessage::default();
+    /// message.set_message_body(AmqpMessageBody::Value("Hello, world!".into()));
+    ///
+    /// ```
+    ///
+    pub fn set_message_body(&mut self, body: impl Into<AmqpMessageBody>) {
+        self.body = body.into();
+    }
 
     pub fn serialize(message: &AmqpMessage) -> Result<Vec<u8>> {
         #[cfg(all(feature = "fe2o3-amqp", not(target_arch = "wasm32")))]

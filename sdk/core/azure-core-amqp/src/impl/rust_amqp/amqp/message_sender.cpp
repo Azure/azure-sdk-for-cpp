@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<RustAmqpMessageSender>::FreeMessageSender(RustAmqpMessageSender* value)
   {
     amqpmessagesender_destroy(value);
-  } 
+  }
 
   template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptions>
   {
@@ -61,8 +61,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_options{options}, m_messageSender{
-                                                                      amqpmessagesender_create()}
+      : m_session{session}, m_target{target}, m_options{options},
+        m_messageSender{amqpmessagesender_create()}
   {
   }
 

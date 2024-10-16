@@ -171,7 +171,7 @@ pub unsafe extern "C" fn amqpmanagement_call(
             .iter()
             .map(|(key, value)| {
                 let key = String::from(key);
-                let value = value.into();
+                let value = value;
                 (key, value)
             })
             .collect();
@@ -202,6 +202,6 @@ pub unsafe extern "C" fn amqpmanagement_call(
             "Application properties must be a map, found: {:?}",
             application_properties
         );
-        return ptr::null_mut();
+        ptr::null_mut()
     }
 }

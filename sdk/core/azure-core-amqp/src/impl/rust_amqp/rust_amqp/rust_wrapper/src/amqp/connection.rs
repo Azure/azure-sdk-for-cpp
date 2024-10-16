@@ -449,9 +449,9 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
                     )
                 })
                 .collect();
-            return Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+            Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
                 inner: builder.inner.with_properties(properties),
-            }));
+            }))
         }
         _ => panic!("Expected map for value, found: {:?}", properties.inner),
     }
