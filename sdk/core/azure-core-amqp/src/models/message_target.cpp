@@ -163,19 +163,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #endif
   {
 #if ENABLE_UAMQP
-    UniqueMessageTargetHandle target{target_create()};
-    if (!target)
+    if (!m_target)
     {
       throw std::runtime_error("Could not create source.");
     }
-
     if (target_set_address(
-            target.get(),
+            m_target.get(),
             _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address.c_str())).get()))
     {
       throw std::runtime_error("Could not set address.");
     }
-    m_target = std::move(target);
 #elif ENABLE_RUST_AMQP
     UniqueMessageTargetBuilderHandle builder{target_builder_create()};
     if (!builder)

@@ -309,7 +309,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   UniqueMessageHandle _detail::AmqpMessageFactory::ToImplementation(AmqpMessage const& message)
   {
 #if ENABLE_UAMQP
-    UniqueMessageHandle builder(message_create());
+    UniqueMessageHandle rv(message_create());
 
     // AMQP 1.0 specifies a message format of 0, but EventHubs uses other values.
     if (message_set_message_format(rv.get(), message.MessageFormat))

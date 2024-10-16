@@ -533,7 +533,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MessageSource = "ingress";
       options.Name = "sender-link";
       MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
-      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
       EXPECT_FALSE(sender.Open());
 
       Azure::Core::Amqp::Models::AmqpMessage message;
