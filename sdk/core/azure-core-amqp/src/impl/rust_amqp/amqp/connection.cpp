@@ -117,19 +117,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     m_containerId = containerId;
     // Transfer the configuration options to the connection options builder.
     UniqueAmqpConnectionOptionsBuilder builder{amqpconnectionoptionsbuilder_create()};
-    if (amqpconnectionoptionsbuilder_set_max_frame_size(builder.get(), m_options.MaxFrameSize))
+    builder.reset(
+        amqpconnectionoptionsbuilder_set_max_frame_size(builder.release(), m_options.MaxFrameSize));
+    if (!builder)
     {
       throw std::runtime_error("Failed to set max frame size.");
     }
-    if (amqpconnectionoptionsbuilder_set_channel_max(builder.get(), m_options.MaxChannelCount))
+
+    builder.reset(
+        amqpconnectionoptionsbuilder_set_channel_max(builder.release(), m_options.MaxChannelCount));
+    if (!builder)
     {
       throw std::runtime_error("Failed to set max channel count.");
     }
-    if (amqpconnectionoptionsbuilder_set_idle_timeout(
-            builder.get(),
-            static_cast<std::uint32_t>(
-                std::chrono::duration_cast<std::chrono::milliseconds>(m_options.IdleTimeout)
-                    .count())))
+    builder.reset(amqpconnectionoptionsbuilder_set_idle_timeout(
+        builder.release(),
+        static_cast<std::uint32_t>(
+            std::chrono::duration_cast<std::chrono::milliseconds>(m_options.IdleTimeout).count())));
+    if (!builder)
     {
       throw std::runtime_error("Failed to set idle timeout.");
     }
@@ -141,8 +146,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         locales.push_back(locale.c_str());
       }
 
-      if (amqpconnectionoptionsbuilder_set_incoming_locales(
-              builder.get(), locales.data(), locales.size()))
+      builder.reset(amqpconnectionoptionsbuilder_set_incoming_locales(
+          builder.release(), locales.data(), locales.size()));
+      if (!builder)
       {
         throw std::runtime_error("Failed to set incoming locales.");
       }
@@ -155,8 +161,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         locales.push_back(locale.c_str());
       }
 
-      if (amqpconnectionoptionsbuilder_set_outgoing_locales(
-              builder.get(), locales.data(), locales.size()))
+      builder.reset(amqpconnectionoptionsbuilder_set_outgoing_locales(
+          builder.release(), locales.data(), locales.size()));
+      if (!builder)
       {
         throw std::runtime_error("Failed to set incoming locales.");
       }
@@ -169,8 +176,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         capabilities.push_back(const_cast<char*>(capability.c_str()));
       }
 
-      if (amqpconnectionoptionsbuilder_set_offered_capabilities(
-              builder.get(), capabilities.data(), capabilities.size()))
+      builder.reset(amqpconnectionoptionsbuilder_set_offered_capabilities(
+          builder.release(), capabilities.data(), capabilities.size()));
+      if (!builder)
       {
         throw std::runtime_error("Failed to set incoming locales.");
       }
@@ -183,8 +191,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         capabilities.push_back(const_cast<char*>(capability.c_str()));
       }
 
-      if (amqpconnectionoptionsbuilder_set_desired_capabilities(
-              builder.get(), capabilities.data(), capabilities.size()))
+      builder.reset(amqpconnectionoptionsbuilder_set_desired_capabilities(
+          builder.release(), capabilities.data(), capabilities.size()));
+      if (!builder)
       {
         throw std::runtime_error("Failed to set incoming locales.");
       }
@@ -192,21 +201,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (!m_options.Properties.empty())
     {
-      if (amqpconnectionoptionsbuilder_set_properties(
-              builder.get(),
-              Models::_detail::AmqpValueFactory::ToImplementation(
-                  m_options.Properties.AsAmqpValue())))
+      builder.reset(amqpconnectionoptionsbuilder_set_properties(
+          builder.release(),
+          Models::_detail::AmqpValueFactory::ToImplementation(m_options.Properties.AsAmqpValue())));
+      if (!builder)
       {
         throw std::runtime_error("Failed to set connection properties.");
       }
     }
 
-    if (amqpconnectionoptionsbuilder_set_buffer_size(builder.get(), m_options.BufferSize))
+    builder.reset(
+        amqpconnectionoptionsbuilder_set_buffer_size(builder.release(), m_options.BufferSize));
+    if (!builder)
     {
       throw std::runtime_error("Failed to set buffer size.");
     }
 
-    m_connectionOptions.reset(amqpconnectionoptionsbuilder_build(builder.get()));
+    m_connectionOptions.reset(amqpconnectionoptionsbuilder_build(builder.release()));
   }
 
   void ConnectionImpl::Open(Azure::Core::Context const& context)
@@ -239,19 +250,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         context};
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
-    if (!m_connection)
+    if (m_connection)
     {
-      throw std::logic_error("Connection not opened.");
+      if (!IsOpen())
+      {
+        throw std::runtime_error("Cannot close an unopened connection.");
+      }
+      if (amqpconnection_close(callContext.GetCallContext(), m_connection.get()))
+      {
+        throw std::runtime_error("Could not close connection: " + callContext.GetError());
+      }
+      m_connectionOpened = false;
+      m_connection.reset();
     }
-    if (!IsOpen())
+    else
     {
-      throw std::runtime_error("Cannot close an unopened connection.");
+      Log::Stream(Logger::Level::Informational) << "Closing an already closed connection.";
     }
-    if (amqpconnection_close(callContext.GetCallContext(), m_connection.get()))
-    {
-      throw std::runtime_error("Could not close connection: " + callContext.GetError());
-    }
-    m_connectionOpened = false;
   }
 
   void ConnectionImpl::Close(
