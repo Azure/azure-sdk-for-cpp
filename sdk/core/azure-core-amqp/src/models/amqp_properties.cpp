@@ -222,7 +222,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       if (properties_set_to(
               returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
+              _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
       {
         throw std::runtime_error("Could not set to");
       }
