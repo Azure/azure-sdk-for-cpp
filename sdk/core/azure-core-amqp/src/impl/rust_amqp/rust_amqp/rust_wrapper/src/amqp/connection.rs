@@ -287,7 +287,7 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_destroy(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_build(
     builder: *mut RustAmqpConnectionOptionsBuilder,
 ) -> *mut RustAmqpConnectionOptions {
-    let builder = unsafe { &mut *builder };
+    let builder = Box::from_raw(builder);
     let options = builder.inner.build();
     Box::into_raw(Box::new(RustAmqpConnectionOptions { inner: options }))
 }
@@ -306,12 +306,13 @@ pub unsafe extern "C" fn amqpconnectionoptions_destroy(options: *mut RustAmqpCon
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_idle_timeout(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     idle_timeout: u32,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder
-        .inner
-        .with_idle_timeout(Duration::milliseconds(idle_timeout as i64));
-    0
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder
+            .inner
+            .with_idle_timeout(Duration::milliseconds(idle_timeout as i64)),
+    }))
 }
 
 /// # Safety
@@ -320,10 +321,11 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_idle_timeout(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_max_frame_size(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     max_frame_size: u32,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_max_frame_size(max_frame_size);
-    0
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder.inner.with_max_frame_size(max_frame_size),
+    }))
 }
 
 /// # Safety
@@ -332,10 +334,11 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_max_frame_size(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_channel_max(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     channel_max: u16,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_channel_max(channel_max);
-    0
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder.inner.with_channel_max(channel_max),
+    }))
 }
 
 /// # Safety
@@ -345,17 +348,18 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_outgoing_locales(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     locales: *const *const c_char,
     count: usize,
-) -> u32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
     let locales = unsafe { std::slice::from_raw_parts(locales, count) };
     let locales = locales
         .iter()
         .map(|locale| unsafe { CStr::from_ptr(*locale).to_str().unwrap() })
         .collect::<Vec<&str>>();
-    builder
-        .inner
-        .with_outgoing_locales(locales.into_iter().map(String::from).collect());
-    0
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder
+            .inner
+            .with_outgoing_locales(locales.into_iter().map(String::from).collect()),
+    }))
 }
 
 /// # Safety
@@ -365,17 +369,18 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_incoming_locales(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     locales: *const *const c_char,
     count: usize,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
     let locales = unsafe { std::slice::from_raw_parts(locales, count) };
     let locales = locales
         .iter()
         .map(|locale| unsafe { CStr::from_ptr(*locale).to_str().unwrap() })
         .collect::<Vec<&str>>();
-    builder
-        .inner
-        .with_incoming_locales(locales.into_iter().map(String::from).collect());
-    0
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder
+            .inner
+            .with_incoming_locales(locales.into_iter().map(String::from).collect()),
+    }))
 }
 
 /// # Safety
@@ -385,17 +390,18 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_offered_capabilities(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     capabilities: *const *const c_char,
     count: usize,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
     let capabilities = unsafe { std::slice::from_raw_parts(capabilities, count) };
     let capabilities = capabilities
         .iter()
         .map(|capability| unsafe { CStr::from_ptr(*capability).to_str().unwrap() })
         .collect::<Vec<&str>>();
-    builder
-        .inner
-        .with_offered_capabilities(capabilities.into_iter().map(AmqpSymbol::from).collect());
-    0
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder
+            .inner
+            .with_offered_capabilities(capabilities.into_iter().map(AmqpSymbol::from).collect()),
+    }))
 }
 
 /// # Safety
@@ -405,17 +411,18 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_desired_capabilities(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     capabilities: *const *const c_char,
     count: usize,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
     let capabilities = unsafe { std::slice::from_raw_parts(capabilities, count) };
     let capabilities = capabilities
         .iter()
         .map(|capability| unsafe { CStr::from_ptr(*capability).to_str().unwrap() })
         .collect::<Vec<&str>>();
-    builder
-        .inner
-        .with_desired_capabilities(capabilities.into_iter().map(AmqpSymbol::from).collect());
-    0
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder
+            .inner
+            .with_desired_capabilities(capabilities.into_iter().map(AmqpSymbol::from).collect()),
+    }))
 }
 
 /// # Safety
@@ -424,8 +431,8 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_desired_capabilities(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     properties: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
     let properties = unsafe { &*properties };
     match &properties.inner {
         AmqpValue::Map(properties) => {
@@ -442,10 +449,11 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
                     )
                 })
                 .collect();
-            builder.inner.with_properties(properties);
-            0
+            return Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+                inner: builder.inner.with_properties(properties),
+            }));
         }
-        _ => 1,
+        _ => panic!("Expected map for value, found: {:?}", properties.inner),
     }
 }
 
@@ -455,10 +463,11 @@ pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_properties(
 pub unsafe extern "C" fn amqpconnectionoptionsbuilder_set_buffer_size(
     builder: *mut RustAmqpConnectionOptionsBuilder,
     buffer_size: usize,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_buffer_size(buffer_size);
-    0
+) -> *mut RustAmqpConnectionOptionsBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpConnectionOptionsBuilder {
+        inner: builder.inner.with_buffer_size(buffer_size),
+    }))
 }
 
 #[cfg(test)]
@@ -527,7 +536,7 @@ mod tests {
     fn test_amqpconnectionoptionsbuilder_set_idle_timeout() {
         let builder = unsafe { amqpconnectionoptionsbuilder_create() };
         let result = unsafe { amqpconnectionoptionsbuilder_set_idle_timeout(builder, 30) };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe {
             amqpconnectionoptionsbuilder_destroy(builder);
         }
@@ -537,7 +546,7 @@ mod tests {
     fn test_amqpconnectionoptionsbuilder_set_max_frame_size() {
         let builder = unsafe { amqpconnectionoptionsbuilder_create() };
         let result = unsafe { amqpconnectionoptionsbuilder_set_max_frame_size(builder, 65536) };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe {
             amqpconnectionoptionsbuilder_destroy(builder);
         }
@@ -547,7 +556,7 @@ mod tests {
     fn test_amqpconnectionoptionsbuilder_set_channel_max() {
         let builder = unsafe { amqpconnectionoptionsbuilder_create() };
         let result = unsafe { amqpconnectionoptionsbuilder_set_channel_max(builder, 256) };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe {
             amqpconnectionoptionsbuilder_destroy(builder);
         }
@@ -569,7 +578,7 @@ mod tests {
                 locale_ptrs.len(),
             )
         };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe {
             amqpconnectionoptionsbuilder_destroy(builder);
         }
@@ -591,7 +600,7 @@ mod tests {
                 locale_ptrs.len(),
             )
         };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe { amqpconnectionoptionsbuilder_destroy(builder) };
     }
 
@@ -611,7 +620,7 @@ mod tests {
                 capability_ptrs.len(),
             )
         };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe { amqpconnectionoptionsbuilder_destroy(builder) };
     }
 
@@ -631,7 +640,7 @@ mod tests {
                 capability_ptrs.len(),
             )
         };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe { amqpconnectionoptionsbuilder_destroy(builder) };
     }
 
@@ -652,7 +661,7 @@ mod tests {
                 &rust_value as *const RustAmqpValue,
             )
         };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe { amqpconnectionoptionsbuilder_destroy(builder) };
     }
 
@@ -660,7 +669,7 @@ mod tests {
     fn test_amqpconnectionoptionsbuilder_set_buffer_size() {
         let builder = unsafe { amqpconnectionoptionsbuilder_create() };
         let result = unsafe { amqpconnectionoptionsbuilder_set_buffer_size(builder, 1024) };
-        assert_eq!(result, 0);
+        assert_ne!(result, ptr::null_mut());
         unsafe { amqpconnectionoptionsbuilder_destroy(builder) };
     }
 }

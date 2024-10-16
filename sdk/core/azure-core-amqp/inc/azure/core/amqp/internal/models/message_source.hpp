@@ -14,6 +14,7 @@ struct SOURCE_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   class MessageSourceImpl;
+  class AmqpSourceFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -219,5 +220,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     std::unique_ptr<_detail::MessageSourceImpl> m_impl;
     // Declared as friend so it can access the private m_impl member.
     friend std::ostream& operator<<(std::ostream&, MessageSource const&);
+    friend class Models::_detail::AmqpSourceFactory;
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal
