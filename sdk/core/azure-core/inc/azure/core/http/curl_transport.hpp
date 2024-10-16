@@ -13,9 +13,14 @@
 #include "azure/core/nullable.hpp"
 
 #include <chrono>
+#include <ctime>
 #include <memory>
 #include <string>
-
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Core { namespace Test {
+  class CurlTransport_VerifyKeepAliveHeaders_Test;
+}}} // namespace Azure::Core::Test
+#endif
 namespace Azure { namespace Core { namespace Http {
   class CurlNetworkConnection;
 
@@ -26,6 +31,32 @@ namespace Azure { namespace Core { namespace Http {
      *
      */
     constexpr std::chrono::milliseconds DefaultConnectionTimeout = std::chrono::minutes(5);
+
+    /**
+     * @brief The configuration options for the keep-alive feature.
+     *
+     * @remark The keep-alive feature allows the SDK to reuse the same connection to the service for
+     * multiple requests.
+     */
+    class KeepAliveOptions {
+    public:
+      /**
+       * @brief The time in seconds that the host will allow an idle connection to remain open
+       * before it is closed.
+       *
+       * @remark A connection is idle if no data is sent or received by a host. A host
+       * may keep an idle connection open for longer than timeout seconds, but the host should
+       * attempt to retain a connection for at least timeout seconds.
+       *
+       */
+      std::chrono::seconds ConnectionTimeout = std::chrono::seconds(0);
+
+      /**
+       * @brief The maximum number of requests that a host will allow over a single connection.
+       *
+       */
+      std::size_t MaxRequests = size_t(1);
+    };
   } // namespace _detail
 
   /**
@@ -152,6 +183,15 @@ namespace Azure { namespace Core { namespace Http {
     bool HttpKeepAlive = true;
 
     /**
+     * @brief Options specified in the keep-alive request header
+     *
+     * @remark The keep-alive feature allows the SDK to reuse the same connection to the service for
+     * multiple requests. This field is populated if the Keep-Alive header is present in the
+     * request.
+     */
+    Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> KeepAliveOptions;
+
+    /**
      * @brief This option determines whether libcurl verifies the authenticity of the peer's
      * certificate.
      *
@@ -200,6 +240,9 @@ namespace Azure { namespace Core { namespace Http {
    * @brief Concrete implementation of an HTTP Transport that uses libcurl.
    */
   class CurlTransport : public HttpTransport {
+#if defined(_azure_TESTING_BUILD)
+    friend class Azure::Core::Test::CurlTransport_VerifyKeepAliveHeaders_Test;
+#endif
   private:
     CurlTransportOptions m_options;
 
@@ -208,6 +251,8 @@ namespace Azure { namespace Core { namespace Http {
      * a websocket. Takes ownership of the CurlNetworkConnection object.
      */
     virtual void OnUpgradedConnection(std::unique_ptr<CurlNetworkConnection>&&){};
+
+    void ValidateKeepAliveHeaders(Request& request, std::unique_ptr<RawResponse>& response);
 
   public:
     /**
