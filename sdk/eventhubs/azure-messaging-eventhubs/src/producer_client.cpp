@@ -11,7 +11,11 @@
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
+#include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
 
+using namespace Azure::Core::Diagnostics::_internal;
+using namespace Azure::Core::Diagnostics;
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
 }
@@ -57,6 +61,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
+    Log::Stream(Logger::Level::Verbose) << "Close producer client.";
+    {
+      std::unique_lock<std::mutex> lock(m_propertiesClientLock);
+      if (m_propertiesClient)
+      {
+        m_propertiesClient->Close(context);
+        m_propertiesClient.reset();
+      }
+    }
+    Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
     for (auto& sender : m_senders)
     {
       sender.second.Close(context);
@@ -64,10 +78,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_senders.clear();
 
 #if ENABLE_RUST_AMQP
+    Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
     for (auto& session : m_sessions)
     {
       session.second.End(context);
     }
+    Log::Stream(Logger::Level::Verbose) << "Closing connections.";
     for (auto& connection : m_connections)
     {
       connection.second.Close(context);
