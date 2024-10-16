@@ -114,9 +114,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     _detail::UniqueMessageHeaderHandle rv{header_create()};
-#elif ENABLE_RUST_AMQP
-    _detail::UniqueMessageHeaderBuilderHandle rv{header_builder_create()};
-#endif
     if (header.Durable)
     {
       if (header_set_durable(rv.get(), header.Durable))
@@ -133,11 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
     if (header.TimeToLive.HasValue())
     {
-#if ENABLE_UAMQP
       if (header_set_ttl(rv.get(), static_cast<milliseconds>(header.TimeToLive.Value().count())))
-#elif ENABLE_RUST_AMQP
-      if (header_set_ttl(rv.get(), header.TimeToLive.Value().count()))
-#endif
       {
         throw std::runtime_error("Could not set header TTL.");
       }
@@ -158,16 +151,58 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-#if ENABLE_RUST_AMQP
+    return rv;
+#elif ENABLE_RUST_AMQP
+    _detail::UniqueMessageHeaderBuilderHandle builder{header_builder_create()};
+    if (header.Durable)
+    {
+      builder.reset(header_set_durable(builder.release(), header.Durable));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set durable value.");
+      }
+    }
+    if (header.Priority != 4)
+    {
+      builder.reset(header_set_priority(builder.release(), header.Priority));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set priority value.");
+      }
+    }
+    if (header.TimeToLive.HasValue())
+    {
+      builder.reset(header_set_ttl(builder.release(), header.TimeToLive.Value().count()));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set header TTL.");
+      }
+    }
+
+    if (header.IsFirstAcquirer)
+    {
+      builder.reset(header_set_first_acquirer(builder.release(), header.IsFirstAcquirer));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set first acquirer value.");
+      }
+    }
+    if (header.DeliveryCount != 0)
+    {
+      builder.reset(header_set_delivery_count(builder.release(), header.DeliveryCount));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set delivery count value.");
+      }
+    }
+
     // Now that we've set all the builder parameters, actually build the header.
     Azure::Core::Amqp::_detail::HeaderImplementation* implementation;
-    if (header_build(rv.get(), &implementation))
+    if (header_build(builder.release(), &implementation))
     {
       throw std::runtime_error("Could not build header.");
     }
     return _detail::UniqueMessageHeaderHandle{implementation};
-#elif ENABLE_UAMQP
-    return rv;
 #endif
   }
 

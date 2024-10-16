@@ -13,7 +13,7 @@ use azure_core_amqp::{
     },
     value::{AmqpOrderedMap, AmqpSymbol, AmqpValue},
 };
-use std::mem;
+use std::{mem, ptr};
 use tracing::error;
 
 pub struct RustAmqpSession {
@@ -156,11 +156,13 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_destroy(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_outgoing_window(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     outgoing_window: u32,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
-    session_options_builder
-        .inner
-        .with_outgoing_window(outgoing_window);
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
+    Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+        inner: session_options_builder
+            .inner
+            .with_outgoing_window(outgoing_window),
+    }))
 }
 
 /// # Safety
@@ -169,11 +171,13 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_outgoing_window(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_incoming_window(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     incoming_window: u32,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
-    session_options_builder
-        .inner
-        .with_incoming_window(incoming_window);
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
+    Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+        inner: session_options_builder
+            .inner
+            .with_incoming_window(incoming_window),
+    }))
 }
 
 /// # Safety
@@ -182,11 +186,13 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_incoming_window(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_next_outgoing_id(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     next_outgoing_id: u32,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
-    session_options_builder
-        .inner
-        .with_next_outgoing_id(next_outgoing_id);
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
+    Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+        inner: session_options_builder
+            .inner
+            .with_next_outgoing_id(next_outgoing_id),
+    }))
 }
 
 /// # Safety
@@ -195,9 +201,11 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_next_outgoing_id(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_handle_max(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     handle_max: u32,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
-    session_options_builder.inner.with_handle_max(handle_max);
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
+    Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+        inner: session_options_builder.inner.with_handle_max(handle_max),
+    }))
 }
 
 /// # Safety
@@ -206,17 +214,21 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_handle_max(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_offered_capabilities(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     offered_capabilities: *mut RustAmqpValue,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
     let offered_capabilities = unsafe { &*offered_capabilities };
     if let AmqpValue::List(offered_capabilities) = &offered_capabilities.inner {
         let offered_capabilities: Vec<AmqpSymbol> = offered_capabilities
             .iter()
             .map(|v| AmqpSymbol::from(v.clone()))
             .collect();
-        session_options_builder
-            .inner
-            .with_offered_capabilities(offered_capabilities);
+        Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+            inner: session_options_builder
+                .inner
+                .with_offered_capabilities(offered_capabilities),
+        }))
+    } else {
+        ptr::null_mut()
     }
 }
 
@@ -226,17 +238,21 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_offered_capabilities(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_desired_capabilities(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     desired_capabilities: *mut RustAmqpValue,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
     let desired_capabilities = unsafe { &*desired_capabilities };
     if let AmqpValue::List(desired_capabilities) = &desired_capabilities.inner {
         let desired_capabilities: Vec<AmqpSymbol> = desired_capabilities
             .iter()
             .map(|v| AmqpSymbol::from(v.clone()))
             .collect();
-        session_options_builder
-            .inner
-            .with_desired_capabilities(desired_capabilities);
+        Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+            inner: session_options_builder
+                .inner
+                .with_desired_capabilities(desired_capabilities),
+        }))
+    } else {
+        ptr::null_mut()
     }
 }
 
@@ -246,17 +262,21 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_desired_capabilities(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_properties(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     properties: *mut RustAmqpValue,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
     let properties = unsafe { &*properties };
     if let AmqpValue::Map(properties) = &properties.inner {
         let properties_map: AmqpOrderedMap<AmqpSymbol, AmqpValue> = properties
             .iter()
             .map(|(k, v)| (AmqpSymbol::from(k), v))
             .collect();
-        session_options_builder
-            .inner
-            .with_properties(properties_map);
+        Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+            inner: session_options_builder
+                .inner
+                .with_properties(properties_map),
+        }))
+    } else {
+        ptr::null_mut()
     }
 }
 
@@ -266,9 +286,11 @@ pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_properties(
 pub unsafe extern "C" fn amqpsessionoptionsbuilder_set_buffer_size(
     session_options_builder: *mut RustAmqpSessionOptionsBuilder,
     buffer_size: usize,
-) {
-    let session_options_builder = unsafe { &mut *session_options_builder };
-    session_options_builder.inner.with_buffer_size(buffer_size);
+) -> *mut RustAmqpSessionOptionsBuilder {
+    let session_options_builder = Box::from_raw(session_options_builder);
+    Box::into_raw(Box::new(RustAmqpSessionOptionsBuilder {
+        inner: session_options_builder.inner.with_buffer_size(buffer_size),
+    }))
 }
 
 /// # Safety
