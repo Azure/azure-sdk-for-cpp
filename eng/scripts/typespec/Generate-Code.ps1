@@ -18,7 +18,7 @@ popd
 
 pushd
 Write-Host "Invoking: tsp compile ."
-tsp compile --emit $typespecCppDir .
+tsp compile --emit $typespecCppDir client.tsp
 
 if (-not (Test-Path ".clang-format")) {
   $oldProgressPreference = $ProgressPreference
