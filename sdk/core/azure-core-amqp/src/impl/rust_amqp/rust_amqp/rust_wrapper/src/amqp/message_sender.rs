@@ -269,15 +269,19 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_build(
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_sender_settle_mode(
     builder: *mut RustAmqpSenderOptionsBuilder,
     settle_mode: RustSenderSettleMode,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     let sender_settle_mode = match settle_mode {
         RustSenderSettleMode::Unsettled => SenderSettleMode::Unsettled,
         RustSenderSettleMode::Settled => SenderSettleMode::Settled,
         RustSenderSettleMode::Mixed => SenderSettleMode::Mixed,
     };
     if !builder.is_null() {
-        let builder = &mut *builder;
-        builder.inner.with_sender_settle_mode(sender_settle_mode);
+        let builder = Box::from_raw(builder);
+        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+            inner: builder.inner.with_sender_settle_mode(sender_settle_mode),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -286,17 +290,21 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_sender_settle_mode
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_receiver_settle_mode(
     builder: *mut RustAmqpSenderOptionsBuilder,
     settle_mode: RustReceiverSettleMode,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     let receiver_settle_mode = match settle_mode {
         RustReceiverSettleMode::First => ReceiverSettleMode::First,
         RustReceiverSettleMode::Second => ReceiverSettleMode::Second,
     };
 
     if !builder.is_null() {
-        let builder = &mut *builder;
-        builder
-            .inner
-            .with_receiver_settle_mode(receiver_settle_mode);
+        let builder = Box::from_raw(builder);
+        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+            inner: builder
+                .inner
+                .with_receiver_settle_mode(receiver_settle_mode),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -305,11 +313,15 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_receiver_settle_mo
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_source(
     builder: *mut RustAmqpSenderOptionsBuilder,
     source: *mut RustAmqpSource,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() && !source.is_null() {
-        let builder = &mut *builder;
+        let builder = Box::from_raw(builder);
         let source = &*source;
-        builder.inner.with_source(source.get().clone());
+        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+            inner: builder.inner.with_source(source.get().clone()),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -318,9 +330,9 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_source(
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabilities(
     builder: *mut RustAmqpSenderOptionsBuilder,
     offered_capabilities: *mut RustAmqpValue,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() && !offered_capabilities.is_null() {
-        let builder = &mut *builder;
+        let builder = Box::from_raw(builder);
         let offered_capabilities = &*offered_capabilities;
         match offered_capabilities.inner {
             AmqpValue::Array(ref array) => {
@@ -331,10 +343,17 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabiliti
                         _ => panic!("Invalid offered capability: {:?}", c),
                     })
                     .collect();
-                builder.inner.with_offered_capabilities(capabilities);
+                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+                    inner: builder.inner.with_offered_capabilities(capabilities),
+                }))
             }
-            _ => error!("Invalid offered capabilities: {:?}", offered_capabilities),
+            _ => {
+                error!("Invalid offered capabilities: {:?}", offered_capabilities);
+                std::ptr::null_mut()
+            }
         }
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -343,9 +362,9 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabiliti
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabilities(
     builder: *mut RustAmqpSenderOptionsBuilder,
     desired_capabilities: *mut RustAmqpValue,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() && !desired_capabilities.is_null() {
-        let builder = &mut *builder;
+        let builder = Box::from_raw(builder);
         let desired_capabilities = &*desired_capabilities;
         match desired_capabilities.inner {
             AmqpValue::Array(ref array) => {
@@ -356,13 +375,20 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabiliti
                         _ => panic!("Invalid desired capability: {:?}", c),
                     })
                     .collect();
-                builder.inner.with_offered_capabilities(capabilities);
+                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+                    inner: builder.inner.with_offered_capabilities(capabilities),
+                }))
             }
-            _ => error!(
-                "Invalid desired capabilities: {:?}",
-                desired_capabilities.inner
-            ),
+            _ => {
+                error!(
+                    "Invalid desired capabilities: {:?}",
+                    desired_capabilities.inner
+                );
+                std::ptr::null_mut()
+            }
         }
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -371,9 +397,9 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabiliti
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
     builder: *mut RustAmqpSenderOptionsBuilder,
     properties: *mut RustAmqpValue,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() && !properties.is_null() {
-        let builder = &mut *builder;
+        let builder = Box::from_raw(builder);
         let properties = &*properties;
         match properties.inner {
             AmqpValue::Map(ref map) => {
@@ -381,10 +407,17 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
                     .iter()
                     .map(|(k, v)| (AmqpSymbol::from(k.clone()), v.clone()))
                     .collect();
-                builder.inner.with_properties(properties_map);
+                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+                    inner: builder.inner.with_properties(properties_map),
+                }))
             }
-            _ => error!("Invalid properties: {:?}", properties),
+            _ => {
+                error!("Invalid properties: {:?}", properties);
+                std::ptr::null_mut()
+            }
         }
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -393,12 +426,16 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_initial_delivery_count(
     builder: *mut RustAmqpSenderOptionsBuilder,
     initial_delivery_count: u32,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() {
-        let builder = &mut *builder;
-        builder
-            .inner
-            .with_initial_delivery_count(initial_delivery_count);
+        let builder = Box::from_raw(builder);
+        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+            inner: builder
+                .inner
+                .with_initial_delivery_count(initial_delivery_count),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
 }
 
@@ -407,9 +444,13 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_initial_delivery_c
 pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_max_message_size(
     builder: *mut RustAmqpSenderOptionsBuilder,
     max_message_size: u64,
-) {
+) -> *mut RustAmqpSenderOptionsBuilder {
     if !builder.is_null() {
-        let builder = &mut *builder;
-        builder.inner.with_max_message_size(max_message_size);
+        let builder = Box::from_raw(builder);
+        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
+            inner: builder.inner.with_max_message_size(max_message_size),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
 }

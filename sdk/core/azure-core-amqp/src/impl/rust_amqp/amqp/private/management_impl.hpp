@@ -4,8 +4,7 @@
 #pragma once
 
 #include "azure/core/amqp/internal/management.hpp"
-#include "message_receiver_impl.hpp"
-#include "message_sender_impl.hpp"
+#include "rust_amqp_wrapper.h"
 #include "session_impl.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -14,6 +13,16 @@
 #include <mutex>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+
+  template <> struct UniqueHandleHelper<RustInterop::RustAmqpManagement>
+  {
+    static void FreeManagement(RustInterop::RustAmqpManagement* value);
+
+    using type
+        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpManagement, FreeManagement>;
+  };
+
+  using UniqueAmqpManagement = UniqueHandle<RustInterop::RustAmqpManagement>;
 
   class ManagementClientFactory final {
   public:
@@ -60,47 +69,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Context const& context);
 
   private:
-    enum class ManagementState
-    {
-      Idle,
-      Opening,
-      Closing,
-      Open,
-      Error
-    };
-
-    std::shared_ptr<MessageSenderImpl> m_messageSender;
-    std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
-    ManagementState m_state = ManagementState::Idle;
-    std::mutex m_openCloseLock;
     bool m_isOpen{false};
-    bool m_messageSenderOpen{false};
-    bool m_messageReceiverOpen{false};
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
-        m_openCompleteQueue;
-
-    bool m_sendCompleted{false};
-
-    void SetState(ManagementState newState);
-    // Reflect the error state to the OnError callback and return a delivery rejected status.
-    Models::AmqpValue IndicateError(
-        std::string const& correlationId,
-        std::string const& errorCondition,
-        std::string const& errorDescription);
-
+    UniqueAmqpManagement m_management;
     _internal::ManagementClientOptions m_options;
-    std::string m_source;
-    std::shared_ptr<SessionImpl> m_session;
+    std::shared_ptr<_detail::SessionImpl> m_session;
     std::string m_managementEntityPath;
+
     Azure::Core::Credentials::AccessToken m_accessToken;
-
-    using ManagementOperationQueue = Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        _internal::ManagementOperationStatus,
-        std::uint32_t,
-        Models::_internal::AmqpError,
-        std::shared_ptr<Models::AmqpMessage>>;
-
-    std::recursive_mutex m_messageQueuesLock;
-    std::map<std::string, std::unique_ptr<ManagementOperationQueue>> m_messageQueues;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
