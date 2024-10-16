@@ -947,4 +947,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
             return os;
           }
         }
+        Azure::Core::Amqp::_detail::AmqpSourceImplementation* AmqpSourceFactory::ToImplementation(
+            Models::_internal::MessageSource const& source)
+        {
+          return source.m_impl->m_source.get();
+        }
+
 }}}}} // namespace Azure::Core::Amqp::Models::_detail

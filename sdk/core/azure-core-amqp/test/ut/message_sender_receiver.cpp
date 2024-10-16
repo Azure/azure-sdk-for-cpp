@@ -532,17 +532,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MaxMessageSize = 65536;
       options.MessageSource = "ingress";
       options.Name = "sender-link";
-      MessageSender sender(session.CreateMessageSender("localhost/ingress", options, nullptr));
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
       EXPECT_FALSE(sender.Open());
 
       Azure::Core::Amqp::Models::AmqpMessage message;
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
 
-      Azure::Core::Amqp::Common::_internal::
-          AsyncOperationQueue<MessageSendStatus, Azure::Core::Amqp::Models::AmqpValue>
-              sendCompleteQueue;
       auto result = sender.Send(message);
+#if ENABLE_UAMQP
       EXPECT_EQ(std::get<0>(result), MessageSendStatus::Ok);
+#endif
 
       sender.Close();
     }
@@ -679,12 +678,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
     senderOptions.MaxMessageSize = 65536;
     senderOptions.Name = "sender-link";
-    MessageSender sender(session.CreateMessageSender(endpoint, senderOptions, nullptr));
+    MessageSender sender(session.CreateMessageSender(endpoint, senderOptions));
     EXPECT_FALSE(sender.Open());
 
     Azure::Core::Amqp::Models::AmqpMessage message;
     message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
-    EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(sender.Send(message)));
+    auto result = sender.Send(message);
+#if ENABLE_UAMQP
+    EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(result));
+#endif
 
     sender.Close();
 
@@ -773,7 +775,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     receiverOptions.Name = "receiver-link";
     receiverOptions.EnableTrace = true;
     MessageReceiver receiver(session.CreateMessageReceiver(
-        sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions, nullptr));
+        sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions));
 
     receiver.Open();
 
@@ -918,7 +920,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
     receiverOptions.MaxMessageSize = 65536;
     receiverOptions.Name = "receiver-link";
-    MessageReceiver receiver(session.CreateMessageReceiver(endpoint, receiverOptions, nullptr));
+    MessageReceiver receiver(session.CreateMessageReceiver(endpoint, receiverOptions));
 
     receiver.Open();
 
@@ -1038,7 +1040,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     receiverOptions.Name = "receiver-link";
     receiverOptions.EnableTrace = true;
     MessageReceiver receiver(session.CreateMessageReceiver(
-        sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions, nullptr));
+        sasCredential->GetEndpoint() + sasCredential->GetEntityPath(), receiverOptions));
 
     receiver.Open();
 

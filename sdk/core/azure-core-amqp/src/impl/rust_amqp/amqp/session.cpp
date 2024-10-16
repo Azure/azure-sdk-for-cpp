@@ -141,12 +141,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Session End without corresponding Begin.");
     }
-
-    // We always say we're no longer begun even if the end fails.
-    m_isBegun = false;
-    if (amqpsession_end(callContext.GetCallContext(), m_session.get()))
+    if (m_session)
     {
-      throw std::runtime_error("Failed to end session." + callContext.GetError());
+      // We always say we're no longer begun even if the end fails.
+      m_isBegun = false;
+      if (amqpsession_end(callContext.GetCallContext(), m_session.get()))
+      {
+        throw std::runtime_error("Failed to end session." + callContext.GetError());
+      }
+    }
+    else
+    {
+      Log::Stream(Logger::Level::Informational) << "Ending an already ended session.";
     }
   }
 
