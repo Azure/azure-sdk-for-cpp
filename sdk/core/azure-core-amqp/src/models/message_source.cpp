@@ -215,9 +215,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
 
     builder.reset(source_set_address(
-            builder.release(),
-            _detail::UniqueAmqpValueHandle{amqpvalue_create_string(address.c_str())}.get()))
-    ; if (!builder) {
+        builder.release(),
+        _detail::UniqueAmqpValueHandle{amqpvalue_create_string(address.c_str())}.get()));
+    if (!builder)
+    {
       throw std::runtime_error("Could not set address.");
     }
     Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
@@ -257,8 +258,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
 
     builder.reset(source_set_address(
-            builder.release(), _detail::UniqueAmqpValueHandle{amqpvalue_create_string(address)}.get()))
-    ; if (!builder) {
+        builder.release(), _detail::UniqueAmqpValueHandle{amqpvalue_create_string(address)}.get()));
+    if (!builder)
+    {
       throw std::runtime_error("Could not set address.");
     }
     Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
@@ -538,8 +540,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Address.IsNull())
     {
       builder.reset(source_set_address(
-              builder.release(), _detail::AmqpValueFactory::ToImplementation(options.Address)))
-      ; if (!builder) {
+          builder.release(), _detail::AmqpValueFactory::ToImplementation(options.Address)));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set source address.");
       }
     }
@@ -561,8 +564,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
           throw std::logic_error("Unknown terminus durability.");
       }
 
-      builder.reset(source_set_durable(builder.release(), durability))
-      ; if (!builder) {
+      builder.reset(source_set_durable(builder.release(), durability));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set durable.");
       }
     }
@@ -586,26 +590,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         default:
           throw std::logic_error("Unknown terminus durability.");
       }
-      builder.reset(source_set_expiry_policy(builder.release(), policy))
-      ; if (!builder) {
+      builder.reset(source_set_expiry_policy(builder.release(), policy));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set durable.");
       }
     }
     if (options.Timeout.HasValue())
     {
       builder.reset(source_set_timeout(
-              builder.release(),
-              static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
-                                        options.Timeout.Value().time_since_epoch())
-                                        .count())))
-      ; if (!builder) {
+          builder.release(),
+          static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
+                                    options.Timeout.Value().time_since_epoch())
+                                    .count())));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set value.");
       }
     }
     if (options.Dynamic.HasValue())
     {
-      builder.reset(source_set_dynamic(builder.release(), *options.Dynamic))
-      ; if (!builder) {
+      builder.reset(source_set_dynamic(builder.release(), *options.Dynamic));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set dynamic.");
       }
     }
@@ -613,27 +620,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       AmqpValue dynamicNodeProperties(options.DynamicNodeProperties.AsAmqpValue());
       builder.reset(source_set_dynamic_node_properties(
-              builder.release(), _detail::AmqpValueFactory::ToImplementation(dynamicNodeProperties)))
-      ; if (!builder) {
+          builder.release(), _detail::AmqpValueFactory::ToImplementation(dynamicNodeProperties)));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set dynamic node properties.");
       }
     }
     if (options.DistributionMode.HasValue())
     {
       builder.reset(source_set_distribution_mode(
-              builder.release(),
-              _detail::AmqpValueFactory::ToImplementation(
-                  options.DistributionMode.Value().AsAmqpValue())))
-      ; if (!builder) {
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(
+              options.DistributionMode.Value().AsAmqpValue())));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set distribution mode.");
       }
     }
     if (!options.Filter.empty())
     {
       builder.reset(source_set_filter(
-              builder.release(),
-              _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue())))
-      ; if (!builder) {
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue())));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set filter set.");
       }
     }
@@ -645,29 +655,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       }
       if (options.DefaultOutcome.AsSymbol() == "amqp:accepted:list")
       {
-        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Accepted))
-        ; if (!builder) {
+        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Accepted));
+        if (!builder)
+        {
           throw std::runtime_error("Could not set default outcome.");
         }
       }
       else if (options.DefaultOutcome.AsSymbol() == "amqp:rejected:list")
       {
-        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Rejected))
-        ; if (!builder) {
+        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Rejected));
+        if (!builder)
+        {
           throw std::runtime_error("Could not set default outcome.");
         }
       }
       else if (options.DefaultOutcome.AsSymbol() == "amqp:released:list")
       {
-        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Released))
-        ; if (!builder) {
+        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Released));
+        if (!builder)
+        {
           throw std::runtime_error("Could not set default outcome.");
         }
       }
       else if (options.DefaultOutcome.AsSymbol() == "amqp:modified:list")
       {
-        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Modified))
-        ; if (!builder) {
+        builder.reset(source_set_default_outcome(builder.release(), RustDeliveryOutcome::Modified));
+        if (!builder)
+        {
           throw std::runtime_error("Could not set default outcome.");
         }
       }
@@ -679,18 +693,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!options.Outcomes.empty())
     {
       builder.reset(source_set_outcomes(
-              builder.release(),
-              _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue())))
-      ;if (!builder) {
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue())));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set outcomes.");
       }
     }
     if (!options.Capabilities.empty())
     {
       builder.reset(source_set_capabilities(
-              builder.release(),
-              _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue())))
-      ; if (!builder) {
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue())));
+      if (!builder)
+      {
         throw std::runtime_error("Could not set capabilities.");
       }
     }

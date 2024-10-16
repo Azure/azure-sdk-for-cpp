@@ -159,7 +159,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_UAMQP
@@ -183,7 +186,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     builder.reset(target_set_address(
         builder.release(),
         _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address.c_str())).get()));
-    if (!builder) {
+    if (!builder)
+    {
       throw std::runtime_error("Could not set address.");
     }
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
@@ -236,7 +240,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl()
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP

@@ -23,7 +23,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using MessageImplementation = std::remove_pointer<MESSAGE_HANDLE>::type;
 #elif ENABLE_RUST_AMQP
   using MessageImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessage;
-  using MessageBuilderImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessageBuilder;
+  using MessageBuilderImplementation
+      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessageBuilder;
 #endif
 
   template <> struct UniqueHandleHelper<MessageImplementation>
@@ -33,12 +34,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     using type = Core::_internal::BasicUniqueHandle<MessageImplementation, FreeAmqpMessage>;
   };
 
-  #if ENABLE_RUST_AMQP
+#if ENABLE_RUST_AMQP
   template <> struct UniqueHandleHelper<MessageBuilderImplementation>
   {
     static void FreeAmqpMessageBuilder(MessageBuilderImplementation* obj);
 
-    using type = Core::_internal::BasicUniqueHandle<MessageBuilderImplementation, FreeAmqpMessageBuilder>;
+    using type
+        = Core::_internal::BasicUniqueHandle<MessageBuilderImplementation, FreeAmqpMessageBuilder>;
   };
 #endif
 }}}} // namespace Azure::Core::Amqp::_detail
@@ -46,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   using UniqueMessageHandle
       = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::MessageImplementation>;
-  #if ENABLE_RUST_AMQP
+#if ENABLE_RUST_AMQP
   using UniqueMessageBuilderHandle
       = Amqp::_detail::UniqueHandle<Azure::Core::Amqp::_detail::MessageBuilderImplementation>;
 #endif
