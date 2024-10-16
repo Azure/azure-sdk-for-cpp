@@ -104,7 +104,12 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_REPO_PATH CODEGEN_DESTINATION CODE
     message("Will copy tsp generation scripts from ${SCRIPTS_FOLDER} to ${DOWNLOAD_CODEGEN_FOLDER}")
     file(COPY ${SCRIPTS_FOLDER}
     DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
-    
+    message("Will copy ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp to ${DOWNLOAD_CODEGEN_FOLDER}")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp
+    DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
+    message("Will copy ${CMAKE_CURRENT_SOURCE_DIR}/tspconfig.yaml to ${DOWNLOAD_CODEGEN_FOLDER}")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/tspconfig.yaml
+    DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
     #build codegen
     message("Building codegen in folder ${DOWNLOAD_CODEGEN_FOLDER}")
     execute_process(COMMAND pwsh Build-Codegen.ps1
@@ -127,5 +132,5 @@ macro(UpdateCodeFilesFromGenerated CODEGEN_DESTINATION INCLUDE_DESTINATION SOURC
 
     message("Copying files from ${SOURCE_SRC} to ${SOURCE_DESTINATION}")
     file(COPY ${SOURCE_SRC} DESTINATION ${SOURCE_DESTINATION})
-
+    message("CMAKE_CURRENT_SOURCE_DIR = ${CMAKE_CURRENT_SOURCE_DIR}")
 endmacro()
