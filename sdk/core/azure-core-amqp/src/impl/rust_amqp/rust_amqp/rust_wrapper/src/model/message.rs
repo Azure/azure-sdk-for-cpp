@@ -1,14 +1,15 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // Licensed under the MIT License.
 
-// cspell: words amqp amqpvalue repr
+// cspell: words amqp amqpvalue repr messagebuilder
 
 use crate::model::{
     header::RustMessageHeader, properties::RustMessageProperties, value::RustAmqpValue,
 };
 use azure_core_amqp::{
     messaging::{
-        AmqpAnnotationKey, AmqpAnnotations, AmqpApplicationProperties, AmqpMessage, AmqpMessageBody,
+        builders::AmqpMessageBuilder, AmqpAnnotationKey, AmqpAnnotations,
+        AmqpApplicationProperties, AmqpMessage, AmqpMessageBody,
     },
     value::{AmqpOrderedMap, AmqpValue},
     Deserializable,
@@ -28,10 +29,37 @@ pub struct RustAmqpMessage {
     inner: AmqpMessage,
 }
 
+pub struct RustAmqpMessageBuilder {
+    inner: AmqpMessageBuilder,
+}
+
 impl RustAmqpMessage {
     pub fn get(&self) -> &AmqpMessage {
         &self.inner
     }
+}
+
+#[no_mangle]
+extern "C" fn messagebuilder_create() -> *mut RustAmqpMessageBuilder {
+    Box::into_raw(Box::new(RustAmqpMessageBuilder {
+        inner: AmqpMessage::builder(),
+    }))
+}
+
+#[no_mangle]
+extern "C" fn messagebuilder_destroy(message_builder: *mut RustAmqpMessageBuilder) {
+    unsafe {
+        mem::drop(Box::from_raw(message_builder));
+    }
+}
+
+#[no_mangle]
+extern "C" fn messagebuilder_build_and_destroy(
+    message_builder: *mut RustAmqpMessageBuilder,
+) -> *mut RustAmqpMessage {
+    let message_builder = unsafe { Box::from_raw(message_builder) };
+    let message = message_builder.inner.build();
+    Box::into_raw(Box::new(RustAmqpMessage { inner: message }))
 }
 
 #[no_mangle]
@@ -45,6 +73,29 @@ extern "C" fn message_create() -> *mut RustAmqpMessage {
 extern "C" fn message_destroy(message: *mut RustAmqpMessage) {
     unsafe {
         mem::drop(Box::from_raw(message));
+    }
+}
+
+#[no_mangle]
+extern "C" fn message_deserialize(
+    data: *const u8,
+    count: usize,
+    message: *mut *mut RustAmqpMessage,
+) -> i32 {
+    let data = unsafe { std::slice::from_raw_parts(data, count) };
+    let val = AmqpMessage::decode(data);
+    match val {
+        Ok(m) => {
+            unsafe {
+                *message = Box::into_raw(Box::new(RustAmqpMessage { inner: m }));
+            }
+            0
+        }
+        Err(err) => {
+            warn!("Failed to deserialize message: {:?}", err);
+            println!("Failed to deserialize message: {:?}", err);
+            1
+        }
     }
 }
 
@@ -207,126 +258,6 @@ extern "C" fn message_get_footer(
 }
 
 #[no_mangle]
-extern "C" fn message_set_delivery_annotations(
-    message: *mut RustAmqpMessage,
-    delivery_annotations: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let delivery_annotations = unsafe { &*delivery_annotations };
-    if let AmqpValue::Map(map) = &delivery_annotations.inner {
-        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
-            .iter()
-            .map(|f| match f.0 {
-                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
-                _ => panic!("Invalid message annotation key type"),
-            })
-            .collect();
-        message
-            .inner
-            .set_delivery_annotations(AmqpAnnotations(amqp_map));
-        return 0;
-    }
-    1
-}
-
-#[no_mangle]
-extern "C" fn message_set_message_annotations(
-    message: *mut RustAmqpMessage,
-    message_annotations: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let message_annotations = unsafe { &*message_annotations };
-    if let AmqpValue::Map(map) = &message_annotations.inner {
-        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
-            .iter()
-            .map(|f| match f.0 {
-                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
-                _ => panic!("Invalid message annotation key type"),
-            })
-            .collect();
-        message
-            .inner
-            .set_message_annotations(AmqpAnnotations(amqp_map));
-        return 0;
-    }
-    1
-}
-
-#[no_mangle]
-extern "C" fn message_set_application_properties(
-    message: *mut RustAmqpMessage,
-    application_properties: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let application_properties = unsafe { &*application_properties };
-    if let AmqpValue::Map(map) = &application_properties.inner {
-        let amqp_map: AmqpOrderedMap<String, AmqpValue> = map
-            .iter()
-            .map(|f| {
-                (
-                    match f.0 {
-                        AmqpValue::String(s) => s,
-                        _ => panic!("Application Properties key must be a string."),
-                    },
-                    f.1.clone(),
-                )
-            })
-            .collect();
-        message
-            .inner
-            .set_application_properties(AmqpApplicationProperties(amqp_map));
-        return 0;
-    }
-    1
-}
-
-#[no_mangle]
-extern "C" fn message_set_footer(
-    message: *mut RustAmqpMessage,
-    footer: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let footer = unsafe { &*footer };
-    if let AmqpValue::Map(map) = &footer.inner {
-        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
-            .iter()
-            .map(|f| match f.0 {
-                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
-                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
-                _ => panic!("Invalid message annotation key type"),
-            })
-            .collect();
-        message.inner.set_footer(AmqpAnnotations(amqp_map));
-        return 0;
-    }
-    1
-}
-
-#[no_mangle]
-extern "C" fn message_set_header(
-    message: *mut RustAmqpMessage,
-    message_header: *const RustMessageHeader,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let header = unsafe { &*message_header };
-    message.inner.set_header(header.get().clone());
-    0
-}
-
-#[no_mangle]
-extern "C" fn message_set_properties(
-    message: *mut RustAmqpMessage,
-    message_properties: *const RustMessageProperties,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let properties = unsafe { &*message_properties };
-    message.inner.set_properties(properties.inner.clone());
-    0
-}
-
-#[no_mangle]
 extern "C" fn message_get_body_type(
     message: *const RustAmqpMessage,
     body_type: &mut RustAmqpMessageBodyType,
@@ -408,7 +339,7 @@ extern "C" fn message_get_body_amqp_sequence_in_place(
 }
 
 #[no_mangle]
-extern "C" fn message_get_body_amqp_value_in_place(
+unsafe extern "C" fn message_get_body_amqp_value_in_place(
     message: *const RustAmqpMessage,
     data: *mut *mut RustAmqpValue,
 ) -> i32 {
@@ -425,64 +356,177 @@ extern "C" fn message_get_body_amqp_value_in_place(
 }
 
 #[no_mangle]
-extern "C" fn message_add_body_amqp_data(
-    message: *mut RustAmqpMessage,
+unsafe extern "C" fn messagebuilder_set_delivery_annotations(
+    message_builder: *mut RustAmqpMessageBuilder,
+    delivery_annotations: *const RustAmqpValue,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let delivery_annotations = unsafe { &*delivery_annotations };
+    if let AmqpValue::Map(map) = &delivery_annotations.inner {
+        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
+            .iter()
+            .map(|f| match f.0 {
+                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
+                _ => panic!("Invalid message annotation key type"),
+            })
+            .collect();
+        Box::into_raw(Box::new(RustAmqpMessageBuilder {
+            inner: message_builder
+                .inner
+                .with_delivery_annotations(AmqpAnnotations(amqp_map)),
+        }))
+    } else {
+        std::ptr::null_mut()
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_set_message_annotations(
+    message_builder: *mut RustAmqpMessageBuilder,
+    message_annotations: *const RustAmqpValue,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let message_annotations = unsafe { &*message_annotations };
+    if let AmqpValue::Map(map) = &message_annotations.inner {
+        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
+            .iter()
+            .map(|f| match f.0 {
+                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
+                _ => panic!("Invalid message annotation key type"),
+            })
+            .collect();
+        Box::into_raw(Box::new(RustAmqpMessageBuilder {
+            inner: message_builder
+                .inner
+                .with_message_annotations(AmqpAnnotations(amqp_map)),
+        }))
+    } else {
+        std::ptr::null_mut()
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_set_application_properties(
+    message_builder: *mut RustAmqpMessageBuilder,
+    application_properties: *const RustAmqpValue,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let application_properties = unsafe { &*application_properties };
+    if let AmqpValue::Map(map) = &application_properties.inner {
+        let amqp_map: AmqpOrderedMap<String, AmqpValue> = map
+            .iter()
+            .map(|f| {
+                (
+                    match f.0 {
+                        AmqpValue::String(s) => s,
+                        _ => panic!("Application Properties key must be a string."),
+                    },
+                    f.1.clone(),
+                )
+            })
+            .collect();
+        Box::into_raw(Box::new(RustAmqpMessageBuilder {
+            inner: message_builder
+                .inner
+                .with_application_properties(AmqpApplicationProperties(amqp_map)),
+        }))
+    } else {
+        std::ptr::null_mut()
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_set_footer(
+    message_builder: *mut RustAmqpMessageBuilder,
+    footer: *const RustAmqpValue,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let footer = unsafe { &*footer };
+    if let AmqpValue::Map(map) = &footer.inner {
+        let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> = map
+            .iter()
+            .map(|f| match f.0 {
+                AmqpValue::Symbol(s) => (AmqpAnnotationKey::Symbol(s.clone()), f.1.clone()),
+                AmqpValue::ULong(u) => (AmqpAnnotationKey::Ulong(u), f.1.clone()),
+                _ => panic!("Invalid message annotation key type"),
+            })
+            .collect();
+        Box::into_raw(Box::new(RustAmqpMessageBuilder {
+            inner: message_builder.inner.with_footer(AmqpAnnotations(amqp_map)),
+        }))
+    } else {
+        std::ptr::null_mut()
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_set_header(
+    message_builder: *mut RustAmqpMessageBuilder,
+    message_header: *const RustMessageHeader,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let header = &*message_header;
+    Box::into_raw(Box::new(RustAmqpMessageBuilder {
+        inner: message_builder.inner.with_header(header.get().clone()),
+    }))
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_set_properties(
+    message_builder: *mut RustAmqpMessageBuilder,
+    message_properties: *const RustMessageProperties,
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let properties = &*message_properties;
+    Box::into_raw(Box::new(RustAmqpMessageBuilder {
+        inner: message_builder
+            .inner
+            .with_properties(properties.inner.clone()),
+    }))
+}
+
+#[no_mangle]
+unsafe extern "C" fn messagebuilder_add_body_amqp_data(
+    message_builder: *mut RustAmqpMessageBuilder,
     data: *const u8,
     count: usize,
-) -> i32 {
-    let message = unsafe { &mut *message };
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
     let mut vec = Vec::new();
-    unsafe {
-        vec.extend_from_slice(std::slice::from_raw_parts(data, count));
-    }
-    message.inner.add_message_body_binary(&vec);
-    0
+    vec.extend_from_slice(std::slice::from_raw_parts(data, count));
+    Box::into_raw(Box::new(RustAmqpMessageBuilder {
+        inner: message_builder.inner.add_message_body_binary(vec),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn message_add_body_amqp_sequence(
-    message: *mut RustAmqpMessage,
+unsafe extern "C" fn messagebuilder_add_body_amqp_sequence(
+    message_builder: *mut RustAmqpMessageBuilder,
     data: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let data = unsafe { &*data };
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let data = &*data;
     if let AmqpValue::List(list) = &data.inner {
-        message.inner.add_message_body_sequence(list.clone());
-        return 0;
+        Box::into_raw(Box::new(RustAmqpMessageBuilder {
+            inner: message_builder
+                .inner
+                .add_message_body_sequence(list.clone()),
+        }))
+    } else {
+        std::ptr::null_mut()
     }
-    1
 }
 
 #[no_mangle]
-extern "C" fn message_set_body_amqp_value(
-    message: *mut RustAmqpMessage,
+unsafe extern "C" fn messagebuilder_set_body_amqp_value(
+    message_builder: *mut RustAmqpMessageBuilder,
     data: *const RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &mut *message };
-    let data = unsafe { &*data };
-    message.inner.set_message_body(data.inner.clone());
-    0
-}
-
-#[no_mangle]
-extern "C" fn message_deserialize(
-    data: *const u8,
-    count: usize,
-    message: *mut *mut RustAmqpMessage,
-) -> i32 {
-    let data = unsafe { std::slice::from_raw_parts(data, count) };
-    let val = AmqpMessage::decode(data);
-    match val {
-        Ok(m) => {
-            unsafe {
-                *message = Box::into_raw(Box::new(RustAmqpMessage { inner: m }));
-            }
-            0
-        }
-        Err(err) => {
-            warn!("Failed to deserialize message: {:?}", err);
-            println!("Failed to deserialize message: {:?}", err);
-            1
-        }
-    }
+) -> *mut RustAmqpMessageBuilder {
+    let message_builder = Box::from_raw(message_builder);
+    let data = &*data;
+    Box::into_raw(Box::new(RustAmqpMessageBuilder {
+        inner: message_builder.inner.with_body(data.inner.clone()),
+    }))
 }

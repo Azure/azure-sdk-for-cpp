@@ -42,6 +42,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     message_destroy(value);
   }
   // @endcond
+
+#if ENABLE_RUST_AMQP
+  void UniqueHandleHelper<MessageBuilderImplementation>::FreeAmqpMessageBuilder(
+      MessageBuilderImplementation* value)
+  {
+    messagebuilder_destroy(value);
+  }
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 using namespace Azure::Core::Amqp::_detail;
@@ -300,15 +308,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   UniqueMessageHandle _detail::AmqpMessageFactory::ToImplementation(AmqpMessage const& message)
   {
-    UniqueMessageHandle rv(message_create());
-
 #if ENABLE_UAMQP
+    UniqueMessageHandle builder(message_create());
+
     // AMQP 1.0 specifies a message format of 0, but EventHubs uses other values.
     if (message_set_message_format(rv.get(), message.MessageFormat))
     {
       throw std::runtime_error("Could not set destination message format.");
     }
-#endif
     if (message_set_header(
             rv.get(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()))
     {
@@ -424,6 +431,119 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       default:
         throw std::runtime_error("Unknown message body type.");
     }
+#else
+    UniqueMessageBuilderHandle builder(messagebuilder_create());
+    builder.reset(messagebuilder_set_header(
+        builder.release(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()));
+    if (!builder)
+    {
+      throw std::runtime_error("Could not set message header.");
+    }
+    builder.reset(messagebuilder_set_properties(
+        builder.release(),
+        _detail::MessagePropertiesFactory::ToImplementation(message.Properties).get()));
+    if (!builder)
+    {
+      throw std::runtime_error("Could not set message properties.");
+    }
+    if (!message.DeliveryAnnotations.empty())
+    {
+      builder.reset(messagebuilder_set_delivery_annotations(
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue())));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set delivery annotations.");
+      }
+    }
+
+    if (!message.MessageAnnotations.empty())
+    {
+      builder.reset(messagebuilder_set_message_annotations(
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue())));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set message annotations.");
+      }
+    }
+
+    if (!message.ApplicationProperties.empty())
+    {
+      AmqpMap appProperties;
+      for (auto const& val : message.ApplicationProperties)
+      {
+        if ((val.second.GetType() == AmqpValueType::List)
+            || (val.second.GetType() == AmqpValueType::Map)
+            || (val.second.GetType() == AmqpValueType::Composite)
+            || (val.second.GetType() == AmqpValueType::Described))
+        {
+          throw std::runtime_error(
+              "Message Application Property values must be simple value types");
+        }
+        appProperties.emplace(val);
+      }
+      builder.reset(messagebuilder_set_application_properties(
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue())));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set application properties.");
+      }
+    }
+
+    if (!message.Footer.empty())
+    {
+      builder.reset(messagebuilder_set_footer(
+          builder.release(),
+          _detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue())));
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set message annotations.");
+      }
+    }
+    switch (message.BodyType)
+    {
+      case MessageBodyType::None:
+        break;
+      case MessageBodyType::Data:
+        for (auto const& binaryVal : message.m_binaryDataBody)
+        {
+          builder.reset(messagebuilder_add_body_amqp_data(
+              builder.release(), binaryVal.data(), binaryVal.size()));
+          if (!builder)
+          {
+            throw std::runtime_error("Could not set message body AMQP sequence value.");
+          }
+        }
+        break;
+      case MessageBodyType::Sequence:
+        for (auto const& sequenceVal : message.m_amqpSequenceBody)
+        {
+          builder.reset(messagebuilder_add_body_amqp_sequence(
+              builder.release(),
+              _detail::AmqpValueFactory::ToImplementation(sequenceVal.AsAmqpValue())));
+          if (!builder)
+          {
+            throw std::runtime_error("Could not set message body AMQP sequence value.");
+          }
+        }
+        break;
+      case MessageBodyType::Value:
+        builder.reset(messagebuilder_set_body_amqp_value(
+            builder.release(),
+            _detail::AmqpValueFactory::ToImplementation(message.m_amqpValueBody)));
+        if (!builder)
+        {
+          throw std::runtime_error("Could not set message body AMQP value.");
+        }
+        break;
+      case MessageBodyType::Invalid:
+      default:
+        throw std::runtime_error("Unknown message body type.");
+    }
+    UniqueMessageHandle rv{messagebuilder_build_and_destroy(builder.release())};
+#endif
     return rv;
   }
 

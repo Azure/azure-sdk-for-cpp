@@ -19,9 +19,9 @@ impl RustAmqpSource {
         Self { inner: source }
     }
 
-        pub(crate) fn get(&self) -> &AmqpSource {
-            &self.inner
-        }
+    pub(crate) fn get(&self) -> &AmqpSource {
+        &self.inner
+    }
 }
 
 #[repr(C)]
@@ -391,124 +391,112 @@ extern "C" fn source_builder_build(
 }
 
 #[no_mangle]
-extern "C" fn source_set_address(
+unsafe extern "C" fn source_set_address(
     builder: *mut RustAmqpSourceBuilder,
     address: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let address = unsafe { &*address };
     match &address.inner {
-        AmqpValue::String(address) => {
-            builder.inner.with_address(address.clone());
-            0
-        }
+        AmqpValue::String(address) => Box::into_raw(Box::new(RustAmqpSourceBuilder {
+            inner: builder.inner.with_address(address.clone()),
+        })),
         _ => {
             warn!("Invalid address type: {:?}", address.inner);
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn source_set_durable(
+unsafe extern "C" fn source_set_durable(
     builder: *mut RustAmqpSourceBuilder,
     durable: RustTerminusDurability,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    match durable {
-        RustTerminusDurability::None => {
-            builder
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpSourceBuilder {
+        inner: match durable {
+            RustTerminusDurability::None => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::None);
-            0
-        }
-        RustTerminusDurability::Configuration => {
-            builder
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::None),
+            RustTerminusDurability::Configuration => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::Configuration);
-            0
-        }
-        RustTerminusDurability::UnsettledState => {
-            builder
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::Configuration),
+            RustTerminusDurability::UnsettledState => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::UnsettledState);
-            0
-        }
-    }
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::UnsettledState),
+        },
+    }))
 }
 
 #[no_mangle]
-extern "C" fn source_set_expiry_policy(
+unsafe extern "C" fn source_set_expiry_policy(
     builder: *mut RustAmqpSourceBuilder,
     expiry_policy: RustExpiryPolicy,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    match expiry_policy {
-        RustExpiryPolicy::LinkDetach => {
-            builder
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpSourceBuilder {
+        inner: match expiry_policy {
+            RustExpiryPolicy::LinkDetach => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::LinkDetach);
-            0
-        }
-        RustExpiryPolicy::SessionEnd => {
-            builder
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::LinkDetach),
+            RustExpiryPolicy::SessionEnd => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::SessionEnd);
-            0
-        }
-        RustExpiryPolicy::ConnectionClose => {
-            builder.inner.with_expiry_policy(
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::SessionEnd),
+            RustExpiryPolicy::ConnectionClose => builder.inner.with_expiry_policy(
                 azure_core_amqp::messaging::TerminusExpiryPolicy::ConnectionClose,
-            );
-            0
-        }
-        RustExpiryPolicy::Never => {
-            builder
+            ),
+            RustExpiryPolicy::Never => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::Never);
-            0
-        }
-    }
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::Never),
+        },
+    }))
 }
 
 #[no_mangle]
-extern "C" fn source_set_timeout(builder: *mut RustAmqpSourceBuilder, timeout: u32) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_timeout(timeout);
-    0
+unsafe extern "C" fn source_set_timeout(
+    builder: *mut RustAmqpSourceBuilder,
+    timeout: u32,
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpSourceBuilder {
+        inner: builder.inner.with_timeout(timeout),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn source_set_dynamic(builder: *mut RustAmqpSourceBuilder, dynamic: bool) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_dynamic(dynamic);
-    0
+unsafe extern "C" fn source_set_dynamic(
+    builder: *mut RustAmqpSourceBuilder,
+    dynamic: bool,
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpSourceBuilder {
+        inner: builder.inner.with_dynamic(dynamic),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn source_set_distribution_mode(
+unsafe extern "C" fn source_set_distribution_mode(
     builder: *mut RustAmqpSourceBuilder,
     distribution_mode: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let distribution_mode = unsafe { &*distribution_mode };
     match &distribution_mode.inner {
         AmqpValue::Symbol(s) => match s.0.as_str() {
-            "move" => {
-                builder
+            "move" => Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder
                     .inner
-                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Move);
-                0
-            }
-            "copy" => {
-                builder
+                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Move),
+            })),
+            "copy" => Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder
                     .inner
-                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Copy);
-                0
-            }
+                    .with_distribution_mode(azure_core_amqp::messaging::DistributionMode::Copy),
+            })),
             _ => {
                 warn!("Invalid distribution mode: {}", s.0);
-                1
+                std::ptr::null_mut()
             }
         },
         _ => {
@@ -516,17 +504,17 @@ extern "C" fn source_set_distribution_mode(
                 "Invalid distribution mode type: {:?}",
                 distribution_mode.inner
             );
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn source_set_filter(
+unsafe extern "C" fn source_set_filter(
     builder: *mut RustAmqpSourceBuilder,
     filter: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let filter = unsafe { &*filter };
     match &filter.inner {
         AmqpValue::Map(filter) => {
@@ -535,56 +523,47 @@ extern "C" fn source_set_filter(
                 .into_iter()
                 .map(|f| (f.0.into(), f.1.clone()))
                 .collect();
-            builder.inner.with_filter(map);
-            0
+            Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder.inner.with_filter(map),
+            }))
         }
         _ => {
             warn!("Invalid filter type: {:?}", filter.inner);
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn source_set_default_outcome(
+unsafe extern "C" fn source_set_default_outcome(
     builder: *mut RustAmqpSourceBuilder,
     default_outcome: RustDeliveryOutcome,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    match default_outcome {
-        RustDeliveryOutcome::Accepted => {
-            builder
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpSourceBuilder {
+        inner: match default_outcome {
+            RustDeliveryOutcome::Accepted => builder
                 .inner
-                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Accepted);
-            0
-        }
-        RustDeliveryOutcome::Rejected => {
-            builder
+                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Accepted),
+            RustDeliveryOutcome::Rejected => builder
                 .inner
-                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Rejected);
-            0
-        }
-        RustDeliveryOutcome::Released => {
-            builder
+                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Rejected),
+            RustDeliveryOutcome::Released => builder
                 .inner
-                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Released);
-            0
-        }
-        RustDeliveryOutcome::Modified => {
-            builder
+                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Released),
+            RustDeliveryOutcome::Modified => builder
                 .inner
-                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Modified);
-            0
-        }
-    }
+                .with_default_outcome(azure_core_amqp::messaging::AmqpOutcome::Modified),
+        },
+    }))
 }
 
 #[no_mangle]
-extern "C" fn source_set_dynamic_node_properties(
+unsafe extern "C" fn source_set_dynamic_node_properties(
     builder: *mut RustAmqpSourceBuilder,
     properties: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let properties = unsafe { &*properties };
     match &properties.inner {
         AmqpValue::Map(properties) => {
@@ -604,25 +583,26 @@ extern "C" fn source_set_dynamic_node_properties(
                     )
                 })
                 .collect();
-            builder.inner.with_dynamic_node_properties(map);
-            0
+            Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder.inner.with_dynamic_node_properties(map),
+            }))
         }
         _ => {
             warn!(
                 "Invalid dynamic node properties type: {:?}",
                 properties.inner
             );
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn source_set_outcomes(
+unsafe extern "C" fn source_set_outcomes(
     builder: *mut RustAmqpSourceBuilder,
     outcomes: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let outcomes = unsafe { &*outcomes };
     match &outcomes.inner {
         AmqpValue::List(outcomes) => {
@@ -638,8 +618,9 @@ extern "C" fn source_set_outcomes(
                     }
                 })
                 .collect();
-            builder.inner.with_outcomes(list);
-            0
+            Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder.inner.with_outcomes(list),
+            }))
         }
         AmqpValue::Array(outcomes) => {
             let list: Vec<azure_core_amqp::value::AmqpSymbol> = outcomes
@@ -653,22 +634,23 @@ extern "C" fn source_set_outcomes(
                     }
                 })
                 .collect();
-            builder.inner.with_outcomes(list);
-            0
+            Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder.inner.with_outcomes(list),
+            }))
         }
         _ => {
             warn!("Invalid outcomes type: {:?}", outcomes.inner);
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn source_set_capabilities(
+unsafe extern "C" fn source_set_capabilities(
     builder: *mut RustAmqpSourceBuilder,
     capabilities: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpSourceBuilder {
+    let builder = Box::from_raw(builder);
     let capabilities = unsafe { &*capabilities };
     match &capabilities.inner {
         AmqpValue::Array(capabilities) => {
@@ -683,12 +665,13 @@ extern "C" fn source_set_capabilities(
                     }
                 })
                 .collect();
-            builder.inner.with_capabilities(list);
-            0
+            Box::into_raw(Box::new(RustAmqpSourceBuilder {
+                inner: builder.inner.with_capabilities(list),
+            }))
         }
         _ => {
             warn!("Invalid capabilities type: {:?}", capabilities.inner);
-            1
+            std::ptr::null_mut()
         }
     }
 }

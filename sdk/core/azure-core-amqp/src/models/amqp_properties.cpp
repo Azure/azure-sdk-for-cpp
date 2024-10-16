@@ -188,10 +188,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     UniquePropertiesHandle returnValue(properties_create());
-#elif ENABLE_RUST_AMQP
-    _detail::UniqueMessagePropertiesBuilderHandle returnValue{properties_builder_create()};
-#endif
-
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
@@ -213,7 +209,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.UserId.HasValue())
     {
-#if ENABLE_UAMQP
       amqp_binary value{
           properties.UserId.Value().data(),
           static_cast<uint32_t>(properties.UserId.Value().size())};
@@ -221,22 +216,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         throw std::runtime_error("Could not set user id");
       }
-#elif ENABLE_RUST_AMQP
-      if (properties_set_user_id(
-              returnValue.get(),
-              properties.UserId.Value().data(),
-              static_cast<uint32_t>(properties.UserId.Value().size())))
-      {
-        throw std::runtime_error("Could not set user id");
-      }
-#endif
     }
 
     if (properties.To.HasValue())
     {
       if (properties_set_to(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
+              returnValue.get(), static_cast<std::string>(properties.To.Value()).c_str()))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -324,16 +309,139 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-#if ENABLE_RUST_AMQP
+    return returnValue;
+#elif ENABLE_RUST_AMQP
+    _detail::UniqueMessagePropertiesBuilderHandle builder{properties_builder_create()};
+
+    if (properties.MessageId.HasValue())
+    {
+      builder.reset(properties_set_message_id(
+              builder.release(),
+              _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
+      ;if (!builder) {
+        throw std::runtime_error("Could not set message id");
+      }
+    }
+    if (properties.CorrelationId.HasValue())
+    {
+builder.reset(properties_set_correlation_id(
+              builder.release(),
+              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value())))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set correlation id");
+      }
+    }
+
+    if (properties.UserId.HasValue())
+    {
+      builder.reset(properties_set_user_id(
+              builder.release(),
+              properties.UserId.Value().data(),
+              static_cast<uint32_t>(properties.UserId.Value().size())))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set user id");
+      }
+    }
+
+    if (properties.To.HasValue())
+    {
+      builder.reset(properties_set_to(
+              builder.release(),
+              static_cast<std::string>(properties.To.Value()).c_str()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set to");
+      }
+    }
+
+    if (properties.Subject.HasValue())
+    {
+      builder.reset(properties_set_subject(builder.release(), properties.Subject.Value().data()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set subject");
+      }
+    }
+
+    if (properties.ReplyTo.HasValue())
+    {
+builder.reset(properties_set_reply_to(
+              builder.release(),
+              _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set reply to");
+      }
+    }
+
+    if (properties.ContentType.HasValue())
+    {
+      builder.reset(properties_set_content_type(builder.release(), properties.ContentType.Value().data()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set content type");
+      }
+    }
+
+    if (properties.ContentEncoding.HasValue())
+    {
+      builder.reset(properties_set_content_encoding(
+              builder.release(), properties.ContentEncoding.Value().data()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set content type");
+      }
+    }
+
+    if (properties.AbsoluteExpiryTime.HasValue())
+    {
+      auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+          properties.AbsoluteExpiryTime.Value().time_since_epoch())};
+
+      builder.reset(properties_set_absolute_expiry_time(builder.release(), timeStamp.count()))
+     ;if(!builder){
+        throw std::runtime_error("Could not set absolute expiry time");
+      }
+    }
+
+    if (properties.CreationTime.HasValue())
+    {
+      auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+          properties.CreationTime.Value().time_since_epoch())};
+
+      builder.reset(properties_set_creation_time(builder.release(), timeStamp.count()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set absolute expiry time");
+      }
+    }
+
+    if (properties.GroupId.HasValue())
+    {
+      builder.reset(properties_set_group_id(builder.release(), properties.GroupId.Value().data()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set group id");
+      }
+    }
+
+    if (properties.GroupSequence.HasValue())
+    {
+      builder.reset(properties_set_group_sequence(builder.release(), properties.GroupSequence.Value()))
+      ; if (!builder) {
+        throw std::runtime_error("Could not set group sequence");
+      }
+    }
+
+    if (properties.ReplyToGroupId.HasValue())
+    {
+      builder.reset(properties_set_reply_to_group_id(
+              builder.release(), properties.ReplyToGroupId.Value().data()))
+      ; if (!builder){
+        throw std::runtime_error("Could not set reply-to group id");
+      }
+    }
+
     // Now that we've set all the builder parameters, actually build the header.
     Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
-    if (properties_build(returnValue.get(), &implementation))
+    if (properties_build(builder.release(), &implementation))
     {
       throw std::runtime_error("Could not build header.");
     }
     return _detail::UniquePropertiesHandle{implementation};
-#elif ENABLE_UAMQP
-    return returnValue;
 #endif
   }
 

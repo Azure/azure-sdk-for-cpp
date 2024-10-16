@@ -28,7 +28,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<RustAmqpMessageSender>::FreeMessageSender(RustAmqpMessageSender* value)
   {
     amqpmessagesender_destroy(value);
-  }
+  } 
 
   template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptions>
   {
