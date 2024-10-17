@@ -10,26 +10,35 @@
 
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace _detail {
-  // NOTE: Treat Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent() as _internal -
-  // it is being/has been used by eventhubs.
+namespace Azure { namespace Core { namespace Http { namespace _internal {
+  /**
+   * @brief Telemetry User-Agent string generator.
+   *
+   */
   class UserAgentGenerator {
   public:
+    /**
+     * @brief Generates User-Agent string for telemetry.
+     *
+     * @param componentName the name of the SDK component.
+     * @param componentVersion the version of the SDK component.
+     * @param applicationId user application ID
+     * @param cplusplusValue value of the `__cplusplus` macro.
+     *
+     * @return User-Agent string.
+     *
+     * @see https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+     *
+     * @note Values for @a cplusplusValue: `__cplusplus` when value comes from the code being built
+     * after the Azure SDK has been built. `0L` when being sent from sample code, `-1L` when being
+     * sent from tests code, `-2L` when being sent from the SDK code, and `-3L` when being sent from
+     * the SDK code for compatibility reasons.
+     *
+     */
     static std::string GenerateUserAgent(
         std::string const& componentName,
         std::string const& componentVersion,
         std::string const& applicationId,
         long cplusplusValue);
-
-    [[deprecated("Use an overload with additional cplusplusValue parameter.")]] static std::string
-    GenerateUserAgent(
-        std::string const& componentName,
-        std::string const& componentVersion,
-        std::string const& applicationId)
-    {
-      // The value of -3L is to signify that an old version of signature has been used (older
-      // version of eventhubs); we can't rely on cpp version reported by it.
-      return GenerateUserAgent(componentName, componentVersion, applicationId, -3L);
-    }
   };
-}}}} // namespace Azure::Core::Http::_detail
+}}}} // namespace Azure::Core::Http::_internal
