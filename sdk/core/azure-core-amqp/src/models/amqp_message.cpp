@@ -19,6 +19,7 @@
 #include <azure_uamqp_c/message.h>
 using NativeMessageBodyType = MESSAGE_BODY_TYPE;
 #elif ENABLE_RUST_AMQP
+#include <azure/core/amqp/internal/common/runtime_context.hpp>
 using namespace Azure::Core::Amqp::_detail::RustInterop;
 
 constexpr auto AMQP_TYPE_DESCRIBED = RustAmqpValueType::AmqpValueDescribed;
@@ -56,7 +57,9 @@ using namespace Azure::Core::Amqp::_detail;
 using namespace Azure::Core::Amqp::Models::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-
+#if ENABLE_RUST_AMQP
+  using namespace Azure::Core::Amqp::Common::_detail;
+#endif
   namespace {
     UniqueMessageHeaderHandle GetHeaderFromMessage(MessageImplementation* message)
     {
@@ -433,39 +436,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 #else
     UniqueMessageBuilderHandle builder(messagebuilder_create());
-    builder.reset(messagebuilder_set_header(
-        builder.release(), _detail::MessageHeaderFactory::ToImplementation(message.Header).get()));
-    if (!builder)
-    {
-      throw std::runtime_error("Could not set message header.");
-    }
-    builder.reset(messagebuilder_set_properties(
-        builder.release(),
-        _detail::MessagePropertiesFactory::ToImplementation(message.Properties).get()));
-    if (!builder)
-    {
-      throw std::runtime_error("Could not set message properties.");
-    }
+
+    invoke_builder_api(
+        messagebuilder_set_header,
+        builder,
+        _detail::MessageHeaderFactory::ToImplementation(message.Header).get());
+    invoke_builder_api(
+        messagebuilder_set_properties,
+        builder,
+        _detail::MessagePropertiesFactory::ToImplementation(message.Properties).get());
     if (!message.DeliveryAnnotations.empty())
     {
-      builder.reset(messagebuilder_set_delivery_annotations(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set delivery annotations.");
-      }
+      invoke_builder_api(
+          messagebuilder_set_delivery_annotations,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue()));
     }
-
     if (!message.MessageAnnotations.empty())
     {
-      builder.reset(messagebuilder_set_message_annotations(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set message annotations.");
-      }
+      invoke_builder_api(
+          messagebuilder_set_message_annotations,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue()));
     }
 
     if (!message.ApplicationProperties.empty())
@@ -483,24 +475,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         appProperties.emplace(val);
       }
-      builder.reset(messagebuilder_set_application_properties(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set application properties.");
-      }
+      invoke_builder_api(
+          messagebuilder_set_application_properties,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue()));
     }
 
     if (!message.Footer.empty())
     {
-      builder.reset(messagebuilder_set_footer(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set message annotations.");
-      }
+      invoke_builder_api(
+          messagebuilder_set_footer,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue()));
     }
     switch (message.BodyType)
     {
@@ -509,34 +495,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case MessageBodyType::Data:
         for (auto const& binaryVal : message.m_binaryDataBody)
         {
-          builder.reset(messagebuilder_add_body_amqp_data(
-              builder.release(), binaryVal.data(), binaryVal.size()));
-          if (!builder)
-          {
-            throw std::runtime_error("Could not set message body AMQP sequence value.");
-          }
+          invoke_builder_api(
+              messagebuilder_add_body_amqp_data, builder, binaryVal.data(), binaryVal.size());
         }
         break;
       case MessageBodyType::Sequence:
         for (auto const& sequenceVal : message.m_amqpSequenceBody)
         {
-          builder.reset(messagebuilder_add_body_amqp_sequence(
-              builder.release(),
-              _detail::AmqpValueFactory::ToImplementation(sequenceVal.AsAmqpValue())));
-          if (!builder)
-          {
-            throw std::runtime_error("Could not set message body AMQP sequence value.");
-          }
+          invoke_builder_api(
+              messagebuilder_add_body_amqp_sequence,
+              builder,
+              _detail::AmqpValueFactory::ToImplementation(sequenceVal.AsAmqpValue()));
         }
         break;
       case MessageBodyType::Value:
-        builder.reset(messagebuilder_set_body_amqp_value(
-            builder.release(),
-            _detail::AmqpValueFactory::ToImplementation(message.m_amqpValueBody)));
-        if (!builder)
-        {
-          throw std::runtime_error("Could not set message body AMQP value.");
-        }
+        invoke_builder_api(
+            messagebuilder_set_body_amqp_value,
+            builder,
+            _detail::AmqpValueFactory::ToImplementation(message.m_amqpValueBody));
         break;
       case MessageBodyType::Invalid:
       default:

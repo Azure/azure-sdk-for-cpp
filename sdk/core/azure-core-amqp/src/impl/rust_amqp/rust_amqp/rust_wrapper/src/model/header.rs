@@ -8,7 +8,7 @@ use azure_core_amqp::{
     value::{AmqpComposite, AmqpDescriptor, AmqpValue},
 };
 use std::mem;
-
+use crate::call_context::{RustCallContext, call_context_from_ptr_mut};
 use super::value::RustAmqpValue;
 
 pub struct RustMessageHeader {
@@ -99,9 +99,11 @@ extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
 
 #[no_mangle]
 unsafe extern "C" fn header_set_durable(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessageHeaderBuilder,
     durable: bool,
 ) -> *mut RustMessageHeaderBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessageHeaderBuilder {
         inner: builder.inner.with_durable(durable),
@@ -110,9 +112,11 @@ unsafe extern "C" fn header_set_durable(
 
 #[no_mangle]
 unsafe extern "C" fn header_set_priority(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessageHeaderBuilder,
     priority: u8,
 ) -> *mut RustMessageHeaderBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessageHeaderBuilder {
         inner: builder.inner.with_priority(priority),
@@ -121,9 +125,11 @@ unsafe extern "C" fn header_set_priority(
 
 #[no_mangle]
 unsafe extern "C" fn header_set_ttl(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessageHeaderBuilder,
     time_to_live: u64,
 ) -> *mut RustMessageHeaderBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessageHeaderBuilder {
         inner: builder
@@ -134,9 +140,11 @@ unsafe extern "C" fn header_set_ttl(
 
 #[no_mangle]
 unsafe extern "C" fn header_set_first_acquirer(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessageHeaderBuilder,
     first_acquirer: bool,
 ) -> *mut RustMessageHeaderBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessageHeaderBuilder {
         inner: builder.inner.with_first_acquirer(first_acquirer),
@@ -145,9 +153,11 @@ unsafe extern "C" fn header_set_first_acquirer(
 
 #[no_mangle]
 unsafe extern "C" fn header_set_delivery_count(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessageHeaderBuilder,
     delivery_count: u32,
 ) -> *mut RustMessageHeaderBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessageHeaderBuilder {
         inner: builder.inner.with_delivery_count(delivery_count),

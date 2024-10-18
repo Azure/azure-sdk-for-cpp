@@ -13,6 +13,7 @@
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
 #elif ENABLE_RUST_AMQP
+#include <azure/core/amqp/internal/common/runtime_context.hpp>
 using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif
 
@@ -49,6 +50,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
 #if ENABLE_RUST_AMQP
+  using namespace Common::_detail;
   namespace _detail {
     using UniqueMessageHeaderBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
         Azure::Core::Amqp::_detail::HeaderBuilderImplementation>;
@@ -156,44 +158,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     _detail::UniqueMessageHeaderBuilderHandle builder{header_builder_create()};
     if (header.Durable)
     {
-      builder.reset(header_set_durable(builder.release(), header.Durable));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set durable value.");
-      }
+      invoke_builder_api(header_set_durable, builder, header.Durable);
     }
     if (header.Priority != 4)
     {
-      builder.reset(header_set_priority(builder.release(), header.Priority));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set priority value.");
-      }
+      invoke_builder_api(header_set_priority, builder, header.Priority);
     }
     if (header.TimeToLive.HasValue())
     {
-      builder.reset(header_set_ttl(builder.release(), header.TimeToLive.Value().count()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set header TTL.");
-      }
+      invoke_builder_api(header_set_ttl, builder, header.TimeToLive.Value().count());
     }
 
     if (header.IsFirstAcquirer)
     {
-      builder.reset(header_set_first_acquirer(builder.release(), header.IsFirstAcquirer));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set first acquirer value.");
-      }
+      invoke_builder_api(header_set_first_acquirer, builder, header.IsFirstAcquirer);
     }
     if (header.DeliveryCount != 0)
     {
-      builder.reset(header_set_delivery_count(builder.release(), header.DeliveryCount));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set delivery count value.");
-      }
+      invoke_builder_api(header_set_delivery_count, builder, header.DeliveryCount);
     }
 
     // Now that we've set all the builder parameters, actually build the header.

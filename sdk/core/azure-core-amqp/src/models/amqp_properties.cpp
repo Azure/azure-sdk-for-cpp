@@ -14,7 +14,9 @@
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 
 #elif ENABLE_RUST_AMQP
+#include <azure/core/amqp/internal/common/runtime_context.hpp>
 using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::Common::_detail;
 #endif // ENABLE_UAMQP
 #include <iomanip>
 #include <iostream>
@@ -316,85 +318,57 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.MessageId.HasValue())
     {
-      builder.reset(properties_set_message_id(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set message id");
-      }
+      invoke_builder_api(
+          properties_set_message_id,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value()));
     }
     if (properties.CorrelationId.HasValue())
     {
-      builder.reset(properties_set_correlation_id(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set correlation id");
-      }
+      invoke_builder_api(
+          properties_set_correlation_id,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value()));
     }
 
     if (properties.UserId.HasValue())
     {
-      builder.reset(properties_set_user_id(
-          builder.release(),
+      invoke_builder_api(
+          properties_set_user_id,
+          builder,
           properties.UserId.Value().data(),
-          static_cast<uint32_t>(properties.UserId.Value().size())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set user id");
-      }
+          static_cast<uint32_t>(properties.UserId.Value().size()));
     }
 
     if (properties.To.HasValue())
     {
-      builder.reset(properties_set_to(
-          builder.release(), static_cast<std::string>(properties.To.Value()).c_str()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set to");
-      }
+      invoke_builder_api(
+          properties_set_to, builder, static_cast<std::string>(properties.To.Value()).c_str());
     }
 
     if (properties.Subject.HasValue())
     {
-      builder.reset(properties_set_subject(builder.release(), properties.Subject.Value().data()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set subject");
-      }
+      invoke_builder_api(properties_set_subject, builder, properties.Subject.Value().data());
     }
 
     if (properties.ReplyTo.HasValue())
     {
-      builder.reset(properties_set_reply_to(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set reply to");
-      }
+      invoke_builder_api(
+          properties_set_reply_to,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value()));
     }
 
     if (properties.ContentType.HasValue())
     {
-      builder.reset(
-          properties_set_content_type(builder.release(), properties.ContentType.Value().data()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set content type");
-      }
+      invoke_builder_api(
+          properties_set_content_type, builder, properties.ContentType.Value().data());
     }
 
     if (properties.ContentEncoding.HasValue())
     {
-      builder.reset(properties_set_content_encoding(
-          builder.release(), properties.ContentEncoding.Value().data()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set content type");
-      }
+      invoke_builder_api(
+          properties_set_content_encoding, builder, properties.ContentEncoding.Value().data());
     }
 
     if (properties.AbsoluteExpiryTime.HasValue())
@@ -402,11 +376,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.AbsoluteExpiryTime.Value().time_since_epoch())};
 
-      builder.reset(properties_set_absolute_expiry_time(builder.release(), timeStamp.count()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set absolute expiry time");
-      }
+      invoke_builder_api(properties_set_absolute_expiry_time, builder, timeStamp.count());
     }
 
     if (properties.CreationTime.HasValue())
@@ -414,47 +384,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.CreationTime.Value().time_since_epoch())};
 
-      builder.reset(properties_set_creation_time(builder.release(), timeStamp.count()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set absolute expiry time");
-      }
+      invoke_builder_api(properties_set_creation_time, builder, timeStamp.count());
     }
 
     if (properties.GroupId.HasValue())
     {
-      builder.reset(properties_set_group_id(builder.release(), properties.GroupId.Value().data()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set group id");
-      }
+      invoke_builder_api(properties_set_group_id, builder, properties.GroupId.Value().data());
     }
 
     if (properties.GroupSequence.HasValue())
     {
-      builder.reset(
-          properties_set_group_sequence(builder.release(), properties.GroupSequence.Value()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set group sequence");
-      }
+      invoke_builder_api(properties_set_group_sequence, builder, properties.GroupSequence.Value());
     }
 
     if (properties.ReplyToGroupId.HasValue())
     {
-      builder.reset(properties_set_reply_to_group_id(
-          builder.release(), properties.ReplyToGroupId.Value().data()));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set reply-to group id");
-      }
+      invoke_builder_api(
+          properties_set_reply_to_group_id, builder, properties.ReplyToGroupId.Value().data());
     }
 
     // Now that we've set all the builder parameters, actually build the header.
     Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
-    if (properties_build(builder.release(), &implementation))
+    CallContext callContext;
+    if (properties_build(callContext.GetCallContext(), builder.release(), &implementation))
     {
-      throw std::runtime_error("Could not build header.");
+      throw std::runtime_error("Could not build header." + callContext.GetError());
     }
     return _detail::UniquePropertiesHandle{implementation};
 #endif
@@ -515,9 +469,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     Azure::Core::Amqp::_detail::PropertiesImplementation* handle;
-    if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &handle))
+    CallContext callContext;
+    if (amqpvalue_get_properties(
+            callContext.GetCallContext(),
+            _detail::AmqpValueFactory::ToImplementation(value),
+            &handle))
     {
-      throw std::runtime_error("Could not convert value to AMQP Properties.");
+      throw std::runtime_error(
+          "Could not convert value to AMQP Properties: " + callContext.GetError());
     }
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;

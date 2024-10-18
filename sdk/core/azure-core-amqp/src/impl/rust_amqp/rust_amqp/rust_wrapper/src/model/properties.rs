@@ -3,7 +3,11 @@
 
 // cspell: words amqp amqpvalue repr
 
-use crate::model::value::RustAmqpValue;
+use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
+    error_from_str,
+    model::value::RustAmqpValue,
+};
 use azure_core_amqp::{
     messaging::{builders::AmqpMessagePropertiesBuilder, AmqpMessageId, AmqpMessageProperties},
     value::{AmqpComposite, AmqpDescriptor, AmqpTimestamp, AmqpValue},
@@ -264,9 +268,11 @@ extern "C" fn properties_builder_destroy(properties: *mut RustMessagePropertiesB
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_message_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     message_id: *const RustAmqpValue,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let message_id = unsafe { &*message_id };
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
@@ -282,9 +288,11 @@ unsafe extern "C" fn properties_set_message_id(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_correlation_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     correlation_id: *const RustAmqpValue,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let correlation_id = unsafe { &*correlation_id };
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
@@ -302,10 +310,12 @@ unsafe extern "C" fn properties_set_correlation_id(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_user_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     value: *const u8,
     size: u32,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let value = unsafe { std::slice::from_raw_parts(value, size as usize) };
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
@@ -315,9 +325,11 @@ unsafe extern "C" fn properties_set_user_id(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_to(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     value: *const c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let value = unsafe { CStr::from_ptr(value) };
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
@@ -327,9 +339,11 @@ unsafe extern "C" fn properties_set_to(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_subject(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let subject = unsafe {
         std::ffi::CStr::from_ptr(string_value)
@@ -343,9 +357,11 @@ unsafe extern "C" fn properties_set_subject(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_reply_to(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     value: *const RustAmqpValue,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let value = unsafe { &*value };
     if let AmqpValue::String(reply_to) = &value.inner {
@@ -359,9 +375,11 @@ unsafe extern "C" fn properties_set_reply_to(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_content_type(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let content_type = unsafe {
         std::ffi::CStr::from_ptr(string_value)
@@ -375,9 +393,11 @@ unsafe extern "C" fn properties_set_content_type(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_content_encoding(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let content_encoding = unsafe {
         std::ffi::CStr::from_ptr(string_value)
@@ -391,9 +411,11 @@ unsafe extern "C" fn properties_set_content_encoding(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_absolute_expiry_time(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     expiry_time: u64,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
         inner: builder.inner.with_absolute_expiry_time(AmqpTimestamp(
@@ -404,9 +426,11 @@ unsafe extern "C" fn properties_set_absolute_expiry_time(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_creation_time(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     creation_time: u64,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
         inner: builder.inner.with_creation_time(AmqpTimestamp(
@@ -417,9 +441,11 @@ unsafe extern "C" fn properties_set_creation_time(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_group_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let group_id = unsafe {
         std::ffi::CStr::from_ptr(string_value)
@@ -433,9 +459,11 @@ unsafe extern "C" fn properties_set_group_id(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_group_sequence(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     group_sequence: u32,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustMessagePropertiesBuilder {
         inner: builder.inner.with_group_sequence(group_sequence),
@@ -444,9 +472,11 @@ unsafe extern "C" fn properties_set_group_sequence(
 
 #[no_mangle]
 unsafe extern "C" fn properties_set_reply_to_group_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
 ) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     let reply_to_group_id = unsafe {
         std::ffi::CStr::from_ptr(string_value)
@@ -460,6 +490,7 @@ unsafe extern "C" fn properties_set_reply_to_group_id(
 
 #[no_mangle]
 unsafe extern "C" fn properties_build(
+    _call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     header: *mut *mut RustMessageProperties,
 ) -> i32 {
@@ -472,9 +503,11 @@ unsafe extern "C" fn properties_build(
 
 #[no_mangle]
 extern "C" fn amqpvalue_get_properties(
+    call_context: *mut RustCallContext,
     value: *const RustAmqpValue,
     header: &mut *mut RustMessageProperties,
 ) -> i32 {
+    let call_context = call_context_from_ptr_mut(call_context);
     let value = unsafe { &*value };
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {
@@ -489,6 +522,8 @@ extern "C" fn amqpvalue_get_properties(
                     }
                     _ => {
                         *header = std::ptr::null_mut();
+                        call_context
+                            .set_error(error_from_str("Properties value must be an AMQP list."));
                         println!("Unexpected properties value: {:?}", value);
                         1
                     }
@@ -496,11 +531,13 @@ extern "C" fn amqpvalue_get_properties(
             }
             _ => {
                 println!("Unexpected properties descriptor code: {:?}", value);
+                call_context.set_error(error_from_str("Unexpected AMQP descriptor code."));
                 *header = std::ptr::null_mut();
                 1
             }
         },
         _ => {
+            call_context.set_error(error_from_str("Properties must be a described type."));
             println!("Unexpected properties type: {:?}", value.inner);
             1
         }
