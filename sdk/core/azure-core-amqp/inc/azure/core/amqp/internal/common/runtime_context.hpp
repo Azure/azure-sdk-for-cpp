@@ -79,6 +79,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     {
     }
 
+    CallContext()
+        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(nullptr)}
+    {
+    }
+
     Azure::Core::Amqp::_detail::RustCallContext* GetCallContext() const
     {
       return m_callContext.get();
@@ -104,6 +109,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     UniqueRustCallContext m_callContext;
     Azure::Core::Context m_context;
   };
+
+  template <typename Api, typename T, typename... Args>
+  void invoke_builder_api(Api& api, T& builder, Args&&... args)
+  {
+    CallContext callContext;
+    auto raw = api(callContext.GetCallContext(), builder.release(), std::forward<Args>(args)...);
+    if (!raw)
+    {
+      throw std::runtime_error("Error processing builder API: " + callContext.GetError());
+    }
+    builder.reset(raw);
+  }
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 #endif // ENABLE_RUST_AMQP

@@ -23,9 +23,9 @@ impl RustAmqpTarget {
         Self { inner: target }
     }
 
-        pub(crate) fn get(&self) -> &AmqpTarget {
-            &self.inner
-        }
+    pub(crate) fn get(&self) -> &AmqpTarget {
+        &self.inner
+    }
 }
 
 #[no_mangle]
@@ -258,119 +258,114 @@ extern "C" fn target_builder_build(
 }
 
 #[no_mangle]
-extern "C" fn target_set_address(
+unsafe extern "C" fn target_set_address(
     builder: *mut RustAmqpTargetBuilder,
     address: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
     let address = unsafe { &*address };
     match &address.inner {
-        AmqpValue::String(value) => {
-            builder.inner.with_address(value.clone());
-            0
-        }
+        AmqpValue::String(value) => Box::into_raw(Box::new(RustAmqpTargetBuilder {
+            inner: builder.inner.with_address(value.clone()),
+        })),
         _ => {
             warn!("Expected string value for address");
-            1
+            std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn target_set_durable(
+unsafe extern "C" fn target_set_durable(
     builder: *mut RustAmqpTargetBuilder,
     durable: RustTerminusDurability,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    match durable {
-        RustTerminusDurability::None => {
-            builder
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpTargetBuilder {
+        inner: match durable {
+            RustTerminusDurability::None => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::None);
-        }
-        RustTerminusDurability::Configuration => {
-            builder
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::None),
+            RustTerminusDurability::Configuration => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::Configuration);
-        }
-        RustTerminusDurability::UnsettledState => {
-            builder
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::Configuration),
+            RustTerminusDurability::UnsettledState => builder
                 .inner
-                .with_durable(azure_core_amqp::messaging::TerminusDurability::UnsettledState);
-        }
-    }
-    0
+                .with_durable(azure_core_amqp::messaging::TerminusDurability::UnsettledState),
+        },
+    }))
 }
 
 #[no_mangle]
-extern "C" fn target_set_expiry_policy(
+unsafe extern "C" fn target_set_expiry_policy(
     builder: *mut RustAmqpTargetBuilder,
     expiry_policy: RustExpiryPolicy,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    match expiry_policy {
-        RustExpiryPolicy::LinkDetach => {
-            builder
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpTargetBuilder {
+        inner: match expiry_policy {
+            RustExpiryPolicy::LinkDetach => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::LinkDetach);
-        }
-        RustExpiryPolicy::SessionEnd => {
-            builder
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::LinkDetach),
+            RustExpiryPolicy::SessionEnd => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::SessionEnd);
-        }
-        RustExpiryPolicy::ConnectionClose => {
-            builder.inner.with_expiry_policy(
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::SessionEnd),
+            RustExpiryPolicy::ConnectionClose => builder.inner.with_expiry_policy(
                 azure_core_amqp::messaging::TerminusExpiryPolicy::ConnectionClose,
-            );
-        }
-        RustExpiryPolicy::Never => {
-            builder
+            ),
+            RustExpiryPolicy::Never => builder
                 .inner
-                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::Never);
-        }
-    }
-    0
+                .with_expiry_policy(azure_core_amqp::messaging::TerminusExpiryPolicy::Never),
+        },
+    }))
 }
 
 #[no_mangle]
-extern "C" fn target_set_timeout(builder: *mut RustAmqpTargetBuilder, timeout: u32) -> u32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_timeout(timeout);
-    0
+unsafe extern "C" fn target_set_timeout(
+    builder: *mut RustAmqpTargetBuilder,
+    timeout: u32,
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpTargetBuilder {
+        inner: builder.inner.with_timeout(timeout),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn target_set_dynamic(builder: *mut RustAmqpTargetBuilder, dynamic: bool) -> u32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_dynamic(dynamic);
-    0
+unsafe extern "C" fn target_set_dynamic(
+    builder: *mut RustAmqpTargetBuilder,
+    dynamic: bool,
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustAmqpTargetBuilder {
+        inner: builder.inner.with_dynamic(dynamic),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn target_set_capabilities(
+unsafe extern "C" fn target_set_capabilities(
     builder: *mut RustAmqpTargetBuilder,
     capabilities: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
     let capabilities = unsafe { &*capabilities };
     match &capabilities.inner {
-        AmqpValue::Array(value) => {
-            builder.inner.with_capabilities(value.clone());
-        }
+        AmqpValue::Array(value) => Box::into_raw(Box::new(RustAmqpTargetBuilder {
+            inner: builder.inner.with_capabilities(value.clone()),
+        })),
         _ => {
-            return 1;
+            warn!("Expected array value for capabilities");
+            std::ptr::null_mut()
         }
     }
-    0
 }
 
 #[no_mangle]
-extern "C" fn target_set_dynamic_node_properties(
+unsafe extern "C" fn target_set_dynamic_node_properties(
     builder: *mut RustAmqpTargetBuilder,
     properties: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
+) -> *mut RustAmqpTargetBuilder {
+    let builder = Box::from_raw(builder);
     let properties = unsafe { &*properties };
     match &properties.inner {
         AmqpValue::Map(value) => {
@@ -387,11 +382,10 @@ extern "C" fn target_set_dynamic_node_properties(
                     )
                 })
                 .collect();
-            builder.inner.with_dynamic_node_properties(value.clone());
+            Box::into_raw(Box::new(RustAmqpTargetBuilder {
+                inner: builder.inner.with_dynamic_node_properties(value.clone()),
+            }))
         }
-        _ => {
-            return 1;
-        }
+        _ => std::ptr::null_mut(),
     }
-    0
 }

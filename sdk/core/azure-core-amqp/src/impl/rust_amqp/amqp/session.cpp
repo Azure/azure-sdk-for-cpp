@@ -102,23 +102,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaximumLinkCount.HasValue())
     {
-      amqpsessionoptionsbuilder_set_handle_max(
-          optionsBuilder.get(), m_options.MaximumLinkCount.Value());
+      optionsBuilder.reset(amqpsessionoptionsbuilder_set_handle_max(
+          optionsBuilder.release(), m_options.MaximumLinkCount.Value()));
     }
     if (m_options.InitialIncomingWindowSize.HasValue())
     {
-      amqpsessionoptionsbuilder_set_incoming_window(
-          optionsBuilder.get(), m_options.InitialIncomingWindowSize.Value());
+      optionsBuilder.reset(amqpsessionoptionsbuilder_set_incoming_window(
+          optionsBuilder.release(), m_options.InitialIncomingWindowSize.Value()));
     }
     if (m_options.InitialOutgoingWindowSize.HasValue())
     {
-      amqpsessionoptionsbuilder_set_outgoing_window(
-          optionsBuilder.get(), m_options.InitialOutgoingWindowSize.Value());
+      optionsBuilder.reset(amqpsessionoptionsbuilder_set_outgoing_window(
+          optionsBuilder.release(), m_options.InitialOutgoingWindowSize.Value()));
     }
     if (!m_options.DesiredCapabilities.empty())
     {
     }
-    UniqueAmqpSessionOptions sessionOptions{amqpsessionoptionsbuilder_build(optionsBuilder.get())};
+    UniqueAmqpSessionOptions sessionOptions{
+        amqpsessionoptionsbuilder_build(optionsBuilder.release())};
     if (amqpsession_begin(
             callContext.GetCallContext(),
             m_session.get(),
