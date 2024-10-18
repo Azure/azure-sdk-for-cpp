@@ -62,7 +62,7 @@ pub unsafe extern "C" fn amqpmanagement_create(
     access_token: *const RustAccessToken,
 ) -> *mut RustAmqpManagement {
     let call_context = call_context_from_ptr_mut(call_context);
-    let session = unsafe { (*session).get_session() };
+    let session = (*session).get_session();
     let name = std::ffi::CStr::from_ptr(name).to_str().unwrap();
     let rust_access_token: &RustAccessToken = &*access_token;
     let access_token: AccessToken = AccessToken::new(

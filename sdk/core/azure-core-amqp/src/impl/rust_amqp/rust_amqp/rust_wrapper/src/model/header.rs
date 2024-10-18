@@ -230,6 +230,7 @@ mod tests {
 
     #[test]
     fn test_amqpvalue_create_header() {
+        unsafe {
         let header = RustMessageHeader {
             inner: AmqpMessageHeader::builder().with_priority(3).build(),
         };
@@ -238,12 +239,12 @@ mod tests {
 
         let mut size: usize = 0;
         assert_eq!(
-            unsafe { amqpvalue_get_encoded_size(value.clone(), &mut size as *mut usize) },
+             { amqpvalue_get_encoded_size(value, &mut size as *mut usize) },
             0
         );
         let mut buffer: Vec<u8> = vec![0; size];
         assert_eq!(
-            unsafe { amqpvalue_encode(value, buffer.as_mut_ptr(), size) },
+             { amqpvalue_encode(value, buffer.as_mut_ptr(), size) },
             0
         );
 
@@ -262,5 +263,6 @@ mod tests {
         //     ),
         //     0
         // );
+    }
     }
 }

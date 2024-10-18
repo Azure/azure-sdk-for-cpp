@@ -19,8 +19,9 @@ impl RustCallContext {
         }
     }
 
-    pub fn runtime_context(&self) -> &RuntimeContext {
-        unsafe { &*self.runtime_context }
+    /// # Safety
+    pub unsafe fn runtime_context(&self) -> &RuntimeContext {
+        &*self.runtime_context
     }
 
     pub fn set_error(&mut self, error: Box<dyn std::error::Error + Send + Sync>) {
@@ -37,9 +38,7 @@ pub extern "C" fn call_context_new(runtime_context: *mut RuntimeContext) -> *mut
 ///
 #[no_mangle]
 pub unsafe extern "C" fn call_context_delete(ctx: *mut RustCallContext) {
-    unsafe {
-        drop(Box::from_raw(ctx));
-    }
+    drop(Box::from_raw(ctx));
 }
 
 /// # Safety
