@@ -469,6 +469,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     Azure::Core::Amqp::_detail::PropertiesImplementation* handle;
+#if ENABLE_RUST_AMQP
     CallContext callContext;
     if (amqpvalue_get_properties(
             callContext.GetCallContext(),
@@ -478,6 +479,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       throw std::runtime_error(
           "Could not convert value to AMQP Properties: " + callContext.GetError());
     }
+#elif ENABLE_UAMQP
+    if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &handle))
+    {
+      throw std::runtime_error("Could not convert value to AMQP Properties");
+    }
+#endif
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
     return _detail::MessagePropertiesFactory::FromImplementation(uniqueHandle);
