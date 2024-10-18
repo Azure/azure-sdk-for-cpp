@@ -20,6 +20,8 @@
 #include <azure_uamqp_c/amqp_definitions_target.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #elif ENABLE_RUST_AMQP
+#include <azure/core/amqp/internal/common/runtime_context.hpp>
+using namespace Azure::Core::Amqp::Common::_detail;
 using namespace Azure::Core::Amqp::_detail::RustInterop;
 #endif // ENABLE_UAMQP
 
@@ -183,13 +185,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not create source.");
     }
 
-    builder.reset(target_set_address(
-        builder.release(),
-        _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address.c_str())).get()));
-    if (!builder)
-    {
-      throw std::runtime_error("Could not set address.");
-    }
+    invoke_builder_api(target_builder_set_address, builder, address.c_str());
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
     if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
@@ -203,7 +199,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueMessageTargetHandle target{target_create()};
-
     if (!target)
     {
       throw std::runtime_error("Could not create source.");
@@ -217,18 +212,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     m_target = std::move(target);
 #elif ENABLE_RUST_AMQP
     UniqueMessageTargetBuilderHandle builder{target_builder_create()};
-
     if (!builder)
     {
       throw std::runtime_error("Could not create source.");
     }
 
-    builder.reset(target_set_address(
-        builder.release(), _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address)).get()));
-    if (!builder)
-    {
-      throw std::runtime_error("Could not set address.");
-    }
+    invoke_builder_api(target_builder_set_address, builder, address);
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
     if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
@@ -429,12 +418,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     if (!options.Address.IsNull())
     {
-      builder.reset(target_set_address(
-          builder.release(), _detail::AmqpValueFactory::ToImplementation(options.Address)));
-      if (!builder)
+      if (options.Address.GetType() != AmqpValueType::String)
       {
-        throw std::runtime_error("Could not set source address.");
+        throw std::runtime_error("Message target must be a string.");
       }
+      invoke_builder_api(
+          target_builder_set_address, builder, static_cast<std::string>(options.Address).c_str());
     }
     if (options.TerminusDurabilityValue.HasValue())
     {
@@ -453,7 +442,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         default:
           throw std::logic_error("Unknown terminus durability.");
       }
-      builder.reset(target_set_durable(builder.release(), durability));
+      invoke_builder_api(target_builder_set_durable, builder, durability);
       if (!builder)
       {
         throw std::runtime_error("Could not set durable.");
@@ -479,7 +468,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         default:
           throw std::logic_error("Unknown terminus durability.");
       }
-      builder.reset(target_set_expiry_policy(builder.release(), policy));
+      invoke_builder_api(target_builder_set_expiry_policy, builder, policy);
       if (!builder)
       {
         throw std::runtime_error("Could not set durable.");
@@ -487,46 +476,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (options.Timeout.HasValue())
     {
-      builder.reset(target_set_timeout(
-          builder.release(),
+      invoke_builder_api(
+          target_builder_set_timeout,
+          builder,
           static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
                                     options.Timeout.Value().time_since_epoch())
-                                    .count())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set value.");
-      }
+                                    .count()));
     }
     if (options.Dynamic.HasValue())
     {
-      builder.reset(target_set_dynamic(builder.release(), *options.Dynamic));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set dynamic.");
-      }
+      invoke_builder_api(target_builder_set_dynamic, builder, *options.Dynamic);
     }
 
     if (!options.DynamicNodeProperties.empty())
     {
-      builder.reset(target_set_dynamic_node_properties(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(
-              options.DynamicNodeProperties.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set dynamic node properties.");
-      }
+      invoke_builder_api(
+          target_builder_set_dynamic_node_properties,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.DynamicNodeProperties.AsAmqpValue()));
     }
 
     if (!options.Capabilities.empty())
     {
-      builder.reset(target_set_capabilities(
-          builder.release(),
-          _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue())));
-      if (!builder)
-      {
-        throw std::runtime_error("Could not set capabilities.");
-      }
+      invoke_builder_api(
+          target_builder_set_capabilities,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue()));
     }
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
     if (target_builder_build(builder.release(), &targetHandle) != 0)

@@ -49,17 +49,15 @@ extern "C" fn messagebuilder_create() -> *mut RustAmqpMessageBuilder {
 }
 
 #[no_mangle]
-extern "C" fn messagebuilder_destroy(message_builder: *mut RustAmqpMessageBuilder) {
-    unsafe {
-        mem::drop(Box::from_raw(message_builder));
-    }
+unsafe extern "C" fn messagebuilder_destroy(message_builder: *mut RustAmqpMessageBuilder) {
+    mem::drop(Box::from_raw(message_builder));
 }
 
 #[no_mangle]
-extern "C" fn messagebuilder_build_and_destroy(
+unsafe extern "C" fn messagebuilder_build_and_destroy(
     message_builder: *mut RustAmqpMessageBuilder,
 ) -> *mut RustAmqpMessage {
-    let message_builder = unsafe { Box::from_raw(message_builder) };
+    let message_builder = Box::from_raw(message_builder);
     let message = message_builder.inner.build();
     Box::into_raw(Box::new(RustAmqpMessage { inner: message }))
 }
@@ -72,25 +70,21 @@ extern "C" fn message_create() -> *mut RustAmqpMessage {
 }
 
 #[no_mangle]
-extern "C" fn message_destroy(message: *mut RustAmqpMessage) {
-    unsafe {
-        mem::drop(Box::from_raw(message));
-    }
+unsafe extern "C" fn message_destroy(message: *mut RustAmqpMessage) {
+    mem::drop(Box::from_raw(message));
 }
 
 #[no_mangle]
-extern "C" fn message_deserialize(
+unsafe extern "C" fn message_deserialize(
     data: *const u8,
     count: usize,
     message: *mut *mut RustAmqpMessage,
 ) -> i32 {
-    let data = unsafe { std::slice::from_raw_parts(data, count) };
+    let data = std::slice::from_raw_parts(data, count);
     let val = AmqpMessage::decode(data);
     match val {
         Ok(m) => {
-            unsafe {
-                *message = Box::into_raw(Box::new(RustAmqpMessage { inner: m }));
-            }
+            *message = Box::into_raw(Box::new(RustAmqpMessage { inner: m }));
             0
         }
         Err(err) => {
@@ -102,104 +96,42 @@ extern "C" fn message_deserialize(
 }
 
 #[no_mangle]
-extern "C" fn message_get_header(
+unsafe extern "C" fn message_get_header(
     message: *const RustAmqpMessage,
     message_header: *mut *mut RustMessageHeader,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message = &*message;
     if message.inner.header().is_none() {
-        unsafe { *message_header = std::ptr::null_mut() };
+        *message_header = std::ptr::null_mut();
         return 0;
     }
     let header = message.inner.header().unwrap();
-    unsafe { *message_header = Box::into_raw(Box::new(RustMessageHeader::new(header.clone()))) }
+    *message_header = Box::into_raw(Box::new(RustMessageHeader::new(header.clone())));
     0
 }
 
 #[no_mangle]
-extern "C" fn message_get_properties(
+unsafe extern "C" fn message_get_properties(
     message: *const RustAmqpMessage,
     message_properties: *mut *mut RustMessageProperties,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message = { &*message };
     let properties = message.inner.properties();
     let properties = properties.map(|p| Box::new(RustMessageProperties { inner: p.clone() }));
     match properties {
-        Some(p) => unsafe { *message_properties = Box::into_raw(p) },
-        None => unsafe { *message_properties = std::ptr::null_mut() },
+        Some(p) => *message_properties = Box::into_raw(p),
+        None => *message_properties = std::ptr::null_mut(),
     }
     0
 }
 
 #[no_mangle]
-extern "C" fn message_get_delivery_annotations(
+unsafe extern "C" fn message_get_delivery_annotations(
     message: *const RustAmqpMessage,
     delivery_annotations: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message = &*message;
     let amqp_da = message.inner.delivery_annotations();
-    match amqp_da {
-        Some(da) => {
-            let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
-                da.0.clone()
-                    .into_iter()
-                    .map(|f| match f.0 {
-                        AmqpAnnotationKey::Symbol(s) => (AmqpValue::from(s), f.1),
-                        AmqpAnnotationKey::Ulong(u) => (AmqpValue::from(u), f.1),
-                    })
-                    .collect();
-            unsafe {
-                *delivery_annotations = Box::into_raw(Box::new(RustAmqpValue {
-                    inner: AmqpValue::Map(map),
-                }))
-            };
-            0
-        }
-        None => {
-            unsafe { *delivery_annotations = std::ptr::null_mut() };
-            1
-        }
-    }
-}
-
-#[no_mangle]
-extern "C" fn message_get_message_annotations(
-    message: *const RustAmqpMessage,
-    delivery_annotations: *mut *mut RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &*message };
-    let amqp_da = message.inner.message_annotations();
-    match amqp_da {
-        Some(da) => {
-            let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
-                da.0.clone()
-                    .into_iter()
-                    .map(|f| match f.0 {
-                        AmqpAnnotationKey::Symbol(s) => (AmqpValue::from(s), f.1),
-                        AmqpAnnotationKey::Ulong(u) => (AmqpValue::from(u), f.1),
-                    })
-                    .collect();
-            unsafe {
-                *delivery_annotations = Box::into_raw(Box::new(RustAmqpValue {
-                    inner: AmqpValue::Map(map),
-                }))
-            };
-            0
-        }
-        None => {
-            unsafe { *delivery_annotations = std::ptr::null_mut() };
-            1
-        }
-    }
-}
-
-#[no_mangle]
-extern "C" fn message_get_application_properties(
-    message: *const RustAmqpMessage,
-    application_properties: *mut *mut RustAmqpValue,
-) -> i32 {
-    let message = unsafe { &*message };
-    let amqp_da = message.inner.application_properties();
     match amqp_da {
         Some(da) => {
             let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
@@ -207,64 +139,104 @@ extern "C" fn message_get_application_properties(
                     .into_iter()
                     .map(|f| (AmqpValue::from(f.0), f.1))
                     .collect();
-
-            unsafe {
-                *application_properties = Box::into_raw(Box::new(RustAmqpValue {
-                    inner: AmqpValue::Map(map),
-                }))
-            };
+            *delivery_annotations = Box::into_raw(Box::new(RustAmqpValue {
+                inner: AmqpValue::Map(map),
+            }));
             0
         }
         None => {
-            unsafe { *application_properties = std::ptr::null_mut() };
+            *delivery_annotations = std::ptr::null_mut();
             1
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn message_get_footer(
+unsafe extern "C" fn message_get_message_annotations(
+    message: *const RustAmqpMessage,
+    delivery_annotations: *mut *mut RustAmqpValue,
+) -> i32 {
+    let message = &*message;
+    let amqp_da = message.inner.message_annotations();
+    match amqp_da {
+        Some(da) => {
+            let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
+                da.0.clone()
+                    .into_iter()
+                    .map(|f| (f.0.into(), f.1))
+                    .collect();
+            *delivery_annotations = Box::into_raw(Box::new(RustAmqpValue {
+                inner: AmqpValue::Map(map),
+            }));
+            0
+        }
+        None => {
+            *delivery_annotations = std::ptr::null_mut();
+            1
+        }
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn message_get_application_properties(
+    message: *const RustAmqpMessage,
+    application_properties: *mut *mut RustAmqpValue,
+) -> i32 {
+    let message = &*message;
+    let amqp_da = message.inner.application_properties();
+    match amqp_da {
+        Some(da) => {
+            let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
+                da.0.clone()
+                    .into_iter()
+                    .map(|f| (f.0.into(), f.1))
+                    .collect();
+
+            *application_properties = Box::into_raw(Box::new(RustAmqpValue {
+                inner: AmqpValue::Map(map),
+            }));
+            0
+        }
+        None => {
+            *application_properties = std::ptr::null_mut();
+            1
+        }
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn message_get_footer(
     message: *const RustAmqpMessage,
     footer: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message = &*message;
     let amqp_da = message.inner.footer();
     match amqp_da {
         Some(da) => {
             let map: AmqpOrderedMap<AmqpValue, AmqpValue> =
                 da.0.clone()
                     .into_iter()
-                    .map(|f| {
-                        (
-                            match f.0 {
-                                AmqpAnnotationKey::Symbol(s) => AmqpValue::from(s),
-                                AmqpAnnotationKey::Ulong(u) => AmqpValue::from(u),
-                            },
-                            f.1,
-                        )
-                    })
+                    .map(|f| (f.0.into(), f.1))
                     .collect();
 
-            unsafe {
-                *footer = Box::into_raw(Box::new(RustAmqpValue {
-                    inner: AmqpValue::Map(map),
-                }))
-            };
+            *footer = Box::into_raw(Box::new(RustAmqpValue {
+                inner: AmqpValue::Map(map),
+            }));
             0
         }
         None => {
-            unsafe { *footer = std::ptr::null_mut() };
+            *footer = std::ptr::null_mut();
             1
         }
     }
 }
 
 #[no_mangle]
-extern "C" fn message_get_body_type(
+unsafe extern "C" fn message_get_body_type(
     message: *const RustAmqpMessage,
     body_type: &mut RustAmqpMessageBodyType,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message =  &*message ;
     match message.inner.body() {
         AmqpMessageBody::Binary(_) => *body_type = RustAmqpMessageBodyType::Data,
         AmqpMessageBody::Value(_) => *body_type = RustAmqpMessageBodyType::Value,
@@ -275,11 +247,11 @@ extern "C" fn message_get_body_type(
 }
 
 #[no_mangle]
-extern "C" fn message_get_body_amqp_data_count(
+unsafe extern "C" fn message_get_body_amqp_data_count(
     message: *const RustAmqpMessage,
     count: &mut usize,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message =  &*message ;
     match message.inner.body() {
         AmqpMessageBody::Binary(data) => *count = data.len(),
         _ => return 1,
@@ -288,11 +260,11 @@ extern "C" fn message_get_body_amqp_data_count(
 }
 
 #[no_mangle]
-extern "C" fn message_get_body_amqp_sequence_count(
+unsafe extern "C" fn message_get_body_amqp_sequence_count(
     message: *const RustAmqpMessage,
     count: &mut usize,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message = &*message ;
     match message.inner.body() {
         AmqpMessageBody::Sequence(data) => *count = data.len(),
         _ => return 1,
@@ -310,10 +282,8 @@ unsafe extern "C" fn message_get_body_amqp_data_in_place(
     let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Binary(d) => {
-            unsafe {
                 *data = d[index as usize].as_ptr() as *mut u8;
                 *count = d[index as usize].len() as u32;
-            }
             0
         }
         _ => 1,
@@ -321,19 +291,17 @@ unsafe extern "C" fn message_get_body_amqp_data_in_place(
 }
 
 #[no_mangle]
-extern "C" fn message_get_body_amqp_sequence_in_place(
+unsafe extern "C" fn message_get_body_amqp_sequence_in_place(
     message: *const RustAmqpMessage,
     index: u32,
     data: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let message = unsafe { &*message };
+    let message =  &*message ;
     match message.inner.body() {
         AmqpMessageBody::Sequence(d) => {
-            unsafe {
                 *data = Box::into_raw(Box::new(RustAmqpValue {
                     inner: AmqpValue::List(d[index as usize].clone()),
                 }));
-            }
             0
         }
         _ => 1,
@@ -348,9 +316,7 @@ unsafe extern "C" fn message_get_body_amqp_value_in_place(
     let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Value(d) => {
-            unsafe {
                 *data = Box::into_raw(Box::new(RustAmqpValue { inner: d.clone() }));
-            }
             0
         }
         _ => 1,

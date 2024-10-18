@@ -3,7 +3,13 @@
 
 // cspell: words amqp amqpvalue repr
 
-use crate::model::value::RustAmqpValue;
+use std::ffi::{c_char, CStr};
+
+use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
+    error_from_str,
+    model::value::RustAmqpValue,
+};
 use azure_core_amqp::{
     messaging::{builders::AmqpSourceBuilder, AmqpSource},
     value::{AmqpComposite, AmqpDescriptor, AmqpOrderedMap, AmqpSymbol, AmqpValue},
@@ -48,24 +54,22 @@ pub enum RustDeliveryOutcome {
 }
 
 #[no_mangle]
-extern "C" fn source_destroy(source: *mut RustAmqpSource) {
-    unsafe {
-        std::mem::drop(Box::from_raw(source));
-    }
+unsafe extern "C" fn source_destroy(source: *mut RustAmqpSource) {
+    std::mem::drop(Box::from_raw(source));
 }
 
 #[no_mangle]
-extern "C" fn source_clone(source: *const RustAmqpSource) -> *mut RustAmqpSource {
-    let source = unsafe { &*source };
+unsafe extern "C" fn source_clone(source: *const RustAmqpSource) -> *mut RustAmqpSource {
+    let source = &*source;
     Box::into_raw(Box::new(RustAmqpSource::new(source.inner.clone())))
 }
 
 #[no_mangle]
-extern "C" fn source_get_address(
+unsafe extern "C" fn source_get_address(
     source: *const RustAmqpSource,
     address: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_address) = &source.inner.address {
         *address = Box::into_raw(Box::new(RustAmqpValue {
             inner: AmqpValue::String(source_address.clone()),
@@ -78,11 +82,11 @@ extern "C" fn source_get_address(
 }
 
 #[no_mangle]
-extern "C" fn source_get_durable(
+unsafe extern "C" fn source_get_durable(
     source: *const RustAmqpSource,
     durable: &mut RustTerminusDurability,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(durable_value) = &source.inner.durable {
         match durable_value {
             azure_core_amqp::messaging::TerminusDurability::None => {
@@ -103,11 +107,11 @@ extern "C" fn source_get_durable(
 }
 
 #[no_mangle]
-extern "C" fn source_get_expiry_policy(
+unsafe extern "C" fn source_get_expiry_policy(
     source: *const RustAmqpSource,
     expiry_policy: &mut RustExpiryPolicy,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(expiry_policy_value) = &source.inner.expiry_policy {
         match expiry_policy_value {
             azure_core_amqp::messaging::TerminusExpiryPolicy::LinkDetach => {
@@ -131,8 +135,8 @@ extern "C" fn source_get_expiry_policy(
 }
 
 #[no_mangle]
-extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u32) -> i32 {
-    let source = unsafe { &*source };
+unsafe extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u32) -> i32 {
+    let source = &*source;
     if let Some(timeout_value) = source.inner.timeout {
         *timeout = timeout_value;
         0
@@ -143,8 +147,8 @@ extern "C" fn source_get_timeout(source: *const RustAmqpSource, timeout: &mut u3
 }
 
 #[no_mangle]
-extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bool) -> i32 {
-    let source = unsafe { &*source };
+unsafe extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bool) -> i32 {
+    let source = &*source;
     if let Some(dynamic_value) = source.inner.dynamic {
         *dynamic = dynamic_value;
         0
@@ -157,11 +161,11 @@ extern "C" fn source_get_dynamic(source: *const RustAmqpSource, dynamic: &mut bo
 // Returns 0 == DistributionMode::Move
 // Returns 1 == DistributionMode::Copy
 #[no_mangle]
-extern "C" fn source_get_distribution_mode(
+unsafe extern "C" fn source_get_distribution_mode(
     source: *const RustAmqpSource,
     distribution_mode: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(distribution_mode_value) = &source.inner.distribution_mode {
         match distribution_mode_value {
             azure_core_amqp::messaging::DistributionMode::Move => {
@@ -183,11 +187,11 @@ extern "C" fn source_get_distribution_mode(
 }
 
 #[no_mangle]
-extern "C" fn source_get_filter(
+unsafe extern "C" fn source_get_filter(
     source: *const RustAmqpSource,
     filter: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_filter) = &source.inner.filter {
         let map: AmqpOrderedMap<AmqpValue, AmqpValue> = source_filter
             .clone()
@@ -205,11 +209,11 @@ extern "C" fn source_get_filter(
 }
 
 #[no_mangle]
-extern "C" fn source_get_default_outcome(
+unsafe extern "C" fn source_get_default_outcome(
     source: *const RustAmqpSource,
     default_outcome: &mut RustDeliveryOutcome,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_default_outcome) = &source.inner.default_outcome {
         match source_default_outcome {
             azure_core_amqp::messaging::AmqpOutcome::Accepted => {
@@ -232,11 +236,11 @@ extern "C" fn source_get_default_outcome(
 }
 
 #[no_mangle]
-extern "C" fn source_get_dynamic_node_properties(
+unsafe extern "C" fn source_get_dynamic_node_properties(
     source: *const RustAmqpSource,
     properties: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_properties) = &source.inner.dynamic_node_properties {
         let map: AmqpOrderedMap<AmqpValue, AmqpValue> = source_properties
             .clone()
@@ -254,11 +258,11 @@ extern "C" fn source_get_dynamic_node_properties(
 }
 
 #[no_mangle]
-extern "C" fn source_get_outcomes(
+unsafe extern "C" fn source_get_outcomes(
     source: *const RustAmqpSource,
     outcomes: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_outcomes) = &source.inner.outcomes {
         let list: Vec<AmqpValue> = source_outcomes
             .clone()
@@ -276,11 +280,11 @@ extern "C" fn source_get_outcomes(
 }
 
 #[no_mangle]
-extern "C" fn source_get_capabilities(
+unsafe extern "C" fn source_get_capabilities(
     source: *const RustAmqpSource,
     capabilities: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     if let Some(source_capabilities) = &source.inner.capabilities {
         let list: Vec<AmqpValue> = source_capabilities
             .clone()
@@ -298,25 +302,25 @@ extern "C" fn source_get_capabilities(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_source(
+unsafe extern "C" fn amqpvalue_create_source(
     source: *const RustAmqpSource,
     value: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let source = unsafe { &*source };
+    let source = &*source;
     let inner_value = AmqpValue::Composite(Box::new(AmqpComposite::new(
         AmqpDescriptor::Code(0x28),
         source.inner.clone(),
     )));
-    unsafe { *value = Box::into_raw(Box::new(RustAmqpValue { inner: inner_value })) };
+    *value = Box::into_raw(Box::new(RustAmqpValue { inner: inner_value }));
     0
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_source(
+unsafe extern "C" fn amqpvalue_get_source(
     value: *const RustAmqpValue,
     source: &mut *mut RustAmqpSource,
 ) -> i32 {
-    let value = unsafe { &*value };
+    let value = &*value;
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {
             AmqpDescriptor::Code(0x28) => {
@@ -374,45 +378,47 @@ extern "C" fn source_builder_create() -> *mut RustAmqpSourceBuilder {
 }
 
 #[no_mangle]
-extern "C" fn source_builder_destroy(builder: *mut RustAmqpSourceBuilder) {
-    unsafe {
-        std::mem::drop(Box::from_raw(builder));
-    }
+unsafe extern "C" fn source_builder_destroy(builder: *mut RustAmqpSourceBuilder) {
+    std::mem::drop(Box::from_raw(builder));
 }
 
 #[no_mangle]
-extern "C" fn source_builder_build(
+unsafe extern "C" fn source_builder_build(
     builder: *mut RustAmqpSourceBuilder,
     source: &mut *mut RustAmqpSource,
 ) -> i32 {
-    let builder = unsafe { &mut *builder };
+    let builder = &mut *builder;
     *source = Box::into_raw(Box::new(RustAmqpSource::new(builder.inner.build())));
     0
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_address(
+unsafe extern "C" fn source_builder_set_address(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
-    address: *const RustAmqpValue,
+    address: *const c_char,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let address = unsafe { &*address };
-    match &address.inner {
-        AmqpValue::String(address) => Box::into_raw(Box::new(RustAmqpSourceBuilder {
-            inner: builder.inner.with_address(address.clone()),
+    let address = CStr::from_ptr(address).to_str();
+    match address {
+        Ok(address) => Box::into_raw(Box::new(RustAmqpSourceBuilder {
+            inner: builder.inner.with_address(address),
         })),
-        _ => {
-            warn!("Invalid address type: {:?}", address.inner);
+        Err(err) => {
+            call_context.set_error(Box::new(err));
             std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_durable(
+unsafe extern "C" fn source_builder_set_durable(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     durable: RustTerminusDurability,
 ) -> *mut RustAmqpSourceBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustAmqpSourceBuilder {
         inner: match durable {
@@ -430,10 +436,12 @@ unsafe extern "C" fn source_set_durable(
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_expiry_policy(
+unsafe extern "C" fn source_builder_set_expiry_policy(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     expiry_policy: RustExpiryPolicy,
 ) -> *mut RustAmqpSourceBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustAmqpSourceBuilder {
         inner: match expiry_policy {
@@ -454,10 +462,12 @@ unsafe extern "C" fn source_set_expiry_policy(
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_timeout(
+unsafe extern "C" fn source_builder_set_timeout(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     timeout: u32,
 ) -> *mut RustAmqpSourceBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustAmqpSourceBuilder {
         inner: builder.inner.with_timeout(timeout),
@@ -465,10 +475,12 @@ unsafe extern "C" fn source_set_timeout(
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_dynamic(
+unsafe extern "C" fn source_builder_set_dynamic(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     dynamic: bool,
 ) -> *mut RustAmqpSourceBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustAmqpSourceBuilder {
         inner: builder.inner.with_dynamic(dynamic),
@@ -476,12 +488,14 @@ unsafe extern "C" fn source_set_dynamic(
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_distribution_mode(
+unsafe extern "C" fn source_builder_set_distribution_mode(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     distribution_mode: *const RustAmqpValue,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let distribution_mode = unsafe { &*distribution_mode };
+    let distribution_mode = &*distribution_mode;
     match &distribution_mode.inner {
         AmqpValue::Symbol(s) => match s.0.as_str() {
             "move" => Box::into_raw(Box::new(RustAmqpSourceBuilder {
@@ -496,6 +510,7 @@ unsafe extern "C" fn source_set_distribution_mode(
             })),
             _ => {
                 warn!("Invalid distribution mode: {}", s.0);
+                call_context.set_error(error_from_str("Invalid distribution mode"));
                 std::ptr::null_mut()
             }
         },
@@ -504,18 +519,21 @@ unsafe extern "C" fn source_set_distribution_mode(
                 "Invalid distribution mode type: {:?}",
                 distribution_mode.inner
             );
+            call_context.set_error(error_from_str("Distribution mode must be a symbol."));
             std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_filter(
+unsafe extern "C" fn source_builder_set_filter(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     filter: *const RustAmqpValue,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let filter = unsafe { &*filter };
+    let filter = &*filter;
     match &filter.inner {
         AmqpValue::Map(filter) => {
             let map: AmqpOrderedMap<AmqpSymbol, AmqpValue> = filter
@@ -529,16 +547,19 @@ unsafe extern "C" fn source_set_filter(
         }
         _ => {
             warn!("Invalid filter type: {:?}", filter.inner);
+            call_context.set_error(error_from_str("Filter type must be a map."));
             std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_default_outcome(
+unsafe extern "C" fn source_builder_set_default_outcome(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     default_outcome: RustDeliveryOutcome,
 ) -> *mut RustAmqpSourceBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
     Box::into_raw(Box::new(RustAmqpSourceBuilder {
         inner: match default_outcome {
@@ -559,29 +580,20 @@ unsafe extern "C" fn source_set_default_outcome(
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_dynamic_node_properties(
+unsafe extern "C" fn source_builder_set_dynamic_node_properties(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     properties: *const RustAmqpValue,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     match &properties.inner {
         AmqpValue::Map(properties) => {
             let map: AmqpOrderedMap<AmqpSymbol, AmqpValue> = properties
                 .clone()
                 .into_iter()
-                .map(|f| {
-                    (
-                        match f.0 {
-                            AmqpValue::Symbol(f) => f,
-                            _ => {
-                                warn!("Invalid dynamic node properties key: {:?}", f.0);
-                                AmqpSymbol("invalid".to_string())
-                            }
-                        },
-                        f.1.clone(),
-                    )
-                })
+                .map(|f| (f.0.into(), f.1))
                 .collect();
             Box::into_raw(Box::new(RustAmqpSourceBuilder {
                 inner: builder.inner.with_dynamic_node_properties(map),
@@ -592,18 +604,21 @@ unsafe extern "C" fn source_set_dynamic_node_properties(
                 "Invalid dynamic node properties type: {:?}",
                 properties.inner
             );
+            call_context.set_error(error_from_str("Dynamic node properties must be a map."));
             std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_outcomes(
+unsafe extern "C" fn source_builder_set_outcomes(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     outcomes: *const RustAmqpValue,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let outcomes = unsafe { &*outcomes };
+    let outcomes = &*outcomes;
     match &outcomes.inner {
         AmqpValue::List(outcomes) => {
             let list: Vec<azure_core_amqp::value::AmqpSymbol> = outcomes
@@ -611,7 +626,7 @@ unsafe extern "C" fn source_set_outcomes(
                 .clone()
                 .into_iter()
                 .map(|f| match f {
-                    AmqpValue::Symbol(f) => f.clone(),
+                    AmqpValue::Symbol(f) => f,
                     _ => {
                         warn!("Invalid outcome type: {:?}", f);
                         AmqpSymbol("invalid".to_string())
@@ -627,7 +642,7 @@ unsafe extern "C" fn source_set_outcomes(
                 .clone()
                 .into_iter()
                 .map(|f| match f {
-                    AmqpValue::Symbol(f) => f.clone(),
+                    AmqpValue::Symbol(f) => f,
                     _ => {
                         warn!("Invalid outcome type: {:?}", f);
                         AmqpSymbol("invalid".to_string())
@@ -639,19 +654,21 @@ unsafe extern "C" fn source_set_outcomes(
             }))
         }
         _ => {
-            warn!("Invalid outcomes type: {:?}", outcomes.inner);
+            call_context.set_error(error_from_str("Outcomes must be an array or a list."));
             std::ptr::null_mut()
         }
     }
 }
 
 #[no_mangle]
-unsafe extern "C" fn source_set_capabilities(
+unsafe extern "C" fn source_builder_set_capabilities(
+    call_context: *mut RustCallContext,
     builder: *mut RustAmqpSourceBuilder,
     capabilities: *const RustAmqpValue,
 ) -> *mut RustAmqpSourceBuilder {
+    let call_context = call_context_from_ptr_mut(call_context);
     let builder = Box::from_raw(builder);
-    let capabilities = unsafe { &*capabilities };
+    let capabilities = &*capabilities;
     match &capabilities.inner {
         AmqpValue::Array(capabilities) => {
             let list: Vec<AmqpSymbol> = capabilities
@@ -671,6 +688,7 @@ unsafe extern "C" fn source_set_capabilities(
         }
         _ => {
             warn!("Invalid capabilities type: {:?}", capabilities.inner);
+            call_context.set_error(error_from_str("Capabilities must be an array."));
             std::ptr::null_mut()
         }
     }

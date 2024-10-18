@@ -3,13 +3,13 @@
 
 // cspell: words amqp amqpvalue repr
 
+use super::value::RustAmqpValue;
+use crate::call_context::{call_context_from_ptr_mut, RustCallContext};
 use azure_core_amqp::{
     messaging::{builders::AmqpMessageHeaderBuilder, AmqpMessageHeader},
     value::{AmqpComposite, AmqpDescriptor, AmqpValue},
 };
 use std::mem;
-use crate::call_context::{RustCallContext, call_context_from_ptr_mut};
-use super::value::RustAmqpValue;
 
 pub struct RustMessageHeader {
     inner: AmqpMessageHeader,
@@ -26,29 +26,36 @@ impl RustMessageHeader {
 }
 
 #[no_mangle]
-extern "C" fn header_destroy(header: *mut RustMessageHeader) {
-    unsafe {
-        mem::drop(Box::from_raw(header));
-    }
+unsafe extern "C" fn header_destroy(header: *mut RustMessageHeader) {
+    mem::drop(Box::from_raw(header));
 }
 
 #[no_mangle]
-extern "C" fn header_get_durable(header: *const RustMessageHeader, durable: &mut bool) -> i32 {
-    let header = unsafe { &*header };
+unsafe extern "C" fn header_get_durable(
+    header: *const RustMessageHeader,
+    durable: &mut bool,
+) -> i32 {
+    let header = { &*header };
     *durable = header.inner.durable();
     0
 }
 
 #[no_mangle]
-extern "C" fn header_get_priority(header: *const RustMessageHeader, priority: &mut u8) -> i32 {
-    let header = unsafe { &*header };
+unsafe extern "C" fn header_get_priority(
+    header: *const RustMessageHeader,
+    priority: &mut u8,
+) -> i32 {
+    let header = { &*header };
     *priority = header.inner.priority();
     0
 }
 
 #[no_mangle]
-extern "C" fn header_get_ttl(header: *const RustMessageHeader, time_to_live: &mut u64) -> i32 {
-    let header = unsafe { &*header };
+unsafe extern "C" fn header_get_ttl(
+    header: *const RustMessageHeader,
+    time_to_live: &mut u64,
+) -> i32 {
+    let header = { &*header };
     if let Some(ttl) = header.inner.time_to_live() {
         *time_to_live = ttl.as_millis() as u64;
         0
@@ -59,22 +66,22 @@ extern "C" fn header_get_ttl(header: *const RustMessageHeader, time_to_live: &mu
 }
 
 #[no_mangle]
-extern "C" fn header_get_first_acquirer(
+unsafe extern "C" fn header_get_first_acquirer(
     header: *const RustMessageHeader,
     first_acquirer: &mut bool,
 ) -> i32 {
-    let header = unsafe { &*header };
+    let header = { &*header };
 
     *first_acquirer = header.inner.first_acquirer();
     0
 }
 
 #[no_mangle]
-extern "C" fn header_get_delivery_count(
+unsafe extern "C" fn header_get_delivery_count(
     header: *const RustMessageHeader,
     delivery_count: &mut u32,
 ) -> i32 {
-    let header = unsafe { &*header };
+    let header = { &*header };
     *delivery_count = header.inner.delivery_count();
     0
 }
@@ -91,8 +98,8 @@ extern "C" fn header_builder_create() -> *mut RustMessageHeaderBuilder {
 }
 
 #[no_mangle]
-extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
-    unsafe {
+unsafe extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
+    {
         mem::drop(Box::from_raw(builder));
     }
 }
@@ -210,8 +217,10 @@ unsafe extern "C" fn amqpvalue_get_header(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_header(header: *const RustMessageHeader) -> *mut RustAmqpValue {
-    let header = unsafe { &*header };
+unsafe extern "C" fn amqpvalue_create_header(
+    header: *const RustMessageHeader,
+) -> *mut RustAmqpValue {
+    let header = &*header;
     let value = AmqpValue::Composite(Box::new(AmqpComposite::new(
         AmqpDescriptor::Code(0x70),
         header.inner.clone(),
@@ -231,38 +240,34 @@ mod tests {
     #[test]
     fn test_amqpvalue_create_header() {
         unsafe {
-        let header = RustMessageHeader {
-            inner: AmqpMessageHeader::builder().with_priority(3).build(),
-        };
-        let value = amqpvalue_create_header(&header);
-        //        let value = unsafe { Box::from_raw(value) };
+            let header = RustMessageHeader {
+                inner: AmqpMessageHeader::builder().with_priority(3).build(),
+            };
+            let value = amqpvalue_create_header(&header);
 
-        let mut size: usize = 0;
-        assert_eq!(
-             { amqpvalue_get_encoded_size(value, &mut size as *mut usize) },
-            0
-        );
-        let mut buffer: Vec<u8> = vec![0; size];
-        assert_eq!(
-             { amqpvalue_encode(value, buffer.as_mut_ptr(), size) },
-            0
-        );
+            let mut size: usize = 0;
+            assert_eq!(
+                { amqpvalue_get_encoded_size(value, &mut size as *mut usize) },
+                0
+            );
+            let mut buffer: Vec<u8> = vec![0; size];
+            assert_eq!({ amqpvalue_encode(value, buffer.as_mut_ptr(), size) }, 0);
 
-        let deserialized = <AmqpValue as Deserializable<AmqpValue>>::decode(buffer.as_slice());
-        assert!(deserialized.is_ok());
-        let deserialized = deserialized.unwrap();
-        println!("Deserialized: {:?}", deserialized);
+            let deserialized = <AmqpValue as Deserializable<AmqpValue>>::decode(buffer.as_slice());
+            assert!(deserialized.is_ok());
+            let deserialized = deserialized.unwrap();
+            println!("Deserialized: {:?}", deserialized);
 
-        // let mut header2 = Box::new(RustMessageHeader {
-        //     inner: AmqpMessageHeader::builder().with_priority(3).build(),
-        // });
-        // assert_eq!(
-        //     amqpvalue_get_header(
-        //         deserialized.as_ref(),
-        //         &mut Box::into_raw(header2) as &mut *mut RustMessageHeader
-        //     ),
-        //     0
-        // );
-    }
+            // let mut header2 = Box::new(RustMessageHeader {
+            //     inner: AmqpMessageHeader::builder().with_priority(3).build(),
+            // });
+            // assert_eq!(
+            //     amqpvalue_get_header(
+            //         deserialized.as_ref(),
+            //         &mut Box::into_raw(header2) as &mut *mut RustMessageHeader
+            //     ),
+            //     0
+            // );
+        }
     }
 }
