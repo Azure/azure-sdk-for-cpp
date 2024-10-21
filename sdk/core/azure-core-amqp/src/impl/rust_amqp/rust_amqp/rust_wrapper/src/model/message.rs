@@ -331,7 +331,7 @@ unsafe extern "C" fn messagebuilder_set_delivery_annotations(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let delivery_annotations = unsafe { &*delivery_annotations };
+    let delivery_annotations =  &*delivery_annotations ;
     if let AmqpValue::Map(map) = &delivery_annotations.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();
@@ -354,7 +354,7 @@ unsafe extern "C" fn messagebuilder_set_message_annotations(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let message_annotations = unsafe { &*message_annotations };
+    let message_annotations =  &*message_annotations ;
     if let AmqpValue::Map(map) = &message_annotations.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();
@@ -377,7 +377,7 @@ unsafe extern "C" fn messagebuilder_set_application_properties(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let application_properties = unsafe { &*application_properties };
+    let application_properties =  &*application_properties ;
     if let AmqpValue::Map(map) = &application_properties.inner {
         let amqp_map: AmqpOrderedMap<String, AmqpValue> = map
             .iter()
@@ -410,7 +410,7 @@ unsafe extern "C" fn messagebuilder_set_footer(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let footer = unsafe { &*footer };
+    let footer =  &*footer ;
     if let AmqpValue::Map(map) = &footer.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();

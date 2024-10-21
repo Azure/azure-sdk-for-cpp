@@ -13,8 +13,8 @@
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
 #elif ENABLE_RUST_AMQP
-#include <azure/core/amqp/internal/common/runtime_context.hpp>
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 #endif
 
 #include <chrono>
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_RUST_AMQP
 
   using HeaderBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustMessageHeaderBuilder;
+      = Azure::Core::Amqp::RustInterop::_detail::RustMessageHeaderBuilder;
 
   template <> struct UniqueHandleHelper<HeaderBuilderImplementation>
   {

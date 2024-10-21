@@ -22,9 +22,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   using MessageImplementation = std::remove_pointer<MESSAGE_HANDLE>::type;
 #elif ENABLE_RUST_AMQP
-  using MessageImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessage;
+  using MessageImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessage;
   using MessageBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpMessageBuilder;
+      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageBuilder;
 #endif
 
   template <> struct UniqueHandleHelper<MessageImplementation>

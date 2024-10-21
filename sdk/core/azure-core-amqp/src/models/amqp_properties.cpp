@@ -14,8 +14,8 @@
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 
 #elif ENABLE_RUST_AMQP
-#include <azure/core/amqp/internal/common/runtime_context.hpp>
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 using namespace Azure::Core::Amqp::Common::_detail;
 #endif // ENABLE_UAMQP
 #include <iomanip>
@@ -36,7 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_RUST_AMQP
 
   using PropertiesBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustMessagePropertiesBuilder;
+      = Azure::Core::Amqp::RustInterop::_detail::RustMessagePropertiesBuilder;
 
   template <> struct UniqueHandleHelper<PropertiesBuilderImplementation>
   {

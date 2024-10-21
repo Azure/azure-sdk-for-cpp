@@ -20,9 +20,9 @@
 #include <azure_uamqp_c/amqp_definitions_target.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #elif ENABLE_RUST_AMQP
-#include <azure/core/amqp/internal/common/runtime_context.hpp>
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
 using namespace Azure::Core::Amqp::Common::_detail;
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 #endif // ENABLE_UAMQP
 
 #include <iostream>
@@ -40,16 +40,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // @endcond
 
 #if ENABLE_RUST_AMQP
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpTargetBuilder>
+  template <> struct UniqueHandleHelper<RustAmqpTargetBuilder>
   {
-    static void FreeMessageTargetBuilder(RustInterop::RustAmqpTargetBuilder* obj);
+    static void FreeMessageTargetBuilder(RustAmqpTargetBuilder* obj);
 
-    using type = Core::_internal::
-        BasicUniqueHandle<RustInterop::RustAmqpTargetBuilder, FreeMessageTargetBuilder>;
+    using type
+        = Core::_internal::BasicUniqueHandle<RustAmqpTargetBuilder, FreeMessageTargetBuilder>;
   };
 
-  void UniqueHandleHelper<RustInterop::RustAmqpTargetBuilder>::FreeMessageTargetBuilder(
-      RustInterop::RustAmqpTargetBuilder* obj)
+  void UniqueHandleHelper<RustAmqpTargetBuilder>::FreeMessageTargetBuilder(
+      RustAmqpTargetBuilder* obj)
   {
     target_builder_destroy(obj);
   }
@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 #if ENABLE_RUST_AMQP
   using UniqueMessageTargetBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
-      Azure::Core::Amqp::_detail::RustInterop::RustAmqpTargetBuilder>;
+      RustAmqpTargetBuilder>;
 #endif
 
   MessageTargetImpl::MessageTargetImpl(Models::AmqpValue const& target)
@@ -161,10 +161,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_create()
-  }
+      : m_target{target_create()}
 #endif
   {
 #if ENABLE_UAMQP
@@ -229,10 +226,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl()
 #if ENABLE_UAMQP
-      : m_target
-  {
-    target_create()
-  }
+      : m_target{target_create()}
 #endif
   {
 #if ENABLE_RUST_AMQP

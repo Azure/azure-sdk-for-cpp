@@ -19,8 +19,8 @@
 #include <azure_uamqp_c/message.h>
 using NativeMessageBodyType = MESSAGE_BODY_TYPE;
 #elif ENABLE_RUST_AMQP
-#include <azure/core/amqp/internal/common/runtime_context.hpp>
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 constexpr auto AMQP_TYPE_DESCRIBED = RustAmqpValueType::AmqpValueDescribed;
 constexpr auto AMQP_TYPE_MAP = RustAmqpValueType::AmqpValueMap;

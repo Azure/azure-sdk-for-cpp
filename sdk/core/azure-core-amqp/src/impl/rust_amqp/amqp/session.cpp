@@ -5,12 +5,13 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"
-
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+using namespace Azure::Core::Amqp::Common::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<AmqpSessionImplementation>::FreeAmqpSession(
@@ -102,18 +103,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaximumLinkCount.HasValue())
     {
-      optionsBuilder.reset(amqpsessionoptionsbuilder_set_handle_max(
-          optionsBuilder.release(), m_options.MaximumLinkCount.Value()));
+      invoke_builder_api(
+          amqpsessionoptionsbuilder_set_handle_max,
+          optionsBuilder,
+          m_options.MaximumLinkCount.Value());
     }
     if (m_options.InitialIncomingWindowSize.HasValue())
     {
-      optionsBuilder.reset(amqpsessionoptionsbuilder_set_incoming_window(
-          optionsBuilder.release(), m_options.InitialIncomingWindowSize.Value()));
+      invoke_builder_api(
+          amqpsessionoptionsbuilder_set_incoming_window,
+          optionsBuilder,
+          m_options.InitialIncomingWindowSize.Value());
     }
     if (m_options.InitialOutgoingWindowSize.HasValue())
     {
-      optionsBuilder.reset(amqpsessionoptionsbuilder_set_outgoing_window(
-          optionsBuilder.release(), m_options.InitialOutgoingWindowSize.Value()));
+      invoke_builder_api(
+          amqpsessionoptionsbuilder_set_outgoing_window,
+          optionsBuilder,
+          m_options.InitialOutgoingWindowSize.Value());
     }
     if (!m_options.DesiredCapabilities.empty())
     {

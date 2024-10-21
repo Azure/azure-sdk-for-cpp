@@ -20,8 +20,8 @@
 #elif ENABLE_RUST_AMQP
 #include "rust_amqp_wrapper.h"
 
-#include <azure/core/amqp/internal/common/runtime_context.hpp>
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 using namespace Azure::Core::Amqp::Common::_detail;
 #endif // ENABLE_UAMQP
 
@@ -38,7 +38,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 #if ENABLE_RUST_AMQP
   using AmqpSourceBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSourceBuilder;
+      = RustAmqpSourceBuilder;
 
   template <> struct UniqueHandleHelper<AmqpSourceBuilderImplementation>
   {

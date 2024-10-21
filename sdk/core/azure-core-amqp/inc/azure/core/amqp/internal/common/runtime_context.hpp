@@ -12,8 +12,8 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  using RustRuntimeContext = RustInterop::RuntimeContext;
-  using RustCallContext = RustInterop::RustCallContext;
+  using RustRuntimeContext = Azure::Core::Amqp::RustInterop::_detail::RuntimeContext;
+  using RustCallContext = Azure::Core::Amqp::RustInterop::_detail::RustCallContext;
 
   template <> struct UniqueHandleHelper<RustRuntimeContext>
   {
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   public:
     RustRuntimeContext()
-        : m_runtimeContext{Azure::Core::Amqp::_detail::RustInterop::runtime_context_new()}
+        : m_runtimeContext{Azure::Core::Amqp::RustInterop::_detail::runtime_context_new()}
     {
     }
 
@@ -72,15 +72,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
      */
 
     CallContext(
-        Azure::Core::Amqp::_detail::RustInterop::RuntimeContext* runtimeContext,
+        Azure::Core::Amqp::RustInterop::_detail::RuntimeContext* runtimeContext,
         Azure::Core::Context const& context)
-        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(runtimeContext)},
+        : m_callContext{Azure::Core::Amqp::RustInterop::_detail::call_context_new(runtimeContext)},
           m_context(context)
     {
     }
 
     CallContext()
-        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(nullptr)}
+        : m_callContext{Azure::Core::Amqp::RustInterop::_detail::call_context_new(nullptr)}
     {
     }
 
@@ -96,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       {
         //        auto err{rust_error_get_message(error.get())};
         std::string errorString{err};
-        Azure::Core::Amqp::_detail::RustInterop::rust_string_delete(err);
+        Azure::Core::Amqp::RustInterop::_detail::rust_string_delete(err);
         return errorString;
       }
       else

@@ -47,7 +47,7 @@ int main(int argc, char** argv)
 
 #if ENABLE_RUST_AMQP
   // Initialize the Rust AMQP logging.
-  Azure::Core::Amqp::_detail::RustInterop::enable_tracing_integration();
+  Azure::Core::Amqp::RustInterop::_detail::enable_tracing_integration();
 #endif
 
   // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
