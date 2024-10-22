@@ -11,7 +11,11 @@ use crate::{
 };
 
 use async_std::sync::Mutex;
-use azure_core::{auth::AccessToken, error::{ErrorKind, Result}, Error};
+use azure_core::{
+    auth::AccessToken,
+    error::{ErrorKind, Result},
+    Error,
+};
 use fe2o3_amqp_management::operations::ReadResponse;
 use fe2o3_amqp_types::{messaging::ApplicationProperties, primitives::SimpleValue};
 use std::sync::{Arc, OnceLock};

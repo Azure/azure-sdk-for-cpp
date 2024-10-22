@@ -19,8 +19,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using AmqpValueImplementation = std::remove_pointer<AMQP_VALUE>::type;
   using AmqpValueImplementationType = AMQP_TYPE;
 #elif ENABLE_RUST_AMQP
-  using AmqpValueImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpValue;
-  using AmqpValueImplementationType = Azure::Core::Amqp::_detail::RustInterop::RustAmqpValueType;
+  using AmqpValueImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpValue;
+  using AmqpValueImplementationType = Azure::Core::Amqp::RustInterop::_detail::RustAmqpValueType;
 #endif
 
   template <> struct UniqueHandleHelper<AmqpValueImplementation>

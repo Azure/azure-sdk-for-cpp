@@ -22,10 +22,9 @@
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-
-  using namespace RustInterop;
 
   void UniqueHandleHelper<RustAmqpManagement>::FreeManagement(RustAmqpManagement* value)
   {
