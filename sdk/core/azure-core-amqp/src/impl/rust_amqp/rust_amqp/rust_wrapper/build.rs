@@ -19,7 +19,7 @@ fn main() {
     config.structure = struct_config;
     config.language = Language::Cxx;
     config.namespaces = Some(
-        ["Azure", "Core", "Amqp", "_detail", "RustInterop"]
+        ["Azure", "Core", "Amqp", "RustInterop", "_detail"]
             .iter()
             .map(|x| x.to_string())
             .collect(),
