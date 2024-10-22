@@ -18,8 +18,10 @@
 #include <azure_uamqp_c/amqp_definitions_source.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #elif ENABLE_RUST_AMQP
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
 #include "rust_amqp_wrapper.h"
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+using namespace Azure::Core::Amqp::Common::_detail;
 #endif // ENABLE_UAMQP
 
 #include <iostream>
@@ -34,8 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // @endcond
 
 #if ENABLE_RUST_AMQP
-  using AmqpSourceBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSourceBuilder;
+  using AmqpSourceBuilderImplementation = RustAmqpSourceBuilder;
 
   template <> struct UniqueHandleHelper<AmqpSourceBuilderImplementation>
   {
@@ -194,10 +195,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueAmqpMessageSource source{source_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueAmqpMessageSourceBuilder source{source_builder_create()};
-#endif
-
     if (source == nullptr)
     {
       throw std::runtime_error("Could not create source.");
@@ -209,11 +206,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set address.");
     }
-#if ENABLE_UAMQP
     m_source = std::move(source);
 #elif ENABLE_RUST_AMQP
+    UniqueAmqpMessageSourceBuilder builder{source_builder_create()};
+
+    if (!builder)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+
+    InvokeBuilderApi(source_builder_set_address, builder, address.c_str());
     Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
-    if (source_builder_build(source.get(), &sourceHandle))
+    if (source_builder_build(builder.release(), &sourceHandle))
     {
       throw std::runtime_error("Could not build source.");
     }
@@ -229,10 +233,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueAmqpMessageSource source{source_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueAmqpMessageSourceBuilder source{source_builder_create()};
-#endif
-
     if (source == nullptr)
     {
       throw std::runtime_error("Could not create source.");
@@ -243,11 +243,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set address.");
     }
-#if ENABLE_UAMQP
     m_source = std::move(source);
 #elif ENABLE_RUST_AMQP
+    UniqueAmqpMessageSourceBuilder builder{source_builder_create()};
+
+    if (builder == nullptr)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+
+    InvokeBuilderApi(source_builder_set_address, builder, address);
     Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
-    if (source_builder_build(source.get(), &sourceHandle))
+    if (source_builder_build(builder.get(), &sourceHandle))
     {
       throw std::runtime_error("Could not build source.");
     }
@@ -301,9 +308,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueAmqpMessageSource source{source_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueAmqpMessageSourceBuilder source{source_builder_create()};
-#endif
 
     if (!options.Address.IsNull())
     {
@@ -519,11 +523,144 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::runtime_error("Could not set capabilities.");
       }
     }
-#if ENABLE_UAMQP
     m_source = std::move(source);
 #elif ENABLE_RUST_AMQP
+    UniqueAmqpMessageSourceBuilder builder{source_builder_create()};
+
+    if (!options.Address.IsNull())
+    {
+      if (options.Address.GetType() != AmqpValueType::String)
+      {
+        throw std::runtime_error("Message target must be a string.");
+      }
+      InvokeBuilderApi(
+          source_builder_set_address, builder, static_cast<std::string>(options.Address).c_str());
+    }
+    if (options.SourceTerminusDurability.HasValue())
+    {
+      RustTerminusDurability durability;
+      switch (options.SourceTerminusDurability.Value())
+      {
+        case _internal::TerminusDurability::None:
+          durability = RustTerminusDurability::None;
+          break;
+        case _internal::TerminusDurability::Configuration:
+          durability = RustTerminusDurability::Configuration;
+          break;
+        case _internal::TerminusDurability::UnsettledState:
+          durability = RustTerminusDurability::UnsettledState;
+          break;
+        default:
+          throw std::logic_error("Unknown terminus durability.");
+      }
+
+      InvokeBuilderApi(source_builder_set_durable, builder, durability);
+    }
+    if (options.SourceTerminusExpiryPolicy.HasValue())
+    {
+      RustExpiryPolicy policy;
+      switch (options.SourceTerminusExpiryPolicy.Value())
+      {
+        case _internal::TerminusExpiryPolicy::LinkDetach:
+          policy = RustExpiryPolicy::LinkDetach;
+          break;
+        case _internal::TerminusExpiryPolicy::SessionEnd:
+          policy = RustExpiryPolicy::SessionEnd;
+          break;
+        case _internal::TerminusExpiryPolicy::ConnectionClose:
+          policy = RustExpiryPolicy::ConnectionClose;
+          break;
+        case _internal::TerminusExpiryPolicy::Never:
+          policy = RustExpiryPolicy::Never;
+          break;
+        default:
+          throw std::logic_error("Unknown terminus durability.");
+      }
+      InvokeBuilderApi(source_builder_set_expiry_policy, builder, policy);
+    }
+    if (options.Timeout.HasValue())
+    {
+      InvokeBuilderApi(
+          source_builder_set_timeout,
+          builder,
+          static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
+                                    options.Timeout.Value().time_since_epoch())
+                                    .count()));
+    }
+    if (options.Dynamic.HasValue())
+    {
+      InvokeBuilderApi(source_builder_set_dynamic, builder, *options.Dynamic);
+    }
+    if (!options.DynamicNodeProperties.empty())
+    {
+      AmqpValue dynamicNodeProperties(options.DynamicNodeProperties.AsAmqpValue());
+      InvokeBuilderApi(
+          source_builder_set_dynamic_node_properties,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(dynamicNodeProperties));
+    }
+    if (options.DistributionMode.HasValue())
+    {
+      InvokeBuilderApi(
+          source_builder_set_distribution_mode,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(
+              options.DistributionMode.Value().AsAmqpValue()));
+    }
+    if (!options.Filter.empty())
+    {
+      InvokeBuilderApi(
+          source_builder_set_filter,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.Filter.AsAmqpValue()));
+    }
+    if (!options.DefaultOutcome.IsNull())
+    {
+      if (options.DefaultOutcome.GetType() != AmqpValueType::Symbol)
+      {
+        throw std::runtime_error("Default outcome must be a Symbol.");
+      }
+      if (options.DefaultOutcome.AsSymbol() == "amqp:accepted:list")
+      {
+        InvokeBuilderApi(
+            source_builder_set_default_outcome, builder, RustDeliveryOutcome::Accepted);
+      }
+      else if (options.DefaultOutcome.AsSymbol() == "amqp:rejected:list")
+      {
+        InvokeBuilderApi(
+            source_builder_set_default_outcome, builder, RustDeliveryOutcome::Rejected);
+      }
+      else if (options.DefaultOutcome.AsSymbol() == "amqp:released:list")
+      {
+        InvokeBuilderApi(
+            source_builder_set_default_outcome, builder, RustDeliveryOutcome::Released);
+      }
+      else if (options.DefaultOutcome.AsSymbol() == "amqp:modified:list")
+      {
+        InvokeBuilderApi(
+            source_builder_set_default_outcome, builder, RustDeliveryOutcome::Modified);
+      }
+      else
+      {
+        throw std::runtime_error("Unknown default outcome.");
+      }
+    }
+    if (!options.Outcomes.empty())
+    {
+      InvokeBuilderApi(
+          source_builder_set_outcomes,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.Outcomes.AsAmqpValue()));
+    }
+    if (!options.Capabilities.empty())
+    {
+      InvokeBuilderApi(
+          source_builder_set_capabilities,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue()));
+    }
     Azure::Core::Amqp::_detail::AmqpSourceImplementation* sourceHandle;
-    if (source_builder_build(source.get(), &sourceHandle))
+    if (source_builder_build(builder.release(), &sourceHandle))
     {
       throw std::runtime_error("Could not build source.");
     }
