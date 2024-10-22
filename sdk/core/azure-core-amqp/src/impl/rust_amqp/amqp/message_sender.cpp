@@ -17,7 +17,7 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 #include <memory>
 
@@ -30,32 +30,31 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     amqpmessagesender_destroy(value);
   }
 
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptions>
+  template <> struct UniqueHandleHelper<RustAmqpSenderOptions>
   {
-    static void FreeSenderOptions(RustInterop::RustAmqpSenderOptions* value)
+    static void FreeSenderOptions(RustAmqpSenderOptions* value)
     {
       amqpmessagesenderoptions_destroy(value);
     }
 
-    using type
-        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpSenderOptions, FreeSenderOptions>;
+    using type = Core::_internal::BasicUniqueHandle<RustAmqpSenderOptions, FreeSenderOptions>;
   };
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpSenderOptionsBuilder>
+  template <> struct UniqueHandleHelper<RustAmqpSenderOptionsBuilder>
   {
-    static void FreeSenderOptionsBuilder(RustInterop::RustAmqpSenderOptionsBuilder* value)
+    static void FreeSenderOptionsBuilder(RustAmqpSenderOptionsBuilder* value)
     {
       amqpmessagesenderoptions_builder_destroy(value);
     }
 
     using type = Core::_internal::
-        BasicUniqueHandle<RustInterop::RustAmqpSenderOptionsBuilder, FreeSenderOptionsBuilder>;
+        BasicUniqueHandle<RustAmqpSenderOptionsBuilder, FreeSenderOptionsBuilder>;
   };
 
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueSenderOptions = UniqueHandle<RustInterop::RustAmqpSenderOptions>;
-  using UniqueSenderOptionsBuilder = UniqueHandle<RustInterop::RustAmqpSenderOptionsBuilder>;
+  using UniqueSenderOptions = UniqueHandle<RustAmqpSenderOptions>;
+  using UniqueSenderOptionsBuilder = UniqueHandle<RustAmqpSenderOptionsBuilder>;
 
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
