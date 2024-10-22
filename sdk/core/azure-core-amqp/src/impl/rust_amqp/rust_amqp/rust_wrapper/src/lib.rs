@@ -22,3 +22,10 @@ pub extern "C" fn rust_string_delete(rust_string: *const c_char) {
         mem::drop(CString::from_raw(rust_string as *mut c_char));
     }
 }
+
+pub(crate) fn error_from_str(msg: &'static str) -> Box<dyn std::error::Error + Send + Sync> {
+    Box::new(azure_core::error::Error::message(
+        azure_core::error::ErrorKind::Other,
+        msg,
+    ))
+}

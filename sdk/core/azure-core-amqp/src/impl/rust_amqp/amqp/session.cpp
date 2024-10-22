@@ -5,12 +5,13 @@
 
 #include "azure/core/amqp/internal/session.hpp"
 
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
 #include "private/connection_impl.hpp"
 #include "private/session_impl.hpp"
-
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+using namespace Azure::Core::Amqp::Common::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void UniqueHandleHelper<AmqpSessionImplementation>::FreeAmqpSession(
@@ -102,23 +103,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaximumLinkCount.HasValue())
     {
-      amqpsessionoptionsbuilder_set_handle_max(
-          optionsBuilder.get(), m_options.MaximumLinkCount.Value());
+      InvokeBuilderApi(
+          amqpsessionoptionsbuilder_set_handle_max,
+          optionsBuilder,
+          m_options.MaximumLinkCount.Value());
     }
     if (m_options.InitialIncomingWindowSize.HasValue())
     {
-      amqpsessionoptionsbuilder_set_incoming_window(
-          optionsBuilder.get(), m_options.InitialIncomingWindowSize.Value());
+      InvokeBuilderApi(
+          amqpsessionoptionsbuilder_set_incoming_window,
+          optionsBuilder,
+          m_options.InitialIncomingWindowSize.Value());
     }
     if (m_options.InitialOutgoingWindowSize.HasValue())
     {
-      amqpsessionoptionsbuilder_set_outgoing_window(
-          optionsBuilder.get(), m_options.InitialOutgoingWindowSize.Value());
+      InvokeBuilderApi(
+          amqpsessionoptionsbuilder_set_outgoing_window,
+          optionsBuilder,
+          m_options.InitialOutgoingWindowSize.Value());
     }
     if (!m_options.DesiredCapabilities.empty())
     {
     }
-    UniqueAmqpSessionOptions sessionOptions{amqpsessionoptionsbuilder_build(optionsBuilder.get())};
+    UniqueAmqpSessionOptions sessionOptions{
+        amqpsessionoptionsbuilder_build(optionsBuilder.release())};
     if (amqpsession_begin(
             callContext.GetCallContext(),
             m_session.get(),
