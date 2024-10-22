@@ -46,8 +46,6 @@ set(
     inc/azure/data/tables/credentials/named_key_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/enum_operators.hpp
-    inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
-    inc/azure/data/tables/internal/cryptography/url_encode.hpp
     inc/azure/data/tables/internal/policies/service_version_policy.hpp
     inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
     inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
@@ -70,6 +68,8 @@ set(
     src/policies/shared_key_lite_policy.cpp
     src/policies/tenant_bearer_token_policy.cpp
     src/policies/timeout_policy.cpp
+    src/private/hmacsha256.hpp
+    src/private/url_encode.hpp
     src/private/package_version.hpp
     src/serializers.cpp
     src/tables_clients.cpp
