@@ -8,17 +8,21 @@
 #include "unique_handle.hpp"
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpMessageSender>
+  template <>
+  struct UniqueHandleHelper<Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender>
   {
-    static void FreeMessageSender(RustInterop::RustAmqpMessageSender* value);
+    static void FreeMessageSender(
+        Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender* value);
 
-    using type
-        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpMessageSender, FreeMessageSender>;
+    using type = Core::_internal::BasicUniqueHandle<
+        Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender,
+        FreeMessageSender>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueMessageSender = UniqueHandle<_detail::RustInterop::RustAmqpMessageSender>;
+  using UniqueMessageSender
+      = UniqueHandle<Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender>;
 
   class MessageSenderFactory final {
   public:

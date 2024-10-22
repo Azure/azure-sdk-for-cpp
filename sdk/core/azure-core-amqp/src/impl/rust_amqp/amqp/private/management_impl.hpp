@@ -14,15 +14,17 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpManagement>
+  template <> struct UniqueHandleHelper<Azure::Core::Amqp::RustInterop::_detail::RustAmqpManagement>
   {
-    static void FreeManagement(RustInterop::RustAmqpManagement* value);
+    static void FreeManagement(Azure::Core::Amqp::RustInterop::_detail::RustAmqpManagement* value);
 
-    using type
-        = Core::_internal::BasicUniqueHandle<RustInterop::RustAmqpManagement, FreeManagement>;
+    using type = Core::_internal::BasicUniqueHandle<
+        Azure::Core::Amqp::RustInterop::_detail::RustAmqpManagement,
+        FreeManagement>;
   };
 
-  using UniqueAmqpManagement = UniqueHandle<RustInterop::RustAmqpManagement>;
+  using UniqueAmqpManagement
+      = UniqueHandle<Azure::Core::Amqp::RustInterop::_detail::RustAmqpManagement>;
 
   class ManagementClientFactory final {
   public:

@@ -7,18 +7,15 @@
 
 #include "../../../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
-#include "azure/core/amqp/internal/network/socket_transport.hpp"
-#include "azure/core/amqp/internal/network/tls_transport.hpp"
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "private/claims_based_security_impl.hpp"
 #include "private/connection_impl.hpp"
-#include "private/session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/uuid.hpp>
 
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 #include <memory>
 
