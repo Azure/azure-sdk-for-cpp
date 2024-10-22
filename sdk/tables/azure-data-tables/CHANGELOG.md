@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 1.0.0 (2024-11-05)
 
 ### Other Changes
+
+General Availability release for Azure Data Tables.
 
 ## 1.0.0-beta.4 (2024-08-06)
 
