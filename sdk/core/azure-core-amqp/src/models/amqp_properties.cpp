@@ -14,7 +14,9 @@
 #include <azure_uamqp_c/amqp_definitions_properties.h>
 
 #elif ENABLE_RUST_AMQP
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+using namespace Azure::Core::Amqp::Common::_detail;
 #endif // ENABLE_UAMQP
 #include <iomanip>
 #include <iostream>
@@ -34,7 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_RUST_AMQP
 
   using PropertiesBuilderImplementation
-      = Azure::Core::Amqp::_detail::RustInterop::RustMessagePropertiesBuilder;
+      = Azure::Core::Amqp::RustInterop::_detail::RustMessagePropertiesBuilder;
 
   template <> struct UniqueHandleHelper<PropertiesBuilderImplementation>
   {
@@ -188,10 +190,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
 #if ENABLE_UAMQP
     UniquePropertiesHandle returnValue(properties_create());
-#elif ENABLE_RUST_AMQP
-    _detail::UniqueMessagePropertiesBuilderHandle returnValue{properties_builder_create()};
-#endif
-
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
@@ -213,7 +211,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.UserId.HasValue())
     {
-#if ENABLE_UAMQP
       amqp_binary value{
           properties.UserId.Value().data(),
           static_cast<uint32_t>(properties.UserId.Value().size())};
@@ -221,15 +218,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         throw std::runtime_error("Could not set user id");
       }
-#elif ENABLE_RUST_AMQP
-      if (properties_set_user_id(
-              returnValue.get(),
-              properties.UserId.Value().data(),
-              static_cast<uint32_t>(properties.UserId.Value().size())))
-      {
-        throw std::runtime_error("Could not set user id");
-      }
-#endif
     }
 
     if (properties.To.HasValue())
@@ -324,16 +312,104 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-#if ENABLE_RUST_AMQP
+    return returnValue;
+#elif ENABLE_RUST_AMQP
+    _detail::UniqueMessagePropertiesBuilderHandle builder{properties_builder_create()};
+
+    if (properties.MessageId.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_message_id,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value()));
+    }
+    if (properties.CorrelationId.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_correlation_id,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value()));
+    }
+
+    if (properties.UserId.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_user_id,
+          builder,
+          properties.UserId.Value().data(),
+          static_cast<uint32_t>(properties.UserId.Value().size()));
+    }
+
+    if (properties.To.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_to, builder, static_cast<std::string>(properties.To.Value()).c_str());
+    }
+
+    if (properties.Subject.HasValue())
+    {
+      InvokeBuilderApi(properties_set_subject, builder, properties.Subject.Value().data());
+    }
+
+    if (properties.ReplyTo.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_reply_to,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value()));
+    }
+
+    if (properties.ContentType.HasValue())
+    {
+      InvokeBuilderApi(properties_set_content_type, builder, properties.ContentType.Value().data());
+    }
+
+    if (properties.ContentEncoding.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_content_encoding, builder, properties.ContentEncoding.Value().data());
+    }
+
+    if (properties.AbsoluteExpiryTime.HasValue())
+    {
+      auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+          properties.AbsoluteExpiryTime.Value().time_since_epoch())};
+
+      InvokeBuilderApi(properties_set_absolute_expiry_time, builder, timeStamp.count());
+    }
+
+    if (properties.CreationTime.HasValue())
+    {
+      auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
+          properties.CreationTime.Value().time_since_epoch())};
+
+      InvokeBuilderApi(properties_set_creation_time, builder, timeStamp.count());
+    }
+
+    if (properties.GroupId.HasValue())
+    {
+      InvokeBuilderApi(properties_set_group_id, builder, properties.GroupId.Value().data());
+    }
+
+    if (properties.GroupSequence.HasValue())
+    {
+      InvokeBuilderApi(properties_set_group_sequence, builder, properties.GroupSequence.Value());
+    }
+
+    if (properties.ReplyToGroupId.HasValue())
+    {
+      InvokeBuilderApi(
+          properties_set_reply_to_group_id, builder, properties.ReplyToGroupId.Value().data());
+    }
+
     // Now that we've set all the builder parameters, actually build the header.
     Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
-    if (properties_build(returnValue.get(), &implementation))
+    CallContext callContext;
+    if (properties_build(callContext.GetCallContext(), builder.release(), &implementation))
     {
-      throw std::runtime_error("Could not build header.");
+      throw std::runtime_error("Could not build header." + callContext.GetError());
     }
     return _detail::UniquePropertiesHandle{implementation};
-#elif ENABLE_UAMQP
-    return returnValue;
 #endif
   }
 
@@ -392,10 +468,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
     Azure::Core::Amqp::_detail::PropertiesImplementation* handle;
+#if ENABLE_RUST_AMQP
+    CallContext callContext;
+    if (amqpvalue_get_properties(
+            callContext.GetCallContext(),
+            _detail::AmqpValueFactory::ToImplementation(value),
+            &handle))
+    {
+      throw std::runtime_error(
+          "Could not convert value to AMQP Properties: " + callContext.GetError());
+    }
+#elif ENABLE_UAMQP
     if (amqpvalue_get_properties(_detail::AmqpValueFactory::ToImplementation(value), &handle))
     {
-      throw std::runtime_error("Could not convert value to AMQP Properties.");
+      throw std::runtime_error("Could not convert value to AMQP Properties");
     }
+#endif
     _detail::UniquePropertiesHandle uniqueHandle{handle};
     handle = nullptr;
     return _detail::MessagePropertiesFactory::FromImplementation(uniqueHandle);

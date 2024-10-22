@@ -20,7 +20,9 @@
 #include <azure_uamqp_c/amqp_definitions_target.h>
 #include <azure_uamqp_c/amqpvalue.h>
 #elif ENABLE_RUST_AMQP
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+using namespace Azure::Core::Amqp::Common::_detail;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 #endif // ENABLE_UAMQP
 
 #include <iostream>
@@ -38,16 +40,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // @endcond
 
 #if ENABLE_RUST_AMQP
-  template <> struct UniqueHandleHelper<RustInterop::RustAmqpTargetBuilder>
+  template <> struct UniqueHandleHelper<RustAmqpTargetBuilder>
   {
-    static void FreeMessageTargetBuilder(RustInterop::RustAmqpTargetBuilder* obj);
+    static void FreeMessageTargetBuilder(RustAmqpTargetBuilder* obj);
 
-    using type = Core::_internal::
-        BasicUniqueHandle<RustInterop::RustAmqpTargetBuilder, FreeMessageTargetBuilder>;
+    using type
+        = Core::_internal::BasicUniqueHandle<RustAmqpTargetBuilder, FreeMessageTargetBuilder>;
   };
 
-  void UniqueHandleHelper<RustInterop::RustAmqpTargetBuilder>::FreeMessageTargetBuilder(
-      RustInterop::RustAmqpTargetBuilder* obj)
+  void UniqueHandleHelper<RustAmqpTargetBuilder>::FreeMessageTargetBuilder(
+      RustAmqpTargetBuilder* obj)
   {
     target_builder_destroy(obj);
   }
@@ -135,8 +137,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 #if ENABLE_RUST_AMQP
-  using UniqueMessageTargetBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
-      Azure::Core::Amqp::_detail::RustInterop::RustAmqpTargetBuilder>;
+  using UniqueMessageTargetBuilderHandle
+      = Azure::Core::Amqp::_detail::UniqueHandle<RustAmqpTargetBuilder>;
 #endif
 
   MessageTargetImpl::MessageTargetImpl(Models::AmqpValue const& target)
@@ -166,27 +168,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 #endif
   {
 #if ENABLE_UAMQP
-    UniqueMessageTargetHandle target{target_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueMessageTargetBuilderHandle target{target_builder_create()};
-#endif
-
-    if (!target)
+    if (!m_target)
     {
       throw std::runtime_error("Could not create source.");
     }
-
     if (target_set_address(
-            target.get(),
+            m_target.get(),
             _detail::UniqueAmqpValueHandle(amqpvalue_create_string(address.c_str())).get()))
     {
       throw std::runtime_error("Could not set address.");
     }
-#if ENABLE_UAMQP
-    m_target = std::move(target);
 #elif ENABLE_RUST_AMQP
+    UniqueMessageTargetBuilderHandle builder{target_builder_create()};
+    if (!builder)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+
+    InvokeBuilderApi(target_builder_set_address, builder, address.c_str());
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
-    if (target_builder_build(target.get(), &targetHandle) != 0)
+    if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
       throw std::runtime_error("Could not build target.");
     }
@@ -198,10 +199,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueMessageTargetHandle target{target_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueMessageTargetBuilderHandle target{target_builder_create()};
-#endif
-
     if (!target)
     {
       throw std::runtime_error("Could not create source.");
@@ -212,11 +209,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       throw std::runtime_error("Could not set address.");
     }
-#if ENABLE_UAMQP
     m_target = std::move(target);
 #elif ENABLE_RUST_AMQP
+    UniqueMessageTargetBuilderHandle builder{target_builder_create()};
+    if (!builder)
+    {
+      throw std::runtime_error("Could not create source.");
+    }
+
+    InvokeBuilderApi(target_builder_set_address, builder, address);
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
-    if (target_builder_build(target.get(), &targetHandle) != 0)
+    if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
       throw std::runtime_error("Could not build target.");
     }
@@ -270,10 +273,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   {
 #if ENABLE_UAMQP
     UniqueMessageTargetHandle target{target_create()};
-#elif ENABLE_RUST_AMQP
-    UniqueMessageTargetBuilderHandle target{target_builder_create()};
-#endif
-
     if (!options.Address.IsNull())
     {
       if (target_set_address(
@@ -413,11 +412,99 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         throw std::runtime_error("Could not set capabilities.");
       }
     }
-#if ENABLE_UAMQP
     m_target = std::move(target);
 #elif ENABLE_RUST_AMQP
+    UniqueMessageTargetBuilderHandle builder{target_builder_create()};
+
+    if (!options.Address.IsNull())
+    {
+      if (options.Address.GetType() != AmqpValueType::String)
+      {
+        throw std::runtime_error("Message target must be a string.");
+      }
+      InvokeBuilderApi(
+          target_builder_set_address, builder, static_cast<std::string>(options.Address).c_str());
+    }
+    if (options.TerminusDurabilityValue.HasValue())
+    {
+      RustTerminusDurability durability;
+      switch (options.TerminusDurabilityValue.Value())
+      {
+        case _internal::TerminusDurability::None:
+          durability = RustTerminusDurability::None;
+          break;
+        case _internal::TerminusDurability::Configuration:
+          durability = RustTerminusDurability::Configuration;
+          break;
+        case _internal::TerminusDurability::UnsettledState:
+          durability = RustTerminusDurability::UnsettledState;
+          break;
+        default:
+          throw std::logic_error("Unknown terminus durability.");
+      }
+      InvokeBuilderApi(target_builder_set_durable, builder, durability);
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set durable.");
+      }
+    }
+    if (options.TerminusExpiryPolicyValue.HasValue())
+    {
+      RustExpiryPolicy policy;
+      switch (options.TerminusExpiryPolicyValue.Value())
+      {
+        case _internal::TerminusExpiryPolicy::LinkDetach:
+          policy = RustExpiryPolicy::LinkDetach;
+          break;
+        case _internal::TerminusExpiryPolicy::SessionEnd:
+          policy = RustExpiryPolicy::SessionEnd;
+          break;
+        case _internal::TerminusExpiryPolicy::ConnectionClose:
+          policy = RustExpiryPolicy::ConnectionClose;
+          break;
+        case _internal::TerminusExpiryPolicy::Never:
+          policy = RustExpiryPolicy::Never;
+          break;
+        default:
+          throw std::logic_error("Unknown terminus durability.");
+      }
+      InvokeBuilderApi(target_builder_set_expiry_policy, builder, policy);
+      if (!builder)
+      {
+        throw std::runtime_error("Could not set durable.");
+      }
+    }
+    if (options.Timeout.HasValue())
+    {
+      InvokeBuilderApi(
+          target_builder_set_timeout,
+          builder,
+          static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
+                                    options.Timeout.Value().time_since_epoch())
+                                    .count()));
+    }
+    if (options.Dynamic.HasValue())
+    {
+      InvokeBuilderApi(target_builder_set_dynamic, builder, *options.Dynamic);
+    }
+
+    if (!options.DynamicNodeProperties.empty())
+    {
+      InvokeBuilderApi(
+          target_builder_set_dynamic_node_properties,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.DynamicNodeProperties.AsAmqpValue()));
+    }
+
+    if (!options.Capabilities.empty())
+    {
+      InvokeBuilderApi(
+          target_builder_set_capabilities,
+          builder,
+          _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue()));
+    }
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
-    if (target_builder_build(target.get(), &targetHandle) != 0)
+    if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
       throw std::runtime_error("Could not build target.");
     }

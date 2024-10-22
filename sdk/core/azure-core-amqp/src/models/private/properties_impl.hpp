@@ -20,7 +20,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   using PropertiesImplementation = std::remove_pointer<PROPERTIES_HANDLE>::type;
 #elif ENABLE_RUST_AMQP
-  using PropertiesImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageProperties;
+  using PropertiesImplementation = Azure::Core::Amqp::RustInterop::_detail::RustMessageProperties;
 #endif
 
   template <> struct UniqueHandleHelper<PropertiesImplementation>

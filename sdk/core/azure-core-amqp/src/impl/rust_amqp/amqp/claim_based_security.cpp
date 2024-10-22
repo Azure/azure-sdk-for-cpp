@@ -9,7 +9,7 @@
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using namespace Azure::Core::Amqp::_internal;
@@ -30,7 +30,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
-    RustInterop::RustAmqpClaimsBasedSecurity* cbs;
+    RustAmqpClaimsBasedSecurity* cbs;
     if (amqpclaimsbasedsecurity_create(
             callContext.GetCallContext(), session->GetAmqpSession().get(), &cbs))
     {

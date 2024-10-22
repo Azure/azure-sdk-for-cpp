@@ -27,7 +27,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_create(
     claims_based_security: *mut *mut RustAmqpClaimsBasedSecurity,
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
-    let session = unsafe { (*session).get_session() };
+    let session = (*session).get_session();
     let cbs = AmqpClaimsBasedSecurity::new(session);
     match cbs {
         Ok(cbs) => {
@@ -47,10 +47,8 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_create(
 ///
 #[no_mangle]
 pub unsafe extern "C" fn amqpclaimsbasedsecurity_destroy(cbs: *mut RustAmqpClaimsBasedSecurity) {
-    unsafe {
-        trace!("Destroying CBS");
-        mem::drop(Box::from_raw(cbs));
-    }
+    trace!("Destroying CBS");
+    mem::drop(Box::from_raw(cbs));
 }
 
 #[no_mangle]
@@ -128,8 +126,8 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
     let cbs = &mut (*cbs).inner;
-    let path = unsafe { std::ffi::CStr::from_ptr(path).to_str().unwrap() };
-    let secret = unsafe { std::ffi::CStr::from_ptr(secret).to_str().unwrap() };
+    let path = std::ffi::CStr::from_ptr(path).to_str().unwrap();
+    let secret = std::ffi::CStr::from_ptr(secret).to_str().unwrap();
     let expires_on = UNIX_EPOCH + Duration::from_secs(expires_on);
     let expires_on = time::OffsetDateTime::from(expires_on);
 
@@ -181,7 +179,7 @@ mod tests {
             assert_eq!(result, 0);
 
             let claims_based_security = Box::into_raw(Box::new(RustAmqpClaimsBasedSecurity {
-                inner: AmqpClaimsBasedSecurity::new(&(*session).get_session()).unwrap(),
+                inner: AmqpClaimsBasedSecurity::new((*session).get_session()).unwrap(),
             }));
 
             let result = amqpclaimsbasedsecurity_attach(call_context, claims_based_security);

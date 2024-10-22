@@ -3,24 +3,30 @@
 
 // cspell: words amqp amqpvalue repr
 
+use crate::{
+    call_context::{call_context_from_ptr_mut, RustCallContext},
+    error_from_str,
+    model::value::RustAmqpValue,
+};
 use azure_core_amqp::{
     messaging::{builders::AmqpMessagePropertiesBuilder, AmqpMessageId, AmqpMessageProperties},
     value::{AmqpComposite, AmqpDescriptor, AmqpTimestamp, AmqpValue},
 };
-use std::mem;
-use std::time::UNIX_EPOCH;
-
-use crate::model::value::RustAmqpValue;
+use std::{
+    time::UNIX_EPOCH,
+    {
+        ffi::{c_char, CStr},
+        mem,
+    },
+};
 
 pub struct RustMessageProperties {
     pub(crate) inner: AmqpMessageProperties,
 }
 
 #[no_mangle]
-extern "C" fn properties_destroy(properties: *mut RustMessageProperties) {
-    unsafe {
-        mem::drop(Box::from_raw(properties));
-    }
+unsafe extern "C" fn properties_destroy(properties: *mut RustMessageProperties) {
+    mem::drop(Box::from_raw(properties));
 }
 
 fn value_from_message_id(message_id: AmqpMessageId) -> AmqpValue {
@@ -33,11 +39,11 @@ fn value_from_message_id(message_id: AmqpMessageId) -> AmqpValue {
 }
 
 #[no_mangle]
-extern "C" fn properties_get_message_id(
+unsafe extern "C" fn properties_get_message_id(
     properties: *const RustMessageProperties,
     message_id: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(id) = properties.inner.message_id() {
         *message_id = Box::into_raw(Box::new(RustAmqpValue {
             inner: value_from_message_id(id.clone()),
@@ -49,11 +55,11 @@ extern "C" fn properties_get_message_id(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_correlation_id(
+unsafe extern "C" fn properties_get_correlation_id(
     properties: *const RustMessageProperties,
     correlation_id: &mut *mut RustAmqpValue,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(id) = properties.inner.correlation_id() {
         *correlation_id = Box::into_raw(Box::new(RustAmqpValue {
             inner: value_from_message_id(id.clone()),
@@ -65,12 +71,12 @@ extern "C" fn properties_get_correlation_id(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_user_id(
+unsafe extern "C" fn properties_get_user_id(
     properties: *const RustMessageProperties,
     value: &mut *const u8,
     size: &mut u32,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(id) = properties.inner.user_id() {
         *value = id.as_ptr();
         *size = id.len() as u32;
@@ -81,17 +87,15 @@ extern "C" fn properties_get_user_id(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_to(
+unsafe extern "C" fn properties_get_to(
     properties: *const RustMessageProperties,
     value: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(to) = properties.inner.to() {
-        unsafe {
-            *value = Box::into_raw(Box::new(RustAmqpValue {
-                inner: AmqpValue::String(to.clone()),
-            }))
-        };
+        *value = Box::into_raw(Box::new(RustAmqpValue {
+            inner: AmqpValue::String(to.clone()),
+        }));
     } else {
         return -1;
     }
@@ -99,13 +103,13 @@ extern "C" fn properties_get_to(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_subject(
+unsafe extern "C" fn properties_get_subject(
     properties: *const RustMessageProperties,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(subject) = properties.inner.subject() {
-        unsafe { *string_value = std::ffi::CString::new(subject.clone()).unwrap().into_raw() };
+        *string_value = std::ffi::CString::new(subject.clone()).unwrap().into_raw();
     } else {
         return -1;
     }
@@ -113,17 +117,15 @@ extern "C" fn properties_get_subject(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_reply_to(
+unsafe extern "C" fn properties_get_reply_to(
     properties: *const RustMessageProperties,
     value: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = &*properties;
     if let Some(reply_to) = properties.inner.reply_to() {
-        unsafe {
-            *value = Box::into_raw(Box::new(RustAmqpValue {
-                inner: AmqpValue::String(reply_to.clone()),
-            }))
-        };
+        *value = Box::into_raw(Box::new(RustAmqpValue {
+            inner: AmqpValue::String(reply_to.clone()),
+        }));
     } else {
         return -1;
     }
@@ -131,17 +133,15 @@ extern "C" fn properties_get_reply_to(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_content_type(
+unsafe extern "C" fn properties_get_content_type(
     properties: *const RustMessageProperties,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(content_type) = properties.inner.content_type() {
-        unsafe {
-            *string_value = std::ffi::CString::new(content_type.clone().0)
-                .unwrap()
-                .into_raw()
-        };
+        *string_value = std::ffi::CString::new(content_type.clone().0)
+            .unwrap()
+            .into_raw();
     } else {
         return -1;
     }
@@ -149,17 +149,15 @@ extern "C" fn properties_get_content_type(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_content_encoding(
+unsafe extern "C" fn properties_get_content_encoding(
     properties: *const RustMessageProperties,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(content_encoding) = properties.inner.content_encoding() {
-        unsafe {
-            *string_value = std::ffi::CString::new(content_encoding.clone().0)
-                .unwrap()
-                .into_raw()
-        };
+        *string_value = std::ffi::CString::new(content_encoding.clone().0)
+            .unwrap()
+            .into_raw();
     } else {
         return -1;
     }
@@ -167,11 +165,11 @@ extern "C" fn properties_get_content_encoding(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_absolute_expiry_time(
+unsafe extern "C" fn properties_get_absolute_expiry_time(
     properties: *const RustMessageProperties,
     expiry_time: &mut u64,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(expiry) = properties.inner.absolute_expiry_time() {
         *expiry_time = expiry.0.duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
     } else {
@@ -181,11 +179,11 @@ extern "C" fn properties_get_absolute_expiry_time(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_creation_time(
+unsafe extern "C" fn properties_get_creation_time(
     properties: *const RustMessageProperties,
     creation_time: &mut u64,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(creation) = properties.inner.creation_time() {
         *creation_time = creation.0.duration_since(UNIX_EPOCH).unwrap().as_millis() as u64;
     } else {
@@ -195,13 +193,13 @@ extern "C" fn properties_get_creation_time(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_group_id(
+unsafe extern "C" fn properties_get_group_id(
     properties: *const RustMessageProperties,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(group_id) = properties.inner.group_id() {
-        unsafe { *string_value = std::ffi::CString::new(group_id.clone()).unwrap().into_raw() };
+        *string_value = std::ffi::CString::new(group_id.clone()).unwrap().into_raw();
     } else {
         return -1;
     }
@@ -209,11 +207,11 @@ extern "C" fn properties_get_group_id(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_group_sequence(
+unsafe extern "C" fn properties_get_group_sequence(
     properties: *const RustMessageProperties,
     group_sequence: &mut u32,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(sequence) = properties.inner.group_sequence() {
         *group_sequence = *sequence;
     } else {
@@ -223,17 +221,15 @@ extern "C" fn properties_get_group_sequence(
 }
 
 #[no_mangle]
-extern "C" fn properties_get_reply_to_group_id(
+unsafe extern "C" fn properties_get_reply_to_group_id(
     properties: *const RustMessageProperties,
     string_value: *mut *const std::os::raw::c_char,
 ) -> i32 {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     if let Some(reply_to_group_id) = properties.inner.reply_to_group_id() {
-        unsafe {
-            *string_value = std::ffi::CString::new(reply_to_group_id.clone())
-                .unwrap()
-                .into_raw()
-        };
+        *string_value = std::ffi::CString::new(reply_to_group_id.clone())
+            .unwrap()
+            .into_raw();
     } else {
         return -1;
     }
@@ -252,219 +248,253 @@ extern "C" fn properties_builder_create() -> *mut RustMessagePropertiesBuilder {
 }
 
 #[no_mangle]
-extern "C" fn properties_builder_destroy(properties: *mut RustMessagePropertiesBuilder) {
-    unsafe {
-        mem::drop(Box::from_raw(properties));
-    }
+unsafe extern "C" fn properties_builder_destroy(properties: *mut RustMessagePropertiesBuilder) {
+    mem::drop(Box::from_raw(properties));
 }
 
 #[no_mangle]
-extern "C" fn properties_set_message_id(
+unsafe extern "C" fn properties_set_message_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     message_id: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let message_id = unsafe { &*message_id };
-    builder.inner.with_message_id(match &message_id.inner {
-        AmqpValue::Binary(id) => AmqpMessageId::Binary(id.clone()),
-        AmqpValue::String(id) => AmqpMessageId::String(id.clone()),
-        AmqpValue::Uuid(id) => AmqpMessageId::Uuid(*id),
-        AmqpValue::ULong(id) => AmqpMessageId::Ulong(*id),
-        _ => return -1,
-    });
-    0
-}
-
-#[no_mangle]
-extern "C" fn properties_set_correlation_id(
-    builder: *mut RustMessagePropertiesBuilder,
-    correlation_id: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let correlation_id = unsafe { &*correlation_id };
-    builder
-        .inner
-        .with_correlation_id(match &correlation_id.inner {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let message_id = &*message_id;
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_message_id(match &message_id.inner {
             AmqpValue::Binary(id) => AmqpMessageId::Binary(id.clone()),
             AmqpValue::String(id) => AmqpMessageId::String(id.clone()),
             AmqpValue::Uuid(id) => AmqpMessageId::Uuid(*id),
             AmqpValue::ULong(id) => AmqpMessageId::Ulong(*id),
-            _ => return -1,
-        });
-    0
+            _ => return std::ptr::null_mut(),
+        }),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_user_id(
+unsafe extern "C" fn properties_set_correlation_id(
+    call_context: *mut RustCallContext,
+    builder: *mut RustMessagePropertiesBuilder,
+    correlation_id: *const RustAmqpValue,
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let correlation_id = &*correlation_id;
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder
+            .inner
+            .with_correlation_id(match &correlation_id.inner {
+                AmqpValue::Binary(id) => AmqpMessageId::Binary(id.clone()),
+                AmqpValue::String(id) => AmqpMessageId::String(id.clone()),
+                AmqpValue::Uuid(id) => AmqpMessageId::Uuid(*id),
+                AmqpValue::ULong(id) => AmqpMessageId::Ulong(*id),
+                _ => return std::ptr::null_mut(),
+            }),
+    }))
+}
+
+#[no_mangle]
+unsafe extern "C" fn properties_set_user_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     value: *const u8,
     size: u32,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let value = unsafe { std::slice::from_raw_parts(value, size as usize) };
-    builder.inner.with_user_id(value.to_vec());
-    0
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let value = std::slice::from_raw_parts(value, size as usize);
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_user_id(value.to_vec()),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_to(
+unsafe extern "C" fn properties_set_to(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
-    value: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let value = unsafe { &*value };
-    if let AmqpValue::String(to) = &value.inner {
-        builder.inner.with_to(to.clone());
-        0
-    } else {
-        -1
-    }
+    value: *const c_char,
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let value = { CStr::from_ptr(value) };
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_to(value.to_str().unwrap()),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_subject(
+unsafe extern "C" fn properties_set_subject(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let subject = unsafe {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let subject = {
         std::ffi::CStr::from_ptr(string_value)
             .to_string_lossy()
             .to_string()
     };
-    builder.inner.with_subject(subject);
-    0
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_subject(subject),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_reply_to(
+unsafe extern "C" fn properties_set_reply_to(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     value: *const RustAmqpValue,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let value = unsafe { &*value };
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let value = { &*value };
     if let AmqpValue::String(reply_to) = &value.inner {
-        builder.inner.with_reply_to(reply_to.clone());
-        0
+        Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+            inner: builder.inner.with_reply_to(reply_to.clone()),
+        }))
     } else {
-        -1
+        std::ptr::null_mut()
     }
 }
 
 #[no_mangle]
-extern "C" fn properties_set_content_type(
+unsafe extern "C" fn properties_set_content_type(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let content_type = unsafe {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let content_type = {
         std::ffi::CStr::from_ptr(string_value)
             .to_string_lossy()
             .to_string()
     };
-    builder.inner.with_content_type(content_type);
-    0
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_content_type(content_type),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_content_encoding(
+unsafe extern "C" fn properties_set_content_encoding(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let content_encoding = unsafe {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let content_encoding = {
         std::ffi::CStr::from_ptr(string_value)
             .to_string_lossy()
             .to_string()
     };
-    builder.inner.with_content_encoding(content_encoding);
-    0
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_content_encoding(content_encoding),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_absolute_expiry_time(
+unsafe extern "C" fn properties_set_absolute_expiry_time(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     expiry_time: u64,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_absolute_expiry_time(AmqpTimestamp(
-        UNIX_EPOCH + std::time::Duration::from_millis(expiry_time),
-    ));
-    0
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_absolute_expiry_time(AmqpTimestamp(
+            UNIX_EPOCH + std::time::Duration::from_millis(expiry_time),
+        )),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_creation_time(
+unsafe extern "C" fn properties_set_creation_time(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     creation_time: u64,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_creation_time(AmqpTimestamp(
-        UNIX_EPOCH + std::time::Duration::from_millis(creation_time),
-    ));
-    0
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_creation_time(AmqpTimestamp(
+            UNIX_EPOCH + std::time::Duration::from_millis(creation_time),
+        )),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_group_id(
+unsafe extern "C" fn properties_set_group_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let group_id = unsafe {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let group_id = {
         std::ffi::CStr::from_ptr(string_value)
             .to_string_lossy()
             .to_string()
     };
-    builder.inner.with_group_id(group_id);
-    0
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_group_id(group_id),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_group_sequence(
+unsafe extern "C" fn properties_set_group_sequence(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     group_sequence: u32,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    builder.inner.with_group_sequence(group_sequence);
-    0
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_group_sequence(group_sequence),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_set_reply_to_group_id(
+unsafe extern "C" fn properties_set_reply_to_group_id(
+    call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     string_value: *const std::os::raw::c_char,
-) -> i32 {
-    let builder = unsafe { &mut *builder };
-    let reply_to_group_id = unsafe {
+) -> *mut RustMessagePropertiesBuilder {
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let builder = Box::from_raw(builder);
+    let reply_to_group_id = {
         std::ffi::CStr::from_ptr(string_value)
             .to_string_lossy()
             .to_string()
     };
-    builder.inner.with_reply_to_group_id(reply_to_group_id);
-    0
+    Box::into_raw(Box::new(RustMessagePropertiesBuilder {
+        inner: builder.inner.with_reply_to_group_id(reply_to_group_id),
+    }))
 }
 
 #[no_mangle]
-extern "C" fn properties_build(
+unsafe extern "C" fn properties_build(
+    _call_context: *mut RustCallContext,
     builder: *mut RustMessagePropertiesBuilder,
     header: *mut *mut RustMessageProperties,
 ) -> i32 {
-    let builder = unsafe { &mut *builder };
-    unsafe {
-        *header = Box::into_raw(Box::new(RustMessageProperties {
-            inner: builder.inner.build(),
-        }))
-    };
+    let builder = Box::from_raw(builder);
+    *header = Box::into_raw(Box::new(RustMessageProperties {
+        inner: builder.inner.build(),
+    }));
     0
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_get_properties(
+unsafe extern "C" fn amqpvalue_get_properties(
+    call_context: *mut RustCallContext,
     value: *const RustAmqpValue,
     header: &mut *mut RustMessageProperties,
 ) -> i32 {
-    let value = unsafe { &*value };
+    let call_context = call_context_from_ptr_mut(call_context);
+    let value = { &*value };
     match &value.inner {
         AmqpValue::Described(value) => match value.descriptor() {
             AmqpDescriptor::Code(0x73) => {
@@ -478,6 +508,8 @@ extern "C" fn amqpvalue_get_properties(
                     }
                     _ => {
                         *header = std::ptr::null_mut();
+                        call_context
+                            .set_error(error_from_str("Properties value must be an AMQP list."));
                         println!("Unexpected properties value: {:?}", value);
                         1
                     }
@@ -485,11 +517,13 @@ extern "C" fn amqpvalue_get_properties(
             }
             _ => {
                 println!("Unexpected properties descriptor code: {:?}", value);
+                call_context.set_error(error_from_str("Unexpected AMQP descriptor code."));
                 *header = std::ptr::null_mut();
                 1
             }
         },
         _ => {
+            call_context.set_error(error_from_str("Properties must be a described type."));
             println!("Unexpected properties type: {:?}", value.inner);
             1
         }
@@ -497,10 +531,10 @@ extern "C" fn amqpvalue_get_properties(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_properties(
+unsafe extern "C" fn amqpvalue_create_properties(
     properties: *const RustMessageProperties,
 ) -> *mut RustAmqpValue {
-    let properties = unsafe { &*properties };
+    let properties = { &*properties };
     let value = AmqpValue::Composite(Box::new(AmqpComposite::new(
         AmqpDescriptor::Code(0x73),
         properties.inner.clone(),
@@ -539,185 +573,212 @@ mod tests {
 
     #[test]
     fn test_properties_get_message_id() {
-        let properties = create_test_properties();
-        let mut message_id: *mut RustAmqpValue = ptr::null_mut();
-        let result = properties_get_message_id(properties, &mut message_id);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut message_id: *mut RustAmqpValue = ptr::null_mut();
+            let result = properties_get_message_id(properties, &mut message_id);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 (*message_id).inner,
                 AmqpValue::String("test_message_id".to_string())
             );
             drop(Box::from_raw(message_id));
-        }
-        unsafe {
+
             drop(Box::from_raw(properties));
         }
     }
 
     #[test]
     fn test_properties_get_correlation_id() {
-        let properties = create_test_properties();
-        let mut correlation_id: *mut RustAmqpValue = ptr::null_mut();
-        let result = properties_get_correlation_id(properties, &mut correlation_id);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut correlation_id: *mut RustAmqpValue = ptr::null_mut();
+            let result = properties_get_correlation_id(properties, &mut correlation_id);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 (*correlation_id).inner,
                 AmqpValue::String("test_correlation_id".to_string())
             );
             drop(Box::from_raw(correlation_id));
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_user_id() {
-        let properties = create_test_properties();
-        let mut value: *const u8 = ptr::null();
-        let mut size: u32 = 0;
-        let result = properties_get_user_id(properties, &mut value, &mut size);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut value: *const u8 = ptr::null();
+            let mut size: u32 = 0;
+            let result = properties_get_user_id(properties, &mut value, &mut size);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 std::slice::from_raw_parts(value, size as usize),
                 &[1, 2, 3, 4]
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_to() {
-        let properties = create_test_properties();
-        let mut value: *mut RustAmqpValue = ptr::null_mut();
-        let result = properties_get_to(properties, &mut value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut value: *mut RustAmqpValue = ptr::null_mut();
+            let result = properties_get_to(properties, &mut value);
+            assert_eq!(result, 0);
+
             assert_eq!((*value).inner, AmqpValue::String("test_to".to_string()));
             drop(Box::from_raw(value));
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_subject() {
-        let properties = create_test_properties();
-        let mut string_value: *const std::os::raw::c_char = ptr::null();
-        let result = properties_get_subject(properties, &mut string_value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut string_value: *const std::os::raw::c_char = ptr::null();
+            let result = properties_get_subject(properties, &mut string_value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 CString::from_raw(string_value as *mut _).to_str().unwrap(),
                 "test_subject"
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_reply_to() {
-        let properties = create_test_properties();
-        let mut value: *mut RustAmqpValue = ptr::null_mut();
-        let result = properties_get_reply_to(properties, &mut value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut value: *mut RustAmqpValue = ptr::null_mut();
+            let result = properties_get_reply_to(properties, &mut value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 (*value).inner,
                 AmqpValue::String("test_reply_to".to_string())
             );
             drop(Box::from_raw(value));
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_content_type() {
-        let properties = create_test_properties();
-        let mut string_value: *const std::os::raw::c_char = ptr::null();
-        let result = properties_get_content_type(properties, &mut string_value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut string_value: *const std::os::raw::c_char = ptr::null();
+            let result = properties_get_content_type(properties, &mut string_value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 CString::from_raw(string_value as *mut _).to_str().unwrap(),
                 "test_content_type"
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_content_encoding() {
-        let properties = create_test_properties();
-        let mut string_value: *const std::os::raw::c_char = ptr::null();
-        let result = properties_get_content_encoding(properties, &mut string_value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut string_value: *const std::os::raw::c_char = ptr::null();
+            let result = properties_get_content_encoding(properties, &mut string_value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 CString::from_raw(string_value as *mut _).to_str().unwrap(),
                 "test_content_encoding"
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_absolute_expiry_time() {
-        let properties = create_test_properties();
-        let mut expiry_time: u64 = 0;
-        let result = properties_get_absolute_expiry_time(properties, &mut expiry_time);
-        assert_eq!(result, 0);
-        assert_eq!(expiry_time, 1000 * 1000);
-        unsafe { drop(Box::from_raw(properties)) };
+        unsafe {
+            let properties = create_test_properties();
+            let mut expiry_time: u64 = 0;
+            let result = properties_get_absolute_expiry_time(properties, &mut expiry_time);
+            assert_eq!(result, 0);
+            assert_eq!(expiry_time, 1000 * 1000);
+
+            drop(Box::from_raw(properties));
+        }
     }
 
     #[test]
     fn test_properties_get_creation_time() {
-        let properties = create_test_properties();
-        let mut creation_time: u64 = 0;
-        let result = properties_get_creation_time(properties, &mut creation_time);
-        assert_eq!(result, 0);
-        assert_eq!(creation_time, 500 * 1000);
-        unsafe { drop(Box::from_raw(properties)) };
+        unsafe {
+            let properties = create_test_properties();
+            let mut creation_time: u64 = 0;
+            let result = properties_get_creation_time(properties, &mut creation_time);
+            assert_eq!(result, 0);
+            assert_eq!(creation_time, 500 * 1000);
+
+            drop(Box::from_raw(properties));
+        }
     }
 
     #[test]
     fn test_properties_get_group_id() {
-        let properties = create_test_properties();
-        let mut string_value: *const std::os::raw::c_char = ptr::null();
-        let result = properties_get_group_id(properties, &mut string_value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut string_value: *const std::os::raw::c_char = ptr::null();
+            let result = properties_get_group_id(properties, &mut string_value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 CString::from_raw(string_value as *mut _).to_str().unwrap(),
                 "test_group_id"
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 
     #[test]
     fn test_properties_get_group_sequence() {
-        let properties = create_test_properties();
-        let mut group_sequence: u32 = 0;
-        let result = properties_get_group_sequence(properties, &mut group_sequence);
-        assert_eq!(result, 0);
-        assert_eq!(group_sequence, 42);
-        unsafe { drop(Box::from_raw(properties)) };
+        unsafe {
+            let properties = create_test_properties();
+            let mut group_sequence: u32 = 0;
+            let result = properties_get_group_sequence(properties, &mut group_sequence);
+            assert_eq!(result, 0);
+            assert_eq!(group_sequence, 42);
+
+            drop(Box::from_raw(properties));
+        }
     }
 
     #[test]
     fn test_properties_get_reply_to_group_id() {
-        let properties = create_test_properties();
-        let mut string_value: *const std::os::raw::c_char = ptr::null();
-        let result = properties_get_reply_to_group_id(properties, &mut string_value);
-        assert_eq!(result, 0);
         unsafe {
+            let properties = create_test_properties();
+            let mut string_value: *const std::os::raw::c_char = ptr::null();
+            let result = properties_get_reply_to_group_id(properties, &mut string_value);
+            assert_eq!(result, 0);
+
             assert_eq!(
                 CString::from_raw(string_value as *mut _).to_str().unwrap(),
                 "test_reply_to_group_id"
             );
+
+            drop(Box::from_raw(properties));
         }
-        unsafe { drop(Box::from_raw(properties)) };
     }
 }

@@ -10,20 +10,20 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <>
-  struct UniqueHandleHelper<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>
+  struct UniqueHandleHelper<Azure::Core::Amqp::RustInterop::_detail::RustAmqpClaimsBasedSecurity>
   {
     static void FreeAmqpCbs(
-        Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity* obj);
+        Azure::Core::Amqp::RustInterop::_detail::RustAmqpClaimsBasedSecurity* obj);
 
     using type = Core::_internal::BasicUniqueHandle<
-        Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity,
+        Azure::Core::Amqp::RustInterop::_detail::RustAmqpClaimsBasedSecurity,
         FreeAmqpCbs>;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpCbsHandle
-      = UniqueHandle<Azure::Core::Amqp::_detail::RustInterop::RustAmqpClaimsBasedSecurity>;
+      = UniqueHandle<Azure::Core::Amqp::RustInterop::_detail::RustAmqpClaimsBasedSecurity>;
 
   class ClaimsBasedSecurityImpl final {
 

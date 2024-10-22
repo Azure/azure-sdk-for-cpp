@@ -12,8 +12,8 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  using RustRuntimeContext = RustInterop::RuntimeContext;
-  using RustCallContext = RustInterop::RustCallContext;
+  using RustRuntimeContext = Azure::Core::Amqp::RustInterop::_detail::RuntimeContext;
+  using RustCallContext = Azure::Core::Amqp::RustInterop::_detail::RustCallContext;
 
   template <> struct UniqueHandleHelper<RustRuntimeContext>
   {
@@ -48,7 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
   public:
     RustRuntimeContext()
-        : m_runtimeContext{Azure::Core::Amqp::_detail::RustInterop::runtime_context_new()}
+        : m_runtimeContext{Azure::Core::Amqp::RustInterop::_detail::runtime_context_new()}
     {
     }
 
@@ -72,10 +72,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
      */
 
     CallContext(
-        Azure::Core::Amqp::_detail::RustInterop::RuntimeContext* runtimeContext,
+        Azure::Core::Amqp::RustInterop::_detail::RuntimeContext* runtimeContext,
         Azure::Core::Context const& context)
-        : m_callContext{Azure::Core::Amqp::_detail::RustInterop::call_context_new(runtimeContext)},
+        : m_callContext{Azure::Core::Amqp::RustInterop::_detail::call_context_new(runtimeContext)},
           m_context(context)
+    {
+    }
+
+    CallContext()
+        : m_callContext{Azure::Core::Amqp::RustInterop::_detail::call_context_new(nullptr)}
     {
     }
 
@@ -91,7 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
       {
         //        auto err{rust_error_get_message(error.get())};
         std::string errorString{err};
-        Azure::Core::Amqp::_detail::RustInterop::rust_string_delete(err);
+        Azure::Core::Amqp::RustInterop::_detail::rust_string_delete(err);
         return errorString;
       }
       else
@@ -104,6 +109,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     UniqueRustCallContext m_callContext;
     Azure::Core::Context m_context;
   };
+
+  /**
+   * Invoke a Rust AMQP builder API, checking for error.
+   *
+   * @param api - Flat C API to invoke. The first parameter MUST be a RustCallContext object, the
+   * second parameter must be a Rust client object.
+   * @param builder - Unique Pointer to a Rust builder object.
+   * @param args - remaining arguments to the flat C API.
+   *
+   * This function will check the return from the API, and if it is null, will throw an exception
+   * with error information from the callContext.
+   *
+   */
+  template <typename Api, typename T, typename... Args>
+  void InvokeBuilderApi(Api& api, T& builder, Args&&... args)
+  {
+    CallContext callContext;
+    auto raw = api(callContext.GetCallContext(), builder.release(), std::forward<Args>(args)...);
+    if (!raw)
+    {
+      throw std::runtime_error("Error processing builder API: " + callContext.GetError());
+    }
+    builder.reset(raw);
+  }
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 #endif // ENABLE_RUST_AMQP

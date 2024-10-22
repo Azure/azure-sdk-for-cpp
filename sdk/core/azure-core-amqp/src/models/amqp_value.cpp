@@ -23,7 +23,7 @@
 #include "rust_amqp_wrapper.h"
 
 #include <cstring>
-using namespace Azure::Core::Amqp::_detail::RustInterop;
+using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 constexpr auto AMQP_TYPE_SYMBOL = RustAmqpValueType::AmqpValueSymbol;
 #endif

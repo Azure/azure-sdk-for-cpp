@@ -7,10 +7,10 @@ use crate::model::value::RustAmqpValue;
 use azure_core_amqp::value::{AmqpDescribed, AmqpValue};
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_delivery_annotations(
+unsafe extern "C" fn amqpvalue_create_delivery_annotations(
     value: *const RustAmqpValue,
 ) -> *mut RustAmqpValue {
-    let value = unsafe { &*value };
+    let value = { &*value };
     let annotations = match &value.inner {
         AmqpValue::Map(map) => map,
         _ => return std::ptr::null_mut(),
@@ -23,10 +23,10 @@ extern "C" fn amqpvalue_create_delivery_annotations(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_message_annotations(
+unsafe extern "C" fn amqpvalue_create_message_annotations(
     value: *const RustAmqpValue,
 ) -> *mut RustAmqpValue {
-    let value = unsafe { &*value };
+    let value = { &*value };
     let annotations = match &value.inner {
         AmqpValue::Map(map) => map,
         _ => return std::ptr::null_mut(),
@@ -39,8 +39,8 @@ extern "C" fn amqpvalue_create_message_annotations(
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_footer(value: *const RustAmqpValue) -> *mut RustAmqpValue {
-    let value = unsafe { &*value };
+unsafe extern "C" fn amqpvalue_create_footer(value: *const RustAmqpValue) -> *mut RustAmqpValue {
+    let value = { &*value };
     let annotations = match &value.inner {
         AmqpValue::Map(map) => map,
         _ => return std::ptr::null_mut(),
@@ -53,10 +53,10 @@ extern "C" fn amqpvalue_create_footer(value: *const RustAmqpValue) -> *mut RustA
 }
 
 #[no_mangle]
-extern "C" fn amqpvalue_create_application_properties(
+unsafe extern "C" fn amqpvalue_create_application_properties(
     value: *const RustAmqpValue,
 ) -> *mut RustAmqpValue {
-    let value = unsafe { &*value };
+    let value = { &*value };
     let properties = match &value.inner {
         AmqpValue::Map(map) => map,
         _ => return std::ptr::null_mut(),
@@ -66,4 +66,118 @@ extern "C" fn amqpvalue_create_application_properties(
     Box::into_raw(Box::new(RustAmqpValue {
         inner: AmqpValue::Described(Box::new(application_properties)),
     }))
+}
+#[cfg(test)]
+mod tests {
+    use azure_core_amqp::value::AmqpDescriptor;
+
+    use super::*;
+
+    #[test]
+    fn test_amqpvalue_create_delivery_annotations() {
+        unsafe {
+            let map = AmqpValue::Map(
+                vec![("key".into(), AmqpValue::String("value".into()))]
+                    .into_iter()
+                    .collect(),
+            );
+            let rust_amqp_value = RustAmqpValue { inner: map };
+            let result = { amqpvalue_create_delivery_annotations(&rust_amqp_value) };
+            assert!(!result.is_null());
+            let result_value = { &*result };
+            match &result_value.inner {
+                AmqpValue::Described(described) => {
+                    assert_eq!(described.descriptor, AmqpDescriptor::Code(0x71));
+                    match &described.value {
+                        AmqpValue::Map(map) => {
+                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                        }
+                        _ => panic!("Expected AmqpValue::Map"),
+                    }
+                }
+                _ => panic!("Expected AmqpValue::Described"),
+            }
+        }
+    }
+
+    #[test]
+    fn test_amqpvalue_create_message_annotations() {
+        unsafe {
+            let map = AmqpValue::Map(
+                vec![("key".into(), AmqpValue::String("value".into()))]
+                    .into_iter()
+                    .collect(),
+            );
+            let rust_amqp_value = RustAmqpValue { inner: map };
+            let result = { amqpvalue_create_message_annotations(&rust_amqp_value) };
+            assert!(!result.is_null());
+            let result_value = { &*result };
+            match &result_value.inner {
+                AmqpValue::Described(described) => {
+                    assert_eq!(described.descriptor, AmqpDescriptor::Code(0x72));
+                    match &described.value {
+                        AmqpValue::Map(map) => {
+                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                        }
+                        _ => panic!("Expected AmqpValue::Map"),
+                    }
+                }
+                _ => panic!("Expected AmqpValue::Described"),
+            }
+        }
+    }
+
+    #[test]
+    fn test_amqpvalue_create_footer() {
+        unsafe {
+            let map = AmqpValue::Map(
+                vec![("key".into(), AmqpValue::String("value".into()))]
+                    .into_iter()
+                    .collect(),
+            );
+            let rust_amqp_value = RustAmqpValue { inner: map };
+            let result = { amqpvalue_create_footer(&rust_amqp_value) };
+            assert!(!result.is_null());
+            let result_value = { &*result };
+            match &result_value.inner {
+                AmqpValue::Described(described) => {
+                    assert_eq!(described.descriptor, AmqpDescriptor::Code(0x78));
+                    match &described.value {
+                        AmqpValue::Map(map) => {
+                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                        }
+                        _ => panic!("Expected AmqpValue::Map"),
+                    }
+                }
+                _ => panic!("Expected AmqpValue::Described"),
+            }
+        }
+    }
+
+    #[test]
+    fn test_amqpvalue_create_application_properties() {
+        unsafe {
+            let map = AmqpValue::Map(
+                vec![("key".into(), AmqpValue::String("value".into()))]
+                    .into_iter()
+                    .collect(),
+            );
+            let rust_amqp_value = RustAmqpValue { inner: map };
+            let result = { amqpvalue_create_application_properties(&rust_amqp_value) };
+            assert!(!result.is_null());
+            let result_value = { &*result };
+            match &result_value.inner {
+                AmqpValue::Described(described) => {
+                    assert_eq!(described.descriptor, AmqpDescriptor::Code(0x74));
+                    match &described.value {
+                        AmqpValue::Map(map) => {
+                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                        }
+                        _ => panic!("Expected AmqpValue::Map"),
+                    }
+                }
+                _ => panic!("Expected AmqpValue::Described"),
+            }
+        }
+    }
 }

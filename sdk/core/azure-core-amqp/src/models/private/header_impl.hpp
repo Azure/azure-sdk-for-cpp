@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   using HeaderImplementation = std::remove_pointer<HEADER_HANDLE>::type;
 #elif ENABLE_RUST_AMQP
-  using HeaderImplementation = Azure::Core::Amqp::_detail::RustInterop::RustMessageHeader;
+  using HeaderImplementation = Azure::Core::Amqp::RustInterop::_detail::RustMessageHeader;
 #endif
 
   template <> struct UniqueHandleHelper<HeaderImplementation>

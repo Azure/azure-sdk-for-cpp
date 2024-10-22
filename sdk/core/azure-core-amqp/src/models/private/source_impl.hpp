@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   using AmqpSourceImplementation = std::remove_pointer<SOURCE_HANDLE>::type;
 #elif ENABLE_RUST_AMQP
-  using AmqpSourceImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSource;
+  using AmqpSourceImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSource;
 #endif
 
   template <> struct UniqueHandleHelper<AmqpSourceImplementation>
