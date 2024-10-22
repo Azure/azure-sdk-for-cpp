@@ -24,9 +24,11 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-  using AmqpConnectionImplementation = RustInterop::RustAmqpConnection;
-  using AmqpConnectionOptionsImplementation = RustInterop::RustAmqpConnectionOptions;
-  using AmqpConnectionOptionsBuilderImplementation = RustInterop::RustAmqpConnectionOptionsBuilder;
+  using AmqpConnectionImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnection;
+  using AmqpConnectionOptionsImplementation
+      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnectionOptions;
+  using AmqpConnectionOptionsBuilderImplementation
+      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnectionOptionsBuilder;
 
   template <> struct UniqueHandleHelper<AmqpConnectionImplementation>
   {

@@ -13,10 +13,10 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using AmqpSessionImplementation = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSession;
-  using AmqpSessionOptions = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSessionOptions;
+  using AmqpSessionImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSession;
+  using AmqpSessionOptions = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSessionOptions;
   using AmqpSessionOptionsBuilder
-      = Azure::Core::Amqp::_detail::RustInterop::RustAmqpSessionOptionsBuilder;
+      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSessionOptionsBuilder;
 
   template <> struct UniqueHandleHelper<AmqpSessionImplementation>
   {
