@@ -137,8 +137,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
 #if ENABLE_RUST_AMQP
-  using UniqueMessageTargetBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
-      RustAmqpTargetBuilder>;
+  using UniqueMessageTargetBuilderHandle
+      = Azure::Core::Amqp::_detail::UniqueHandle<RustAmqpTargetBuilder>;
 #endif
 
   MessageTargetImpl::MessageTargetImpl(Models::AmqpValue const& target)
@@ -161,7 +161,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl(std::string const& address)
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_UAMQP
@@ -182,7 +185,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not create source.");
     }
 
-    invoke_builder_api(target_builder_set_address, builder, address.c_str());
+    InvokeBuilderApi(target_builder_set_address, builder, address.c_str());
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
     if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
@@ -214,7 +217,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       throw std::runtime_error("Could not create source.");
     }
 
-    invoke_builder_api(target_builder_set_address, builder, address);
+    InvokeBuilderApi(target_builder_set_address, builder, address);
     Azure::Core::Amqp::_detail::AmqpTargetImplementation* targetHandle;
     if (target_builder_build(builder.release(), &targetHandle) != 0)
     {
@@ -226,7 +229,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
   MessageTargetImpl::MessageTargetImpl()
 #if ENABLE_UAMQP
-      : m_target{target_create()}
+      : m_target
+  {
+    target_create()
+  }
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -416,7 +422,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
       {
         throw std::runtime_error("Message target must be a string.");
       }
-      invoke_builder_api(
+      InvokeBuilderApi(
           target_builder_set_address, builder, static_cast<std::string>(options.Address).c_str());
     }
     if (options.TerminusDurabilityValue.HasValue())
@@ -436,7 +442,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         default:
           throw std::logic_error("Unknown terminus durability.");
       }
-      invoke_builder_api(target_builder_set_durable, builder, durability);
+      InvokeBuilderApi(target_builder_set_durable, builder, durability);
       if (!builder)
       {
         throw std::runtime_error("Could not set durable.");
@@ -462,7 +468,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
         default:
           throw std::logic_error("Unknown terminus durability.");
       }
-      invoke_builder_api(target_builder_set_expiry_policy, builder, policy);
+      InvokeBuilderApi(target_builder_set_expiry_policy, builder, policy);
       if (!builder)
       {
         throw std::runtime_error("Could not set durable.");
@@ -470,7 +476,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (options.Timeout.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           target_builder_set_timeout,
           builder,
           static_cast<uint32_t>(std::chrono::duration_cast<std::chrono::seconds>(
@@ -479,12 +485,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     if (options.Dynamic.HasValue())
     {
-      invoke_builder_api(target_builder_set_dynamic, builder, *options.Dynamic);
+      InvokeBuilderApi(target_builder_set_dynamic, builder, *options.Dynamic);
     }
 
     if (!options.DynamicNodeProperties.empty())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           target_builder_set_dynamic_node_properties,
           builder,
           _detail::AmqpValueFactory::ToImplementation(options.DynamicNodeProperties.AsAmqpValue()));
@@ -492,7 +498,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     if (!options.Capabilities.empty())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           target_builder_set_capabilities,
           builder,
           _detail::AmqpValueFactory::ToImplementation(options.Capabilities.AsAmqpValue()));

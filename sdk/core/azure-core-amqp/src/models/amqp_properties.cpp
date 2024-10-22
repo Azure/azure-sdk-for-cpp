@@ -318,14 +318,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.MessageId.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_message_id,
           builder,
           _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value()));
     }
     if (properties.CorrelationId.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_correlation_id,
           builder,
           _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value()));
@@ -333,7 +333,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.UserId.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_user_id,
           builder,
           properties.UserId.Value().data(),
@@ -342,18 +342,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.To.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_to, builder, static_cast<std::string>(properties.To.Value()).c_str());
     }
 
     if (properties.Subject.HasValue())
     {
-      invoke_builder_api(properties_set_subject, builder, properties.Subject.Value().data());
+      InvokeBuilderApi(properties_set_subject, builder, properties.Subject.Value().data());
     }
 
     if (properties.ReplyTo.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_reply_to,
           builder,
           _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value()));
@@ -361,13 +361,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (properties.ContentType.HasValue())
     {
-      invoke_builder_api(
-          properties_set_content_type, builder, properties.ContentType.Value().data());
+      InvokeBuilderApi(properties_set_content_type, builder, properties.ContentType.Value().data());
     }
 
     if (properties.ContentEncoding.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_content_encoding, builder, properties.ContentEncoding.Value().data());
     }
 
@@ -376,7 +375,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.AbsoluteExpiryTime.Value().time_since_epoch())};
 
-      invoke_builder_api(properties_set_absolute_expiry_time, builder, timeStamp.count());
+      InvokeBuilderApi(properties_set_absolute_expiry_time, builder, timeStamp.count());
     }
 
     if (properties.CreationTime.HasValue())
@@ -384,22 +383,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.CreationTime.Value().time_since_epoch())};
 
-      invoke_builder_api(properties_set_creation_time, builder, timeStamp.count());
+      InvokeBuilderApi(properties_set_creation_time, builder, timeStamp.count());
     }
 
     if (properties.GroupId.HasValue())
     {
-      invoke_builder_api(properties_set_group_id, builder, properties.GroupId.Value().data());
+      InvokeBuilderApi(properties_set_group_id, builder, properties.GroupId.Value().data());
     }
 
     if (properties.GroupSequence.HasValue())
     {
-      invoke_builder_api(properties_set_group_sequence, builder, properties.GroupSequence.Value());
+      InvokeBuilderApi(properties_set_group_sequence, builder, properties.GroupSequence.Value());
     }
 
     if (properties.ReplyToGroupId.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           properties_set_reply_to_group_id, builder, properties.ReplyToGroupId.Value().data());
     }
 

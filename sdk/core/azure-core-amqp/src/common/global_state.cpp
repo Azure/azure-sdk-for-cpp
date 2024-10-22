@@ -213,14 +213,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
 #if ENABLE_RUST_AMQP
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  void UniqueHandleHelper<RustRuntimeContext>::FreeRuntimeContext(
-      RustRuntimeContext* obj)
+  void UniqueHandleHelper<RustRuntimeContext>::FreeRuntimeContext(RustRuntimeContext* obj)
   {
     Azure::Core::Amqp::RustInterop::_detail::runtime_context_delete(obj);
   }
 
-  void UniqueHandleHelper<RustCallContext>::FreeCallContext(
-      RustCallContext* obj)
+  void UniqueHandleHelper<RustCallContext>::FreeCallContext(RustCallContext* obj)
   {
     Azure::Core::Amqp::RustInterop::_detail::call_context_delete(obj);
   }

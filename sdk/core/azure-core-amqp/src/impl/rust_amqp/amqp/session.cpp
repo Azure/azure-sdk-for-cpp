@@ -103,21 +103,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaximumLinkCount.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           amqpsessionoptionsbuilder_set_handle_max,
           optionsBuilder,
           m_options.MaximumLinkCount.Value());
     }
     if (m_options.InitialIncomingWindowSize.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           amqpsessionoptionsbuilder_set_incoming_window,
           optionsBuilder,
           m_options.InitialIncomingWindowSize.Value());
     }
     if (m_options.InitialOutgoingWindowSize.HasValue())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           amqpsessionoptionsbuilder_set_outgoing_window,
           optionsBuilder,
           m_options.InitialOutgoingWindowSize.Value());

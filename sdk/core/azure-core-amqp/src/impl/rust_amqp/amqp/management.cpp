@@ -26,7 +26,6 @@ using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
-
   void UniqueHandleHelper<RustAmqpManagement>::FreeManagement(RustAmqpManagement* value)
   {
     amqpmanagement_destroy(value);

@@ -158,24 +158,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     _detail::UniqueMessageHeaderBuilderHandle builder{header_builder_create()};
     if (header.Durable)
     {
-      invoke_builder_api(header_set_durable, builder, header.Durable);
+      InvokeBuilderApi(header_set_durable, builder, header.Durable);
     }
     if (header.Priority != 4)
     {
-      invoke_builder_api(header_set_priority, builder, header.Priority);
+      InvokeBuilderApi(header_set_priority, builder, header.Priority);
     }
     if (header.TimeToLive.HasValue())
     {
-      invoke_builder_api(header_set_ttl, builder, header.TimeToLive.Value().count());
+      InvokeBuilderApi(header_set_ttl, builder, header.TimeToLive.Value().count());
     }
 
     if (header.IsFirstAcquirer)
     {
-      invoke_builder_api(header_set_first_acquirer, builder, header.IsFirstAcquirer);
+      InvokeBuilderApi(header_set_first_acquirer, builder, header.IsFirstAcquirer);
     }
     if (header.DeliveryCount != 0)
     {
-      invoke_builder_api(header_set_delivery_count, builder, header.DeliveryCount);
+      InvokeBuilderApi(header_set_delivery_count, builder, header.DeliveryCount);
     }
 
     // Now that we've set all the builder parameters, actually build the header.

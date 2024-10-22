@@ -437,24 +437,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 #else
     UniqueMessageBuilderHandle builder(messagebuilder_create());
 
-    invoke_builder_api(
+    InvokeBuilderApi(
         messagebuilder_set_header,
         builder,
         _detail::MessageHeaderFactory::ToImplementation(message.Header).get());
-    invoke_builder_api(
+    InvokeBuilderApi(
         messagebuilder_set_properties,
         builder,
         _detail::MessagePropertiesFactory::ToImplementation(message.Properties).get());
     if (!message.DeliveryAnnotations.empty())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           messagebuilder_set_delivery_annotations,
           builder,
           _detail::AmqpValueFactory::ToImplementation(message.DeliveryAnnotations.AsAmqpValue()));
     }
     if (!message.MessageAnnotations.empty())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           messagebuilder_set_message_annotations,
           builder,
           _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue()));
@@ -475,7 +475,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         }
         appProperties.emplace(val);
       }
-      invoke_builder_api(
+      InvokeBuilderApi(
           messagebuilder_set_application_properties,
           builder,
           _detail::AmqpValueFactory::ToImplementation(appProperties.AsAmqpValue()));
@@ -483,7 +483,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!message.Footer.empty())
     {
-      invoke_builder_api(
+      InvokeBuilderApi(
           messagebuilder_set_footer,
           builder,
           _detail::AmqpValueFactory::ToImplementation(message.Footer.AsAmqpValue()));
@@ -495,21 +495,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       case MessageBodyType::Data:
         for (auto const& binaryVal : message.m_binaryDataBody)
         {
-          invoke_builder_api(
+          InvokeBuilderApi(
               messagebuilder_add_body_amqp_data, builder, binaryVal.data(), binaryVal.size());
         }
         break;
       case MessageBodyType::Sequence:
         for (auto const& sequenceVal : message.m_amqpSequenceBody)
         {
-          invoke_builder_api(
+          InvokeBuilderApi(
               messagebuilder_add_body_amqp_sequence,
               builder,
               _detail::AmqpValueFactory::ToImplementation(sequenceVal.AsAmqpValue()));
         }
         break;
       case MessageBodyType::Value:
-        invoke_builder_api(
+        InvokeBuilderApi(
             messagebuilder_set_body_amqp_value,
             builder,
             _detail::AmqpValueFactory::ToImplementation(message.m_amqpValueBody));

@@ -37,8 +37,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       amqpmessagesenderoptions_destroy(value);
     }
 
-    using type
-        = Core::_internal::BasicUniqueHandle<RustAmqpSenderOptions, FreeSenderOptions>;
+    using type = Core::_internal::BasicUniqueHandle<RustAmqpSenderOptions, FreeSenderOptions>;
   };
   template <> struct UniqueHandleHelper<RustAmqpSenderOptionsBuilder>
   {

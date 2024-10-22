@@ -21,7 +21,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  using UniqueMessageSender = UniqueHandle<Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender>;
+  using UniqueMessageSender
+      = UniqueHandle<Azure::Core::Amqp::RustInterop::_detail::RustAmqpMessageSender>;
 
   class MessageSenderFactory final {
   public:
