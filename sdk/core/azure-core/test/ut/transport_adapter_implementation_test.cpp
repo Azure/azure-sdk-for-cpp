@@ -78,4 +78,25 @@ namespace Azure { namespace Core { namespace Test {
   /* Custom adapter. Not adding tests */
 #endif
 
+  std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline>
+  TransportAdapter::CreateTlsClientAuthPipelineForTest()
+  {
+    if (GetParam().Suffix == "winHttp")
+    {
+      Azure::Core::Http::WinHttpTransportOptions options;
+      options.TlsClientCertificate = nullptr;
+      auto transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(options);
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> retryPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+
+      Azure::Core::_internal::ClientOptions op;
+      op.Retry.RetryDelay = std::chrono::milliseconds(10);
+      op.Transport.Transport = transport;
+      auto pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
+          op, "TransportTest", "X.X", std::move(retryPolicies), std::move(policies));
+      return pipeline;
+    }
+    return nullptr;
+  }
+
 }}} // namespace Azure::Core::Test

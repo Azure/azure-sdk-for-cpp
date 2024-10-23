@@ -13,6 +13,12 @@
 #include <string>
 #include <thread>
 
+#if defined(AZ_PLATFORM_WINDOWS)
+#include <windows.h>
+#include <wincrypt.h>
+#include <wil\resource.h>
+#endif
+
 namespace Azure { namespace Core { namespace Test {
 
   using namespace Azure::Core::Json::_internal;
@@ -49,7 +55,9 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = m_pipeline->Send(request, Context{});
     checkResponseCode(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+    auto expectedResponseBodySize = 0;
+    // http://mt3.google.com/generate_204 returns 204 with no body and thus no content-length header
+    //    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
@@ -301,6 +309,19 @@ namespace Azure { namespace Core { namespace Test {
 
     checkResponseCode(response->GetStatusCode());
     CheckBodyFromStream(*response, expectedResponseBodySize, expectedChunkResponse);
+  }
+
+  TEST_P(TransportAdapter, tlsClientCertificate)
+  {
+    if (GetParam().Suffix == "winHttp")
+    {
+      m_pipeline = CreateTlsClientAuthPipelineForTest();
+    }
+    Azure::Core::Url host(
+        "https://sharedwus.wus.attest.azure.net/.well-known/openid-configuration");
+    auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
+    auto response = m_pipeline->Send(request, Context{});
+    checkResponseCode(response->GetStatusCode());
   }
 
   TEST_P(TransportAdapter, createResponseT)
