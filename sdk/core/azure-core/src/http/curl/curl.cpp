@@ -407,7 +407,48 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   auto response = session->ExtractResponse();
   // Move the ownership of the CurlSession (bodyStream) to the response
   response->SetBodyStream(std::move(session));
+  // check the consistency of the keep alive headers between the request and the response
+  // as suggested by RFC 7230 section 6.3 (https://tools.ietf.org/html/rfc7230#section-6.3)
+  ValidateKeepAliveHeaders(request, response);
+
   return response;
+}
+
+// Check if the server supports keep alive and if the headers are consistent between the request and
+// the response. If they are not consistent, the keep alive header in the request is removed.and the
+// calculated options are reset in order to prevent the wrongful caching of the keep alive settings.
+void CurlTransport::ValidateKeepAliveHeaders(
+    Request& request,
+    std::unique_ptr<RawResponse>& response)
+{
+  // if the server supports keep alive the headers should be present in the response. If they are
+  // they should be the same as the request headers.
+  if (response->GetHeaders().find("Connection") != response->GetHeaders().end()
+      && request.GetHeader("Connection").HasValue()
+      && response->GetHeaders().find("Keep-Alive") != response->GetHeaders().end()
+      && request.GetHeader("Keep-Alive").HasValue()
+      // just in case the server sends the headers in a different case, the case sensitivity of the
+      // map is guaranteed for keys not values. So we need to ensure we compare the values in a case
+      // insensitive way.
+      && Azure::Core::_internal::StringExtensions::ToLower(
+             response->GetHeaders().find("Connection")->second)
+          == Azure::Core::_internal::StringExtensions::ToLower(
+              request.GetHeader("Connection").Value())
+      // just in case the server sends the keep-alive header in a different case
+      && Azure::Core::_internal::StringExtensions::ToLower(
+             response->GetHeaders().find("Keep-Alive")->second)
+          == Azure::Core::_internal::StringExtensions::ToLower(
+              request.GetHeader("Keep-Alive").Value()))
+  {
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Response has same keep-alive settings");
+  }
+  else
+  {
+    // cleanup keep-alive header in the request since they don't match up the response from
+    // the server.
+    request.RemoveHeader("Keep-Alive");
+    m_options.KeepAliveOptions.Reset();
+  }
 }
 
 CURLcode CurlSession::Perform(Context const& context)
@@ -2224,10 +2265,18 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
         {
           g_curlConnectionPool.ConnectionPoolIndex.erase(hostPoolIndex);
         }
-
-        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
-        // return connection ref
-        return connection;
+        // if the connection is expired do not return it, let the code flow and return a new one.
+        if (!connection->IsKeepAliveExpired())
+        {
+          connection->IncreaseUsageCount();
+          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Re-using connection from the pool.");
+          // return connection ref
+          return connection;
+        }
+        else
+        {
+          Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Connection expired. Discarding.");
+        }
       }
     }
   }
@@ -2237,6 +2286,58 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
 
   return std::make_unique<CurlConnection>(request, options, hostDisplayName, connectionKey);
+}
+
+Azure::Core::Http::_detail::KeepAliveOptions CurlConnection::ParseKeepAliveHeader(
+    std::string const& keepAlive)
+{
+  // Parse the Keep-Alive header to determine if the connection should be kept alive.
+  // The Keep-Alive header is in the format of:
+  // Keep-Alive: timeout=5, max=1000
+  // The timeout is the number of seconds the connection is allowed to be idle before it is closed.
+  // The max is the maximum number of requests that can be made on the connection before it is
+  // closed.
+  // If the header is not present, the connection will be kept alive for the lifetime of the
+  // application.
+  Azure::Core::Http::_detail::KeepAliveOptions keepAliveOptions;
+  std::string const timeoutKey = "timeout=";
+  std::string const maxKey = "max=";
+  auto timeoutPos = keepAlive.find(timeoutKey);
+  auto maxPos = keepAlive.find(maxKey);
+  try
+  {
+
+    if (timeoutPos != std::string::npos)
+    {
+      auto timeoutEnd = keepAlive.find(',', timeoutPos);
+      if (timeoutEnd == std::string::npos)
+      {
+        timeoutEnd = keepAlive.size();
+      }
+
+      keepAliveOptions.ConnectionTimeout = std::chrono::seconds(std::stoi(keepAlive.substr(
+          timeoutPos + timeoutKey.size(), timeoutEnd - timeoutPos - timeoutKey.size())));
+    }
+
+    if (maxPos != std::string::npos)
+    {
+      auto maxEnd = keepAlive.find(',', maxPos);
+      if (maxEnd == std::string::npos)
+      {
+        maxEnd = keepAlive.size();
+      }
+      keepAliveOptions.MaxRequests
+          = std::stoi(keepAlive.substr(maxPos + maxKey.size(), maxEnd - maxPos - maxKey.size()));
+    }
+  }
+  catch (std::invalid_argument const&)
+  {
+    Log::Write(
+        Logger::Level::Error,
+        "Failed to parse max value / timeout from Keep-Alive header: " + keepAlive);
+    return Azure::Core::Http::_detail::KeepAliveOptions();
+  }
+  return keepAliveOptions;
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
@@ -2250,9 +2351,9 @@ void CurlConnectionPool::MoveConnectionBackToPool(
     return; // The server has asked us to not re-use this connection.
   }
 
-  if (connection->IsShutdown())
+  if (connection->IsShutdown() || connection->IsKeepAliveExpired())
   {
-    // Can't re-used a shut down connection
+    // Can't re-used a shut down connection or an expired connection
     return;
   }
 
@@ -2313,7 +2414,28 @@ CurlConnection::CurlConnection(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_easy_init returned Null"));
   }
+
   CURLcode result;
+
+  if (request.GetHeader("connection").HasValue() && request.GetHeader("keep-alive").HasValue())
+  {
+    auto connectionHeader = Azure::Core::_internal::StringExtensions::ToLower(
+        request.GetHeader("connection").Value());
+    auto keepAliveHeader = Azure::Core::_internal::StringExtensions::ToLower(
+        request.GetHeader("keep-alive").Value());
+
+    if (connectionHeader == "keep-alive")
+    {
+      auto keepAliveValue = ParseKeepAliveHeader(keepAliveHeader);
+      // if we have issues parsing this header , or the data in the header is invalid no point in
+      // setting it up
+      if (keepAliveValue.ConnectionTimeout != std::chrono::seconds(0)
+          || keepAliveValue.MaxRequests > 0)
+      {
+        m_keepAliveOptions = keepAliveValue;
+      }
+    }
+  }
 
   if (options.EnableCurlTracing)
   {

@@ -29,7 +29,11 @@
 
 /// From openssl/x509.h.  Avoids needing to include openssl headers
 typedef struct x509_store_ctx_st X509_STORE_CTX;
-
+#if defined(_azure_TESTING_BUILD)
+namespace Azure { namespace Core { namespace Test {
+  class CurlConnectionTest_ParseKeepAliveHeader_Test;
+}}} // namespace Azure::Core::Test
+#endif
 namespace Azure { namespace Core {
   namespace _detail {
     /**
@@ -105,6 +109,12 @@ namespace Azure { namespace Core {
       virtual bool IsExpired() = 0;
 
       /**
+       * @brief Checks whether this CURL connection is expired due to keep-alive settings.
+       *
+       */
+      virtual bool IsKeepAliveExpired() { return false; };
+
+      /**
        * @brief This function is used when working with streams to pull more data from the wire.
        * Function will try to keep pulling data from socket until the buffer is all written or until
        * there is no more data to get from the socket.
@@ -133,6 +143,19 @@ namespace Azure { namespace Core {
        * @return `true` is the connection was shut it down; otherwise, `false`.
        */
       bool IsShutdown() const { return m_isShutDown; }
+
+      /**
+       * @brief Increase the usage count.
+       *
+       */
+      virtual void IncreaseUsageCount(){};
+
+      /**
+       * @brief Get the connection usage count.
+       *
+       * @return The usage count
+       */
+      virtual size_t GetUsageCount() const { return 0; };
     };
 
     /**
@@ -140,15 +163,20 @@ namespace Azure { namespace Core {
      *
      */
     class CurlConnection final : public CurlNetworkConnection {
+#if defined(_azure_TESTING_BUILD)
+      friend class Azure::Core::Test::CurlConnectionTest_ParseKeepAliveHeader_Test;
+#endif
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       curl_socket_t m_curlSocket;
       std::chrono::steady_clock::time_point m_lastUseTime;
+      std::chrono::steady_clock::time_point m_firstUseTime = std::chrono::steady_clock::now();
       std::string m_connectionKey;
       // CRL validation is disabled by default to be consistent with WinHTTP behavior
       bool m_enableCrlValidation{false};
       // Allow the connection to proceed if retrieving the CRL failed.
       bool m_allowFailedCrlRetrieval{true};
+      size_t m_usedCount = size_t(1);
 
       static int CurlLoggingCallback(
           CURL* handle,
@@ -160,6 +188,9 @@ namespace Azure { namespace Core {
       static int CurlSslCtxCallback(CURL* curl, void* sslctx, void* parm);
       int SslCtxCallback(CURL* curl, void* sslctx);
       int VerifyCertificateError(int ok, X509_STORE_CTX* storeContext);
+      Azure::Nullable<Azure::Core::Http::_detail::KeepAliveOptions> m_keepAliveOptions;
+      Azure::Core::Http::_detail::KeepAliveOptions ParseKeepAliveHeader(
+          std::string const& keepAlive);
 
     public:
       /**
@@ -202,7 +233,34 @@ namespace Azure { namespace Core {
       {
         auto connectionOnWaitingTimeMs = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - this->m_lastUseTime);
-        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds;
+        return connectionOnWaitingTimeMs.count() >= _detail::DefaultConnectionExpiredMilliseconds
+            || IsKeepAliveExpired();
+      }
+
+      /**
+       * @brief Checks whether this CURL connection is expired due to keep-alive settings.
+       * @return `true` if this connection is considered expired; otherwise, `false`.
+       */
+      bool IsKeepAliveExpired() override
+      {
+        // if we have keep alive options and we haven reached the max requests declare expired
+        if (m_keepAliveOptions.HasValue() && m_keepAliveOptions.Value().MaxRequests > 0
+            && m_keepAliveOptions.Value().MaxRequests <= m_usedCount)
+        {
+          return true;
+        }
+
+        // if we have keep alive options and we have a connection timeout and the connection time
+        // frame has passed declare expired
+        if (m_keepAliveOptions.HasValue()
+            && m_keepAliveOptions.Value().ConnectionTimeout > std::chrono::seconds(0)
+            && m_firstUseTime + m_keepAliveOptions.Value().ConnectionTimeout
+                < std::chrono::steady_clock::now())
+        {
+          return true;
+        }
+
+        return false;
       }
 
       /**
@@ -230,6 +288,19 @@ namespace Azure { namespace Core {
        */
       CURLcode SendBuffer(uint8_t const* buffer, size_t bufferSize, Context const& context)
           override;
+
+      /**
+       * @brief Increase the usage count.
+       *
+       */
+      void IncreaseUsageCount() override { m_usedCount++; };
+
+      /**
+       * @brief Get the connection usage count.
+       *
+       * @return The usage count
+       */
+      size_t GetUsageCount() const override { return m_usedCount; }
     };
   } // namespace Http
 }} // namespace Azure::Core

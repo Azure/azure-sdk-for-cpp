@@ -365,4 +365,28 @@ namespace Azure { namespace Core { namespace Test {
         0);
   }
 
+  TEST(CurlTransport, VerifyKeepAliveHeaders)
+  {
+    Azure::Core::Http::CurlTransport transport;
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+    request.SetHeader("Connection", "keep-alive");
+    request.SetHeader("Keep-Alive", "timeout=5, max=1000");
+    std::unique_ptr<Azure::Core::Http::RawResponse> response
+        = std::make_unique<Azure::Core::Http::RawResponse>(
+            1, 0, Azure::Core::Http::HttpStatusCode(200), "OK");
+    response->SetHeader("Connection", "keep-alive");
+    response->SetHeader("Keep-Alive", "timeout=5, max=1000");
+
+    transport.ValidateKeepAliveHeaders(request, response);
+
+    EXPECT_EQ(request.GetHeader("Connection").Value(), "keep-alive");
+    EXPECT_EQ(request.GetHeader("Keep-Alive").Value(), "timeout=5, max=1000");
+
+    response->SetHeader("Connection", "close");
+    transport.ValidateKeepAliveHeaders(request, response);
+
+    EXPECT_EQ(request.GetHeader("Connection").Value(), "keep-alive");
+    EXPECT_EQ(request.GetHeader("Keep-Alive").HasValue(), false);
+  }
 }}} // namespace Azure::Core::Test
