@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
+#include "../private/hmacsha256.hpp"
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/cryptography/hash.hpp>

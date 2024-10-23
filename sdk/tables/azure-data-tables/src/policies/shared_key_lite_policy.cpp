@@ -3,7 +3,7 @@
 
 #include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
 
-#include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
+#include "../private/hmacsha256.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
