@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // SPDX-License-Identifier: MIT
-#include "azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp"
+
+#include "../private/policies/tenant_bearer_token_policy.hpp"
 
 #include <azure/core/internal/credentials/authorization_challenge_parser.hpp>
 

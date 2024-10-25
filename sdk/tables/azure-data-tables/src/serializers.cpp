@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/internal/serializers.hpp"
+#include "private/serializers.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 

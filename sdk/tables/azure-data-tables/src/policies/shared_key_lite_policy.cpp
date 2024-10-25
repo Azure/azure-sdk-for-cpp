@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
+#include "../private/policies/shared_key_lite_policy.hpp"
 
 #include "../private/hmacsha256.hpp"
 
