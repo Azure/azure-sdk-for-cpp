@@ -45,7 +45,7 @@ namespace Azure {
     }
     void CreateHSMClientForTest(std::string hsmUrl = "")
     {
-      SettingsClientOptions options;
+      SettingsClientOptions options = SettingsClientOptions{"7.4"};
       m_client = InitTestClient<
           Azure::Security::KeyVault::Administration::SettingsClient,
           Azure::Security::KeyVault::Administration::SettingsClientOptions>(
