@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/internal/policies/timeout_policy.hpp"
+#include "../private/policies/timeout_policy.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
