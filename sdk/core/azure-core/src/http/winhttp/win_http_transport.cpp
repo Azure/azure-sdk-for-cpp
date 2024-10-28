@@ -887,7 +887,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   }
 
   namespace {
-
+#if 0
     /******************** Begin Potential Throwaway Code *******/
     // These functions are captured because they may be required when further iterations on the mTLS
     // functionality is needed and it would be a shame to lose them.
@@ -1142,6 +1142,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         options.TlsClientCertificate = certificate.get();
 #endif
     /******************** End Potential Throwaway Code *******/
+#endif
 
     WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
         Azure::Core::Http::Policies::TransportOptions const& transportOptions)
@@ -1201,6 +1202,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       {
         GetErrorAndThrow("Error while duplicating client certificate context.");
       }
+      // Erase the TLS client certificate in the m_options member because it cannot be relied upon
+      // from this point on.
+      m_options.TlsClientCertificate = nullptr;
     }
   }
 
@@ -1259,6 +1263,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
   }
 
+  /** @brief Construct a new WinHttpRequest object.
+   *
+   * @param connectionHandle The connection handle to use for the request.
+   * @param url The URL to request.
+   * @param method The HTTP method to use for the request.
+   * @param tlsClientCertificate The client certificate to use for the request.
+   * @param options The transport options to use for the request.
+   *
+   * @remark Note that we *cannot* use the TlsClientCertificate field in the options passed into
+   * this function because the creator of the associated WinHttpTransport object may have freed the
+   * memory backing that object after constructing the WinHttpTransport object. Therefore, we must
+   * use the tlsClientCertificate saved in the WinHttpTransport object instead.
+   *
+   */
   WinHttpRequest::WinHttpRequest(
       Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
       Azure::Core::Url const& url,
