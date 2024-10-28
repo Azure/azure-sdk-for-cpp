@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/tables_clients.hpp"
+#include "azure/data/tables/tables_client.hpp"
+#include "azure/data/tables/tables_service_client.hpp"
 
 #include "private/policies/service_version_policy.hpp"
 #include "private/policies/shared_key_lite_policy.hpp"
