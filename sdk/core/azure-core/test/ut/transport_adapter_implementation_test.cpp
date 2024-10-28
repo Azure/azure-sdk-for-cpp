@@ -12,7 +12,6 @@
 
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/win_http_transport.hpp"
-
 #endif
 
 #include <string>
