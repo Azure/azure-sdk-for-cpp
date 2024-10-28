@@ -3,7 +3,7 @@
 // Licensed under the MIT License.
 
 // clang-format off
-#include "azure/data/tables.hpp"
+#include "azure/data/tables/enum_operators.hpp"
 #include "test/ut/test_base.hpp"
 
 namespace Azure { namespace Data { namespace Test {
