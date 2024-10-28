@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License. See License.txt in the project root for license information.
+#pragma once
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
   /**
    * The version used for the operations to Tables services.

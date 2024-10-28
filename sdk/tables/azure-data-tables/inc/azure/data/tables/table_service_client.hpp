@@ -6,6 +6,7 @@
 #include "azure/data/tables/credentials/azure_sas_credential.hpp"
 #include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
+#include "azure/data/tables/table_client_options.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>

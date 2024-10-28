@@ -50,9 +50,10 @@ set(
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
-    inc/azure/data/tables/tables_client.hpp
+    inc/azure/data/tables/table_client.hpp
+    inc/azure/data/tables/table_client_options.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
-    inc/azure/data/tables/tables_service_client.hpp
+    inc/azure/data/tables/table_service_client.hpp
 )
 
 set(
@@ -74,7 +75,7 @@ set(
     src/private/url_encode.hpp
     src/private/xml_wrapper.hpp
     src/serializers.cpp
-    src/tables_clients.cpp
+    src/table_clients.cpp
     src/tables_sas_builder.cpp
     src/xml_wrapper.cpp
 )
