@@ -112,9 +112,13 @@ namespace Azure { namespace Core { namespace Http {
     std::unique_ptr<_detail::WinHttpTransportImpl> m_impl;
 
   protected:
-    // Callback to allow a derived transport to extract the request handle. Used for WebSocket
-    // transports.
-    virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&) const;
+    /** @brief Callback to allow a derived transport to extract the request handle. Used for
+     * WebSocket transports.
+     *
+     * @param request - Request which contains the WinHttp request handle.
+     */
+    virtual void OnUpgradedConnection(
+        std::unique_ptr<_detail::WinHttpRequest> const& request) const;
 
   public:
     /**
