@@ -15,5 +15,6 @@
 #include "azure/data/tables/enum_operators.hpp"
 #include "azure/data/tables/models.hpp"
 #include "azure/data/tables/rtti.hpp"
-#include "azure/data/tables/tables_clients.hpp"
+#include "azure/data/tables/tables_client.hpp"
 #include "azure/data/tables/tables_sas_builder.hpp"
+#include "azure/data/tables/tables_service_client.hpp"
