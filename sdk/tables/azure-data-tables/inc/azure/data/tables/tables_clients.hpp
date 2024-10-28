@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/azure_sas_credential.hpp"
-#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -196,50 +194,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param tableName The name of the table.
-     * @param credential The named key credential used to sign requests.
-     * @param url A url referencing the table that includes the name of the account and the name of
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableClient(
-        const std::string& tableName,
-        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
-        std::string url,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl The service Url
-     * @param credential The SAS credential used to sign requests.
-     * @param tableName The name of the table.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const std::string& tableName,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param connectionString the connection string used to initialize.
-     * @param tableName The name of the table.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     * @return TableClient.
-     */
-    static TableClient CreateFromConnectionString(
-        const std::string& connectionString,
-        const std::string& tableName,
-        const TableClientOptions& options = {});
-
-    /**
      * @brief Retrieves details about any stored access policies specified on the table that may be
      * used with Shared Access Signatures.
      *
@@ -424,46 +378,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl A url referencing the table that includes the name of the account and the
-     * name of the table.
-     * @param credential The named key credential used to sign requests.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl A url referencing the table that includes the name of the account and the
-     * name of the table.
-     * @param credential The SAS credential used to sign requests.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param connectionString the connection string used to initialize.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     * @return TableServiceClient.
-     */
-    static TableServiceClient CreateFromConnectionString(
-        const std::string& connectionString,
-        const TableClientOptions& options = {});
-
-    /**
      * @brief Creates a new table under the given account.
      *
      * @param context for canceling long running operations.
@@ -549,7 +463,6 @@ namespace Azure { namespace Data { namespace Tables {
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     std::shared_ptr<Core::Credentials::TokenCredential> m_tokenCredential;
-    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> m_namedKeyCredential;
     Core::Url m_url;
   };
 }}} // namespace Azure::Data::Tables

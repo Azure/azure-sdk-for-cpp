@@ -40,18 +40,6 @@ namespace Azure { namespace Data { namespace Test {
       throw std::runtime_error("Cannot find connection string.");
     }
 
-    std::string GetAccountName()
-    {
-      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
-          .AccountName;
-    }
-
-    std::string GetAccountKey()
-    {
-      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
-          .AccountKey;
-    }
-
   protected:
     std::string m_tableName;
     std::shared_ptr<Tables::TableServiceClient> m_tableServiceClient;
