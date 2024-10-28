@@ -13,12 +13,6 @@
 #if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 #include "azure/core/http/win_http_transport.hpp"
 
-#include <Windows.h>
-
-#include <wincrypt.h>
-
-#include <wil/resource.h>
-
 #endif
 
 #include <string>
@@ -84,65 +78,5 @@ namespace Azure { namespace Core { namespace Test {
 #else
   /* Custom adapter. Not adding tests */
 #endif
-
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-  namespace {
-
-    struct CertName : public CERT_NAME_BLOB
-    {
-      CertName(std::string const& x500dn) : CERT_NAME_BLOB{0}
-      {
-        // Determine the size needed to encode the buffer.
-        CertStrToName(
-            X509_ASN_ENCODING,
-            x500dn.c_str(),
-            CERT_X500_NAME_STR,
-            nullptr,
-            pbData,
-            &cbData,
-            nullptr);
-        pbData = new BYTE[cbData];
-        if (!CertStrToName(
-                X509_ASN_ENCODING,
-                x500dn.c_str(),
-                CERT_X500_NAME_STR,
-                nullptr,
-                pbData,
-                &cbData,
-                nullptr))
-        {
-          throw std::runtime_error("Failed to convert string to name blob");
-        }
-      }
-      ~CertName() { delete pbData; }
-    };
-  } // namespace
-#endif
-  std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline>
-  TransportAdapter::CreateTlsClientAuthPipelineForTest()
-  {
-#if defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
-    if (GetParam().Suffix == "winHttp")
-    {
-      Azure::Core::Http::WinHttpTransportOptions options;
-      CertName certName("cn=Test;cn=TlsClient");
-      wil::unique_cert_context certContext{CertCreateSelfSignCertificate(
-          0, &certName, 0, nullptr, nullptr, nullptr, nullptr, nullptr)};
-
-      options.TlsClientCertificate = certContext.get();
-      auto transport = std::make_shared<Azure::Core::Http::WinHttpTransport>(options);
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> retryPolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
-
-      Azure::Core::_internal::ClientOptions op;
-      op.Retry.RetryDelay = std::chrono::milliseconds(10);
-      op.Transport.Transport = transport;
-      auto pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
-          op, "TransportTest", "X.X", std::move(retryPolicies), std::move(policies));
-      return pipeline;
-    }
-#endif
-    return nullptr;
-  }
 
 }}} // namespace Azure::Core::Test

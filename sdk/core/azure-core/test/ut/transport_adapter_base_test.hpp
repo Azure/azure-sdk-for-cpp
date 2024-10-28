@@ -80,8 +80,6 @@ namespace Azure { namespace Core { namespace Test {
           op, "TransportTest", "X.X", std::move(retryPolicies), std::move(policies));
     }
 
-    std::unique_ptr<Azure::Core::Http::_internal::HttpPipeline> CreateTlsClientAuthPipelineForTest();
-
     static void CheckBodyFromBuffer(
         Azure::Core::Http::RawResponse& response,
         int64_t size,
