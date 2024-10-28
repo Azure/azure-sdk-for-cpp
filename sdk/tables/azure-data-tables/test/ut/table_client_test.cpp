@@ -114,11 +114,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, GetAccessPolicy)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     auto getResponse = m_tableClient->GetAccessPolicy();
@@ -127,11 +122,6 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, SetAccessPolicy)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
     Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
@@ -529,7 +519,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateFail)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -559,7 +549,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionCreateOK)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -590,7 +580,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionDelete)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -628,7 +618,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionMerge)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -664,7 +654,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionUpdate)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -698,7 +688,7 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, TransactionInsertReplace)
   {
-    if (GetParam() != AuthType::ConnectionString)
+    if (GetParam() == AuthType::Key)
     {
       SkipTest();
       return;
@@ -736,14 +726,8 @@ namespace Azure { namespace Data { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "connectionstring_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "key";
-          break;
-        case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
           break;
         default:
           stringValue = "key";
@@ -752,9 +736,5 @@ namespace Azure { namespace Data { namespace Test {
       return stringValue;
     }
   } // namespace
-  INSTANTIATE_TEST_SUITE_P(
-      Tables,
-      TablesClientTest,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::SAS),
-      GetSuffix);
+  INSTANTIATE_TEST_SUITE_P(Tables, TablesClientTest, ::testing::Values(AuthType::Key), GetSuffix);
 }}} // namespace Azure::Data::Test

@@ -18,8 +18,6 @@ namespace Azure { namespace Data { namespace Test {
   enum class AuthType
   {
     Key = 0x0,
-    SAS = 0x1,
-    ConnectionString = 0x2,
   };
 
   class TablesClientTest : public Azure::Storage::Test::StorageTest,
