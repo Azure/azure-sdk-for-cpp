@@ -463,6 +463,20 @@ std::string InternetStatusToString(DWORD internetStatus)
   APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_SETTINGS_READ_COMPLETE);
   return rv;
 }
+
+std::string InternetStatusInformationToString(DWORD internetStatus)
+{
+  std::string rv;
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_CERT_REV_FAILED);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_INVALID_CERT);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_CERT_REVOKED);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_INVALID_CA);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_CERT_CN_INVALID);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_CERT_DATE_INVALID);
+  APPEND_ENUM_STRING(WINHTTP_CALLBACK_STATUS_FLAG_SECURITY_CHANNEL_ERROR);
+  return rv;
+}
+
 #undef APPEND_ENUM_STRING
 } // namespace
 
@@ -708,7 +722,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
             + InternetStatusToString(internetStatus) + ")");
     if (internetStatus == WINHTTP_CALLBACK_STATUS_SECURE_FAILURE)
     {
-      Log::Write(Logger::Level::Error, "Security failure. :(");
+      DWORD securityFlags = *reinterpret_cast<DWORD*>(statusInformation);
+      Log::Stream(Logger::Level::Error)
+          << "Security failure.  :(" << std::hex << securityFlags << ") ("
+          << InternetStatusInformationToString(securityFlags) << ")";
     }
     else if (internetStatus == WINHTTP_CALLBACK_STATUS_REQUEST_ERROR)
     {
@@ -870,6 +887,262 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   }
 
   namespace {
+
+    /******************** Begin Potential Throwaway Code *******/
+    // These functions are captured because they may be required when further iterations on the mTLS
+    // functionality is needed and it would be a shame to lose them.
+    struct CertName : public CERT_NAME_BLOB
+    {
+      CertName(std::string const& x500dn) : CERT_NAME_BLOB{0}
+      {
+        // Determine the size needed to encode the buffer.
+        CertStrToName(
+            X509_ASN_ENCODING,
+            x500dn.c_str(),
+            CERT_X500_NAME_STR,
+            nullptr,
+            pbData,
+            &cbData,
+            nullptr);
+        pbData = new BYTE[cbData];
+        if (!CertStrToName(
+                X509_ASN_ENCODING,
+                x500dn.c_str(),
+                CERT_X500_NAME_STR,
+                nullptr,
+                pbData,
+                &cbData,
+                nullptr))
+        {
+          throw std::runtime_error("Failed to convert string to name blob");
+        }
+      }
+      ~CertName() { delete pbData; }
+    };
+
+    struct CryptDataBlob : public CRYPT_DATA_BLOB
+    {
+      CryptDataBlob() : CRYPT_DATA_BLOB{0} {}
+      ~CryptDataBlob() { delete pbData; }
+    };
+
+    wil::unique_hcryptprov CreateCryptoProvider()
+    {
+      wil::unique_hcryptprov hCryptProv;
+      if (!CryptAcquireContext(
+              hCryptProv.addressof(), NULL, MS_ENHANCED_PROV, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+      {
+        GetErrorAndThrow("Failed to acquire crypto context: ");
+      }
+
+      return hCryptProv;
+    }
+
+    wil::unique_ncrypt_key DecodePemPrivateKey(
+        HCRYPTPROV cryptoProvider,
+        std::string const& privateKey)
+    {
+      DWORD privateKeyLength = 0;
+      if (!CryptStringToBinary(
+              privateKey.c_str(),
+              0,
+              CRYPT_STRING_BASE64HEADER,
+              nullptr,
+              &privateKeyLength,
+              nullptr,
+              nullptr))
+      {
+        GetErrorAndThrow("Failed to get size of convert private key in binary: ");
+      }
+      std::vector<BYTE> privateKeyBinary(privateKeyLength);
+      if (!CryptStringToBinary(
+              privateKey.c_str(),
+              0,
+              CRYPT_STRING_BASE64HEADER,
+              privateKeyBinary.data(),
+              &privateKeyLength,
+              nullptr,
+              nullptr))
+      {
+        GetErrorAndThrow("Failed to convert private key to binary: ");
+      }
+
+      wil::unique_ncrypt_key nCryptKey;
+      if (!NCryptImportKey(
+              cryptoProvider,
+              0,
+              NCRYPT_PKCS8_PRIVATE_KEY_BLOB,
+              nullptr,
+              nCryptKey.addressof(),
+              privateKeyBinary.data(),
+              privateKeyLength,
+              NULL))
+      {
+        GetErrorAndThrow("Failed to add private key to store: ");
+      }
+      return nCryptKey;
+    }
+
+    wil::unique_cert_context DecodePemCertificate(std::string const& certificatePem)
+    {
+      DWORD certificateLength = 0;
+      if (!CryptStringToBinary(
+              certificatePem.c_str(),
+              0,
+              CRYPT_STRING_BASE64HEADER,
+              nullptr,
+              &certificateLength,
+              nullptr,
+              nullptr))
+      {
+      }
+      std::vector<BYTE> certificateBinary(certificateLength);
+      if (!CryptStringToBinary(
+              certificatePem.c_str(),
+              0,
+              CRYPT_STRING_BASE64HEADER,
+              certificateBinary.data(),
+              &certificateLength,
+              nullptr,
+              nullptr))
+      {
+      }
+
+      wil::unique_cert_context certContext{CertCreateCertificateContext(
+          X509_ASN_ENCODING | PKCS_7_ASN_ENCODING,
+          certificateBinary.data(),
+          static_cast<DWORD>(certificateBinary.size()))};
+      if (!certContext)
+      {
+        GetErrorAndThrow("Failed to create certificate context");
+      }
+
+      return certContext;
+    }
+
+    void ExportCertificateToPfxFile(PCCERT_CONTEXT certificate, const std::string pfxFileName)
+    {
+      wil::unique_hcertstore store{
+          CertOpenStore(CERT_STORE_PROV_MEMORY, 0, 0, CERT_STORE_CREATE_NEW_FLAG, nullptr)};
+      if (!store)
+      {
+        throw std::runtime_error("Failed to create certificate store");
+      }
+      if (!CertAddCertificateContextToStore(store.get(), certificate, CERT_STORE_ADD_NEW, nullptr))
+      {
+        throw std::runtime_error("Failed to add certificate to store");
+      }
+      CryptDataBlob pfxBlob;
+
+      if (!PFXExportCertStoreEx(
+              store.get(),
+              &pfxBlob,
+              nullptr,
+              nullptr,
+              (PKCS12_INCLUDE_EXTENDED_PROPERTIES | REPORT_NOT_ABLE_TO_EXPORT_PRIVATE_KEY
+               | REPORT_NO_PRIVATE_KEY | EXPORT_PRIVATE_KEYS)))
+      {
+        throw std::runtime_error("Failed to export certificate");
+      }
+
+      pfxBlob.pbData = new BYTE[pfxBlob.cbData];
+
+      if (!PFXExportCertStoreEx(
+              store.get(),
+              &pfxBlob,
+              nullptr,
+              nullptr,
+              (PKCS12_INCLUDE_EXTENDED_PROPERTIES | REPORT_NOT_ABLE_TO_EXPORT_PRIVATE_KEY
+               | REPORT_NO_PRIVATE_KEY | EXPORT_PRIVATE_KEYS)))
+      {
+        throw std::runtime_error("Failed to export certificate");
+      }
+
+      {
+        wil::unique_hfile pfxFile{
+            CreateFileA(pfxFileName.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr)};
+
+        if (!WriteFile(pfxFile.get(), pfxBlob.pbData, pfxBlob.cbData, nullptr, nullptr))
+        {
+          throw std::runtime_error("Failed to write pfx file");
+        }
+      }
+    }
+
+    wil::unique_hcertstore ImportPfxCertificateStore(std::string const& fileName)
+    {
+      CryptDataBlob pfxBlob;
+      {
+        wil::unique_hfile pfxFile{
+            CreateFileA(fileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, 0, nullptr)};
+        if (pfxFile.get() == INVALID_HANDLE_VALUE)
+        {
+          throw std::runtime_error("Failed to open pfx file");
+        }
+        BY_HANDLE_FILE_INFORMATION fileInfo;
+        if (!GetFileInformationByHandle(pfxFile.get(), &fileInfo))
+        {
+          throw std::runtime_error("Failed to get file information");
+        }
+        pfxBlob.pbData = new BYTE[fileInfo.nFileSizeLow];
+        DWORD bytesRead;
+        if (!ReadFile(pfxFile.get(), pfxBlob.pbData, fileInfo.nFileSizeLow, &bytesRead, nullptr))
+        {
+          throw std::runtime_error("Failed to read pfx file");
+        }
+        pfxBlob.cbData = bytesRead;
+      }
+      wil::unique_hcertstore store{
+          PFXImportCertStore(&pfxBlob, nullptr, CRYPT_EXPORTABLE | CRYPT_MACHINE_KEYSET)};
+      if (!store)
+      {
+        throw std::runtime_error("Failed to import pfx file");
+      }
+      return store;
+    }
+
+#if 0
+
+    // Open a PFX store and load the certificate in the store into a TLS context.
+    // 
+    //      auto cryptoProvider = CreateCryptoProvider();
+        //      auto privateKey = DecodePemPrivateKey(cryptoProvider.get(), TlsClientPrivateKey);
+        //      auto certificate = DecodePemCertificate(TlsClientCertificate);
+
+        wil::unique_hcertstore store{ImportPfxCertificateStore("client_cert.pfx")};
+
+        wil::unique_cert_context certificate{CertEnumCertificatesInStore(store.get(), nullptr)};
+
+        //{
+        //  CERT_KEY_CONTEXT keyContext;
+        //  keyContext.cbSize = sizeof(keyContext);
+        //  keyContext.hCryptProv = cryptoProvider.get();
+        //  keyContext.hNCryptKey = privateKey.get();
+        //  keyContext.dwKeySpec = CERT_NCRYPT_KEY_SPEC | AT_SIGNATURE | AT_KEYEXCHANGE;
+        //  ;
+        //  if (!CertSetCertificateContextProperty(
+        //          certificate.get(),
+        //          CERT_KEY_CONTEXT_PROP_ID,
+        //          CERT_STORE_NO_CRYPT_RELEASE_FLAG,
+        //          &keyContext))
+        //  {
+        //    throw std::runtime_error("Failed to set private key to certificate context");
+        //  }
+        //}
+
+        //      ExportCertificateToPfxFile(certificate.get(), "test.pfx");
+
+        wil::unique_hcryptkey key2;
+        if (!CryptAcquireCertificatePrivateKey(
+                certificate.get(), 0, nullptr, key2.addressof(), nullptr, nullptr))
+        {
+          GTEST_LOG_(INFO) << "Failed to retrieve private key from certificate: " << GetLastError();
+        }
+
+        options.TlsClientCertificate = certificate.get();
+#endif
+    /******************** End Potential Throwaway Code *******/
+
     WinHttpTransportOptions WinHttpTransportOptionsFromTransportOptions(
         Azure::Core::Http::Policies::TransportOptions const& transportOptions)
     {
@@ -1028,7 +1301,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     if (requestSecureHttp)
     {
-      if (!options.TlsClientCertificate)
+      if (!m_tlsClientCertificate)
       {
         // If the service requests TLS client certificates, we want to let the WinHTTP APIs know
         // that it's ok to initiate the request without a client certificate.
@@ -1160,7 +1433,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Azure::Core::Url const& url,
       Azure::Core::Http::HttpMethod const& method)
   {
-    auto request{std::make_unique<WinHttpRequest>(connectionHandle, url, method, m_tlsClientCertificate.get(), m_options)};
+    auto request{std::make_unique<WinHttpRequest>(
+        connectionHandle, url, method, m_tlsClientCertificate.get(), m_options)};
     // If we are supporting WebSockets, then let WinHTTP know that it should
     // prepare to upgrade the HttpRequest to a WebSocket.
     if (HasWebSocketSupport())
@@ -1237,6 +1511,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     int64_t streamLength = request.GetBodyStream()->Length();
 
+    if (m_tlsClientCertificate)
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "Client certificate needed, providing before request.." << std::endl;
+      if (!WinHttpSetOption(
+              m_requestHandle.get(),
+              WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
+              reinterpret_cast<void*>(const_cast<PCERT_CONTEXT>(m_tlsClientCertificate.get())),
+              sizeof(CERT_CONTEXT)))
+      {
+        GetErrorAndThrow("Error setting client certificate.");
+      }
+    }
+
     try
     {
       if (!m_httpAction->WaitForAction(
@@ -1257,19 +1545,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
                               m_httpAction.get()))) // Context for WinHTTP status callbacks for
                                                     // this request.
                   {
-                    auto err = GetLastError();
-                    if (err == ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED)
-                    {
-                      if (!WinHttpSetOption(
-                              m_requestHandle.get(),
-                              WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
-                              reinterpret_cast<void*>(
-                                  const_cast<PCERT_CONTEXT>(m_tlsClientCertificate.get())),
-                              sizeof(CERT_CONTEXT)))
-                      {
-                        GetErrorAndThrow("Error while sending a request.");
-                      }
-                    }
                     // Errors include:
                     // ERROR_WINHTTP_CANNOT_CONNECT
                     // ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED
