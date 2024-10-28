@@ -52,6 +52,7 @@ set(
     inc/azure/data/tables.hpp
     inc/azure/data/tables/tables_client.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
+    inc/azure/data/tables/tables_service_client.hpp
 )
 
 set(
