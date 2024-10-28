@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed ServiceVersion type, replaced with ApiVersion field in the TableClientOptions type.
+
 ### Bugs Fixed
 
 ### Other Changes
