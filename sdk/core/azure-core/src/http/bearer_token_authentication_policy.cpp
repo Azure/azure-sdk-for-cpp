@@ -31,6 +31,11 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
   auto result = AuthorizeAndSendRequest(request, nextPolicy, context);
   {
     auto const& response = *result;
+    if (response.GetStatusCode() == HttpStatusCode::Unauthorized)
+    {
+      std::unique_lock<std::shared_timed_mutex> writeLock(m_accessTokenMutex);
+      m_accessToken.ExpiresOn = DateTime(std::chrono::system_clock::now());
+    }
     auto const& challenge = AuthorizationChallengeHelper::GetChallenge(response);
     if (!challenge.empty() && AuthorizeRequestOnChallenge(challenge, request, context))
     {
