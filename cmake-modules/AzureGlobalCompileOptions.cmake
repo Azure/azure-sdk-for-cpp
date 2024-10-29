@@ -14,7 +14,7 @@ if(MSVC)
 
   #https://stackoverflow.com/questions/37527946/warning-unreferenced-inline-function-has-been-removed
   add_compile_options(/permissive- /W4 ${WARNINGS_AS_ERRORS_FLAG} /wd5031 /wd4668 /wd4820 /wd4255 /wd4710)
-  #https://learn.microsoft.com/en-us/cpp/build/reference/zc-cplusplus?view=msvc-170
+  #https://learn.microsoft.com/cpp/build/reference/zc-cplusplus?view=msvc-170
   add_compile_options(/Zc:__cplusplus)
 
   # NOTE: Static analysis will slow building time considerably and it is run during CI gates.
