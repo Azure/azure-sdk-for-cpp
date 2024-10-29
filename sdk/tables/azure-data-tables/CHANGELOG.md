@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Use the package version for telemetry, rather than api version.
+
 ### Other Changes
 
 ## 1.0.0-beta.4 (2024-08-06)
