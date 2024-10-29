@@ -13,26 +13,11 @@ using namespace Azure::Data::Tables::Models;
 
 const std::string TableName = "transactions2";
 
-std::string GetConnectionString()
-{
-  const static std::string ConnectionString = "";
-
-  if (!ConnectionString.empty())
-  {
-    return ConnectionString;
-  }
-  const static std::string envConnectionString = std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
-  if (!envConnectionString.empty())
-  {
-    return envConnectionString;
-  }
-  throw std::runtime_error("Cannot find connection string.");
-}
-
 int main()
 {
-  // Get the service client
-  auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
+  // create table service client with the specified url containing the account name.
+  const std::string serviceUrl = "https://account-name.table.core.windows.net";
+  auto tableServiceClient = TableServiceClient(serviceUrl);
   // create table
   tableServiceClient.CreateTable(TableName);
   // get table client from table service client
