@@ -39,10 +39,6 @@ namespace Azure { namespace Data { namespace Tables {
 
   namespace _detail {
     /**
-     * The version used for the operations to Tables services.
-     */
-    constexpr static const char* ApiVersion = "2019-02-02";
-    /**
      * The package name of the SDK.
      */
     constexpr static const char* TablesServicePackageName = "data-tables";
@@ -75,48 +71,6 @@ namespace Azure { namespace Data { namespace Tables {
   } // namespace _detail
 
   /**
-   * @brief API version for Tables service.
-   */
-  class ServiceVersion final {
-  public:
-    /**
-     * @brief Construct a new Service Version object
-     *
-     * @param version The string version for Tables Service.
-     */
-    explicit ServiceVersion(std::string version) : m_version{std::move(version)} {}
-
-    /**
-     * @brief Enable comparing between two versions.
-     *
-     * @param other Another service version to be compared.
-     */
-    bool operator==(const ServiceVersion& other) const { return m_version == other.m_version; }
-
-    /**
-     * @brief Enable comparing between two versions.
-     *
-     * @param other Another service version to be compared.
-     */
-    bool operator!=(const ServiceVersion& other) const { return !(*this == other); }
-
-    /**
-     * @brief Returns string representation.
-     *
-     */
-    std::string const& ToString() const { return m_version; }
-
-    /**
-     * @brief API version 2019-12-12.
-     *
-     */
-    AZ_DATA_TABLES_DLLEXPORT const static ServiceVersion V2019_02_02;
-
-  private:
-    std::string m_version;
-  };
-
-  /**
    * @brief Audiences available for Blobs
    *
    */
@@ -145,7 +99,7 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * API version used by this client.
      */
-    ServiceVersion ApiVersion{_detail::ApiVersion};
+    std::string ApiVersion{"2019-02-02"};
 
     /**
      * Enables tenant discovery through the authorization challenge when the client is configured to

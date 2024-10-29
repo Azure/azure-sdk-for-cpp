@@ -7,8 +7,11 @@
 ### Breaking Changes
 
 - Renamed `tables_clients.hpp` to `table_client.hpp` and split `TableServiceClient` into its own file, `table_service_client.hpp`. 
+- Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
 
 ### Bugs Fixed
+
+- Use the package version for telemetry, rather than api version.
 
 ### Other Changes
 
