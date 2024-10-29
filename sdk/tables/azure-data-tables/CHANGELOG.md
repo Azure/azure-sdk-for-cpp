@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
+
 ### Bugs Fixed
 
 - Use the package version for telemetry, rather than api version.
