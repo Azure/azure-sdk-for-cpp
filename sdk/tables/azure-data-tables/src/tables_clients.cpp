@@ -3,6 +3,7 @@
 
 #include "azure/data/tables/tables_clients.hpp"
 
+#include "private/package_version.hpp"
 #include "private/policies/service_version_policy.hpp"
 #include "private/policies/shared_key_lite_policy.hpp"
 #include "private/policies/tenant_bearer_token_policy.hpp"
@@ -29,7 +30,7 @@ TableServiceClient::TableServiceClient(const TableClientOptions& options)
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -47,7 +48,7 @@ TableServiceClient::TableServiceClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -83,7 +84,7 @@ TableServiceClient::TableServiceClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -103,7 +104,7 @@ TableServiceClient::TableServiceClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 
@@ -119,7 +120,7 @@ TableServiceClient::TableServiceClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies2),
       std::move(perOperationPolicies2));
 }
@@ -336,7 +337,7 @@ TableClient::TableClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -372,7 +373,7 @@ TableClient::TableClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -393,7 +394,7 @@ TableClient::TableClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 
@@ -409,7 +410,7 @@ TableClient::TableClient(
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies2),
       std::move(perOperationPolicies2));
 }
