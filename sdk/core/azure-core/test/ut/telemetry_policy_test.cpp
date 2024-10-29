@@ -101,6 +101,13 @@ TEST(TelemetryPolicy, UserAgentCppVer)
     EXPECT_GE(ua.length(), 11);
     EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/199711)");
   }
+
+  {
+    std::ostringstream cppversion;
+    cppversion << "TEST: " << __cplusplus;
+
+    EXPECT_EQ(cppversion.str(), "TEST:201402L)");
+  }
 }
 
 TEST(TelemetryPolicy, NoOverwrite)
