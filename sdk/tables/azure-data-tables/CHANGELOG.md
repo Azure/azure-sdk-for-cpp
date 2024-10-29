@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Renamed `tables_clients.hpp` to `table_client.hpp` and split `TableServiceClient` into its own file, `table_service_client.hpp`. 
+
 ### Bugs Fixed
 
 ### Other Changes
