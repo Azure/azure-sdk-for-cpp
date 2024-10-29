@@ -7,6 +7,9 @@
 ### Breaking Changes
 
 - Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
+- Moved TableServiceClientOptions to TableClientOptions.
+- Moved TableServiceClient to its own header file.
+- Renamed tables_clients.hpp to table_client.hpp.
 
 ### Bugs Fixed
 

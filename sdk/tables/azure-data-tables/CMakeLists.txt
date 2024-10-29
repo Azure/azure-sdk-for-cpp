@@ -42,6 +42,7 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/account_sas_builder.hpp
+    inc/azure/data/tables/constants.hpp
     inc/azure/data/tables/credentials/azure_sas_credential.hpp
     inc/azure/data/tables/credentials/named_key_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
@@ -49,8 +50,10 @@ set(
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
-    inc/azure/data/tables/tables_clients.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
+    inc/azure/data/tables/table_client_options.hpp
+    inc/azure/data/tables/table_client.hpp
+    inc/azure/data/tables/table_service_client.hpp
 )
 
 set(
