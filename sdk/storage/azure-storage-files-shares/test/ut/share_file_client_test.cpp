@@ -4,7 +4,8 @@
 #include "share_file_client_test.hpp"
 
 #include <azure/core/cryptography/hash.hpp>
-#include <azure/storage/blobs.hpp>
+#include <azure/storage/blobs/blob_container_client.hpp>
+#include <azure/storage/blobs/block_blob_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/storage_common.hpp>
