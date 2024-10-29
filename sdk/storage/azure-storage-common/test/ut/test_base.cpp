@@ -130,7 +130,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StorageTest::PremiumFileAccountName()
   {
     const static std::string accountName
-        = ParseConnectionStringAndGetAccountName(StandardStorageConnectionString());
+        = ParseConnectionStringAndGetAccountName(PremiumFileConnectionString());
     return accountName;
   }
 
@@ -149,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StorageTest::AdlsGen2AccountName()
   {
     const static std::string accountName
-        = ParseConnectionStringAndGetAccountName(StandardStorageConnectionString());
+        = ParseConnectionStringAndGetAccountName(AdlsGen2ConnectionString());
     return accountName;
   }
 
