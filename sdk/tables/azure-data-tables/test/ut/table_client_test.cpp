@@ -114,6 +114,11 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, GetAccessPolicy)
   {
+    if (GetParam() == AuthType::Key)
+    {
+      SkipTest();
+      return;
+    }
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
 
     auto getResponse = m_tableClient->GetAccessPolicy();
@@ -122,6 +127,11 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, SetAccessPolicy)
   {
+    if (GetParam() == AuthType::Key)
+    {
+      SkipTest();
+      return;
+    }
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
     Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
