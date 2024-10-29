@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Removed ServiceVersion type, replaced with ApiVersion field in the TableClientOptions type.
+- Removed ServiceVersion type and changed with ApiVersion field within the TableClientOptions to be std::string.
 
 ### Bugs Fixed
 
