@@ -11,23 +11,24 @@
 #include <string>
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
+  /**
+   * @brief Telemetry User-Agent string generator.
+   *
+   */
   class UserAgentGenerator {
-
-    // This doesn't behave as expected, locally, depending on how the tests are written.
-    // TODO: Consider removing these target_compile_definitions.
-    static const long CppStandardVersion =
-#if defined(_azure_BUILDING_SDK)
-        -2L
-#elif defined(_azure_BUILDING_TESTS)
-        -1L
-#elif defined(_azure_BUILDING_SAMPLES)
-        0L
-#else
-        __cplusplus
-#endif
-        ;
-
   public:
+    /**
+     * @brief Generates User-Agent string for telemetry.
+     *
+     * @param componentName the name of the SDK component.
+     * @param componentVersion the version of the SDK component.
+     * @param applicationId user application ID
+     *
+     * @return User-Agent string.
+     *
+     * @see https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+     *
+     */
     static std::string GenerateUserAgent(
         std::string const& componentName,
         std::string const& componentVersion,
