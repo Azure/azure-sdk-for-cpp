@@ -7,8 +7,11 @@
 ### Breaking Changes
 
 - Removed the `TablesAudience` field from `TableClientOptions` since it is not required.
+- Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
 
 ### Bugs Fixed
+
+- Use the package version for telemetry, rather than api version.
 
 ### Other Changes
 
