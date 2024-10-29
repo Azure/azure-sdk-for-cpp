@@ -36,6 +36,10 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
       std::unique_lock<std::shared_timed_mutex> writeLock(m_accessTokenMutex);
       m_accessToken.ExpiresOn = DateTime(std::chrono::system_clock::now());
     }
+
+    // We keep this check outside the lock to avoid blocking other threads while we are processing
+    // the challenge from the response. GetChallenge already checks the status code and returns an
+    // empty string if it is not 401.
     auto const& challenge = AuthorizationChallengeHelper::GetChallenge(response);
     if (!challenge.empty() && AuthorizeRequestOnChallenge(challenge, request, context))
     {
