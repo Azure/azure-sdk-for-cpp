@@ -6,6 +6,7 @@
 
 ### Breaking Changes
 
+- Removed the `TablesAudience` field from `TableClientOptions` since it is not required.
 - Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
 - Removed the `TableServiceClient` constructor that only accepts one defaulted options parameter.
 
