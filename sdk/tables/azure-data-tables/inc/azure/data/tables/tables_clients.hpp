@@ -344,14 +344,6 @@ namespace Azure { namespace Data { namespace Tables {
   class TableServiceClient final {
   public:
     /**
-     * @brief Initializes a new instance of tableServiceClient.
-     *
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(const TableClientOptions& options = {});
-
-    /**
      * @brief Initializes a new instance of tableClient.
      *
      * @param serviceUrl A url referencing the table that includes the name of the account and the
