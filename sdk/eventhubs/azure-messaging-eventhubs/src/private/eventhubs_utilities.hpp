@@ -277,7 +277,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       options.Properties.emplace(
           "user-agent",
           Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
-              packageName, PackageVersion::ToString(), applicationId));
+              packageName, PackageVersion::ToString(), applicationId, __cplusplus));
     }
 
     static void LogRawBuffer(std::ostream& os, std::vector<uint8_t> const& buffer);

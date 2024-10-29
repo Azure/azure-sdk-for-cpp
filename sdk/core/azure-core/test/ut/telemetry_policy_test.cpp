@@ -102,10 +102,17 @@ TEST(TelemetryPolicy, UserAgentCppVer)
   }
   {
     const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
-        "storage.blobs", "11.0.0-beta.1", "MyApp");
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
     EXPECT_GE(ua.length(), 11);
     EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201402)");
+  }
+  {
+    const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
+
+    EXPECT_GE(ua.length(), 11);
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201703)");
   }
 }
 
