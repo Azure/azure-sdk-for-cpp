@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed support for constructing the clients using connection strings or `NamedKeyCredential` in favor of `TokenCredential`.
+
 ### Bugs Fixed
 
 ### Other Changes
