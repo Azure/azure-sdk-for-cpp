@@ -10,26 +10,27 @@
 
 #include <string>
 
-namespace Azure { namespace Core { namespace Http { namespace _detail {
-  // NOTE: Treat Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent() as _internal -
-  // it is being/has been used by eventhubs.
+namespace Azure { namespace Core { namespace Http { namespace _internal {
   class UserAgentGenerator {
+
+    // This doesn't behave as expected, locally, depending on how the tests are written.
+    // TODO: Consider removing these target_compile_definitions.
+    static const long CppStandardVersion =
+#if defined(_azure_BUILDING_SDK)
+        -2L
+#elif defined(_azure_BUILDING_TESTS)
+        -1L
+#elif defined(_azure_BUILDING_SAMPLES)
+        0L
+#else
+        __cplusplus
+#endif
+        ;
+
   public:
     static std::string GenerateUserAgent(
         std::string const& componentName,
         std::string const& componentVersion,
-        std::string const& applicationId,
-        long cplusplusValue);
-
-    [[deprecated("Use an overload with additional cplusplusValue parameter.")]] static std::string
-    GenerateUserAgent(
-        std::string const& componentName,
-        std::string const& componentVersion,
-        std::string const& applicationId)
-    {
-      // The value of -3L is to signify that an old version of signature has been used (older
-      // version of eventhubs); we can't rely on cpp version reported by it.
-      return GenerateUserAgent(componentName, componentVersion, applicationId, -3L);
-    }
+        std::string const& applicationId);
   };
-}}}} // namespace Azure::Core::Http::_detail
+}}}} // namespace Azure::Core::Http::_internal

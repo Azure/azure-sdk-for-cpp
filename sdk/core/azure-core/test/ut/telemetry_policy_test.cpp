@@ -59,7 +59,7 @@ TEST(TelemetryPolicy, telemetryString)
 
   constexpr auto TelemetryHeader = "user-agent";
   constexpr auto OSInfoMinLength = 10;
-  const std::string CppVersionSuffix = " Cpp/-1)";
+  const std::string CppVersionSuffix = " Cpp/199711)";
 
   for (auto const& test : UserAgentTests)
   {
@@ -95,19 +95,11 @@ TEST(TelemetryPolicy, telemetryString)
 TEST(TelemetryPolicy, UserAgentCppVer)
 {
   {
-    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
-        "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
+    const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
+        "storage.blobs", "11.0.0-beta.1", "MyApp");
 
     EXPECT_GE(ua.length(), 11);
-    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201402)");
-  }
-
-  {
-    const std::string ua = Http::_detail::UserAgentGenerator::GenerateUserAgent(
-        "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
-
-    EXPECT_GE(ua.length(), 11);
-    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201703)");
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/199711)");
   }
 }
 

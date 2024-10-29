@@ -20,8 +20,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     class EventHubsPropertiesClient;
   }
 
-  class ConsumerClient;
-
   /// @brief The default consumer group name.
   constexpr const char* DefaultConsumerGroup = "$Default";
 
@@ -40,25 +38,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Name of the consumer client. */
     std::string Name{};
-
-  private:
-    // The friend declaration is needed so that ConsumerClient could access CppStandardVersion,
-    // and it is not a struct's public field like the ones above to be set non-programmatically.
-    // When building the SDK, tests, or samples, the value of __cplusplus is ultimately controlled
-    // by the cmake files in this repo (i.e. C++14), therefore we set distinct values of 0, -1, etc
-    // when it is the case.
-    friend class ConsumerClient;
-    long CppStandardVersion =
-#if defined(_azure_BUILDING_SDK)
-        -2L
-#elif defined(_azure_BUILDING_TESTS)
-        -1L
-#elif defined(_azure_BUILDING_SAMPLES)
-        0L
-#else
-        __cplusplus
-#endif
-        ;
   };
 
   /**

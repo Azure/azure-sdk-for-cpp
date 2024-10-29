@@ -97,9 +97,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Set the user agent related properties in the connectOptions based on the package
     // information and application ID.
     _detail::EventHubsUtilities::SetUserAgent(
-        connectOptions,
-        m_consumerClientOptions.ApplicationID,
-        m_consumerClientOptions.CppStandardVersion);
+        connectOptions, m_consumerClientOptions.ApplicationID);
 
     return Azure::Core::Amqp::_internal::Connection{
         m_fullyQualifiedNamespace, m_credential, connectOptions};
