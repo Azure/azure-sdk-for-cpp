@@ -3,7 +3,6 @@
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
-#include <azure/core/platform.hpp>
 
 #include <gtest/gtest.h>
 
@@ -61,11 +60,7 @@ TEST(TelemetryPolicy, telemetryString)
   constexpr auto TelemetryHeader = "user-agent";
   constexpr auto OSInfoMinLength = 10;
 
-#if defined(AZ_PLATFORM_POSIX)
   const std::string CppVersionSuffix = " Cpp/201402)";
-#else
-  const std::string CppVersionSuffix = " Cpp/199711)";
-#endif
 
   for (auto const& test : UserAgentTests)
   {
@@ -103,20 +98,14 @@ TEST(TelemetryPolicy, UserAgentCppVer)
   {
     std::ostringstream cppversion;
     cppversion << "TEST:" << __cplusplus;
-
-    // The _cplusplus macro doesn't update its value on MSVC/Windows.
-#if defined(AZ_PLATFORM_POSIX)
     EXPECT_EQ(cppversion.str(), "TEST:201402");
-#else
-    EXPECT_EQ(cppversion.str(), "TEST:199711");
-#endif
   }
   {
     const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp");
 
     EXPECT_GE(ua.length(), 11);
-    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/199711)");
+    EXPECT_EQ(ua.substr(ua.length() - 11, ua.size()), "Cpp/201402)");
   }
 }
 
