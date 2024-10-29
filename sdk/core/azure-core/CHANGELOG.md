@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
-- Invalidate the token cache within `BearerTokenAuthenticationPolicy` whenever an auth request comes back with a 401 response.
+- Invalidate the token cache within `BearerTokenAuthenticationPolicy` whenever a token request comes back with a 401 response.
 
 ### Other Changes
 
