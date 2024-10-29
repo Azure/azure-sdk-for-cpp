@@ -18,22 +18,6 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
-TableServiceClient::TableServiceClient(const TableClientOptions& options)
-{
-  TableClientOptions newOptions = options;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      newOptions,
-      _detail::TablesServicePackageName,
-      _detail::ApiVersion,
-      std::move(perRetryPolicies),
-      std::move(perOperationPolicies));
-}
-
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     const TableClientOptions& options)
@@ -56,8 +40,6 @@ TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Core::Credentials::TokenCredential> credential,
     const TableClientOptions& options)
-    : TableServiceClient(options)
-
 {
   m_tokenCredential = credential;
   TableClientOptions newOptions = options;
@@ -165,7 +147,7 @@ TableServiceClient TableServiceClient::CreateFromConnectionString(
   }
   else
   {
-    return TableServiceClient(options);
+    return TableServiceClient(tablesUrl.GetAbsoluteUrl(), options);
   }
 }
 
