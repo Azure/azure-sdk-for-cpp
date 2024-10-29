@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Remove the `TableServiceClient` constructor that only has one defaulted options parameter.
+- Removed the `TableServiceClient` constructor that only accepts one defaulted options parameter.
 
 ### Bugs Fixed
 
