@@ -3,6 +3,7 @@
 
 #include "share_client_test.hpp"
 
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/files/shares/share_sas_builder.hpp>
 
 #include <chrono>

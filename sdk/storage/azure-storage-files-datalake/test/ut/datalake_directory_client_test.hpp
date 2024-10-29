@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#pragma once
+
 #include "datalake_path_client_test.hpp"
 
 #include <azure/storage/files/datalake.hpp>
