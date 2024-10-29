@@ -95,6 +95,11 @@ TEST(TelemetryPolicy, telemetryString)
 TEST(TelemetryPolicy, UserAgentCppVer)
 {
   {
+    std::ostringstream cppversion;
+    cppversion << "TEST:" << __cplusplus;
+    EXPECT_EQ(cppversion.str(), "TEST:201402");
+  }
+  {
     const std::string ua = Http::_internal::UserAgentGenerator::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
