@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Removed the `TablesAudience` field from `TableClientOptions` since it is not required.
+
 ### Bugs Fixed
 
 ### Other Changes

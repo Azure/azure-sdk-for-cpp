@@ -71,9 +71,7 @@ TableServiceClient::TableServiceClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(
-        newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                       : m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
@@ -360,9 +358,7 @@ TableClient::TableClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(
-        newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                       : m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
