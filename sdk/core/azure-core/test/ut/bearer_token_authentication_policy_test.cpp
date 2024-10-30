@@ -52,6 +52,37 @@ public:
     return std::make_unique<TestTransportPolicy>(*this);
   }
 };
+
+class TestTransportPolicyMultipleResponses final : public HttpPolicy {
+private:
+  mutable int m_responsesCount = 0;
+
+public:
+  std::unique_ptr<RawResponse> Send(Request&, NextHttpPolicy, Context const&) const override
+  {
+    if (m_responsesCount == 1)
+    {
+      m_responsesCount++;
+      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Unauthorized, "TestStatus");
+    }
+    if (m_responsesCount == 2)
+    {
+      m_responsesCount++;
+      return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "TestStatus");
+    }
+    if (m_responsesCount > 2)
+    {
+      EXPECT_TRUE(false);
+    }
+    m_responsesCount++;
+    return std::make_unique<RawResponse>(1, 1, HttpStatusCode::Ok, "TestStatus");
+  }
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    return std::make_unique<TestTransportPolicyMultipleResponses>(*this);
+  }
+};
 } // namespace
 
 TEST(BearerTokenAuthenticationPolicy, InitialGet)
@@ -158,6 +189,66 @@ TEST(BearerTokenAuthenticationPolicy, RefreshNearExpiry)
 
     *accessToken = {"ACCESSTOKEN2", std::chrono::system_clock::now() + 1h};
 
+    pipeline.Send(request, Context());
+
+    {
+      auto const headers = request.GetHeaders();
+      auto const authHeader = headers.find("authorization");
+      EXPECT_NE(authHeader, headers.end());
+      EXPECT_EQ(authHeader->second, "Bearer ACCESSTOKEN2");
+    }
+  }
+}
+
+TEST(BearerTokenAuthenticationPolicy, TokenInvalidatedAfterUnauth)
+{
+  using namespace std::chrono_literals;
+  auto accessToken = std::make_shared<AccessToken>();
+
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
+  policies.emplace_back(std::make_unique<BearerTokenAuthenticationPolicy>(
+      std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
+
+  policies.emplace_back(std::make_unique<TestTransportPolicyMultipleResponses>());
+
+  HttpPipeline pipeline(policies);
+
+  // The first request is successful, the token gets cached in the credential
+  {
+    Request request(HttpMethod::Get, Url("https://www.azure.com"));
+
+    *accessToken = {"ACCESSTOKEN1", std::chrono::system_clock::now() + 1h};
+
+    pipeline.Send(request, Context());
+
+    {
+      auto const headers = request.GetHeaders();
+      auto const authHeader = headers.find("authorization");
+      EXPECT_NE(authHeader, headers.end());
+      EXPECT_EQ(authHeader->second, "Bearer ACCESSTOKEN1");
+    }
+  }
+
+  // The second request returns unauthorized, the token should be invalidated
+  {
+    Request request(HttpMethod::Get, Url("https://www.azure.com"));
+
+    *accessToken = {"ACCESSTOKEN2", std::chrono::system_clock::now() + 1h};
+
+    pipeline.Send(request, Context());
+
+    {
+      auto const headers = request.GetHeaders();
+      auto const authHeader = headers.find("authorization");
+      EXPECT_NE(authHeader, headers.end());
+      EXPECT_EQ(authHeader->second, "Bearer ACCESSTOKEN1");
+    }
+
+    // We expect the next call to return a new token
     pipeline.Send(request, Context());
 
     {
