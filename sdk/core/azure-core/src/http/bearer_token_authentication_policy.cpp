@@ -31,6 +31,7 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
   auto result = AuthorizeAndSendRequest(request, nextPolicy, context);
   {
     auto const& response = *result;
+    m_invalidateToken = (response.GetStatusCode() == HttpStatusCode::Unauthorized);
     auto const& challenge = AuthorizationChallengeHelper::GetChallenge(response);
     if (!challenge.empty() && AuthorizeRequestOnChallenge(challenge, request, context))
     {
@@ -67,9 +68,10 @@ bool TokenNeedsRefresh(
     Azure::Core::Credentials::AccessToken const& cachedToken,
     Azure::Core::Credentials::TokenRequestContext const& cachedTokenRequestContext,
     Azure::DateTime const& currentTime,
-    Azure::Core::Credentials::TokenRequestContext const& newTokenRequestContext)
+    Azure::Core::Credentials::TokenRequestContext const& newTokenRequestContext,
+    bool forceRefresh)
 {
-  return newTokenRequestContext.TenantId != cachedTokenRequestContext.TenantId
+  return forceRefresh || newTokenRequestContext.TenantId != cachedTokenRequestContext.TenantId
       || newTokenRequestContext.Scopes != cachedTokenRequestContext.Scopes
       || currentTime > (cachedToken.ExpiresOn - newTokenRequestContext.MinimumExpiration);
 }
@@ -91,7 +93,12 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
 
   {
     std::shared_lock<std::shared_timed_mutex> readLock(m_accessTokenMutex);
-    if (!TokenNeedsRefresh(m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext))
+    if (!TokenNeedsRefresh(
+            m_accessToken,
+            m_accessTokenContext,
+            currentTime,
+            tokenRequestContext,
+            m_invalidateToken))
     {
       ApplyBearerToken(request, m_accessToken);
       return;
@@ -100,10 +107,20 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
 
   std::unique_lock<std::shared_timed_mutex> writeLock(m_accessTokenMutex);
   // Check if token needs refresh for the second time in case another thread has just updated it.
-  if (TokenNeedsRefresh(m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext))
+  if (TokenNeedsRefresh(
+          m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext, m_invalidateToken))
   {
-    m_accessToken = m_credential->GetToken(tokenRequestContext, context);
+    TokenRequestContext trcCopy = tokenRequestContext;
+    if (m_invalidateToken)
+    {
+      // Need to set this to invalidate the credential's token cache to ensure we fetch a new token
+      // on subsequent GetToken calls.
+      trcCopy.MinimumExpiration = DateTime::duration::max();
+    }
+
+    m_accessToken = m_credential->GetToken(trcCopy, context);
     m_accessTokenContext = tokenRequestContext;
+    m_invalidateToken = false;
   }
 
   ApplyBearerToken(request, m_accessToken);

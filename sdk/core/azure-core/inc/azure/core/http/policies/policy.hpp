@@ -576,6 +576,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       mutable Credentials::AccessToken m_accessToken;
       mutable std::shared_timed_mutex m_accessTokenMutex;
       mutable Credentials::TokenRequestContext m_accessTokenContext;
+      mutable std::atomic<bool> m_invalidateToken = {false};
 
     public:
       /**
@@ -610,6 +611,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         std::shared_lock<std::shared_timed_mutex> readLock(other.m_accessTokenMutex);
         m_accessToken = other.m_accessToken;
         m_accessTokenContext = other.m_accessTokenContext;
+        m_invalidateToken.store(other.m_invalidateToken.load());
       }
 
       void operator=(BearerTokenAuthenticationPolicy const&) = delete;
