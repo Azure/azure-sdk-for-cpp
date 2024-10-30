@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Allow the `ApiVersion` field within `SettingsClientOptions` to be settable.
+
 ### Other Changes
 
 ## 4.0.0-beta.5 (2024-08-06)

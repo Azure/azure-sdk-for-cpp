@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      * @brief Service Version used.
      *
      */
-    const std::string ApiVersion{"7.4"};
+    std::string ApiVersion{"7.4"};
   };
 
 }}}} // namespace Azure::Security::KeyVault::Administration
