@@ -51,16 +51,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Include this parameter to specify that the tables' metadata be returned as part of
-     * the response body.
-     */
-    enum class QueryTablesIncludeFlags
-    {
-      None = 0,
-      Metadata = 1,
-    };
-
-    /**
      * @brief Query Tables options.
      *
      */
@@ -85,11 +75,6 @@ namespace Azure { namespace Data { namespace Tables {
        * @brief Specifies the maximum number of tables to return.
        */
       Azure::Nullable<std::int32_t> PageSizeHint;
-
-      /**
-       * @brief Specifies that the table's metadata be returned.
-       */
-      Models::QueryTablesIncludeFlags Include = Models::QueryTablesIncludeFlags::None;
     };
 
     /**
