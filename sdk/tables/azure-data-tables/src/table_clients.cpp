@@ -9,6 +9,7 @@
 #include "private/policies/tenant_bearer_token_policy.hpp"
 #include "private/policies/timeout_policy.hpp"
 #include "private/serializers.hpp"
+#include "private/tables_constants.hpp"
 
 #include <sstream>
 #include <string>

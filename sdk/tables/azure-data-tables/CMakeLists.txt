@@ -70,10 +70,11 @@ set(
     src/private/policies/tenant_bearer_token_policy.hpp
     src/private/policies/timeout_policy.hpp
     src/private/serializers.hpp
+    src/private/tables_constants.hpp
     src/private/url_encode.hpp
     src/private/xml_wrapper.hpp
     src/serializers.cpp
-    src/tables_clients.cpp
+    src/table_clients.cpp
     src/tables_sas_builder.cpp
     src/xml_wrapper.cpp
 )
