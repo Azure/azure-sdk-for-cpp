@@ -70,7 +70,7 @@ set(
     src/private/policies/tenant_bearer_token_policy.hpp
     src/private/policies/timeout_policy.hpp
     src/private/serializers.hpp
-    src/private/table_constants.hpp
+    src/private/tables_constants.hpp
     src/private/url_encode.hpp
     src/private/xml_wrapper.hpp
     src/serializers.cpp
