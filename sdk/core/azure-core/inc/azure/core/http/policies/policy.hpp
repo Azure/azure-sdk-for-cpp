@@ -576,7 +576,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       mutable Credentials::AccessToken m_accessToken;
       mutable std::shared_timed_mutex m_accessTokenMutex;
       mutable Credentials::TokenRequestContext m_accessTokenContext;
-      mutable std::atomic<bool> m_invalidateToken = false;
+      mutable std::atomic<bool> m_invalidateToken = {false};
 
     public:
       /**
