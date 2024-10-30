@@ -32,10 +32,6 @@ std::unique_ptr<RawResponse> BearerTokenAuthenticationPolicy::Send(
   {
     auto const& response = *result;
     m_invalidateToken = (response.GetStatusCode() == HttpStatusCode::Unauthorized);
-
-    // We keep this check outside the lock to avoid blocking other threads while we are processing
-    // the challenge from the response. GetChallenge already checks the status code and returns an
-    // empty string if it is not 401.
     auto const& challenge = AuthorizationChallengeHelper::GetChallenge(response);
     if (!challenge.empty() && AuthorizeRequestOnChallenge(challenge, request, context))
     {
