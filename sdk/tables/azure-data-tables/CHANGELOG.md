@@ -7,7 +7,9 @@
 ### Breaking Changes
 
 - Renamed `tables_clients.hpp` to `table_client.hpp` and split `TableServiceClient` into its own file, `table_service_client.hpp`. 
+- Removed the `TablesAudience` field from `TableClientOptions` since it is not required.
 - Removed ServiceVersion type and changed the ApiVersion field within `TableClientOptions` to be std::string.
+- Removed the `TableServiceClient` constructor that only accepts one defaulted options parameter.
 
 ### Bugs Fixed
 

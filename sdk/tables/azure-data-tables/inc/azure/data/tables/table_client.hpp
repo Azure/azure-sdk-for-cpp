@@ -71,27 +71,6 @@ namespace Azure { namespace Data { namespace Tables {
   } // namespace _detail
 
   /**
-   * @brief Audiences available for Blobs
-   *
-   */
-  class TablesAudience final
-      : public Azure::Core::_internal::ExtendableEnumeration<TablesAudience> {
-  public:
-    /**
-     * @brief Construct a new TablesAudience object
-     *
-     * @param tablesAudience The Azure Active Directory audience to use when forming authorization
-     * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
-     * cloud where the resource is located. For more information: See
-     * https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
-     */
-    explicit TablesAudience(std::string tablesAudience)
-        : ExtendableEnumeration(std::move(tablesAudience))
-    {
-    }
-  };
-
-  /**
    * @brief Optional parameters for constructing a new TableClient.
    */
   struct TableClientOptions final : Azure::Core::_internal::ClientOptions
@@ -107,12 +86,6 @@ namespace Azure { namespace Data { namespace Tables {
      * to prompt a challenge in order to discover the correct tenant for the resource.
      */
     bool EnableTenantDiscovery = false;
-
-    /**
-     * The Audience to use for authentication with Azure Active Directory (AAD).
-     *
-     */
-    Azure::Nullable<TablesAudience> Audience;
   };
 
   /**
