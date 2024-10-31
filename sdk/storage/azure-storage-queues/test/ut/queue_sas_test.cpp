@@ -3,6 +3,7 @@
 
 #include "queue_client_test.hpp"
 
+#include <azure/storage/common/crypt.hpp>
 #include <azure/storage/queues/queue_sas_builder.hpp>
 
 #include <chrono>
