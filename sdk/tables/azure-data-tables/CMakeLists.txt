@@ -46,18 +46,11 @@ set(
     inc/azure/data/tables/credentials/named_key_credential.hpp
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/enum_operators.hpp
-    inc/azure/data/tables/internal/cryptography/hmacsha256.hpp
-    inc/azure/data/tables/internal/cryptography/url_encode.hpp
-    inc/azure/data/tables/internal/policies/service_version_policy.hpp
-    inc/azure/data/tables/internal/policies/shared_key_lite_policy.hpp
-    inc/azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp
-    inc/azure/data/tables/internal/policies/timeout_policy.hpp
-    inc/azure/data/tables/internal/serializers.hpp
-    inc/azure/data/tables/internal/xml_wrapper.hpp
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp
-    inc/azure/data/tables/tables_clients.hpp
+    inc/azure/data/tables/table_client.hpp
+    inc/azure/data/tables/table_service_client.hpp
     inc/azure/data/tables/tables_sas_builder.hpp
 )
 
@@ -70,9 +63,18 @@ set(
     src/policies/shared_key_lite_policy.cpp
     src/policies/tenant_bearer_token_policy.cpp
     src/policies/timeout_policy.cpp
+    src/private/hmacsha256.hpp
     src/private/package_version.hpp
+    src/private/policies/service_version_policy.hpp
+    src/private/policies/shared_key_lite_policy.hpp
+    src/private/policies/tenant_bearer_token_policy.hpp
+    src/private/policies/timeout_policy.hpp
+    src/private/serializers.hpp
+    src/private/tables_constants.hpp
+    src/private/url_encode.hpp
+    src/private/xml_wrapper.hpp
     src/serializers.cpp
-    src/tables_clients.cpp
+    src/table_clients.cpp
     src/tables_sas_builder.cpp
     src/xml_wrapper.cpp
 )

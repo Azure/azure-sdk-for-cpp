@@ -1,13 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/data/tables/tables_clients.hpp"
-
-#include "azure/data/tables/internal/policies/service_version_policy.hpp"
-#include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
-#include "azure/data/tables/internal/policies/tenant_bearer_token_policy.hpp"
-#include "azure/data/tables/internal/policies/timeout_policy.hpp"
-#include "azure/data/tables/internal/serializers.hpp"
+#include "azure/data/tables/table_client.hpp"
+#include "azure/data/tables/table_service_client.hpp"
+#include "private/package_version.hpp"
+#include "private/policies/service_version_policy.hpp"
+#include "private/policies/shared_key_lite_policy.hpp"
+#include "private/policies/tenant_bearer_token_policy.hpp"
+#include "private/policies/timeout_policy.hpp"
+#include "private/serializers.hpp"
+#include "private/tables_constants.hpp"
 
 #include <sstream>
 #include <string>
@@ -18,22 +20,6 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
-TableServiceClient::TableServiceClient(const TableClientOptions& options)
-{
-  TableClientOptions newOptions = options;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      newOptions,
-      _detail::TablesServicePackageName,
-      _detail::ApiVersion,
-      std::move(perRetryPolicies),
-      std::move(perOperationPolicies));
-}
-
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     const TableClientOptions& options)
@@ -42,12 +28,11 @@ TableServiceClient::TableServiceClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -56,8 +41,6 @@ TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     std::shared_ptr<Core::Credentials::TokenCredential> credential,
     const TableClientOptions& options)
-    : TableServiceClient(options)
-
 {
   m_tokenCredential = credential;
   TableClientOptions newOptions = options;
@@ -65,25 +48,21 @@ TableServiceClient::TableServiceClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
 
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(
-        newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                       : m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
   }
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -98,12 +77,11 @@ TableServiceClient::TableServiceClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 
@@ -114,12 +92,11 @@ TableServiceClient::TableServiceClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
   perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies2.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
+  perOperationPolicies2.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies2),
       std::move(perOperationPolicies2));
 }
@@ -165,7 +142,7 @@ TableServiceClient TableServiceClient::CreateFromConnectionString(
   }
   else
   {
-    return TableServiceClient(options);
+    return TableServiceClient(tablesUrl.GetAbsoluteUrl(), options);
   }
 }
 
@@ -331,12 +308,11 @@ TableClient::TableClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -354,25 +330,21 @@ TableClient::TableClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
 
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(
-        newOptions.Audience.HasValue() ? newOptions.Audience.Value().ToString()
-                                       : m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
   }
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 }
@@ -388,12 +360,11 @@ TableClient::TableClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(options.ApiVersion.ToString()));
+  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
 
@@ -404,12 +375,11 @@ TableClient::TableClient(
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
   std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
   perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies2.emplace_back(
-      std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
+  perOperationPolicies2.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       newOptions,
       _detail::TablesServicePackageName,
-      _detail::ApiVersion,
+      PackageVersion::ToString(),
       std::move(perRetryPolicies2),
       std::move(perOperationPolicies2));
 }

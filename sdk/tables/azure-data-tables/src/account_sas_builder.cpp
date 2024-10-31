@@ -3,8 +3,8 @@
 
 #include "azure/data/tables/account_sas_builder.hpp"
 
-#include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
-#include "azure/data/tables/internal/cryptography/url_encode.hpp"
+#include "private/hmacsha256.hpp"
+#include "private/url_encode.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/http/http.hpp>

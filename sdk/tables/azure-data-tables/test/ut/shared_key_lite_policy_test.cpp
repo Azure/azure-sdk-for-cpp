@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../src/private/hmacsha256.hpp"
+#include "../src/private/policies/shared_key_lite_policy.hpp"
 #include "azure/data/tables/credentials/named_key_credential.hpp"
-#include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
-#include "azure/data/tables/internal/policies/shared_key_lite_policy.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/cryptography/hash.hpp>
