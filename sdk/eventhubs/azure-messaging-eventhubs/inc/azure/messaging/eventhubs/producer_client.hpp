@@ -58,7 +58,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 #elif defined(_azure_BUILDING_SAMPLES)
         0L
 #else
+    // https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+#if defined(_MSVC_LANG) && __cplusplus == 199711L
+        _MSVC_LANG
+#else
         __cplusplus
+#endif
 #endif
         ;
   };

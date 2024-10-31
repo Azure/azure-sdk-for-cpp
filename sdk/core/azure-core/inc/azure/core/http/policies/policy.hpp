@@ -89,7 +89,12 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 #elif defined(_azure_BUILDING_SAMPLES)
         0L
 #else
+    // https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+#if defined(_MSVC_LANG) && __cplusplus == 199711L
+        _MSVC_LANG
+#else
         __cplusplus
+#endif
 #endif
         ;
   };
@@ -545,7 +550,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& packageName,
           std::string const& packageVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+          : m_telemetryId(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
               packageName,
               packageVersion,
               options.ApplicationId,
