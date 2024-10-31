@@ -411,7 +411,7 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 }
 
 // Check if the server supports keep alive and if the headers are consistent between the request and
-// the response. If they are not consistent, the keep alive header in the request is removed.and the
+// the response. If they are not consistent, the keep alive header in the request is removed and the
 // calculated options are reset in order to prevent the wrongful caching of the keep alive settings.
 void CurlTransport::ValidateKeepAliveHeaders(
     Request& request,
