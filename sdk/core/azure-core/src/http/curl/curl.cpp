@@ -2349,7 +2349,7 @@ void CurlConnectionPool::MoveConnectionBackToPool(
 
   if (connection->IsShutdown() || connection->IsKeepAliveExpired())
   {
-    // Can't re-used a shut down connection or an expired connection
+    // Can't re-use a shutdown connection or an expired connection
     return;
   }
 
