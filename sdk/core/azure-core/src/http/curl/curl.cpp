@@ -423,9 +423,7 @@ void CurlTransport::ValidateKeepAliveHeaders(
       && request.GetHeader("Connection").HasValue()
       && response->GetHeaders().find("Keep-Alive") != response->GetHeaders().end()
       && request.GetHeader("Keep-Alive").HasValue()
-      // just in case the server sends the headers in a different case, the case sensitivity of the
-      // map is guaranteed for keys not values. So we need to ensure we compare the values in a case
-      // insensitive way.
+      // Case sensitivity only applies to the `Key` in the map. Thus. compare `Value` in a case insensitive manor.
       && Azure::Core::_internal::StringExtensions::ToLower(
              response->GetHeaders().find("Connection")->second)
           == Azure::Core::_internal::StringExtensions::ToLower(
