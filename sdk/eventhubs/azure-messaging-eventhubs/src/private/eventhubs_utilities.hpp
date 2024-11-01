@@ -15,7 +15,7 @@
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/internal/http/user_agent.hpp>
+#include <azure/core/internal/http/user_agent_helper.hpp>
 
 #include <chrono>
 

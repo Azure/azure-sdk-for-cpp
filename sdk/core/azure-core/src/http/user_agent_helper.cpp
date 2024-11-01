@@ -12,7 +12,7 @@
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
 
-#include <azure/core/internal/http/user_agent.hpp>
+#include "azure/core/internal/http/user_agent_helper.hpp"
 
 #include <sstream>
 
