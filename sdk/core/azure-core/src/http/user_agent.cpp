@@ -7,8 +7,8 @@
  */
 
 #include "azure/core/context.hpp"
-#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/http.hpp"
+#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
