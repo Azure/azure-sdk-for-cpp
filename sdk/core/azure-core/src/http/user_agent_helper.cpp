@@ -150,7 +150,7 @@ std::string TrimString(std::string s)
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
 
-  std::string UserAgentGenerator::GenerateUserAgent(
+  std::string UserAgentHelper::BuildUserAgent(
       std::string const& componentName,
       std::string const& componentVersion,
       std::string const& applicationId,

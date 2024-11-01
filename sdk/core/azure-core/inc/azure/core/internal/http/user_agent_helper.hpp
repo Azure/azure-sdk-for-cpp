@@ -3,7 +3,7 @@
 
 /**
  * @file
- * @brief Declaration of the UserAgentGenerator type.
+ * @brief Declaration of the UserAgentHelper type.
  */
 
 #pragma once
@@ -12,13 +12,13 @@
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
   /**
-   * @brief Telemetry User-Agent string generator.
+   * @brief Telemetry User-Agent string helper.
    *
    */
-  class UserAgentGenerator {
+  class UserAgentHelper {
   public:
     /**
-     * @brief Generates User-Agent string for telemetry.
+     * @brief Builds User-Agent string for telemetry.
      *
      * @param componentName the name of the SDK component.
      * @param componentVersion the version of the SDK component.
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
      * the SDK code for compatibility reasons.
      *
      */
-    static std::string GenerateUserAgent(
+    static std::string BuildUserAgent(
         std::string const& componentName,
         std::string const& componentVersion,
         std::string const& applicationId,

@@ -550,7 +550,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& packageName,
           std::string const& packageVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+          : m_telemetryId(Azure::Core::Http::_internal::UserAgentHelper::BuildUserAgent(
               packageName,
               packageVersion,
               options.ApplicationId,
