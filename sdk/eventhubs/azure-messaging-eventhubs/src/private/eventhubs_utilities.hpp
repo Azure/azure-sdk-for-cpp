@@ -14,8 +14,8 @@
 #include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/context.hpp>
+#include <azure/core/http/http.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/internal/http/user_agent.hpp>
 
 #include <chrono>
 
@@ -277,7 +277,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 #endif
       options.Properties.emplace(
           "user-agent",
-          Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+          Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }
 

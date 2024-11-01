@@ -7,12 +7,11 @@
  */
 
 #include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/platform.hpp"
-
-#include <azure/core/internal/http/user_agent.hpp>
 
 #include <sstream>
 
@@ -150,7 +149,7 @@ std::string TrimString(std::string s)
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
 
-  std::string UserAgentGenerator::GenerateUserAgent(
+  std::string HttpShared::GenerateUserAgent(
       std::string const& componentName,
       std::string const& componentVersion,
       std::string const& applicationId,

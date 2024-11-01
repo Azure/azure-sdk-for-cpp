@@ -15,7 +15,6 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
-#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -550,7 +549,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& packageName,
           std::string const& packageVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(Azure::Core::Http::_internal::UserAgentGenerator::GenerateUserAgent(
+          : m_telemetryId(Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName,
               packageVersion,
               options.ApplicationId,
