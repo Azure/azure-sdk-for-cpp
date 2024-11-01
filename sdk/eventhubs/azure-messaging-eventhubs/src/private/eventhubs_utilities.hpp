@@ -277,7 +277,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 #endif
       options.Properties.emplace(
           "user-agent",
-          Azure::Core::Http::_internal::UserAgentHelper::BuildUserAgent(
+          Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }
 
