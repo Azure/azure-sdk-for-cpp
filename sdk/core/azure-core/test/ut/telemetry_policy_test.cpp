@@ -100,7 +100,7 @@ TEST(TelemetryPolicy, UserAgentCppVer)
     EXPECT_EQ(cppversion.str(), "TEST:201402");
   }
   {
-    const std::string ua = Http::_internal::UserAgentHelper::BuildUserAgent(
+    const std::string ua = Http::_internal::HttpShared::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201402L);
 
     EXPECT_GE(ua.length(), 11);
@@ -108,7 +108,7 @@ TEST(TelemetryPolicy, UserAgentCppVer)
   }
 
   {
-    const std::string ua = Http::_internal::UserAgentHelper::BuildUserAgent(
+    const std::string ua = Http::_internal::HttpShared::GenerateUserAgent(
         "storage.blobs", "11.0.0-beta.1", "MyApp", 201703L);
 
     EXPECT_GE(ua.length(), 11);
