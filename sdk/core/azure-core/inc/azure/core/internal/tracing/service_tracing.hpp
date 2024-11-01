@@ -2,9 +2,9 @@
 // Licensed under the MIT License.
 
 #include "azure/core/context.hpp"
+#include "azure/core/http/http.hpp"
 #include "azure/core/internal/client_options.hpp"
 #include "azure/core/internal/extendable_enumeration.hpp"
-#include "azure/core/internal/http/user_agent_helper.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
 
 #pragma once
