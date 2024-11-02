@@ -4,11 +4,8 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 
-#include <algorithm>
 #include <chrono>
-#include <iterator>
 #include <sstream>
-#include <type_traits>
 
 using Azure::Core::Context;
 using namespace Azure::Core;
