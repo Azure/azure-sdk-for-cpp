@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE lpsz REFERER
+// cspell:words HCERTIFICATECHAIN PCCERT CCERT HCERTCHAINENGINE HCERTSTORE lpsz REFERER hcryptprov ncrypt hcryptkey
 
 #include "azure/core/base64.hpp"
 #include "azure/core/diagnostics/logger.hpp"

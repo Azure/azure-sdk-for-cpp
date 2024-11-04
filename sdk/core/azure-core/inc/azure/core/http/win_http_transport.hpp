@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell: words PCCERT
+
 /**
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
