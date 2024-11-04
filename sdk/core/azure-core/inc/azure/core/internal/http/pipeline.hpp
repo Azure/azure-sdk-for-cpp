@@ -46,7 +46,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
     explicit HttpPipeline(
         const std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>& policies)
     {
-      if (policies.size() == 0)
+      if (policies.empty())
       {
         throw std::invalid_argument("policies cannot be empty");
       }
@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
         std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>>&& policies)
         : m_policies(std::move(policies))
     {
-      if (m_policies.size() == 0)
+      if (m_policies.empty())
       {
         throw std::invalid_argument("policies cannot be empty");
       }

@@ -2,13 +2,10 @@
 // Licensed under the MIT License.
 
 #include "azure/core/http/policies/policy.hpp"
-#include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 
 #include <algorithm>
-#include <cstdlib>
-#include <limits>
 #include <sstream>
 #include <thread>
 

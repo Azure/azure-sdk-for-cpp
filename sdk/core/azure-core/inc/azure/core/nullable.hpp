@@ -18,7 +18,7 @@ namespace Azure {
 namespace _detail {
   struct NontrivialEmptyType final
   {
-    constexpr NontrivialEmptyType() noexcept {}
+    constexpr NontrivialEmptyType() noexcept = default;
   };
 } // namespace _detail
 

@@ -542,7 +542,6 @@ void AttestationAdministrationClient::RetrieveResponseValidationCollateral(
           m_endpoint, HttpMethod::Get, {"certs"}, nullptr);
       auto response = AttestationCommonRequest::SendRequest(*m_pipeline, request, context);
       auto jsonWebKeySet(JsonWebKeySetSerializer::Deserialize(response));
-      TokenValidationCertificateResult returnValue;
       std::vector<AttestationSigner> newValue;
       for (const auto& jwk : jsonWebKeySet.Keys)
       {
