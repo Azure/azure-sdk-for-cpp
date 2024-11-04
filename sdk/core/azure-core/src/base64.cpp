@@ -3,8 +3,6 @@
 
 #include "azure/core/base64.hpp"
 
-#include "azure/core/platform.hpp"
-
 #include <string>
 #include <vector>
 
@@ -336,15 +334,11 @@ std::string Base64Encode(uint8_t const* const data, size_t length)
   {
     int32_t result = Base64EncodeAndPadTwo(&data[sourceIndex]);
     Base64WriteIntAsFourBytes(destination, result);
-    destination += 4;
-    sourceIndex += 1;
   }
   else if (sourceIndex + 2 == inputSize)
   {
     int32_t result = Base64EncodeAndPadOne(&data[sourceIndex]);
     Base64WriteIntAsFourBytes(destination, result);
-    destination += 4;
-    sourceIndex += 2;
   }
 
   return encodedResult;
@@ -453,7 +447,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     }
 
     Base64WriteThreeLowOrderBytes(destinationPtr, i0);
-    destinationPtr += 3;
   }
   else if (i2 != EncodingPad)
   {
@@ -469,7 +462,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
 
     destinationPtr[1] = static_cast<uint8_t>(i0 >> 8);
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
-    destinationPtr += 2;
   }
   else
   {
@@ -479,7 +471,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     }
 
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
-    destinationPtr += 1;
   }
 
   return destination;

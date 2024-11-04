@@ -14,21 +14,9 @@
 #endif
 #endif
 
-#include "azure/core/platform.hpp"
-
-#if defined(AZ_PLATFORM_WINDOWS)
-#if !defined(WIN32_LEAN_AND_MEAN)
-#define WIN32_LEAN_AND_MEAN
-#endif
-#if !defined(NOMINMAX)
-#define NOMINMAX
-#endif
-#endif
-
 #include "azure/core/http/curl_transport.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/policies/policy.hpp"
-#include "azure/core/http/transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/internal/strings.hpp"
 
