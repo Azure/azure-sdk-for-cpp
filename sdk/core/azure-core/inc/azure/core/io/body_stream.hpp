@@ -227,7 +227,8 @@ namespace Azure { namespace Core { namespace IO {
         AZURE_ASSERT(fileHandle && offset >= 0 && length >= 0);
       }
 
-      RandomAccessFileBodyStream() : m_filehandle(nullptr), m_baseOffset(0), m_length(0), m_offset(0)
+      RandomAccessFileBodyStream()
+          : m_filehandle(nullptr), m_baseOffset(0), m_length(0), m_offset(0)
       {
       }
 #endif
