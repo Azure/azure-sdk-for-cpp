@@ -23,6 +23,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpCbsHandle = UniqueHandle<CBS_INSTANCE_TAG>;
+
   class ClaimsBasedSecurityImpl final : public _internal::ManagementClientEvents {
 
   public:
