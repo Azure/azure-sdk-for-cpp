@@ -227,7 +227,8 @@ namespace Azure { namespace Core { namespace IO {
         AZURE_ASSERT(fileHandle && offset >= 0 && length >= 0);
       }
 
-      RandomAccessFileBodyStream() : m_filehandle(NULL), m_baseOffset(0), m_length(0), m_offset(0)
+      RandomAccessFileBodyStream()
+          : m_filehandle(nullptr), m_baseOffset(0), m_length(0), m_offset(0)
       {
       }
 #endif
@@ -275,7 +276,7 @@ namespace Azure { namespace Core { namespace IO {
      * @brief Closes the file and cleans up any resources.
      *
      */
-    ~FileBodyStream();
+    ~FileBodyStream() override;
 
     /** @brief Rewind seeks the current stream to the start of the file. */
     void Rewind() override;

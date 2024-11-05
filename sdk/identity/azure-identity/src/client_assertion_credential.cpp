@@ -5,7 +5,6 @@
 
 #include "private/client_assertion_credential_impl.hpp"
 #include "private/identity_log.hpp"
-#include "private/package_version.hpp"
 #include "private/tenant_id_resolver.hpp"
 
 #include <azure/core/internal/json/json.hpp>

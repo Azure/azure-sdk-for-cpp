@@ -7,7 +7,6 @@
 #include "azure/core/platform.hpp"
 
 #include <cassert>
-#include <cstdio>
 #include <cstring>
 #include <random>
 #include <stdexcept>

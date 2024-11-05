@@ -6,10 +6,8 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "private/environment_log_level_listener.hpp"
 
-#include <iostream>
 #include <mutex>
 #include <shared_mutex>
-#include <sstream>
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;

@@ -6,6 +6,8 @@
 #include "azure/core/internal/extendable_enumeration.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
 
+#include <utility>
+
 #pragma once
 
 /**
@@ -31,7 +33,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     friend class TracingContextFactory;
     ServiceSpan() = default;
-    explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(span) {}
+    explicit ServiceSpan(std::shared_ptr<Span> span) : m_span(std::move(span)) {}
 
     ServiceSpan(const ServiceSpan&) = delete;
     ServiceSpan& operator=(ServiceSpan const&) = delete;
@@ -41,7 +43,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
   public:
     ServiceSpan(ServiceSpan&& that) = default;
 
-    ~ServiceSpan()
+    ~ServiceSpan() override
     {
       if (m_span)
       {

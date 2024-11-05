@@ -176,7 +176,7 @@ namespace Azure { namespace Core {
      * @brief Destructs `%RequestFailedException`.
      *
      */
-    ~RequestFailedException() = default;
+    ~RequestFailedException() override = default;
 
   private:
     static std::string GetRawResponseField(
