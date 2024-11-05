@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include <azure/data/tables.hpp>
+#include <azure/identity.hpp>
 
 #include <cstdio>
 #include <iostream>
@@ -13,27 +14,21 @@ using namespace Azure::Data::Tables::Models;
 
 const std::string TableName = "transactions";
 
-std::string GetConnectionString()
-{
-  const static std::string ConnectionString = "";
-
-  if (!ConnectionString.empty())
-  {
-    return ConnectionString;
-  }
-  const static std::string envConnectionString = std::getenv("STANDARD_STORAGE_CONNECTION_STRING");
-  if (!envConnectionString.empty())
-  {
-    return envConnectionString;
-  }
-  throw std::runtime_error("Cannot find connection string.");
-}
-
 int main()
 {
-  // Get the service client
-  auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
-  // create table
+  const std::string accountName{std::getenv("ACCOUNT_NAME")};
+  auto credential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
+      Azure::Identity::ChainedTokenCredential::Sources{
+          std ::make_shared<Azure::Identity::AzurePipelinesCredential>(
+              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID"),
+              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID"),
+              Azure::Core::_internal::Environment::GetVariable(
+                  "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
+              Azure::Core::_internal::Environment::GetVariable("SYSTEM_ACCESSTOKEN")),
+          std::make_shared<Azure::Identity::DefaultAzureCredential>()});
+  auto tableServiceClient = Azure::Data::Tables::TableServiceClient(
+      "https://" + accountName + ".table.core.windows.net/", credential);
+
   tableServiceClient.CreateTable(TableName);
   // get table client from table service client
   auto tableClient = tableServiceClient.GetTableClient(TableName);
