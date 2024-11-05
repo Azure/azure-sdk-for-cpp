@@ -55,20 +55,6 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param serviceUrl A url referencing the table that includes the name of the account and the
      * name of the table.
-     * @param credential The named key credential used to sign requests.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl A url referencing the table that includes the name of the account and the
-     * name of the table.
      * @param credential The SAS credential used to sign requests.
      * @param options Optional client options that define the transport pipeline policies for
      * authentication, retries, etc., that are applied to every request.
@@ -76,18 +62,6 @@ namespace Azure { namespace Data { namespace Tables {
     explicit TableServiceClient(
         const std::string& serviceUrl,
         std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param connectionString the connection string used to initialize.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     * @return TableServiceClient.
-     */
-    static TableServiceClient CreateFromConnectionString(
-        const std::string& connectionString,
         const TableClientOptions& options = {});
 
     /**
@@ -176,7 +150,6 @@ namespace Azure { namespace Data { namespace Tables {
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     std::shared_ptr<Core::Credentials::TokenCredential> m_tokenCredential;
-    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> m_namedKeyCredential;
     Core::Url m_url;
   };
 }}} // namespace Azure::Data::Tables

@@ -12,7 +12,6 @@ namespace Azure { namespace Data { namespace Test {
   {
     Key = 0x0,
     SAS = 0x1,
-    ConnectionString = 0x2,
   };
 
   class TablesClientTest : public Azure::Storage::Test::StorageTest,
@@ -25,32 +24,39 @@ namespace Azure { namespace Data { namespace Test {
 
     Azure::Data::Tables::TableClient CreateKeyTableClientForTest(
         Tables::TableClientOptions& clientOptions);
-    std::string GetConnectionString()
+   
+    std::string GetAccountName()
     {
-      const static std::string ConnectionString = "";
+      static std::string accountName = "";
 
-      if (!ConnectionString.empty())
+      if (!accountName.empty())
       {
-        return ConnectionString;
+        return accountName;
       }
-      const static std::string envConnectionString = GetEnv("STANDARD_STORAGE_CONNECTION_STRING");
-      if (!envConnectionString.empty())
+      const static std::string envAccountName = GetEnv("ACCOUNT_NAME");
+      if (!envAccountName.empty())
       {
-        return envConnectionString;
+        accountName = envAccountName;
+        return envAccountName;
       }
       throw std::runtime_error("Cannot find connection string.");
     }
 
-    std::string GetAccountName()
-    {
-      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
-          .AccountName;
-    }
-
     std::string GetAccountKey()
     {
-      return Azure::Data::Tables::Credentials::_detail::ParseConnectionString(GetConnectionString())
-          .AccountKey;
+      static std::string accountKey = "";
+
+      if (!accountKey.empty())
+      {
+        return accountKey;
+      }
+      const static std::string envAccountKey = GetEnv("ACCOUNT_KEY");
+      if (!envAccountKey.empty())
+      {
+        accountKey = envAccountKey;
+        return envAccountKey;
+      }
+      throw std::runtime_error("Cannot find connection string.");
     }
 
   protected:

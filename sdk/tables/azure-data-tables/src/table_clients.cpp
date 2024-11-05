@@ -69,40 +69,6 @@ TableServiceClient::TableServiceClient(
 
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
-    const TableClientOptions& options)
-    : m_url(Azure::Core::Url(serviceUrl))
-{
-  m_namedKeyCredential = credential;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options,
-      _detail::TablesServicePackageName,
-      PackageVersion::ToString(),
-      std::move(perRetryPolicies),
-      std::move(perOperationPolicies));
-
-  TableClientOptions newOptions = options;
-  newOptions.PerRetryPolicies.emplace_back(
-      std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
-
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-  perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies2.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      newOptions,
-      _detail::TablesServicePackageName,
-      PackageVersion::ToString(),
-      std::move(perRetryPolicies2),
-      std::move(perOperationPolicies2));
-}
-
-TableServiceClient::TableServiceClient(
-    const std::string& serviceUrl,
     std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
     const TableClientOptions& options)
     : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
@@ -113,10 +79,6 @@ TableClient TableServiceClient::GetTableClient(
     const std::string& tableName,
     TableClientOptions const& options) const
 {
-  if (m_namedKeyCredential != nullptr)
-  {
-    return TableClient(tableName, m_namedKeyCredential, m_url.GetAbsoluteUrl(), options);
-  }
   if (m_tokenCredential != nullptr)
   {
     return TableClient(m_url.GetAbsoluteUrl(), tableName, m_tokenCredential, options);
@@ -126,24 +88,6 @@ TableClient TableServiceClient::GetTableClient(
     return TableClient(m_url.GetAbsoluteUrl(), tableName, options);
   }
   throw std::runtime_error("TableServiceClient is not properly initialized.");
-}
-
-TableServiceClient TableServiceClient::CreateFromConnectionString(
-    const std::string& connectionString,
-    const TableClientOptions& options)
-{
-  auto parsedConnectionString = ParseConnectionString(connectionString);
-  auto tablesUrl = std::move(parsedConnectionString.TableServiceUrl);
-
-  if (parsedConnectionString.KeyCredential)
-  {
-    return TableServiceClient(
-        tablesUrl.GetAbsoluteUrl(), std::move(parsedConnectionString.KeyCredential), options);
-  }
-  else
-  {
-    return TableServiceClient(tablesUrl.GetAbsoluteUrl(), options);
-  }
 }
 
 Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck(
@@ -350,41 +294,6 @@ TableClient::TableClient(
 }
 
 TableClient::TableClient(
-    const std::string& tableName,
-    std::shared_ptr<Azure::Data::Tables::Credentials::NamedKeyCredential> credential,
-    std::string url,
-    const TableClientOptions& options)
-    : m_url(std::move(url)), m_tableName(tableName)
-
-{
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-  perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies.emplace_back(std::make_unique<ServiceVersionPolicy>(options.ApiVersion));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options,
-      _detail::TablesServicePackageName,
-      PackageVersion::ToString(),
-      std::move(perRetryPolicies),
-      std::move(perOperationPolicies));
-
-  TableClientOptions newOptions = options;
-  newOptions.PerRetryPolicies.emplace_back(
-      std::make_unique<Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy>(credential));
-
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies2;
-  std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies2;
-  perRetryPolicies2.emplace_back(std::make_unique<TimeoutPolicy>());
-  perOperationPolicies2.emplace_back(std::make_unique<ServiceVersionPolicy>(newOptions.ApiVersion));
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      newOptions,
-      _detail::TablesServicePackageName,
-      PackageVersion::ToString(),
-      std::move(perRetryPolicies2),
-      std::move(perOperationPolicies2));
-}
-
-TableClient::TableClient(
     const std::string& serviceUrl,
     std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
     const std::string& tableName,
@@ -395,28 +304,6 @@ TableClient::TableClient(
         tableName,
         options)
 {
-}
-
-TableClient TableClient::CreateFromConnectionString(
-    const std::string& connectionString,
-    const std::string& tableName,
-    const TableClientOptions& options)
-{
-  auto parsedConnectionString = ParseConnectionString(connectionString);
-  auto tablesUrl = std::move(parsedConnectionString.TableServiceUrl);
-
-  if (parsedConnectionString.KeyCredential)
-  {
-    return TableClient(
-        tableName,
-        std::move(parsedConnectionString.KeyCredential),
-        tablesUrl.GetAbsoluteUrl(),
-        options);
-  }
-  else
-  {
-    return TableClient(tablesUrl.GetAbsoluteUrl(), tableName, options);
-  }
 }
 
 Azure::Response<Models::Table> TableServiceClient::CreateTable(

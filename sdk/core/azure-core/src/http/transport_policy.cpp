@@ -100,7 +100,7 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
 {
   // Before doing any work, check to make sure that the context hasn't already been cancelled.
   context.ThrowIfCancelled();
-
+  
   /*
    * The transport policy is always the last policy.
    *
@@ -133,7 +133,10 @@ std::unique_ptr<RawResponse> TransportPolicy::Send(
   // The entire payload needs must be downloaded to the response's buffer.
   auto bodyStream = response->ExtractBodyStream();
   response->SetBody(bodyStream->ReadToEnd(context));
-
+  std::string bodyString{response->GetBody().begin(), response->GetBody().end()};
+  std::string reqBodyString{
+      request.GetBodyStream()->ReadToEnd().begin(), request.GetBodyStream()->ReadToEnd().end()};
+  
   // BodyStream is moved out of response. This makes transport implementation to clean any active
   // session with sockets or internal state.
   return response;
