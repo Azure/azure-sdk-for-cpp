@@ -48,7 +48,7 @@ std::string Environment::GetVariable(const char* name)
     }
 #endif
   }
-  return std::string();
+  return {};
 }
 
 void Environment::SetVariable(const char* name, const char* value)

@@ -85,7 +85,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns The remote endpoint used when communicating with the attestation service.
      */
-    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
+    std::string Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
      * @brief Retrieves an Attestation Policy from the service.

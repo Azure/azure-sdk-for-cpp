@@ -27,12 +27,12 @@ namespace Azure {
     payload[ValueParameterValue] = Base64Url::Base64UrlEncode(parameters.Plaintext);
     auto& iv = parameters.GetIv();
 
-    if (iv.size() > 0)
+    if (!iv.empty())
     {
       payload[IvValue] = Base64Url::Base64UrlEncode(iv);
     }
 
-    if (parameters.AdditionalAuthenticatedData.size() > 0)
+    if (!parameters.AdditionalAuthenticatedData.empty())
     {
       payload[AdditionalAuthenticatedValue]
           = Base64Url::Base64UrlEncode(parameters.AdditionalAuthenticatedData);

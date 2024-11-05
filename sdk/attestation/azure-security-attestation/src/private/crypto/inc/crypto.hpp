@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     class AsymmetricKey {
 
     public:
-      virtual ~AsymmetricKey() {}
+      virtual ~AsymmetricKey() = default;
 
       /**
        * @brief Verifies an Asymmetric Key signature. Valid for all asymmetric keys.
@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
       X509Certificate() {}
 
     public:
-      virtual ~X509Certificate() {}
+      virtual ~X509Certificate() = default;
       /**
        * @brief Returns the public key associated with this X.509 certificate.
        *

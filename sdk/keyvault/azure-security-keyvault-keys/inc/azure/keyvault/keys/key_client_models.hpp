@@ -21,11 +21,13 @@
 #include <azure/core/paged_response.hpp>
 #include <azure/core/response.hpp>
 
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
@@ -448,16 +450,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::vector<uint8_t> Y;
 
     /** @brief Returns true if the key supports the desired key operation. */
-    bool SupportsOperation(KeyOperation operation) const
+    bool SupportsOperation(KeyOperation const& operation) const
     {
-      for (auto supportedOperation : m_keyOps)
-      {
-        if (operation == supportedOperation)
-        {
-          return true;
-        }
-      }
-      return false;
+      return std::any_of(
+          m_keyOps.cbegin(),
+          m_keyOps.cend(),
+          [&](auto const& op) { return op == operation; });
     }
 
   private:
@@ -705,7 +703,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      * @param name The name of the deleted key.
      */
-    DeletedKey(std::string name) : KeyVaultKey(name) {}
+    DeletedKey(std::string name) : KeyVaultKey(std::move(name)) {}
 
     /**
      * @brief Indicate when the key was deleted.
@@ -754,7 +752,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string())
-        : PagedResponse(std::move(keyProperties)), m_keyName(keyName), m_keyClient(keyClient),
+        : PagedResponse(std::move(keyProperties)), m_keyName(keyName), m_keyClient(std::move(keyClient)),
           Items(std::move(keyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
@@ -801,7 +799,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         DeletedKeyPagedResponse&& deletedKeyProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient)
-        : PagedResponse(std::move(deletedKeyProperties)), m_keyClient(keyClient),
+        : PagedResponse(std::move(deletedKeyProperties)), m_keyClient(std::move(keyClient)),
           Items(std::move(deletedKeyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
@@ -875,7 +873,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     DeleteKeyOperation(
         std::string resumeToken,
         std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
-        : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
+        : m_keyClient(std::move(keyClient)), m_value(DeletedKey(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
     }
@@ -966,7 +964,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     RecoverDeletedKeyOperation(
         std::string resumeToken,
         std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient)
-        : m_keyClient(keyClient), m_value(DeletedKey(resumeToken)),
+        : m_keyClient(std::move(keyClient)), m_value(DeletedKey(resumeToken)),
           m_continuationToken(std::move(resumeToken))
     {
     }
@@ -1062,7 +1060,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     /**
      * @brief The action that will be executed.
      */
-    LifetimeActionType Action;
+    LifetimeActionType Action{};
   };
 
   /**

@@ -364,7 +364,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param keyMaterial The cryptographic key
      */
     ImportKeyOptions(std::string name, JsonWebKey keyMaterial)
-        : Key(keyMaterial), Properties(std::move(name))
+        : Key(std::move(keyMaterial)), Properties(std::move(name))
     {
     }
 

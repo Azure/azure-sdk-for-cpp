@@ -499,7 +499,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
         constexpr auto PathEnvVarName = "PATH";
         auto pathValue = Environment::GetVariable(PathEnvVarName);
 
-        for (auto const pf :
+        for (auto const& pf :
              {Environment::GetVariable("ProgramFiles"),
               Environment::GetVariable("ProgramFiles(x86)")})
         {

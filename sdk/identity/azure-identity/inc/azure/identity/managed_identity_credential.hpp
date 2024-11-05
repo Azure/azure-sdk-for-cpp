@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #if defined(_azure_TESTING_BUILD)
 // Define the class used from tests
@@ -102,7 +103,7 @@ namespace Azure { namespace Identity {
      * @param id The resource ID of the user-assigned managed identity.
      *
      */
-    static ManagedIdentityId FromUserAssignedResourceId(Azure::Core::ResourceIdentifier id)
+    static ManagedIdentityId FromUserAssignedResourceId(Azure::Core::ResourceIdentifier const& id)
     {
       return ManagedIdentityId(_detail::ManagedIdentityIdKind::ResourceId, id.ToString());
     }
@@ -121,16 +122,16 @@ namespace Azure { namespace Identity {
      * ID and object ID are NOT interchangeable, even though they are both Uuid values.
      */
     explicit ManagedIdentityId(_detail::ManagedIdentityIdKind idKind, std::string id)
-        : m_idKind(idKind), m_id(id)
+        : m_idKind(idKind), m_id(std::move(id))
     {
-      if (idKind == _detail::ManagedIdentityIdKind::SystemAssigned && !id.empty())
+      if (idKind == _detail::ManagedIdentityIdKind::SystemAssigned && !m_id.empty())
       {
         throw std::invalid_argument(
             "There is no need to provide an ID (such as client, object, or resource ID) if you are "
             "using system-assigned managed identity.");
       }
 
-      if (id.empty()
+      if (m_id.empty()
           && (idKind == _detail::ManagedIdentityIdKind::ClientId
               || idKind == _detail::ManagedIdentityIdKind::ObjectId
               || idKind == _detail::ManagedIdentityIdKind::ResourceId))

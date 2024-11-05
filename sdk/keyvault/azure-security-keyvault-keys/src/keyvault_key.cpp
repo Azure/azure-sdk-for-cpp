@@ -55,7 +55,7 @@ void _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
   // "Attributes"
   if (jsonParser.contains(_detail::AttributesPropertyName))
   {
-    auto attributes = jsonParser[_detail::AttributesPropertyName];
+    auto const& attributes = jsonParser[_detail::AttributesPropertyName];
     JsonOptional::SetIfExists(key.Properties.Enabled, attributes, _detail::EnabledPropertyName);
     JsonOptional::SetIfExists(
         key.Properties.Exportable, attributes, _detail::ExportablePropertyName);

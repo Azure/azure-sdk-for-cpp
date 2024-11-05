@@ -17,8 +17,8 @@ Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
     std::vector<std::string> const& path) const
 {
   Azure::Core::Http::Request request = content == nullptr
-      ? Azure::Core::Http::Request(method, m_vaultUrl)
-      : Azure::Core::Http::Request(method, m_vaultUrl, content);
+      ? Azure::Core::Http::Request(std::move(method), m_vaultUrl)
+      : Azure::Core::Http::Request(std::move(method), m_vaultUrl, content);
 
   request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
   request.SetHeader(HttpShared::Accept, HttpShared::ApplicationJson);
@@ -40,7 +40,7 @@ Azure::Core::Http::Request _detail::KeyVaultProtocolClient::CreateRequest(
     Azure::Core::Http::HttpMethod method,
     std::vector<std::string> const& path) const
 {
-  return CreateRequest(method, nullptr, path);
+  return CreateRequest(std::move(method), nullptr, path);
 }
 
 std::unique_ptr<Azure::Core::Http::RawResponse> _detail::KeyVaultProtocolClient::SendRequest(

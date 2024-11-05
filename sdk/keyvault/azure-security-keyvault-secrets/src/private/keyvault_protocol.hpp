@@ -18,6 +18,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
@@ -181,7 +182,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
         Azure::Core::Http::HttpMethod method,
         std::vector<std::string> const& path)
     {
-      auto request = CreateRequest(method, path);
+      auto request = CreateRequest(std::move(method), path);
       // Use the core pipeline directly to avoid checking the response code.
       return m_pipeline.Send(request, context);
     }
