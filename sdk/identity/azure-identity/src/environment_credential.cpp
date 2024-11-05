@@ -57,7 +57,7 @@ EnvironmentCredential::EnvironmentCredential(
 
     if (!clientSecret.empty())
     {
-      envVarsToParams.emplace_back({AzureClientSecretEnvVarName, "clientSecret"});
+      envVarsToParams.emplace_back(std::make_pair(AzureClientSecretEnvVarName, "clientSecret"));
 
       ClientSecretCredentialOptions clientSecretCredentialOptions;
       static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
@@ -65,7 +65,8 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.emplace_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.emplace_back(
+            std::make_pair(_detail::AzureAuthorityHostEnvVarName, "authorityHost"));
         clientSecretCredentialOptions.AuthorityHost = authority;
       }
 
@@ -77,7 +78,8 @@ EnvironmentCredential::EnvironmentCredential(
     }
     else if (!clientCertificatePath.empty())
     {
-      envVarsToParams.emplace_back({AzureClientCertificatePathEnvVarName, "clientCertificatePath"});
+      envVarsToParams.emplace_back(
+          std::make_pair(AzureClientCertificatePathEnvVarName, "clientCertificatePath"));
 
       ClientCertificateCredentialOptions clientCertificateCredentialOptions;
       static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
@@ -85,7 +87,8 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.emplace_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.emplace_back(
+            std::make_pair(_detail::AzureAuthorityHostEnvVarName, "authorityHost"));
         clientCertificateCredentialOptions.AuthorityHost = authority;
       }
 
