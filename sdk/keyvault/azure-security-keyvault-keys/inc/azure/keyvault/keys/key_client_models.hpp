@@ -453,9 +453,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     bool SupportsOperation(KeyOperation const& operation) const
     {
       return std::any_of(
-          m_keyOps.cbegin(),
-          m_keyOps.cend(),
-          [&](auto const& op) { return op == operation; });
+          m_keyOps.cbegin(), m_keyOps.cend(), [&](auto const& op) { return op == operation; });
     }
 
   private:
@@ -752,8 +750,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string())
-        : PagedResponse(std::move(keyProperties)), m_keyName(keyName), m_keyClient(std::move(keyClient)),
-          Items(std::move(keyProperties.Items))
+        : PagedResponse(std::move(keyProperties)), m_keyName(keyName),
+          m_keyClient(std::move(keyClient)), Items(std::move(keyProperties.Items))
     {
       RawResponse = std::move(rawResponse);
     }

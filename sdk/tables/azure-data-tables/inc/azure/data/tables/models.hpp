@@ -704,10 +704,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @param other Add Entity result.
        */
-      UpsertEntityResult(AddEntityResult const& other)
-          : AddEntityResult(other), ETag(other.ETag)
-      {
-      }
+      UpsertEntityResult(AddEntityResult const& other) : AddEntityResult(other), ETag(other.ETag) {}
     };
 
     /**

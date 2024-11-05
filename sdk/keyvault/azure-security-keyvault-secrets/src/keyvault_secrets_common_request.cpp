@@ -42,9 +42,8 @@ Azure::Core::Http::Request _detail::KeyVaultSecretsCommonRequest::CreateRequest(
     Azure::Core::IO::BodyStream* content)
 {
   using namespace Azure::Core::Http;
-  Request request = content == nullptr
-      ? Request(std::move(method), std::move(url))
-      : Request(std::move(method), std::move(url), content);
+  Request request = content == nullptr ? Request(std::move(method), std::move(url))
+                                       : Request(std::move(method), std::move(url), content);
 
   request.SetHeader(ContentHeaderName, ApplicationJsonValue);
   request.GetUrl().AppendQueryParameter(ApiVersionQueryParamName, apiVersion);
