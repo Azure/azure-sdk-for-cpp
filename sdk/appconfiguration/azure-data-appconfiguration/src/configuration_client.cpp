@@ -309,7 +309,7 @@ GetKeyValuesPagedResponse ConfigurationClient::GetKeyValues(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -325,7 +325,7 @@ GetKeyValuesPagedResponse ConfigurationClient::GetKeyValues(
   url.AppendQueryParameter("snapshot", Core::Url::Encode(options.Snapshot));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Tags.size(); ++i)
+    for (size_t i = 0; i < options.Tags.size(); ++i)
     {
       if (i != 0)
       {
@@ -466,7 +466,7 @@ Azure::Response<CheckKeyValuesResult> ConfigurationClient::CheckKeyValues(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -482,7 +482,7 @@ Azure::Response<CheckKeyValuesResult> ConfigurationClient::CheckKeyValues(
   url.AppendQueryParameter("snapshot", Core::Url::Encode(options.Snapshot));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Tags.size(); ++i)
+    for (size_t i = 0; i < options.Tags.size(); ++i)
     {
       if (i != 0)
       {
@@ -533,7 +533,7 @@ Azure::Response<GetKeyValueResult> ConfigurationClient::GetKeyValue(
   url.AppendQueryParameter("label", Core::Url::Encode(options.Label));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -873,7 +873,7 @@ Azure::Response<CheckKeyValueResult> ConfigurationClient::CheckKeyValue(
   url.AppendQueryParameter("label", Core::Url::Encode(options.Label));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -923,7 +923,7 @@ GetSnapshotsPagedResponse ConfigurationClient::GetSnapshots(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -938,7 +938,7 @@ GetSnapshotsPagedResponse ConfigurationClient::GetSnapshots(
 
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Status.size(); ++i)
+    for (size_t i = 0; i < options.Status.size(); ++i)
     {
       if (i != 0)
       {
@@ -1143,7 +1143,7 @@ Azure::Response<GetSnapshotResult> ConfigurationClient::GetSnapshot(
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -1400,7 +1400,7 @@ Azure::Response<CreateSnapshotResult> ConfigurationClient::CreateSnapshot(
     {
       jsonRoot["status"] = entity.Status.Value().ToString();
     }
-    for (auto i = 0; i < entity.Filters.size(); ++i)
+    for (size_t i = 0; i < entity.Filters.size(); ++i)
     {
       jsonRoot["filters"][i]["key"] = entity.Filters[i].Key;
 
@@ -1412,7 +1412,7 @@ Azure::Response<CreateSnapshotResult> ConfigurationClient::CreateSnapshot(
       {
         jsonRoot["filters"][i]["tags"] = Core::Json::_internal::json::array();
 
-        for (auto j = 0; j < entity.Filters[i].Tags.Value().size(); ++j)
+        for (size_t j = 0; j < entity.Filters[i].Tags.Value().size(); ++j)
         {
           jsonRoot["filters"][i]["tags"][j] = entity.Filters[i].Tags.Value()[j];
         }
@@ -1792,7 +1792,7 @@ GetLabelsPagedResponse ConfigurationClient::GetLabels(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -1884,7 +1884,7 @@ Azure::Response<CheckLabelsResult> ConfigurationClient::CheckLabels(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -2110,7 +2110,7 @@ GetRevisionsPagedResponse ConfigurationClient::GetRevisions(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -2125,7 +2125,7 @@ GetRevisionsPagedResponse ConfigurationClient::GetRevisions(
 
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Tags.size(); ++i)
+    for (size_t i = 0; i < options.Tags.size(); ++i)
     {
       if (i != 0)
       {
@@ -2265,7 +2265,7 @@ Azure::Response<CheckRevisionsResult> ConfigurationClient::CheckRevisions(
   url.AppendQueryParameter("After", Core::Url::Encode(options.After));
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Select.size(); ++i)
+    for (size_t i = 0; i < options.Select.size(); ++i)
     {
       if (i != 0)
       {
@@ -2280,7 +2280,7 @@ Azure::Response<CheckRevisionsResult> ConfigurationClient::CheckRevisions(
 
   {
     std::string valueStr;
-    for (auto i = 0; i < options.Tags.size(); ++i)
+    for (size_t i = 0; i < options.Tags.size(); ++i)
     {
       if (i != 0)
       {
