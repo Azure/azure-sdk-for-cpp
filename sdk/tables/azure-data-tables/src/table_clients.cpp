@@ -909,8 +909,9 @@ std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::T
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
-
-  returnValue += "POST " + m_url.GetAbsoluteUrl() + "/" + m_tableName + " HTTP/1.1\n";
+  auto url = m_url;
+  url.AppendPath(m_tableName);
+  returnValue += "POST " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "Prefer: return-no-content\n";
@@ -925,10 +926,11 @@ std::string TableClient::PrepDeleteEntity(
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
-
-  returnValue += "DELETE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
-      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
-      + " HTTP/1.1\n";
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
+      + entity.GetRowKey().Value + ClosingFragment);
+  returnValue += "DELETE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   // returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
@@ -949,10 +951,11 @@ std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models:
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
-
-  returnValue += "MERGE " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
-      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
-      + " HTTP/1.1\n";
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
+      + entity.GetRowKey().Value + ClosingFragment);
+  returnValue += "MERGE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "DataServiceVersion: 3.0;\n\n";
@@ -968,10 +971,11 @@ std::string TableClient::PrepUpdateEntity(
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
-
-  returnValue += "PUT " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
-      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
-      + " HTTP/1.1\n";
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
+      + entity.GetRowKey().Value + ClosingFragment);
+  returnValue += "PUT " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   returnValue += "Prefer: return-no-content\n";
@@ -997,10 +1001,11 @@ std::string TableClient::PrepInsertEntity(
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
-
-  returnValue += "PATCH " + m_url.GetAbsoluteUrl() + "/" + m_tableName + PartitionKeyFragment
-      + entity.GetPartitionKey().Value + RowKeyFragment + entity.GetRowKey().Value + ClosingFragment
-      + " HTTP/1.1\n";
+  auto url = m_url;
+  url.AppendPath(
+      m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
+      + entity.GetRowKey().Value + ClosingFragment);
+  returnValue += "PATCH " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Content-Length: " + std::to_string(payload.length());
   returnValue += "Accept: application/json;odata=minimalmetadata\n";

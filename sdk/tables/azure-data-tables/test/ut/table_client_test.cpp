@@ -13,7 +13,7 @@
 #include <ctime>
 // useful for debugging to avoid table conflicts when creating tables
 // as it takes a while from then a table is deleted to when it can be recreated
-// #define RANDOM_TABLE_NAME
+#define RANDOM_TABLE_NAME
 
 #ifdef RANDOM_TABLE_NAME
 #include <iostream>
