@@ -112,7 +112,7 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
   {
     TokenRequestContext trcCopy = tokenRequestContext;
 
-    // Only invalidate the token cache if this policy isn't part of the challenged based auth flow.
+    // Only invalidate the token cache if this policy isn't part of the challenge-based auth flow.
     if (m_invalidateToken && trcCopy.TenantId == m_tokenRequestContext.TenantId
         && trcCopy.Scopes == m_tokenRequestContext.Scopes)
     {
