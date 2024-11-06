@@ -361,7 +361,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     public:
       struct ListFileSystemPathsOptions final
       {
-        Nullable<std::string> RequestId;
+        //Nullable<std::string> RequestId;
         Nullable<std::int32_t> Timeout;
         Nullable<std::string> ContinuationToken;
         Nullable<std::string> Path;
@@ -379,7 +379,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     public:
       struct CreatePathOptions final
       {
-        Nullable<std::string> RequestId;
+        //Nullable<std::string> RequestId;
         Nullable<std::int32_t> Timeout;
         Nullable<Models::PathResourceType> Resource;
         Nullable<std::string> ContinuationToken;
@@ -422,7 +422,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           const Core::Context& context);
       struct DeletePathOptions final
       {
-        Nullable<std::string> RequestId;
+        //Nullable<std::string> RequestId;
         Nullable<std::int32_t> Timeout;
         Nullable<bool> Recursive;
         Nullable<std::string> ContinuationToken;

@@ -53,10 +53,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("resource", "filesystem");
-      if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
+      /*if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
       {
         request.SetHeader("x-ms-client-request-id", options.RequestId.Value());
-      }
+      }*/
       if (options.Timeout.HasValue())
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
@@ -149,10 +149,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
-      if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
+      /*if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
       {
         request.SetHeader("x-ms-client-request-id", options.RequestId.Value());
-      }
+      }*/
       if (options.Timeout.HasValue())
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
@@ -337,10 +337,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
-      if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
+      /*if (options.RequestId.HasValue() && !options.RequestId.Value().empty())
       {
         request.SetHeader("x-ms-client-request-id", options.RequestId.Value());
-      }
+      }*/
       if (options.Timeout.HasValue())
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
