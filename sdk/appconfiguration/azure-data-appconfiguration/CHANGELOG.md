@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Initial release.
+
 ### Breaking Changes
 
 ### Bugs Fixed
