@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-/** 
+/**
  * @brief Declaration of a Windows PCCERT_CONTEXT structure from the Windows SDK.
  */
 using PCCERT_CONTEXT = const struct _CERT_CONTEXT*;
@@ -150,7 +150,10 @@ namespace Azure { namespace Core { namespace Http {
     // and virtual or protected and
     // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
     virtual ~WinHttpTransport();
+
+    // @cond
     friend _detail::WinHttpTransportImpl;
+    // @endcond
   };
 
 }}} // namespace Azure::Core::Http
