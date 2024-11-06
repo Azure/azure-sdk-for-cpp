@@ -131,11 +131,6 @@ namespace Azure { namespace Core { namespace Http {
     WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions());
 
     /**
-     * @brief Constructs `%WinHttpTransport`.
-     *
-     * @param options Optional parameter to override the default settings.
-     */
-    /**
      * @brief Constructs `%WinHttpTransport` object based on common Azure HTTP Transport Options
      *
      */

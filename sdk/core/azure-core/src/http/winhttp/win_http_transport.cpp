@@ -483,30 +483,16 @@ std::string InternetStatusInformationToString(DWORD internetStatus)
 
 namespace Azure { namespace Core { namespace Http {
 
-  /**
-   * @brief Constructs `%WinHttpTransport`.
-   *
-   * @param options Optional parameter to override the default settings.
-   */
   WinHttpTransport::WinHttpTransport(WinHttpTransportOptions const& options)
       : m_impl{std::make_unique<_detail::WinHttpTransportImpl>(this, options)}
   {
   }
 
-  /**
-   * @brief Constructs `%WinHttpTransport` object based on common Azure HTTP Transport Options
-   *
-   */
   WinHttpTransport::WinHttpTransport(Azure::Core::Http::Policies::TransportOptions const& options)
       : m_impl{std::make_unique<_detail::WinHttpTransportImpl>(this, options)}
   {
   }
 
-  /**
-   * @brief Implements the HTTP transport interface to send an HTTP Request and produce an
-   * HTTP RawResponse.
-   *
-   */
   std::unique_ptr<RawResponse> WinHttpTransport::Send(Request& request, Context const& context)
   {
     return m_impl->Send(request, context);
