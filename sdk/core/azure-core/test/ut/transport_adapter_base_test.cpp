@@ -49,7 +49,17 @@ namespace Azure { namespace Core { namespace Test {
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
     auto response = m_pipeline->Send(request, Context{});
     checkResponseCode(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
-    auto expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+    std::uint64_t expectedResponseBodySize;
+    if (response->GetStatusCode() == Azure::Core::Http::HttpStatusCode::NoContent)
+    {
+      // http://mt3.google.com/generate_204 returns 204 with no body and thus no content-length
+      // header
+      expectedResponseBodySize = 0;
+    }
+    else
+    {
+      expectedResponseBodySize = std::stoull(response->GetHeaders().at("content-length"));
+    }
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
