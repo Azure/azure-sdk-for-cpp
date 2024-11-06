@@ -111,7 +111,10 @@ void BearerTokenAuthenticationPolicy::AuthenticateAndAuthorizeRequest(
           m_accessToken, m_accessTokenContext, currentTime, tokenRequestContext, m_invalidateToken))
   {
     TokenRequestContext trcCopy = tokenRequestContext;
-    if (m_invalidateToken)
+
+    // Only invalidate the token cache if this policy isn't part of the challenged based auth flow.
+    if (m_invalidateToken && trcCopy.TenantId == m_tokenRequestContext.TenantId
+        && trcCopy.Scopes == m_tokenRequestContext.Scopes)
     {
       // Need to set this to invalidate the credential's token cache to ensure we fetch a new token
       // on subsequent GetToken calls.

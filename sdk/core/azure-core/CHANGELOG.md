@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Only invalidate the `BearerTokenAuthenticationPolicy` token cache if the policy is not part of the challenge-based authentication flow.
+
 ### Other Changes
 
 ## 1.14.1 (2024-11-01)
