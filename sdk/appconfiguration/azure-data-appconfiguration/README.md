@@ -1,14 +1,16 @@
-# Azure Template Package client library for C++
-
-Azure Template Package client library for C++ (`azure-template`)  matches necessary patterns that the development team has established to create a unified SDK written in the C++ programming language. These libraries follow the Azure SDK Design Guidelines for C++.
-
-The library allows client libraries to expose common functionality in a consistent fashion.  Once you learn how to use these APIs in one client library, you will know how to use them in other client libraries.
+# Azure App Configuration Package client library for C++
 
 ## Getting started
 
-For a rich example of a well formatted readme, please check [here.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md) In addition, this is an [example readme](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-EXAMPLE.md) that should be emulated. Note that the top-level sections in this template align with that of the [template.](https://github.com/Azure/azure-sdk/blob/main/docs/policies/README-TEMPLATE.md)
+### Prerequisites
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management.
+- [CMake](https://cmake.org/download/) for project build.
+- An [Azure subscription][azure_sub].
+- An existing Azure App Configuration store. If you need to create an Azure App Configuration store, you can use the Azure Portal or [Azure CLI][azure_cli].
 
-# Key concepts
+### Install the package
+
+## Key concepts
 
 Bullet point list of your library's main concepts.
 
@@ -16,11 +18,11 @@ Bullet point list of your library's main concepts.
 
 Examples of some of the key concepts for your library.
 
-# Troubleshooting
+## Troubleshooting
 
 Running into issues? This section should contain details as to what to do there.
 
-# Next steps
+## Next steps
 
 More sample code should go here, along with links out to the appropriate example tests.
 
@@ -61,10 +63,4 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_cli]: https://docs.microsoft.com/cli/azure
-[azure_pattern_circuit_breaker]: https://docs.microsoft.com/azure/architecture/patterns/circuit-breaker
-[azure_pattern_retry]: https://docs.microsoft.com/azure/architecture/patterns/retry
-[azure_portal]: https://portal.azure.com
 [azure_sub]: https://azure.microsoft.com/free/
-[c_compiler]: https://visualstudio.microsoft.com/vs/features/cplusplus/
-[cloud_shell]: https://docs.microsoft.com/azure/cloud-shell/overview
-[cloud_shell_bash]: https://shell.azure.com/bash
