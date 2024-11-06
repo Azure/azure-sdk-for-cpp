@@ -22,7 +22,9 @@
 #include <string>
 #include <vector>
 
-// Declarations of a Windows PCCERT_CONTEXT structure to avoid including the Windows SDK headers.
+/** 
+ * @brief Declaration of a Windows PCCERT_CONTEXT structure from the Windows SDK.
+ */
 using PCCERT_CONTEXT = const struct _CERT_CONTEXT*;
 
 namespace Azure { namespace Core { namespace Http {
