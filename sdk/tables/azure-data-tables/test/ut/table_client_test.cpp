@@ -13,7 +13,7 @@
 #include <ctime>
 // useful for debugging to avoid table conflicts when creating tables
 // as it takes a while from then a table is deleted to when it can be recreated
-#define RANDOM_TABLE_NAME
+// #define RANDOM_TABLE_NAME
 
 #ifdef RANDOM_TABLE_NAME
 #include <iostream>
@@ -568,7 +568,8 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789000");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
@@ -593,7 +594,8 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789001");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
@@ -617,15 +619,15 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
-
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789002");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
 
     steps.clear();
     // delete entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Delete, entity2});
-
-    response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789003");
+    response = m_tableClient->SubmitTransaction(steps, batchId2);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
@@ -647,14 +649,16 @@ namespace Azure { namespace Data { namespace Test {
 
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789004");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
 
     steps.clear();
     // merge entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::UpdateMerge, entity2});
 
-    response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789005");
+    response = m_tableClient->SubmitTransaction(steps, batchId2);
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
@@ -676,13 +680,15 @@ namespace Azure { namespace Data { namespace Test {
 
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789006");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
 
     steps.clear();
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::UpdateReplace, entity2});
-    response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789007");
+    response = m_tableClient->SubmitTransaction(steps, batchId2);
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
@@ -704,13 +710,15 @@ namespace Azure { namespace Data { namespace Test {
 
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity});
-    auto response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789008");
+    auto response = m_tableClient->SubmitTransaction(steps, batchId);
 
     steps.clear();
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity2});
-    response = m_tableClient->SubmitTransaction(steps);
+    Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789009");
+    response = m_tableClient->SubmitTransaction(steps, batchId2);
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
@@ -725,7 +733,7 @@ namespace Azure { namespace Data { namespace Test {
           stringValue = "key";
           break;
         case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
+          stringValue = "sas"; //_LIVEONLY_";
           break;
         default:
           stringValue = "key";

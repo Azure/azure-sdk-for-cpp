@@ -803,20 +803,21 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
 Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     std::vector<Models::TransactionStep> const& steps,
+    Azure::Core::Uuid const& batchId,
     Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("$batch");
-  std::string batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
+  std::string batchIdUuid = "batch_" + batchId.ToString();
   std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
-  std::string body = PreparePayload(batchId, changesetId, steps);
+  std::string body = PreparePayload(batchIdUuid, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader(ContentTypeHeader, "multipart/mixed; boundary=" + batchId);
+  request.SetHeader(ContentTypeHeader, "multipart/mixed; boundary=" + batchIdUuid);
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader("Connection", "Keep-Alive");

@@ -220,6 +220,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         std::vector<Models::TransactionStep> const& steps,
+        Azure::Core::Uuid const& batchId = Azure::Core::Uuid::CreateUuid(),
         Core::Context const& context = {});
 
   private:

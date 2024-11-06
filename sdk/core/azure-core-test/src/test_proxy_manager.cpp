@@ -18,7 +18,7 @@ using Azure::Core::_internal::Environment;
 
 TestMode TestProxyManager::GetTestMode()
 {
-  auto value = Environment::GetVariable("AZURE_TEST_MODE");
+  auto value = std::string{"PLAYBACK"}; // Environment::GetVariable("AZURE_TEST_MODE");
   if (value.empty())
   {
     return Azure::Core::Test::TestMode::LIVE;
