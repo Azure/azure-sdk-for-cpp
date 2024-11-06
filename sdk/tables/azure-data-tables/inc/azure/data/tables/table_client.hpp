@@ -214,7 +214,8 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Submits a transaction.
      *
-     * @param steps the transaction steps to execute.
+     * @param steps The transaction steps to execute.
+     * @param batchId The batchId for the transaction.
      * @param context for canceling long running operations.
      * @return Submit transaction result.
      */
