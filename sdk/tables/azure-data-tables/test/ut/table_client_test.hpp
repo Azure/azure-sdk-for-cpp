@@ -19,12 +19,7 @@ namespace Azure { namespace Data { namespace Test {
   protected:
     void SetUp() override;
     void TearDown() override;
-    Azure::Data::Tables::TableClient CreateTableClientForTest(
-        Tables::TableClientOptions& clientOptions);
 
-    Azure::Data::Tables::TableClient CreateKeyTableClientForTest(
-        Tables::TableClientOptions& clientOptions);
-   
     std::string GetAccountName()
     {
       static std::string accountName = "";
@@ -58,6 +53,7 @@ namespace Azure { namespace Data { namespace Test {
       }
       throw std::runtime_error("Cannot find connection string.");
     }
+
   protected:
     std::string m_tableName;
     std::shared_ptr<Tables::TableServiceClient> m_tableServiceClient;

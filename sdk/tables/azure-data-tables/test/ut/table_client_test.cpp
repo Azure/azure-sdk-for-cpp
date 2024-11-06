@@ -51,7 +51,7 @@ namespace Azure { namespace Data { namespace Test {
       std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
       switch (param)
       {
-         case AuthType::Key:
+        case AuthType::Key:
           m_credential = GetTestCredential();
           m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
               Azure::Data::Tables::TableServiceClient(
@@ -108,15 +108,6 @@ namespace Azure { namespace Data { namespace Test {
       }
     }
     StorageTest::TearDown();
-  }
-
-  Azure::Data::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
-      Tables::TableClientOptions& clientOptions)
-  {
-    m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
-    auto tableClient
-        = Tables::TableClient(GetEnv("DATA_TABLES_URL"), m_tableName, m_credential, clientOptions);
-    return tableClient;
   }
 
   TEST_P(TablesClientTest, ClientConstructor) { EXPECT_FALSE(m_tableClient == nullptr); }
