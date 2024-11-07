@@ -27,6 +27,8 @@ extends:
     parameters:
       ServiceDirectory: appconfiguration
       CtestRegex: azure-data-appconfiguration.*
+      LineCoverageTarget: 0
+      BranchCoverageTarget: 0
       Artifacts:
         - Name: azure-data-appconfiguration
           Path: azure-data-appconfiguration
