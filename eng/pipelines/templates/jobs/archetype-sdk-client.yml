@@ -244,6 +244,7 @@ jobs:
             - script: cmake --build . --target ${{ artifact.Path }}-docs
               workingDirectory: build
               displayName: Generate docs (${{ artifact.Name }}-docs)
+              condition: and(succeeded(), ne('${{parameters.ServiceDirectory}}', 'appconfiguration'))
 
             - template: /eng/common/pipelines/templates/steps/verify-links.yml
               parameters:
