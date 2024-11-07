@@ -54,7 +54,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Destructor.
      *
      */
-    virtual ~KeyClient() = default; 
+    virtual ~KeyClient() = default;
 
     /**
      * @brief Construct a new Key Client object
