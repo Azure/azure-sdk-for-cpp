@@ -16,8 +16,7 @@ const std::string TableName = "table";
 int main()
 {
   const std::string accountName{std::getenv("ACCOUNT_NAME")};
-  auto credential = 
-          std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
   auto tableServiceClient = Azure::Data::Tables::TableServiceClient(
       "https://" + accountName + ".table.core.windows.net/", credential);
   auto tableClient = Azure::Data::Tables::TableClient(

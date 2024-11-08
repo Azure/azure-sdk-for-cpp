@@ -110,7 +110,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * @brief Indicates that List is permitted.
      */
     List = 8,
-    
+
     /**
      * @brief Indicates that Add is permitted.
      */
