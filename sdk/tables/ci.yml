@@ -57,12 +57,12 @@ extends:
           Value: "debug"
         - Name: DATA_TABLES_URL
           Value: "https://account-name.table.core.windows.net"
+        - Name: ACCOUNT_NAME
+          Value: 'account-name'
+        - Name: ACCOUNT_KEY
+          Value: '3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333'
       CMakeTestOptions:
         - Name: Default
           Value: ''
         - Name: Test
           Value: '-DBUILD_TESTING=ON'
-        - Name: ACCOUNT_NAME
-          Value: 'account-name'
-        - Name: ACCOUNT_KEY
-          Value: '3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333'
