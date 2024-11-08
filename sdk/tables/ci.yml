@@ -62,3 +62,7 @@ extends:
           Value: ''
         - Name: Test
           Value: '-DBUILD_TESTING=ON'
+        - Name: ACCOUNT_NAME
+          Value: 'account-name'
+        - Name: ACCOUNT_KEY
+          Value: 'key'
