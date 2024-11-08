@@ -186,8 +186,8 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Table entity.
      */
     Response<Models::TableEntity> GetEntity(
-        const std::string& partitionKey,
-        const std::string& rowKey,
+        std::string const& partitionKey,
+        std::string const& rowKey,
         Core::Context const& context = {});
 
     /**
@@ -200,7 +200,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         std::vector<Models::TransactionStep> const& steps,
-        Azure::Core::Uuid const& batchId = Azure::Core::Uuid::CreateUuid(),
+        std::string const& batchId = Azure::Core::Uuid::CreateUuid().ToString(),
         Core::Context const& context = {});
 
   private:

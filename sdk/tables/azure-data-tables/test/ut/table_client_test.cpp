@@ -521,7 +521,7 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789000");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
@@ -547,7 +547,7 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789001");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
@@ -572,14 +572,14 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789002");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
 
     steps.clear();
     // delete entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Delete, entity2});
     Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789003");
-    response = m_tableClient->SubmitTransaction(steps, batchId2);
+    response = m_tableClient->SubmitTransaction(steps, batchId2.ToString());
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
@@ -602,7 +602,7 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789004");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
 
     steps.clear();
     // merge entity
@@ -610,7 +610,7 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Data::Tables::Models::TransactionActionType::UpdateMerge, entity2});
 
     Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789005");
-    response = m_tableClient->SubmitTransaction(steps, batchId2);
+    response = m_tableClient->SubmitTransaction(steps, batchId2.ToString());
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
@@ -633,14 +633,14 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789006");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
 
     steps.clear();
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::UpdateReplace, entity2});
     Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789007");
-    response = m_tableClient->SubmitTransaction(steps, batchId2);
+    response = m_tableClient->SubmitTransaction(steps, batchId2.ToString());
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
@@ -663,14 +663,14 @@ namespace Azure { namespace Data { namespace Test {
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity});
     Azure::Core::Uuid batchId = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789008");
-    auto response = m_tableClient->SubmitTransaction(steps, batchId);
+    auto response = m_tableClient->SubmitTransaction(steps, batchId.ToString());
 
     steps.clear();
     // replace entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::InsertReplace, entity2});
     Azure::Core::Uuid batchId2 = Azure::Core::Uuid::Parse("12345678-1234-1234-1234-123456789009");
-    response = m_tableClient->SubmitTransaction(steps, batchId2);
+    response = m_tableClient->SubmitTransaction(steps, batchId2.ToString());
 
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
