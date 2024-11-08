@@ -194,13 +194,11 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Submits a transaction.
      *
      * @param steps The transaction steps to execute.
-     * @param batchId The batchId for the transaction.
      * @param context for canceling long running operations.
      * @return Submit transaction result.
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         std::vector<Models::TransactionStep> const& steps,
-        std::string const& batchId = Azure::Core::Uuid::CreateUuid().ToString(),
         Core::Context const& context = {});
 
   private:

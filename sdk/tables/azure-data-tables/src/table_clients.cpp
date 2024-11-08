@@ -754,12 +754,11 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
 Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     std::vector<Models::TransactionStep> const& steps,
-    std::string const& batchId,
     Core::Context const& context)
 {
   auto url = m_url;
   url.AppendPath("$batch");
-  std::string batchIdUuid = "batch_" + batchId;
+  std::string batchIdUuid = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
   std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
   std::string body = PreparePayload(batchIdUuid, changesetId, steps);
