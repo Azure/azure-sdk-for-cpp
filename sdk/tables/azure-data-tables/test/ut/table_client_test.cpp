@@ -685,7 +685,7 @@ namespace Azure { namespace Data { namespace Test {
           stringValue = "key";
           break;
         case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
+          stringValue = "sas";
           break;
         default:
           stringValue = "key";
