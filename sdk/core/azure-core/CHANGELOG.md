@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added mTLS support to WinHTTP transport.
+  - To enable mTLS, first create an appropriate Windows `PCCERT_CONTEXT` object and set the `TlsClientCertificate` field in `WinHttpTransportOptions` to that certificate before creating the `WinHttpTransport` object.
+
 ### Breaking Changes
 
 ### Bugs Fixed

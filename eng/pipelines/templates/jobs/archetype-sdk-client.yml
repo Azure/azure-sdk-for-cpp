@@ -244,6 +244,12 @@ jobs:
             - script: cmake --build . --target ${{ artifact.Path }}-docs
               workingDirectory: build
               displayName: Generate docs (${{ artifact.Name }}-docs)
+              condition: and(succeeded(), ne('${{parameters.ServiceDirectory}}', 'appconfiguration'))
+            
+            - pwsh: |
+                $docsfileExists = Test-Path -Path "build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html"
+                Write-Output "##vso[task.setvariable variable=DocsFileExists]$docsfileExists"
+              displayName: Check if docs exist for ${{ artifact.Name }}
 
             - template: /eng/common/pipelines/templates/steps/verify-links.yml
               parameters:
@@ -252,6 +258,7 @@ jobs:
                 CheckLinkGuidance: $false
                 Recursive: $true
                 WorkingDirectory: build/sdk/${{ parameters.ServiceDirectory }}/${{ artifact.Path }}/docs/html
+                condition: and(succeeded(), eq(variables['DocsFileExists'], True))
 
             - task: PowerShell@2
               inputs:
@@ -350,5 +357,6 @@ jobs:
           parameters:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/docs
             ArtifactName: docs
+            CustomCondition: eq(variables['DocsFileExists'], True)
 
         - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml

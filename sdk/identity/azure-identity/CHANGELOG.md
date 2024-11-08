@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+## 1.10.1 (2024-11-08)
+
+### Bugs Fixed
+
+- Fix overflow issue in token cache.
+
+### Other Changes
+
 - [[#6086]](https://github.com/Azure/azure-sdk-for-cpp/pull/6086) Correct minimum version specification for the Azure Core dependency. (A community contribution, courtesy of _[jdblischak](https://github.com/jdblischak)_)
 
 Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:

@@ -148,7 +148,7 @@ EnvironmentLogLevelListener::GetLogListener()
 }
 
 namespace {
-static bool g_initialized;
+bool g_initialized = false;
 } // namespace
 
 bool EnvironmentLogLevelListener::IsInitialized() { return g_initialized; }

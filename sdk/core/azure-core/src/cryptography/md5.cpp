@@ -97,7 +97,7 @@ private:
   size_t m_hashLength = 0;
   std::string m_buffer;
 
-  void OnAppend(const uint8_t* data, size_t length)
+  void OnAppend(const uint8_t* data, size_t length) override
   {
     if (!BCRYPT_SUCCESS(
             m_status = BCryptHashData(
@@ -110,7 +110,7 @@ private:
     }
   }
 
-  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length)
+  std::vector<uint8_t> OnFinal(const uint8_t* data, size_t length) override
   {
     OnAppend(data, length);
 
@@ -148,7 +148,7 @@ public:
     }
   }
 
-  ~Md5BCrypt()
+  ~Md5BCrypt() override
   {
     if (m_hashHandle)
     {
@@ -209,7 +209,7 @@ Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_uniqu
 #endif
 
 namespace Azure { namespace Core { namespace Cryptography {
-  Md5Hash::~Md5Hash() {}
+  Md5Hash::~Md5Hash() = default;
 
   void Md5Hash::OnAppend(const uint8_t* data, size_t length)
   {

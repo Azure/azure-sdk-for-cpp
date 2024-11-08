@@ -327,7 +327,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief A value indicating whether the returned raw response for this request will be buffered
      * within a memory buffer or if it will be returned as a body stream instead.
      */
-    bool ShouldBufferResponse() { return this->m_shouldBufferResponse; }
+    bool ShouldBufferResponse() const { return this->m_shouldBufferResponse; }
 
     /**
      * @brief Get URL.

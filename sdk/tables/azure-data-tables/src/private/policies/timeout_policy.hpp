@@ -13,7 +13,6 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
     constexpr static const char* HttpHeaderDate = "date";
     constexpr static const char* HttpHeaderXMsDate = "x-ms-date";
     constexpr static const char* HttpQueryTimeout = "timeout";
-    constexpr static const char* HttpHeaderClientRequestId = "x-ms-client-request-id";
 
   public:
     ~TimeoutPolicy() override {}

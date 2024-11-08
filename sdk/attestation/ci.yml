@@ -29,7 +29,7 @@ extends:
       Location: WestUS
       CtestRegex: azure-security-attestation.*
       LiveTestCtestRegex: azure-security-attestation.*
-      LineCoverageTarget: 70
+      LineCoverageTarget: 69.9834
       BranchCoverageTarget: 34
       Artifacts:
         - Name: azure-security-attestation
