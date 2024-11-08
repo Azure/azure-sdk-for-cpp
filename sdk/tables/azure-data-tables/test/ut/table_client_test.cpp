@@ -499,7 +499,7 @@ namespace Azure { namespace Data { namespace Test {
     }
   }
 
-  TEST_P(TablesClientTest, TransactionCreateFail)
+  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
@@ -524,7 +524,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionCreateOK)
+  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
@@ -549,7 +549,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionDelete)
+  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
@@ -579,7 +579,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionMerge)
+  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
@@ -609,7 +609,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionUpdate)
+  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
@@ -637,7 +637,7 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionInsertReplace)
+  TEST_P(TablesClientTest, TransactionInsertReplace_LIVEONLY_)
   {
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
