@@ -39,7 +39,7 @@ extends:
         - Name: ACCOUNT_NAME
           Value: 'account-name'
         - Name: ACCOUNT_KEY
-          Value: 'key''
+          Value: '3333333333333333333333333'
       CMakeTestOptions:
         - Name: Default
           Value: ''
