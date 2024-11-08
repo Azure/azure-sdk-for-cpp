@@ -36,10 +36,10 @@ extends:
           Path: azure-data-tables
           VcpkgPortName: azure-data-tables-cpp
       TestEnv:
+        - Name: LOGGING__LOGLEVEL__DEFAULT
+          Value: "debug"
         - Name: ACCOUNT_NAME
           Value: 'account-name'
-        - Name: ACCOUNT_KEY
-          Value: 'YWNjb3VudF9rZXk='
       CMakeTestOptions:
         - Name: Default
           Value: ''
