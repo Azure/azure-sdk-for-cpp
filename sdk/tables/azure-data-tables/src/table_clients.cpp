@@ -758,8 +758,8 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
 {
   auto url = m_url;
   url.AppendPath("$batch");
-  std::string batchIdUuid = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
-  std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
+  std::string const batchIdUuid = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
+  std::string const changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
   std::string const body = PreparePayload(batchIdUuid, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
