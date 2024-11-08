@@ -107,14 +107,14 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     Delete = 4,
 
     /**
-     * @brief Indicates that Add is permitted.
-     */
-    Add = 8,
-
-    /**
      * @brief Indicates that List is permitted.
      */
-    List = 16,
+    List = 8,
+    
+    /**
+     * @brief Indicates that Add is permitted.
+     */
+    Add = 16,
 
     /**
      * @brief Indicates that Update is permitted.

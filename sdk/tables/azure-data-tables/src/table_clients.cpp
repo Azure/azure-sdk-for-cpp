@@ -418,55 +418,6 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
   return response;
 }
 
-Azure::Response<Models::SetTableAccessPolicyResult> TableClient::SetAccessPolicy(
-    Models::TableAccessPolicy const& tableAccessPolicy,
-    Core::Context const& context)
-
-{
-  auto url = m_url;
-  url.AppendPath(m_tableName);
-  url.AppendQueryParameter(CompHeader, "acl");
-  std::string xmlBody = Serializers::SetAccessPolicy(tableAccessPolicy);
-  Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<const uint8_t*>(xmlBody.data()), xmlBody.length());
-
-  auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url, &requestBody);
-  request.SetHeader(ContentTypeHeader, "application/xml; charset=UTF-8");
-  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
-  request.GetUrl().AppendQueryParameter(CompHeader, "acl");
-  request.SetHeader("x-ms-version", "2019-12-12");
-  auto pRawResponse = m_pipeline->Send(request, context);
-  auto httpStatusCode = pRawResponse->GetStatusCode();
-  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
-  {
-    throw Core::RequestFailedException(pRawResponse);
-  }
-  Models::SetTableAccessPolicyResult response;
-  return Response<Models::SetTableAccessPolicyResult>(std::move(response), std::move(pRawResponse));
-}
-
-Azure::Response<Models::TableAccessPolicy> TableClient::GetAccessPolicy(
-    Core::Context const& context)
-{
-  auto url = m_url;
-  url.SetPath("");
-  url.AppendPath(m_tableName);
-  url.AppendQueryParameter(CompHeader, "acl");
-  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
-
-  auto pRawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = pRawResponse->GetStatusCode();
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(pRawResponse);
-  }
-  const auto& responseBody = pRawResponse->GetBody();
-
-  Models::TableAccessPolicy response = Serializers::TableAccessPolicyFromXml(responseBody);
-
-  return Response<Models::TableAccessPolicy>(std::move(response), std::move(pRawResponse));
-}
-
 Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
     std::string const& tableName,
     Core::Context const& context)

@@ -133,45 +133,6 @@ namespace Azure { namespace Data { namespace Test {
     }
   }
 
-  TEST_P(TablesClientTest, GetAccessPolicy)
-  {
-    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-
-    auto getResponse = m_tableClient->GetAccessPolicy();
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
-  }
-
-  TEST_P(TablesClientTest, SetAccessPolicy)
-  {
-    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
-    Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
-    newIdentifier.Id = "testid";
-    newIdentifier.Permissions = "r";
-    newIdentifier.StartsOn = Azure::DateTime::Parse(
-        Azure::DateTime(std::chrono::system_clock::now())
-            .ToString(Azure::DateTime::DateFormat::Rfc1123),
-        Azure::DateTime::DateFormat::Rfc1123);
-    newIdentifier.ExpiresOn = Azure::DateTime::Parse(
-        Azure::DateTime(std::chrono::system_clock::now() + std::chrono::seconds(60))
-            .ToString(Azure::DateTime::DateFormat::Rfc1123),
-        Azure::DateTime::DateFormat::Rfc1123);
-    newPolicy.SignedIdentifiers.emplace_back(newIdentifier);
-
-    m_tableClient->SetAccessPolicy(newPolicy);
-    if (GetEnv("AZURE_TEST_MODE") != "PLAYBACK")
-    {
-      // setting policy takes up to 30 seconds to take effect
-      std::this_thread::sleep_for(std::chrono::milliseconds(30001));
-    }
-
-    auto getResponse = m_tableClient->GetAccessPolicy();
-
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 1);
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Id, newIdentifier.Id);
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Permissions, newIdentifier.Permissions);
-  }
-
   TEST_P(TablesClientTest, ListTables)
   {
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);

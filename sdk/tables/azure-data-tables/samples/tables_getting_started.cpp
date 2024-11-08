@@ -15,15 +15,7 @@ const std::string TableName = "sample1";
 int main()
 {
   const std::string accountName{std::getenv("ACCOUNT_NAME")};
-  auto credential = std::make_shared<Azure::Identity::ChainedTokenCredential>(
-      Azure::Identity::ChainedTokenCredential::Sources{
-          std ::make_shared<Azure::Identity::AzurePipelinesCredential>(
-              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_TENANT_ID"),
-              Azure::Core::_internal::Environment::GetVariable("AZURESUBSCRIPTION_CLIENT_ID"),
-              Azure::Core::_internal::Environment::GetVariable(
-                  "AZURESUBSCRIPTION_SERVICE_CONNECTION_ID"),
-              Azure::Core::_internal::Environment::GetVariable("SYSTEM_ACCESSTOKEN")),
-          std::make_shared<Azure::Identity::DefaultAzureCredential>()});
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
   auto tableServiceClient = Azure::Data::Tables::TableServiceClient(
       "https://" + accountName + ".table.core.windows.net/", credential);
 

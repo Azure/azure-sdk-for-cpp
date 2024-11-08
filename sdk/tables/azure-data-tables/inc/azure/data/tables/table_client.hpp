@@ -104,27 +104,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Retrieves details about any stored access policies specified on the table that may be
-     * used with Shared Access Signatures.
-     *
-     * @param context for canceling long running operations.
-     * @return Get access policy result.
-     */
-    Response<Models::TableAccessPolicy> GetAccessPolicy(Core::Context const& context = {});
-
-    /**
-     * @brief Sets stored access policies for the table that may be used with Shared Access
-     * Signatures.
-     *
-     * @param tableAccessPolicy The TableAccessPolicy to set.
-     * @param context for canceling long running operations.
-     * @return Set access policy result.
-     */
-    Response<Models::SetTableAccessPolicyResult> SetAccessPolicy(
-        Models::TableAccessPolicy const& tableAccessPolicy,
-        Core::Context const& context = {});
-
-    /**
      * @brief Add entity in a table.
      *
      * @param tableEntity The TableEntity to set.
