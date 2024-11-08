@@ -758,16 +758,16 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
 {
   auto url = m_url;
   url.AppendPath("$batch");
-  std::string const batchIdUuid = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
+  std::string const batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
   std::string const changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
-  std::string const body = PreparePayload(batchIdUuid, changesetId, steps);
+  std::string const body = PreparePayload(batchId, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
   Core::Http::Request request(Core::Http::HttpMethod::Post, url, &requestBody);
 
-  request.SetHeader(ContentTypeHeader, "multipart/mixed; boundary=" + batchIdUuid);
+  request.SetHeader(ContentTypeHeader, "multipart/mixed; boundary=" + batchId);
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader("Connection", "Keep-Alive");
