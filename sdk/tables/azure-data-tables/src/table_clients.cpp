@@ -761,7 +761,7 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
   std::string batchIdUuid = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
   std::string changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
-  std::string body = PreparePayload(batchIdUuid, changesetId, steps);
+  std::string const body = PreparePayload(batchIdUuid, changesetId, steps);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(body.data()), body.length());
 
