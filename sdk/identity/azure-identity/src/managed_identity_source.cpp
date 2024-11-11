@@ -61,10 +61,10 @@ std::string ExpectedArcKeyDirectory()
 #endif
 }
 
-static constexpr off_t MaximumAzureArcKeySize = 4096;
+constexpr off_t MaximumAzureArcKeySize = 4096;
 
 #if defined(AZ_PLATFORM_WINDOWS)
-static constexpr char DirectorySeparator = '\\';
+constexpr char DirectorySeparator = '\\';
 #else
 static constexpr char DirectorySeparator = '/';
 #endif
@@ -74,7 +74,7 @@ static constexpr char DirectorySeparator = '/';
 // - be in the expected directory for the OS
 // - have a .key extension
 // - contain at most 4096 bytes
-void ValidateArcKeyFile(std::string fileName)
+void ValidateArcKeyFile(std::string const& fileName)
 {
   using Azure::Core::Credentials::AuthenticationException;
 

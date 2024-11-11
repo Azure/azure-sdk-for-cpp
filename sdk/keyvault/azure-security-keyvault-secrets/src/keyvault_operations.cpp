@@ -71,7 +71,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<SecretProperties> response)
-    : m_secretClient(secretClient)
+    : m_secretClient(std::move(secretClient))
 {
   m_value = response.Value;
 
@@ -88,9 +88,9 @@ RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
 RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
-    : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
+    : m_secretClient(std::move(secretClient)), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Name = resumeToken;
+  m_value.Name = m_continuationToken;
 }
 
 RecoverDeletedSecretOperation RecoverDeletedSecretOperation::CreateFromResumeToken(
@@ -160,7 +160,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 DeleteSecretOperation::DeleteSecretOperation(
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<DeletedSecret> response)
-    : m_secretClient(secretClient)
+    : m_secretClient(std::move(secretClient))
 {
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
@@ -175,9 +175,9 @@ DeleteSecretOperation::DeleteSecretOperation(
 DeleteSecretOperation::DeleteSecretOperation(
     std::string resumeToken,
     std::shared_ptr<SecretClient> secretClient)
-    : m_secretClient(secretClient), m_continuationToken(std::move(resumeToken))
+    : m_secretClient(std::move(secretClient)), m_continuationToken(std::move(resumeToken))
 {
-  m_value.Name = resumeToken;
+  m_value.Name = m_continuationToken;
 }
 
 DeleteSecretOperation DeleteSecretOperation::CreateFromResumeToken(

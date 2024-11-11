@@ -181,7 +181,7 @@ namespace Azure { namespace Core {
   private:
     static std::string GetRawResponseField(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse,
-        std::string fieldName);
+        std::string const& fieldName);
 
     /**
      * @brief Returns a descriptive string for this RawResponse.

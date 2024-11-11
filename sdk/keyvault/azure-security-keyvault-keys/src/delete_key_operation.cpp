@@ -57,7 +57,7 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation::PollInternal(
 Azure::Security::KeyVault::Keys::DeleteKeyOperation::DeleteKeyOperation(
     std::shared_ptr<Azure::Security::KeyVault::Keys::KeyClient> keyClient,
     Azure::Response<Azure::Security::KeyVault::Keys::DeletedKey> response)
-    : m_keyClient(keyClient)
+    : m_keyClient(std::move(keyClient))
 {
   // The response becomes useless and the value and rawResponse are now owned by the
   // DeleteKeyOperation. This is fine because the DeleteKeyOperation is what the delete key api

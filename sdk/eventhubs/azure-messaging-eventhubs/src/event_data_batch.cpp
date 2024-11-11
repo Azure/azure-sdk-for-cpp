@@ -22,7 +22,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Azure::Core::Amqp::Models::AmqpMessage EventDataBatch::ToAmqpMessage() const
   {
     Azure::Core::Amqp::Models::AmqpMessage returnValue{m_batchEnvelope};
-    if (m_marshalledMessages.size() == 0)
+    if (m_marshalledMessages.empty())
     {
       throw std::runtime_error("No messages added to the batch.");
     }
@@ -67,7 +67,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     std::lock_guard<std::mutex> lock(m_rwMutex);
 
-    if (m_marshalledMessages.size() == 0)
+    if (m_marshalledMessages.empty())
     {
       // The first message is special - we use its properties and annotations on the envelope for
       // the batch message.
@@ -83,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           << " Max size: " << m_maxBytes.Value() << std::endl;
       // If we don't have any messages and we can't add this one, then we can't add it at all.
       // Discard the contents of the batch.
-      if (m_marshalledMessages.size() == 0)
+      if (m_marshalledMessages.empty())
       {
         m_currentSize = 0;
         m_batchEnvelope = nullptr;

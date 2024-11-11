@@ -39,8 +39,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
   public:
     explicit KeyVaultChallengeBasedAuthenticationPolicy(
         std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-        Core::Credentials::TokenRequestContext tokenRequestContext)
-        : BearerTokenAuthenticationPolicy(credential, tokenRequestContext),
+        Core::Credentials::TokenRequestContext const& tokenRequestContext)
+        : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
           m_tokenRequestContext(tokenRequestContext)
     {
     }

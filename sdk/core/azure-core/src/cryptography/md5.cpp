@@ -36,6 +36,7 @@ public:
   Md5AlgorithmProvider()
   {
     // open an algorithm handle
+    Handle = nullptr;
     if (!BCRYPT_SUCCESS(
             m_status = BCryptOpenAlgorithmProvider(&Handle, BCRYPT_MD5_ALGORITHM, nullptr, 0)))
     {

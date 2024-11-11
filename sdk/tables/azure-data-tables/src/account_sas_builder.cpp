@@ -11,7 +11,7 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2023-08-03";
+    constexpr const char* SasVersion = "2023-08-03";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)

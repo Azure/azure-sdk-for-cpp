@@ -156,7 +156,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     ReceivedEventData(std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message);
 
     // Destructor
-    ~ReceivedEventData() = default;
+    ~ReceivedEventData() override = default;
 
     /** @brief Copy an ReceivedEventData to another.
      */

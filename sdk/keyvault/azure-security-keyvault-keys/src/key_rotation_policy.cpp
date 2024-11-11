@@ -93,7 +93,7 @@ std::string _detail::KeyRotationPolicySerializer::KeyRotationPolicySerialize(
       payload[_detail::AttributesPropertyName],
       _detail::ExpiryTimeValue);
 
-  for (auto lifetimeAction : rotationPolicy.LifetimeActions)
+  for (auto const& lifetimeAction : rotationPolicy.LifetimeActions)
   {
     json oneAction;
 

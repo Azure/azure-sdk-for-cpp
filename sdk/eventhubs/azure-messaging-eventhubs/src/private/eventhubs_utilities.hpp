@@ -18,6 +18,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <chrono>
+#include <utility>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
@@ -93,7 +94,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     EventHubsPropertiesClient(
         const Azure::Core::Amqp::_internal::Connection& connection,
         std::string eventHubName)
-        : m_session{connection.CreateSession()}, m_eventHub{eventHubName} {};
+        : m_session{connection.CreateSession()}, m_eventHub{std::move(eventHubName)} {};
 
     ~EventHubsPropertiesClient()
     {

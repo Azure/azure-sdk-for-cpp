@@ -104,7 +104,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
-          : m_tableServiceClient(tableServiceClient){};
+          : m_tableServiceClient(std::move(tableServiceClient)){};
 
       friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
@@ -438,14 +438,14 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @param value Property value.
        */
-      TableEntityProperty(std::string const& value) : Value(std::move(value)) {}
+      TableEntityProperty(std::string value) : Value(std::move(value)) {}
       /**
        * @brief Construct a new TableEntityProperty object.
        * @param value Property value.
        * @param type Property type.
        */
-      TableEntityProperty(std::string const& value, TableEntityDataType type)
-          : Value(std::move(value)), Type(type)
+      TableEntityProperty(std::string value, TableEntityDataType type)
+          : Value(std::move(value)), Type(std::move(type))
       {
       }
       /**
@@ -687,7 +687,7 @@ namespace Azure { namespace Data { namespace Tables {
        * @param other Merge Entity result.
        */
       UpsertEntityResult(MergeEntityResult const& other)
-          : MergeEntityResult(other), ETag(std::move(other.ETag))
+          : MergeEntityResult(other), ETag(other.ETag)
       {
       }
       /**
@@ -696,7 +696,7 @@ namespace Azure { namespace Data { namespace Tables {
        * @param other Update Entity result.
        */
       UpsertEntityResult(UpdateEntityResult const& other)
-          : UpdateEntityResult(other), ETag(std::move(other.ETag))
+          : UpdateEntityResult(other), ETag(other.ETag)
       {
       }
       /**
@@ -704,10 +704,7 @@ namespace Azure { namespace Data { namespace Tables {
        *
        * @param other Add Entity result.
        */
-      UpsertEntityResult(AddEntityResult const& other)
-          : AddEntityResult(other), ETag(std::move(other.ETag))
-      {
-      }
+      UpsertEntityResult(AddEntityResult const& other) : AddEntityResult(other), ETag(other.ETag) {}
     };
 
     /**
@@ -774,7 +771,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
-          : m_tableClient(tableClient){};
+          : m_tableClient(std::move(tableClient)){};
 
       std::shared_ptr<TableClient> m_tableClient;
       friend class Azure::Data::Tables::TableClient;
@@ -806,7 +803,7 @@ namespace Azure { namespace Data { namespace Tables {
       /**
        * Action.
        */
-      TransactionActionType Action;
+      TransactionActionType Action{};
       /**
        * Entity.
        */

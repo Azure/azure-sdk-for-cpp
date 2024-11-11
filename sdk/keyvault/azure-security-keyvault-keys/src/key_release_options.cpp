@@ -28,7 +28,7 @@ Azure::Security::KeyVault::Keys::_detail::KeyReleaseOptionsSerializer::KeyReleas
       keyReleaseOptions.Encryption,
       payload,
       _detail::EncryptionValue,
-      [](KeyEncryptionAlgorithm enc) { return enc.ToString(); });
+      [](KeyEncryptionAlgorithm const& enc) { return enc.ToString(); });
 
   JsonOptional::SetFromNullable(keyReleaseOptions.Nonce, payload, _detail::NonceValue);
 

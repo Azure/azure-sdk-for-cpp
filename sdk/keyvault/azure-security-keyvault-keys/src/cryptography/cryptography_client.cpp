@@ -43,7 +43,7 @@ inline std::vector<uint8_t> CreateDigest(
 {
   // Use heap for the reading buffer.
   auto heapBuffer = std::make_unique<std::vector<uint8_t>>(DefaultStreamDigestReadSize);
-  auto* buffer = heapBuffer.get()->data();
+  auto* buffer = heapBuffer->data();
   auto hashAlgorithm = algorithm.GetHashAlgorithm();
   for (size_t read = data.Read(buffer, DefaultStreamDigestReadSize); read > 0;
        read = data.Read(buffer, DefaultStreamDigestReadSize))
@@ -54,7 +54,7 @@ inline std::vector<uint8_t> CreateDigest(
 }
 
 inline std::vector<uint8_t> CreateDigest(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     std::vector<uint8_t> const& data)
 {
   auto hashAlgorithm = algorithm.GetHashAlgorithm();
@@ -106,7 +106,7 @@ CryptographyClient::CryptographyClient(
 
     perRetrypolicies.emplace_back(
         std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
-            credential, tokenContext));
+            std::move(credential), tokenContext));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
@@ -143,7 +143,7 @@ Azure::Response<DecryptResult> CryptographyClient::Decrypt(
 }
 
 Azure::Response<WrapResult> CryptographyClient::WrapKey(
-    KeyWrapAlgorithm algorithm,
+    KeyWrapAlgorithm const& algorithm,
     std::vector<uint8_t> const& key,
     Azure::Core::Context const& context)
 {
@@ -159,7 +159,7 @@ Azure::Response<WrapResult> CryptographyClient::WrapKey(
 }
 
 Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
-    KeyWrapAlgorithm algorithm,
+    KeyWrapAlgorithm const& algorithm,
     std::vector<uint8_t> const& encryptedKey,
     Azure::Core::Context const& context)
 {
@@ -175,7 +175,7 @@ Azure::Response<UnwrapResult> CryptographyClient::UnwrapKey(
 }
 
 Azure::Response<SignResult> CryptographyClient::Sign(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     std::vector<uint8_t> const& digest,
     Azure::Core::Context const& context)
 {
@@ -191,7 +191,7 @@ Azure::Response<SignResult> CryptographyClient::Sign(
 }
 
 Azure::Response<SignResult> CryptographyClient::SignData(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     Azure::Core::IO::BodyStream& data,
     Azure::Core::Context const& context)
 {
@@ -199,7 +199,7 @@ Azure::Response<SignResult> CryptographyClient::SignData(
 }
 
 Azure::Response<SignResult> CryptographyClient::SignData(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     std::vector<uint8_t> const& data,
     Azure::Core::Context const& context)
 {
@@ -207,7 +207,7 @@ Azure::Response<SignResult> CryptographyClient::SignData(
 }
 
 Azure::Response<VerifyResult> CryptographyClient::Verify(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     std::vector<uint8_t> const& digest,
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)
@@ -225,7 +225,7 @@ Azure::Response<VerifyResult> CryptographyClient::Verify(
 }
 
 Azure::Response<VerifyResult> CryptographyClient::VerifyData(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     Azure::Core::IO::BodyStream& data,
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)
@@ -234,7 +234,7 @@ Azure::Response<VerifyResult> CryptographyClient::VerifyData(
 }
 
 Azure::Response<VerifyResult> CryptographyClient::VerifyData(
-    SignatureAlgorithm algorithm,
+    SignatureAlgorithm const& algorithm,
     std::vector<uint8_t> const& data,
     std::vector<uint8_t> const& signature,
     Azure::Core::Context const& context)

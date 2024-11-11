@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #if defined(_azure_TESTING_BUILD)
@@ -244,7 +245,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bodyStream #Azure::Core::IO::BodyStream.
      */
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
-        : Request(httpMethod, std::move(url), bodyStream, true)
+        : Request(std::move(httpMethod), std::move(url), bodyStream, true)
     {
     }
 

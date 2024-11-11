@@ -31,7 +31,7 @@ using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
 namespace {
-constexpr static const char CreateValue[] = "create";
+constexpr const char CreateValue[] = "create";
 } // namespace
 
 std::unique_ptr<RawResponse> KeyClient::SendRequest(
@@ -48,7 +48,7 @@ Request KeyClient::CreateRequest(
     Azure::Core::IO::BodyStream* content) const
 {
   return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::CreateRequest(
-      m_vaultUrl, m_apiVersion, method, path, content);
+      m_vaultUrl, m_apiVersion, std::move(method), path, content);
 }
 
 Request KeyClient::ContinuationTokenRequest(
@@ -68,7 +68,7 @@ Request KeyClient::ContinuationTokenRequest(
 KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<Core::Credentials::TokenCredential const> credential,
-    KeyClientOptions options)
+    KeyClientOptions const& options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
   std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
@@ -78,7 +78,7 @@ KeyClient::KeyClient(
 
     perRetrypolicies.emplace_back(
         std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
-            credential, std::move(tokenContext)));
+            std::move(credential), std::move(tokenContext)));
   }
   std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
 
@@ -111,7 +111,7 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     Azure::Core::Context const& context) const
 {
   // Payload for the request
-  _detail::KeyRequestParameters const params(keyType, options);
+  _detail::KeyRequestParameters const params(std::move(keyType), options);
   auto payload = params.Serialize();
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());

@@ -94,8 +94,7 @@ public:
         // Strong comparison
         // If either is weak then there is no match
         //  else tags must match character for character
-        return !left.IsWeak() && !right.IsWeak()
-            && (left.m_value.Value().compare(right.m_value.Value()) == 0);
+        return !left.IsWeak() && !right.IsWeak() && left.m_value.Value() == right.m_value.Value();
         break;
 
       case ETagComparison::Weak:

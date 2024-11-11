@@ -57,7 +57,7 @@ EnvironmentCredential::EnvironmentCredential(
 
     if (!clientSecret.empty())
     {
-      envVarsToParams.push_back({AzureClientSecretEnvVarName, "clientSecret"});
+      envVarsToParams.emplace_back(std::make_pair(AzureClientSecretEnvVarName, "clientSecret"));
 
       ClientSecretCredentialOptions clientSecretCredentialOptions;
       static_cast<TokenCredentialOptions&>(clientSecretCredentialOptions) = options;
@@ -65,19 +65,21 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.push_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.emplace_back(
+            std::make_pair(_detail::AzureAuthorityHostEnvVarName, "authorityHost"));
         clientSecretCredentialOptions.AuthorityHost = authority;
       }
 
       PrintCredentialCreationLogMessage(
           GetCredentialName(), envVarsToParams, "ClientSecretCredential");
 
-      m_credentialImpl.reset(new ClientSecretCredential(
-          tenantId, clientId, clientSecret, clientSecretCredentialOptions));
+      m_credentialImpl = std::make_unique<ClientSecretCredential>(
+          tenantId, clientId, clientSecret, clientSecretCredentialOptions);
     }
     else if (!clientCertificatePath.empty())
     {
-      envVarsToParams.push_back({AzureClientCertificatePathEnvVarName, "clientCertificatePath"});
+      envVarsToParams.emplace_back(
+          std::make_pair(AzureClientCertificatePathEnvVarName, "clientCertificatePath"));
 
       ClientCertificateCredentialOptions clientCertificateCredentialOptions;
       static_cast<TokenCredentialOptions&>(clientCertificateCredentialOptions) = options;
@@ -85,15 +87,16 @@ EnvironmentCredential::EnvironmentCredential(
 
       if (!authority.empty())
       {
-        envVarsToParams.push_back({_detail::AzureAuthorityHostEnvVarName, "authorityHost"});
+        envVarsToParams.emplace_back(
+            std::make_pair(_detail::AzureAuthorityHostEnvVarName, "authorityHost"));
         clientCertificateCredentialOptions.AuthorityHost = authority;
       }
 
       PrintCredentialCreationLogMessage(
           GetCredentialName(), envVarsToParams, "ClientCertificateCredential");
 
-      m_credentialImpl.reset(new ClientCertificateCredential(
-          tenantId, clientId, clientCertificatePath, clientCertificateCredentialOptions));
+      m_credentialImpl = std::make_unique<ClientCertificateCredential>(
+          tenantId, clientId, clientCertificatePath, clientCertificateCredentialOptions);
     }
   }
 
