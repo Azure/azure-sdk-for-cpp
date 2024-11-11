@@ -319,7 +319,7 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_set_offered_capabilities(
             _ => {
                 let call_context = call_context_from_ptr_mut(call_context);
                 call_context.set_error(error_from_string(format!(
-                    "Invalid offered capabiltiies: {:?}",
+                    "Invalid offered capabilities: {:?}",
                     offered_capabilities
                 )));
                 -1
