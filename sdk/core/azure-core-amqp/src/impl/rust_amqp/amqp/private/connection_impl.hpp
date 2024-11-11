@@ -27,8 +27,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using AmqpConnectionImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnection;
   using AmqpConnectionOptionsImplementation
       = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnectionOptions;
-  using AmqpConnectionOptionsBuilderImplementation
-      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpConnectionOptionsBuilder;
 
   template <> struct UniqueHandleHelper<AmqpConnectionImplementation>
   {
@@ -46,15 +44,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         BasicUniqueHandle<AmqpConnectionOptionsImplementation, FreeAmqpConnectionOptions>;
   };
 
-  template <> struct UniqueHandleHelper<AmqpConnectionOptionsBuilderImplementation>
-  {
-    static void FreeAmqpConnectionOptionsBuilder(AmqpConnectionOptionsBuilderImplementation* obj);
-
-    using type = Core::_internal::BasicUniqueHandle<
-        AmqpConnectionOptionsBuilderImplementation,
-        FreeAmqpConnectionOptionsBuilder>;
-  };
-
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -62,8 +51,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionImplementation>;
   using UniqueAmqpConnectionOptions
       = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionOptionsImplementation>;
-  using UniqueAmqpConnectionOptionsBuilder
-      = UniqueHandle<Azure::Core::Amqp::_detail::AmqpConnectionOptionsBuilderImplementation>;
 
   class ClaimsBasedSecurity;
 

@@ -14,6 +14,8 @@
 #include <azure_uamqp_c/amqp_definitions_header.h>
 #elif ENABLE_RUST_AMQP
 #include "azure/core/amqp/internal/common/runtime_context.hpp"
+
+#include <numeric>
 using namespace Azure::Core::Amqp::RustInterop::_detail;
 #endif
 
@@ -27,35 +29,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     header_destroy(handle);
   }
   // @endcond
-#if ENABLE_RUST_AMQP
-
-  using HeaderBuilderImplementation
-      = Azure::Core::Amqp::RustInterop::_detail::RustMessageHeaderBuilder;
-
-  template <> struct UniqueHandleHelper<HeaderBuilderImplementation>
-  {
-    static void FreeAmqpHeaderBuilder(HeaderBuilderImplementation* obj);
-
-    using type
-        = Core::_internal::BasicUniqueHandle<HeaderBuilderImplementation, FreeAmqpHeaderBuilder>;
-  };
-  void UniqueHandleHelper<HeaderBuilderImplementation>::FreeAmqpHeaderBuilder(
-      HeaderBuilderImplementation* obj)
-  {
-    header_builder_destroy(obj);
-  }
-
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-#if ENABLE_RUST_AMQP
-  using namespace Common::_detail;
-  namespace _detail {
-    using UniqueMessageHeaderBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
-        Azure::Core::Amqp::_detail::HeaderBuilderImplementation>;
-  }
-#endif
   bool MessageHeader::operator==(MessageHeader const& that) const noexcept
   {
     return this->DeliveryCount == that.DeliveryCount && this->Durable == that.Durable
@@ -114,8 +90,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::UniqueMessageHeaderHandle _detail::MessageHeaderFactory::ToImplementation(
       MessageHeader const& header)
   {
-#if ENABLE_UAMQP
     _detail::UniqueMessageHeaderHandle rv{header_create()};
+#if ENABLE_UAMQP
     if (header.Durable)
     {
       if (header_set_durable(rv.get(), header.Durable))
@@ -152,40 +128,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set delivery count value.");
       }
     }
-
-    return rv;
 #elif ENABLE_RUST_AMQP
-    _detail::UniqueMessageHeaderBuilderHandle builder{header_builder_create()};
     if (header.Durable)
     {
-      InvokeBuilderApi(header_set_durable, builder, header.Durable);
+      Common::_detail::InvokeAmqpApi(header_set_durable, rv, header.Durable);
     }
     if (header.Priority != 4)
     {
-      InvokeBuilderApi(header_set_priority, builder, header.Priority);
+      Common::_detail::InvokeAmqpApi(header_set_priority, rv, header.Priority);
     }
     if (header.TimeToLive.HasValue())
     {
-      InvokeBuilderApi(header_set_ttl, builder, header.TimeToLive.Value().count());
+      Common::_detail::InvokeAmqpApi(header_set_ttl, rv, header.TimeToLive.Value().count());
     }
 
     if (header.IsFirstAcquirer)
     {
-      InvokeBuilderApi(header_set_first_acquirer, builder, header.IsFirstAcquirer);
+      Common::_detail::InvokeAmqpApi(header_set_first_acquirer, rv, header.IsFirstAcquirer);
     }
     if (header.DeliveryCount != 0)
     {
-      InvokeBuilderApi(header_set_delivery_count, builder, header.DeliveryCount);
+      Common::_detail::InvokeAmqpApi(header_set_delivery_count, rv, header.DeliveryCount);
     }
-
-    // Now that we've set all the builder parameters, actually build the header.
-    Azure::Core::Amqp::_detail::HeaderImplementation* implementation;
-    if (header_build(builder.release(), &implementation))
-    {
-      throw std::runtime_error("Could not build header.");
-    }
-    return _detail::UniqueMessageHeaderHandle{implementation};
 #endif
+    return rv;
   }
 
   std::ostream& operator<<(std::ostream& os, MessageHeader const& header)

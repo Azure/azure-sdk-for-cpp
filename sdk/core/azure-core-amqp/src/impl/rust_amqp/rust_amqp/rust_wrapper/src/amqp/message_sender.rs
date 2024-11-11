@@ -3,10 +3,7 @@
 // cspell: words repr amqp amqpsession amqpmessagesender amqpmessagesenderoptions
 
 use azure_core_amqp::{
-    sender::{
-        builders::AmqpSenderOptionsBuilder, AmqpSendOptions, AmqpSender, AmqpSenderApis,
-        AmqpSenderOptions,
-    },
+    sender::{AmqpSendOptions, AmqpSender, AmqpSenderApis, AmqpSenderOptions},
     value::{AmqpOrderedMap, AmqpSymbol, AmqpValue},
     ReceiverSettleMode, SenderSettleMode,
 };
@@ -15,6 +12,7 @@ use tracing::{error, trace};
 
 use crate::{
     call_context::{call_context_from_ptr_mut, RustCallContext},
+    error_from_str, error_from_string,
     model::{
         message::RustAmqpMessage, source::RustAmqpSource, target::RustAmqpTarget,
         value::RustAmqpValue,
@@ -92,7 +90,7 @@ pub unsafe extern "C" fn amqpmessagesender_attach(
         .runtime()
         .block_on(sender.inner.attach(
             session.get_session(),
-            name,
+            name.into(),
             target.get().clone(),
             Some(options.inner.clone()),
         ));
@@ -205,10 +203,6 @@ pub unsafe extern "C" fn amqpmessagesender_get_max_message_size(
     }
 }
 
-pub struct RustAmqpSenderOptionsBuilder {
-    inner: AmqpSenderOptionsBuilder, //
-}
-
 pub struct RustAmqpSenderOptions {
     inner: AmqpSenderOptions,
 }
@@ -218,30 +212,15 @@ pub struct RustAmqpSendOptions {
     settled: *const bool,
 }
 
-/// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_create(
-) -> *mut RustAmqpSenderOptionsBuilder {
-    Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-        inner: AmqpSenderOptions::builder(),
+unsafe extern "C" fn amqpmessagesenderoptions_create() -> *mut RustAmqpSenderOptions {
+    Box::into_raw(Box::new(RustAmqpSenderOptions {
+        inner: AmqpSenderOptions::default(),
     }))
 }
 
-/// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_destroy(
-    options: *mut RustAmqpSenderOptionsBuilder,
-) {
-    if !options.is_null() {
-        drop(Box::from_raw(options));
-    } else {
-        error!("Options builder cannot be null.");
-    }
-}
-
-/// # Safety
-#[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_destroy(options: *mut RustAmqpSenderOptions) {
+unsafe extern "C" fn amqpmessagesenderoptions_destroy(options: *mut RustAmqpSenderOptions) {
     if !options.is_null() {
         drop(Box::from_raw(options));
     } else {
@@ -251,88 +230,78 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_destroy(options: *mut RustAmqp
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_build(
-    builder: *const RustAmqpSenderOptionsBuilder,
-) -> *mut RustAmqpSenderOptions {
-    if builder.is_null() {
-        error!("Invalid input");
-        return std::ptr::null_mut();
-    }
-    let builder = &*builder;
-    Box::into_raw(Box::new(RustAmqpSenderOptions {
-        inner: builder.inner.clone().build(),
-    }))
-}
-
-/// # Safety
-#[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_sender_settle_mode(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_sender_settle_mode(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     settle_mode: RustSenderSettleMode,
-) -> *mut RustAmqpSenderOptionsBuilder {
+) -> i32 {
     let sender_settle_mode = match settle_mode {
         RustSenderSettleMode::Unsettled => SenderSettleMode::Unsettled,
         RustSenderSettleMode::Settled => SenderSettleMode::Settled,
         RustSenderSettleMode::Mixed => SenderSettleMode::Mixed,
     };
-    if !builder.is_null() {
-        let builder = Box::from_raw(builder);
-        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-            inner: builder.inner.with_sender_settle_mode(sender_settle_mode),
-        }))
+    if !options.is_null() {
+        let options = &mut *options;
+        options.inner.sender_settle_mode = Some(sender_settle_mode);
+        0
     } else {
-        std::ptr::null_mut()
+        let call_context = call_context_from_ptr_mut(call_context);
+        call_context.set_error(error_from_str("Options cannot be null."));
+        -1
     }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_receiver_settle_mode(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_receiver_settle_mode(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     settle_mode: RustReceiverSettleMode,
-) -> *mut RustAmqpSenderOptionsBuilder {
+) -> i32 {
     let receiver_settle_mode = match settle_mode {
         RustReceiverSettleMode::First => ReceiverSettleMode::First,
         RustReceiverSettleMode::Second => ReceiverSettleMode::Second,
     };
 
-    if !builder.is_null() {
-        let builder = Box::from_raw(builder);
-        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-            inner: builder
-                .inner
-                .with_receiver_settle_mode(receiver_settle_mode),
-        }))
+    if !options.is_null() {
+        let options = &mut *options;
+        options.inner.receiver_settle_mode = Some(receiver_settle_mode);
+        0
     } else {
-        std::ptr::null_mut()
+        let call_context = call_context_from_ptr_mut(call_context);
+        call_context.set_error(error_from_str("Options cannot be null."));
+        -1
     }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_source(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_source(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     source: *mut RustAmqpSource,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() && !source.is_null() {
-        let builder = Box::from_raw(builder);
+) -> i32 {
+    if !options.is_null() && !source.is_null() {
+        let options = &mut *options;
         let source = &*source;
-        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-            inner: builder.inner.with_source(source.get().clone()),
-        }))
+        options.inner.source = Some(source.get().clone());
+        0
     } else {
-        std::ptr::null_mut()
+        let call_context = call_context_from_ptr_mut(call_context);
+        call_context.set_error(error_from_str("Options and source cannot be null."));
+        -1
     }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabilities(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_offered_capabilities(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     offered_capabilities: *mut RustAmqpValue,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() && !offered_capabilities.is_null() {
-        let builder = Box::from_raw(builder);
+) -> i32 {
+    if !options.is_null() && !offered_capabilities.is_null() {
+        let options = &mut *options;
         let offered_capabilities = &*offered_capabilities;
         match offered_capabilities.inner {
             AmqpValue::Array(ref array) => {
@@ -343,63 +312,78 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_offered_capabiliti
                         _ => panic!("Invalid offered capability: {:?}", c),
                     })
                     .collect();
-                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-                    inner: builder.inner.with_offered_capabilities(capabilities),
-                }))
+                let options = &mut *options;
+                options.inner.offered_capabilities = Some(capabilities);
+                0
             }
             _ => {
-                error!("Invalid offered capabilities: {:?}", offered_capabilities);
-                std::ptr::null_mut()
+                let call_context = call_context_from_ptr_mut(call_context);
+                call_context.set_error(error_from_string(format!(
+                    "Invalid offered capabiltiies: {:?}",
+                    offered_capabilities
+                )));
+                -1
             }
         }
     } else {
-        std::ptr::null_mut()
+        let call_context = call_context_from_ptr_mut(call_context);
+        call_context.set_error(error_from_str(
+            "Options and offered capabilities cannot be null.",
+        ));
+        -1
     }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_desired_capabilities(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_desired_capabilities(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     desired_capabilities: *mut RustAmqpValue,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() && !desired_capabilities.is_null() {
-        let builder = Box::from_raw(builder);
+) -> i32 {
+    if !options.is_null() && !desired_capabilities.is_null() {
         let desired_capabilities = &*desired_capabilities;
+        let call_context = call_context_from_ptr_mut(call_context);
         match desired_capabilities.inner {
             AmqpValue::Array(ref array) => {
                 let capabilities = array
                     .iter()
                     .map(|c| match c {
                         AmqpValue::Symbol(symbol) => symbol.clone(),
-                        _ => panic!("Invalid desired capability: {:?}", c),
+                        _ => {
+                            call_context.set_error(error_from_string(format!(
+                                "Invalid desired capability: {:?}",
+                                c
+                            )));
+                            panic!("Invalid desired capability: {:?}", c);
+                        }
                     })
                     .collect();
-                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-                    inner: builder.inner.with_offered_capabilities(capabilities),
-                }))
+                let options = &mut *options;
+                options.inner.desired_capabilities = Some(capabilities);
+                0
             }
             _ => {
-                error!(
+                call_context.set_error(error_from_string(format!(
                     "Invalid desired capabilities: {:?}",
                     desired_capabilities.inner
-                );
-                std::ptr::null_mut()
+                )));
+                -1
             }
         }
     } else {
-        std::ptr::null_mut()
+        error!("Options and desired capabilities cannot be null.");
+        -1
     }
 }
 
-/// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+unsafe extern "C" fn amqpmessagesenderoptions_set_properties(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     properties: *mut RustAmqpValue,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() && !properties.is_null() {
-        let builder = Box::from_raw(builder);
+) -> i32 {
+    if !options.is_null() && !properties.is_null() {
         let properties = &*properties;
         match properties.inner {
             AmqpValue::Map(ref map) => {
@@ -407,50 +391,56 @@ pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_properties(
                     .iter()
                     .map(|(k, v)| (AmqpSymbol::from(k.clone()), v.clone()))
                     .collect();
-                Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-                    inner: builder.inner.with_properties(properties_map),
-                }))
+                let options = &mut *options;
+                options.inner.properties = Some(properties_map);
+                0
             }
             _ => {
-                error!("Invalid properties: {:?}", properties);
-                std::ptr::null_mut()
+                let call_context = call_context_from_ptr_mut(call_context);
+                call_context.set_error(error_from_string(format!(
+                    "Invalid properties: {:?}",
+                    properties.inner
+                )));
+                -1
             }
         }
     } else {
-        std::ptr::null_mut()
+        error!("Options and properties cannot be null.");
+        -1
     }
 }
 
-/// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_initial_delivery_count(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+unsafe extern "C" fn amqpmessagesenderoptions_set_initial_delivery_count(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     initial_delivery_count: u32,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() {
-        let builder = Box::from_raw(builder);
-        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-            inner: builder
-                .inner
-                .with_initial_delivery_count(initial_delivery_count),
-        }))
+) -> i32 {
+    if !options.is_null() {
+        let options = &mut *options;
+        options.inner.initial_delivery_count = Some(initial_delivery_count);
+        0
     } else {
-        std::ptr::null_mut()
+        call_context_from_ptr_mut(call_context)
+            .set_error(error_from_str("Options cannot be null."));
+        -1
     }
 }
 
 /// # Safety
 #[no_mangle]
-pub unsafe extern "C" fn amqpmessagesenderoptions_builder_set_max_message_size(
-    builder: *mut RustAmqpSenderOptionsBuilder,
+pub unsafe extern "C" fn amqpmessagesenderoptions_set_max_message_size(
+    call_context: *mut RustCallContext,
+    options: *mut RustAmqpSenderOptions,
     max_message_size: u64,
-) -> *mut RustAmqpSenderOptionsBuilder {
-    if !builder.is_null() {
-        let builder = Box::from_raw(builder);
-        Box::into_raw(Box::new(RustAmqpSenderOptionsBuilder {
-            inner: builder.inner.with_max_message_size(max_message_size),
-        }))
+) -> i32 {
+    if !options.is_null() {
+        let options = &mut *options;
+        options.inner.max_message_size = Some(max_message_size);
+        0
     } else {
-        std::ptr::null_mut()
+        call_context_from_ptr_mut(call_context)
+            .set_error(error_from_str("Options cannot be null."));
+        -1
     }
 }
