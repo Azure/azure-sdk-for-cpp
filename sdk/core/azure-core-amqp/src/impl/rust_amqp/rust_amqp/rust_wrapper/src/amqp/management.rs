@@ -44,7 +44,7 @@ impl AmqpManagementApis for RustAmqpManagement {
 
     async fn call(
         &self,
-        operation_type: impl Into<String>,
+        operation_type: String,
         application_properties: AmqpOrderedMap<String, AmqpValue>,
     ) -> Result<AmqpOrderedMap<String, AmqpValue>> {
         self.inner
@@ -72,7 +72,7 @@ pub unsafe extern "C" fn amqpmanagement_create(
         OffsetDateTime::from(UNIX_EPOCH + Duration::from_secs(rust_access_token.expires_on)),
     );
 
-    let management = AmqpManagement::new(session.clone(), name, access_token);
+    let management = AmqpManagement::new(session.clone(), name.to_string(), access_token);
     match management {
         Ok(management) => Box::into_raw(Box::new(RustAmqpManagement::new(management))),
         Err(e) => {
@@ -179,7 +179,7 @@ pub unsafe extern "C" fn amqpmanagement_call(
         let result = call_context.runtime_context().runtime().block_on(
             management
                 .inner
-                .call(operation_type, application_properties),
+                .call(operation_type.to_string(), application_properties),
         );
         if let Err(err) = result {
             error!("Failed to call management: {:?}", err);

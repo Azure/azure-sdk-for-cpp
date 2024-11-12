@@ -521,35 +521,31 @@ mod tests {
                 std::time::UNIX_EPOCH + std::time::Duration::from_millis(timestamp as u64);
 
             let amqp_message = AmqpMessage::builder()
-                .add_application_property("abc", "23 skiddoo")
-                .add_application_property("What?", 29.5)
+                .add_application_property("abc".to_string(), "23 skiddoo")
+                .add_application_property("What?".to_string(), 29.5)
                 .with_body(AmqpValue::from("hello"))
-                .with_properties(
-                    AmqpMessageProperties::builder()
-                        .with_absolute_expiry_time(timestamp)
-                        .with_content_encoding(AmqpSymbol::from("utf-8"))
-                        .with_content_type(AmqpSymbol::from("text/plain"))
-                        .with_correlation_id("abc")
-                        .with_creation_time(timestamp)
-                        .with_group_id(AmqpSymbol::from("group"))
-                        .with_group_sequence(5)
-                        .with_message_id("message")
-                        .with_reply_to(AmqpSymbol::from("reply"))
-                        .with_reply_to_group_id(AmqpSymbol::from("reply_group"))
-                        .with_subject(AmqpSymbol::from("subject"))
-                        .with_to(AmqpSymbol::from("to"))
-                        .with_user_id(vec![39, 20, 54])
-                        .build(),
-                )
-                .with_header(
-                    AmqpMessageHeader::builder()
-                        .with_delivery_count(95)
-                        .with_first_acquirer(true)
-                        .with_durable(true)
-                        .with_time_to_live(Some(std::time::Duration::from_millis(1000)))
-                        .with_priority(3)
-                        .build(),
-                )
+                .with_properties(AmqpMessageProperties {
+                    absolute_expiry_time: Some(timestamp.into()),
+                    content_encoding: Some(AmqpSymbol::from("utf-8")),
+                    content_type: Some(AmqpSymbol::from("text/plain")),
+                    correlation_id: Some("abc".into()),
+                    creation_time: Some(timestamp.into()),
+                    group_id: Some("group".to_string()),
+                    group_sequence: Some(5),
+                    message_id: Some("message".into()),
+                    reply_to: Some("reply".to_string()),
+                    reply_to_group_id: Some("reply_group".to_string()),
+                    subject: Some("subject".to_string()),
+                    to: Some("to".to_string()),
+                    user_id: Some(vec![39, 20, 54]),
+                })
+                .with_header(AmqpMessageHeader {
+                    delivery_count: 95,
+                    first_acquirer: true,
+                    durable: true,
+                    time_to_live: Some(std::time::Duration::from_millis(1000)),
+                    priority: 3,
+                })
                 .with_delivery_annotations(AmqpAnnotations::from(vec![
                     (AmqpAnnotationKey::from(93), 123),
                     (AmqpAnnotationKey::from(128), 95),
