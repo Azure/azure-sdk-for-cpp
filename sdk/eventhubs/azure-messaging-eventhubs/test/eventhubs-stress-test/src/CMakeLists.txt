@@ -16,7 +16,7 @@ find_package(protobuf)
 find_package(nlohmann_json)
 find_package(CURL)
 
-set(INCLUDE_FILES 
+set(INCLUDE_FILES
   inc/eventhubs_stress_scenarios.hpp
   scenarios/inc/batch_stress_tests.hpp
   scenarios/inc/shared_functions.hpp
@@ -49,7 +49,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/scenarios/inc>
 )
 
-target_link_libraries(azure-messaging-eventhubs-stress-test 
+target_link_libraries(azure-messaging-eventhubs-stress-test
 PRIVATE
 azure-messaging-eventhubs
 azure-identity
@@ -60,6 +60,5 @@ opentelemetry-cpp::otlp_http_log_record_exporter
 opentelemetry-cpp::sdk
 )
 
-create_map_file(azure-messaging-eventhubs-stress-test azure-messaging-eventhubs-stress-test.map)
 file(COPY ${CMAKE_CURRENT_BINARY_DIR}
   DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)

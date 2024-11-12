@@ -27,7 +27,6 @@ target_compile_definitions(azure-security-keyvault-administration-test PRIVATE _
 
 create_per_service_target_build(keyvault azure-security-keyvault-administration-test)
 
-create_map_file(azure-security-keyvault-administration-test azure-security-keyvault-administration-test.map)
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-administration-test PUBLIC /wd6326 /wd26495 /wd26812 /wd4389)

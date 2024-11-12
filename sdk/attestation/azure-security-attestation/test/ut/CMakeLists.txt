@@ -38,7 +38,6 @@ target_compile_definitions(azure-security-attestation-test PRIVATE _azure_BUILDI
 
 create_per_service_target_build(attestation azure-security-attestation-test)
 
-create_map_file(azure-security-attestation-test azure-security-attestation-test.map)
 
 target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-security-attestation azure-identity azure-core-test-fw gtest_main)
 

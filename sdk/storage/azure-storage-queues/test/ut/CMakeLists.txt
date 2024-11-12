@@ -32,7 +32,6 @@ add_executable (
 target_compile_definitions(azure-storage-queues-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(storage azure-storage-queues-test)
-create_map_file(azure-storage-queues-test azure-storage-queues-test.map)
 
 # Include shared test headers
 target_include_directories(azure-storage-queues-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)

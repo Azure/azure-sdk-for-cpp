@@ -26,7 +26,6 @@ target_compile_definitions(azure-security-keyvault-certificates-test PRIVATE _az
 
 create_per_service_target_build(keyvault azure-security-keyvault-certificates-test)
 
-create_map_file(azure-security-keyvault-certificates-test azure-security-keyvault-certificates-test.map)
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-certificates-test PUBLIC /wd6326 /wd26495 /wd26812 /wd4389)

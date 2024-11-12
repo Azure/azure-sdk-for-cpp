@@ -59,7 +59,6 @@ target_compile_definitions(azure-core-amqp-tests PRIVATE _CRT_SECURE_NO_WARNINGS
 target_link_libraries(azure-core-amqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp)
 
 create_per_service_target_build(core azure-core-amqp-tests)
-create_map_file(azure-core-amqp-tests azure-core-amqp-tests.map)
 
 # gtest_discover_tests will scan the test from azure-core-amqp-tests and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

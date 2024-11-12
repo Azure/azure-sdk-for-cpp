@@ -26,7 +26,6 @@ add_executable (
 target_compile_definitions(azure-storage-common-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(storage azure-storage-common-test)
-create_map_file(azure-storage-common-test azure-storage-common-test.map)
 
 if (MSVC)
   target_compile_options(azure-storage-common-test PUBLIC /wd6326 /wd26495 /wd26812)

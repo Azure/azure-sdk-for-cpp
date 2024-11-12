@@ -18,4 +18,3 @@ target_link_libraries(azure-core-test-fault-injector PRIVATE azure-core)
 
 target_compile_definitions(azure-core-test-fault-injector PRIVATE _azure_BUILDING_TESTS)
 
-create_map_file(azure-core-test-fault-injector azure-core-test-fault-injector.map)

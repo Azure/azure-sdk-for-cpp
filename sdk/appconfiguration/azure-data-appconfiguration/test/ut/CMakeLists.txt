@@ -20,7 +20,6 @@ add_executable (
 target_compile_definitions(azure-data-appconfiguration-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(appconfiguration azure-data-appconfiguration-test)
-create_map_file(azure-data-appconfiguration-test azure-data-appconfiguration-test.map)
 
 target_link_libraries(azure-data-appconfiguration-test PRIVATE Azure::azure-data-appconfiguration azure-identity azure-core-test-fw gtest gtest_main gmock)
 

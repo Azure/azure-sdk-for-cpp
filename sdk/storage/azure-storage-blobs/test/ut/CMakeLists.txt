@@ -44,7 +44,6 @@ target_compile_definitions(azure-storage-blobs-test PRIVATE _azure_BUILDING_TEST
 
 create_per_service_target_build(storage azure-storage-blobs-test)
 
-create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)
 
 # Include shared test headers
 target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)

@@ -66,7 +66,6 @@ target_include_directories(azure-core-amqp-uamqp-tests PRIVATE Azure::azure-core
 target_link_libraries(azure-core-amqp-uamqp-tests PRIVATE GTest::gtest_main Azure::azure-core-amqp uamqp umock_c azure_macro_utils_c)
 
 create_per_service_target_build(core azure-core-amqp-uamqp-tests)
-create_map_file(azure-core-amqp-uamqp-tests azure-core-amqp-uamqp-tests.map)
 
 # gtest_discover_tests will scan the test from azure-core-amqp-tests and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

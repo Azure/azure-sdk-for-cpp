@@ -36,7 +36,6 @@ add_executable (
 target_compile_definitions(azure-storage-files-shares-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(storage azure-storage-files-shares-test)
-create_map_file(azure-storage-files-shares-test azure-storage-files-shares-test.map)
 
 # Include shared test headers
 target_include_directories(azure-storage-files-shares-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)

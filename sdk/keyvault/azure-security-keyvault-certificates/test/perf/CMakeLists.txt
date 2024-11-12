@@ -26,7 +26,6 @@ add_executable (
 target_compile_definitions(azure-security-keyvault-certificates-perf PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(keyvault azure-security-keyvault-certificates-perf)
-create_map_file(azure-security-keyvault-certificates-perf azure-security-keyvault-certificates-perf.map)
 
 # Include the headers from the project.
 target_include_directories(
@@ -35,7 +34,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
 
-# link the `azure-perf` lib together with any other library which will be used for the tests. 
+# link the `azure-perf` lib together with any other library which will be used for the tests.
 target_link_libraries(azure-security-keyvault-certificates-perf PRIVATE azure-identity azure-security-keyvault-certificates azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-security-keyvault-certificates-perf PROPERTIES FOLDER "Tests/Keyvault")

@@ -33,7 +33,6 @@ add_executable (
 target_compile_definitions(azure-security-keyvault-secrets-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(keyvault azure-security-keyvault-secrets-test)
-create_map_file(azure-security-keyvault-secrets-test azure-security-keyvault-secrets-test.map)
 
 if (MSVC)
   target_compile_options(azure-security-keyvault-secrets-test PUBLIC /wd6326 /wd26495 /wd26812)

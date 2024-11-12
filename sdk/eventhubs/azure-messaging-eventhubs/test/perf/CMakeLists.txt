@@ -26,7 +26,6 @@ add_executable (
 target_compile_definitions(azure-messaging-eventhubs-perf PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-perf)
-create_map_file(azure-messaging-eventhubs-perf azure-messaging-eventhubs-perf.map)
 
 # Include the headers from the project.
 target_include_directories(
@@ -35,7 +34,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
 
-# link the `azure-perf` lib together with any other library which will be used for the tests. 
+# link the `azure-perf` lib together with any other library which will be used for the tests.
 target_link_libraries(azure-messaging-eventhubs-perf PRIVATE azure-identity azure-messaging-eventhubs azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-messaging-eventhubs-perf PROPERTIES FOLDER "Tests/eventhubs")

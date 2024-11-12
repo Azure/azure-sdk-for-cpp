@@ -29,7 +29,6 @@ target_compile_definitions(azure-identity-perf PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(identity azure-identity-perf)
 
-create_map_file(azure-identity-perf azure-identity-perf.map)
 
 # Include the headers from the project.
 target_include_directories(
@@ -38,7 +37,7 @@ target_include_directories(
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
 )
 
-# link the `azure-perf` lib together with any other library which will be used for the tests. 
+# link the `azure-perf` lib together with any other library which will be used for the tests.
 target_link_libraries(azure-identity-perf PRIVATE azure-identity azure-perf)
 # Make sure the project will appear in the test folder for Visual Studio CMake view
 set_target_properties(azure-identity-perf PROPERTIES FOLDER "Tests/Identity")

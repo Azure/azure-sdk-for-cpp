@@ -42,24 +42,23 @@ if (MSVC)
   #             - 'testing::internal::Mutex::StaticConstructorSelector'
   #             - 'testing::TestPartResult::Type'
   #           is unscoped. Prefer 'enum class' over 'enum' (Enum.3)
-  # - C6326: Google comparisons 
+  # - C6326: Google comparisons
   target_compile_options(azure-core-test PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-core-tracing-opentelemetry-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-target_link_libraries(azure-core-tracing-opentelemetry-test PRIVATE azure-core-tracing-opentelemetry 
+target_link_libraries(azure-core-tracing-opentelemetry-test PRIVATE azure-core-tracing-opentelemetry
     azure-core
     azure-identity
     opentelemetry-cpp::ostream_span_exporter
     opentelemetry-cpp::in_memory_span_exporter
     opentelemetry-cpp::sdk
-    azure-core-test-fw 
+    azure-core-test-fw
     gtest_main)
 
 create_per_service_target_build(core azure-core-tracing-opentelemetry-test)
-create_map_file(azure-core-tracing-opentelemetry-test azure-core-tracing-opentelemetry-test.map)
 
 # gtest_discover_tests will scan the test from azure-core-tracing-opentelemetry-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

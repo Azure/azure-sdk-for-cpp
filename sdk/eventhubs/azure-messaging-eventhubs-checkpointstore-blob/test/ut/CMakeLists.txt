@@ -24,7 +24,6 @@ add_executable (
 target_compile_definitions(azure-messaging-eventhubs-blobstore-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-blobstore-test)
-create_map_file(azure-messaging-eventhubs-blobstore-test azure-messaging-eventhubs-blobstore-test.map)
 
 if (MSVC)
   target_compile_options(azure-messaging-eventhubs-blobstore-test PUBLIC /wd6326 /wd26495 /wd26812)
@@ -32,20 +31,20 @@ endif()
 
 target_link_libraries(
     azure-messaging-eventhubs-blobstore-test
-      PRIVATE 
+      PRIVATE
         azure-messaging-eventhubs-checkpointstore-blob
-        azure-messaging-eventhubs 
+        azure-messaging-eventhubs
         azure-core-test-fw
-        azure-identity 
-        gtest 
+        azure-identity
+        gtest
         gtest_main
         gmock
 )
 
 # Adding private headers so we can test the private APIs with no relative paths include.
 target_include_directories (
-    azure-messaging-eventhubs-blobstore-test 
-      PRIVATE 
+    azure-messaging-eventhubs-blobstore-test
+      PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
