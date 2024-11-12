@@ -15,7 +15,6 @@
 #elif ENABLE_RUST_AMQP
 #include "azure/core/amqp/internal/common/runtime_context.hpp"
 
-#include <numeric>
 using namespace Azure::Core::Amqp::RustInterop::_detail;
 #endif
 

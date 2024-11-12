@@ -146,8 +146,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    * with error information from the callContext.
    *
    */
-  template <typename Api, typename T, typename... Args>
-  void InvokeAmqpApi(Api& api, T& amqpObject, Args&&... args)
+  template <typename Api, typename T, typename H, typename... Args>
+  void InvokeAmqpApi(Api& api, std::unique_ptr<T, H>& amqpObject, Args&&... args)
   {
     CallContext callContext;
     auto result = api(callContext.GetCallContext(), amqpObject.get(), std::forward<Args>(args)...);
