@@ -3,7 +3,6 @@
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
-#include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
 #include <azure/core/exception.hpp>

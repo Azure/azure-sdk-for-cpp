@@ -3,7 +3,6 @@
 
 #include "azure/attestation/attestation_administration_client.hpp"
 
-#include "azure/attestation/attestation_client.hpp"
 #include "private/attestation_client_models_private.hpp"
 #include "private/attestation_client_private.hpp"
 #include "private/attestation_common_request.hpp"
@@ -12,7 +11,6 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
 #include <shared_mutex>

@@ -9,7 +9,6 @@
 #include <azure/core/internal/json/json.hpp>
 
 #include <string>
-#include <vector>
 
 using namespace Azure::Core::_internal;
 using namespace Azure::Core::Json::_internal;

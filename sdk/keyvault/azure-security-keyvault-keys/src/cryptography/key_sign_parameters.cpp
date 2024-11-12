@@ -9,7 +9,6 @@
 #include <azure/core/base64.hpp>
 
 #include <string>
-#include <vector>
 
 namespace Azure {
   namespace Security {

@@ -14,13 +14,9 @@
 #include "jsonhelpers_private.hpp"
 
 #include <azure/core/base64.hpp>
-#include <azure/core/datetime.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_optional.hpp>
-#include <azure/core/internal/json/json_serializable.hpp>
 #include <azure/core/nullable.hpp>
 
-#include <memory>
 #include <string>
 #include <vector>
 

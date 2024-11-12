@@ -4,8 +4,6 @@
 #include "azure/keyvault/keys/key_client_models.hpp"
 #include "private/key_constants.hpp"
 
-#include <stdexcept>
-
 using namespace Azure::Security::KeyVault::Keys;
 
 const KeyVaultKeyType KeyVaultKeyType::Ec(_detail::EcValue);
