@@ -21,7 +21,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-include(CreateMapFile)
 
 if(FETCH_SOURCE_DEPS)
     set(AZ_ALL_LIBRARIES ON)

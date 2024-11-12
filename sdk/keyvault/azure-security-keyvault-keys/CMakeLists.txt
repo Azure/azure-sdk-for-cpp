@@ -29,8 +29,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-# Add create_map_file function
-include(CreateMapFile)
 
 if(FETCH_SOURCE_DEPS)
     GetFolderList(KEYS)

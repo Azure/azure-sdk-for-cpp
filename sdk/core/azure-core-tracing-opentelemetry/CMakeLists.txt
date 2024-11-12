@@ -24,8 +24,6 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-# Add create_map_file function
-include(CreateMapFile)
 
 if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
     find_package(Threads REQUIRED)

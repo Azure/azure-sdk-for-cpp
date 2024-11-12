@@ -20,8 +20,6 @@ include(AzureTransportAdapters)
 include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
-# Add create_map_file function
-include(CreateMapFile)
 
 find_package(Threads REQUIRED)
 

@@ -27,8 +27,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 include(AzureBuildTargetForCI)
-# Add create_map_file function
-include(CreateMapFile)
 
 if(NOT AZ_ALL_LIBRARIES)
   find_package(azure-core-cpp CONFIG QUIET)
