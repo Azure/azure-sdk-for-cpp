@@ -315,32 +315,3 @@ jobs:
           pwsh: true
           workingDirectory: $(Pipeline.Workspace)
         displayName: Report Binary Sizes
-
-      # Use the job name to create the artifact name for MAP file publishing.
-      # Attempts are also noted starting with 1
-      # "Validate windows2022_UWP_debug_x86" -> "windows2022_UWP_debug_x86_attempt_1"
-      - pwsh: |
-          $artifactName = "$(Agent.JobName)_attempt_$(System.JobAttempt)"
-          $parts = $artifactName -split ' '
-          if ($parts[1]) {
-            $artifactName = $parts[1]
-          }
-          Write-Host "##vso[task.setvariable variable=MapFileArtifactName;]$artifactName"
-        displayName: Set map file artifact name
-        condition: eq(variables['PublishMapFiles'], 'true')
-
-      - task: CopyFiles@2
-        inputs:
-          contents: "**/*.map"
-          targetFolder: $(Build.ArtifactStagingDirectory)
-          flattenFolders: true
-        condition: eq(variables['PublishMapFiles'], 'true')
-        displayName: Stage map files
-
-      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
-        parameters:
-          ArtifactPath: $(Build.ArtifactStagingDirectory)
-          ArtifactName: map-files-$(MapFileArtifactName)
-          CustomCondition: eq(variables['PublishMapFiles'], 'true')
-          SbomEnabled: false
-
