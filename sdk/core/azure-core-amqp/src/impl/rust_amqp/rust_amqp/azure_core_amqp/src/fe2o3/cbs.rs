@@ -9,10 +9,9 @@ use azure_core::error::Result;
 use fe2o3_amqp_cbs::token::CbsToken;
 use fe2o3_amqp_types::primitives::Timestamp;
 use std::borrow::BorrowMut;
-use std::{fmt::Debug, sync::OnceLock};
+use std::sync::OnceLock;
 use tracing::{debug, trace};
 
-#[derive(Debug)]
 pub(crate) struct Fe2o3ClaimsBasedSecurity<'a> {
     cbs: OnceLock<Mutex<fe2o3_amqp_cbs::client::CbsClient>>,
     session: &'a AmqpSession,
@@ -27,15 +26,15 @@ impl<'a> Fe2o3ClaimsBasedSecurity<'a> {
     }
 }
 
-impl<'a> Fe2o3ClaimsBasedSecurity<'a> {}
+impl Fe2o3ClaimsBasedSecurity<'_> {}
 
-impl<'a> Drop for Fe2o3ClaimsBasedSecurity<'a> {
+impl Drop for Fe2o3ClaimsBasedSecurity<'_> {
     fn drop(&mut self) {
         debug!("Dropping Fe2o3ClaimsBasedSecurity.");
     }
 }
 
-impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
+impl AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'_> {
     async fn attach(&self) -> Result<()> {
         let session = self.session.implementation.get()?;
         let mut session = session.lock().await;
@@ -67,8 +66,9 @@ impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
 
     async fn authorize_path(
         &self,
-        path: impl Into<String> + Debug,
-        secret: impl Into<String>,
+        path: String,
+        token_type: Option<String>,
+        secret: String,
         expires_at: time::OffsetDateTime,
     ) -> Result<()> {
         trace!(
@@ -77,8 +77,8 @@ impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
             expires_at
         );
         let cbs_token = CbsToken::new(
-            secret.into(),
-            "jwt",
+            secret,
+            token_type.unwrap_or("jwt".to_string()),
             Some(Timestamp::from(
                 expires_at
                     .to_offset(time::UtcOffset::UTC)
@@ -103,7 +103,7 @@ impl<'a> AmqpClaimsBasedSecurityApis for Fe2o3ClaimsBasedSecurity<'a> {
             .lock()
             .await
             .borrow_mut()
-            .put_token(path.into(), cbs_token)
+            .put_token(path, cbs_token)
             .await
             .map_err(AmqpManagement::from)?;
         Ok(())

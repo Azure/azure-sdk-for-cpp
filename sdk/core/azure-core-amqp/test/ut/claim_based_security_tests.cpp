@@ -227,6 +227,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
+  // The native broker doesn't support CBS or management APIs.
+#if !defined(USE_NATIVE_BROKER)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
     auto connection{CreateConnection()};
@@ -257,9 +259,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Cleanup(session);
     Cleanup(connection);
   }
+#endif
 #endif // !defined(AZ_PLATFORM_MAC)
 
 #if !defined(AZ_PLATFORM_MAC)
+  // The native broker doesn't support CBS or management APIs.
+#if !defined(USE_NATIVE_BROKER)
   TEST_F(TestCbs, CbsOpenAndPutError)
   {
     {
@@ -290,6 +295,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Cleanup(connection);
     }
   }
+#endif
 
 #if ENABLE_RUST_CANCEL
 

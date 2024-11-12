@@ -33,34 +33,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     properties_destroy(value);
   }
   // @endcond
-#if ENABLE_RUST_AMQP
-
-  using PropertiesBuilderImplementation
-      = Azure::Core::Amqp::RustInterop::_detail::RustMessagePropertiesBuilder;
-
-  template <> struct UniqueHandleHelper<PropertiesBuilderImplementation>
-  {
-    static void FreeAmqpPropertiesBuilder(PropertiesBuilderImplementation* obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<PropertiesBuilderImplementation, FreeAmqpPropertiesBuilder>;
-  };
-  void UniqueHandleHelper<PropertiesBuilderImplementation>::FreeAmqpPropertiesBuilder(
-      PropertiesBuilderImplementation* obj)
-  {
-    properties_builder_destroy(obj);
-  }
-
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models {
-#if ENABLE_RUST_AMQP
-  namespace _detail {
-    using UniqueMessagePropertiesBuilderHandle = Azure::Core::Amqp::_detail::UniqueHandle<
-        Azure::Core::Amqp::_detail::PropertiesBuilderImplementation>;
-  }
-#endif
   MessageProperties _detail::MessagePropertiesFactory::FromImplementation(
       UniquePropertiesHandle const& properties)
   {
@@ -188,8 +163,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   _detail::UniquePropertiesHandle _detail::MessagePropertiesFactory::ToImplementation(
       MessageProperties const& properties)
   {
-#if ENABLE_UAMQP
     UniquePropertiesHandle returnValue(properties_create());
+#if ENABLE_UAMQP
     if (properties.MessageId.HasValue())
     {
       if (properties_set_message_id(
@@ -311,63 +286,61 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set reply-to group id");
       }
     }
-
-    return returnValue;
 #elif ENABLE_RUST_AMQP
-    _detail::UniqueMessagePropertiesBuilderHandle builder{properties_builder_create()};
 
     if (properties.MessageId.HasValue())
     {
-      InvokeBuilderApi(
+      InvokeAmqpApi(
           properties_set_message_id,
-          builder,
+          returnValue,
           _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value()));
     }
     if (properties.CorrelationId.HasValue())
     {
-      InvokeBuilderApi(
+      InvokeAmqpApi(
           properties_set_correlation_id,
-          builder,
+          returnValue,
           _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value()));
     }
 
     if (properties.UserId.HasValue())
     {
-      InvokeBuilderApi(
+      InvokeAmqpApi(
           properties_set_user_id,
-          builder,
+          returnValue,
           properties.UserId.Value().data(),
           static_cast<uint32_t>(properties.UserId.Value().size()));
     }
 
     if (properties.To.HasValue())
     {
-      InvokeBuilderApi(
-          properties_set_to, builder, static_cast<std::string>(properties.To.Value()).c_str());
+      InvokeAmqpApi(
+          properties_set_to, returnValue, static_cast<std::string>(properties.To.Value()).c_str());
     }
 
     if (properties.Subject.HasValue())
     {
-      InvokeBuilderApi(properties_set_subject, builder, properties.Subject.Value().data());
+      InvokeAmqpApi(properties_set_subject, returnValue, properties.Subject.Value().data());
     }
 
     if (properties.ReplyTo.HasValue())
     {
-      InvokeBuilderApi(
+      InvokeAmqpApi(
           properties_set_reply_to,
-          builder,
+          returnValue,
           _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value()));
     }
 
     if (properties.ContentType.HasValue())
     {
-      InvokeBuilderApi(properties_set_content_type, builder, properties.ContentType.Value().data());
+      InvokeAmqpApi(
+          properties_set_content_type, returnValue, properties.ContentType.Value().data());
     }
 
     if (properties.ContentEncoding.HasValue())
     {
-      InvokeBuilderApi(
-          properties_set_content_encoding, builder, properties.ContentEncoding.Value().data());
+      InvokeAmqpApi(
+          properties_set_content_encoding, returnValue, properties.ContentEncoding.Value().data());
     }
 
     if (properties.AbsoluteExpiryTime.HasValue())
@@ -375,7 +348,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.AbsoluteExpiryTime.Value().time_since_epoch())};
 
-      InvokeBuilderApi(properties_set_absolute_expiry_time, builder, timeStamp.count());
+      InvokeAmqpApi(properties_set_absolute_expiry_time, returnValue, timeStamp.count());
     }
 
     if (properties.CreationTime.HasValue())
@@ -383,34 +356,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       auto timeStamp{std::chrono::duration_cast<std::chrono::milliseconds>(
           properties.CreationTime.Value().time_since_epoch())};
 
-      InvokeBuilderApi(properties_set_creation_time, builder, timeStamp.count());
+      InvokeAmqpApi(properties_set_creation_time, returnValue, timeStamp.count());
     }
 
     if (properties.GroupId.HasValue())
     {
-      InvokeBuilderApi(properties_set_group_id, builder, properties.GroupId.Value().data());
+      InvokeAmqpApi(properties_set_group_id, returnValue, properties.GroupId.Value().data());
     }
 
     if (properties.GroupSequence.HasValue())
     {
-      InvokeBuilderApi(properties_set_group_sequence, builder, properties.GroupSequence.Value());
+      InvokeAmqpApi(properties_set_group_sequence, returnValue, properties.GroupSequence.Value());
     }
 
     if (properties.ReplyToGroupId.HasValue())
     {
-      InvokeBuilderApi(
-          properties_set_reply_to_group_id, builder, properties.ReplyToGroupId.Value().data());
+      InvokeAmqpApi(
+          properties_set_reply_to_group_id, returnValue, properties.ReplyToGroupId.Value().data());
     }
 
-    // Now that we've set all the builder parameters, actually build the header.
-    Azure::Core::Amqp::_detail::PropertiesImplementation* implementation;
-    CallContext callContext;
-    if (properties_build(callContext.GetCallContext(), builder.release(), &implementation))
-    {
-      throw std::runtime_error("Could not build header." + callContext.GetError());
-    }
-    return _detail::UniquePropertiesHandle{implementation};
 #endif
+
+    return returnValue;
   }
 
   namespace {

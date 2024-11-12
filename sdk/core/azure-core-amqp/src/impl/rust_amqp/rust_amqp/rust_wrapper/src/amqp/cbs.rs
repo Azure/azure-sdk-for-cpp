@@ -134,7 +134,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
     let result = call_context
         .runtime_context()
         .runtime()
-        .block_on(cbs.authorize_path(path, secret, expires_on));
+        .block_on(cbs.authorize_path(path.to_string(), None, secret.to_string(), expires_on));
     if let Err(e) = result {
         error!("Failed to authorize path: {:?}", e);
         call_context.set_error(Box::new(e));
@@ -168,7 +168,7 @@ mod tests {
                 .runtime_context()
                 .runtime()
                 .block_on(connection.open(
-                    "testConnection",
+                    "testConnection".to_string(),
                     url::Url::parse("amqp://localhost:25672").unwrap(),
                     None,
                 ))
