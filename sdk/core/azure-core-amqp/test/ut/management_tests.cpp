@@ -7,8 +7,18 @@
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/internal/session.hpp"
 #include "azure/core/platform.hpp"
-#include "mock_amqp_server.hpp"
 
+#if ENABLE_RUST_AMQP
+#define USE_NATIVE_BROKER
+#elif ENABLE_UAMQP
+#undef USE_NATIVE_BROKER
+#endif
+
+#if defined(USE_NATIVE_BROKER)
+constexpr const uint16_t nativeBrokerPort = 25672;
+#else
+#include "mock_amqp_server.hpp"
+#endif
 #include <gtest/gtest.h>
 
 // cspell: ignore abcdabcd

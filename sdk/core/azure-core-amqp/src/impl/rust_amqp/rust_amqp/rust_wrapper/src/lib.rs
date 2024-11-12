@@ -29,3 +29,10 @@ pub(crate) fn error_from_str(msg: &'static str) -> Box<dyn std::error::Error + S
         msg,
     ))
 }
+
+pub(crate) fn error_from_string(msg: String) -> Box<dyn std::error::Error + Send + Sync> {
+    Box::new(azure_core::error::Error::message(
+        azure_core::error::ErrorKind::Other,
+        msg,
+    ))
+}
