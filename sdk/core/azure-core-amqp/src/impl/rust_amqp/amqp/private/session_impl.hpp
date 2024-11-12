@@ -15,8 +15,6 @@
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using AmqpSessionImplementation = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSession;
   using AmqpSessionOptions = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSessionOptions;
-  using AmqpSessionOptionsBuilder
-      = Azure::Core::Amqp::RustInterop::_detail::RustAmqpSessionOptionsBuilder;
 
   template <> struct UniqueHandleHelper<AmqpSessionImplementation>
   {
@@ -30,19 +28,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using type = Core::_internal::BasicUniqueHandle<AmqpSessionOptions, FreeAmqpSessionOptions>;
   };
-  template <> struct UniqueHandleHelper<AmqpSessionOptionsBuilder>
-  {
-    static void FreeAmqpSessionOptionsBuilder(AmqpSessionOptionsBuilder* obj);
-
-    using type = Core::_internal::
-        BasicUniqueHandle<AmqpSessionOptionsBuilder, FreeAmqpSessionOptionsBuilder>;
-  };
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueAmqpSession = UniqueHandle<AmqpSessionImplementation>;
   using UniqueAmqpSessionOptions = UniqueHandle<AmqpSessionOptions>;
-  using UniqueAmqpSessionOptionsBuilder = UniqueHandle<AmqpSessionOptionsBuilder>;
 
   class SessionFactory final {
   public:

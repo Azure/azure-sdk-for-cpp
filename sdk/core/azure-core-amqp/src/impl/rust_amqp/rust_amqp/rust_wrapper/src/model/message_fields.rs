@@ -90,7 +90,10 @@ mod tests {
                     assert_eq!(described.descriptor, AmqpDescriptor::Code(0x71));
                     match &described.value {
                         AmqpValue::Map(map) => {
-                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                            assert_eq!(
+                                map.get(&AmqpValue::from("key")).unwrap(),
+                                &AmqpValue::String("value".into())
+                            );
                         }
                         _ => panic!("Expected AmqpValue::Map"),
                     }
@@ -117,7 +120,10 @@ mod tests {
                     assert_eq!(described.descriptor, AmqpDescriptor::Code(0x72));
                     match &described.value {
                         AmqpValue::Map(map) => {
-                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                            assert_eq!(
+                                map.get(&AmqpValue::from("key")).unwrap(),
+                                &AmqpValue::String("value".into())
+                            );
                         }
                         _ => panic!("Expected AmqpValue::Map"),
                     }
@@ -144,7 +150,10 @@ mod tests {
                     assert_eq!(described.descriptor, AmqpDescriptor::Code(0x78));
                     match &described.value {
                         AmqpValue::Map(map) => {
-                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                            assert_eq!(
+                                map.get(&AmqpValue::from("key")).unwrap(),
+                                &AmqpValue::String("value".into())
+                            );
                         }
                         _ => panic!("Expected AmqpValue::Map"),
                     }
@@ -171,7 +180,10 @@ mod tests {
                     assert_eq!(described.descriptor, AmqpDescriptor::Code(0x74));
                     match &described.value {
                         AmqpValue::Map(map) => {
-                            assert_eq!(map.get("key").unwrap(), &AmqpValue::String("value".into()));
+                            assert_eq!(
+                                map.get(&AmqpValue::from("key")).unwrap(),
+                                &AmqpValue::String("value".into())
+                            );
                         }
                         _ => panic!("Expected AmqpValue::Map"),
                     }

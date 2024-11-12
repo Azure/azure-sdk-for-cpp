@@ -403,7 +403,7 @@ unsafe extern "C" fn source_builder_set_address(
     let address = CStr::from_ptr(address).to_str();
     match address {
         Ok(address) => Box::into_raw(Box::new(RustAmqpSourceBuilder {
-            inner: builder.inner.with_address(address),
+            inner: builder.inner.with_address(address.to_string()),
         })),
         Err(err) => {
             call_context.set_error(Box::new(err));

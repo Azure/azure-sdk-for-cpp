@@ -134,5 +134,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     builder.reset(raw);
   }
 
+  /**
+   * Invoke a simple Rust AMQP API, checking for error.
+   *
+   * @param api - Flat C API to invoke. The first parameter MUST be a RustCallContext object, the
+   * second parameter must be a Rust client object.
+   * @param amqpObject - Unique Pointer to a Rust AMQP object.
+   * @param args - remaining arguments to the flat C API.
+   *
+   * This function will check the return from the API, and if it is not 0, will throw an exception
+   * with error information from the callContext.
+   *
+   */
+  template <typename Api, typename T, typename H, typename... Args>
+  void InvokeAmqpApi(Api& api, std::unique_ptr<T, H>& amqpObject, Args&&... args)
+  {
+    CallContext callContext;
+    auto result = api(callContext.GetCallContext(), amqpObject.get(), std::forward<Args>(args)...);
+    if (result)
+    {
+      throw std::runtime_error("Error processing builder API: " + callContext.GetError());
+    }
+  }
+
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
 #endif // ENABLE_RUST_AMQP

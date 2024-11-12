@@ -264,7 +264,7 @@ unsafe extern "C" fn target_builder_set_address(
     let address = std::ffi::CStr::from_ptr(address).to_str();
     match address {
         Ok(address) => Box::into_raw(Box::new(RustAmqpTargetBuilder {
-            inner: builder.inner.with_address(address),
+            inner: builder.inner.with_address(address.to_string()),
         })),
         Err(e) => {
             warn!("Failed to convert address to string: {:?}", e);

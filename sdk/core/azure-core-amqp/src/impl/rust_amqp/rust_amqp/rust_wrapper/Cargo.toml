@@ -19,7 +19,7 @@ azure_core.workspace = true
 uuid.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
-tokio.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread"] }
 url.workspace = true
 time.workspace = true
 
