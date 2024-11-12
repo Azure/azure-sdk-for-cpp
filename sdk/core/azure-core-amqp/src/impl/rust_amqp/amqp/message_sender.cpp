@@ -39,22 +39,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     using type = Core::_internal::BasicUniqueHandle<RustAmqpSenderOptions, FreeSenderOptions>;
   };
-  template <> struct UniqueHandleHelper<RustAmqpSenderOptionsBuilder>
-  {
-    static void FreeSenderOptionsBuilder(RustAmqpSenderOptionsBuilder* value)
-    {
-      amqpmessagesenderoptions_builder_destroy(value);
-    }
-
-    using type = Core::_internal::
-        BasicUniqueHandle<RustAmqpSenderOptionsBuilder, FreeSenderOptionsBuilder>;
-  };
 
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueSenderOptions = UniqueHandle<RustAmqpSenderOptions>;
-  using UniqueSenderOptionsBuilder = UniqueHandle<RustAmqpSenderOptionsBuilder>;
 
   MessageSenderImpl::MessageSenderImpl(
       std::shared_ptr<_detail::SessionImpl> session,
@@ -100,7 +89,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
 
-    UniqueSenderOptionsBuilder optionsBuilder{amqpmessagesenderoptions_builder_create()};
+    UniqueSenderOptions senderOptions{amqpmessagesenderoptions_create()};
 
     Models::_internal::AmqpError rv;
     if (m_options.EnableTrace)
@@ -108,6 +97,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Verbose)
           << "Opening message sender. Authenticate if needed with audience: " << m_target;
     }
+
     if (m_options.AuthenticationRequired)
     {
       // If we need to authenticate with either ServiceBus or BearerToken, now is the time to do
@@ -118,8 +108,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.InitialDeliveryCount)
     {
-      optionsBuilder.reset(amqpmessagesenderoptions_builder_set_initial_delivery_count(
-          optionsBuilder.release(), m_options.InitialDeliveryCount.Value()));
+      Common::_detail::InvokeAmqpApi(
+          amqpmessagesenderoptions_set_initial_delivery_count,
+          senderOptions,
+          m_options.InitialDeliveryCount.Value());
     }
 
     if (m_options.MaxLinkCredits)
@@ -129,13 +121,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (m_options.MaxMessageSize)
     {
-      optionsBuilder.reset(amqpmessagesenderoptions_builder_set_max_message_size(
-          optionsBuilder.release(), m_options.MaxMessageSize.Value()));
+      Common::_detail::InvokeAmqpApi(
+          amqpmessagesenderoptions_set_max_message_size,
+          senderOptions,
+          m_options.MaxMessageSize.Value());
     }
 
-    optionsBuilder.reset(amqpmessagesenderoptions_builder_set_source(
-        optionsBuilder.release(),
-        Models::_detail::AmqpSourceFactory::ToImplementation(m_options.MessageSource)));
+    Common::_detail::InvokeAmqpApi(
+        amqpmessagesenderoptions_set_source,
+        senderOptions,
+        Models::_detail::AmqpSourceFactory::ToImplementation(m_options.MessageSource));
 
     RustSenderSettleMode senderSettleMode = RustSenderSettleMode::Settled;
     switch (m_options.SettleMode)
@@ -151,10 +146,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         break;
     }
 
-    optionsBuilder.reset(amqpmessagesenderoptions_builder_set_sender_settle_mode(
-        optionsBuilder.release(), senderSettleMode));
-
-    UniqueSenderOptions options{amqpmessagesenderoptions_builder_build(optionsBuilder.get())};
+    Common::_detail::InvokeAmqpApi(
+        amqpmessagesenderoptions_set_sender_settle_mode, senderOptions, senderSettleMode);
 
     if (amqpmessagesender_attach(
             callContext.GetCallContext(),
@@ -162,7 +155,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             m_session->GetAmqpSession().get(),
             m_options.Name.c_str(),
             Models::_detail::AmqpTargetFactory::ToImplementation(m_target),
-            options.get()))
+            senderOptions.get()))
     {
       throw std::runtime_error("Could not open Message Sender: " + callContext.GetError());
     }

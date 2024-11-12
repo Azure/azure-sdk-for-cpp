@@ -23,12 +23,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     amqpsessionoptions_destroy(value);
   }
-  void UniqueHandleHelper<AmqpSessionOptionsBuilder>::FreeAmqpSessionOptionsBuilder(
-      AmqpSessionOptionsBuilder* value)
-  {
-    amqpsessionoptionsbuilder_destroy(value);
-  }
-
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
@@ -99,34 +93,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             ->GetRuntimeContext(),
         context};
 
-    UniqueAmqpSessionOptionsBuilder optionsBuilder{amqpsessionoptionsbuilder_create()};
+    UniqueAmqpSessionOptions sessionOptions{amqpsessionoptions_create()};
 
     if (m_options.MaximumLinkCount.HasValue())
     {
-      InvokeBuilderApi(
-          amqpsessionoptionsbuilder_set_handle_max,
-          optionsBuilder,
-          m_options.MaximumLinkCount.Value());
+      InvokeAmqpApi(
+          amqpsessionoptions_set_handle_max, sessionOptions, m_options.MaximumLinkCount.Value());
     }
     if (m_options.InitialIncomingWindowSize.HasValue())
     {
-      InvokeBuilderApi(
-          amqpsessionoptionsbuilder_set_incoming_window,
-          optionsBuilder,
+      InvokeAmqpApi(
+          amqpsessionoptions_set_incoming_window,
+          sessionOptions,
           m_options.InitialIncomingWindowSize.Value());
     }
     if (m_options.InitialOutgoingWindowSize.HasValue())
     {
-      InvokeBuilderApi(
-          amqpsessionoptionsbuilder_set_outgoing_window,
-          optionsBuilder,
+      InvokeAmqpApi(
+          amqpsessionoptions_set_outgoing_window,
+          sessionOptions,
           m_options.InitialOutgoingWindowSize.Value());
     }
     if (!m_options.DesiredCapabilities.empty())
     {
     }
-    UniqueAmqpSessionOptions sessionOptions{
-        amqpsessionoptionsbuilder_build(optionsBuilder.release())};
     if (amqpsession_begin(
             callContext.GetCallContext(),
             m_session.get(),

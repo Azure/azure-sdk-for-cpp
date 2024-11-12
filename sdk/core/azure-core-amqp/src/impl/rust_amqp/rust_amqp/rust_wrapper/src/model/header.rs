@@ -6,7 +6,7 @@
 use super::value::RustAmqpValue;
 use crate::call_context::{call_context_from_ptr_mut, RustCallContext};
 use azure_core_amqp::{
-    messaging::{builders::AmqpMessageHeaderBuilder, AmqpMessageHeader},
+    messaging::AmqpMessageHeader,
     value::{AmqpComposite, AmqpDescriptor, AmqpValue},
 };
 use std::mem;
@@ -26,6 +26,13 @@ impl RustMessageHeader {
 }
 
 #[no_mangle]
+extern "C" fn header_create() -> *mut RustMessageHeader {
+    Box::into_raw(Box::new(RustMessageHeader {
+        inner: AmqpMessageHeader::default(),
+    }))
+}
+
+#[no_mangle]
 unsafe extern "C" fn header_destroy(header: *mut RustMessageHeader) {
     mem::drop(Box::from_raw(header));
 }
@@ -36,7 +43,7 @@ unsafe extern "C" fn header_get_durable(
     durable: &mut bool,
 ) -> i32 {
     let header = { &*header };
-    *durable = header.inner.durable();
+    *durable = header.inner.durable;
     0
 }
 
@@ -46,7 +53,7 @@ unsafe extern "C" fn header_get_priority(
     priority: &mut u8,
 ) -> i32 {
     let header = { &*header };
-    *priority = header.inner.priority();
+    *priority = header.inner.priority;
     0
 }
 
@@ -56,7 +63,7 @@ unsafe extern "C" fn header_get_ttl(
     time_to_live: &mut u64,
 ) -> i32 {
     let header = { &*header };
-    if let Some(ttl) = header.inner.time_to_live() {
+    if let Some(ttl) = header.inner.time_to_live {
         *time_to_live = ttl.as_millis() as u64;
         0
     } else {
@@ -72,7 +79,7 @@ unsafe extern "C" fn header_get_first_acquirer(
 ) -> i32 {
     let header = { &*header };
 
-    *first_acquirer = header.inner.first_acquirer();
+    *first_acquirer = header.inner.first_acquirer;
     0
 }
 
@@ -82,104 +89,67 @@ unsafe extern "C" fn header_get_delivery_count(
     delivery_count: &mut u32,
 ) -> i32 {
     let header = { &*header };
-    *delivery_count = header.inner.delivery_count();
+    *delivery_count = header.inner.delivery_count;
     0
-}
-
-pub struct RustMessageHeaderBuilder {
-    inner: AmqpMessageHeaderBuilder,
-}
-
-#[no_mangle]
-extern "C" fn header_builder_create() -> *mut RustMessageHeaderBuilder {
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: AmqpMessageHeader::builder(),
-    }))
-}
-
-#[no_mangle]
-unsafe extern "C" fn header_builder_destroy(builder: *mut RustMessageHeaderBuilder) {
-    {
-        mem::drop(Box::from_raw(builder));
-    }
 }
 
 #[no_mangle]
 unsafe extern "C" fn header_set_durable(
     call_context: *mut RustCallContext,
-    builder: *mut RustMessageHeaderBuilder,
+    options: *mut RustMessageHeader,
     durable: bool,
-) -> *mut RustMessageHeaderBuilder {
+) -> i32 {
     let _call_context = call_context_from_ptr_mut(call_context);
-    let builder = Box::from_raw(builder);
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: builder.inner.with_durable(durable),
-    }))
+    let options = &mut *options;
+    options.inner.durable = durable;
+    0
 }
 
 #[no_mangle]
 unsafe extern "C" fn header_set_priority(
     call_context: *mut RustCallContext,
-    builder: *mut RustMessageHeaderBuilder,
+    options: *mut RustMessageHeader,
     priority: u8,
-) -> *mut RustMessageHeaderBuilder {
+) -> i32 {
     let _call_context = call_context_from_ptr_mut(call_context);
-    let builder = Box::from_raw(builder);
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: builder.inner.with_priority(priority),
-    }))
+    let options = &mut *options;
+    options.inner.priority = priority;
+    0
 }
 
 #[no_mangle]
 unsafe extern "C" fn header_set_ttl(
     call_context: *mut RustCallContext,
-    builder: *mut RustMessageHeaderBuilder,
+    options: *mut RustMessageHeader,
     time_to_live: u64,
-) -> *mut RustMessageHeaderBuilder {
+) -> i32 {
     let _call_context = call_context_from_ptr_mut(call_context);
-    let builder = Box::from_raw(builder);
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: builder
-            .inner
-            .with_time_to_live(Some(std::time::Duration::from_millis(time_to_live))),
-    }))
+    let options = &mut *options;
+    options.inner.time_to_live = Some(std::time::Duration::from_millis(time_to_live));
+    0
 }
 
 #[no_mangle]
 unsafe extern "C" fn header_set_first_acquirer(
     call_context: *mut RustCallContext,
-    builder: *mut RustMessageHeaderBuilder,
+    options: *mut RustMessageHeader,
     first_acquirer: bool,
-) -> *mut RustMessageHeaderBuilder {
+) -> i32 {
     let _call_context = call_context_from_ptr_mut(call_context);
-    let builder = Box::from_raw(builder);
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: builder.inner.with_first_acquirer(first_acquirer),
-    }))
+    let options = &mut *options;
+    options.inner.first_acquirer = first_acquirer;
+    0
 }
 
 #[no_mangle]
 unsafe extern "C" fn header_set_delivery_count(
     call_context: *mut RustCallContext,
-    builder: *mut RustMessageHeaderBuilder,
+    options: *mut RustMessageHeader,
     delivery_count: u32,
-) -> *mut RustMessageHeaderBuilder {
-    let _call_context = call_context_from_ptr_mut(call_context);
-    let builder = Box::from_raw(builder);
-    Box::into_raw(Box::new(RustMessageHeaderBuilder {
-        inner: builder.inner.with_delivery_count(delivery_count),
-    }))
-}
-
-#[no_mangle]
-unsafe extern "C" fn header_build(
-    builder: *mut RustMessageHeaderBuilder,
-    header: *mut *mut RustMessageHeader,
 ) -> i32 {
-    let builder = Box::from_raw(builder);
-    *header = Box::into_raw(Box::new(RustMessageHeader {
-        inner: builder.inner.build(),
-    }));
+    let _call_context = call_context_from_ptr_mut(call_context);
+    let options = &mut *options;
+    options.inner.delivery_count = delivery_count;
     0
 }
 
@@ -241,7 +211,10 @@ mod tests {
     fn test_amqpvalue_create_header() {
         unsafe {
             let header = RustMessageHeader {
-                inner: AmqpMessageHeader::builder().with_priority(3).build(),
+                inner: AmqpMessageHeader {
+                    priority: 3,
+                    ..Default::default()
+                },
             };
             let value = amqpvalue_create_header(&header);
 
@@ -257,17 +230,6 @@ mod tests {
             assert!(deserialized.is_ok());
             let deserialized = deserialized.unwrap();
             println!("Deserialized: {:?}", deserialized);
-
-            // let mut header2 = Box::new(RustMessageHeader {
-            //     inner: AmqpMessageHeader::builder().with_priority(3).build(),
-            // });
-            // assert_eq!(
-            //     amqpvalue_get_header(
-            //         deserialized.as_ref(),
-            //         &mut Box::into_raw(header2) as &mut *mut RustMessageHeader
-            //     ),
-            //     0
-            // );
         }
     }
 }

@@ -419,7 +419,8 @@ pub unsafe extern "C" fn amqpvalue_get_char(
 pub extern "C" fn amqpvalue_create_timestamp(timestamp_value: u64) -> *mut RustAmqpValue {
     let amqp_value = RustAmqpValue {
         inner: AmqpValue::TimeStamp(AmqpTimestamp(
-            std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_millis(timestamp_value),
+            std::time::SystemTime::UNIX_EPOCH
+                .checked_add(std::time::Duration::from_millis(timestamp_value)),
         )),
     };
     Box::into_raw(Box::new(amqp_value))
@@ -434,10 +435,13 @@ pub unsafe extern "C" fn amqpvalue_get_timestamp(
     let value = &*value;
     match &value.inner {
         AmqpValue::TimeStamp(v) => {
-            *timestamp_value =
-                v.0.duration_since(std::time::SystemTime::UNIX_EPOCH)
+            *timestamp_value = match v.0 {
+                Some(t) => t
+                    .duration_since(std::time::SystemTime::UNIX_EPOCH)
                     .unwrap()
-                    .as_millis() as i64;
+                    .as_millis() as i64,
+                None => i64::MAX,
+            };
             0
         }
         _ => -1,
@@ -775,7 +779,7 @@ pub unsafe extern "C" fn amqpvalue_get_map_item(
     match &value.inner {
         AmqpValue::Map(v) => {
             let amqp_value = RustAmqpValue {
-                inner: v.get(key.inner.clone()).unwrap().clone(),
+                inner: v.get(&key.inner).unwrap().clone(),
             };
             Box::into_raw(Box::new(amqp_value))
         }

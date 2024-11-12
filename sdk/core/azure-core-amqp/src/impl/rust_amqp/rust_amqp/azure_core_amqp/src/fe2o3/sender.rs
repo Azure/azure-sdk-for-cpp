@@ -2,6 +2,10 @@
 // Licensed under the MIT license.
 //cspell: words amqp
 
+use super::error::{
+    AmqpDeliveryRejected, AmqpLinkDetach, AmqpNotAccepted, AmqpSenderAttach, AmqpSenderSend,
+    Fe2o3AmqpError,
+};
 use crate::messaging::{AmqpMessage, AmqpTarget};
 use crate::sender::{AmqpSendOptions, AmqpSenderApis, AmqpSenderOptions};
 use crate::session::AmqpSession;
@@ -9,13 +13,9 @@ use async_std::sync::Mutex;
 use azure_core::Result;
 use std::borrow::BorrowMut;
 use std::sync::OnceLock;
+use tracing::{info, warn};
 
-use super::error::{
-    AmqpDeliveryRejected, AmqpLinkDetach, AmqpNotAccepted, AmqpSenderAttach, AmqpSenderSend,
-    Fe2o3AmqpError,
-};
-
-#[derive(Debug, Default)]
+#[derive(Default)]
 pub(crate) struct Fe2o3AmqpSender {
     sender: OnceLock<Mutex<fe2o3_amqp::Sender>>,
 }
@@ -24,7 +24,7 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
     async fn attach(
         &self,
         session: &AmqpSession,
-        name: impl Into<String>,
+        name: String,
         target: impl Into<AmqpTarget>,
         options: Option<AmqpSenderOptions>,
     ) -> Result<()> {
@@ -63,7 +63,7 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
             }
         }
         let sender = session_builder
-            .name(name.into())
+            .name(name)
             .target(target.into())
             .attach(session.implementation.get()?.lock().await.borrow_mut())
             .await
@@ -84,12 +84,24 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
                 "Message Sender not set.",
             )
         })?;
-        sender
+        let res = sender
             .into_inner()
             .detach()
             .await
-            .map_err(|e| AmqpLinkDetach::from(e.1))?;
-        Ok(())
+            .map_err(|e| AmqpLinkDetach::from(e.1));
+        match res {
+            Ok(_) => Ok(()),
+            Err(e) => match e.0 {
+                fe2o3_amqp::link::DetachError::ClosedByRemote => {
+                    info!("Error detaching sender: {:?}", e);
+                    Ok(())
+                }
+                _ => {
+                    warn!("Error detaching sender: {:?}", e);
+                    Err(e.into())
+                }
+            },
+        }
     }
 
     fn max_message_size(&self) -> azure_core::Result<Option<u64>> {
@@ -106,7 +118,6 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
             .max_message_size())
     }
 
-    #[tracing::instrument]
     async fn send(
         &self,
         message: impl Into<AmqpMessage> + std::fmt::Debug,
