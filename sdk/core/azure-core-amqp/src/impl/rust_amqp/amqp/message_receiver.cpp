@@ -23,14 +23,14 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
 
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-#if ENABLE_UAMQP
-  void UniqueHandleHelper<MESSAGE_RECEIVER_INSTANCE_TAG>::FreeMessageReceiver(
-      MESSAGE_RECEIVER_HANDLE value)
+  void UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiver>::FreeMessageReceiver(
+      RustInterop::_detail::RustAmqpMessageReceiver* value)
   {
-    messagereceiver_destroy(value);
+    amqpmessagereceiver_destroy(value);
   }
-#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
