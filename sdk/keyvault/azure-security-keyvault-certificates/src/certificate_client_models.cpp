@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+
 #include "private/certificate_constants.hpp"
 
 using namespace Azure::Security::KeyVault::Certificates;
