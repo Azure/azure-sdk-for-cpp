@@ -14,12 +14,18 @@ using namespace Azure::Data::Tables::Models;
 
 const std::string TableName = "transactions";
 
+// The following environment variables must be set before running the sample.
+// * ACCOUNT_NAME: The  name of the account.
+std::string GetAccountName() { return std::getenv("ACCOUNT_NAME"); }
+std::string const GetServiceUrl()
+{
+  return std::string{"https://" + GetAccountName() + ".table.core.windows.net/"};
+}
+
 int main()
 {
-  const std::string accountName{std::getenv("ACCOUNT_NAME")};
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
-  auto tableServiceClient = Azure::Data::Tables::TableServiceClient(
-      "https://" + accountName + ".table.core.windows.net/", credential);
+  auto tableServiceClient = Azure::Data::Tables::TableServiceClient(GetServiceUrl(), credential);
 
   tableServiceClient.CreateTable(TableName);
   // get table client from table service client
