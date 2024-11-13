@@ -84,33 +84,61 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
 }
 
 #[no_mangle]
-unsafe extern "C" fn amqpmessagereceiver_get_max_message_size(
+unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     call_context: *mut RustCallContext,
     receiver: *mut RustAmqpMessageReceiver,
-) -> u64 {
+) -> i32 {
     if receiver.is_null() {
         call_context_from_ptr_mut(call_context).set_error(error_from_str("Invalid input"));
         error!("Invalid input");
-        return 0;
+        return -1;
     }
 
-    let receiver = &mut *receiver;
+    let receiver = Box::from_raw(receiver);
     let call_context = call_context_from_ptr_mut(call_context);
-    trace!("Getting max message size");
+    trace!("Starting to detach receiver");
     let result = call_context
         .runtime_context()
         .runtime()
-        .block_on(receiver.inner.max_message_size());
-    trace!("Got max message size");
-    match result {
-        Ok(size) => size.unwrap_or(0),
-        Err(err) => {
-            error!("Failed to get max message size: {:?}", err);
-            call_context.set_error(Box::new(err));
-            0
-        }
+        .block_on(receiver.inner.detach());
+    trace!("Detached receiver");
+    if let Err(err) = result {
+        error!("Failed to detach receiver: {:?}", err);
+        call_context.set_error(Box::new(err));
+        -1
+    } else {
+        0
     }
 }
+
+// #[no_mangle]
+// unsafe extern "C" fn amqpmessagereceiver_get_max_message_size(
+//     call_context: *mut RustCallContext,
+//     receiver: *mut RustAmqpMessageReceiver,
+// ) -> u64 {
+//     if receiver.is_null() {
+//         call_context_from_ptr_mut(call_context).set_error(error_from_str("Invalid input"));
+//         error!("Invalid input");
+//         return 0;
+//     }
+
+//     let receiver = &mut *receiver;
+//     let call_context = call_context_from_ptr_mut(call_context);
+//     trace!("Getting max message size");
+//     let result = call_context
+//         .runtime_context()
+//         .runtime()
+//         .block_on(receiver.inner.max_message_size());
+//     trace!("Got max message size");
+//     match result {
+//         Ok(size) => size.unwrap_or(0),
+//         Err(err) => {
+//             error!("Failed to get max message size: {:?}", err);
+//             call_context.set_error(Box::new(err));
+//             0
+//         }
+//     }
+// }
 
 #[no_mangle]
 unsafe extern "C" fn amqpmessagereceiveroptions_create() -> *mut RustAmqpMessageReceiverOptions {

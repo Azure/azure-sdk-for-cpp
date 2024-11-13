@@ -1,17 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Enable declaration of strerror_s.
-#define __STDC_WANT_LIB_EXT1__ 1
+// cspell: words amqpmessagereceiver amqpmessagereceiveroptions amqp Amqp
+
+//// Enable declaration of strerror_s.
+// #define __STDC_WANT_LIB_EXT1__ 1
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
 
 #include "../../../models/private/message_impl.hpp"
+#include "../../../models/private/source_impl.hpp"
+#include "../../../models/private/target_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/message_receiver_impl.hpp"
+#include "private/session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -22,6 +27,7 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
+using namespace Azure::Core::Amqp::Common::_detail;
 
 using namespace Azure::Core::Amqp::RustInterop::_detail;
 
@@ -31,9 +37,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     amqpmessagereceiver_destroy(value);
   }
+
+  template <> struct UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>
+  {
+    static void FreeMessageReceiverOptions(
+        RustInterop::_detail::RustAmqpMessageReceiverOptions* obj);
+
+    using type = Core::_internal::BasicUniqueHandle<
+        RustInterop::_detail::RustAmqpMessageReceiverOptions,
+        FreeMessageReceiverOptions>;
+  };
+
+  void UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>::
+      FreeMessageReceiverOptions(RustInterop::_detail::RustAmqpMessageReceiverOptions* value)
+  {
+    amqpmessagereceiveroptions_destroy(value);
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  using UniqueMessageReceiverOptions
+      = UniqueHandle<RustInterop::_detail::RustAmqpMessageReceiverOptions>;
 
   /** Configure the MessageReceiver for receiving messages from a service instance.
    */
@@ -67,12 +92,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::Core::_internal::AzureNoReturnPath(
           "MessageReceiverImpl is being destroyed while open.");
     }
-    if (m_link)
-    {
-      m_link.reset();
-    }
-    m_messageQueue.Clear();
   }
+
+  // Nullable<uint32_t> InitialDeliveryCount;
+
+  // Nullable<uint64_t> MaxMessageSize;
+  // uint32_t MaxLinkCredit{};
+
+  // Models::AmqpMap Properties;
 
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
@@ -81,13 +108,56 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->AuthenticateAudience(
           m_session, static_cast<std::string>(m_source.GetAddress()), context);
     }
-    throw std::runtime_error("Not yet implemented");
-  }
 
+    UniqueMessageReceiverOptions options{amqpmessagereceiveroptions_create()};
+
+    InvokeAmqpApi(amqpmessagereceiveroptions_set_name, options, m_options.Name.c_str());
+
+    RustReceiverSettleMode settleMode;
+    switch (m_options.SettleMode)
+    {
+      case ReceiverSettleMode::First:
+        settleMode = RustReceiverSettleMode::First;
+        break;
+      case ReceiverSettleMode::Second:
+        settleMode = RustReceiverSettleMode::Second;
+        break;
+    }
+    InvokeAmqpApi(amqpmessagereceiveroptions_set_receiver_settle_mode, options, settleMode);
+    InvokeAmqpApi(
+        amqpmessagereceiveroptions_set_target,
+        options,
+        Models::_detail::AmqpTargetFactory::ToImplementation(m_options.MessageTarget));
+    InvokeAmqpApi(
+        amqpmessagereceiveroptions_set_properties,
+        options,
+        Models::_detail::AmqpValueFactory::ToImplementation(m_options.Properties.AsAmqpValue()));
+
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+    if (!amqpmessagereceiver_attach(
+            callContext.GetCallContext(),
+            m_receiver.get(),
+            m_session->GetAmqpSession().get(),
+            Models::_detail::AmqpSourceFactory::ToImplementation(m_source),
+            options.get()))
+    {
+      m_receiverOpen = true;
+    }
+    else
+    {
+      throw std::runtime_error("Failed to attach message receiver: " + callContext.GetError());
+    }
+  }
   void MessageReceiverImpl::Close(Context const& context)
   {
-    throw std::runtime_error("Not yet implemented");
-    (void)context;
-  }
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
+    if (!amqpmessagereceiver_detach_and_release(callContext.GetCallContext(), m_receiver.release()))
+    {
+      throw std::runtime_error("Failed to detach message receiver: " + callContext.GetError());
+    }
+  }
 }}}} // namespace Azure::Core::Amqp::_detail

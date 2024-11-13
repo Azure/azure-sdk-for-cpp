@@ -4,9 +4,6 @@
 #pragma once
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
-#if ENABLE_UAMQP
-#include "link_impl.hpp"
-#endif
 #include "rust_amqp_wrapper.h"
 #include "session_impl.hpp"
 #include "unique_handle.hpp"
@@ -60,13 +57,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     bool m_receiverOpen{false};
-    std::shared_ptr<_detail::LinkImpl> m_link;
+    UniqueMessageReceiver m_receiver;
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;
     std::shared_ptr<_detail::SessionImpl> m_session;
-    bool m_deferLinkPolling{false};
-
-    bool m_linkPollingEnabled{false};
-    std::mutex m_mutableState;
   };
 }}}} // namespace Azure::Core::Amqp::_detail
