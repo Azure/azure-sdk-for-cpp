@@ -105,7 +105,7 @@ Two different clients are provided to interact with the various components of th
 
 ##### Creating and deleting a table
 
-In order to Create/Delete a table we need to create a TablesServiceClient first.
+In order to Create/Delete a table we need to create a `TableServiceClient` first.
 
 ```cpp
 #include <azure/data/tables.hpp>
