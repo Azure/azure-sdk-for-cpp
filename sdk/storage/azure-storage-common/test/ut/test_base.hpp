@@ -10,9 +10,6 @@
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/blobs.hpp>
-#include <azure/storage/common/internal/constants.hpp>
-#include <azure/storage/common/storage_common.hpp>
 
 #include <cctype>
 #include <chrono>
@@ -24,6 +21,8 @@
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Storage {
+
+  using Metadata = Azure::Core::CaseInsensitiveMap;
 
   namespace Test {
 
@@ -121,7 +120,7 @@ namespace Azure { namespace Storage {
       char RandomChar();
       std::string RandomString(size_t size = 10);
       std::string LowercaseRandomString(size_t size = 10);
-      Storage::Metadata RandomMetadata(size_t size = 5);
+      Metadata RandomMetadata(size_t size = 5);
       void RandomBuffer(char* buffer, size_t length);
       void RandomBuffer(uint8_t* buffer, size_t length)
       {

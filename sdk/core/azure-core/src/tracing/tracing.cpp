@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #include "azure/core/context.hpp"
-#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/tracing/service_tracing.hpp"
 #include "azure/core/internal/tracing/tracing_impl.hpp"
 
@@ -42,7 +41,6 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
       std::string const& methodName,
       Azure::Core::Context const& context) const
   {
-    Azure::Core::Context contextToUse = context;
     CreateSpanOptions createOptions;
 
     createOptions.Kind = SpanKind::Internal;

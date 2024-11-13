@@ -3,17 +3,15 @@
 
 #include "azure/core/base64.hpp"
 
-#include "azure/core/platform.hpp"
-
 #include <string>
 #include <vector>
 
 namespace {
 
-static char const Base64EncodeArray[65]
+char const Base64EncodeArray[65]
     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static char const EncodingPad = '=';
-static int8_t const Base64DecodeArray[256] = {
+char const EncodingPad = '=';
+int8_t const Base64DecodeArray[256] = {
     -1,
     -1,
     -1,
@@ -273,7 +271,7 @@ static int8_t const Base64DecodeArray[256] = {
     -1,
 };
 
-static int32_t Base64Encode(const uint8_t* threeBytes)
+int32_t Base64Encode(const uint8_t* threeBytes)
 {
   int32_t i = (threeBytes[0] << 16) | (threeBytes[1] << 8) | threeBytes[2];
 
@@ -285,7 +283,7 @@ static int32_t Base64Encode(const uint8_t* threeBytes)
   return i0 | (i1 << 8) | (i2 << 16) | (i3 << 24);
 }
 
-static int32_t Base64EncodeAndPadOne(const uint8_t* twoBytes)
+int32_t Base64EncodeAndPadOne(const uint8_t* twoBytes)
 {
   int32_t i = twoBytes[0] << 16 | (twoBytes[1] << 8);
 
@@ -296,7 +294,7 @@ static int32_t Base64EncodeAndPadOne(const uint8_t* twoBytes)
   return i0 | (i1 << 8) | (i2 << 16) | (EncodingPad << 24);
 }
 
-static int32_t Base64EncodeAndPadTwo(const uint8_t* oneByte)
+int32_t Base64EncodeAndPadTwo(const uint8_t* oneByte)
 {
   int32_t i = oneByte[0] << 8;
 
@@ -306,7 +304,7 @@ static int32_t Base64EncodeAndPadTwo(const uint8_t* oneByte)
   return i0 | (i1 << 8) | (EncodingPad << 16) | (EncodingPad << 24);
 }
 
-static void Base64WriteIntAsFourBytes(char* destination, int32_t value)
+void Base64WriteIntAsFourBytes(char* destination, int32_t value)
 {
   destination[3] = static_cast<uint8_t>((value >> 24) & 0xFF);
   destination[2] = static_cast<uint8_t>((value >> 16) & 0xFF);
@@ -336,21 +334,17 @@ std::string Base64Encode(uint8_t const* const data, size_t length)
   {
     int32_t result = Base64EncodeAndPadTwo(&data[sourceIndex]);
     Base64WriteIntAsFourBytes(destination, result);
-    destination += 4;
-    sourceIndex += 1;
   }
   else if (sourceIndex + 2 == inputSize)
   {
     int32_t result = Base64EncodeAndPadOne(&data[sourceIndex]);
     Base64WriteIntAsFourBytes(destination, result);
-    destination += 4;
-    sourceIndex += 2;
   }
 
   return encodedResult;
 }
 
-static int32_t Base64Decode(const char* encodedBytes)
+int32_t Base64Decode(const char* encodedBytes)
 {
   int32_t i0 = encodedBytes[0];
   int32_t i1 = encodedBytes[1];
@@ -373,7 +367,7 @@ static int32_t Base64Decode(const char* encodedBytes)
   return i0;
 }
 
-static void Base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destination, int64_t value)
+void Base64WriteThreeLowOrderBytes(std::vector<uint8_t>::iterator destination, int64_t value)
 {
   destination[0] = static_cast<uint8_t>(value >> 16);
   destination[1] = static_cast<uint8_t>(value >> 8);
@@ -453,7 +447,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     }
 
     Base64WriteThreeLowOrderBytes(destinationPtr, i0);
-    destinationPtr += 3;
   }
   else if (i2 != EncodingPad)
   {
@@ -469,7 +462,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
 
     destinationPtr[1] = static_cast<uint8_t>(i0 >> 8);
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
-    destinationPtr += 2;
   }
   else
   {
@@ -479,7 +471,6 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     }
 
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
-    destinationPtr += 1;
   }
 
   return destination;

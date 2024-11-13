@@ -3,13 +3,11 @@
 
 #include "azure/core/http/http.hpp"
 
-#include "azure/core/http/policies/policy.hpp"
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/url.hpp"
 
 #include <algorithm>
 #include <unordered_set>
-#include <utility>
 
 using namespace Azure::Core;
 using namespace Azure::Core::Http;

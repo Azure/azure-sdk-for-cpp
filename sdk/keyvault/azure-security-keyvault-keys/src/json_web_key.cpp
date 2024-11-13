@@ -27,7 +27,7 @@ void ParseStringOperationsToKeyOperations(
   }
 }
 
-static inline void AssignBytesIfExists(
+inline void AssignBytesIfExists(
     Azure::Core::Json::_internal::json const& jsonKey,
     std::string const& keyName,
     std::vector<uint8_t>& destBytes)
@@ -38,14 +38,14 @@ static inline void AssignBytesIfExists(
       });
 }
 
-static inline void WriteJsonIfVectorHasData(
+inline void WriteJsonIfVectorHasData(
     std::vector<uint8_t> const& srcVector,
     Azure::Core::Json::_internal::json& jsonKey,
     std::string const& keyName)
 {
   JsonOptional::SetFromIfPredicate<std::vector<uint8_t> const&>(
       srcVector,
-      [](std::vector<uint8_t> const& value) { return value.size() > 0; },
+      [](std::vector<uint8_t> const& value) { return !value.empty(); },
       jsonKey,
       keyName,
       Base64Url::Base64UrlEncode);
@@ -60,7 +60,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeyS
   destJson[_detail::KeyTypePropertyName] = jwk.KeyType.ToString();
 
   // ops
-  for (KeyOperation op : jwk.KeyOperations())
+  for (KeyOperation const& op : jwk.KeyOperations())
   {
     destJson[_detail::KeyOpsPropertyName].push_back(op.ToString());
   }
@@ -70,7 +70,7 @@ void Azure::Security::KeyVault::Keys::_detail::JsonWebKeySerializer::JsonWebKeyS
       jwk.CurveName, destJson, _detail::CurveNamePropertyName, [](KeyCurveName const& value) {
         return value.ToString();
       });
-  if (jwk.Id.length() > 0)
+  if (!jwk.Id.empty())
   {
     destJson[_detail::KeyIdPropertyName] = jwk.Id;
   }

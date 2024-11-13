@@ -4,15 +4,26 @@
 
 ### Features Added
 
+- Added mTLS support to WinHTTP transport.
+  - To enable mTLS, first create an appropriate Windows `PCCERT_CONTEXT` object and set the `TlsClientCertificate` field in `WinHttpTransportOptions` to that certificate before creating the `WinHttpTransport` object.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.14.1 (2024-11-01)
+
+### Bugs Fixed
+
 - Fixed warning for an unused function in curl.cpp when building the SDK using a version of libcurl older than 7.77.0.
+- Invalidate the token cache within `BearerTokenAuthenticationPolicy` whenever a token request comes back with a 401 response.
 
 ### Other Changes
 
 - [[#6087]](https://github.com/Azure/azure-sdk-for-cpp/pull/6087) Set version property for the compiled SDK binary files. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
+- [[#6064]](https://github.com/Azure/azure-sdk-for-cpp/issues/6064) Added internal support for the SDK packages to access more of telemetry features.
 
 ### Acknowledgments
 

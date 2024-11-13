@@ -19,6 +19,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace _detail {
@@ -50,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
       {
         m_options.NotBefore = key.NotBefore.Value();
       }
-      if (key.Tags.size() > 0)
+      if (!key.Tags.empty())
       {
         m_options.Tags = std::unordered_map<std::string, std::string>(key.Tags);
       }
@@ -69,7 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     }
 
     explicit KeyRequestParameters(KeyVaultKeyType keyType, CreateKeyOptions const& options)
-        : m_keyType(keyType), m_options(options)
+        : m_keyType(std::move(keyType)), m_options(options)
     {
     }
 

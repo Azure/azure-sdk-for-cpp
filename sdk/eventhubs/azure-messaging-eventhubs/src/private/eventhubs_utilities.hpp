@@ -14,10 +14,11 @@
 #include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/context.hpp>
+#include <azure/core/http/http.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/internal/http/user_agent.hpp>
 
 #include <chrono>
+#include <utility>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
@@ -93,7 +94,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     EventHubsPropertiesClient(
         const Azure::Core::Amqp::_internal::Connection& connection,
         std::string eventHubName)
-        : m_session{connection.CreateSession()}, m_eventHub{eventHubName} {};
+        : m_session{connection.CreateSession()}, m_eventHub{std::move(eventHubName)} {};
 
     ~EventHubsPropertiesClient()
     {
@@ -277,7 +278,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 #endif
       options.Properties.emplace(
           "user-agent",
-          Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+          Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }
 

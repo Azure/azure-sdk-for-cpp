@@ -3,6 +3,8 @@
 
 #include "share_directory_client_test.hpp"
 
+#include <azure/storage/common/crypt.hpp>
+
 #include <algorithm>
 #include <chrono>
 

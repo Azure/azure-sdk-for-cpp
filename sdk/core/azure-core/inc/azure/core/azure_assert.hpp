@@ -50,7 +50,7 @@
 /** @brief Azure specific assert macro.*/
 #define AZURE_ASSERT(exp) assert((exp))
 /** @brief Azure specific assert macro with message.*/
-#define AZURE_ASSERT_MSG(exp, msg) assert(((void)msg, (exp)))
+#define AZURE_ASSERT_MSG(exp, msg) assert(((void)(msg), (exp)))
 
 #endif
 

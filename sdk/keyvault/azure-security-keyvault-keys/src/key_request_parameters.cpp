@@ -21,7 +21,7 @@ std::string KeyRequestParameters::Serialize() const
   Azure::Core::Json::_internal::json payload;
   // kty
   JsonOptional::SetFromNullable<KeyVaultKeyType, std::string>(
-      m_keyType, payload, _detail::KeyTypePropertyName, [](KeyVaultKeyType type) {
+      m_keyType, payload, _detail::KeyTypePropertyName, [](KeyVaultKeyType const& type) {
         return type.ToString();
       });
 
@@ -39,7 +39,7 @@ std::string KeyRequestParameters::Serialize() const
   // key_size
   // public_exponent
   // key_ops
-  for (KeyOperation op : m_options.KeyOperations)
+  for (KeyOperation const& op : m_options.KeyOperations)
   {
     payload[_detail::KeyOpsPropertyName].push_back(op.ToString());
   }
@@ -58,7 +58,7 @@ std::string KeyRequestParameters::Serialize() const
       PosixTimeConverter::DateTimeToPosixTime);
 
   // tags
-  for (auto tag : m_options.Tags)
+  for (auto const& tag : m_options.Tags)
   {
     payload[_detail::TagsPropertyName][tag.first] = tag.second;
   }

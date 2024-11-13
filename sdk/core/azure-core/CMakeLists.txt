@@ -90,7 +90,6 @@ set(
     inc/azure/core/internal/extendable_enumeration.hpp
     inc/azure/core/internal/http/http_sanitizer.hpp
     inc/azure/core/internal/http/pipeline.hpp
-    inc/azure/core/internal/http/user_agent.hpp
     inc/azure/core/internal/io/null_body_stream.hpp
     inc/azure/core/internal/json/json.hpp
     inc/azure/core/internal/json/json_optional.hpp

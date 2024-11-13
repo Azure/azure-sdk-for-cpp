@@ -42,6 +42,23 @@ public:
 
 using namespace std::chrono_literals;
 
+TEST(TokenCache, IsFreshOverflow)
+{
+  TestableTokenCache tokenCache;
+
+  EXPECT_EQ(tokenCache.m_cache.size(), 0UL);
+
+  DateTime const Tomorrow = std::chrono::system_clock::now() + 24h;
+
+  auto const token1 = tokenCache.GetToken("A", {}, DateTime::duration::max(), [=]() {
+    AccessToken result;
+    result.Token = "T1";
+    result.ExpiresOn = Tomorrow;
+    return result;
+  });
+  EXPECT_EQ(token1.Token, "T1");
+}
+
 TEST(TokenCache, GetReuseRefresh)
 {
   TestableTokenCache tokenCache;

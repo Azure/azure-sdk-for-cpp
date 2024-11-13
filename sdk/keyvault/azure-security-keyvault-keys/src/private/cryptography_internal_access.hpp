@@ -31,7 +31,7 @@ namespace Azure {
           std::string const& apiVersion,
           std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
       {
-        return CryptographyClient(keyId, apiVersion, pipeline);
+        return CryptographyClient(std::move(keyId), apiVersion, std::move(pipeline));
       }
     };
 

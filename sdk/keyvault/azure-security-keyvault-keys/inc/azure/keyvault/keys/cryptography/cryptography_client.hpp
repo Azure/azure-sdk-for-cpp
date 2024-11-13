@@ -21,6 +21,7 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Azure {
@@ -76,7 +77,7 @@ namespace Azure {
         Azure::Core::Url keyId,
         std::string const& apiVersion,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline)
-        : m_keyId(keyId), m_apiVersion(apiVersion), m_pipeline(pipeline)
+        : m_keyId(std::move(keyId)), m_apiVersion(apiVersion), m_pipeline(std::move(pipeline))
     {
     }
 
@@ -142,7 +143,7 @@ namespace Azure {
      * wrapped key.
      */
     Azure::Response<WrapResult> WrapKey(
-        KeyWrapAlgorithm algorithm,
+        KeyWrapAlgorithm const& algorithm,
         std::vector<uint8_t> const& key,
         Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -157,7 +158,7 @@ namespace Azure {
      * information regarding the algorithm and key used to unwrap it.
      */
     Azure::Response<UnwrapResult> UnwrapKey(
-        KeyWrapAlgorithm algorithm,
+        KeyWrapAlgorithm const& algorithm,
         std::vector<uint8_t> const& encryptedKey,
         Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -175,7 +176,7 @@ namespace Azure {
      * signature.
      */
     Azure::Response<SignResult> Sign(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         std::vector<uint8_t> const& digest,
         Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -192,7 +193,7 @@ namespace Azure {
      * signature.
      */
     Azure::Response<SignResult> SignData(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         Azure::Core::IO::BodyStream& data,
         Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -209,7 +210,7 @@ namespace Azure {
      * signature.
      */
     Azure::Response<SignResult> SignData(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         std::vector<uint8_t> const& data,
         Azure::Core::Context const& context = Azure::Core::Context());
 
@@ -227,7 +228,7 @@ namespace Azure {
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> Verify(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         std::vector<uint8_t> const& digest,
         std::vector<uint8_t> const& signature,
         Azure::Core::Context const& context = Azure::Core::Context());
@@ -245,7 +246,7 @@ namespace Azure {
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         Azure::Core::IO::BodyStream& data,
         std::vector<uint8_t> const& signature,
         Azure::Core::Context const& context = Azure::Core::Context());
@@ -263,7 +264,7 @@ namespace Azure {
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
-        SignatureAlgorithm algorithm,
+        SignatureAlgorithm const& algorithm,
         std::vector<uint8_t> const& data,
         std::vector<uint8_t> const& signature,
         Azure::Core::Context const& context = Azure::Core::Context());

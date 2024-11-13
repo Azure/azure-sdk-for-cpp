@@ -6,17 +6,15 @@
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "private/environment_log_level_listener.hpp"
 
-#include <iostream>
 #include <mutex>
 #include <shared_mutex>
-#include <sstream>
 
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Diagnostics::_internal;
 
 namespace {
-static std::shared_timed_mutex g_logListenerMutex;
-static std::function<void(Logger::Level level, std::string const& message)> g_logListener(
+std::shared_timed_mutex g_logListenerMutex{};
+std::function<void(Logger::Level level, std::string const& message)> g_logListener(
     _detail::EnvironmentLogLevelListener::GetLogListener());
 } // namespace
 

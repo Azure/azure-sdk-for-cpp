@@ -107,3 +107,19 @@ TEST_F(SettingsClientTest, UpdateSetting_RECORDEDONLY_)
     SkipTest();
   }
 }
+
+TEST(KeyVaultSettingsClientTest, ServiceVersion)
+{
+  auto credential
+      = std::make_shared<Azure::Identity::ClientSecretCredential>("tenantID", "AppId", "SecretId");
+  // Default - 7.4
+  EXPECT_NO_THROW(auto options = SettingsClientOptions(); SettingsClient settingsClient(
+                      "http://account.vault.azure.net", credential, options);
+                  EXPECT_EQ(options.ApiVersion, "7.4"););
+
+  // 7.4
+  EXPECT_NO_THROW(
+      auto options = SettingsClientOptions(); options.ApiVersion = "7.4";
+      SettingsClient settingsClient("http://account.vault.azure.net", credential, options);
+      EXPECT_EQ(options.ApiVersion, "7.4"););
+}

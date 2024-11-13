@@ -3,15 +3,15 @@
 
 #include "azure/data/tables/account_sas_builder.hpp"
 
-#include "azure/data/tables/internal/cryptography/hmacsha256.hpp"
-#include "azure/data/tables/internal/cryptography/url_encode.hpp"
+#include "private/hmacsha256.hpp"
+#include "private/url_encode.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/http/http.hpp>
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   namespace {
-    constexpr static const char* SasVersion = "2023-08-03";
+    constexpr const char* SasVersion = "2023-08-03";
   }
 
   void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)

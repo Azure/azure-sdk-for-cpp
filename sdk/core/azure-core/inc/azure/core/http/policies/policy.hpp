@@ -15,7 +15,6 @@
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/internal/http/http_sanitizer.hpp"
-#include "azure/core/internal/http/user_agent.hpp"
 #include "azure/core/uuid.hpp"
 
 #include <atomic>
@@ -89,7 +88,12 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
 #elif defined(_azure_BUILDING_SAMPLES)
         0L
 #else
+    // https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+#if defined(_MSVC_LANG) && __cplusplus == 199711L
+        _MSVC_LANG
+#else
         __cplusplus
+#endif
 #endif
         ;
   };
@@ -545,7 +549,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           std::string const& packageName,
           std::string const& packageVersion,
           TelemetryOptions options = TelemetryOptions())
-          : m_telemetryId(Azure::Core::Http::_detail::UserAgentGenerator::GenerateUserAgent(
+          : m_telemetryId(Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName,
               packageVersion,
               options.ApplicationId,
@@ -576,6 +580,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       mutable Credentials::AccessToken m_accessToken;
       mutable std::shared_timed_mutex m_accessTokenMutex;
       mutable Credentials::TokenRequestContext m_accessTokenContext;
+      mutable std::atomic<bool> m_invalidateToken = {false};
 
     public:
       /**
@@ -610,6 +615,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
         std::shared_lock<std::shared_timed_mutex> readLock(other.m_accessTokenMutex);
         m_accessToken = other.m_accessToken;
         m_accessTokenContext = other.m_accessTokenContext;
+        m_invalidateToken.store(other.m_invalidateToken.load());
       }
 
       void operator=(BearerTokenAuthenticationPolicy const&) = delete;

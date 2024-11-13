@@ -26,6 +26,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 #if defined(_azure_TESTING_BUILD)
@@ -244,7 +245,7 @@ namespace Azure { namespace Core { namespace Http {
      * @param bodyStream #Azure::Core::IO::BodyStream.
      */
     explicit Request(HttpMethod httpMethod, Url url, Azure::Core::IO::BodyStream* bodyStream)
-        : Request(httpMethod, std::move(url), bodyStream, true)
+        : Request(std::move(httpMethod), std::move(url), bodyStream, true)
     {
     }
 
@@ -327,7 +328,7 @@ namespace Azure { namespace Core { namespace Http {
      * @brief A value indicating whether the returned raw response for this request will be buffered
      * within a memory buffer or if it will be returned as a body stream instead.
      */
-    bool ShouldBufferResponse() { return this->m_shouldBufferResponse; }
+    bool ShouldBufferResponse() const { return this->m_shouldBufferResponse; }
 
     /**
      * @brief Get URL.
@@ -412,6 +413,34 @@ namespace Azure { namespace Core { namespace Http {
         }
         return {}; // empty string
       }
+
+      /**
+       * @brief Generates User-Agent string for telemetry.
+       *
+       * @param componentName the name of the SDK component.
+       * @param componentVersion the version of the SDK component.
+       * @param applicationId user application ID
+       * @param cplusplusValue value of the `__cplusplus` macro.
+       *
+       * @return User-Agent string.
+       *
+       * @see https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
+       *
+       * @note Values for @a cplusplusValue: `__cplusplus` when value comes from the code being
+       * built after the Azure SDK has been built. `0L` when being sent from sample code, `-1L` when
+       * being sent from tests code, `-2L` when being sent from the SDK code, and `-3L` when being
+       * sent from the SDK code for compatibility reasons.
+       *
+       */
+      static std::string GenerateUserAgent(
+          std::string const& componentName,
+          std::string const& componentVersion,
+          std::string const& applicationId,
+          long cplusplusValue);
+
+    private:
+      HttpShared() = delete;
+      ~HttpShared() = delete;
     };
   } // namespace _internal
 

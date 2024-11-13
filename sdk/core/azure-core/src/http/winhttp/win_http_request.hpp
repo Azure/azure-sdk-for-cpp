@@ -28,9 +28,10 @@
 #pragma warning(disable : 6553)
 #pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
                                 // 'GetProcAddress'.
+#include <wincrypt.h>
+
 #include <wil\resource.h>
 #pragma warning(pop)
-#include <wincrypt.h>
 #include <winhttp.h>
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
@@ -157,6 +158,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
     std::unique_ptr<WinHttpAction> m_httpAction;
     std::vector<std::string> m_expectedTlsRootCertificates;
+    wil::unique_cert_context m_tlsClientCertificate;
 
     /*
      * Adds the specified trusted certificates to the specified certificate store.
@@ -176,6 +178,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
         Azure::Core::Url const& url,
         Azure::Core::Http::HttpMethod const& method,
+        PCCERT_CONTEXT tlsClientCertificate,
         WinHttpTransportOptions const& options);
 
     ~WinHttpRequest();

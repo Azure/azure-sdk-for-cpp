@@ -16,6 +16,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace Azure {
@@ -583,7 +584,7 @@ namespace Azure {
      * use for decrypt operation.
      * @param ciphertext The content to decrypt.
      */
-    DecryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const ciphertext)
+    DecryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> ciphertext)
         : Algorithm(std::move(algorithm)), Ciphertext(std::move(ciphertext))
     {
     }
@@ -892,7 +893,7 @@ namespace Azure {
      * use for encrypt operation.
      * @param plaintext The content to encrypt.
      */
-    EncryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> const plaintext)
+    EncryptParameters(EncryptionAlgorithm algorithm, std::vector<uint8_t> plaintext)
         : Algorithm(std::move(algorithm)), Plaintext(std::move(plaintext))
     {
     }

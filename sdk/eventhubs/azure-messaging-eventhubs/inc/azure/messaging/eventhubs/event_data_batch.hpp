@@ -53,8 +53,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class EventDataBatch final {
   private:
-    const std::string anyPartitionId = "";
-
     std::mutex m_rwMutex;
     std::string m_partitionId;
     std::string m_partitionKey;
@@ -150,7 +148,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     bool TryAddAmqpMessage(
         std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message);
 
-    size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
+    static size_t CalculateActualSizeForPayload(std::vector<uint8_t> const& payload)
     {
       const size_t vbin8Overhead = 5;
       const size_t vbin32Overhead = 8;
@@ -177,7 +175,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @param options Options settings for creating the data batch
      */
-    EventDataBatch(EventDataBatchOptions options = {})
+    EventDataBatch(EventDataBatchOptions const& options = {})
         : m_partitionId{options.PartitionId}, m_partitionKey{options.PartitionKey},
           m_maxBytes{options.MaxBytes}, m_marshalledMessages{}, m_batchEnvelope{}, m_currentSize{0}
     {
@@ -188,7 +186,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       if (options.PartitionId.empty())
       {
-        m_partitionId = anyPartitionId;
+        m_partitionId = ""; // "" means "any partition ID"
       }
     };
 

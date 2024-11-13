@@ -88,7 +88,7 @@ namespace Azure { namespace Core {
      * @brief Constructs a new, empty URL object.
      *
      */
-    Url() {}
+    Url() = default;
 
     /**
      * @brief Constructs a URL from a URL-encoded string.

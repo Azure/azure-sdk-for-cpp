@@ -77,7 +77,7 @@ namespace Azure { namespace Identity { namespace _detail {
   public:
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
-        Core::Context const& context) const override final;
+        Core::Context const& context) const final;
   };
 
   class AppServiceV2017ManagedIdentitySource final : public AppServiceManagedIdentitySource {
@@ -96,7 +96,7 @@ namespace Azure { namespace Identity { namespace _detail {
             objectId,
             resourceId,
             options,
-            endpointUrl,
+            std::move(endpointUrl),
             secret,
             "2017-09-01",
             "secret",
@@ -129,7 +129,7 @@ namespace Azure { namespace Identity { namespace _detail {
             objectId,
             resourceId,
             options,
-            endpointUrl,
+            std::move(endpointUrl),
             secret,
             "2019-08-01",
             "X-IDENTITY-HEADER",

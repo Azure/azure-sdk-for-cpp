@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell: words PCCERT
+
 /**
  * @file
  * @brief #Azure::Core::Http::HttpTransport implementation via WinHTTP.
@@ -20,10 +22,16 @@
 #include <string>
 #include <vector>
 
+/**
+ * @brief Declaration of a Windows PCCERT_CONTEXT structure from the Windows SDK.
+ */
+using PCCERT_CONTEXT = const struct _CERT_CONTEXT*;
+
 namespace Azure { namespace Core { namespace Http {
   namespace _detail {
+    class WinHttpTransportImpl;
     class WinHttpRequest;
-  }
+  } // namespace _detail
 
   /**
    * @brief Sets the WinHTTP session and connection options used to customize the behavior of the
@@ -91,6 +99,12 @@ namespace Azure { namespace Core { namespace Http {
      * the server.
      */
     std::vector<std::string> ExpectedTlsRootCertificates;
+
+    /**
+     * @brief TLS Client Certificate Context, used when the TLS Server requests mTLS client
+     * authentication.
+     */
+    PCCERT_CONTEXT TlsClientCertificate{nullptr};
   };
 
   /**
@@ -99,23 +113,16 @@ namespace Azure { namespace Core { namespace Http {
    */
   class WinHttpTransport : public HttpTransport {
   private:
-    WinHttpTransportOptions m_options;
-    // m_sessionhandle is const to ensure immutability.
-    const Azure::Core::_internal::UniqueHandle<void*> m_sessionHandle;
+    std::unique_ptr<_detail::WinHttpTransportImpl> m_impl;
 
-    Azure::Core::_internal::UniqueHandle<void*> CreateSessionHandle();
-    Azure::Core::_internal::UniqueHandle<void*> CreateConnectionHandle(
-        Azure::Core::Url const& url,
-        Azure::Core::Context const& context);
-
-    std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
-        Azure::Core::_internal::UniqueHandle<void*> const& connectionHandle,
-        Azure::Core::Url const& url,
-        Azure::Core::Http::HttpMethod const& method);
-
-    // Callback to allow a derived transport to extract the request handle. Used for WebSocket
-    // transports.
-    virtual void OnUpgradedConnection(std::unique_ptr<_detail::WinHttpRequest> const&){};
+  protected:
+    /** @brief Callback to allow a derived transport to extract the request handle. Used for
+     * WebSocket transports.
+     *
+     * @param request - Request which contains the WinHttp request handle.
+     */
+    virtual void OnUpgradedConnection(
+        std::unique_ptr<_detail::WinHttpRequest> const& request) const;
 
   public:
     /**
@@ -125,11 +132,6 @@ namespace Azure { namespace Core { namespace Http {
      */
     WinHttpTransport(WinHttpTransportOptions const& options = WinHttpTransportOptions());
 
-    /**
-     * @brief Constructs `%WinHttpTransport`.
-     *
-     * @param options Optional parameter to override the default settings.
-     */
     /**
      * @brief Constructs `%WinHttpTransport` object based on common Azure HTTP Transport Options
      *
@@ -148,6 +150,10 @@ namespace Azure { namespace Core { namespace Http {
     // and virtual or protected and
     // non-virtual"](http://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#c35-a-base-class-destructor-should-be-either-public-and-virtual-or-protected-and-non-virtual)
     virtual ~WinHttpTransport();
+
+    // @cond
+    friend _detail::WinHttpTransportImpl;
+    // @endcond
   };
 
 }}} // namespace Azure::Core::Http

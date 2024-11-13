@@ -55,7 +55,7 @@ namespace Azure { namespace Core {
 
   std::string RequestFailedException::GetRawResponseField(
       std::unique_ptr<Azure::Core::Http::RawResponse> const& rawResponse,
-      std::string fieldName)
+      std::string const& fieldName)
   {
     auto& headers = rawResponse->GetHeaders();
     std::string contentType = HttpShared::GetHeaderOrEmptyString(headers, HttpShared::ContentType);

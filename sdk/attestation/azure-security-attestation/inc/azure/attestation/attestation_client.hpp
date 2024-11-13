@@ -173,7 +173,7 @@ namespace Azure { namespace Security { namespace Attestation {
      *
      * @returns The absolute URL for this attestation client.
      */
-    std::string const Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
+    std::string Endpoint() const { return m_endpoint.GetAbsoluteUrl(); }
 
     /**
      * Retrieves metadata about the attestation signing keys in use by the attestation service.

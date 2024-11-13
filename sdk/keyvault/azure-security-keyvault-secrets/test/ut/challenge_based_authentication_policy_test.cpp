@@ -1192,6 +1192,18 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
                       HttpStatusCode::Ok,
                       "{\"expires_in\":3600,\"access_token\":\"ACCESSTOKEN4\"}",
                       {}),
+                  TestResponse( // <-- DoSomething() #9
+                      HttpStatusCode::Ok,
+                      "{\"expires_in\":3600,\"access_token\":\"ACCESSTOKEN5\"}",
+                      {}),
+                  TestResponse( // <-- DoSomething() #10
+                      HttpStatusCode::Ok,
+                      "{\"expires_in\":3600,\"access_token\":\"ACCESSTOKEN6\"}",
+                      {}),
+                  TestResponse( // <-- DoSomething() #12
+                      HttpStatusCode::Ok,
+                      "{\"expires_in\":3600,\"access_token\":\"ACCESSTOKEN7\"}",
+                      {}),
               }),
           {"*"}),
       std::make_shared<TestHttpTransport>(
@@ -1258,7 +1270,7 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
                   }), // ^^^ authorization_uri is missing - throws
 
               // DoSomething() #9 vvvvv
-              TestResponse(HttpStatusCode::Ok, {}, {}), // AnotherTenantId (vault.azure...), TOKEN4
+              TestResponse(HttpStatusCode::Ok, {}, {}), // AnotherTenantId (vault.azure...), TOKEN5
 
               // DoSomething() #10 vvvvv
               TestResponse(
@@ -1271,7 +1283,7 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
                           " authorization_uri=\"https://login.windows.net/OriginalTenantId\","
                           " resource=\"https://vault.azure.net/\""),
                   }),
-              TestResponse(HttpStatusCode::Ok, {}, {}), // OriginalTenantId, cached TOKEN2
+              TestResponse(HttpStatusCode::Ok, {}, {}), // OriginalTenantId, TOKEN6
 
               // DoSomething() #11 vvvvv
               TestResponse(
@@ -1285,7 +1297,7 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
                   }), // ^^^ resource is missing - won't update token
 
               // DoSomething() #12 vvvvv
-              TestResponse(HttpStatusCode::Ok, {}, {}), // OriginalTenantId, TOKEN5
+              TestResponse(HttpStatusCode::Ok, {}, {}), // OriginalTenantId, TOKEN7
           }));
 
   client.DoSomething(); // #1: Ok with defaults, authorize with TOKEN1
@@ -1295,13 +1307,15 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
   client.DoSomething(); // #5: Ok, authorize with TOKEN3
   client.DoSomething(); // #6: Ok, authorize with TOKEN3
   client.DoSomething(); // #7: Challenge response, same TenantId, new scope, authorize with TOKEN4
-  EXPECT_THROW(client.DoSomething(), AuthenticationException); // #8: Bad challenge (no TenantId)
-  client.DoSomething(); // #9: Ok, keeps authorizing with TOKEN4
-  client.DoSomething(); // #10: Revert back to OriginalTokenId, use cached TOKEN1
-  client.DoSomething(); // #11: Attempt NewTenantId, but scope is missing
-  client.DoSomething(); // #12: Ok, authorize with TOKEN1
+  EXPECT_THROW(
+      client.DoSomething(),
+      AuthenticationException); // #8: Bad challenge (no TenantId), cache invalidated
+  client.DoSomething(); // #9: Ok, authorize with TOKEN5
+  client.DoSomething(); // #10: Don't revert back to cached token, authorize with TOKEN6
+  client.DoSomething(); // #11: Attempt NewTenantId, but scope is missing, cache invalidated
+  client.DoSomething(); // #12: Ok, authorize with TOKEN7
 
-  EXPECT_EQ(identityRequests->size(), 4);
+  EXPECT_EQ(identityRequests->size(), 7);
   {
     // DoSomething() #1 vvv
     {
@@ -1339,7 +1353,32 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
           "https%3A%2F%2Fvault.azure.net%2F.default");
     }
 
-    // DoSomething() #10 won't make a request because the token is cached
+    // DoSomething() #9 vvv
+    {
+      auto const& identityRequest4 = identityRequests->at(4);
+      EXPECT_EQ(GetTenantIdFromClientSecretRequest(identityRequest4), "AnotherTenantId");
+      EXPECT_EQ(
+          GetScopeFromClientSecretRequest(identityRequest4),
+          "https%3A%2F%2Fvault.azure.net%2F.default");
+    }
+
+    // DoSomething() #10 vvv
+    {
+      auto const& identityRequest5 = identityRequests->at(5);
+      EXPECT_EQ(GetTenantIdFromClientSecretRequest(identityRequest5), "OriginalTenantId");
+      EXPECT_EQ(
+          GetScopeFromClientSecretRequest(identityRequest5),
+          "https%3A%2F%2Fvault.azure.net%2F.default");
+    }
+
+    // DoSomething() #12 vvv
+    {
+      auto const& identityRequest6 = identityRequests->at(6);
+      EXPECT_EQ(GetTenantIdFromClientSecretRequest(identityRequest6), "OriginalTenantId");
+      EXPECT_EQ(
+          GetScopeFromClientSecretRequest(identityRequest6),
+          "https%3A%2F%2Fvault.azure.net%2F.default");
+    }
   }
 
   EXPECT_EQ(serviceRequests->size(), 16);
@@ -1410,30 +1449,30 @@ TEST(KeyVaultChallengeBasedAuthenticationPolicy, MultipleTimes)
     // DoSomething() #9 vvv
     {
       auto const& serviceRequest11 = serviceRequests->at(11);
-      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest11), "Bearer ACCESSTOKEN4");
+      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest11), "Bearer ACCESSTOKEN5");
     }
 
     // DoSomething() #10 vvv
     {
       auto const& serviceRequest12 = serviceRequests->at(12);
-      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest12), "Bearer ACCESSTOKEN4");
+      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest12), "Bearer ACCESSTOKEN5");
     }
 
     {
       auto const& serviceRequest13 = serviceRequests->at(13);
-      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest13), "Bearer ACCESSTOKEN1");
+      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest13), "Bearer ACCESSTOKEN6");
     }
 
     // DoSomething() #11 vvv
     {
       auto const& serviceRequest14 = serviceRequests->at(14);
-      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest14), "Bearer ACCESSTOKEN1");
+      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest14), "Bearer ACCESSTOKEN6");
     }
 
     // DoSomething() #12 vvv
     {
       auto const& serviceRequest15 = serviceRequests->at(15);
-      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest15), "Bearer ACCESSTOKEN1");
+      EXPECT_EQ(GetAuthHeaderValueFromServiceRequest(serviceRequest15), "Bearer ACCESSTOKEN7");
     }
   }
 }

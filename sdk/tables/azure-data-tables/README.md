@@ -105,7 +105,7 @@ Two different clients are provided to interact with the various components of th
 
 ##### Creating and deleting a table
 
-In order to Create/Delete a table we need to create a TablesClient first.
+In order to Create/Delete a table we need to create a `TableServiceClient` first.
 
 ```cpp
 #include <azure/data/tables.hpp>
@@ -113,7 +113,8 @@ In order to Create/Delete a table we need to create a TablesClient first.
 using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
-auto tableServiceClient = TableServiceClient::CreateFromConnectionString(GetConnectionString());
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto tableServiceClient = Azure::Data::Tables::TableServiceClient(GetServiceUrl(), credential);
 
 // create new table
 tableServiceClient.CreateTable(TableName);
@@ -155,7 +156,7 @@ auto tableClient = tableServiceClient.GetTableClient(TableName);
 ```
 N.B. Here we are obtaining the table client from the table service client using the credentials that were passed to the table service client.
 
-##### Create a client with a connection string
+##### Create a client with DefaultAzureCredentials
 In order to Create/Update/Merge/Delete entities we need to create a TablesClient first.
 
 ```cpp
@@ -164,7 +165,8 @@ In order to Create/Update/Merge/Delete entities we need to create a TablesClient
 using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
 ...
-auto tableClient = TableClient::CreateFromConnectionString(..., TableName);
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto tableServiceClient = Azure::Data::Tables::TableServiceClient(GetServiceUrl(), credential);
 ```
 
 ##### Entities

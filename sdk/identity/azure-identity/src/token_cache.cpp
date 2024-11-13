@@ -18,7 +18,9 @@ bool TokenCache::IsFresh(
     DateTime::duration minimumExpiration,
     std::chrono::system_clock::time_point now)
 {
-  return item->AccessToken.ExpiresOn > (DateTime(now) + minimumExpiration);
+  // Even if ExpiresOn is unset, the default and lowest value of DateTime is time_point of 0
+  // Therefore, there is no risk of underflow with subtracting duration::max().
+  return (item->AccessToken.ExpiresOn - minimumExpiration) > DateTime(now);
 }
 
 namespace {

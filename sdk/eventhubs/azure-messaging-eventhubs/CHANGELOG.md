@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.10 (Unreleased)
+## 1.0.0-beta.11 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0-beta.10 (2024-11-01)
+
+### Bugs Fixed
+
+- [[#6064]](https://github.com/Azure/azure-sdk-for-cpp/issues/6064) Utilize new telemetry features from Azure Core.
 
 ## 1.0.0-beta.9 (2024-06-11)
 

@@ -14,6 +14,7 @@
 #include <azure/core/paged_response.hpp>
 
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
@@ -42,7 +43,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::shared_ptr<SecretClient> secretClient,
         std::string const& secretName = std::string())
         : PagedResponse(std::move(secretProperties)), m_secretName(secretName),
-          m_secretClient(secretClient), Items(std::move(secretProperties.Items))
+          m_secretClient(std::move(secretClient)), Items(std::move(secretProperties.Items))
     {
       RawResponse = std::move(rawResponse);
     }
@@ -79,7 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         DeletedSecretPagedResponse&& deletedKeyProperties,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient)
-        : PagedResponse(std::move(deletedKeyProperties)), m_secretClient(secretClient),
+        : PagedResponse(std::move(deletedKeyProperties)), m_secretClient(std::move(secretClient)),
           Items(std::move(deletedKeyProperties.Items))
     {
       RawResponse = std::move(rawResponse);

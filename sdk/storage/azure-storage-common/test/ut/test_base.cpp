@@ -19,19 +19,6 @@
 #include <sstream>
 #include <string>
 
-namespace Azure { namespace Storage { namespace Blobs { namespace Models {
-
-  bool operator==(const SignedIdentifier& lhs, const SignedIdentifier& rhs)
-  {
-    return lhs.Id == rhs.Id && lhs.StartsOn.HasValue() == rhs.StartsOn.HasValue()
-        && (!lhs.StartsOn.HasValue() || lhs.StartsOn.Value() == rhs.StartsOn.Value())
-        && lhs.ExpiresOn.HasValue() == rhs.ExpiresOn.HasValue()
-        && (!lhs.ExpiresOn.HasValue() || lhs.ExpiresOn.Value() == rhs.ExpiresOn.Value())
-        && lhs.Permissions == rhs.Permissions;
-  }
-
-}}}} // namespace Azure::Storage::Blobs::Models
-
 namespace Azure { namespace Storage { namespace Test {
 
   constexpr static const char* StandardStorageConnectionStringValue = "";
@@ -79,11 +66,52 @@ namespace Azure { namespace Storage { namespace Test {
     TestBase::TearDown();
   }
 
+  std::string ParseConnectionStringAndGetAccountName(const std::string& connectionString)
+  {
+    std::map<std::string, std::string> connectionStringMap;
+
+    std::string::const_iterator cur = connectionString.begin();
+
+    while (cur != connectionString.end())
+    {
+      auto key_begin = cur;
+      auto key_end = std::find(cur, connectionString.end(), '=');
+      std::string key = std::string(key_begin, key_end);
+      cur = key_end;
+      if (cur != connectionString.end())
+      {
+        ++cur;
+      }
+
+      auto value_begin = cur;
+      auto value_end = std::find(cur, connectionString.end(), ';');
+      std::string value = std::string(value_begin, value_end);
+      cur = value_end;
+      if (cur != connectionString.end())
+      {
+        ++cur;
+      }
+
+      if (!key.empty() || !value.empty())
+      {
+        connectionStringMap[std::move(key)] = std::move(value);
+      }
+    }
+
+    auto getWithDefault = [](const std::map<std::string, std::string>& m,
+                             const std::string& key,
+                             const std::string& defaultValue = std::string()) {
+      auto ite = m.find(key);
+      return ite == m.end() ? defaultValue : ite->second;
+    };
+
+    return getWithDefault(connectionStringMap, "AccountName");
+  }
+
   const std::string& StorageTest::StandardStorageAccountName()
   {
     const static std::string accountName
-        = Azure::Storage::_internal::ParseConnectionString(StandardStorageConnectionString())
-              .AccountName;
+        = ParseConnectionStringAndGetAccountName(StandardStorageConnectionString());
     return accountName;
   }
 
@@ -102,8 +130,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StorageTest::PremiumFileAccountName()
   {
     const static std::string accountName
-        = Azure::Storage::_internal::ParseConnectionString(PremiumFileConnectionString())
-              .AccountName;
+        = ParseConnectionStringAndGetAccountName(PremiumFileConnectionString());
     return accountName;
   }
 
@@ -122,7 +149,7 @@ namespace Azure { namespace Storage { namespace Test {
   const std::string& StorageTest::AdlsGen2AccountName()
   {
     const static std::string accountName
-        = Azure::Storage::_internal::ParseConnectionString(AdlsGen2ConnectionString()).AccountName;
+        = ParseConnectionStringAndGetAccountName(AdlsGen2ConnectionString());
     return accountName;
   }
 
@@ -204,9 +231,9 @@ namespace Azure { namespace Storage { namespace Test {
     return Azure::Core::_internal::StringExtensions::ToLower(RandomString(size));
   }
 
-  Storage::Metadata StorageTest::RandomMetadata(size_t size)
+  Metadata StorageTest::RandomMetadata(size_t size)
   {
-    Storage::Metadata result;
+    Metadata result;
     for (size_t i = 0; i < size; ++i)
     {
       result["meta" + LowercaseRandomString(5)] = RandomString(10);
