@@ -51,14 +51,6 @@ namespace Azure { namespace Data { namespace Test {
       std::replace(m_tableName.begin(), m_tableName.end(), '-', '0');
       switch (param)
       {
-        case AuthType::ConnectionString:
-          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
-              Tables::TableServiceClient::CreateFromConnectionString(
-                  GetConnectionString(), clientOptions));
-          m_tableClient = std::make_shared<Tables::TableClient>(
-              Tables::TableClient::CreateFromConnectionString(
-                  GetConnectionString(), m_tableName, tableClientOptions));
-          break;
         case AuthType::Key:
           m_credential = GetTestCredential();
           m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
@@ -118,24 +110,6 @@ namespace Azure { namespace Data { namespace Test {
     StorageTest::TearDown();
   }
 
-  Azure::Data::Tables::TableClient TablesClientTest::CreateKeyTableClientForTest(
-      Tables::TableClientOptions& clientOptions)
-  {
-    m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
-    auto tableClient
-        = Tables::TableClient(GetEnv("DATA_TABLES_URL"), m_tableName, m_credential, clientOptions);
-    return tableClient;
-  }
-
-  Azure::Data::Tables::TableClient TablesClientTest::CreateTableClientForTest(
-      Tables::TableClientOptions& clientOptions)
-  {
-    m_tableName = GetTestNameLowerCase() + LowercaseRandomString(10);
-    auto tableClient = Tables::TableClient::CreateFromConnectionString(
-        GetEnv("STANDARD_STORAGE_CONNECTION_STRING"), m_tableName, clientOptions);
-    return tableClient;
-  }
-
   TEST_P(TablesClientTest, ClientConstructor) { EXPECT_FALSE(m_tableClient == nullptr); }
 
   TEST_P(TablesClientTest, CreateTable)
@@ -157,55 +131,6 @@ namespace Azure { namespace Data { namespace Test {
     {
       EXPECT_EQ(e.StatusCode, Azure::Core::Http::HttpStatusCode::BadRequest);
     }
-  }
-
-  TEST_P(TablesClientTest, GetAccessPolicy)
-  {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-
-    auto getResponse = m_tableClient->GetAccessPolicy();
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 0);
-  }
-
-  TEST_P(TablesClientTest, SetAccessPolicy)
-  {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    Azure::Data::Tables::Models::TableAccessPolicy newPolicy{};
-    Azure::Data::Tables::Models::SignedIdentifier newIdentifier{};
-    newIdentifier.Id = "testid";
-    newIdentifier.Permissions = "r";
-    newIdentifier.StartsOn = Azure::DateTime::Parse(
-        Azure::DateTime(std::chrono::system_clock::now())
-            .ToString(Azure::DateTime::DateFormat::Rfc1123),
-        Azure::DateTime::DateFormat::Rfc1123);
-    newIdentifier.ExpiresOn = Azure::DateTime::Parse(
-        Azure::DateTime(std::chrono::system_clock::now() + std::chrono::seconds(60))
-            .ToString(Azure::DateTime::DateFormat::Rfc1123),
-        Azure::DateTime::DateFormat::Rfc1123);
-    newPolicy.SignedIdentifiers.emplace_back(newIdentifier);
-
-    m_tableClient->SetAccessPolicy(newPolicy);
-    if (GetEnv("AZURE_TEST_MODE") != "PLAYBACK")
-    {
-      // setting policy takes up to 30 seconds to take effect
-      std::this_thread::sleep_for(std::chrono::milliseconds(30001));
-    }
-
-    auto getResponse = m_tableClient->GetAccessPolicy();
-
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers.size(), 1);
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Id, newIdentifier.Id);
-    EXPECT_EQ(getResponse.Value.SignedIdentifiers[0].Permissions, newIdentifier.Permissions);
   }
 
   TEST_P(TablesClientTest, ListTables)
@@ -574,13 +499,8 @@ namespace Azure { namespace Data { namespace Test {
     }
   }
 
-  TEST_P(TablesClientTest, TransactionCreateFail)
+  TEST_P(TablesClientTest, TransactionCreateFail_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -604,14 +524,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_TRUE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionCreateOK)
+  TEST_P(TablesClientTest, TransactionCreateOK_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -635,14 +549,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionDelete)
+  TEST_P(TablesClientTest, TransactionDelete_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -661,26 +569,18 @@ namespace Azure { namespace Data { namespace Test {
         Azure::Data::Tables::Models::TransactionActionType::Add, entity});
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
-
     auto response = m_tableClient->SubmitTransaction(steps);
 
     steps.clear();
     // delete entity
     steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
         Azure::Data::Tables::Models::TransactionActionType::Delete, entity2});
-
     response = m_tableClient->SubmitTransaction(steps);
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionMerge)
+  TEST_P(TablesClientTest, TransactionMerge_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -709,14 +609,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionUpdate)
+  TEST_P(TablesClientTest, TransactionUpdate_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -743,14 +637,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.Error.HasValue());
   }
 
-  TEST_P(TablesClientTest, TransactionInsertReplace)
+  TEST_P(TablesClientTest, TransactionInsertReplace_LIVEONLY_)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      SkipTest();
-      return;
-    }
-
     Azure::Data::Tables::Models::TableEntity entity;
     Azure::Data::Tables::Models::TableEntity entity2;
     entity.SetPartitionKey("P1");
@@ -783,9 +671,6 @@ namespace Azure { namespace Data { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "connectionstring_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "key";
           break;
@@ -802,6 +687,6 @@ namespace Azure { namespace Data { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       Tables,
       TablesClientTest,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString, AuthType::SAS),
+      ::testing::Values(AuthType::Key, AuthType::SAS),
       GetSuffix);
 }}} // namespace Azure::Data::Test
