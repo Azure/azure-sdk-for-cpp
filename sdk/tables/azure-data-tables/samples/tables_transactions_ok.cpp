@@ -9,9 +9,6 @@
 #include <stdexcept>
 #include <thread>
 
-using namespace Azure::Data::Tables;
-using namespace Azure::Data::Tables::Models;
-
 const std::string TableName = "transactions";
 
 // The following environment variables must be set before running the sample.
@@ -32,21 +29,23 @@ int main()
   auto tableClient = tableServiceClient.GetTableClient(TableName);
 
   // Create two table entities
-  TableEntity entity;
-  TableEntity entity2;
+  Azure::Data::Tables::Models::TableEntity entity;
+  Azure::Data::Tables::Models::TableEntity entity2;
   entity.SetPartitionKey("P1");
   entity.SetRowKey("R1");
-  entity.Properties["Name"] = TableEntityProperty("Azure");
-  entity.Properties["Product"] = TableEntityProperty("Tables");
+  entity.Properties["Name"] = Azure::Data::Tables::Models::TableEntityProperty("Azure");
+  entity.Properties["Product"] = Azure::Data::Tables::Models::TableEntityProperty("Tables");
   entity2.SetPartitionKey("P1");
   entity2.SetRowKey("R2");
-  entity2.Properties["Name"] = TableEntityProperty("Azure2");
-  entity2.Properties["Product"] = TableEntityProperty("Tables2");
+  entity2.Properties["Name"] = Azure::Data::Tables::Models::TableEntityProperty("Azure2");
+  entity2.Properties["Product"] = Azure::Data::Tables::Models::TableEntityProperty("Tables2");
 
   // Create a transaction with two steps
-  std::vector<TransactionStep> steps;
-  steps.emplace_back(TransactionStep{TransactionActionType::Add, entity});
-  steps.emplace_back(TransactionStep{TransactionActionType::Add, entity2});
+  std::vector<Azure::Data::Tables::Models::TransactionStep> steps;
+  steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+      Azure::Data::Tables::Models::TransactionActionType::Add, entity});
+  steps.emplace_back(Azure::Data::Tables::Models::TransactionStep{
+      Azure::Data::Tables::Models::TransactionActionType::Add, entity2});
 
   // Submit the transaction
   auto response = tableClient.SubmitTransaction(steps);

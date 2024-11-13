@@ -9,8 +9,8 @@
 #include <stdexcept>
 #include <thread>
 
-using namespace Azure::Data::Tables;
 const std::string TableName = "sample1";
+
 // The following environment variables must be set before running the sample.
 // * ACCOUNT_NAME: The name of the storage account.
 std::string GetAccountName() { return std::getenv("ACCOUNT_NAME"); }
