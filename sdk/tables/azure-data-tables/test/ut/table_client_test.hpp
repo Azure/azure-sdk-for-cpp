@@ -51,7 +51,7 @@ namespace Azure { namespace Data { namespace Test {
         accountKey = envAccountKey;
         return envAccountKey;
       }
-      throw std::runtime_error("Cannot find connection string.");
+      throw std::runtime_error("Cannot find Account Key.");
     }
 
   protected:
