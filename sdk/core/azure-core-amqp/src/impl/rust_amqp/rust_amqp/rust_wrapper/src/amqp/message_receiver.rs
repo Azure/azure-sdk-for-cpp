@@ -6,13 +6,22 @@ use azure_core_amqp::{
     receiver::{AmqpReceiver, AmqpReceiverApis, AmqpReceiverOptions, ReceiverCreditMode},
     value::{AmqpOrderedMap, AmqpSymbol, AmqpValue},
 };
-use std::{ffi::c_char, mem};
+use std::{
+    ffi::c_char,
+    future::{poll_fn, Future},
+    mem,
+    pin::{pin, Pin},
+    task::Poll,
+};
 use tracing::{error, trace};
 
 use crate::{
     call_context::{call_context_from_ptr_mut, RustCallContext},
     error_from_str, error_from_string,
-    model::{source::RustAmqpSource, target::RustAmqpTarget, value::RustAmqpValue},
+    model::{
+        message::RustAmqpMessage, source::RustAmqpSource, target::RustAmqpTarget,
+        value::RustAmqpValue,
+    },
 };
 
 use super::{message_sender::RustReceiverSettleMode, session::RustAmqpSession};
@@ -109,6 +118,48 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     } else {
         0
     }
+}
+
+#[no_mangle]
+unsafe extern "C" fn amqpmessagereceiver_receive_message(
+    call_context: *mut RustCallContext,
+    receiver: *mut RustAmqpMessageReceiver,
+) -> *mut RustAmqpMessage {
+    if receiver.is_null() {
+        call_context_from_ptr_mut(call_context).set_error(error_from_str("Null message receiver."));
+        return std::ptr::null_mut();
+    }
+
+    let receiver = &mut *receiver;
+    let call_context = call_context_from_ptr_mut(call_context);
+    trace!("Starting to receive message");
+
+    let mut future = receiver.inner.receive();
+    let future = pin!(future);
+    let mut cx = std::task::Context::from_waker(get_waker());
+    let ready = future.poll(&mut cx);
+    if ready.is_pending() {
+        return std::ptr::null_mut();
+    }
+
+    let result = call_context.runtime_context().runtime().block_on(future);
+    trace!("Received message");
+    match result {
+        Ok(message) => Box::into_raw(Box::new(RustAmqpMessage::from(message))),
+        Err(err) => {
+            error!("Failed to receive message: {:?}", err);
+            call_context.set_error(Box::new(err));
+            std::ptr::null_mut()
+        }
+    }
+}
+
+async fn get_waker() -> std::task::Waker {
+    return poll_fn(|cx| Poll::Ready(cx.waker().clone())).await;
+}
+
+struct WrappedFuture<T> {
+    inner: Pin<Box<dyn Future<Output = T>>>,
 }
 
 // #[no_mangle]

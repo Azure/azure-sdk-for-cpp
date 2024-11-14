@@ -12,6 +12,7 @@
 #include "../../../models/private/source_impl.hpp"
 #include "../../../models/private/target_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
+#include "../../../models/private/error_impl.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -66,16 +67,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageSource const& source,
       MessageReceiverOptions const& options)
-      : m_options{options}, m_source{source}, m_session{session}
+      : m_receiver{amqpmessagereceiver_create()}, m_options{options}, m_source{source},
+        m_session{session}
   {
   }
 
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
   {
-    throw std::runtime_error("Not implemented");
-    (void)context;
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+    auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
+        amqpmessagereceiver_receive_message(callContext.GetCallContext(), m_receiver.get()));
+
+    return std::make_pair(message, Models::_internal::AmqpError{});
   }
+ 
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::TryWaitForIncomingMessage()
   {
@@ -136,18 +144,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-    if (!amqpmessagereceiver_attach(
+    if (amqpmessagereceiver_attach(
             callContext.GetCallContext(),
             m_receiver.get(),
             m_session->GetAmqpSession().get(),
             Models::_detail::AmqpSourceFactory::ToImplementation(m_source),
             options.get()))
     {
-      m_receiverOpen = true;
+      throw std::runtime_error("Failed to attach message receiver: " + callContext.GetError());
     }
     else
     {
-      throw std::runtime_error("Failed to attach message receiver: " + callContext.GetError());
+      m_receiverOpen = true;
     }
   }
   void MessageReceiverImpl::Close(Context const& context)
@@ -155,7 +163,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-    if (!amqpmessagereceiver_detach_and_release(callContext.GetCallContext(), m_receiver.release()))
+    // Even if the detach fails, we still want to consider the receiver closed.
+    m_receiverOpen = false;
+    if (amqpmessagereceiver_detach_and_release(callContext.GetCallContext(), m_receiver.release()))
     {
       throw std::runtime_error("Failed to detach message receiver: " + callContext.GetError());
     }

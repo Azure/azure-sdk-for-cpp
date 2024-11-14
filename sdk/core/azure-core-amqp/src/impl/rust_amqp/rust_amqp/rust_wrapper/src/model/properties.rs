@@ -177,7 +177,7 @@ unsafe extern "C" fn properties_get_absolute_expiry_time(
 ) -> i32 {
     let properties = { &*properties };
     if let Some(expiry) = &properties.inner.absolute_expiry_time {
-        *expiry_time = (*expiry).0.map_or(u64::MAX, |t| {
+        *expiry_time = expiry.0.map_or(u64::MAX, |t| {
             t.duration_since(UNIX_EPOCH).unwrap().as_millis() as u64
         });
     } else {
@@ -193,7 +193,7 @@ unsafe extern "C" fn properties_get_creation_time(
 ) -> i32 {
     let properties = { &*properties };
     if let Some(creation) = &properties.inner.creation_time {
-        *creation_time = (*creation).0.map_or(u64::MAX, |t| {
+        *creation_time = creation.0.map_or(u64::MAX, |t| {
             t.duration_since(UNIX_EPOCH).unwrap().as_millis() as u64
         });
     } else {
