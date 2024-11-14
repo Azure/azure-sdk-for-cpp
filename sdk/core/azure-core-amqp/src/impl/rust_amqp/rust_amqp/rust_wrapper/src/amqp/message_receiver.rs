@@ -162,6 +162,50 @@ struct WrappedFuture<T> {
     inner: Pin<Box<dyn Future<Output = T>>>,
 }
 
+impl<T> WrappedFuture<T> {
+    fn new(future: impl Future<Output = T> + 'static) -> Self {
+        Self {
+            inner: Box::pin(future),
+        }
+    }
+}
+
+#[no_mangle]
+unsafe extern "C" fn amqpmessagereceiver_receive_message_async(
+    call_context: *mut RustCallContext,
+    receiver: *mut RustAmqpMessageReceiver,
+    on_complete: extern "C" fn(*mut RustCallContext, *mut RustAmqpMessage),
+) {
+    if receiver.is_null() {
+        call_context_from_ptr_mut(call_context).set_error(error_from_str("Null message receiver."));
+        return;
+    }
+
+    let receiver = &mut *receiver;
+    let call_context = call_context_from_ptr_mut(call_context);
+    trace!("Starting to receive message");
+
+    let future = WrappedFuture::new(receiver.inner.receive());
+    let mut cx = std::task::Context::from_waker(get_waker());
+    let ready = future.poll(&mut cx);
+    if ready.is_pending() {
+        return;
+    }
+
+    let result = call_context.runtime_context().runtime().block_on(future);
+    trace!("Received message");
+    match result {
+        Ok(message) => on_complete(
+            call_context,
+            Box::into_raw(Box::new(RustAmqpMessage::from(message))),
+        ),
+        Err(err) => {
+            error!("Failed to receive message: {:?}", err);
+            call_context.set_error(Box::new(err));
+        }
+    }
+}
+
 // #[no_mangle]
 // unsafe extern "C" fn amqpmessagereceiver_get_max_message_size(
 //     call_context: *mut RustCallContext,
