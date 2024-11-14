@@ -3,8 +3,6 @@
 
 #include "private/keyvault_certificates_common_request.hpp"
 
-#include "private/certificate_constants.hpp"
-
 #include <azure/core/exception.hpp>
 #include <azure/core/http/http.hpp>
 

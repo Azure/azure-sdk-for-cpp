@@ -4,7 +4,6 @@
 #include "azure/core/resource_identifier.hpp"
 
 #include <stdexcept>
-#include <string>
 
 namespace {
 const std::string SubscriptionStart = "/subscriptions/";

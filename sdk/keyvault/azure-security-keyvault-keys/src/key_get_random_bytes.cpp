@@ -7,7 +7,6 @@
 
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
-#include <azure/core/internal/json/json_optional.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::Json::_internal;
