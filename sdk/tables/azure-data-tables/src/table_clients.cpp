@@ -884,7 +884,6 @@ std::string TableClient::PrepDeleteEntity(
       + entity.GetRowKey().Value + ClosingFragment));
   returnValue += "DELETE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
-  // returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
   if (!entity.GetETag().Value.empty())
   {
