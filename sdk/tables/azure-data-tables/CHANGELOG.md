@@ -10,7 +10,6 @@
 - Removed the `TableServiceClient` constructor that only accepts one defaulted options parameter.
 - Updated samples to reflect the changes in the client.
 
-
 ### Bugs Fixed
 
 - Use the package version for telemetry, rather than api version.
