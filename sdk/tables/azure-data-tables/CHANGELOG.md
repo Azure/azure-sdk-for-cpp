@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0-beta.5 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.5 (2024-11-18)
 
 ### Breaking Changes
 
@@ -16,6 +14,8 @@
 - Use the package version for telemetry, rather than api version.
 
 ### Other Changes
+
+- Updated samples to reflect the changes in the client.
 
 ## 1.0.0-beta.4 (2024-08-06)
 
