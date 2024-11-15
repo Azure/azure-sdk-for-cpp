@@ -14,30 +14,30 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     constexpr const char* SasVersion = "2023-08-03";
   }
 
-  void AccountSasBuilder::SetPermissions(AccountSasPermissions permissions)
+  void AccountSasBuilder::SetPermissions(AccountSasPermissionsFlags permissions)
   {
     Permissions.clear();
-    if ((permissions & AccountSasPermissions::Read) == AccountSasPermissions::Read)
+    if ((permissions & AccountSasPermissionsFlags::Read) == AccountSasPermissionsFlags::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & AccountSasPermissions::Write) == AccountSasPermissions::Write)
+    if ((permissions & AccountSasPermissionsFlags::Write) == AccountSasPermissionsFlags::Write)
     {
       Permissions += "w";
     }
-    if ((permissions & AccountSasPermissions::Delete) == AccountSasPermissions::Delete)
+    if ((permissions & AccountSasPermissionsFlags::Delete) == AccountSasPermissionsFlags::Delete)
     {
       Permissions += "d";
     }
-    if ((permissions & AccountSasPermissions::List) == AccountSasPermissions::List)
+    if ((permissions & AccountSasPermissionsFlags::List) == AccountSasPermissionsFlags::List)
     {
       Permissions += "l";
     }
-    if ((permissions & AccountSasPermissions::Add) == AccountSasPermissions::Add)
+    if ((permissions & AccountSasPermissionsFlags::Add) == AccountSasPermissionsFlags::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & AccountSasPermissions::Update) == AccountSasPermissions::Update)
+    if ((permissions & AccountSasPermissionsFlags::Update) == AccountSasPermissionsFlags::Update)
     {
       Permissions += "u";
     }
@@ -49,28 +49,31 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     std::string protocol = _detail::SasProtocolToString(Protocol);
 
     std::string services;
-    if ((Services & AccountSasServices::Table) == AccountSasServices::Table)
+    if ((Services & AccountSasServicesFlags::Table) == AccountSasServicesFlags::Table)
     {
       services += "t";
     }
 
     std::string resourceTypes;
-    if ((ResourceTypes & AccountSasResourceType::Service) == AccountSasResourceType::Service)
+    if ((ResourceTypes & AccountSasResourceTypeFlags::Service)
+        == AccountSasResourceTypeFlags::Service)
     {
       resourceTypes += "s";
     }
-    if ((ResourceTypes & AccountSasResourceType::Container) == AccountSasResourceType::Container)
+    if ((ResourceTypes & AccountSasResourceTypeFlags::Container)
+        == AccountSasResourceTypeFlags::Container)
     {
       resourceTypes += "c";
     }
-    if ((ResourceTypes & AccountSasResourceType::Object) == AccountSasResourceType::Object)
+    if ((ResourceTypes & AccountSasResourceTypeFlags::Object)
+        == AccountSasResourceTypeFlags::Object)
     {
       resourceTypes += "o";
     }
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = ExpiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);

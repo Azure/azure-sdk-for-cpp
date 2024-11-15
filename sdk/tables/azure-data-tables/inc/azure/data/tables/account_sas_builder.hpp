@@ -42,7 +42,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief Specifies the resource types accessible from an account level shared access
    * signature.
    */
-  enum class AccountSasResourceType
+  enum class AccountSasResourceTypeFlags
   {
     /**
      * @brief Indicates whether service-level APIs are accessible from this shared access
@@ -72,7 +72,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   /**
    * @brief Specifies the services accessible from an account level shared access signature.
    */
-  enum class AccountSasServices
+  enum class AccountSasServicesFlags
   {
     /**
      * @brief Indicates whether Azure Table Storage resources are accessible from the shared
@@ -89,7 +89,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
   /**
    * @brief The list of permissions that can be set for an account's access policy.
    */
-  enum class AccountSasPermissions
+  enum class AccountSasPermissionsFlags
   {
     /**
      * @brief Indicates that Read is permitted.
@@ -163,13 +163,13 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * @brief The services associated with the shared access signature. The user is
      * restricted to operations with the specified services.
      */
-    AccountSasServices Services;
+    AccountSasServicesFlags Services;
 
     /**
      * The resource types associated with the shared access signature. The user is
      * restricted to operations on the specified resources.
      */
-    AccountSasResourceType ResourceTypes;
+    AccountSasResourceTypeFlags ResourceTypes;
 
     /**
      * @brief Optional encryption scope to use when sending requests authorized with this SAS url.
@@ -182,7 +182,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      * @param permissions The
      * allowed permissions.
      */
-    void SetPermissions(AccountSasPermissions permissions);
+    void SetPermissions(AccountSasPermissionsFlags permissions);
 
     /**
      * @brief Sets the permissions for the SAS using a raw permissions string.

@@ -19,7 +19,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
    * @brief Contains the list of
    * permissions that can be set for a table's access policy.
    */
-  enum class TablesSasPermissions
+  enum class TablesSasPermissionsFlags
   {
     /**
      * @brief Indicates that Read is permitted.
@@ -112,7 +112,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
      *
      * @param permissions The allowed permissions.
      */
-    void SetPermissions(TablesSasPermissions permissions);
+    void SetPermissions(TablesSasPermissionsFlags permissions);
 
     /**
      * @brief Sets the permissions for the SAS using a raw permissions string.

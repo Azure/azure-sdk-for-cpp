@@ -95,7 +95,7 @@ Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(options.TableName);
+  url.AppendPath(Azure::Core::Url::Encode(options.TableName));
   Core::Http::Request request(Core::Http::HttpMethod::Options, url);
   request.SetHeader(OriginHeader, options.Origin);
   request.SetHeader(AccessControlRequestMethodHeader, Core::Http::HttpMethod::Options.ToString());
@@ -299,10 +299,10 @@ TableClient::TableClient(
     const std::string& tableName,
     const TableClientOptions& options)
     : TableClient(
-        std::string{
-            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
-        tableName,
-        options)
+          std::string{
+              Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
+          tableName,
+          options)
 {
 }
 
@@ -311,7 +311,7 @@ Azure::Response<Models::Table> TableServiceClient::CreateTable(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("Tables");
+  url.AppendPath(Azure::Core::Url::Encode("Tables"));
 
   std::string jsonBody = Serializers::Create(tableName);
 
@@ -362,16 +362,17 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     Azure::Core::Context const& context) const
 {
   auto url = m_url;
-  url.AppendPath("Tables");
+  url.AppendPath(Azure::Core::Url::Encode("Tables"));
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   if (options.Prefix.HasValue())
   {
-    request.GetUrl().AppendQueryParameter(IfMatch, options.Prefix.Value());
+    request.GetUrl().AppendQueryParameter(IfMatch, Core::Url::Encode(options.Prefix.Value()));
   }
   if (options.ContinuationToken.HasValue())
   {
-    request.GetUrl().AppendQueryParameter("NextTableName", options.ContinuationToken.Value());
+    request.GetUrl().AppendQueryParameter(
+        "NextTableName", Core::Url::Encode(options.ContinuationToken.Value()));
   }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -423,7 +424,7 @@ Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("Tables('" + tableName + ClosingFragment);
+  url.AppendPath(Azure::Core::Url::Encode("Tables('" + tableName + ClosingFragment));
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -449,7 +450,7 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 {
   (void)options;
   auto url = m_url;
-  url.AppendPath(m_tableName);
+  url.AppendPath(Azure::Core::Url::Encode(m_tableName));
 
   std::string jsonBody = Serializers::CreateEntity(tableEntity);
 
@@ -481,10 +482,10 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
 {
   (void)options;
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment
       + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
-      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment));
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
 
@@ -526,10 +527,10 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
 {
   (void)options;
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment
       + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
-      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment));
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
 
@@ -569,10 +570,10 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment
       + Azure::Core::Url::Encode(tableEntity.GetPartitionKey().Value) + RowKeyFragment
-      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment);
+      + Azure::Core::Url::Encode(tableEntity.GetRowKey().Value) + ClosingFragment));
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
@@ -639,9 +640,9 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment + Azure::Core::Url::Encode(partitionKey) + RowKeyFragment
-      + Azure::Core::Url::Encode(rowKey) + ClosingFragment);
+      + Azure::Core::Url::Encode(rowKey) + ClosingFragment));
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
   request.SetHeader(AcceptHeader, AcceptFullMeta);
@@ -673,9 +674,9 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   auto url = m_url;
   if (!options.NextPartitionKey.empty() && !options.NextRowKey.empty())
   {
-    url.AppendPath(m_tableName);
-    url.AppendQueryParameter("NextPartitionKey", options.NextPartitionKey);
-    url.AppendQueryParameter("NextRowKey", options.NextRowKey);
+    url.AppendPath(Azure::Core::Url::Encode(m_tableName));
+    url.AppendQueryParameter("NextPartitionKey", Core::Url::Encode(options.NextPartitionKey));
+    url.AppendQueryParameter("NextRowKey", Core::Url::Encode(options.NextRowKey));
   }
   else
   {
@@ -690,7 +691,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     }
     appendPath += ")";
 
-    url.AppendPath(appendPath);
+    url.AppendPath(Azure::Core::Url::Encode(appendPath));
   }
 
   if (options.Filter.HasValue())
@@ -757,7 +758,7 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath("$batch");
+  url.AppendPath(Azure::Core::Url::Encode("$batch"));
   std::string const batchId = "batch_" + Azure::Core::Uuid::CreateUuid().ToString();
   std::string const changesetId = "changeset_" + Azure::Core::Uuid::CreateUuid().ToString();
 
@@ -861,7 +862,7 @@ std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::T
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
   auto url = m_url;
-  url.AppendPath(m_tableName);
+  url.AppendPath(Azure::Core::Url::Encode(m_tableName));
   returnValue += "POST " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
@@ -878,9 +879,9 @@ std::string TableClient::PrepDeleteEntity(
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
-      + entity.GetRowKey().Value + ClosingFragment);
+      + entity.GetRowKey().Value + ClosingFragment));
   returnValue += "DELETE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
   // returnValue += "Prefer: return-no-content\n";
@@ -903,9 +904,9 @@ std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models:
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
-      + entity.GetRowKey().Value + ClosingFragment);
+      + entity.GetRowKey().Value + ClosingFragment));
   returnValue += "MERGE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
@@ -923,9 +924,9 @@ std::string TableClient::PrepUpdateEntity(
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
-      + entity.GetRowKey().Value + ClosingFragment);
+      + entity.GetRowKey().Value + ClosingFragment));
   returnValue += "PUT " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
@@ -953,9 +954,9 @@ std::string TableClient::PrepInsertEntity(
   returnValue += "Content-Type: application/http\n";
   returnValue += "Content-Transfer-Encoding: binary\n\n";
   auto url = m_url;
-  url.AppendPath(
+  url.AppendPath(Azure::Core::Url::Encode(
       m_tableName + PartitionKeyFragment + entity.GetPartitionKey().Value + RowKeyFragment
-      + entity.GetRowKey().Value + ClosingFragment);
+      + entity.GetRowKey().Value + ClosingFragment));
   returnValue += "PATCH " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Content-Type: application/json\n";
   returnValue += "Content-Length: " + std::to_string(payload.length());

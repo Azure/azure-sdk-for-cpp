@@ -13,7 +13,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(SasTest, TableSasBuilderTestAllSet)
   {
     TablesSasBuilder sasBuilder;
-    sasBuilder.SetPermissions(TablesSasPermissions::All);
+    sasBuilder.SetPermissions(TablesSasPermissionsFlags::All);
     sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     sasBuilder.StartsOn
         = Azure::DateTime::Parse("2020-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
@@ -52,7 +52,7 @@ namespace Azure { namespace Data { namespace Test {
 
     sasBuilder.ExpiresOn
         = Azure::DateTime::Parse("2022-03-11T11:13:52Z", Azure::DateTime::DateFormat::Rfc3339);
-    sasBuilder.SetPermissions(TablesSasPermissions::Add);
+    sasBuilder.SetPermissions(TablesSasPermissionsFlags::Add);
     sasBuilder.TableName = "someTableName";
 
     std::string key = "*";
@@ -84,7 +84,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(SasTest, AccountSasBuilderTestAllSet)
   {
     AccountSasBuilder sasBuilder;
-    sasBuilder.SetPermissions(AccountSasPermissions::All);
+    sasBuilder.SetPermissions(AccountSasPermissionsFlags::All);
     sasBuilder.Protocol = SasProtocol::HttpsAndHttp;
     sasBuilder.StartsOn
         = Azure::DateTime::Parse("2020-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
@@ -92,8 +92,8 @@ namespace Azure { namespace Data { namespace Test {
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
     sasBuilder.IPRange = "iprange";
     sasBuilder.EncryptionScope = "myScope";
-    sasBuilder.ResourceTypes = AccountSasResourceType::All;
-    sasBuilder.Services = AccountSasServices::All;
+    sasBuilder.ResourceTypes = AccountSasResourceTypeFlags::All;
+    sasBuilder.Services = AccountSasServicesFlags::All;
 
     std::string key = "accountKey";
     Azure::Data::Tables::Credentials::NamedKeyCredential cred(
@@ -117,7 +117,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST(SasTest, AccountSasBuilderTestMin)
   {
     AccountSasBuilder sasBuilder;
-    sasBuilder.SetPermissions(AccountSasPermissions::All);
+    sasBuilder.SetPermissions(AccountSasPermissionsFlags::All);
     sasBuilder.ExpiresOn
         = Azure::DateTime::Parse("2022-08-18T00:00:00Z", Azure::DateTime::DateFormat::Rfc3339);
 

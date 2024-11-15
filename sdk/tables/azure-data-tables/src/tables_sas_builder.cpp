@@ -14,23 +14,23 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
     constexpr static const char* SasVersion = "2019-07-07";
   }
 
-  void TablesSasBuilder::SetPermissions(TablesSasPermissions permissions)
+  void TablesSasBuilder::SetPermissions(TablesSasPermissionsFlags permissions)
   {
     Permissions.clear();
     // The order matters
-    if ((permissions & TablesSasPermissions::Read) == TablesSasPermissions::Read)
+    if ((permissions & TablesSasPermissionsFlags::Read) == TablesSasPermissionsFlags::Read)
     {
       Permissions += "r";
     }
-    if ((permissions & TablesSasPermissions::Add) == TablesSasPermissions::Add)
+    if ((permissions & TablesSasPermissionsFlags::Add) == TablesSasPermissionsFlags::Add)
     {
       Permissions += "a";
     }
-    if ((permissions & TablesSasPermissions::Update) == TablesSasPermissions::Update)
+    if ((permissions & TablesSasPermissionsFlags::Update) == TablesSasPermissionsFlags::Update)
     {
       Permissions += "u";
     }
-    if ((permissions & TablesSasPermissions::Delete) == TablesSasPermissions::Delete)
+    if ((permissions & TablesSasPermissionsFlags::Delete) == TablesSasPermissionsFlags::Delete)
     {
       Permissions += "d";
     }
@@ -47,7 +47,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = ExpiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);

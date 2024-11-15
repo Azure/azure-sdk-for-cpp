@@ -69,10 +69,10 @@ namespace Azure { namespace Data { namespace Test {
               GetAccountName(), GetAccountKey());
           Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
           sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResourceType::All;
-          sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
+          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResourceTypeFlags::All;
+          sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServicesFlags::All;
           sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
-          sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
+          sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissionsFlags::All);
           std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
           auto sasCreds = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
               sasBuilder.GenerateSasToken(*creds));
@@ -83,7 +83,7 @@ namespace Azure { namespace Data { namespace Test {
           tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
           tableSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
           tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
+          tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissionsFlags::All);
           tableSasBuilder.TableName = m_tableName;
           auto tableSasCreds
               = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
