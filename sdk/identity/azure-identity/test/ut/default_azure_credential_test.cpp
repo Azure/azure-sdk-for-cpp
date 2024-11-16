@@ -175,7 +175,7 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(
             log[0].second,
             "Identity: Creating DefaultAzureCredential which combines "
-            "mutiple parameterless credentials into a single one."
+            "multiple parameterless credentials into a single one."
             "\nDefaultAzureCredential is only recommended for the early stages of development, "
             "and not for usage in production environment."
             "\nOnce the developer focuses on the Credentials and Authentication aspects of their "

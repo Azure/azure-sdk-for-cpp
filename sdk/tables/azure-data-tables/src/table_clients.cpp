@@ -119,7 +119,7 @@ Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServi
   std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
 
-  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(ResourceTypeHeader, ResourceTypeService);
   url.AppendQueryParameter(CompHeader, ComponentProperties);
   Core::IO::MemoryBodyStream requestBody(
       reinterpret_cast<std::uint8_t const*>(xmlBody.data()), xmlBody.length());
@@ -146,7 +146,7 @@ Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServicePr
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(ResourceTypeHeader, ResourceTypeService);
   url.AppendQueryParameter(CompHeader, ComponentProperties);
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -173,7 +173,7 @@ Azure::Response<Models::ServiceStatistics> TableServiceClient::GetStatistics(
   std::string accountName = host.substr(0, host.find('.'));
   accountName += "-secondary";
   url.SetHost(accountName + "." + host.substr(host.find('.') + 1));
-  url.AppendQueryParameter(ResourceTypeHeader, ResrouceTypeService);
+  url.AppendQueryParameter(ResourceTypeHeader, ResourceTypeService);
   url.AppendQueryParameter(CompHeader, "stats");
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 

@@ -860,7 +860,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /*
      * Only friend classes are permitted to construct a DeleteOperation. This is because a
-     * KeyVaultPipelne is required and it is not exposed to customers.
+     * KeyVaultPipeline is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
@@ -951,7 +951,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /*
      * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
-     * because a KeyVaultPipelne is required and it is not exposed to customers.
+     * because a KeyVaultPipeline is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */

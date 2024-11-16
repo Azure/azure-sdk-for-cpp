@@ -49,23 +49,23 @@ AttestationAdministrationClient::AttestationAdministrationClient(
           "azure-security-attestation-cpp",
           PackageVersion::ToString()}
 {
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   if (credential)
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes = {"https://attest.azure.net/.default"};
 
-    perRetrypolicies.emplace_back(
+    perRetryPolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "security.attestation",
       PackageVersion::ToString(),
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perRetryPolicies),
+      std::move(perCallPolicies));
 }
 
 AttestationAdministrationClient AttestationAdministrationClient::Create(
