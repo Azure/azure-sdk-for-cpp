@@ -175,9 +175,9 @@ std::vector<Ownership> ProcessorLoadBalancer::GreedyLoadBalancer(
 
   if (ours.size() < loadBalancerInfo.MaxAllowed)
   { // try claiming from the completely unowned or expires ownerships _first_
-    std::vector<Models::Ownership> randomOwnerships
+    std::vector<Models::Ownership> additionalRandomOwnerships
         = GetRandomOwnerships(loadBalancerInfo.AboveMax, loadBalancerInfo.MaxAllowed - ours.size());
-    ours.insert(ours.end(), randomOwnerships.begin(), randomOwnerships.end());
+    ours.insert(ours.end(), additionalRandomOwnerships.begin(), additionalRandomOwnerships.end());
   }
   for (Models::Ownership& ownership : ours)
   {
