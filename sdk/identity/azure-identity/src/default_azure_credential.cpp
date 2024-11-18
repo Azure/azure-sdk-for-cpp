@@ -27,7 +27,7 @@ DefaultAzureCredential::DefaultAzureCredential(
   IdentityLog::Write(
       IdentityLog::Level::Verbose,
       "Creating " + GetCredentialName()
-          + " which combines mutiple parameterless credentials into a single one.\n"
+          + " which combines multiple parameterless credentials into a single one.\n"
           + GetCredentialName()
           + " is only recommended for the early stages of development, "
             "and not for usage in production environment."

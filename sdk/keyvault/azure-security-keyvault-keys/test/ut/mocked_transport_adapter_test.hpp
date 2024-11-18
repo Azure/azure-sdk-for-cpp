@@ -108,14 +108,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
           options,
           "keyvault-keys",
           Azure::Security::KeyVault::Keys::_detail::PackageVersion::ToString(),
-          std::move(perRetrypolicies),
-          std::move(perCallpolicies));
+          std::move(perRetryPolicies),
+          std::move(perCallPolicies));
     }
   };
 

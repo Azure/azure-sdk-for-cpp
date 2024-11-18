@@ -70,23 +70,23 @@ CertificateClient::CertificateClient(
 {
   auto apiVersion = options.ApiVersion;
 
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
 
-    perRetrypolicies.emplace_back(
+    perRetryPolicies.emplace_back(
         std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
             credential, std::move(tokenContext)));
   }
-  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       KeyVaultServicePackageName,
       PackageVersion::ToString(),
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perRetryPolicies),
+      std::move(perCallPolicies));
 }
 
 Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(

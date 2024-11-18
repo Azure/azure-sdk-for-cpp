@@ -17,7 +17,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   // various strings used in the library
   constexpr static const char* OriginHeader = "Origin";
   constexpr static const char* AccessControlRequestMethodHeader = "Access-Control-Request-Method";
-  constexpr static const char* ResrouceTypeService = "service";
+  constexpr static const char* ResourceTypeService = "service";
   constexpr static const char* ComponentProperties = "properties";
   constexpr static const char* ContentTypeXml = "application/xml";
   constexpr static const char* ContentTypeJson = "application/json";

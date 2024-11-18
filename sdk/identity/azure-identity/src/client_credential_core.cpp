@@ -14,7 +14,7 @@ using Azure::Identity::_detail::TenantIdResolver;
 using Azure::Identity::_detail::TokenCredentialImpl;
 
 // The authority host used by the credentials is in the following order of precedence:
-// 1. AuthorityHost option set/overriden by the user.
+// 1. AuthorityHost option set/overridden by the user.
 // 2. The value of AZURE_AUTHORITY_HOST environment variable, which is the default value of the
 // option.
 // 3. If that environment variable isn't set or is empty, use Azure Public Cloud.

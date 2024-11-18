@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
 
     /**
      * @brief Only friend classes are permitted to construct a BackupOperation. This is
-     * because a KeyVaultPipelne is required and it is not exposed to customers.
+     * because a KeyVaultPipeline is required and it is not exposed to customers.
      *
      * @param backupClient A #BackupClient that is used for getting status updates.
      * @param status A BackupOperationStatus object.
@@ -59,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
           m_isBackupOperation{isBackupOperation} {};
     /**
      * @brief Only friend classes are permitted to construct a BackupOperation. This is
-     * because a KeyVaultPipelne is required and it is not exposed to customers.
+     * because a KeyVaultPipeline is required and it is not exposed to customers.
      * @param backupClient A BackupClient that is used for getting status updates.
      * @param continuationToken A string that is used to resume the operation.
      * @param isBackupOperation A boolean indicating if the operation is a backup operation or a
