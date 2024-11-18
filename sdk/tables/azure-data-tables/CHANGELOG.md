@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 
-- Use the package version for telemetry, rather than api version.
+- Use the package version for telemetry, rather than API version.
 
 ### Other Changes
 
