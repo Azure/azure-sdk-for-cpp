@@ -20,6 +20,130 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     using LeaseDuration [[deprecated]] = LeaseDurationType;
 
+    enum class RolePermissions
+    {
+      /*
+       * @brief No permissions.
+       */
+      None = 0,
+
+      /*
+       * @brief The execute permission.
+       */
+      Execute = 1,
+
+      /*
+       * @brief The write permission.
+       */
+      Write = 2,
+
+      /*
+       * @brief The read permission.
+       */
+      Read = 4,
+    };
+
+    inline RolePermissions operator|(const RolePermissions& lhs, const RolePermissions& rhs)
+    {
+      using type = std::underlying_type_t<RolePermissions>;
+      return static_cast<RolePermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
+    }
+
+    inline RolePermissions operator&(const RolePermissions& lhs, const RolePermissions& rhs)
+    {
+      using type = std::underlying_type_t<RolePermissions>;
+      return static_cast<RolePermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
+    }
+
+    /**
+     * @brief The mode permissions of the file or directory.
+     */
+    struct NfsFileMode final
+    {
+      /**
+       * @brief Permissions the owner has over the file or directory.
+       */
+      RolePermissions Owner;
+
+      /**
+       * @brief Permissions the group has over the file or directory.
+       */
+      RolePermissions Group;
+
+      /**
+       * @brief Permissions other have over the file or directory.
+       */
+      RolePermissions Other;
+
+      /**
+       * @brief Set effective user ID (setuid) on the file or directory.
+       */
+      bool EffectiveUserIdentity;
+
+      /**
+       * @brief Set effective group ID (setgid) on the file or directory.
+       */
+      bool EffectiveGroupIdentity;
+
+      /**
+       * @brief The sticky bit may be set on directories. The files in that directory may only be
+       * renamed or deleted by the file's owner, the directory's owner, or the root user.
+       */
+      bool StickyBit;
+
+      /**
+       * @brief Returns the octal represenation of NfsFileMode as a string.
+       */
+      std::string ToOctalFileMode() const;
+
+      /**
+       * @brief Returns NfsFileMode as a string in symbolic notation.
+       */
+      std::string ToSymbolicFileMode() const;
+
+      /**
+       * @brief Returns a NfsFileMode from the octal string representation.
+       *
+       * @param modeString A 4-digit octal string representation of a File Mode.
+       */
+      static NfsFileMode ParseOctalFileMode(const std::string& modeString);
+
+      /**
+       * @brief Returns a NfsFileMode from the symbolic string representation.
+       *
+       * @param modeString A 9-character symbolic string representation of a File Mode.
+       */
+      static NfsFileMode ParseSymbolicFileMode(const std::string& modeString);
+    };
+
+    struct FilePosixProperties final
+    {
+      /**
+       * NFS only. The mode of the file or directory.
+       */
+      Nullable<NfsFileMode> FileMode;
+
+      /**
+       * NFS only. The owner of the file or directory.
+       */
+      Nullable<std::string> Owner;
+
+      /**
+       * NFS only. The owning group of the file or directory.
+       */
+      Nullable<std::string> Group;
+
+      /**
+       * NFS only. Type of the file or directory.
+       */
+      Nullable<Models::NfsFileType> NfsFileType;
+
+      /**
+       * NFS only. The link count of the file or directory.
+       */
+      Nullable<std::int64_t> LinkCount;
+    };
+
     /**
      * @brief The information returned when forcing the directory handles to close.
      */
