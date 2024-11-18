@@ -99,23 +99,23 @@ CryptographyClient::CryptographyClient(
     CryptographyClientOptions const& options)
     : m_keyId(Azure::Core::Url(keyId)), m_apiVersion(options.Version)
 {
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_keyId)};
 
-    perRetrypolicies.emplace_back(
+    perRetryPolicies.emplace_back(
         std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
             std::move(credential), tokenContext));
   }
-  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       KeyVaultServicePackageName,
       PackageVersion::ToString(),
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perRetryPolicies),
+      std::move(perCallPolicies));
 }
 
 Azure::Response<EncryptResult> CryptographyClient::Encrypt(
