@@ -27,7 +27,7 @@ extends:
     parameters:
       ServiceDirectory: tables
       # Not running tests on CI but only on LiveTest mode
-      CtestRegex: azure-data-tables
+      CtestRegex: azure-data-tables.*
       LineCoverageTarget: 77
       BranchCoverageTarget: 42
       LiveTestCtestRegex: azure-data-tables
