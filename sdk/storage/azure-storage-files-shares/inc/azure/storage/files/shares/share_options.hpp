@@ -695,6 +695,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -782,6 +787,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -835,6 +845,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -1065,6 +1080,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned in SDDL format.
      */
     Nullable<Models::FilePermissionFormat> FilePermissionFormat;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
 
     /**
      * @brief Options for parallel transfer.

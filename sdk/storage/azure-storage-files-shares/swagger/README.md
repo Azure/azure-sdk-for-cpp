@@ -233,6 +233,7 @@ directive:
       $.FileLastWriteTimeMode["x-ms-enum"]["values"] = [{"value": "now", "name": "Now"},{"value": "preserve", "name": "Preserve"}];
       $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
       $.FilePermissionFormat["enum"] = ["sddl", "binary"];
+      $.FileAttributes["required"] = true;
   - from: swagger-document
     where: $.definitions
     transform: >

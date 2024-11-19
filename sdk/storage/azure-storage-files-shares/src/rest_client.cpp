@@ -2105,9 +2105,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
       }
-      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      if (!options.FileAttributes.empty())
       {
-        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
       if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
@@ -2338,9 +2338,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
       }
-      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      if (!options.FileAttributes.empty())
       {
-        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
       if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
@@ -3303,9 +3303,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
       }
-      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      if (!options.FileAttributes.empty())
       {
-        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
       if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {
@@ -3854,9 +3854,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-permission-key", options.FilePermissionKey.Value());
       }
-      if (options.FileAttributes.HasValue() && !options.FileAttributes.Value().empty())
+      if (!options.FileAttributes.empty())
       {
-        request.SetHeader("x-ms-file-attributes", options.FileAttributes.Value());
+        request.SetHeader("x-ms-file-attributes", options.FileAttributes);
       }
       if (options.FileCreationTime.HasValue() && !options.FileCreationTime.Value().empty())
       {

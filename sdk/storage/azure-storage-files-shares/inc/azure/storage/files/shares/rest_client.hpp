@@ -2652,7 +2652,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
-        Nullable<std::string> FileAttributes;
+        std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
@@ -2692,7 +2692,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
-        Nullable<std::string> FileAttributes;
+        std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
@@ -2804,7 +2804,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
-        Nullable<std::string> FileAttributes;
+        std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
@@ -2868,7 +2868,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FilePermission;
         Nullable<Models::FilePermissionFormat> FilePermissionFormat;
         Nullable<std::string> FilePermissionKey;
-        Nullable<std::string> FileAttributes;
+        std::string FileAttributes;
         Nullable<std::string> FileCreationTime;
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
