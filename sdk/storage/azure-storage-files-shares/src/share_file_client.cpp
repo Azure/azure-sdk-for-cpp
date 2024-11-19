@@ -1414,4 +1414,103 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return _detail::FileClient::UploadRangeFromUri(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
   }
+
+  Azure::Response<Models::CreateFileSymbolicLinkResult> ShareFileClient::CreateSymbolicLink(
+      const std::string& linkText,
+      const CreateSymbolicLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::FileClient::CreateFileSymbolicLinkOptions protocolLayerOptions;
+    protocolLayerOptions.LinkText = linkText;
+    if (options.CreatedOn.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.CreatedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
+    }
+    if (options.LastWrittenOn.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
+    }
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.Owner = options.Owner;
+    protocolLayerOptions.Group = options.Group;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+
+    auto response = _detail::FileClient::CreateSymbolicLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::CreateFileSymbolicLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileChangeTime = std::move(response.Value.FileChangeTime);
+    ret.FileCreationTime = std::move(response.Value.FileCreationTime);
+    ret.FileId = std::move(response.Value.FileId);
+    ret.FileLastWriteTime = std::move(response.Value.FileLastWriteTime);
+    ret.FileParentId = std::move(response.Value.FileParentId);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    return Azure::Response<Models::CreateFileSymbolicLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
+  Azure::Response<Models::GetFileSymbolicLinkResult> ShareFileClient::GetSymbolicLink(
+      const GetSymbolicLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::FileClient::GetFileSymbolicLinkOptions protocolLayerOptions;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    auto response = _detail::FileClient::GetSymbolicLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::GetFileSymbolicLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.LinkText = std::move(response.Value.LinkText);
+    return Azure::Response<Models::GetFileSymbolicLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
+  Azure::Response<Models::CreateFileHardLinkResult> ShareFileClient::CreateHardLink(
+      const std::string& targetFile,
+      const CreateHardLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::FileClient::CreateFileHardLinkOptions protocolLayerOptions;
+    protocolLayerOptions.TargetFile = targetFile;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+
+    auto response = _detail::FileClient::CreateHardLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::CreateFileHardLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileChangeTime = std::move(response.Value.FileChangeTime);
+    ret.FileCreationTime = std::move(response.Value.FileCreationTime);
+    ret.FileId = std::move(response.Value.FileId);
+    ret.FileLastWriteTime = std::move(response.Value.FileLastWriteTime);
+    ret.FileParentId = std::move(response.Value.FileParentId);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    ret.NfsProperties.LinkCount = response.Value.LinkCount;
+    return Azure::Response<Models::CreateFileHardLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
 }}}} // namespace Azure::Storage::Files::Shares

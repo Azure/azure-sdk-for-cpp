@@ -714,6 +714,109 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       FilePosixProperties NfsProperties;
     };
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateSymbolicLink.
+     */
+    struct CreateFileSymbolicLinkResult final
+    {
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * Creation time for the file.
+       */
+      DateTime FileCreationTime;
+      /**
+       * Last write time for the file.
+       */
+      DateTime FileLastWriteTime;
+      /**
+       * Change time for the file.
+       */
+      DateTime FileChangeTime;
+      /**
+       * The fileId of the file.
+       */
+      std::string FileId;
+      /**
+       * The parent fileId of the directory.
+       */
+      std::string FileParentId;
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties NfsProperties;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetSymbolicLink.
+     */
+    struct GetFileSymbolicLinkResult final
+    {
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * The path to the original file, the symbolic link is pointing to. The path is of type
+       * string which is not resolved and is stored as is. The path can be absolute path or the
+       * relative path depending on the content stored in the symbolic link file.
+       */
+      std::string LinkText;
+    };
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateHardLink.
+     */
+    struct CreateFileHardLinkResult final
+    {
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * Creation time for the file.
+       */
+      DateTime FileCreationTime;
+      /**
+       * Last write time for the file.
+       */
+      DateTime FileLastWriteTime;
+      /**
+       * Change time for the file.
+       */
+      DateTime FileChangeTime;
+      /**
+       * The fileId of the file.
+       */
+      std::string FileId;
+      /**
+       * The parent fileId of the directory.
+       */
+      std::string FileParentId;
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties NfsProperties;
+    };
   } // namespace Models
 
   /**
