@@ -26,8 +26,8 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: identity
-      CtestRegex: azure-identity.
-      LiveTestCtestRegex: azure-identity.
+      CtestRegex: '^azure-identity.*$'
+      LiveTestCtestRegex: '^azure-identity.*$'
       LineCoverageTarget: 95
       BranchCoverageTarget: 56
       Artifacts:

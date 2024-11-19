@@ -20,7 +20,7 @@ parameters:
     default: true
   - name: LiveTestCtestRegex
     type: string
-    default: '.*'
+    default: ''
   - name: LiveTestCtestExcludeRegex
     type: string
     default: '(?!)'

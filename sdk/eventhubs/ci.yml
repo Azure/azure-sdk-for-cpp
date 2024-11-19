@@ -27,8 +27,8 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: eventhubs
-      CtestRegex: azure-messaging-eventhubs.
-      LiveTestCtestRegex: azure-messaging-eventhubs.
+      CtestRegex: '^azure-messaging-eventhubs.*$'
+      LiveTestCtestRegex: '^azure-messaging-eventhubs.*$'
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 27
       BranchCoverageTarget: 13
