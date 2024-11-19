@@ -11,19 +11,19 @@ parameters:
     default: not-specified
   - name: CtestRegex
     type: string
-    default: .*
+    default: '.*'
   - name: CtestExcludeRegex
     type: string
-    default: (?!)
+    default: '(?!)'
   - name: CoverageEnabled
     type: boolean
     default: true
   - name: LiveTestCtestRegex
     type: string
-    default: .*
+    default: '.*'
   - name: LiveTestCtestExcludeRegex
     type: string
-    default: (?!)
+    default: '(?!)'
   - name: Artifacts
     type: object
     default: []

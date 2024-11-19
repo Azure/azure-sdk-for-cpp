@@ -16,10 +16,10 @@ parameters:
     default: true
   - name: CtestRegex
     type: string
-    default: .*
+    default: '.*'
   - name: CtestExcludeRegex
     type: string
-    default: (?!)
+    default: '(?!)'
   - name: BuildReleaseArtifacts
     type: boolean
     default: true
