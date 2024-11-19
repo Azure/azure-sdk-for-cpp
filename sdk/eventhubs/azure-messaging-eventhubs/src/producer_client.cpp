@@ -89,6 +89,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       connection.second.Close(context);
     }
 #endif
+    // Remove all the sessions and connections after they've been closed.
+    while (!m_sessions.empty())
+    {
+      m_sessions.erase(m_sessions.begin());
+    }
+
+    while (!m_connections.empty())
+    {
+      m_connections.erase(m_connections.begin());
+    };
   }
 
   EventDataBatch ProducerClient::CreateBatch(

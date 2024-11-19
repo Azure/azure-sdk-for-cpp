@@ -8,11 +8,11 @@
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
 
+#include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
 #include "../../../models/private/source_impl.hpp"
 #include "../../../models/private/target_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
-#include "../../../models/private/error_impl.hpp"
 #include "azure/core/amqp/internal/link.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
@@ -33,24 +33,30 @@ using namespace Azure::Core::Amqp::Common::_detail;
 using namespace Azure::Core::Amqp::RustInterop::_detail;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
-  void UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiver>::FreeMessageReceiver(
-      RustInterop::_detail::RustAmqpMessageReceiver* value)
+  void UniqueHandleHelper<RustAmqpMessageReceiver>::FreeMessageReceiver(
+      RustAmqpMessageReceiver* value)
   {
     amqpmessagereceiver_destroy(value);
   }
 
+  void UniqueHandleHelper<RustMessageReceiverChannel>::FreeMessageReceiverChannel(
+      RustMessageReceiverChannel* value)
+  {
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+    amqpmessagereceiverchannel_destroy(callContext.GetCallContext(), value);
+  }
+
   template <> struct UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>
   {
-    static void FreeMessageReceiverOptions(
-        RustInterop::_detail::RustAmqpMessageReceiverOptions* obj);
+    static void FreeMessageReceiverOptions(RustAmqpMessageReceiverOptions* obj);
 
-    using type = Core::_internal::BasicUniqueHandle<
-        RustInterop::_detail::RustAmqpMessageReceiverOptions,
-        FreeMessageReceiverOptions>;
+    using type = Core::_internal::
+        BasicUniqueHandle<RustAmqpMessageReceiverOptions, FreeMessageReceiverOptions>;
   };
 
-  void UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>::
-      FreeMessageReceiverOptions(RustInterop::_detail::RustAmqpMessageReceiverOptions* value)
+  void UniqueHandleHelper<RustAmqpMessageReceiverOptions>::FreeMessageReceiverOptions(
+      RustInterop::_detail::RustAmqpMessageReceiverOptions* value)
   {
     amqpmessagereceiveroptions_destroy(value);
   }
@@ -78,16 +84,60 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-    auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
-        amqpmessagereceiver_receive_message(callContext.GetCallContext(), m_receiver.get()));
+    if (m_receiveFuture)
+    {
+      auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
+          amqpmessagereceiver_receive_message_async_wait(
+              callContext.GetCallContext(), m_receiveFuture.get()));
+      if (!message)
+      {
+        return std::make_pair(nullptr, Models::_internal::AmqpError{});
+      }
+      return std::make_pair(message, Models::_internal::AmqpError{});
+    }
+    else
+    {
 
-    return std::make_pair(message, Models::_internal::AmqpError{});
+      auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
+          amqpmessagereceiver_receive_message(callContext.GetCallContext(), m_receiver.get()));
+
+      return std::make_pair(message, Models::_internal::AmqpError{});
+    }
   }
- 
+
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::TryWaitForIncomingMessage()
   {
-    throw std::runtime_error("Not implemented");
+    Common::_detail::CallContext callContext(
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+
+    if (!m_receiveFuture)
+    {
+      m_receiveFuture.reset(amqpmessagereceiver_receive_message_async(
+          callContext.GetCallContext(), m_receiver.get()));
+      if (!m_receiveFuture)
+      {
+        throw std::runtime_error("Could not start receiving message: " + callContext.GetError());
+        //        return std::make_pair(nullptr, Models::_internal::AmqpError{});
+      }
+    }
+
+    auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
+        amqpmessagereceiver_receive_message_async_poll(
+            callContext.GetCallContext(), m_receiveFuture.get()));
+
+    if (message)
+    {
+      return std::make_pair(message, Models::_internal::AmqpError{});
+    }
+    else if (callContext.GetError().empty())
+    {
+      return std::make_pair(nullptr, Models::_internal::AmqpError{});
+    }
+    else
+    {
+      return std::make_pair(nullptr, Models::_internal::AmqpError{});
+    }
   }
 
   MessageReceiverImpl::~MessageReceiverImpl() noexcept
@@ -160,14 +210,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
   void MessageReceiverImpl::Close(Context const& context)
   {
-    Common::_detail::CallContext callContext(
-        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
-
-    // Even if the detach fails, we still want to consider the receiver closed.
-    m_receiverOpen = false;
-    if (amqpmessagereceiver_detach_and_release(callContext.GetCallContext(), m_receiver.release()))
+    if (m_receiver)
     {
-      throw std::runtime_error("Failed to detach message receiver: " + callContext.GetError());
+      Common::_detail::CallContext callContext(
+          Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+
+      // Even if the detach fails, we still want to consider the receiver closed.
+      m_receiverOpen = false;
+      if (amqpmessagereceiver_detach_and_release(
+              callContext.GetCallContext(), m_receiver.release()))
+      {
+        throw std::runtime_error("Failed to detach message receiver: " + callContext.GetError());
+      }
     }
   }
 }}}} // namespace Azure::Core::Amqp::_detail

@@ -791,7 +791,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-        EXPECT_TRUE(sender.Send(sendMessage));
+        EXPECT_FALSE(sender.Send(sendMessage));
         sender.Close();
       }
 #endif
@@ -827,7 +827,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
-        EXPECT_TRUE(sender.Send(sendMessage));
+        EXPECT_FALSE(sender.Send(sendMessage));
         sender.Close();
       }
 #endif
