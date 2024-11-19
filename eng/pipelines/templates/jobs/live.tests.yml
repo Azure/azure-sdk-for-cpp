@@ -195,7 +195,7 @@ jobs:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants
 
-          ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+          ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --exclude-regex "${{ parameters.CtestExcludeRegex }}" --no-compress-output -T Test
           exit $LASTEXITCODE
         workingDirectory: build
       env:
@@ -212,7 +212,7 @@ jobs:
         export AZURE_TENANT_ID=$(${{parameters.ServiceDirectory}}_TENANT_ID)
         export AZURE_CLIENT_SECRET=$(${{parameters.ServiceDirectory}}_CLIENT_SECRET)
 
-        ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --no-compress-output -T Test
+        ctest $(WindowsCtestConfig) -V --tests-regex "${{ parameters.CtestRegex }}" --exclude-regex "${{ parameters.CtestExcludeRegex }}" --no-compress-output -T Test
       workingDirectory: build
       displayName: ctest
       # Runs only if test-resources are happily deployed.

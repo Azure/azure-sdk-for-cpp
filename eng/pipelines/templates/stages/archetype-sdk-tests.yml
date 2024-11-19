@@ -70,6 +70,7 @@ stages:
                 Location: ${{ parameters.Location}}
                 ServiceDirectory: ${{ parameters.ServiceDirectory}}
                 CtestRegex: ${{ parameters.CtestRegex}}
+                CtestExcludeRegex: ${{ parameters.CtestExcludeRegex}}
                 Coverage: ${{ parameters.Coverage}}
                 CoverageReportPath: ${{ parameters.CoverageReportPath}}
                 TimeoutInMinutes: ${{ parameters.TimeoutInMinutes}}

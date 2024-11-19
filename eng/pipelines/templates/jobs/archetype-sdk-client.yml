@@ -19,7 +19,7 @@ parameters:
     default: .*
   - name: CtestExcludeRegex
     type: string
-    default: ''
+    default: (?!)
   - name: BuildReleaseArtifacts
     type: boolean
     default: true

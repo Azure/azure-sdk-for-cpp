@@ -13,7 +13,7 @@ parameters:
     default: .*
   - name: CtestExcludeRegex
     type: string
-    default: ''
+    default: (?!)
   - name: CoverageReportPath
     type: string
     default: 'sdk/*/*/*cov_xml.xml'

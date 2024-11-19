@@ -27,10 +27,10 @@ extends:
     parameters:
       ServiceDirectory: storage
       # Not running tests on CI but only on LiveTest mode
-      CtestRegex: azure-storage
+      CtestRegex: azure-storage.
+      LiveTestCtestRegex: azure-storage.
       LineCoverageTarget: 81
       BranchCoverageTarget: 47
-      LiveTestCtestRegex: azure-storage
       Artifacts:
         - Name: azure-storage-common
           Path: azure-storage-common

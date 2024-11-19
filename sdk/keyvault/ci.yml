@@ -27,8 +27,8 @@ extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
       ServiceDirectory: keyvault
-      CtestRegex: "azure-security-keyvault.*"
-      LiveTestCtestRegex: "azure-security-keyvault.*"
+      CtestRegex: azure-security-keyvault.
+      LiveTestCtestRegex: azure-security-keyvault.
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 81
       BranchCoverageTarget: 42

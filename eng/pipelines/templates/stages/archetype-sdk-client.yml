@@ -14,13 +14,16 @@ parameters:
     default: .*
   - name: CtestExcludeRegex
     type: string
-    default: ''
+    default: (?!)
   - name: CoverageEnabled
     type: boolean
     default: true
   - name: LiveTestCtestRegex
     type: string
-    default: ''
+    default: .*
+  - name: LiveTestCtestExcludeRegex
+    type: string
+    default: (?!)
   - name: Artifacts
     type: object
     default: []
@@ -196,6 +199,7 @@ extends:
               TimeoutInMinutes: ${{ parameters.LiveTestTimeoutInMinutes }}
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               CtestRegex: ${{ parameters.LiveTestCtestRegex }}
+              CtestExcludeRegex: ${{ parameters.LiveTestCtestExcludeRegex }}
               CoverageReportPath: ${{ parameters.CoverageReportPath }}
               Location: ${{ parameters.Location }}
               CloudConfig: ${{ parameters.CloudConfig }}

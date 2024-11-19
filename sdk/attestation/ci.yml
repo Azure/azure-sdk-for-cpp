@@ -27,8 +27,8 @@ extends:
     parameters:
       ServiceDirectory: attestation
       Location: WestUS
-      CtestRegex: azure-security-attestation.*
-      LiveTestCtestRegex: azure-security-attestation.*
+      CtestRegex: azure-security-attestation.
+      LiveTestCtestRegex: azure-security-attestation.
       LineCoverageTarget: 69.9834
       BranchCoverageTarget: 34
       Artifacts:
