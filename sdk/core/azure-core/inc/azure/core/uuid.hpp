@@ -37,7 +37,7 @@ namespace Azure { namespace Core {
      */
     // Nil UUID, per RFC9562, consists of all zeros:
     // https://www.rfc-editor.org/rfc/rfc9562.html#name-nil-uuid
-    constexpr explicit Uuid() : m_uuid{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} {}
+    constexpr Uuid() : m_uuid{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0} {}
 
     /**
      * @brief Gets Uuid as a string.
