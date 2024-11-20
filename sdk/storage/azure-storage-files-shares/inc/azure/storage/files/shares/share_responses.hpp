@@ -592,7 +592,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateSymbolicLink.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::CreateSymbolicLink.
      */
     struct CreateFileSymbolicLinkResult final
     {
@@ -632,7 +632,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       FilePosixProperties NfsProperties;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetSymbolicLink.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetSymbolicLink.
      */
     struct GetFileSymbolicLinkResult final
     {
@@ -654,7 +654,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string LinkText;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateHardLink.
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::CreateHardLink.
      */
     struct CreateFileHardLinkResult final
     {
