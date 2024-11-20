@@ -40,7 +40,7 @@ create_map_file(azure-data-tables-test azure-data-tables-test.map)
 # Include shared test headers
 target_include_directories(azure-data-tables-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common)
 
-target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-identity azure-core-test-fw gtest gtest_main gmock)
+target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-identity azure-core-test-fw  gtest_main)
 
 # gtest_discover_tests will scan the test from azure-data-tables-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
