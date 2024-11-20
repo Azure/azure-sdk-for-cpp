@@ -91,7 +91,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool StickyBit;
 
       /**
-       * @brief Returns the octal represenation of NfsFileMode as a string.
+       * @brief Returns the octal representation of NfsFileMode as a string.
        */
       std::string ToOctalFileMode() const;
 
