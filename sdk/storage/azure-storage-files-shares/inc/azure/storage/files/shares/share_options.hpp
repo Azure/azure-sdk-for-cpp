@@ -115,6 +115,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       static NfsFileMode ParseSymbolicFileMode(const std::string& modeString);
     };
 
+    /**
+     * @brief NFS properties. Note that these properties only apply to files or directories in
+     * premium NFS file accounts.
+     */
     struct FilePosixProperties final
     {
       /**
