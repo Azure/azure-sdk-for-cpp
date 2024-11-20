@@ -195,7 +195,7 @@ jobs:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants
 
-          ctest -V --tests-regex '${{ parameters.CtestRegex }}' --no-compress-output -T Test --extra-verbose --debug
+          ctest -V --tests-regex '${{ parameters.CtestRegex }}' --no-compress-output -T Test --verbose --extra-verbose --debug --show-only=json-v1
           exit $LASTEXITCODE
         workingDirectory: build
       env:
