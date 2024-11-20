@@ -40,8 +40,6 @@ target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-ide
 
 # gtest_discover_tests will scan the test from azure-data-tables-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-data-tables-test
+gtest_add_tests(TARGET azure-data-tables-test
      TEST_PREFIX azure-data-tables.
-     NO_PRETTY_TYPES
-     NO_PRETTY_VALUES
-     DISCOVERY_TIMEOUT 600)
+    )
