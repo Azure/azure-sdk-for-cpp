@@ -20,130 +20,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     using LeaseDuration [[deprecated]] = LeaseDurationType;
 
-    enum class RolePermissions
-    {
-      /*
-       * @brief No permissions.
-       */
-      None = 0,
-
-      /*
-       * @brief The execute permission.
-       */
-      Execute = 1,
-
-      /*
-       * @brief The write permission.
-       */
-      Write = 2,
-
-      /*
-       * @brief The read permission.
-       */
-      Read = 4,
-    };
-
-    inline RolePermissions operator|(const RolePermissions& lhs, const RolePermissions& rhs)
-    {
-      using type = std::underlying_type_t<RolePermissions>;
-      return static_cast<RolePermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-
-    inline RolePermissions operator&(const RolePermissions& lhs, const RolePermissions& rhs)
-    {
-      using type = std::underlying_type_t<RolePermissions>;
-      return static_cast<RolePermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-
-    /**
-     * @brief The mode permissions of the file or directory.
-     */
-    struct NfsFileMode final
-    {
-      /**
-       * @brief Permissions the owner has over the file or directory.
-       */
-      RolePermissions Owner;
-
-      /**
-       * @brief Permissions the group has over the file or directory.
-       */
-      RolePermissions Group;
-
-      /**
-       * @brief Permissions other have over the file or directory.
-       */
-      RolePermissions Other;
-
-      /**
-       * @brief Set effective user ID (setuid) on the file or directory.
-       */
-      bool EffectiveUserIdentity;
-
-      /**
-       * @brief Set effective group ID (setgid) on the file or directory.
-       */
-      bool EffectiveGroupIdentity;
-
-      /**
-       * @brief The sticky bit may be set on directories. The files in that directory may only be
-       * renamed or deleted by the file's owner, the directory's owner, or the root user.
-       */
-      bool StickyBit;
-
-      /**
-       * @brief Returns the octal represenation of NfsFileMode as a string.
-       */
-      std::string ToOctalFileMode() const;
-
-      /**
-       * @brief Returns NfsFileMode as a string in symbolic notation.
-       */
-      std::string ToSymbolicFileMode() const;
-
-      /**
-       * @brief Returns a NfsFileMode from the octal string representation.
-       *
-       * @param modeString A 4-digit octal string representation of a File Mode.
-       */
-      static NfsFileMode ParseOctalFileMode(const std::string& modeString);
-
-      /**
-       * @brief Returns a NfsFileMode from the symbolic string representation.
-       *
-       * @param modeString A 9-character symbolic string representation of a File Mode.
-       */
-      static NfsFileMode ParseSymbolicFileMode(const std::string& modeString);
-    };
-
-    struct FilePosixProperties final
-    {
-      /**
-       * NFS only. The mode of the file or directory.
-       */
-      Nullable<NfsFileMode> FileMode;
-
-      /**
-       * NFS only. The owner of the file or directory.
-       */
-      Nullable<std::string> Owner;
-
-      /**
-       * NFS only. The owning group of the file or directory.
-       */
-      Nullable<std::string> Group;
-
-      /**
-       * NFS only. Type of the file or directory.
-       */
-      Nullable<Models::NfsFileType> NfsFileType;
-
-      /**
-       * NFS only. The link count of the file or directory.
-       */
-      Nullable<std::int64_t> LinkCount;
-    };
-
     /**
      * @brief The information returned when forcing the directory handles to close.
      */
@@ -812,6 +688,105 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The parent fileId of the directory.
        */
       std::string FileParentId;
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties NfsProperties;
+    };
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::Create.
+     */
+    struct CreateDirectoryResult final
+    {
+      /**
+       * Indicates if the directory was successfully created by this operation.
+       */
+      bool Created = true;
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
+      /**
+       * The ETag contains a value which represents the version of the directory, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the share was last modified. Any operation that modifies the
+       * directory or its properties updates the last modified time. Operations on files do not
+       * affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * The value of this header is set to true if the contents of the request are successfully
+       * encrypted using the specified algorithm, and false otherwise.
+       */
+      bool IsServerEncrypted = bool();
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties NfsProperties;
+    };
+    /**
+     * @brief Response type for
+     * #Azure::Storage::Files::Shares::ShareDirectoryClient::GetProperties.
+     */
+    struct DirectoryProperties final
+    {
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
+      /**
+       * A set of name-value pairs that contain metadata for the directory.
+       */
+      Core::CaseInsensitiveMap Metadata;
+      /**
+       * The ETag contains a value that you can use to perform operations conditionally, in
+       * quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the Directory was last modified. Operations on files within the
+       * directory do not affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * The value of this header is set to true if the directory metadata is completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false.
+       */
+      bool IsServerEncrypted = bool();
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties NfsProperties;
+    };
+
+    /**
+     * @brief Response type for
+     * #Azure::Storage::Files::Shares::ShareDirectoryClient::SetProperties.
+     */
+    struct SetDirectoryPropertiesResult final
+    {
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * Returns the date and time the directory was last modified. Any operation that modifies
+       * the directory or its properties updates the last modified time. Operations on files do
+       * not affect the last modified time of the directory.
+       */
+      DateTime LastModified;
+      /**
+       * The value of this header is set to true if the contents of the request are successfully
+       * encrypted using the specified algorithm, and false otherwise.
+       */
+      bool IsServerEncrypted = bool();
       /**
        * The NFS related properties for the file.
        */

@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
 
       std::string modeString = "";
-      modeString.push_back(higherOrderDigit + '0');
+      modeString.push_back((char)(higherOrderDigit + '0'));
       modeString.push_back(ToOctal(Owner));
       modeString.push_back(ToOctal(Group));
       modeString.push_back(ToOctal(Other));
