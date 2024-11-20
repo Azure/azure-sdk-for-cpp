@@ -527,7 +527,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * used as a digital signatures.
      *
      */
-    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DigitalSignature;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage
+        DigitalSignature;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for
@@ -548,7 +549,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * encryption.
      *
      */
-    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DataEncipherment;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage
+        DataEncipherment;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used to determine
@@ -662,7 +664,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Get a CertificatePolicyAction action that will email certificate contacts.
      *
      */
-    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction EmailContacts;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction
+        EmailContacts;
   };
 
   /**

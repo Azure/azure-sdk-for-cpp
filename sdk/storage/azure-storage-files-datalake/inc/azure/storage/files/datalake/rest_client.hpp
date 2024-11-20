@@ -55,7 +55,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
         /** Constant value of type PathSetAccessControlListRecursiveMode: Set */
-        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
+            Set;
         /** Constant value of type PathSetAccessControlListRecursiveMode: Modify */
         AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Modify;
