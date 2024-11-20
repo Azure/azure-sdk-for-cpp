@@ -4,7 +4,7 @@
 
 #include "azure/data/tables/account_sas_builder.hpp"
 #include "azure/data/tables/tables_sas_builder.hpp"
-#include "test/ut/test_base.hpp"
+#include "test_base.hpp"
 
 namespace Azure { namespace Data { namespace Test {
 

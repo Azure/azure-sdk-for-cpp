@@ -27,18 +27,14 @@ add_executable (
     table_client_test.hpp
     transactions_test.hpp
     transactions_test.cpp
-    # Include shared test source code
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common/test/ut/test_base.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common/test/ut/test_base.hpp
-)
+    test_base.hpp
+    test_base.cpp
+    )
 
 target_compile_definitions(azure-data-tables-test PRIVATE _azure_BUILDING_TESTS)
 
 create_per_service_target_build(tables azure-data-tables-test)
 create_map_file(azure-data-tables-test azure-data-tables-test.map)
-
-# Include shared test headers
-target_include_directories(azure-data-tables-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common)
 
 target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-identity azure-core-test-fw gtest gtest_main gmock)
 
