@@ -526,7 +526,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-#if defined(AZ_CORE_RTTI)
+#if defined(AZURE_CORE_RTTI)
   TEST_P(TransportAdapter, dynamicCast)
   {
     Azure::Core::Url host("http://unresolvedHost.org/get");
@@ -552,9 +552,9 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
 #else
 #error "Unknown platform"
@@ -577,9 +577,9 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
 #else
 #error "Unknown platform"
@@ -603,9 +603,9 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
     testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     testDataPath.append("\\fileData");
 #else
 #error "Unknown platform"

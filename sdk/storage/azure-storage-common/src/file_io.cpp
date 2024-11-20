@@ -5,7 +5,7 @@
 
 #include <azure/core/platform.hpp>
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #endif
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -28,7 +28,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   FileReader::FileReader(const std::string& filename)
   {
     int sizeNeeded = MultiByteToWideChar(
@@ -163,7 +163,7 @@ namespace Azure { namespace Storage { namespace _internal {
       throw std::runtime_error("Failed to write file.");
     }
   }
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
   FileReader::FileReader(const std::string& filename)
   {
     m_handle = open(filename.data(), O_RDONLY);

@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * @brief A value representing infinite lease duration.
      */
-    AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static std::chrono::seconds InfiniteLeaseDuration;
+    AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static std::chrono::seconds InfiniteLeaseDuration;
 
     /**
      * @brief Get lease ID of this lease client.

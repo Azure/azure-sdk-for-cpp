@@ -47,9 +47,9 @@ TEST_F(ConnectionStringTest, ServiceBusSasConnectionGood)
     EXPECT_EQ("{ACCESS_KEY_NAME}=", credential.GetSharedAccessKeyName());
     EXPECT_EQ("{ACCESS_KEY}=", credential.GetSharedAccessKey());
     {
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
       auto xport = credential.GetTransport();
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 
       // Generate a SAS token which expires in 60 seconds.
       Azure::Core::Credentials::TokenRequestContext trc;

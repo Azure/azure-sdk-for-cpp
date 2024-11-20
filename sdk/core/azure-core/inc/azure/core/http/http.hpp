@@ -128,43 +128,43 @@ namespace Azure { namespace Core { namespace Http {
      * @brief The representation of a `GET` HTTP method based on [RFC 7231]
      * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Get;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Get;
 
     /**
      * @brief The representation of a `HEAD` HTTP method based on [RFC 7231]
      * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.2).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Head;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Head;
 
     /**
      * @brief The representation of a `POST` HTTP method based on [RFC 7231]
      * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.3).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Post;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Post;
 
     /**
      * @brief The representation of a `PUT` HTTP method based on [RFC 7231]
      * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.4).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Put;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Put;
 
     /**
      * @brief The representation of a `DELETE` HTTP method based on [RFC 7231]
      * (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.5).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Delete;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Delete;
 
     /**
      * @brief The representation of a `PATCH` HTTP method based on [RFC 5789]
      * (https://datatracker.ietf.org/doc/html/rfc5789).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Patch;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Patch;
 
     /**
      * @brief The representation of an `OPTIONS` HTTP method based on [RFC 2616]
      * (https://datatracker.ietf.org/doc/html/rfc2616).
      */
-    AZ_CORE_DLLEXPORT const static HttpMethod Options;
+    AZURE_CORE_DLLEXPORT const static HttpMethod Options;
 
   private:
     std::string m_value;
@@ -396,11 +396,11 @@ namespace Azure { namespace Core { namespace Http {
 
     struct HttpShared final
     {
-      AZ_CORE_DLLEXPORT static char const ContentType[];
-      AZ_CORE_DLLEXPORT static char const ApplicationJson[];
-      AZ_CORE_DLLEXPORT static char const Accept[];
-      AZ_CORE_DLLEXPORT static char const MsRequestId[];
-      AZ_CORE_DLLEXPORT static char const MsClientRequestId[];
+      AZURE_CORE_DLLEXPORT static char const ContentType[];
+      AZURE_CORE_DLLEXPORT static char const ApplicationJson[];
+      AZURE_CORE_DLLEXPORT static char const Accept[];
+      AZURE_CORE_DLLEXPORT static char const MsRequestId[];
+      AZURE_CORE_DLLEXPORT static char const MsClientRequestId[];
 
       static inline std::string GetHeaderOrEmptyString(
           Azure::Core::CaseInsensitiveMap const& headers,

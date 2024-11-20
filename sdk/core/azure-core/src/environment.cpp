@@ -5,7 +5,7 @@
 
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -26,7 +26,7 @@ std::string Environment::GetVariable(const char* name)
 {
   if (name != nullptr && name[0] != 0)
   {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     std::vector<std::string::value_type> bufferVector;
     std::string::value_type* buffer = nullptr;
     DWORD bufferSize = 0;
@@ -57,7 +57,7 @@ void Environment::SetVariable(const char* name, const char* value)
   {
     const auto isEmptyValue = (value == nullptr || value[0] == 0);
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     static_cast<void>(SetEnvironmentVariableA(name, isEmptyValue ? nullptr : value));
 #else
     if (isEmptyValue)

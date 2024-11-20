@@ -7,7 +7,7 @@
     "Please contribute your changes to https://github.com/Azure/azure-sdk-for-cpp."
   ],
   "name": "azure-template-cpp",
-  "version-semver": "@AZ_LIBRARY_VERSION@",
+  "version-semver": "@AZURE_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure Template SDK for C++",
     "This is a template library meant to illustrate initial client library development process for Azure SDK.",

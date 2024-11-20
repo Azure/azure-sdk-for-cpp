@@ -19,17 +19,17 @@
 #include <random>
 
 #include <gtest/gtest.h>
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 
 #include <netinet/in.h> // for sockaddr_in
 #include <sys/socket.h> // for socket shutdown
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
 #ifdef max
 #undef max
 #endif
-#endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
+#endif // AZURE_PLATFORM_POSIX/AZURE_PLATFORM_WINDOWS
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSessions : public testing::Test {
@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_internal;
   using namespace Azure::Core::Amqp;
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestSessions, SimpleSession)
   {
 
@@ -93,7 +93,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(1909119, session.GetOutgoingWindow());
     }
   }
-#endif // !AZ_PLATFORM_MAC
+#endif // !AZURE_PLATFORM_MAC
   uint16_t FindAvailableSocket()
   {
     // Ensure that the global state for the AMQP stack is initialized. Normally this is done by
@@ -129,7 +129,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         auto bindResult = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
         // We were able to bind to the port, so it's available.
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
         closesocket(sock);
 #else
         close(sock);
@@ -140,7 +140,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         else
         {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
           auto err = WSAGetLastError();
 #else
           auto err = errno;
@@ -150,7 +150,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       else
       {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
         auto err = WSAGetLastError();
 #else
         auto err = errno;
@@ -162,7 +162,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     throw std::runtime_error("Could not find available test port.");
   }
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
   {
     class TestListenerEvents : public Network::_detail::SocketListenerEvents {
@@ -278,5 +278,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
   }
-#endif // !AZ_PLATFORM_MAC
+#endif // !AZURE_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests

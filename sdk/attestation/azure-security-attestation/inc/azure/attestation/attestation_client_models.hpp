@@ -48,19 +48,19 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @brief Specifies that this should apply to SGX enclaves.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationType SgxEnclave;
+    AZURE_ATTESTATION_DLLEXPORT static const AttestationType SgxEnclave;
 
     /**
      * @brief Specifies that this should apply to SGX enclaves using the OpenEnclave APIs.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationType OpenEnclave;
+    AZURE_ATTESTATION_DLLEXPORT static const AttestationType OpenEnclave;
 
     /**
      * @brief Specifies that this should apply to TPM enclaves.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationType Tpm;
+    AZURE_ATTESTATION_DLLEXPORT static const AttestationType Tpm;
   };
 
   /**
@@ -488,13 +488,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * @brief Specifies that the policy object was updated.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const PolicyModification Updated;
+    AZURE_ATTESTATION_DLLEXPORT static const PolicyModification Updated;
 
     /**
      * @brief Specifies that the policy object was removed.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const PolicyModification Removed;
+    AZURE_ATTESTATION_DLLEXPORT static const PolicyModification Removed;
   };
 
   /**
@@ -543,14 +543,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      * certificates.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsPresent;
+    AZURE_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsPresent;
 
     /**
      * @brief After the operation was performed, the certificate is no longer present in the set of
      * certificates.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsAbsent;
+    AZURE_ATTESTATION_DLLEXPORT static const PolicyCertificateModification IsAbsent;
   };
 
   /**

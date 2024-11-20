@@ -26,7 +26,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition InternalError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition InternalError;
 
     /** @brief Entity Not Found
      * A peer attempted to work with a remote entity that does not
@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotFound;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotFound;
 
     /** @brief Unauthorized Access.
      *
@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition UnauthorizedAccess;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition UnauthorizedAccess;
 
     /** @brief Decoder Error
      * Data could not be decoded.
@@ -53,7 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition DecodeError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition DecodeError;
 
     /** @brief Resource allocation exceeded.
      *
@@ -62,7 +62,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * For more information, see
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceLimitExceeded;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceLimitExceeded;
 
     /** @brief Not Allowed.
      *
@@ -71,7 +71,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      *
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotAllowed;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotAllowed;
 
     /** @brief Invalid Field.
      *
@@ -81,7 +81,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition InvalidField;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition InvalidField;
 
     /** @brief Not Implemented.
      * The peer tried to use functionality that is not implemented in its partner.
@@ -90,7 +90,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotImplemented;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition NotImplemented;
 
     /** @brief Resource Locked.
      *
@@ -101,7 +101,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceLocked;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceLocked;
 
     /** @brief Precondition Failed.
      *
@@ -111,7 +111,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PreconditionFailed;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PreconditionFailed;
     /** @brief Resource Deleted.
      *
      * A server entity the client is working with has been deleted.
@@ -120,7 +120,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceDeleted;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ResourceDeleted;
 
     /** @brief Illegal State.
      *
@@ -130,7 +130,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition IllegalState;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition IllegalState;
 
     /** @brief Frame Size Too Small.
      *
@@ -145,89 +145,89 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [AmqpError](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-amqp-error).
      *
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition FrameSizeTooSmall;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition FrameSizeTooSmall;
 
     /**
      * The link has been attached elsewhere, causing the existing attachment to be forcibly
      * closed.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkStolen;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkStolen;
 
     /**
      * The peer sent a larger message than is supported on the link.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkPayloadSizeExceeded;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkPayloadSizeExceeded;
     /**
      * An operator intervened to detach for some reason.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkDetachForced;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkDetachForced;
 
     /**
      * An operator intervened to close the connection for some reason. The client could retry at
      * some later date.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionForced;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionForced;
 
     // These are errors that are specific to Azure services.
     /**
      * The server is busy.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ServerBusyError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ServerBusyError;
     /**
      * One or more arguments supplied to the method are invalid.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentError;
     /**
      * One or more arguments supplied to the method are invalid.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentOutOfRangeError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ArgumentOutOfRangeError;
     /**
      * Request for a runtime operation on a disabled entity.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityDisabledError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityDisabledError;
     /**
      * Partition is not owned.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PartitionNotOwnedError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PartitionNotOwnedError;
     /**
      * Lock token associated with the message or session has expired, or the lock token is not
      * found.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition StoreLockLostError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition StoreLockLostError;
     /**
      * The TokenProvider object could not acquire a token, the token is invalid, or the token
      * does not contain the claims required to perform the operation.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PublisherRevokedError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition PublisherRevokedError;
     /**
      * The server did not respond to the requested operation within the specified time. The
      * server may have completed the requested operation. This can happen due to network or
      * other infrastructure delays.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TimeoutError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TimeoutError;
     /**
      * Tracking Id for an exception.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TrackingIdProperty;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TrackingIdProperty;
     /**
      * IO exceptions that occur in proton-j library.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ProtonIo;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ProtonIo;
     /**
      * A connection error occurred. A valid frame header cannot be formed from the incoming byte
      * stream.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionFramingError;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionFramingError;
     /**
      * The operation was cancelled.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition OperationCancelled;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition OperationCancelled;
     /**
      * Error condition when receiver attempts {@code complete}, {@code abandon}, {@code
      * renewLock}, {@code deadLetter}, or {@code defer} on a peek-locked message whose lock had
      * already expired.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageLockLost;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageLockLost;
     /**
      * Error condition when a session receiver performs an operation on a session after its lock
      * is expired. When a client accepts a session, the session is locked to the receiver for a
@@ -235,26 +235,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * the duration of lock, that is no operations performed on the session, the lock expires
      * and the session is made available to other clients.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionLockLost;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionLockLost;
     /**
      * Error condition when a client attempts to accept a session that is already locked by
      * another client.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionCannotBeLocked;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionCannotBeLocked;
     /**
      * Error condition when a receiver attempts to receive a message with sequence number and
      * the message with that sequence number is not available in the queue or subscription.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageNotFound;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition MessageNotFound;
     /**
      * Error condition when a receiver attempts to receive from a session that does not exist.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionNotFound;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition SessionNotFound;
     /**
      * Error condition when a subscription client tries to create a rule with the name of an
      * already existing rule.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityAlreadyExists;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition EntityAlreadyExists;
 
     /**
      * The container is no longer available on the current connection. The peer SHOULD attempt
@@ -274,7 +274,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * port:
      * the port number on the machine hosting the container.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionRedirect;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition ConnectionRedirect;
 
     /**
      * The address provided cannot be resolved to a terminus at the current container. The info
@@ -295,12 +295,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * address:
      * the address of the terminus at the container.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkRedirect;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition LinkRedirect;
 
     /**
      * The peer sent more message transfers than currently allowed on the link.
      */
-    AZ_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TransferLimitExceeded;
+    AZURE_CORE_AMQP_DLLEXPORT static const AmqpErrorCondition TransferLimitExceeded;
   };
 
   struct AmqpError final

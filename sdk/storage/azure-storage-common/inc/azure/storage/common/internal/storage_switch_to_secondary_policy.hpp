@@ -12,7 +12,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  AZ_STORAGE_COMMON_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatusKey;
+  AZURE_STORAGE_COMMON_DLLEXPORT extern const Azure::Core::Context::Key SecondaryHostReplicaStatusKey;
 
   inline Azure::Core::Context WithReplicaStatus(const Azure::Core::Context& context)
   {

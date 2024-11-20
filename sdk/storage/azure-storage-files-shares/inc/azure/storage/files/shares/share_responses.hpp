@@ -235,11 +235,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return *this;
       }
       /** @brief Read access rights */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Read;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Read;
       /** @brief Write access rights */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Write;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Write;
       /** @brief Delete access rights */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareFileHandleAccessRights Delete;
 
     private:
       std::set<std::string> m_value;

@@ -316,58 +316,58 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      * @remarks Azure Specific attribute.
      *
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes AzNamespace;
 
     /** @brief  Value of the[x - ms - client - request - id] header(or other request - id header,
      * depending on the service) sent by the client.
      *
      * @remarks Azure Specific attribute.
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes RequestId;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes RequestId;
 
     /** @brief Value of the [x-ms-request-id]  header (or other request-id header, depending on the
      * service) sent by the server in response.
      *
      * @remarks Azure Specific attribute.
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes ServiceRequestId;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes ServiceRequestId;
 
     /**
      * @brief HTTP request method.
      *
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes HttpMethod;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes HttpMethod;
 
     /**
      * @brief Full HTTP request URL in the form `scheme://host[:port]/path?query[#fragment]`.
      *
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes HttpUrl;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes HttpUrl;
 
     /**
      * @brief [HTTP response status code](https://tools.ietf.org/html/rfc7231#section-6).
      *
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes HttpStatusCode;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes HttpStatusCode;
 
     /**
      * @brief Value of the [HTTP User-Agent](https://tools.ietf.org/html/rfc7231#section-5.5.3)
      * header sent by the client.
      *
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes HttpUserAgent;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes HttpUserAgent;
 
     /** @brief Fully qualified Azure service endpoint(host name component)
      *
      * For example: 'http://my-account.servicebus.windows.net/'
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes NetPeerName;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes NetPeerName;
 
     /** @brief Port of the Azure Service Endpoint
      *
      * For example: 'http://my-account.servicebus.windows.net/'
      */
-    AZ_CORE_DLLEXPORT const static TracingAttributes NetPeerPort;
+    AZURE_CORE_DLLEXPORT const static TracingAttributes NetPeerPort;
   };
 
 }}}} // namespace Azure::Core::Tracing::_internal

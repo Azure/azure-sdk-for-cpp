@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type EncryptionAlgorithmType: Aes256 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static EncryptionAlgorithmType Aes256;
     };
     /**
      * @brief Extensible enum used to specify how the service should look for a block ID.
@@ -63,11 +63,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlockType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type BlockType: Committed */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockType Committed;
       /** Constant value of type BlockType: Uncommitted */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockType Uncommitted;
       /** Constant value of type BlockType: Latest */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockType Latest;
     };
     /**
      * @brief The retention policy which determines how long the associated data should persist.
@@ -243,11 +243,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit GeoReplicationStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type GeoReplicationStatus: Live */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static GeoReplicationStatus Unavailable;
     };
     /**
      * @brief Geo-Replication information for the Secondary Storage Service.
@@ -286,9 +286,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit LeaseStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseStatus: Locked */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Locked;
       /** Constant value of type LeaseStatus: Unlocked */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseStatus Unlocked;
     };
     /**
      * @brief The current lease state of the blob.
@@ -301,15 +301,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit LeaseState(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseState: Available */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseState Available;
       /** Constant value of type LeaseState: Leased */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseState Leased;
       /** Constant value of type LeaseState: Expired */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseState Expired;
       /** Constant value of type LeaseState: Breaking */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseState Breaking;
       /** Constant value of type LeaseState: Broken */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseState Broken;
     };
     /**
      * @brief When a blob is leased, specifies whether the lease is of infinite or fixed duration.
@@ -323,9 +323,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit LeaseDurationType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseDurationType: Infinite */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Infinite;
       /** Constant value of type LeaseDurationType: Fixed */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static LeaseDurationType Fixed;
     };
     /**
      * @brief Specifies whether data in the container may be accessed publicly and the level of
@@ -339,11 +339,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit PublicAccessType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type PublicAccessType: BlobContainer */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType BlobContainer;
       /** Constant value of type PublicAccessType: Blob */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType Blob;
       /** Constant value of type PublicAccessType: None */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static PublicAccessType None;
     };
     /**
      * @brief Properties of a container.
@@ -549,21 +549,21 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit SkuName(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type SkuName: StandardLrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardLrs;
       /** Constant value of type SkuName: StandardGrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGrs;
       /** Constant value of type SkuName: StandardRagrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagrs;
       /** Constant value of type SkuName: StandardZrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardZrs;
       /** Constant value of type SkuName: PremiumLrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumLrs;
       /** Constant value of type SkuName: PremiumZrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName PremiumZrs;
       /** Constant value of type SkuName: StandardGzrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardGzrs;
       /** Constant value of type SkuName: StandardRagzrs */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SkuName StandardRagzrs;
     };
     /**
      * @brief Identifies the account kind.
@@ -576,15 +576,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit AccountKind(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type AccountKind: Storage */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccountKind Storage;
       /** Constant value of type AccountKind: BlobStorage */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlobStorage;
       /** Constant value of type AccountKind: StorageV2 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccountKind StorageV2;
       /** Constant value of type AccountKind: FileStorage */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccountKind FileStorage;
       /** Constant value of type AccountKind: BlockBlobStorage */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccountKind BlockBlobStorage;
     };
     /**
      * @brief Blob info from a Filter Blobs API call.
@@ -923,13 +923,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit CopyStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type CopyStatus: Pending */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Pending;
       /** Constant value of type CopyStatus: Success */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Success;
       /** Constant value of type CopyStatus: Aborted */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Aborted;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Aborted;
       /** Constant value of type CopyStatus: Failed */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Failed;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static CopyStatus Failed;
     };
     /**
      * @brief Optional. Indicates the tier to be set on the blob.
@@ -942,43 +942,43 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit AccessTier(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type AccessTier: P1 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P1;
       /** Constant value of type AccessTier: P2 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P2;
       /** Constant value of type AccessTier: P3 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P3;
       /** Constant value of type AccessTier: P4 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P4;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P4;
       /** Constant value of type AccessTier: P6 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P6;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P6;
       /** Constant value of type AccessTier: P10 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P10;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P10;
       /** Constant value of type AccessTier: P15 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P15;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P15;
       /** Constant value of type AccessTier: P20 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P20;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P20;
       /** Constant value of type AccessTier: P30 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P30;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P30;
       /** Constant value of type AccessTier: P40 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P40;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P40;
       /** Constant value of type AccessTier: P50 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P50;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P50;
       /** Constant value of type AccessTier: P60 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P60;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P60;
       /** Constant value of type AccessTier: P70 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P70;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P70;
       /** Constant value of type AccessTier: P80 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier P80;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier P80;
       /** Constant value of type AccessTier: Hot */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier Hot;
       /** Constant value of type AccessTier: Cool */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cool;
       /** Constant value of type AccessTier: Archive */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier Archive;
       /** Constant value of type AccessTier: Premium */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
       /** Constant value of type AccessTier: Cold */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
     };
     /**
      * @brief For blob storage LRS accounts, valid values are
@@ -994,11 +994,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit ArchiveStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type ArchiveStatus: RehydratePendingToHot */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToHot;
       /** Constant value of type ArchiveStatus: RehydratePendingToCool */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
       /** Constant value of type ArchiveStatus: RehydratePendingToCold */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCold;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCold;
     };
     /**
      * @brief Optional: Indicates the priority with which to rehydrate an archived blob.
@@ -1012,9 +1012,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit RehydratePriority(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type RehydratePriority: High */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority High;
       /** Constant value of type RehydratePriority: Standard */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static RehydratePriority Standard;
     };
     /**
      * @brief Standard HTTP properties supported by containers and blobs.
@@ -1061,9 +1061,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type ObjectReplicationStatus: Complete */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Complete;
       /** Constant value of type ObjectReplicationStatus: Failed */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ObjectReplicationStatus Failed;
     };
     /**
      * @brief Contains the object replication rule ID and replication status of a blob.
@@ -1110,9 +1110,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type BlobImmutabilityPolicyMode: Unlocked */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Unlocked;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Unlocked;
       /** Constant value of type BlobImmutabilityPolicyMode: Locked */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Locked;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobImmutabilityPolicyMode Locked;
     };
     /**
      * @brief Immutability policy associated with the blob.
@@ -1312,11 +1312,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlobType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type BlobType: BlockBlob */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobType BlockBlob;
       /** Constant value of type BlobType: PageBlob */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobType PageBlob;
       /** Constant value of type BlobType: AppendBlob */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobType AppendBlob;
     };
     namespace _detail {
       /**
@@ -1830,9 +1830,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit DeleteSnapshotsOption(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type DeleteSnapshotsOption: IncludeSnapshots */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption IncludeSnapshots;
       /** Constant value of type DeleteSnapshotsOption: OnlySnapshots */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static DeleteSnapshotsOption OnlySnapshots;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Delete.
@@ -1865,13 +1865,13 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type ScheduleBlobExpiryOriginType: NeverExpire */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType NeverExpire;
       /** Constant value of type ScheduleBlobExpiryOriginType: RelativeToCreation */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToCreation;
       /** Constant value of type ScheduleBlobExpiryOriginType: RelativeToNow */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType RelativeToNow;
       /** Constant value of type ScheduleBlobExpiryOriginType: Absolute */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static ScheduleBlobExpiryOriginType Absolute;
     };
     /**
      * @brief Response type for Azure::Storage::Blobs::BlobClient::SetExpiry.
@@ -2178,9 +2178,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type BlobCopySourceTagsMode: Replace */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
       /** Constant value of type BlobCopySourceTagsMode: Copy */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
@@ -2270,7 +2270,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
 
         /** Constant value of type QueryRequestQueryType: SQL */
-        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryRequestQueryType SQL;
+        AZURE_STORAGE_BLOBS_DLLEXPORT const static QueryRequestQueryType SQL;
       };
       /**
        * @brief The quick query format type.
@@ -2283,13 +2283,13 @@ namespace Azure { namespace Storage { namespace Blobs {
         explicit QueryFormatType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
         /** Constant value of type QueryFormatType: Delimited */
-        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Delimited;
+        AZURE_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Delimited;
         /** Constant value of type QueryFormatType: Json */
-        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Json;
+        AZURE_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Json;
         /** Constant value of type QueryFormatType: Arrow */
-        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Arrow;
+        AZURE_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Arrow;
         /** Constant value of type QueryFormatType: Parquet */
-        AZ_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Parquet;
+        AZURE_STORAGE_BLOBS_DLLEXPORT const static QueryFormatType Parquet;
       };
       /**
        * @brief Groups the settings used for interpreting the blob data if the blob is delimited
@@ -2343,17 +2343,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
 
       /** Constant value of type BlobQueryArrowFieldType: Int64 */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Int64;
       /** Constant value of type BlobQueryArrowFieldType: Bool */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Bool;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Bool;
       /** Constant value of type BlobQueryArrowFieldType: Timestamp */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Timestamp;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Timestamp;
       /** Constant value of type BlobQueryArrowFieldType: String */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType String;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType String;
       /** Constant value of type BlobQueryArrowFieldType: Double */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Double;
       /** Constant value of type BlobQueryArrowFieldType: Decimal */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobQueryArrowFieldType Decimal;
     };
     /**
      * @brief Groups settings regarding specific field of an arrow schema.
@@ -2720,11 +2720,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit SequenceNumberAction(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type SequenceNumberAction: Max */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Max;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Max;
       /** Constant value of type SequenceNumberAction: Update */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Update;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Update;
       /** Constant value of type SequenceNumberAction: Increment */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static SequenceNumberAction Increment;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::UpdateSequenceNumber.
@@ -3174,11 +3174,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       explicit BlockListType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type BlockListType: Committed */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockListType Committed;
       /** Constant value of type BlockListType: Uncommitted */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockListType Uncommitted;
       /** Constant value of type BlockListType: All */
-      AZ_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
+      AZURE_STORAGE_BLOBS_DLLEXPORT const static BlockListType All;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::GetBlockList.

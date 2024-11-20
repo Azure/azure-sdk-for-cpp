@@ -3,10 +3,10 @@
 
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <errno.h>
 #include <unistd.h>
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -32,7 +32,7 @@ size_t RandomAccessFileBodyStream::OnRead(
     Azure::Core::Context const&)
 {
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 
   // Returning ssize_t from pread as a size_t is fine since we do a `< 0` check below and throw.
   auto numberOfBytesRead = pread(
@@ -46,7 +46,7 @@ size_t RandomAccessFileBodyStream::OnRead(
     throw std::runtime_error("Reading error. (Code Number: " + std::to_string(errno) + ")");
   }
 
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 
   DWORD numberOfBytesRead;
   auto o = OVERLAPPED();

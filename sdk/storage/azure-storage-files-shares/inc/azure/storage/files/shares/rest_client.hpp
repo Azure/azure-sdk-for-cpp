@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit ShareTokenIntent(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type ShareTokenIntent: Backup */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareTokenIntent Backup;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareServiceClient::SetProperties.
@@ -191,13 +191,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit AccessTier(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type AccessTier: TransactionOptimized */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier TransactionOptimized;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier TransactionOptimized;
       /** Constant value of type AccessTier: Hot */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Hot;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Hot;
       /** Constant value of type AccessTier: Cool */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Cool;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Cool;
       /** Constant value of type AccessTier: Premium */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Premium;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessTier Premium;
     };
     /**
      * @brief The current lease status of the share.
@@ -210,9 +210,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseStatus: Locked */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Locked;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Locked;
       /** Constant value of type LeaseStatus: Unlocked */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Unlocked;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseStatus Unlocked;
     };
     /**
      * @brief Lease state of the share.
@@ -225,15 +225,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseState(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseState: Available */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Available;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Available;
       /** Constant value of type LeaseState: Leased */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Leased;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Leased;
       /** Constant value of type LeaseState: Expired */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Expired;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Expired;
       /** Constant value of type LeaseState: Breaking */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Breaking;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Breaking;
       /** Constant value of type LeaseState: Broken */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Broken;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseState Broken;
     };
     /**
      * @brief When a share is leased, specifies whether the lease is of infinite or fixed duration.
@@ -247,9 +247,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit LeaseDurationType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseDurationType: Infinite */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Infinite;
       /** Constant value of type LeaseDurationType: Fixed */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static LeaseDurationType Fixed;
     };
     /**
      * @brief The protocols that have been enabled on the share.
@@ -262,9 +262,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit ShareProtocols(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type ShareProtocols: Smb */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Smb;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Smb;
       /** Constant value of type ShareProtocols: Nfs */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Nfs;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareProtocols Nfs;
     };
     /**
      * @brief Root squash to set on the share.  Only valid for NFS shares.
@@ -277,11 +277,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit ShareRootSquash(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type ShareRootSquash: NoRootSquash */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash NoRootSquash;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash NoRootSquash;
       /** Constant value of type ShareRootSquash: RootSquash */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash RootSquash;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash RootSquash;
       /** Constant value of type ShareRootSquash: AllSquash */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash AllSquash;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static ShareRootSquash AllSquash;
     };
     /**
      * @brief Properties of a share.
@@ -645,7 +645,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit DeleteSnapshotsOption(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type DeleteSnapshotsOption: Include */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOption Include;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static DeleteSnapshotsOption Include;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::Delete.
@@ -816,9 +816,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit FilePermissionFormat(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type FilePermissionFormat: Sddl */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Sddl;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Sddl;
       /** Constant value of type FilePermissionFormat: Binary */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Binary;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FilePermissionFormat Binary;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::CreatePermission.
@@ -1030,25 +1030,25 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
 
       /** Constant value of type FileAttributes: ReadOnly */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes ReadOnly;
       /** Constant value of type FileAttributes: Hidden */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Hidden;
       /** Constant value of type FileAttributes: System */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes System;
       /** Constant value of type FileAttributes: None */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes None;
       /** Constant value of type FileAttributes: Directory */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Directory;
       /** Constant value of type FileAttributes: Archive */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Archive;
       /** Constant value of type FileAttributes: Temporary */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Temporary;
       /** Constant value of type FileAttributes: Offline */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes Offline;
       /** Constant value of type FileAttributes: NotContentIndexed */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NotContentIndexed;
       /** Constant value of type FileAttributes: NoScrubData */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileAttributes NoScrubData;
 
     private:
       std::vector<std::string> m_value;
@@ -1355,11 +1355,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         explicit AccessRight(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
         /** Constant value of type AccessRight: Read */
-        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
+        AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Read;
         /** Constant value of type AccessRight: Write */
-        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
+        AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Write;
         /** Constant value of type AccessRight: Delete */
-        AZ_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
+        AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static AccessRight Delete;
       };
       /**
        * @brief A listed Azure Storage handle item.
@@ -1548,13 +1548,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit CopyStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type CopyStatus: Pending */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Pending;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Pending;
       /** Constant value of type CopyStatus: Success */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Success;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Success;
       /** Constant value of type CopyStatus: Aborted */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Aborted;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Aborted;
       /** Constant value of type CopyStatus: Failed */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
     };
     /**
      * @brief Detailed information of the downloaded file.
@@ -1892,9 +1892,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit FileLastWrittenMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type FileLastWrittenMode: Now */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Now;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Now;
       /** Constant value of type FileLastWrittenMode: Preserve */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Preserve;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static FileLastWrittenMode Preserve;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRange.
@@ -1992,9 +1992,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       explicit PermissionCopyMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type PermissionCopyMode: Source */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Source;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Source;
       /** Constant value of type PermissionCopyMode: Override */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Override;
+      AZURE_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Override;
     };
     namespace _detail {
       /**

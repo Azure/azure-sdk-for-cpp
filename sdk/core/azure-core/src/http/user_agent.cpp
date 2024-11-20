@@ -12,7 +12,7 @@
 
 #include <sstream>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -67,7 +67,7 @@ public:
 
 #endif
 
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 #include <sys/utsname.h>
 #endif
 
@@ -76,7 +76,7 @@ std::string GetOSVersion()
 {
   std::ostringstream osVersionInfo;
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) \
     || WINAPI_PARTITION_DESKTOP // See azure/core/platform.hpp for explanation.
   {
@@ -115,7 +115,7 @@ std::string GetOSVersion()
     osVersionInfo << "UWP";
   }
 #endif
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
   {
     utsname sysInfo{};
     if (uname(&sysInfo) == 0)

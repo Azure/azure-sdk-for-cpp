@@ -12,7 +12,7 @@
 #include <stdexcept>
 #include <type_traits>
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <thread>
 namespace {
 // 64-bit Mersenne Twister by Matsumoto and Nishimura, 2000
@@ -139,7 +139,7 @@ namespace Azure { namespace Core {
     static_assert(sizeof(RngResultType) == 4, "sizeof(RngResultType) must be 4.");
     constexpr size_t RngResultSize = 4;
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     std::random_device rd;
 
     static_assert(
@@ -151,7 +151,7 @@ namespace Azure { namespace Core {
 
     for (size_t i = 0; i < result.m_uuid.size(); i += RngResultSize)
     {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
       const RngResultType x = rd();
 #else
       const RngResultType x = distribution(randomGenerator);

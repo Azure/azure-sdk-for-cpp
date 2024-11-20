@@ -24,7 +24,7 @@
 #include <gtest/gtest.h>
 
 class DllExportTest final {
-  AZ_CORE_DLLEXPORT static const bool DllExportHIncluded;
+  AZURE_CORE_DLLEXPORT static const bool DllExportHIncluded;
 };
 
 TEST(SimplifiedHeader, core)

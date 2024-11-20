@@ -54,7 +54,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
      * Storage account.
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT const static QueueAudience DefaultAudience;
+    AZURE_STORAGE_QUEUES_DLLEXPORT const static QueueAudience DefaultAudience;
   };
 
   /**
@@ -93,19 +93,19 @@ namespace Azure { namespace Storage { namespace Queues {
      * @brief API version 2018-03-28.
      *
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
+    AZURE_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2018_03_28;
 
     /**
      * @brief API version 2019-12-12.
      *
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2019_12_12;
+    AZURE_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2019_12_12;
 
     /**
      * @brief API version 2024-08-04.
      *
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2024_08_04;
+    AZURE_STORAGE_QUEUES_DLLEXPORT const static ServiceVersion V2024_08_04;
 
   private:
     std::string m_version;
@@ -262,7 +262,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * @brief A TTL value representing the queue message does not expire.
      */
-    AZ_STORAGE_QUEUES_DLLEXPORT const static std::chrono::seconds MessageNeverExpires;
+    AZURE_STORAGE_QUEUES_DLLEXPORT const static std::chrono::seconds MessageNeverExpires;
   };
 
   /**

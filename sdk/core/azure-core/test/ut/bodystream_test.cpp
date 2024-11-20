@@ -5,9 +5,9 @@
 
 #include <iostream>
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <fcntl.h>
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -47,9 +47,9 @@ TEST(BodyStream, Rewind)
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
   testDataPath.append("/fileData");
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
   testDataPath.append("\\fileData");
 #else
 #error "Unknown platform"

@@ -150,7 +150,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
      * Storage account.
      */
-    AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
+    AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
   };
 
   /**

@@ -489,7 +489,7 @@ namespace Azure { namespace Core { namespace Test {
     // By default, for the Windows and Mac platforms, Curl uses
     // SCHANNEL/SECTRANSP for CRL validation. Those SSL protocols
     // don't have the same behaviors as OpenSSL does.
-#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_WINDOWS) && !defined(AZURE_PLATFORM_MAC)
     //    Azure::Core::Url
     //    testUrl("https://github.com/Azure/azure-sdk-for-cpp/blob/main/README.md");
     Azure::Core::Url testUrl("https://www.wikipedia.org");
@@ -644,7 +644,7 @@ namespace Azure { namespace Core { namespace Test {
       // On Windows and OSX, setting a root certificate disables the default system certificate
       // store. That means that if we set the expected certificate, we won't be able to connect to
       // the server because the certificates root CA is not in the store.
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
       // cspell:disable
       std::string azurewebsitesCertificate
           = "MIIF8zCCBNugAwIBAgIQCq+mxcpjxFFB6jvh98dTFzANBgkqhkiG9w0BAQwFADBh"

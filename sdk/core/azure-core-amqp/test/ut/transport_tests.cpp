@@ -131,7 +131,7 @@ Accept: */*
     void TearDown() override {}
   };
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestSocketTransport, SimpleCreate)
   {
     {
@@ -411,5 +411,5 @@ Host: www.microsoft.com)";
     listenerTransport->Close();
     listener.Stop();
   }
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

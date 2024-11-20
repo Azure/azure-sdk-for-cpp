@@ -5,7 +5,7 @@
 #include "azure/core/base64.hpp"
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -25,7 +25,7 @@
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <openssl/opensslv.h>
 #if OPENSSL_VERSION_NUMBER < 0x30000000L
 #define USE_OPENSSL_1
@@ -47,15 +47,15 @@
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
 #include <openssl/x509v3.h>
-#endif // AZ_PLATFORM_POSIX
+#endif // AZURE_PLATFORM_POSIX
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 
 #include <sys/socket.h> // for socket shutdown
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #include <winsock2.h> // for WSAPoll();
-#endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
+#endif // AZURE_PLATFORM_POSIX/AZURE_PLATFORM_WINDOWS
 
 #include <algorithm>
 #include <chrono>
@@ -109,7 +109,7 @@ int pollSocketUntilEventOrTimeout(
     PollSocketDirection direction,
     long timeout)
 {
-#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_POSIX)
+#if !defined(AZURE_PLATFORM_WINDOWS) && !defined(AZURE_PLATFORM_POSIX)
   // platform does not support Poll().
   throw TransportException("Error while sending request. Platform does not support Poll()");
 #endif
@@ -145,14 +145,14 @@ int pollSocketUntilEventOrTimeout(
         (std::min)(
             pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
             .count());
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
     result = poll(&poller, 1, pollTimeoutMs);
     if (result < 0 && EINTR == errno)
     {
       now = std::chrono::steady_clock::now();
       continue;
     }
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     result = WSAPoll(&poller, 1, pollTimeoutMs);
 #endif
     if (result != 0)
@@ -168,7 +168,7 @@ int pollSocketUntilEventOrTimeout(
 using Azure::Core::Diagnostics::Logger;
 using Azure::Core::Diagnostics::_internal::Log;
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 // Windows needs this after every write to socket or performance would be reduced to 1/4 for
 // uploading operation.
 // https://github.com/Azure/azure-sdk-for-cpp/issues/644
@@ -633,7 +633,7 @@ CURLcode CurlConnection::SendBuffer(
       }
     }
   }
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return CURLE_OK;
@@ -1247,7 +1247,7 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
       }
     }
   }
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   WinSocketSetBuffSize(m_curlSocket);
 #endif
   return readBytes;
@@ -1513,7 +1513,7 @@ int CurlConnection::CurlLoggingCallback(CURL*, curl_infotype type, char* data, s
 
 // On Windows and macOS, libcurl uses native crypto backends, this functionality depends on
 // the OpenSSL backend.
-#if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_WINDOWS) && !defined(AZURE_PLATFORM_MAC)
 namespace Azure { namespace Core {
   namespace _detail {
 
@@ -2444,7 +2444,7 @@ CurlConnection::CurlConnection(
   }
 #endif
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   long sslOption = 0;
   if (!options.SslOptions.EnableCertificateRevocationListCheck)
   {
@@ -2458,7 +2458,7 @@ CurlConnection::CurlConnection(
         + ". Failed to set ssl options to long bitmask:" + std::to_string(sslOption) + ". "
         + std::string(curl_easy_strerror(result)));
   }
-#elif !defined(AZ_PLATFORM_MAC)
+#elif !defined(AZURE_PLATFORM_MAC)
   if (options.SslOptions.EnableCertificateRevocationListCheck)
   {
     if (!SetLibcurlOption(
@@ -2529,7 +2529,7 @@ CurlConnection::CurlConnection(
   auto performResult = curl_easy_perform(m_handle.get());
   if (performResult != CURLE_OK)
   {
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
     if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {
       curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);

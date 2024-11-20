@@ -19,7 +19,7 @@
 #include <sstream>
 #include <vector>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -38,7 +38,7 @@
 #endif // UWP
 #endif
 
-#if !defined(AZ_PLATFORM_WINDOWS) \
+#if !defined(AZURE_PLATFORM_WINDOWS) \
     || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
 #include <openssl/bio.h>
 #include <openssl/evp.h>
@@ -164,7 +164,7 @@ std::string GetJwtToken(
   return Base64Url::Base64UrlEncode(ToUInt8Vector(tokenHeaderVec));
 }
 
-#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
+#if defined(AZURE_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
 enum PrivateKeyType
 {
   Rsa,
@@ -522,7 +522,7 @@ std::vector<unsigned char> SignPkcs1Sha256(PrivateKey key, const uint8_t* data, 
 
 void Azure::Identity::_detail::FreePrivateKeyImpl(void* pkey)
 {
-#if defined(AZ_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
+#if defined(AZURE_PLATFORM_WINDOWS) && (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP)
   BCryptDestroyKey(static_cast<BCRYPT_KEY_HANDLE>(pkey));
 #else
   EVP_PKEY_free(static_cast<EVP_PKEY*>(pkey));

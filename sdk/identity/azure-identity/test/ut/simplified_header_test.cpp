@@ -12,7 +12,7 @@
 
 #include <gtest/gtest.h>
 
-#if !defined(AZ_IDENTITY_DLLEXPORT)
+#if !defined(AZURE_IDENTITY_DLLEXPORT)
 #error "azure/identity.hpp does not include dll_import_export.hpp"
 #endif
 

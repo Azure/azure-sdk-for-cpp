@@ -169,11 +169,11 @@ namespace Azure { namespace Storage { namespace Queues {
       explicit GeoReplicationStatus(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type GeoReplicationStatus: Live */
-      AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Live;
+      AZURE_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
-      AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      AZURE_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
-      AZ_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
+      AZURE_STORAGE_QUEUES_DLLEXPORT const static GeoReplicationStatus Unavailable;
     };
     /**
      * @brief Geo-Replication information for the Secondary Storage Service.

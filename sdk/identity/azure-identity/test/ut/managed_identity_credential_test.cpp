@@ -11,12 +11,12 @@
 
 #include <gtest/gtest.h>
 
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
 #include <unistd.h>
 
 #include <sys/stat.h> // for mkdir
 #include <sys/types.h>
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -1344,7 +1344,7 @@ namespace Azure { namespace Identity { namespace Test {
   std::string CreateDirectoryAndGetKeyPath()
   {
     std::string keyPath;
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
     keyPath = "/var/opt/azcmagent/tokens";
     int result = system(std::string("sudo mkdir -p ").append(keyPath).c_str());
     if (result != 0 && errno != EEXIST)
@@ -1362,7 +1362,7 @@ namespace Azure { namespace Identity { namespace Test {
       EXPECT_TRUE(false);
     }
     keyPath += "/";
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     keyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
     if (keyPath.empty())
     {
@@ -1833,9 +1833,9 @@ namespace Azure { namespace Identity { namespace Test {
 
     std::string keyPath;
 
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
     keyPath = "/var/opt/azcmagent/tokens/";
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
     keyPath = Azure::Core::_internal::Environment::GetVariable("ProgramData");
     if (keyPath.empty())
     {

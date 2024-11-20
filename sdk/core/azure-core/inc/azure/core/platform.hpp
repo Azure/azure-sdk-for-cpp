@@ -7,7 +7,7 @@
  */
 
 // The proper way to check for "UWP/NOT UWP" (*):
-// 1. Include this file, so that AZ_PLATFORM_WINDOWS becomes available.
+// 1. Include this file, so that AZURE_PLATFORM_WINDOWS becomes available.
 // 2. Include windows.h (**)
 // 3. Use "#if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP" (***) as a condition
 // meant to detect as fully-featured Win32 API (i.e. registry access, FileOpen() etc.) = "NOT UWP"
@@ -22,10 +22,10 @@
 // the Windows platforms (UWP itself, Phone OS, Windows Store, etc) that do not allow some Win32
 // APIs such as registry access.
 // (**) - Including windows.h brings up WINAPI_PARTITION_DESKTOP macro (***). The reason we don't
-// simply include windows.h in this header and declare some sort of a "AZ_PLATFORM_WINDOWS_UWP"
+// simply include windows.h in this header and declare some sort of a "AZURE_PLATFORM_WINDOWS_UWP"
 // macro in this file is that some places do need to include windows.h when WIN32_LEAN_AND_MEAN is
 // defined, others do not. So we defer this to each Azure SDK .cpp to do the inclusion as it best
-// fits. Plus, theoretically, you may want to check for AZ_PLATFORM_WINDOWS, yet you don't need
+// fits. Plus, theoretically, you may want to check for AZURE_PLATFORM_WINDOWS, yet you don't need
 // anything from windows.h header.
 // (***) - What is happening here: "WINAPI_PARTITION_DESKTOP" may not be defined on some old Windows
 // SDKs that existed before a concept of "UWP" came out. Those are your traditional "Full Win32 API"
@@ -44,13 +44,13 @@
 #pragma once
 
 #if defined(_WIN32)
-#define AZ_PLATFORM_WINDOWS
+#define AZURE_PLATFORM_WINDOWS
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
-#define AZ_PLATFORM_POSIX
+#define AZURE_PLATFORM_POSIX
 #if defined(__APPLE__) || defined(__MACH__)
-#define AZ_PLATFORM_MAC
+#define AZURE_PLATFORM_MAC
 #else
-#define AZ_PLATFORM_LINUX
+#define AZURE_PLATFORM_LINUX
 #endif
 
 #endif

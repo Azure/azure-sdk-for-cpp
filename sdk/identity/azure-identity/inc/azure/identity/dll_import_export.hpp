@@ -11,32 +11,32 @@
 #pragma once
 
 /**
- * @def AZ_IDENTITY_DLLEXPORT
+ * @def AZURE_IDENTITY_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://learn.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_IDENTITY_DLL) || (0 /*@AZ_IDENTITY_DLL_INSTALLED_AS_PACKAGE@*/)
-#define AZ_IDENTITY_BUILT_AS_DLL 1
+#if defined(AZURE_IDENTITY_DLL) || (0 /*@AZURE_IDENTITY_DLL_INSTALLED_AS_PACKAGE@*/)
+#define AZURE_IDENTITY_BUILT_AS_DLL 1
 #else
-#define AZ_IDENTITY_BUILT_AS_DLL 0
+#define AZURE_IDENTITY_BUILT_AS_DLL 0
 #endif
 
-#if AZ_IDENTITY_BUILT_AS_DLL
+#if AZURE_IDENTITY_BUILT_AS_DLL
 #if defined(_MSC_VER)
-#if defined(AZ_IDENTITY_BEING_BUILT)
-#define AZ_IDENTITY_DLLEXPORT __declspec(dllexport)
-#else // !defined(AZ_IDENTITY_BEING_BUILT)
-#define AZ_IDENTITY_DLLEXPORT __declspec(dllimport)
-#endif // AZ_IDENTITY_BEING_BUILT
+#if defined(AZURE_IDENTITY_BEING_BUILT)
+#define AZURE_IDENTITY_DLLEXPORT __declspec(dllexport)
+#else // !defined(AZURE_IDENTITY_BEING_BUILT)
+#define AZURE_IDENTITY_DLLEXPORT __declspec(dllimport)
+#endif // AZURE_IDENTITY_BEING_BUILT
 #else // !defined(_MSC_VER)
-#define AZ_IDENTITY_DLLEXPORT
+#define AZURE_IDENTITY_DLLEXPORT
 #endif // _MSC_VER
-#else // !AZ_IDENTITY_BUILT_AS_DLL
-#define AZ_IDENTITY_DLLEXPORT
-#endif // AZ_IDENTITY_BUILT_AS_DLL
+#else // !AZURE_IDENTITY_BUILT_AS_DLL
+#define AZURE_IDENTITY_DLLEXPORT
+#endif // AZURE_IDENTITY_BUILT_AS_DLL
 
-#undef AZ_IDENTITY_BUILT_AS_DLL
+#undef AZURE_IDENTITY_BUILT_AS_DLL
 
 /**
  * @brief Azure SDK abstractions.

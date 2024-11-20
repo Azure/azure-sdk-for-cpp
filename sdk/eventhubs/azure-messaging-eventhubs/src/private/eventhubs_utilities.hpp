@@ -269,11 +269,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
       options.Properties.emplace("product", packageName);
       options.Properties.emplace("version", PackageVersion::ToString());
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
       options.Properties.emplace("platform", "Windows");
-#elif defined(AZ_PLATFORM_LINUX)
+#elif defined(AZURE_PLATFORM_LINUX)
       options.Properties.emplace("platform", "Linux");
-#elif defined(AZ_PLATFORM_MAC)
+#elif defined(AZURE_PLATFORM_MAC)
       options.Properties.emplace("platform", "Mac");
 #endif
       options.Properties.emplace(

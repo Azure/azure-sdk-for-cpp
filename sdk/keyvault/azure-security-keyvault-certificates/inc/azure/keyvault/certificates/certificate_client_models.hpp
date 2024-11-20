@@ -250,26 +250,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType Ec;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType Ec;
 
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm backed by a Hardware Security Module
      * (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType EcHsm;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType EcHsm;
 
     /**
      * @brief An RSA cryptographic algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType Rsa;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType Rsa;
 
     /**
      * @brief An RSA cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType RsaHsm;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyType RsaHsm;
   };
 
   /**
@@ -335,7 +335,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256;
 
     /**
      * @brief Get the SECG SECP256K1 elliptic curve.
@@ -345,7 +345,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256K;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P256K;
 
     /**
      * @brief Get the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
@@ -355,7 +355,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P384;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P384;
 
     /**
      * @brief Get the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
@@ -365,7 +365,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P521;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyCurveName P521;
   };
 
   /**
@@ -457,7 +457,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pkcs12;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pkcs12;
 
     /**
      * @brief Get the SECG SECP256K1 elliptic curve.
@@ -467,7 +467,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pem;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateContentType Pem;
   };
 
   /**
@@ -527,63 +527,63 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * used as a digital signatures.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DigitalSignature;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DigitalSignature;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for
      * authentication.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage NonRepudiation;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage NonRepudiation;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for key
      * encryption.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyEncipherment;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyEncipherment;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for data
      * encryption.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DataEncipherment;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DataEncipherment;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used to determine
      * key agreement, such as a key created using the Diffie-Hellman key agreement algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyAgreement;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyAgreement;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used to sign
      * certificates.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyCertSign;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage KeyCertSign;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used to sign a
      * certificate revocation list.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage CrlSign;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage CrlSign;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for
      * encryption only.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage EncipherOnly;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage EncipherOnly;
 
     /**
      * @brief Get a CertificateKeyUsage indicating that the certificate key can be used for
      * decryption only.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DecipherOnly;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificateKeyUsage DecipherOnly;
   };
 
   /**
@@ -649,20 +649,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction
         DigitalSignature;
 
     /**
      * @brief Gets a CertificatePolicyAction that will auto-renew a certificate.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction AutoRenew;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction AutoRenew;
 
     /**
      * @brief Get a CertificatePolicyAction action that will email certificate contacts.
      *
      */
-    AZ_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction EmailContacts;
+    AZURE_SECURITY_KEYVAULT_CERTIFICATES_DLLEXPORT static const CertificatePolicyAction EmailContacts;
   };
 
   /**

@@ -77,27 +77,27 @@ namespace Azure { namespace Core {
      * @brief The #Azure::Core::Operation is Not Started.
      *
      */
-    AZ_CORE_DLLEXPORT static const OperationStatus NotStarted;
+    AZURE_CORE_DLLEXPORT static const OperationStatus NotStarted;
     /**
      * @brief The #Azure::Core::Operation is Running.
      *
      */
-    AZ_CORE_DLLEXPORT static const OperationStatus Running;
+    AZURE_CORE_DLLEXPORT static const OperationStatus Running;
     /**
      * @brief The #Azure::Core::Operation Succeeded.
      *
      */
-    AZ_CORE_DLLEXPORT static const OperationStatus Succeeded;
+    AZURE_CORE_DLLEXPORT static const OperationStatus Succeeded;
     /**
      * @brief The #Azure::Core::Operation was Cancelled.
      *
      */
-    AZ_CORE_DLLEXPORT static const OperationStatus Cancelled;
+    AZURE_CORE_DLLEXPORT static const OperationStatus Cancelled;
     /**
      * @brief The #Azure::Core::Operation Failed.
      *
      */
-    AZ_CORE_DLLEXPORT static const OperationStatus Failed;
+    AZURE_CORE_DLLEXPORT static const OperationStatus Failed;
   };
 
 }} // namespace Azure::Core

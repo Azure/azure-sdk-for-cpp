@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief A value representing infinite lease duration.
      */
-    AZ_STORAGE_BLOBS_DLLEXPORT const static std::chrono::seconds InfiniteLeaseDuration;
+    AZURE_STORAGE_BLOBS_DLLEXPORT const static std::chrono::seconds InfiniteLeaseDuration;
 
     /**
      * @brief Get lease id of this lease client.

@@ -39,9 +39,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         explicit PathRenameMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
         /** Constant value of type PathRenameMode: Legacy */
-        AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Legacy;
         /** Constant value of type PathRenameMode: Posix */
-        AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathRenameMode Posix;
       };
       class PathSetAccessControlListRecursiveMode final
           : public Core::_internal::ExtendableEnumeration<PathSetAccessControlListRecursiveMode> {
@@ -55,12 +55,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         }
 
         /** Constant value of type PathSetAccessControlListRecursiveMode: Set */
-        AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode Set;
         /** Constant value of type PathSetAccessControlListRecursiveMode: Modify */
-        AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Modify;
         /** Constant value of type PathSetAccessControlListRecursiveMode: Remove */
-        AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
+        AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathSetAccessControlListRecursiveMode
             Remove;
       };
     } // namespace _detail
@@ -76,11 +76,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PublicAccessType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type PublicAccessType: None */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType None;
       /** Constant value of type PublicAccessType: FileSystem */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType FileSystem;
       /** Constant value of type PublicAccessType: Path */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PublicAccessType Path;
     };
     namespace _detail {
       struct PathItem final
@@ -131,9 +131,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit PathResourceType(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type PathResourceType: Directory */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType Directory;
       /** Constant value of type PathResourceType: File */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static PathResourceType File;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Create.
@@ -289,13 +289,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       explicit LeaseAction(std::string value) : ExtendableEnumeration(std::move(value)) {}
 
       /** Constant value of type LeaseAction: Acquire */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Acquire;
       /** Constant value of type LeaseAction: AutoRenew */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AutoRenew;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AutoRenew;
       /** Constant value of type LeaseAction: Release */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction Release;
       /** Constant value of type LeaseAction: AcquireRelease */
-      AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
+      AZURE_STORAGE_FILES_DATALAKE_DLLEXPORT const static LeaseAction AcquireRelease;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::DataLake::DataLakeFileClient::Flush.

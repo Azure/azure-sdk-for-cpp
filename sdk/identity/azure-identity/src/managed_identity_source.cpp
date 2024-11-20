@@ -46,9 +46,9 @@ std::string ExpectedArcKeyDirectory()
 {
   using Azure::Core::Credentials::AuthenticationException;
 
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
   return "/var/opt/azcmagent/tokens";
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
   const std::string programDataPath{
       Azure::Core::_internal::Environment::GetVariable("ProgramData")};
   if (programDataPath.empty())
@@ -63,7 +63,7 @@ std::string ExpectedArcKeyDirectory()
 
 constexpr off_t MaximumAzureArcKeySize = 4096;
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 constexpr char DirectorySeparator = '\\';
 #else
 static constexpr char DirectorySeparator = '/';

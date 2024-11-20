@@ -10,7 +10,7 @@
 
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <unistd.h>
 #endif
 
@@ -168,9 +168,9 @@ namespace Azure { namespace Core { namespace IO {
     class RandomAccessFileBodyStream final : public BodyStream {
     private:
       // immutable
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
       int m_fileDescriptor;
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
       void* m_filehandle;
 #endif
       int64_t m_baseOffset;
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace IO {
       size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     public:
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
       /**
        * @brief Construct from a file descriptor.
        *
@@ -206,7 +206,7 @@ namespace Azure { namespace Core { namespace IO {
       {
       }
 
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
       /**
        * @brief Construct from a file handle.
        *
@@ -248,9 +248,9 @@ namespace Azure { namespace Core { namespace IO {
   class FileBodyStream final : public BodyStream {
   private:
     // immutable
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     void* m_filehandle;
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
     int m_fileDescriptor;
 #endif
     // mutable

@@ -296,11 +296,11 @@ namespace Azure { namespace Data { namespace Tables {
       /** Converts the value to a string. */
       const std::string& ToString() const { return m_value; }
       /** Constant value of type GeoReplicationStatus: Live */
-      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
+      AZURE_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Live;
       /** Constant value of type GeoReplicationStatus: Bootstrap */
-      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
+      AZURE_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Bootstrap;
       /** Constant value of type GeoReplicationStatus: Unavailable */
-      AZ_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Unavailable;
+      AZURE_DATA_TABLES_DLLEXPORT const static GeoReplicationStatus Unavailable;
 
     private:
       std::string m_value;
@@ -326,21 +326,21 @@ namespace Azure { namespace Data { namespace Tables {
       {
       }
       /** Constant value of type TableEntityDataType:EdmBinary */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBinary;
       /** Constant value of type TableEntityDataType:EdmBoolean */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmBoolean;
       /** Constant value of type TableEntityDataType:EdmDateTime */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDateTime;
       /** Constant value of type TableEntityDataType:EdmDouble */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmDouble;
       /** Constant value of type TableEntityDataType:EdmGuid */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmGuid;
       /** Constant value of type TableEntityDataType:EdmInt32 */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt32;
       /** Constant value of type TableEntityDataType:EdmInt64 */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmInt64;
       /** Constant value of type TableEntityDataType:EdmString */
-      AZ_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
+      AZURE_DATA_TABLES_DLLEXPORT const static TableEntityDataType EdmString;
     };
 
     /**
