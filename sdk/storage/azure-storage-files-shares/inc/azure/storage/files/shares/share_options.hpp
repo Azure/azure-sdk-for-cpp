@@ -18,6 +18,136 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
+  namespace Models {
+    enum class RolePermissions
+    {
+      /*
+       * @brief No permissions.
+       */
+      None = 0,
+
+      /*
+       * @brief The execute permission.
+       */
+      Execute = 1,
+
+      /*
+       * @brief The write permission.
+       */
+      Write = 2,
+
+      /*
+       * @brief The read permission.
+       */
+      Read = 4,
+    };
+
+    inline RolePermissions operator|(const RolePermissions& lhs, const RolePermissions& rhs)
+    {
+      using type = std::underlying_type_t<RolePermissions>;
+      return static_cast<RolePermissions>(static_cast<type>(lhs) | static_cast<type>(rhs));
+    }
+
+    inline RolePermissions operator&(const RolePermissions& lhs, const RolePermissions& rhs)
+    {
+      using type = std::underlying_type_t<RolePermissions>;
+      return static_cast<RolePermissions>(static_cast<type>(lhs) & static_cast<type>(rhs));
+    }
+
+    /**
+     * @brief The mode permissions of the file or directory.
+     */
+    struct NfsFileMode final
+    {
+      /**
+       * @brief Permissions the owner has over the file or directory.
+       */
+      RolePermissions Owner;
+
+      /**
+       * @brief Permissions the group has over the file or directory.
+       */
+      RolePermissions Group;
+
+      /**
+       * @brief Permissions other have over the file or directory.
+       */
+      RolePermissions Other;
+
+      /**
+       * @brief Set effective user ID (setuid) on the file or directory.
+       */
+      bool EffectiveUserIdentity;
+
+      /**
+       * @brief Set effective group ID (setgid) on the file or directory.
+       */
+      bool EffectiveGroupIdentity;
+
+      /**
+       * @brief The sticky bit may be set on directories. The files in that directory may only be
+       * renamed or deleted by the file's owner, the directory's owner, or the root user.
+       */
+      bool StickyBit;
+
+      /**
+       * @brief Returns the octal representation of NfsFileMode as a string.
+       */
+      std::string ToOctalFileMode() const;
+
+      /**
+       * @brief Returns NfsFileMode as a string in symbolic notation.
+       */
+      std::string ToSymbolicFileMode() const;
+
+      /**
+       * @brief Returns a NfsFileMode from the octal string representation.
+       *
+       * @param modeString A 4-digit octal string representation of a File Mode.
+       */
+      static NfsFileMode ParseOctalFileMode(const std::string& modeString);
+
+      /**
+       * @brief Returns a NfsFileMode from the symbolic string representation.
+       *
+       * @param modeString A 9-character symbolic string representation of a File Mode.
+       */
+      static NfsFileMode ParseSymbolicFileMode(const std::string& modeString);
+    };
+
+    /**
+     * @brief NFS properties. Note that these properties only apply to files or directories in
+     * premium NFS file accounts.
+     */
+    struct FilePosixProperties final
+    {
+      /**
+       * NFS only. The mode of the file or directory.
+       */
+      Nullable<NfsFileMode> FileMode;
+
+      /**
+       * NFS only. The owner of the file or directory.
+       */
+      Nullable<std::string> Owner;
+
+      /**
+       * NFS only. The owning group of the file or directory.
+       */
+      Nullable<std::string> Group;
+
+      /**
+       * NFS only. Type of the file or directory.
+       */
+      Nullable<Models::NfsFileType> NfsFileType;
+
+      /**
+       * NFS only. The link count of the file or directory.
+       */
+      Nullable<std::int64_t> LinkCount;
+    };
+  } // namespace Models
+
   /**
    * @brief Audiences available for share service
    *
@@ -389,6 +519,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * SMB properties to set for the directory.
      */
     Models::FileSmbProperties SmbProperties;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -550,6 +685,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * returned in SDDL format.
      */
     Nullable<Models ::FilePermissionFormat> FilePermissionFormat;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -695,6 +835,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -782,6 +927,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -835,6 +985,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
   };
 
   /**
@@ -1067,6 +1222,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Nullable<Models::FilePermissionFormat> FilePermissionFormat;
 
     /**
+     * The NFS related properties for the file.
+     */
+    Models::FilePosixProperties NfsProperties;
+
+    /**
      * @brief Options for parallel transfer.
      */
     struct
@@ -1130,5 +1290,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct RenewLeaseOptions final
   {
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::CreateSymbolicLink.
+   */
+  struct CreateSymbolicLinkOptions final
+  {
+    /**
+     * A name-value pair to associate with a file storage object.
+     */
+    Storage::Metadata Metadata;
+
+    /**
+     * Creation time for the file or directory.
+     */
+    Nullable<DateTime> CreatedOn;
+
+    /**
+     * Last write time for the file or directory.
+     */
+    Nullable<DateTime> LastWrittenOn;
+
+    /**
+     * Specify the access condition for the path.
+     */
+    LeaseAccessConditions AccessConditions;
+
+    /**
+     * NFS only. The owner user identifier (UID) to be set on the symbolic link. The default value
+     * is 0 (root).
+     */
+    Nullable<std::string> Owner;
+
+    /**
+     * NFS only. The owner group identifier (GID) to be set on the symbolic link. The default value
+     * is 0 (root group).
+     */
+    Nullable<std::string> Group;
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::GetSymbolicLink.
+   */
+  struct GetSymbolicLinkOptions final
+  {
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::CreateHardLink.
+   */
+  struct CreateHardLinkOptions final
+  {
+    /**
+     * Specify the access condition for the path.
+     */
+    LeaseAccessConditions AccessConditions;
   };
 }}}} // namespace Azure::Storage::Files::Shares

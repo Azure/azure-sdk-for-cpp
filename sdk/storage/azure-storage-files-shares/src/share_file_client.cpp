@@ -218,6 +218,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+    if (options.NfsProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.NfsProperties.Owner;
+    protocolLayerOptions.Group = options.NfsProperties.Group;
+    protocolLayerOptions.NfsFileType = options.NfsProperties.NfsFileType;
     auto result
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
@@ -226,6 +233,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.SmbProperties = std::move(result.Value.SmbProperties);
     ret.IsServerEncrypted = result.Value.IsServerEncrypted;
     ret.LastModified = std::move(result.Value.LastModified);
+    if (result.Value.FileMode.HasValue())
+    {
+      ret.NfsProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(result.Value.FileMode.Value());
+    }
+    ret.NfsProperties.Owner = std::move(result.Value.Owner);
+    ret.NfsProperties.Group = std::move(result.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(result.Value.NfsFileType);
 
     return Azure::Response<Models::CreateFileResult>(std::move(ret), std::move(result.RawResponse));
   }
@@ -242,6 +257,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         = _detail::FileClient::Delete(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::DeleteFileResult ret;
     ret.Deleted = true;
+    ret.LinkCount = result.Value.LinkCount;
     return Azure::Response<Models::DeleteFileResult>(std::move(ret), std::move(result.RawResponse));
   }
 
@@ -363,7 +379,37 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           = Azure::Core::Http::HttpRange{rangeStartOffset, rangeEndOffset - rangeStartOffset + 1};
       downloadResponse.Value.FileSize = std::stoll(contentRange.substr(slash_pos + 1));
     }
-    return downloadResponse;
+    Models::DownloadFileResult result;
+    result.BodyStream = std::move(downloadResponse.Value.BodyStream);
+    result.ContentRange = std::move(downloadResponse.Value.ContentRange);
+    result.FileSize = downloadResponse.Value.FileSize;
+    result.HttpHeaders = std::move(downloadResponse.Value.HttpHeaders);
+    result.TransactionalContentHash = std::move(downloadResponse.Value.TransactionalContentHash);
+    result.Details.CopyCompletedOn = std::move(downloadResponse.Value.Details.CopyCompletedOn);
+    result.Details.CopyId = std::move(downloadResponse.Value.Details.CopyId);
+    result.Details.CopyProgress = std::move(downloadResponse.Value.Details.CopyProgress);
+    result.Details.CopySource = std::move(downloadResponse.Value.Details.CopySource);
+    result.Details.CopyStatus = std::move(downloadResponse.Value.Details.CopyStatus);
+    result.Details.CopyStatusDescription
+        = std::move(downloadResponse.Value.Details.CopyStatusDescription);
+    result.Details.ETag = std::move(downloadResponse.Value.Details.ETag);
+    result.Details.IsServerEncrypted = downloadResponse.Value.Details.IsServerEncrypted;
+    result.Details.LastModified = std::move(downloadResponse.Value.Details.LastModified);
+    result.Details.LeaseDuration = std::move(downloadResponse.Value.Details.LeaseDuration);
+    result.Details.LeaseState = std::move(downloadResponse.Value.Details.LeaseState);
+    result.Details.LeaseStatus = std::move(downloadResponse.Value.Details.LeaseStatus);
+    result.Details.Metadata = std::move(downloadResponse.Value.Details.Metadata);
+    result.Details.SmbProperties = std::move(downloadResponse.Value.Details.SmbProperties);
+    if (downloadResponse.Value.Details.FileMode.HasValue())
+    {
+      result.Details.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(
+          downloadResponse.Value.Details.FileMode.Value());
+    }
+    result.Details.NfsProperties.Owner = std::move(downloadResponse.Value.Details.Owner);
+    result.Details.NfsProperties.Group = std::move(downloadResponse.Value.Details.Group);
+    result.Details.NfsProperties.LinkCount = std::move(downloadResponse.Value.Details.LinkCount);
+    return Azure::Response<Models::DownloadFileResult>(
+        std::move(result), std::move(downloadResponse.RawResponse));
   }
 
   StartFileCopyOperation ShareFileClient::StartCopy(
@@ -436,6 +482,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    if (options.NfsProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
+      protocolLayerOptions.FileModeCopyMode = Models::ModeCopyMode::Override;
+    }
+    protocolLayerOptions.Owner = options.NfsProperties.Owner;
+    protocolLayerOptions.Group = options.NfsProperties.Group;
+    if (options.NfsProperties.Owner.HasValue() || options.NfsProperties.Group.HasValue())
+    {
+      protocolLayerOptions.FileOwnerCopyMode = Models::OwnerCopyMode::Override;
+    }
     auto response = _detail::FileClient::StartCopy(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -467,8 +524,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
-    return _detail::FileClient::GetProperties(
+    auto response = _detail::FileClient::GetProperties(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    Models::FileProperties ret;
+    ret.CopyCompletedOn = std::move(response.Value.CopyCompletedOn);
+    ret.CopyId = std::move(response.Value.CopyId);
+    ret.CopyProgress = std::move(response.Value.CopyProgress);
+    ret.CopySource = std::move(response.Value.CopySource);
+    ret.CopyStatus = std::move(response.Value.CopyStatus);
+    ret.CopyStatusDescription = std::move(response.Value.CopyStatusDescription);
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileSize = response.Value.FileSize;
+    ret.HttpHeaders = std::move(response.Value.HttpHeaders);
+    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.LeaseDuration = std::move(response.Value.LeaseDuration);
+    ret.LeaseState = std::move(response.Value.LeaseState);
+    ret.LeaseStatus = std::move(response.Value.LeaseStatus);
+    ret.Metadata = std::move(response.Value.Metadata);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
+    if (response.Value.FileMode.HasValue())
+    {
+      ret.NfsProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode.Value());
+    }
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    ret.NfsProperties.LinkCount = std::move(response.Value.LinkCount);
+    return Azure::Response<Models::FileProperties>(std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetFilePropertiesResult> ShareFileClient::SetProperties(
@@ -544,9 +628,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+    if (options.NfsProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.NfsProperties.Owner;
+    protocolLayerOptions.Group = options.NfsProperties.Group;
 
-    return _detail::FileClient::SetHttpHeaders(
+    auto response = _detail::FileClient::SetHttpHeaders(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::SetFilePropertiesResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
+    if (response.Value.FileMode.HasValue())
+    {
+      ret.NfsProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode.Value());
+    }
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.LinkCount = std::move(response.Value.LinkCount);
+    return Azure::Response<Models::SetFilePropertiesResult>(
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetFileMetadataResult> ShareFileClient::SetMetadata(
@@ -1086,6 +1192,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+    if (options.NfsProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.NfsProperties.Owner;
+    protocolLayerOptions.Group = options.NfsProperties.Group;
+    protocolLayerOptions.NfsFileType = options.NfsProperties.NfsFileType;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1204,6 +1317,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+    if (options.NfsProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.NfsProperties.Owner;
+    protocolLayerOptions.Group = options.NfsProperties.Group;
+    protocolLayerOptions.NfsFileType = options.NfsProperties.NfsFileType;
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1293,5 +1413,104 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     return _detail::FileClient::UploadRangeFromUri(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+  }
+
+  Azure::Response<Models::CreateFileSymbolicLinkResult> ShareFileClient::CreateSymbolicLink(
+      const std::string& linkText,
+      const CreateSymbolicLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::FileClient::CreateFileSymbolicLinkOptions protocolLayerOptions;
+    protocolLayerOptions.LinkText = linkText;
+    if (options.CreatedOn.HasValue())
+    {
+      protocolLayerOptions.FileCreationTime = options.CreatedOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
+    }
+    if (options.LastWrittenOn.HasValue())
+    {
+      protocolLayerOptions.FileLastWriteTime = options.LastWrittenOn.Value().ToString(
+          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+    }
+    else
+    {
+      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
+    }
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.Owner = options.Owner;
+    protocolLayerOptions.Group = options.Group;
+    protocolLayerOptions.Metadata
+        = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+
+    auto response = _detail::FileClient::CreateSymbolicLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::CreateFileSymbolicLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileChangeTime = std::move(response.Value.FileChangeTime);
+    ret.FileCreationTime = std::move(response.Value.FileCreationTime);
+    ret.FileId = std::move(response.Value.FileId);
+    ret.FileLastWriteTime = std::move(response.Value.FileLastWriteTime);
+    ret.FileParentId = std::move(response.Value.FileParentId);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    return Azure::Response<Models::CreateFileSymbolicLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
+  Azure::Response<Models::GetFileSymbolicLinkResult> ShareFileClient::GetSymbolicLink(
+      const GetSymbolicLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    (void)options;
+    _detail::FileClient::GetFileSymbolicLinkOptions protocolLayerOptions;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    auto response = _detail::FileClient::GetSymbolicLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::GetFileSymbolicLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.LinkText = std::move(response.Value.LinkText);
+    return Azure::Response<Models::GetFileSymbolicLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
+  Azure::Response<Models::CreateFileHardLinkResult> ShareFileClient::CreateHardLink(
+      const std::string& targetFile,
+      const CreateHardLinkOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::FileClient::CreateFileHardLinkOptions protocolLayerOptions;
+    protocolLayerOptions.TargetFile = targetFile;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+
+    auto response = _detail::FileClient::CreateHardLink(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    Models::CreateFileHardLinkResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileChangeTime = std::move(response.Value.FileChangeTime);
+    ret.FileCreationTime = std::move(response.Value.FileCreationTime);
+    ret.FileId = std::move(response.Value.FileId);
+    ret.FileLastWriteTime = std::move(response.Value.FileLastWriteTime);
+    ret.FileParentId = std::move(response.Value.FileParentId);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
+    ret.NfsProperties.Owner = std::move(response.Value.Owner);
+    ret.NfsProperties.Group = std::move(response.Value.Group);
+    ret.NfsProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    ret.NfsProperties.LinkCount = response.Value.LinkCount;
+    return Azure::Response<Models::CreateFileHardLinkResult>(
+        std::move(ret), std::move(response.RawResponse));
   }
 }}}} // namespace Azure::Storage::Files::Shares
