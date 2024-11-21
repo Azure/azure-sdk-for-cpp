@@ -44,7 +44,10 @@ create_per_service_target_build(attestation azure-security-attestation-test)
 create_map_file(azure-security-attestation-test azure-security-attestation-test.map)
 
 target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-security-attestation azure-identity azure-core-test-fw gtest_main)
-
+set_target_properties(azure-security-attestation-test PROPERTIES
+                      RUNTIME_OUTPUT_DIRECTORY_DEBUG ${AZURE_TEST_DATA_PATH}/debug
+                      RUNTIME_OUTPUT_DIRECTORY_RELEASE ${AZURE_TEST_DATA_PATH}/release
+)
 gtest_discover_tests(azure-security-attestation-test 
     DISCOVERY_TIMEOUT 600 
     TEST_PREFIX azure-security-attestation.)
