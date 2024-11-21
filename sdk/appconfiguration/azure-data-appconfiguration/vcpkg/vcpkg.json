@@ -10,7 +10,7 @@
   "version-semver": "@AZ_LIBRARY_VERSION@",
   "description": [
     "Microsoft Azure App Configuration SDK for C++",
-    "This library provides API access to the Azure App Configuration service.",
+    "This library provides API access to the Azure App Configuration service."
   ],
   "homepage": "https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/appconfiguration/azure-data-appconfiguration",
   "license": "MIT",
