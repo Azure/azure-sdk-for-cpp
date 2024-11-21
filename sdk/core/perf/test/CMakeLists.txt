@@ -33,6 +33,7 @@ target_link_libraries(azure-perf-unit-test PRIVATE azure-perf gtest gtest_main)
 target_compile_definitions(azure-perf-unit-test PRIVATE _azure_BUILDING_TESTS)
 
 gtest_discover_tests(azure-perf-unit-test
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      TEST_PREFIX azure-perf-unittest.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES

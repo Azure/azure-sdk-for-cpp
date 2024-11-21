@@ -29,5 +29,6 @@ if (MSVC)
 endif()
 
 gtest_discover_tests(azure-template-test 
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      TEST_PREFIX azure-template.
      DISCOVERY_TIMEOUT 600)

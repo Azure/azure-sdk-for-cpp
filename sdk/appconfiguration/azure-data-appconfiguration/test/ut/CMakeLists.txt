@@ -31,5 +31,6 @@ if (MSVC)
 endif()
 
 gtest_discover_tests(azure-data-appconfiguration-test 
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      TEST_PREFIX azure-data-appconfiguration.
      DISCOVERY_TIMEOUT 600)
