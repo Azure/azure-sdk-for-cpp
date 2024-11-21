@@ -46,6 +46,7 @@ target_link_libraries(azure-storage-files-shares-test PRIVATE azure-storage-file
 # gtest_discover_tests will scan the test from azure-storage-files-shares-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-storage-files-shares-test
+     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
      TEST_PREFIX azure-storage-files-shares.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES

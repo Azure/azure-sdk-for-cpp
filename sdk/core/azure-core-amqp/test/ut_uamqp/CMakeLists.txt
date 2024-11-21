@@ -71,6 +71,7 @@ create_map_file(azure-core-amqp-uamqp-tests azure-core-amqp-uamqp-tests.map)
 # gtest_discover_tests will scan the test from azure-core-amqp-tests and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-amqp-uamqp-tests
+     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
      TEST_PREFIX azure-core-amqp.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES

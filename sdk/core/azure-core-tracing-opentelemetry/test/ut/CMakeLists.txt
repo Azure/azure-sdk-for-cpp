@@ -64,6 +64,7 @@ create_map_file(azure-core-tracing-opentelemetry-test azure-core-tracing-opentel
 # gtest_discover_tests will scan the test from azure-core-tracing-opentelemetry-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-tracing-opentelemetry-test
+     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
      TEST_PREFIX azure-core-tracing-opentelemetry.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES

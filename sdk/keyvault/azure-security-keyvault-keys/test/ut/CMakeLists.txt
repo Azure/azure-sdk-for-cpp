@@ -60,6 +60,7 @@ target_include_directories (
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-security-keyvault-keys-test
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   TEST_PREFIX azure-security-keyvault-keys.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES

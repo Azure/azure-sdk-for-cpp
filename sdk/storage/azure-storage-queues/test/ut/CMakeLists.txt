@@ -42,6 +42,7 @@ target_link_libraries(azure-storage-queues-test PRIVATE azure-storage-queues azu
 # gtest_discover_tests will scan the test from azure-storage-queues-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-storage-queues-test
+     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
      TEST_PREFIX azure-storage-queues.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
