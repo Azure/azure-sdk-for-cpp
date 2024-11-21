@@ -222,7 +222,10 @@ jobs:
           Get-ChildItem -Recurse -Filter "*attestation*"
         workingDirectory: build
         displayName: List
-      
+      - pwsh: |
+          Get-ChildItem Env:
+        workingDirectory: build
+        displayName: ENVs
       - pwsh: |
           ctest `
             -C Debug `
