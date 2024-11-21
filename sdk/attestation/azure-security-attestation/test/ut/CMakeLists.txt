@@ -47,5 +47,6 @@ target_link_libraries(azure-security-attestation-test PRIVATE Azure::azure-secur
 
 
 gtest_discover_tests(azure-security-attestation-test 
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     DISCOVERY_TIMEOUT 600 
     TEST_PREFIX azure-security-attestation.)
