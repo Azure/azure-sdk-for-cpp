@@ -218,7 +218,11 @@ jobs:
         displayName: Restore Recordings
         condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), ne('${{parameters.ServiceDirectory}}', 'core'), ne('${{parameters.ServiceDirectory}}', 'template'), ne('${{parameters.ServiceDirectory}}', 'appconfiguration'))
         name: RestoreRecordings
-
+      - pwsh: |
+          Get-ChildItem -Path $path -Recurse -Filter "*azure-security-attestation-test*"
+        workingDirectory: build
+        displayName: List
+      
       - pwsh: |
           ctest `
             -C Debug `
