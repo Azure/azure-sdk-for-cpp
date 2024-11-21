@@ -10,6 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace Models {
+
     ShareFileHandleAccessRights::ShareFileHandleAccessRights(const std::string& value)
     {
       if (!value.empty())
