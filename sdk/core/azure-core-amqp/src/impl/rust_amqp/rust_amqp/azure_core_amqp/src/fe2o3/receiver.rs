@@ -94,21 +94,6 @@ impl AmqpReceiverApis for Fe2o3AmqpReceiver {
         }
     }
 
-    // async fn max_message_size(&self) -> Result<Option<u64>> {
-    //     Ok(self
-    //         .receiver
-    //         .get()
-    //         .ok_or_else(|| {
-    //             azure_core::Error::message(
-    //                 azure_core::error::ErrorKind::Other,
-    //                 "Message receiver is not set",
-    //             )
-    //         })?
-    //         .lock()
-    //         .await
-    //         .max_message_size())
-    // }
-
     async fn receive(&self) -> Result<AmqpMessage> {
         let mut receiver = self
             .receiver
