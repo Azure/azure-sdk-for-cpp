@@ -26,7 +26,19 @@ int main()
 
     Azure::Response<GetKeyValueResult> response = configurationClient.GetKeyValue("key", "accept");
 
-    std::cout << response.Value.Value.Value() << std::endl;
+    GetKeyValueResult result = response.Value;
+    Azure::Nullable<std::string> valueOfKey = result.Value;
+
+    if (valueOfKey.HasValue())
+    {
+      std::cout << valueOfKey.Value() << std::endl;
+    }
+    else
+    {
+      std::cout << "Value for: '"
+                << "key"
+                << "' does not exist." << std::endl;
+    }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
