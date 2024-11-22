@@ -218,7 +218,10 @@ jobs:
         displayName: Restore Recordings
         condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), ne('${{parameters.ServiceDirectory}}', 'core'), ne('${{parameters.ServiceDirectory}}', 'template'), ne('${{parameters.ServiceDirectory}}', 'appconfiguration'))
         name: RestoreRecordings
-
+      - pwsh : |
+          Get-ChildItem -Recurse -Include *eventhub*
+        workingDirectory: build
+        displayName: ListFiles
       - pwsh: |
           ctest `
             -C Debug `
