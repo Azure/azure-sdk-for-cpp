@@ -48,12 +48,17 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
+cmake_policy(PUSH)
+cmake_policy(SET CMP0178 OLD)
+#endif()
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-blobstore-test
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   TEST_PREFIX azure-messaging-eventhubs.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
-  DISCOVERY_MODE POST_BUILD
+  DISCOVERY_MODE PRE_TEST
   DISCOVERY_TIMEOUT 600)
- 
+  
+cmake_policy(POP)
