@@ -20,7 +20,6 @@ use std::{
     ffi::c_char,
     mem, ptr,
     sync::{Arc, OnceLock},
-    thread::sleep,
 };
 use tokio::spawn;
 use tracing::{debug, error, trace};
@@ -165,8 +164,9 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     call_context: *mut RustCallContext,
     receiver: *mut RustAmqpMessageReceiver,
 ) -> i32 {
+    let call_context = call_context_from_ptr_mut(call_context);
     if receiver.is_null() {
-        call_context_from_ptr_mut(call_context).set_error(error_from_str("Invalid input"));
+        call_context.set_error(error_from_str("Invalid input"));
         error!("Invalid input");
         return -1;
     }
@@ -174,16 +174,18 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     let receiver = Box::from_raw(receiver);
     //let receiver = receiver.deref_mut();
     if receiver.message_task.get().is_none() {
-        call_context_from_ptr_mut(call_context)
-            .set_error(error_from_str("Receiver does not have a task."));
+        call_context.set_error(error_from_str("Receiver does not have a task."));
         return -1;
     }
     trace!("Aborting message task");
     receiver.message_task.get().unwrap().abort();
     trace!("Aborted message task");
-    sleep(std::time::Duration::from_millis(500));
+    trace!("Waiting for task to finish.");
+    while !receiver.message_task.get().unwrap().is_finished() {
+        trace!("Task is still running.");
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
     trace!("Dropping receiver");
-    let call_context = call_context_from_ptr_mut(call_context);
     trace!("Starting to detach receiver");
     let receiver_to_detach = Arc::into_inner(receiver.inner);
     if receiver_to_detach.is_none() {
