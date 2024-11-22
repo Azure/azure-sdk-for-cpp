@@ -58,11 +58,6 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-message("CMAKE_CURRENT_BINARY_DIR : ${CMAKE_CURRENT_BINARY_DIR}")
-message("CMAKE_CURRENT_SOURCE_DIR : ${CMAKE_CURRENT_SOURCE_DIR}")
-message("CMAKE_BINARY_DIR : ${CMAKE_BINARY_DIR}")
-message("CMAKE_SOURCE_DIR : ${CMAKE_SOURCE_DIR}")
-
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-test
