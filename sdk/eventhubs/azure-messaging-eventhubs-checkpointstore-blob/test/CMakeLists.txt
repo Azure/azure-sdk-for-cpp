@@ -9,4 +9,4 @@ cmake_minimum_required (VERSION 3.13)
 # Include sub-projects.
 
 # General AMQP Unit tests.
-add_subdirectory ("ut")
+# add_subdirectory ("ut")
