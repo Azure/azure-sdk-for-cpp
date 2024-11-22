@@ -56,6 +56,7 @@ message("CMAKE_CURRENT_LIST_FILE dir ${CMAKE_SOURCE_DIR}")
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-blobstore-test
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   TEST_PREFIX azure-messaging-eventhubs.
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
