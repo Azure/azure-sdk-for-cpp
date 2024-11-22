@@ -39,7 +39,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     amqpmessagereceiver_destroy(value);
   }
 
-
   template <> struct UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>
   {
     static void FreeMessageReceiverOptions(RustAmqpMessageReceiverOptions* obj);
@@ -66,8 +65,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageSource const& source,
       MessageReceiverOptions const& options)
-      : m_receiver{amqpmessagereceiver_create()}, m_options{options}, m_source{source},
-        m_session{session}
+      : m_receiver{amqpmessagereceiver_create()}, m_options{options}, m_source{source}, m_session{
+                                                                                            session}
   {
   }
 

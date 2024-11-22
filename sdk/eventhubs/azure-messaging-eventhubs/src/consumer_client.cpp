@@ -130,6 +130,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     connection.Open(context);
 #endif
     return connection;
+    (void)context;
   }
 
   void ConsumerClient::EnsureConnection(
@@ -156,6 +157,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     session.Begin(context);
 #endif
     return session;
+    (void)context;
   }
 
   void ConsumerClient::EnsureSession(
