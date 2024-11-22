@@ -242,10 +242,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     void EnsureConnection(std::string const& partitionId, Azure::Core::Context const& context);
     void EnsureSession(std::string const& partitionId, Azure::Core::Context const& context);
-    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId,
+    Azure::Core::Amqp::_internal::Connection CreateConnection(
+        std::string const& partitionId,
         Azure::Core::Context const& context) const;
-    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId, Azure::Core::Context const& context) const;
+    Azure::Core::Amqp::_internal::Session CreateSession(
+        std::string const& partitionId,
+        Azure::Core::Context const& context) const;
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
-    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(Azure::Core::Context const& context);
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
+        Azure::Core::Context const& context);
   };
 }}} // namespace Azure::Messaging::EventHubs
