@@ -39,8 +39,8 @@ pub struct RustAmqpMessageReceiverOptions {
 /// message_channel - the channel that will be used to receive messages.
 /// message_task - the task that will be used to receive messages.
 ///
-/// The inner field is an Arc<OnceLock<AmqpReceiver>>. The Arc is there because we will be passing the receiver to the message task and we need to be able to clone it.
-/// Within the Arc is an OnceLock<AmqpReceiver>. This is because the act of detaching the message receiver consumes self and we need to be able to take it out of the Arc.
+/// The inner field is an Arc<AmqpReceiver>. The Arc is there because we will be passing the receiver to the message task and we need to be able to clone it.
+///
 pub struct RustAmqpMessageReceiver {
     inner: Arc<AmqpReceiver>,
     message_channel: OnceLock<std::sync::mpsc::Receiver<Result<AmqpMessage>>>,
@@ -135,7 +135,9 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
     }
     let message_receiver = receiver.inner.clone(); // This is the receiver that will be used to receive messages
 
-    // The call to .set should never fail because we checked to make sure that the message_task was None earlier, but we need to handle it anyway.
+    // Create the task used to receive messages. Note that tokio::spawn can only be called from within the context of the executor, so we create an async future which spawns the task and then block on it.
+    #[allow(clippy::async_yields_async)]
+    // Clippy cannot tell that the block_on call waits for the async closure to complete.
     match receiver
         .message_task
         .set(call_context.runtime_context().runtime().block_on(async {
@@ -151,6 +153,7 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
             })
         })) {
         Ok(_) => 0,
+        // The call to .set should never fail because we checked to make sure that the message_task was None earlier, but we need to handle it anyway.
         Err(err) => {
             error!("Failed to start receiving messages: {:?}", err);
             call_context.set_error(error_from_str("Unable set message task."));
@@ -172,20 +175,15 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     }
 
     let receiver = Box::from_raw(receiver);
-    //let receiver = receiver.deref_mut();
     if receiver.message_task.get().is_none() {
         call_context.set_error(error_from_str("Receiver does not have a task."));
         return -1;
     }
     trace!("Aborting message task");
     receiver.message_task.get().unwrap().abort();
-    trace!("Aborted message task");
-    trace!("Waiting for task to finish.");
     while !receiver.message_task.get().unwrap().is_finished() {
-        trace!("Task is still running.");
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
-    trace!("Dropping receiver");
     trace!("Starting to detach receiver");
     let receiver_to_detach = Arc::into_inner(receiver.inner);
     if receiver_to_detach.is_none() {
