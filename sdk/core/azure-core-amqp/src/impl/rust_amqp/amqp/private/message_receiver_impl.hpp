@@ -19,21 +19,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     using type = Core::_internal::
         BasicUniqueHandle<RustInterop::_detail::RustAmqpMessageReceiver, FreeMessageReceiver>;
   };
-  template <> struct UniqueHandleHelper<RustInterop::_detail::RustMessageReceiverChannel>
-  {
-    static void FreeMessageReceiverChannel(RustInterop::_detail::RustMessageReceiverChannel* obj);
-
-    using type = Core::_internal::BasicUniqueHandle<
-        RustInterop::_detail::RustMessageReceiverChannel,
-        FreeMessageReceiverChannel>;
-  };
 
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   using UniqueMessageReceiver = UniqueHandle<RustInterop::_detail::RustAmqpMessageReceiver>;
-  using UniqueReceiveMessageChannel
-      = UniqueHandle<RustInterop::_detail::RustMessageReceiverChannel>;
   class MessageReceiverFactory final {
   public:
     static Azure::Core::Amqp::_internal::MessageReceiver CreateFromInternal(
@@ -69,7 +59,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     bool m_receiverOpen{false};
     UniqueMessageReceiver m_receiver;
-    UniqueReceiveMessageChannel m_receiveFuture;
 
     _internal::MessageReceiverOptions m_options;
     Models::_internal::MessageSource m_source;

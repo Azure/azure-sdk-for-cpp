@@ -39,13 +39,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     amqpmessagereceiver_destroy(value);
   }
 
-  void UniqueHandleHelper<RustMessageReceiverChannel>::FreeMessageReceiverChannel(
-      RustMessageReceiverChannel* value)
-  {
-    Common::_detail::CallContext callContext(
-        Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
-    amqpmessagereceiverchannel_destroy(callContext.GetCallContext(), value);
-  }
 
   template <> struct UniqueHandleHelper<RustInterop::_detail::RustAmqpMessageReceiverOptions>
   {
@@ -84,22 +77,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-    if (m_receiveFuture)
-    {
-      auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
-          amqpmessagereceiver_receive_message_async_wait(
-              callContext.GetCallContext(), m_receiveFuture.get()));
-      if (!message)
-      {
-        return std::make_pair(nullptr, Models::_internal::AmqpError{});
-      }
-      return std::make_pair(message, Models::_internal::AmqpError{});
-    }
-    else
     {
 
       auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
-          amqpmessagereceiver_receive_message(callContext.GetCallContext(), m_receiver.get()));
+          amqpmessagereceiver_receive_message_wait(callContext.GetCallContext(), m_receiver.get()));
 
       return std::make_pair(message, Models::_internal::AmqpError{});
     }
@@ -111,20 +92,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
 
-    if (!m_receiveFuture)
-    {
-      m_receiveFuture.reset(amqpmessagereceiver_receive_message_async(
-          callContext.GetCallContext(), m_receiver.get()));
-      if (!m_receiveFuture)
-      {
-        throw std::runtime_error("Could not start receiving message: " + callContext.GetError());
-        //        return std::make_pair(nullptr, Models::_internal::AmqpError{});
-      }
-    }
-
     auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
         amqpmessagereceiver_receive_message_async_poll(
-            callContext.GetCallContext(), m_receiveFuture.get()));
+            callContext.GetCallContext(), m_receiver.get()));
 
     if (message)
     {
@@ -156,8 +126,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   // Nullable<uint64_t> MaxMessageSize;
   // uint32_t MaxLinkCredit{};
-
-  // Models::AmqpMap Properties;
 
   void MessageReceiverImpl::Open(Azure::Core::Context const& context)
   {
