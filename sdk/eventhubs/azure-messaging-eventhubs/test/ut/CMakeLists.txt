@@ -62,4 +62,6 @@ target_include_directories (
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-test
   TEST_PREFIX azure-messaging-eventhubs.
+  NO_PRETTY_TYPES
+  NO_PRETTY_VALUES 
   DISCOVERY_TIMEOUT 600)

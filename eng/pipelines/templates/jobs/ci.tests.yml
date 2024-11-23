@@ -223,6 +223,8 @@ jobs:
           ctest `
             -C Debug `
             -V `
+            --debug `
+            --force-new-ctest-process `
             --tests-regex '${{ parameters.CtestRegex }}' `
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
