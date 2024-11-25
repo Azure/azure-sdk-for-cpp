@@ -33,7 +33,7 @@ else()
         )
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
-        FetchContent_Populate(googletest)
+        #FetchContent_Populate(googletest)
         set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
         add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
         unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
@@ -67,6 +67,8 @@ endif()
 
 # Target must already exist
 macro(add_gtest TESTNAME)
+ 
+
 endmacro()
 
 mark_as_advanced(
