@@ -27,7 +27,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Amqp::Models::AmqpValue const& filterValue)
     {
       Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
-      sourceOptions.Filter.emplace(description.Name, value.AsAmqpValue());
+      sourceOptions.Filter.emplace(AmqpSymbol{description.Name}, value.AsAmqpValue());
     }
 
     FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
@@ -166,10 +166,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         receiverOptions.MaxLinkCredit = options.Prefetch;
       }
       receiverOptions.Name = receiverName;
-      receiverOptions.Properties.emplace("com.microsoft:receiver-name", receiverName);
+      receiverOptions.Properties.emplace(AmqpSymbol{"com.microsoft:receiver-name"}, receiverName);
       if (options.OwnerLevel.HasValue())
       {
-        receiverOptions.Properties.emplace("com.microsoft:epoch", options.OwnerLevel.Value());
+        receiverOptions.Properties.emplace(
+            AmqpSymbol{"com.microsoft:epoch"}, options.OwnerLevel.Value());
       }
       return session.CreateMessageReceiver(messageSource, receiverOptions);
     }
