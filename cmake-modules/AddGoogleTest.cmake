@@ -33,7 +33,7 @@ else()
         )
     FetchContent_GetProperties(googletest)
     if(NOT googletest_POPULATED)
- #       FetchContent_Populate(googletest)
+        FetchContent_Populate(googletest)
         set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "")
         add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR} EXCLUDE_FROM_ALL)
         unset(CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
@@ -82,6 +82,6 @@ BUILD_GMOCK
 BUILD_GTEST
 )
 
-#set_target_properties(gtest gtest_main gmock gmock_main
- #   PROPERTIES FOLDER "Extern")
+set_target_properties(gtest gtest_main gmock gmock_main
+    PROPERTIES FOLDER "Extern")
     
