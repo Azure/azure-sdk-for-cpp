@@ -34,6 +34,24 @@ pub enum RustReceiverSettleMode {
     Second,
 }
 
+impl From<ReceiverSettleMode> for RustReceiverSettleMode {
+    fn from(mode: ReceiverSettleMode) -> Self {
+        match mode {
+            ReceiverSettleMode::First => RustReceiverSettleMode::First,
+            ReceiverSettleMode::Second => RustReceiverSettleMode::Second,
+        }
+    }
+}
+
+impl From<RustReceiverSettleMode> for ReceiverSettleMode {
+    fn from(mode: RustReceiverSettleMode) -> Self {
+        match mode {
+            RustReceiverSettleMode::First => ReceiverSettleMode::First,
+            RustReceiverSettleMode::Second => ReceiverSettleMode::Second,
+        }
+    }
+}
+
 pub struct RustAmqpMessageSender {
     inner: AmqpSender,
 }

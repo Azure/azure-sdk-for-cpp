@@ -165,6 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
     }
 
+#if ENABLE_UAMQP
     {
       auto accepted{Models::_internal::Messaging::DeliveryAccepted()};
       auto released{Models::_internal::Messaging::DeliveryReleased()};
@@ -172,6 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto modified{Models::_internal::Messaging::DeliveryModified(true, false, "Annotations")};
       auto received{Models::_internal::Messaging::DeliveryReceived(3, 24)};
     }
+#endif
     EndAmqpSession(session);
     CloseAmqpConnection(connection);
   }
@@ -783,6 +785,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
 #if !defined(USE_NATIVE_BROKER)
       serviceEndpoint->ShouldSendMessage(true);
+#else
+      {
+        MessageSender sender(session.CreateMessageSender("egress", {}));
+        ASSERT_FALSE(sender.Open());
+        Azure::Core::Amqp::Models::AmqpMessage sendMessage;
+        sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
+        EXPECT_FALSE(sender.Send(sendMessage));
+        sender.Close();
+      }
 #endif
       auto message = receiver.WaitForIncomingMessage();
       GTEST_LOG_(INFO) << "Received message.";
@@ -809,8 +820,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Trigger message send for polling.";
 #if !defined(USE_NATIVE_BROKER)
       serviceEndpoint->ShouldSendMessage(true);
-#endif
       std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+#else
+      {
+        MessageSender sender(session.CreateMessageSender("egress", {}));
+        ASSERT_FALSE(sender.Open());
+        Azure::Core::Amqp::Models::AmqpMessage sendMessage;
+        sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
+        EXPECT_FALSE(sender.Send(sendMessage));
+        sender.Close();
+      }
+#endif
       GTEST_LOG_(INFO) << "Message should have been sent and processed.";
       auto result = receiver.TryWaitForIncomingMessage();
       EXPECT_TRUE(result.first);

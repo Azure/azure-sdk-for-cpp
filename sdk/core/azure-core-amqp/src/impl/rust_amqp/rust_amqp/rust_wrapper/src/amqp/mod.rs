@@ -4,5 +4,6 @@
 pub mod cbs;
 pub mod connection;
 pub mod management;
+pub mod message_receiver;
 pub mod message_sender;
 pub mod session;

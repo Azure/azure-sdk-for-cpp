@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // Licensed under the MIT License.
-// cspell: words repr amqp amqpsession amqpmanagement
+// cspell: ignore repr amqp amqpsession amqpmanagement
 
 use crate::{
     call_context::{call_context_from_ptr_mut, RustCallContext},

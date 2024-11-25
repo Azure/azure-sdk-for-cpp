@@ -69,6 +69,12 @@ extern "C" fn message_create() -> *mut RustAmqpMessage {
     }))
 }
 
+impl From<AmqpMessage> for RustAmqpMessage {
+    fn from(inner: AmqpMessage) -> Self {
+        RustAmqpMessage { inner }
+    }
+}
+
 #[no_mangle]
 unsafe extern "C" fn message_destroy(message: *mut RustAmqpMessage) {
     mem::drop(Box::from_raw(message));
@@ -236,7 +242,7 @@ unsafe extern "C" fn message_get_body_type(
     message: *const RustAmqpMessage,
     body_type: &mut RustAmqpMessageBodyType,
 ) -> i32 {
-    let message =  &*message ;
+    let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Binary(_) => *body_type = RustAmqpMessageBodyType::Data,
         AmqpMessageBody::Value(_) => *body_type = RustAmqpMessageBodyType::Value,
@@ -251,7 +257,7 @@ unsafe extern "C" fn message_get_body_amqp_data_count(
     message: *const RustAmqpMessage,
     count: &mut usize,
 ) -> i32 {
-    let message =  &*message ;
+    let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Binary(data) => *count = data.len(),
         _ => return 1,
@@ -264,7 +270,7 @@ unsafe extern "C" fn message_get_body_amqp_sequence_count(
     message: *const RustAmqpMessage,
     count: &mut usize,
 ) -> i32 {
-    let message = &*message ;
+    let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Sequence(data) => *count = data.len(),
         _ => return 1,
@@ -282,8 +288,8 @@ unsafe extern "C" fn message_get_body_amqp_data_in_place(
     let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Binary(d) => {
-                *data = d[index as usize].as_ptr() as *mut u8;
-                *count = d[index as usize].len() as u32;
+            *data = d[index as usize].as_ptr() as *mut u8;
+            *count = d[index as usize].len() as u32;
             0
         }
         _ => 1,
@@ -296,12 +302,12 @@ unsafe extern "C" fn message_get_body_amqp_sequence_in_place(
     index: u32,
     data: *mut *mut RustAmqpValue,
 ) -> i32 {
-    let message =  &*message ;
+    let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Sequence(d) => {
-                *data = Box::into_raw(Box::new(RustAmqpValue {
-                    inner: AmqpValue::List(d[index as usize].clone()),
-                }));
+            *data = Box::into_raw(Box::new(RustAmqpValue {
+                inner: AmqpValue::List(d[index as usize].clone()),
+            }));
             0
         }
         _ => 1,
@@ -316,7 +322,7 @@ unsafe extern "C" fn message_get_body_amqp_value_in_place(
     let message = &*message;
     match message.inner.body() {
         AmqpMessageBody::Value(d) => {
-                *data = Box::into_raw(Box::new(RustAmqpValue { inner: d.clone() }));
+            *data = Box::into_raw(Box::new(RustAmqpValue { inner: d.clone() }));
             0
         }
         _ => 1,
@@ -331,7 +337,7 @@ unsafe extern "C" fn messagebuilder_set_delivery_annotations(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let delivery_annotations =  &*delivery_annotations ;
+    let delivery_annotations = &*delivery_annotations;
     if let AmqpValue::Map(map) = &delivery_annotations.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();
@@ -354,7 +360,7 @@ unsafe extern "C" fn messagebuilder_set_message_annotations(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let message_annotations =  &*message_annotations ;
+    let message_annotations = &*message_annotations;
     if let AmqpValue::Map(map) = &message_annotations.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();
@@ -377,7 +383,7 @@ unsafe extern "C" fn messagebuilder_set_application_properties(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let application_properties =  &*application_properties ;
+    let application_properties = &*application_properties;
     if let AmqpValue::Map(map) = &application_properties.inner {
         let amqp_map: AmqpOrderedMap<String, AmqpValue> = map
             .iter()
@@ -410,7 +416,7 @@ unsafe extern "C" fn messagebuilder_set_footer(
 ) -> *mut RustAmqpMessageBuilder {
     let call_context = call_context_from_ptr_mut(call_context);
     let message_builder = Box::from_raw(message_builder);
-    let footer =  &*footer ;
+    let footer = &*footer;
     if let AmqpValue::Map(map) = &footer.inner {
         let amqp_map: AmqpOrderedMap<AmqpAnnotationKey, AmqpValue> =
             map.iter().map(|f| (f.0.into(), f.1)).collect();
