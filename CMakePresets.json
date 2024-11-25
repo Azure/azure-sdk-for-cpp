@@ -494,6 +494,24 @@
       ]
     },
     {
+      "name": "x64-static-debug-asan-perftests-rust",
+      "displayName": "x64 Debug, ASAN Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "inherits": [
+        "x64-static",
+        "enable-address-sanitizer",
+        "debug-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "rust-amqp",
+        "winhttp-transport",
+        "curl-transport"
+      ],
+      "cacheVariables": {
+        "DISABLE_AZURE_CORE_OPENTELEMETRY": true
+      }
+    },
+    {
       "name": "x64-static-release-perftests-asan",
       "displayName": "x64 Release static With Perf Tests and samples, plus ASAN",
       "inherits": [
