@@ -240,11 +240,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
 
-    void EnsureConnection(std::string const& partitionId);
-    void EnsureSession(std::string const& partitionId);
-    Azure::Core::Amqp::_internal::Connection CreateConnection(std::string const& partitionId) const;
-    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId) const;
+    void EnsureConnection(std::string const& partitionId, Azure::Core::Context const& context);
+    void EnsureSession(std::string const& partitionId, Azure::Core::Context const& context);
+    Azure::Core::Amqp::_internal::Connection CreateConnection(
+        std::string const& partitionId,
+        Azure::Core::Context const& context) const;
+    Azure::Core::Amqp::_internal::Session CreateSession(
+        std::string const& partitionId,
+        Azure::Core::Context const& context) const;
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);
-    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
+        Azure::Core::Context const& context);
   };
 }}} // namespace Azure::Messaging::EventHubs

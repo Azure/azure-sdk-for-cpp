@@ -359,12 +359,8 @@ pub unsafe extern "C" fn amqpconnectionoptions_set_offered_capabilities(
         .iter()
         .map(|capability| CStr::from_ptr(*capability).to_str().unwrap())
         .collect::<Vec<&str>>();
-    options.inner.offered_capabilities = Some(
-        capabilities
-            .into_iter()
-            .map(|capability| AmqpSymbol::from(capability))
-            .collect(),
-    );
+    options.inner.offered_capabilities =
+        Some(capabilities.into_iter().map(AmqpSymbol::from).collect());
     0
 }
 
@@ -383,12 +379,8 @@ pub unsafe extern "C" fn amqpconnectionoptions_set_desired_capabilities(
         .iter()
         .map(|capability| CStr::from_ptr(*capability).to_str().unwrap())
         .collect::<Vec<&str>>();
-    options.inner.desired_capabilities = Some(
-        capabilities
-            .into_iter()
-            .map(|capability| AmqpSymbol::from(capability))
-            .collect(),
-    );
+    options.inner.desired_capabilities =
+        Some(capabilities.into_iter().map(AmqpSymbol::from).collect());
     0
 }
 
