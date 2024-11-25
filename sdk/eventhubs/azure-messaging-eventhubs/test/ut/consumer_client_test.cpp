@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+
 namespace LocalTest {
 
 int i = 0;
