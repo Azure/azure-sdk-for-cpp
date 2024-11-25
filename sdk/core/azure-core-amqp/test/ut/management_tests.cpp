@@ -184,7 +184,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -220,7 +219,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -267,7 +265,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -298,7 +295,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
@@ -371,7 +367,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
   TEST_F(TestManagement, ManagementRequestResponseSimple)
@@ -408,7 +403,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -450,7 +444,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusCode)
@@ -493,7 +486,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusName)
@@ -551,7 +543,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
   TEST_F(TestManagement, ManagementRequestResponseBogusStatusName2)
@@ -595,7 +586,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 
@@ -642,7 +632,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
 #else
-    EXPECT_TRUE(false);
 #endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)

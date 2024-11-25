@@ -59,32 +59,56 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   ConsumerClient::~ConsumerClient()
   {
     Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
-    // Tear down the sessions and then the connections, in that order.
-    for (auto& sender : m_receivers)
-    {
-      sender.second.Close();
-    }
-    while (!m_sessions.empty())
-    {
-      m_sessions.erase(m_sessions.begin());
-    }
-    while (!m_connections.empty())
-    {
-      m_connections.erase(m_connections.begin());
-    };
+
+    Close({});
   }
 
   void ConsumerClient::Close(Azure::Core::Context const& context)
   {
-    for (auto& sender : m_receivers)
+    Log::Stream(Logger::Level::Verbose) << "Close producer client.";
     {
-      sender.second.Close(context);
+      std::unique_lock<std::mutex> lock(m_propertiesClientLock);
+      if (m_propertiesClient)
+      {
+        m_propertiesClient->Close(context);
+        m_propertiesClient.reset();
+      }
     }
+    Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
+    // Tear down the sessions and then the connections, in that order.
+    for (auto& receiver : m_receivers)
+    {
+      receiver.second.Close(context);
+    }
+
+#if ENABLE_RUST_AMQP
+    Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
+    for (auto& session : m_sessions)
+    {
+      session.second.End(context);
+    }
+    Log::Stream(Logger::Level::Verbose) << "Closing connections.";
+    for (auto& connection : m_connections)
+    {
+      connection.second.Close(context);
+    }
+#endif
+
+    while (!m_sessions.empty())
+    {
+      m_sessions.erase(m_sessions.begin());
+    }
+
+    while (!m_connections.empty())
+    {
+      m_connections.erase(m_connections.begin());
+    };
     m_receivers.clear();
   }
 
   Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
-      std::string const& partitionId) const
+      std::string const& partitionId,
+      Azure::Core::Context const& context) const
   {
     ConnectionOptions connectOptions;
     connectOptions.ContainerId
@@ -100,36 +124,51 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_consumerClientOptions.ApplicationID,
         m_consumerClientOptions.CppStandardVersion);
 
-    return Azure::Core::Amqp::_internal::Connection{
-        m_fullyQualifiedNamespace, m_credential, connectOptions};
+    auto connection{Azure::Core::Amqp::_internal::Connection{
+        m_fullyQualifiedNamespace, m_credential, connectOptions}};
+#if ENABLE_RUST_AMQP
+    connection.Open(context);
+#endif
+    return connection;
+    (void)context;
   }
 
-  void ConsumerClient::EnsureConnection(std::string const& partitionId)
+  void ConsumerClient::EnsureConnection(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
   {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
-      m_connections.emplace(partitionId, CreateConnection(partitionId));
+      m_connections.emplace(partitionId, CreateConnection(partitionId, context));
     }
   }
 
   Azure::Core::Amqp::_internal::Session ConsumerClient::CreateSession(
-      std::string const& partitionId) const
+      std::string const& partitionId,
+      Azure::Core::Context const& context) const
   {
     SessionOptions sessionOptions;
     sessionOptions.InitialIncomingWindowSize
         = static_cast<uint32_t>((std::numeric_limits<int32_t>::max)());
 
-    return m_connections.at(partitionId).CreateSession(sessionOptions);
+    auto session{m_connections.at(partitionId).CreateSession(sessionOptions)};
+#if ENABLE_RUST_AMQP
+    session.Begin(context);
+#endif
+    return session;
+    (void)context;
   }
 
-  void ConsumerClient::EnsureSession(std::string const& partitionId)
+  void ConsumerClient::EnsureSession(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
   {
-    EnsureConnection(partitionId);
+    EnsureConnection(partitionId, context);
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      m_sessions.emplace(partitionId, CreateSession(partitionId));
+      m_sessions.emplace(partitionId, CreateSession(partitionId, context));
     }
   }
 
@@ -140,10 +179,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return m_sessions.at(partitionId);
   }
 
-  std::shared_ptr<_detail::EventHubsPropertiesClient> ConsumerClient::GetPropertiesClient()
+  std::shared_ptr<_detail::EventHubsPropertiesClient> ConsumerClient::GetPropertiesClient(
+      Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_propertiesClientLock);
-    EnsureConnection({});
+    EnsureConnection({}, context);
     if (!m_propertiesClient)
     {
       m_propertiesClient
@@ -160,7 +200,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
     std::string hostUrl = m_hostUrl + suffix;
 
-    EnsureSession(partitionId);
+    EnsureSession(partitionId, context);
 
     return _detail::PartitionClientFactory::CreatePartitionClient(
         GetSession(partitionId),
@@ -173,13 +213,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)
   {
-    return GetPropertiesClient()->GetEventHubsProperties(m_eventHub, context);
+    return GetPropertiesClient(context)->GetEventHubsProperties(m_eventHub, context);
   }
 
   Models::EventHubPartitionProperties ConsumerClient::GetPartitionProperties(
       std::string const& partitionId,
       Core::Context const& context)
   {
-    return GetPropertiesClient()->GetEventHubsPartitionProperties(m_eventHub, partitionId, context);
+    return GetPropertiesClient(context)->GetEventHubsPartitionProperties(
+        m_eventHub, partitionId, context);
   }
 }}} // namespace Azure::Messaging::EventHubs
