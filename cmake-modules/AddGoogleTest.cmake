@@ -57,25 +57,25 @@ set_target_properties(check PROPERTIES FOLDER "Scripts")
 #target_include_directories(gtest INTERFACE ${gtest_SOURCE_DIR}/include)
 
 
-if(GOOGLE_TEST_INDIVIDUAL)
-    if(NOT CMAKE_VERSION VERSION_LESS 3.9)
-        include(GoogleTest)
-    else()
-        set(GOOGLE_TEST_INDIVIDUAL OFF)
-    endif()
-endif()
+#if(GOOGLE_TEST_INDIVIDUAL)
+#    if(NOT CMAKE_VERSION VERSION_LESS 3.9)
+#        include(GoogleTest)
+#    else()
+#        set(GOOGLE_TEST_INDIVIDUAL OFF)
+#    endif()
+#endif()
 
-mark_as_advanced(
-gmock_build_tests
-gtest_build_samples
-gtest_build_tests
-gtest_disable_pthreads
-gtest_force_shared_crt
-gtest_hide_internal_symbols
-BUILD_GMOCK
-BUILD_GTEST
-)
+#mark_as_advanced(
+#gmock_build_tests
+#gtest_build_samples
+#gtest_build_tests
+#gtest_disable_pthreads
+#gtest_force_shared_crt
+#gtest_hide_internal_symbols
+#BUILD_GMOCK
+#BUILD_GTEST
+#)
 
-set_target_properties(gtest gtest_main gmock gmock_main
-    PROPERTIES FOLDER "Extern")
+#set_target_properties(gtest gtest_main gmock gmock_main
+ #   PROPERTIES FOLDER "Extern")
     
