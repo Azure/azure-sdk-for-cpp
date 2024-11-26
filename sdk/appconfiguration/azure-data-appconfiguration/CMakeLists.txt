@@ -90,6 +90,10 @@ az_rtti_setup(
   "azure/data/appconfiguration/rtti.hpp"
 )
 
+if (BUILD_SAMPLES)
+  add_subdirectory(samples)
+endif()
+
 if(BUILD_TESTING)
     if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
       include(AddGoogleTest)
