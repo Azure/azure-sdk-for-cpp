@@ -16,7 +16,7 @@
     },
     {
       "name": "opentelemetry-cpp",
-      "features": ["otlp-http"],
+      "features": [ "otlp-http" ],
       "platform": "!(windows & !static)",
       "version>=": "1.3.0"
     },
@@ -35,6 +35,9 @@
     {
       "name": "umock-c",
       "platform": "!uwp"
+    },
+    {
+      "name": "gtest"
     }
   ],
   "overrides": [
