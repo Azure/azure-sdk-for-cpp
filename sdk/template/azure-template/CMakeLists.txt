@@ -94,11 +94,6 @@ az_rtti_setup(
 )
 
 if(BUILD_TESTING)
-    if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-      include(AddGoogleTest)
-      enable_testing ()
-    endif()
-
     # tests
     add_subdirectory(test)
 endif()

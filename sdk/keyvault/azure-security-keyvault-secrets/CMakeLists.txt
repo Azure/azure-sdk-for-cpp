@@ -131,12 +131,6 @@ get_az_version("${CMAKE_CURRENT_SOURCE_DIR}/src/private/package_version.hpp")
 set_target_properties(azure-security-keyvault-secrets PROPERTIES VERSION ${AZ_LIBRARY_VERSION})
 generate_documentation(azure-security-keyvault-secrets ${AZ_LIBRARY_VERSION})
 if(BUILD_TESTING)
-
-  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-  
   add_subdirectory(test/ut)
   add_subdirectory(test/test-app)
 endif()

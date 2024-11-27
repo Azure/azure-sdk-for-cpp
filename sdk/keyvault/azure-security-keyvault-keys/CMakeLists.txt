@@ -142,12 +142,6 @@ set_target_properties(azure-security-keyvault-keys PROPERTIES VERSION ${AZ_LIBRA
 generate_documentation(azure-security-keyvault-keys ${AZ_LIBRARY_VERSION})
 
 if(BUILD_TESTING)
-
-  if (NOT AZ_ALL_LIBRARIES OR FETCH_SOURCE_DEPS)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-  
   add_subdirectory(test/ut)
   add_subdirectory(test/ut-hsm)
   add_subdirectory(test/macros-build)
