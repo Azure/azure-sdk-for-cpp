@@ -5,7 +5,6 @@
 #include "azure/data/tables/table_service_client.hpp"
 #include "private/package_version.hpp"
 #include "private/policies/service_version_policy.hpp"
-#include "private/policies/shared_key_lite_policy.hpp"
 #include "private/policies/tenant_bearer_token_policy.hpp"
 #include "private/policies/timeout_policy.hpp"
 #include "private/serializers.hpp"

@@ -25,7 +25,7 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     /**
      * @brief Initializes a new instance of the NamedKeyCredential.
      *
-     * @param accountName Name of the  account.
+     * @param accountName Name of the account.
      * @param accountKey Access key of the
      * account.
      */
@@ -35,10 +35,10 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     }
 
     /**
-     * @brief Update the  account's access key. This intended to be used when you've
+     * @brief Update the account's access key. This intended to be used when you've
      * regenerated your account's access keys and want to update long lived clients.
      *
-     * @param accountKey An  account access key.
+     * @param accountKey An account access key.
      */
     void Update(std::string accountKey)
     {
