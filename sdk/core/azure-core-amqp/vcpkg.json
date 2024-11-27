@@ -16,6 +16,9 @@
       "name": "azure-identity-cpp"
     },
     {
+      "name": "gtest"
+    },
+    {
       "name": "azure-c-shared-utility",
       "platform": "!uwp"
     },
