@@ -57,16 +57,13 @@ set(
 set(
   AZURE_DATA_TABLES_SOURCE
     src/account_sas_builder.cpp
-    src/credentials/named_key_credential.cpp
     src/cryptography/hmacsha256.cpp
     src/models.cpp
-    src/policies/shared_key_lite_policy.cpp
     src/policies/tenant_bearer_token_policy.cpp
     src/policies/timeout_policy.cpp
     src/private/hmacsha256.hpp
     src/private/package_version.hpp
     src/private/policies/service_version_policy.hpp
-    src/private/policies/shared_key_lite_policy.hpp
     src/private/policies/tenant_bearer_token_policy.hpp
     src/private/policies/timeout_policy.hpp
     src/private/serializers.hpp
