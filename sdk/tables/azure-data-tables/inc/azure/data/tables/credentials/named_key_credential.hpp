@@ -8,9 +8,6 @@
 #include <memory>
 #include <mutex>
 #include <string>
-namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Policies {
-  class SharedKeyLitePolicy;
-}}}}} // namespace Azure::Data::Tables::_detail::Policies
 
 namespace Azure { namespace Data { namespace Tables { namespace Sas {
   class AccountSasBuilder;
@@ -55,7 +52,6 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     const std::string AccountName;
 
   private:
-    friend class Azure::Data::Tables::_detail::Policies::SharedKeyLitePolicy;
     friend class Azure::Data::Tables::Sas::AccountSasBuilder;
     friend class Azure::Data::Tables::Sas::TablesSasBuilder;
 
@@ -68,18 +64,5 @@ namespace Azure { namespace Data { namespace Tables { namespace Credentials {
     mutable std::mutex m_mutex;
     std::string m_accountKey;
   };
-
-  namespace _detail {
-    struct ConnectionStringParts
-    {
-      std::string AccountName;
-      std::string AccountKey;
-      Azure::Core::Url TableServiceUrl;
-      std::shared_ptr<NamedKeyCredential> KeyCredential;
-    };
-
-    ConnectionStringParts ParseConnectionString(const std::string& connectionString);
-    std::string GetDefaultScopeForAudience(const std::string& audience);
-  } // namespace _detail
 
 }}}} // namespace Azure::Data::Tables::Credentials

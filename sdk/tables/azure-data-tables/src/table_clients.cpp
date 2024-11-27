@@ -17,7 +17,6 @@
 using namespace Azure::Data::Tables;
 using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::_detail::Xml;
-using namespace Azure::Data::Tables::Credentials::_detail;
 using namespace Azure::Data::Tables::_detail;
 
 TableServiceClient::TableServiceClient(
