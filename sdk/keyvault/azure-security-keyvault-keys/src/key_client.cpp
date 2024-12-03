@@ -74,7 +74,7 @@ KeyClient::KeyClient(
   std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
+    // tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
 
     perRetryPolicies.emplace_back(
         std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
