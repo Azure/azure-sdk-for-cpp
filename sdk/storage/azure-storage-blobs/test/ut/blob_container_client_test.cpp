@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobContainerClient = m_useTokenCredentialByDefault
         ? Blobs::BlobContainerClient(containerUrl, GetTestCredential(), clientOptions)
         : Blobs::BlobContainerClient::CreateFromConnectionString(
-              StandardStorageConnectionString(), containerName, clientOptions);
+            StandardStorageConnectionString(), containerName, clientOptions);
     m_resourceCleanupFunctions.push_back(
         [blobContainerClient]() { blobContainerClient.DeleteIfExists(); });
 
