@@ -75,11 +75,11 @@ the SGX enclave is configured as follows:
 Assuming a token is issued, this policy will cause a claim named `<custom-name>`
 to be issued with a value which matches the `x-ms-sgx-mrsigner` claim.
 
-For more information on authoring attestation policy documents, see: [Authoring an attestation policy](https://docs.microsoft.com/azure/attestation/author-sign-policy)
+For more information on authoring attestation policy documents, see: [Authoring an attestation policy](https://learn.microsoft.com/azure/attestation/author-sign-policy)
 
 ## Next Steps
 
-For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
+For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://learn.microsoft.com/azure/attestation/) .
 
 <!-- LINKS -->
 <!-- links are known to be broken, they will be fixed after this initial pull

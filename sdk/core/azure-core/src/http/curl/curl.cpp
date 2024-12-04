@@ -182,7 +182,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   {
     // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
-    // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
+    // https://learn.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
     setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
   }
 }
@@ -1405,9 +1405,10 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   key.append(
-      !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
-          std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
-                                                                     : "0");
+      !options.SslOptions.PemEncodedExpectedRootCertificates.empty()
+          ? std::to_string(
+                std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
+          : "0");
 #else
   key.append("0");
 #endif

@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto blobContainerClient = m_useTokenCredentialByDefault
         ? Blobs::BlobContainerClient(containerUrl, GetTestCredential(), clientOptions)
         : Blobs::BlobContainerClient::CreateFromConnectionString(
-            StandardStorageConnectionString(), containerName, clientOptions);
+              StandardStorageConnectionString(), containerName, clientOptions);
     m_resourceCleanupFunctions.push_back(
         [blobContainerClient]() { blobContainerClient.DeleteIfExists(); });
 
@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ListBlobsOtherStuff)
   {
     // NOTE: This test Requires storage account with versioning enabled!
-    // https://docs.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal
+    // https://learn.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal
     auto containerClient = *m_blobContainerClient;
 
     std::string blobName = "blob" + m_containerName;

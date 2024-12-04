@@ -27,8 +27,8 @@ vcpkg install azure-messaging-eventhubs-checkpointstore-blob-cpp
 
 - A C++ Compiler with C++14 support
 - An [Azure subscription](https://azure.microsoft.com/free/)
-- An [Event Hub namespace](https://docs.microsoft.com/azure/event-hubs/).
-- An Event Hub. You can create an event hub in your Event Hubs Namespace using the [Azure Portal](https://docs.microsoft.com/azure/event-hubs/event-hubs-create), or the [Azure CLI](https://docs.microsoft.com/azure/event-hubs/event-hubs-quickstart-cli).
+- An [Event Hub namespace](https://learn.microsoft.com/azure/event-hubs/).
+- An Event Hub. You can create an event hub in your Event Hubs Namespace using the [Azure Portal](https://learn.microsoft.com/azure/event-hubs/event-hubs-create), or the [Azure CLI](https://learn.microsoft.com/azure/event-hubs/event-hubs-quickstart-cli).
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide][azure_sdk_for_cpp_contributing].

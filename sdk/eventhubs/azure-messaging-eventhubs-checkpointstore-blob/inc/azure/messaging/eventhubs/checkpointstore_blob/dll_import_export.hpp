@@ -13,7 +13,7 @@
 /**
  * @def AZ_MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
- * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ * @note See https://learn.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
 #if defined(AZ_MESSAGING_EVENTHUBS_CHECKPOINTSTORE_BLOB_DLL) \
