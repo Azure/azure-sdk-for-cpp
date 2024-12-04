@@ -17,6 +17,7 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace AppConfiguration {
+  class ConfigurationClient;
 
   class GetKeysPagedResponse final : public Core::PagedResponse<GetKeysPagedResponse> {
     friend class ConfigurationClient;
