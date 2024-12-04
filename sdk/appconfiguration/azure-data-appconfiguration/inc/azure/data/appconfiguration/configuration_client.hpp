@@ -7,6 +7,7 @@
 
 #include "configuration_client_models.hpp"
 #include "configuration_client_options.hpp"
+#include "configuration_client_paged_responses.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
