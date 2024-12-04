@@ -80,65 +80,65 @@ namespace Azure {
      * @brief An RSA SHA-256 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS256;
 
     /**
      * @brief An RSA SHA-384 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS384;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS384;
 
     /**
      * @brief An RSA SHA-512 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS512;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm RS512;
 
     /**
      * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-256 and MGF1 with SHA-256 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS256;
 
     /**
      * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-384 and MGF1 with SHA-384 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS384;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS384;
 
     /**
      * cspell: disable-next-line
      * @brief An RSASSA-PSS using SHA-512 and MGF1 with SHA-512 #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS512;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm PS512;
 
     /**
      * @brief An ECDSA with a P-256 curve #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES256;
 
     /**
      * @brief An ECDSA with a P-384 curve #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES384;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES384;
 
     /**
      * @brief An ECDSA with a P-512 curve #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES512;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES512;
 
     /**
      * cspell: disable-next-line
      * @brief An ECDSA with a secp256k1 curve #SignatureAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES256K;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const SignatureAlgorithm ES256K;
   };
 
   /**
@@ -190,37 +190,37 @@ namespace Azure {
      * @brief An RSA1_5 #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm Rsa15;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm Rsa15;
 
     /**
      * @brief An RSA-OAEP #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm RsaOaep;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm RsaOaep;
 
     /**
      * @brief An RSA-OAEP-256 #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm RsaOaep256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm RsaOaep256;
 
     /**
      * @brief An AES 128 #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A128KW;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A128KW;
 
     /**
      * @brief An AES 192 #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A192KW;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A192KW;
 
     /**
      * @brief An AES 256 #KeyWrapAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A256KW;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyWrapAlgorithm A256KW;
   };
 
   /**
@@ -272,73 +272,73 @@ namespace Azure {
      * @brief An RSA1_5 #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm Rsa15;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm Rsa15;
 
     /**
      * @brief An RSA-OAEP #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm RsaOaep;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm RsaOaep;
 
     /**
      * @brief An RSA-OAEP256 #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm RsaOaep256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm RsaOaep256;
 
     /**
      * @brief An 128-bit AES-GCM #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128Gcm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128Gcm;
 
     /**
      * @brief An 192-bit AES-GCM #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192Gcm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192Gcm;
 
     /**
      * @brief An 256-bit AES-GCM #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256Gcm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256Gcm;
 
     /**
      * @brief An 128-bit AES-CBC #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128Cbc;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128Cbc;
 
     /**
      * @brief An 192-bit AES-CBC #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192Cbc;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192Cbc;
 
     /**
      * @brief An 256-bit AES-CBC #EncryptionAlgorithm
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256Cbc;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256Cbc;
 
     /**
      * @brief An 128-bit AES-CBC #EncryptionAlgorithm with PKCS padding.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128CbcPad;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A128CbcPad;
 
     /**
      * @brief An 192-bit AES-CBC #EncryptionAlgorithm with PKCS padding.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192CbcPad;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A192CbcPad;
 
     /**
      * @brief An 256-bit AES-CBC #EncryptionAlgorithm with PKCS padding.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256CbcPad;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const EncryptionAlgorithm A256CbcPad;
   };
 
   /**

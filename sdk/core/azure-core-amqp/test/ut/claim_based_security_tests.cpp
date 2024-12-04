@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_internal;
   using namespace Azure::Core::Amqp::_detail;
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
 
 #define TEST_OSTREAM_INSERTER(ENUMERATION, ENUMERATOR) \
   { \
@@ -72,9 +72,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "CbsOpens" << static_cast<CbsOpenResult>(32768);
     }
   }
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenNoListener)
   {
     MessageTests::AmqpServerMock mockServer;
@@ -146,9 +146,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     mockServer.StopListening();
   }
 
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
     MessageTests::AmqpServerMock mockServer;
@@ -177,9 +177,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
   }
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestCbs, CbsOpenAndPutError)
   {
     {
@@ -248,5 +248,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   }
 
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

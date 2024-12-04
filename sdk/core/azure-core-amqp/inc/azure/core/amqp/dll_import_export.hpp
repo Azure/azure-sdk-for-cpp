@@ -10,32 +10,32 @@
 #pragma once
 
 /**
- * @def AZ_CORE_AMQP_DLLEXPORT
+ * @def AZURE_CORE_AMQP_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_CORE_AMQP_DLL) || (0 /*@AZ_CORE_AMQP_DLL_INSTALLED_AS_PACKAGE@*/)
-#define AZ_CORE_AMQP_BUILT_AS_DLL 1
+#if defined(AZURE_CORE_AMQP_DLL) || (0 /*@AZURE_CORE_AMQP_DLL_INSTALLED_AS_PACKAGE@*/)
+#define AZURE_CORE_AMQP_BUILT_AS_DLL 1
 #else
-#define AZ_CORE_AMQP_BUILT_AS_DLL 0
+#define AZURE_CORE_AMQP_BUILT_AS_DLL 0
 #endif
 
-#if AZ_CORE_AMQP_BUILT_AS_DLL
+#if AZURE_CORE_AMQP_BUILT_AS_DLL
 #if defined(_MSC_VER)
-#if defined(AZ_CORE_AMQP_BEING_BUILT)
-#define AZ_CORE_AMQP_DLLEXPORT __declspec(dllexport)
-#else // !defined(AZ_CORE_AMQP_BEING_BUILT)
-#define AZ_CORE_AMQP_DLLEXPORT __declspec(dllimport)
-#endif // AZ_CORE_AMQP_BEING_BUILT
+#if defined(AZURE_CORE_AMQP_BEING_BUILT)
+#define AZURE_CORE_AMQP_DLLEXPORT __declspec(dllexport)
+#else // !defined(AZURE_CORE_AMQP_BEING_BUILT)
+#define AZURE_CORE_AMQP_DLLEXPORT __declspec(dllimport)
+#endif // AZURE_CORE_AMQP_BEING_BUILT
 #else // !defined(_MSC_VER)
-#define AZ_CORE_AMQP_DLLEXPORT
+#define AZURE_CORE_AMQP_DLLEXPORT
 #endif // _MSC_VER
-#else // !AZ_CORE_BUILT_AS_DLL
-#define AZ_CORE_AMQP_DLLEXPORT
-#endif // AZ_CORE_BUILT_AS_DLL
+#else // !AZURE_CORE_BUILT_AS_DLL
+#define AZURE_CORE_AMQP_DLLEXPORT
+#endif // AZURE_CORE_BUILT_AS_DLL
 
-#undef AZ_CORE_AMQP_BUILT_AS_DLL
+#undef AZURE_CORE_AMQP_BUILT_AS_DLL
 
 /**
  * @brief Azure SDK abstractions.

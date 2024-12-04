@@ -290,9 +290,9 @@ void Azure::Perf::Program::Run(
 
   // Declare a signal handler to report unhandled exceptions on Windows - this is not needed for
   // other OS's as they will print the exception to stderr in their terminate() function.
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   signal(SIGABRT, Azure::Core::Diagnostics::_internal::GlobalExceptionHandler::HandleSigAbort);
-#endif // AZ_PLATFORM_WINDOWS
+#endif // AZURE_PLATFORM_WINDOWS
 
   // Parse args only to get the test name first
   auto testMetadata = GetTestMetadata(tests, argc, argv);

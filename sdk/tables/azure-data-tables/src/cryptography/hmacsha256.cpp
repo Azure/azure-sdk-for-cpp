@@ -6,14 +6,14 @@
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/core/platform.hpp>
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // Windows needs to go before bcrypt
 #include <windows.h>
 
 #include <bcrypt.h>
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
@@ -25,7 +25,7 @@
 #include <stdexcept>
 #include <vector>
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Cryptography {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 
   enum class AlgorithmType
   {
@@ -142,7 +142,7 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
     return hash;
   }
 
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 
   std::vector<uint8_t> HmacSha256::Compute(
       const std::vector<uint8_t>& data,

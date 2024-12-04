@@ -27,7 +27,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::Models;
   using namespace Azure::Core::Amqp::_internal;
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestManagement, BasicTests)
   {
     {
@@ -273,8 +273,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
   }
-#endif // !defined(AZ_PLATFORM_MAC)
-#if !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
 
   namespace {
 
@@ -588,5 +588,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     mockServer.StopListening();
   }
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

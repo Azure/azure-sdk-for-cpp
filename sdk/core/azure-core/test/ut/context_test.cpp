@@ -436,7 +436,7 @@ TEST(Context, Deadline)
   }
 }
 
-#if defined(AZ_CORE_RTTI) && GTEST_HAS_DEATH_TEST
+#if defined(AZURE_CORE_RTTI) && GTEST_HAS_DEATH_TEST
 TEST(Context, PreCondition)
 {
   // Get a mismatch type from the context
@@ -479,7 +479,7 @@ TEST(Context, KeyTypePairPrecondition)
 
 #if GTEST_HAS_DEATH_TEST
 // Type-safe assert requires RTTI build
-#if defined(AZ_CORE_RTTI)
+#if defined(AZURE_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c2.TryGetValue<std::string>(key, strValue), "");
@@ -497,7 +497,7 @@ TEST(Context, KeyTypePairPrecondition)
 
 #if GTEST_HAS_DEATH_TEST
 // Type-safe assert requires RTTI build
-#if defined(AZ_CORE_RTTI)
+#if defined(AZURE_CORE_RTTI)
 #if defined(NDEBUG)
   // Release build won't provide assert msg
   ASSERT_DEATH(c3.TryGetValue<int>(key, intValue), "");

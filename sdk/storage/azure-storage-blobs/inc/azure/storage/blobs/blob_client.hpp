@@ -24,7 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 namespace Azure { namespace Storage { namespace Blobs {
 
   namespace _detail {
-    AZ_STORAGE_BLOBS_DLLEXPORT extern const Azure::Core::Context::Key
+    AZURE_STORAGE_BLOBS_DLLEXPORT extern const Azure::Core::Context::Key
         DataLakeInteroperabilityExtraOptionsKey;
   } // namespace _detail
 

@@ -22,7 +22,7 @@
 #include <utility>
 #include <vector>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -220,7 +220,7 @@ AccessToken AzureCliCredential::GetToken(
 }
 
 namespace {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 template <typename> struct UniqueHandleHelper;
 template <> struct UniqueHandleHelper<HANDLE>
@@ -239,7 +239,7 @@ class OutputPipe final {
   friend class ShellProcess;
 
 private:
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   UniqueHandle<HANDLE> m_writeHandle;
   UniqueHandle<HANDLE> m_readHandle;
@@ -265,7 +265,7 @@ public:
 
 class ShellProcess final {
 private:
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   UniqueHandle<HANDLE> m_processHandle;
 #endif // not UWP
@@ -343,7 +343,7 @@ std::string RunShellCommand(
   return output;
 }
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 void ThrowIfApiCallFails(BOOL apiResult, std::string const& errMsg)
 {
@@ -371,7 +371,7 @@ void ThrowIfApiCallFails(int apiResult, std::string const& errMsg)
 
 OutputPipe::OutputPipe()
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   SECURITY_ATTRIBUTES pipeSecurity = {};
   pipeSecurity.nLength = sizeof(decltype(pipeSecurity));
@@ -407,7 +407,7 @@ OutputPipe::OutputPipe()
 
 OutputPipe::~OutputPipe()
 {
-#if !defined(AZ_PLATFORM_WINDOWS)
+#if !defined(AZURE_PLATFORM_WINDOWS)
   for (auto iter = m_fd.rbegin(); iter != m_fd.rend(); ++iter)
   {
     if (*iter != -1)
@@ -418,7 +418,7 @@ OutputPipe::~OutputPipe()
 #endif
 }
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
 void AppendToEnvironmentValuesIfNotEmpty(
     std::vector<CHAR>& environmentValues,
@@ -470,7 +470,7 @@ void EnsureShellExists(std::string const& pathToShell)
 
 ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   // Start the process.
   PROCESS_INFORMATION procInfo = {};
@@ -654,7 +654,7 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
 
 void ShellProcess::Finalize()
 {
-#if !defined(AZ_PLATFORM_WINDOWS)
+#if !defined(AZURE_PLATFORM_WINDOWS)
   if (m_pid > 0)
   {
     static_cast<void>(waitpid(m_pid, nullptr, 0));
@@ -666,7 +666,7 @@ void ShellProcess::Finalize()
 
 void ShellProcess::Terminate()
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   static_cast<void>(TerminateProcess(m_processHandle.get(), 0));
 #endif // not UWP
@@ -683,7 +683,7 @@ bool OutputPipe::NonBlockingRead(
     std::remove_reference<decltype(buffer)>::type::size_type& bytesRead,
     bool& willHaveMoreData)
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
   static_assert(
       sizeof(std::remove_reference<decltype(buffer)>::type::value_type) == sizeof(CHAR),

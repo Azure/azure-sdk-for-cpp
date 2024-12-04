@@ -159,14 +159,14 @@ namespace Azure { namespace Security { namespace Attestation {
      * generated token as a JSON object.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Json;
+    AZURE_ATTESTATION_DLLEXPORT static const AttestationDataType Json;
 
     /**
      * @brief When specified, instructs the attestation service to express the runtime data in the
      * generated token as a Binary object.
      *
      */
-    AZ_ATTESTATION_DLLEXPORT static const AttestationDataType Binary;
+    AZURE_ATTESTATION_DLLEXPORT static const AttestationDataType Binary;
   };
 
   /** @brief AttestationData represents a block of data to be sent to the attestation service.

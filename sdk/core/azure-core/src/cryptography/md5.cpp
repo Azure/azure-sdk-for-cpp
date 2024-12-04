@@ -4,7 +4,7 @@
 #include "azure/core/cryptography/hash.hpp"
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 
@@ -12,7 +12,7 @@
 #include <windows.h>
 
 #include <bcrypt.h>
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 #include <openssl/evp.h>
 #endif
 
@@ -21,7 +21,7 @@
 
 namespace {
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 
 class Md5AlgorithmProvider final {
 private:
@@ -161,7 +161,7 @@ public:
 } // namespace
 Azure::Core::Cryptography::Md5Hash::Md5Hash() : m_implementation(std::make_unique<Md5BCrypt>()) {}
 
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 
 class Md5OpenSSL final : public Azure::Core::Cryptography::Hash {
 private:

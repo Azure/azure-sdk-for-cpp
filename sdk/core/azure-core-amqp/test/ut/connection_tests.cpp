@@ -29,7 +29,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     void TearDown() override {}
   };
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestConnections, SimpleConnection)
   {
     {
@@ -175,6 +175,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       listener.Stop();
     }
   }
-#endif // !defined(AZ_PLATFORM_MAC)
+#endif // !defined(AZURE_PLATFORM_MAC)
 
 }}}} // namespace Azure::Core::Amqp::Tests

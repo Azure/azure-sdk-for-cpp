@@ -367,7 +367,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
 
         auto err = errno;
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
         char buf[256];
         strerror_s(buf, sizeof(buf), err);
 #else

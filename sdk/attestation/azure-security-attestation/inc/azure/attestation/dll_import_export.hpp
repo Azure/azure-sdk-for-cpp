@@ -11,32 +11,32 @@
 #pragma once
 
 /**
- * @def AZ_ATTESTATION_DLLEXPORT
+ * @def AZURE_ATTESTATION_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_ATTESTATION_DLL) || (0 /*@AZ_ATTESTATION_DLL_INSTALLED_AS_PACKAGE@*/)
-#define AZ_ATTESTATION_BUILT_AS_DLL 1
+#if defined(AZURE_ATTESTATION_DLL) || (0 /*@AZURE_ATTESTATION_DLL_INSTALLED_AS_PACKAGE@*/)
+#define AZURE_ATTESTATION_BUILT_AS_DLL 1
 #else
-#define AZ_ATTESTATION_BUILT_AS_DLL 0
+#define AZURE_ATTESTATION_BUILT_AS_DLL 0
 #endif
 
-#if AZ_ATTESTATION_BUILT_AS_DLL
+#if AZURE_ATTESTATION_BUILT_AS_DLL
 #if defined(_MSC_VER)
-#if defined(AZ_ATTESTATION_BEING_BUILT)
-#define AZ_ATTESTATION_DLLEXPORT __declspec(dllexport)
-#else // !defined(AZ_ATTESTATION_BEING_BUILT)
-#define AZ_ATTESTATION_DLLEXPORT __declspec(dllimport)
-#endif // AZ_ATTESTATION_BEING_BUILT
+#if defined(AZURE_ATTESTATION_BEING_BUILT)
+#define AZURE_ATTESTATION_DLLEXPORT __declspec(dllexport)
+#else // !defined(AZURE_ATTESTATION_BEING_BUILT)
+#define AZURE_ATTESTATION_DLLEXPORT __declspec(dllimport)
+#endif // AZURE_ATTESTATION_BEING_BUILT
 #else // !defined(_MSC_VER)
-#define AZ_ATTESTATION_DLLEXPORT
+#define AZURE_ATTESTATION_DLLEXPORT
 #endif // _MSC_VER
-#else // !AZ_ATTESTATION_BUILT_AS_DLL
-#define AZ_ATTESTATION_DLLEXPORT
-#endif // AZ_ATTESTATION_BUILT_AS_DLL
+#else // !AZURE_ATTESTATION_BUILT_AS_DLL
+#define AZURE_ATTESTATION_DLLEXPORT
+#endif // AZURE_ATTESTATION_BUILT_AS_DLL
 
-#undef AZ_ATTESTATION_BUILT_AS_DLL
+#undef AZURE_ATTESTATION_BUILT_AS_DLL
 
 /**
  * @brief Azure SDK abstractions.
