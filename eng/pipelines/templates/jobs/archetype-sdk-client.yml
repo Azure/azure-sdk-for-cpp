@@ -159,7 +159,7 @@ jobs:
               -DBUILD_DOCUMENTATION=YES
 
         - pwsh: npm install -g moxygen
-          displayName: Install Moxygen to generate markdown for docs.microsoft.com
+          displayName: Install Moxygen to generate markdown for learn.microsoft.com
 
         - pwsh: |
             Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
