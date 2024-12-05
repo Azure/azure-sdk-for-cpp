@@ -2089,4 +2089,281 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(binaryPermission, permission);
     }
   }
+
+  TEST_F(FileShareFileClientTest, PremiumNfsProperties)
+  {
+    auto shareServiceClient = *m_premiumShareServiceClient;
+
+    auto shareName = LowercaseRandomString();
+    auto shareClient = GetPremiumShareClientForTest(shareName);
+    Files::Shares::CreateShareOptions shareOptions;
+    shareOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    EXPECT_NO_THROW(shareClient.Create(shareOptions));
+
+    auto fileName = LowercaseRandomString();
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+
+    std::string octalMode = "0777";
+
+    // Create a file
+    Files::Shares::CreateFileOptions createOptions;
+    createOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(octalMode);
+    createOptions.NfsProperties.Group = "123";
+    createOptions.NfsProperties.Owner = "456";
+    createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    Files::Shares::Models::CreateFileResult createResult;
+    EXPECT_NO_THROW(createResult = fileClient.Create(256, createOptions).Value);
+    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(createResult.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(createResult.NfsProperties.Group.HasValue());
+    EXPECT_EQ(createResult.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(createResult.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(createResult.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createResult.NfsProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::Regular);
+
+    // Set Properties
+    Files::Shares::SetFilePropertiesOptions setOptions;
+    setOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0707");
+    setOptions.NfsProperties.Group = "123";
+    setOptions.NfsProperties.Owner = "456";
+    Files::Shares::Models::SetFilePropertiesResult setResult;
+    EXPECT_NO_THROW(
+        setResult = fileClient
+                        .SetProperties(
+                            Files::Shares::Models::FileHttpHeaders(),
+                            Files::Shares::Models::FileSmbProperties(),
+                            setOptions)
+                        .Value);
+    EXPECT_TRUE(setResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(setResult.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(setResult.NfsProperties.Group.HasValue());
+    EXPECT_EQ(setResult.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(setResult.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(setResult.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(setResult.NfsProperties.LinkCount.HasValue());
+
+    // Get Properties
+    Files::Shares::Models::FileProperties properties;
+    EXPECT_NO_THROW(properties = fileClient.GetProperties().Value);
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+
+    // Download
+    Files::Shares::Models::DownloadFileResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = fileClient.Download().Value);
+    EXPECT_TRUE(downloadResult.Details.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_EQ(
+        downloadResult.Details.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(downloadResult.Details.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(
+        downloadResult.Details.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(downloadResult.Details.NfsProperties.LinkCount.HasValue());
+
+    // DownloadTo
+    Files::Shares::Models::DownloadFileToResult downloadToResult;
+    std::string tempFilename = RandomString() + "1";
+    EXPECT_NO_THROW(downloadToResult = fileClient.DownloadTo(tempFilename).Value);
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadToResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_EQ(
+        downloadToResult.Details.NfsProperties.Group.Value(),
+        setOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(
+        downloadToResult.Details.NfsProperties.Owner.Value(),
+        setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.LinkCount.HasValue());
+    DeleteFile(tempFilename);
+
+    std::vector<uint8_t> buff(256);
+    EXPECT_NO_THROW(downloadToResult = fileClient.DownloadTo(buff.data(), 256).Value);
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadToResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_EQ(
+        downloadToResult.Details.NfsProperties.Group.Value(),
+        setOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(
+        downloadToResult.Details.NfsProperties.Owner.Value(),
+        setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(downloadToResult.Details.NfsProperties.LinkCount.HasValue());
+
+    // Create SymbolicLink
+    std::string sourceUrl = fileClient.GetUrl();
+    auto symbolicLinkClient
+        = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    Files::Shares::CreateSymbolicLinkOptions createSymbolicLinkOptions;
+    createSymbolicLinkOptions.CreatedOn = std::chrono::system_clock::now();
+    createSymbolicLinkOptions.LastWrittenOn
+        = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    createSymbolicLinkOptions.Metadata = RandomMetadata();
+    createSymbolicLinkOptions.Group = "123";
+    createSymbolicLinkOptions.Owner = "456";
+    Files::Shares::Models::CreateFileSymbolicLinkResult createSymbolicLinkResult;
+    EXPECT_NO_THROW(
+        createSymbolicLinkResult
+        = symbolicLinkClient.CreateSymbolicLink(sourceUrl, createSymbolicLinkOptions).Value);
+    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(createSymbolicLinkResult.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.Group.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.NfsProperties.Group.Value(),
+        createSymbolicLinkOptions.Group.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.NfsProperties.Owner.Value(),
+        createSymbolicLinkOptions.Owner.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.NfsProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::SymLink);
+    EXPECT_EQ(
+        createSymbolicLinkResult.SmbProperties.CreatedOn.Value(),
+        createSymbolicLinkOptions.CreatedOn.Value());
+    EXPECT_EQ(
+        createSymbolicLinkResult.SmbProperties.LastWrittenOn.Value(),
+        createSymbolicLinkOptions.LastWrittenOn.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.SmbProperties.ChangedOn.HasValue());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.FileId.empty());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.ParentFileId.empty());
+    EXPECT_TRUE(createSymbolicLinkResult.ETag.HasValue());
+
+    // Get SymbolicLink
+    Files::Shares::Models::GetFileSymbolicLinkResult getSymbolicLinkResult;
+    EXPECT_NO_THROW(getSymbolicLinkResult = symbolicLinkClient.GetSymbolicLink().Value);
+    EXPECT_TRUE(getSymbolicLinkResult.ETag.HasValue());
+    EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
+
+    // Create HardLink
+    auto hardLinkClient
+        = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    Files::Shares::CreateHardLinkOptions createHardLinkOptions;
+    Files::Shares::Models::CreateFileHardLinkResult createFileHardLinkResult;
+    EXPECT_NO_THROW(
+        createFileHardLinkResult
+        = hardLinkClient.CreateHardLink(fileName, createHardLinkOptions).Value);
+    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(createFileHardLinkResult.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.Group.HasValue());
+    EXPECT_EQ(
+        createFileHardLinkResult.NfsProperties.Group.Value(),
+        createOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createFileHardLinkResult.NfsProperties.Owner.Value(),
+        createOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createFileHardLinkResult.NfsProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::Regular);
+    EXPECT_TRUE(createFileHardLinkResult.SmbProperties.CreatedOn.HasValue());
+    EXPECT_TRUE(createFileHardLinkResult.SmbProperties.LastWrittenOn.HasValue());
+    EXPECT_TRUE(createSymbolicLinkResult.SmbProperties.ChangedOn.HasValue());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.FileId.empty());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.ParentFileId.empty());
+    EXPECT_TRUE(createSymbolicLinkResult.ETag.HasValue());
+
+    // Delete
+    Files::Shares::Models::DeleteFileResult deleteResult;
+    EXPECT_NO_THROW(deleteResult = fileClient.Delete().Value);
+    EXPECT_TRUE(deleteResult.LinkCount.HasValue());
+
+    // Upload
+    size_t fileSize = 512;
+    std::vector<uint8_t> content(RandomBuffer(fileSize));
+    auto memBodyStream = Core::IO::MemoryBodyStream(content);
+    tempFilename = "file" + RandomString();
+    WriteFile(tempFilename, content);
+
+    Files::Shares::UploadFileFromOptions uploadOptions;
+    uploadOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(octalMode);
+    uploadOptions.NfsProperties.Group = "123";
+    uploadOptions.NfsProperties.Owner = "456";
+    uploadOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+
+    // From buffer
+    fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize, uploadOptions).Value);
+    properties = fileClient.GetProperties().Value;
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+
+    // From file
+    fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename, uploadOptions).Value);
+    properties = fileClient.GetProperties().Value;
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+
+    // Copy
+    auto destFileClient
+        = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    Files::Shares::StartFileCopyOptions copyOptions;
+    copyOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0757");
+    copyOptions.NfsProperties.Group = "888";
+    copyOptions.NfsProperties.Owner = "999";
+    auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl(), copyOptions);
+    EXPECT_EQ(
+        copyOperation.GetRawResponse().GetStatusCode(),
+        Azure::Core::Http::HttpStatusCode::Accepted);
+    properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+    EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0757");
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), copyOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), copyOptions.NfsProperties.Owner.Value());
+
+    // Copy without NfsProperties
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+    EXPECT_EQ(
+        copyOperation.GetRawResponse().GetStatusCode(),
+        Azure::Core::Http::HttpStatusCode::Accepted);
+    properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+    EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
+  }
 }}} // namespace Azure::Storage::Test

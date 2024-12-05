@@ -36,7 +36,7 @@ directive:
       delete $["x-ms-code-generation-settings"];
 ```
 
-### Delete Unused Query Parameters and Headers
+### Delete Unused Query Parameters and Headers and global changes for Parameters and Headers
 
 ```yaml
 directive:
@@ -80,12 +80,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2025-01-05"]
+        "enum": ["2025-05-05"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2025-01-05";
+      $.ApiVersionParameter.enum[0] = "2025-05-05";
 ```
 
 ### Rename Operations
@@ -663,6 +663,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -710,6 +712,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -739,6 +743,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -767,6 +773,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -797,6 +805,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -852,6 +862,8 @@ directive:
     transform: >
       $.headers["x-ms-file-permission-key"]["x-ms-client-path"] = "SmbProperties.PermissionKey";
       $.headers["x-ms-file-attributes"]["x-ms-client-path"] = "SmbProperties.Attributes";
+      $.headers["x-ms-file-attributes"]["x-nullable"] = true;
+      $.headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
       $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
       $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
       $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
@@ -946,6 +958,8 @@ directive:
         $[status_code].headers["x-ms-server-encrypted"]["x-ms-client-path"] = "Details.IsServerEncrypted";
         $[status_code].headers["x-ms-file-permission-key"]["x-ms-client-path"] = "Details.SmbProperties.PermissionKey";
         $[status_code].headers["x-ms-file-attributes"]["x-ms-client-path"] = "Details.SmbProperties.Attributes";
+        $[status_code].headers["x-ms-file-attributes"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-file-attributes"]["x-ms-client-default"] = "None";
         $[status_code].headers["x-ms-file-creation-time"]["x-ms-client-path"] = "Details.SmbProperties.CreatedOn";
         $[status_code].headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "Details.SmbProperties.LastWrittenOn";
         $[status_code].headers["x-ms-file-change-time"]["x-ms-client-path"] = "Details.SmbProperties.ChangedOn";
@@ -1090,6 +1104,54 @@ directive:
       $["x-ms-file-creation-time"].format = "date-time";
       $["x-ms-file-last-write-time"].format = "date-time";
       $["x-ms-file-change-time"].format = "date-time";
+```
+
+### CreateFileSymbolicLink
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?restype=symboliclink"].put.responses["201"]
+    transform: >
+      $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
+      $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
+      $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
+      $.headers["x-ms-file-id"]["x-ms-client-path"] = "SmbProperties.FileId";
+      $.headers["x-ms-file-parent-id"]["x-ms-client-path"] = "SmbProperties.ParentFileId";
+      $.schema = {
+        "type": "object",
+        "x-ms-client-name": "CreateFileSymbolicLinkResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}},
+          "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}}
+        },
+        "x-namespace" : "_detail"
+      };
+```
+
+### CreateFileHardLink
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}?restype=hardlink"].put.responses["201"]
+    transform: >
+      $.headers["x-ms-file-creation-time"]["x-ms-client-path"] = "SmbProperties.CreatedOn";
+      $.headers["x-ms-file-last-write-time"]["x-ms-client-path"] = "SmbProperties.LastWrittenOn";
+      $.headers["x-ms-file-change-time"]["x-ms-client-path"] = "SmbProperties.ChangedOn";
+      $.headers["x-ms-file-id"]["x-ms-client-path"] = "SmbProperties.FileId";
+      $.headers["x-ms-file-parent-id"]["x-ms-client-path"] = "SmbProperties.ParentFileId";
+      $.schema = {
+        "type": "object",
+        "x-ms-client-name": "CreateFileHardLinkResult",
+        "x-ms-sealed": false,
+        "properties": {
+          "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}},
+          "SmbProperties": {"$ref": "#/definitions/FileSmbProperties", "x-ms-xml": {"name": ""}}
+        },
+        "x-namespace" : "_detail"
+      };
 ```
 
 ### Description

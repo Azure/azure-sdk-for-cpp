@@ -77,18 +77,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Set effective user ID (setuid) on the file or directory.
        */
-      bool EffectiveUserIdentity;
+      bool EffectiveUserIdentity = false;
 
       /**
        * @brief Set effective group ID (setgid) on the file or directory.
        */
-      bool EffectiveGroupIdentity;
+      bool EffectiveGroupIdentity = false;
 
       /**
        * @brief The sticky bit may be set on directories. The files in that directory may only be
        * renamed or deleted by the file's owner, the directory's owner, or the root user.
        */
-      bool StickyBit;
+      bool StickyBit = false;
 
       /**
        * @brief Returns the octal representation of NfsFileMode as a string.

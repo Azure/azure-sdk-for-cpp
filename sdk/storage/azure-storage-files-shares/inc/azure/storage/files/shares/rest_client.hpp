@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2025-01-05";
+    constexpr static const char* ApiVersion = "2025-05-05";
   } // namespace _detail
   namespace Models {
     /**
@@ -1102,7 +1102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** Constant value of type NfsFileType: Directory */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Directory;
       /** Constant value of type NfsFileType: Symlink */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Symlink;
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType SymLink;
     };
     namespace _detail {
       /**
@@ -2284,6 +2284,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       struct CreateFileSymbolicLinkResult final
       {
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
         /**
          * The ETag contains a value which represents the version of the file, in quotes.
          */
@@ -2294,26 +2299,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * affect the last modified time of the directory.
          */
         DateTime LastModified;
-        /**
-         * Creation time for the file.
-         */
-        DateTime FileCreationTime;
-        /**
-         * Last write time for the file.
-         */
-        DateTime FileLastWriteTime;
-        /**
-         * Change time for the file.
-         */
-        DateTime FileChangeTime;
-        /**
-         * The fileId of the file.
-         */
-        std::string FileId;
-        /**
-         * The parent fileId of the directory.
-         */
-        std::string FileParentId;
         /**
          * NFS only. The mode of the file or directory.
          */
@@ -2358,6 +2343,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       struct CreateFileHardLinkResult final
       {
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
         /**
          * The ETag contains a value which represents the version of the file, in quotes.
          */
@@ -2368,26 +2358,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * affect the last modified time of the directory.
          */
         DateTime LastModified;
-        /**
-         * Creation time for the file.
-         */
-        DateTime FileCreationTime;
-        /**
-         * Last write time for the file.
-         */
-        DateTime FileLastWriteTime;
-        /**
-         * Change time for the file.
-         */
-        DateTime FileChangeTime;
-        /**
-         * The fileId of the file.
-         */
-        std::string FileId;
-        /**
-         * The parent fileId of the directory.
-         */
-        std::string FileParentId;
         /**
          * NFS only. The link count of the file or directory.
          */
