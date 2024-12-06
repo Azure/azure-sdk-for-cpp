@@ -43,6 +43,7 @@ set(
     inc/azure/data/appconfiguration/configuration_client.hpp
     inc/azure/data/appconfiguration/configuration_client_models.hpp
     inc/azure/data/appconfiguration/configuration_client_options.hpp
+    inc/azure/data/appconfiguration/configuration_client_paged_responses.hpp
     inc/azure/data/appconfiguration/dll_import_export.hpp
     inc/azure/data/appconfiguration/rtti.hpp
 )

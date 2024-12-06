@@ -643,8 +643,6 @@ Azure::Response<PutKeyValueResult> ConfigurationClient::PutKeyValue(
   {
     auto jsonRoot = Core::Json::_internal::json::object();
 
-// TODO: Add support for KeyValue Entity
-#if 0
     jsonRoot["key"] = options.Entity.Key;
 
     if (options.Entity.Label.HasValue())
@@ -685,7 +683,6 @@ Azure::Response<PutKeyValueResult> ConfigurationClient::PutKeyValue(
     {
       jsonRoot["etag"] = options.Entity.Etag.Value();
     }
-#endif
 
     jsonBody = jsonRoot.dump();
   }

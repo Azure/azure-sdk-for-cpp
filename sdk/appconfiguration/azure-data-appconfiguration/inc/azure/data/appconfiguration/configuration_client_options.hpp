@@ -22,11 +22,6 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace AppConfiguration {
-  class KeyValueFields;
-  struct KeyValue;
-  class SnapshotFields;
-  class SnapshotStatus;
-  class LabelFields;
 
   struct ConfigurationClientOptions final : public Azure::Core::_internal::ClientOptions
   {
@@ -99,7 +94,7 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     std::string IfMatch;
     std::string IfNoneMatch;
     Core::Uuid XMsClientRequestId{};
-    // KeyValue Entity; TODO: Implement KeyValue entity
+    KeyValue Entity;
   };
 
   struct DeleteKeyValueOptions final
