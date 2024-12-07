@@ -32,7 +32,7 @@ namespace Azure {
     /**
      * @brief Gets the ServiceVersion of the service API used when making requests. For more
      * information, see [Key Vault
-     * versions](https://docs.microsoft.com/rest/api/keyvault/key-vault-versions).
+     * versions](https://learn.microsoft.com/rest/api/keyvault/key-vault-versions).
      *
      */
     std::string Version;

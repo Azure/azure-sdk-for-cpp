@@ -1756,7 +1756,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The tier of page blob on a premium storage account or tier of block blob on blob storage
        * LRS accounts. For a list of allowed premium page blob tiers, see
-       * https://docs.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
+       * https://learn.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
        * For blob storage LRS accounts, valid values are Hot/Cool/Archive.
        */
       Nullable<Models::AccessTier> AccessTier;
