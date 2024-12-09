@@ -230,7 +230,7 @@ CryptographyClient cryptoClient(key.Id, credential);
 
 
 #### Note 
-Microsoft recommends you not use CBC without first ensuring the integrity of the cipher text using an HMAC, for example. See https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+Microsoft recommends you not use CBC without first ensuring the integrity of the cipher text using an HMAC, for example. See https://learn.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
 
 Optional initialization vector (IV). If you pass your own IV, make sure you use a cryptographically random, non-repeating IV. If null, a cryptographically random IV will be choosing using {RandomNumberGenerator | whatever cryptorng your language provides}.
 
@@ -325,7 +325,7 @@ std::cout << updatedKey.Properties.UpdatedOn->ToString();
 
 `StartDeleteKey` starts a long-running operation to delete a key previously stored in the Azure Key Vault.
 You can retrieve the key immediately without waiting for the operation to complete.
-When [soft-delete](https://docs.microsoft.com/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
+When [soft-delete](https://learn.microsoft.com/azure/key-vault/general/soft-delete-overview) is not enabled for the Azure Key Vault, this operation permanently deletes the key.
 
 ```cpp
 DeleteKeyOperation operation = client.StartDeleteKey("key-name");
@@ -478,7 +478,7 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
 [api_reference]: https://azure.github.io/azure-sdk-for-cpp/keyvault.html
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_identity]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [azure_sub]: https://azure.microsoft.com/free/
 <!-- ----------------SAMPLES ---------------- -->
@@ -499,15 +499,15 @@ For more information see the [Code of Conduct FAQ][coc_faq] or contact opencode@
 [key_client_vcpkg_package]: https://github.com/microsoft/vcpkg/tree/master/ports/azure-security-keyvault-keys-cpp
 [key_client_samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-keys/samples
 [key_client_src]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/keyvault/azure-security-keyvault-keys
-[keyvault_docs]: https://docs.microsoft.com/azure/key-vault/
-[keyvault_rest]: https://docs.microsoft.com/rest/api/keyvault/
+[keyvault_docs]: https://learn.microsoft.com/azure/key-vault/
+[keyvault_rest]: https://learn.microsoft.com/rest/api/keyvault/
 
 <!-- [secrets_client_library]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Secrets -->
 
 [defaultazurecredential]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#credentials
 [contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[access_control]: https://docs.microsoft.com/azure/key-vault/managed-hsm/access-control
-[rbac_guide]: https://docs.microsoft.com/azure/key-vault/general/rbac-guide
+[access_control]: https://learn.microsoft.com/azure/key-vault/managed-hsm/access-control
+[rbac_guide]: https://learn.microsoft.com/azure/key-vault/general/rbac-guide
 [azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#getting-started
 [project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration
