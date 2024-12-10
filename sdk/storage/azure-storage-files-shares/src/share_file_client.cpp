@@ -1465,11 +1465,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Models::CreateFileSymbolicLinkResult ret;
     ret.ETag = std::move(response.Value.ETag);
-    ret.SmbProperties.ChangedOn = std::move(response.Value.SmbProperties.ChangedOn);
-    ret.SmbProperties.CreatedOn = std::move(response.Value.SmbProperties.CreatedOn);
-    ret.SmbProperties.FileId = std::move(response.Value.SmbProperties.FileId);
-    ret.SmbProperties.LastWrittenOn = std::move(response.Value.SmbProperties.LastWrittenOn);
-    ret.SmbProperties.ParentFileId = std::move(response.Value.SmbProperties.ParentFileId);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
     ret.LastModified = std::move(response.Value.LastModified);
     ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
     ret.NfsProperties.Owner = std::move(response.Value.Owner);
@@ -1512,11 +1508,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     Models::CreateFileHardLinkResult ret;
     ret.ETag = std::move(response.Value.ETag);
-    ret.SmbProperties.ChangedOn = std::move(response.Value.SmbProperties.ChangedOn);
-    ret.SmbProperties.CreatedOn = std::move(response.Value.SmbProperties.CreatedOn);
-    ret.SmbProperties.FileId = std::move(response.Value.SmbProperties.FileId);
-    ret.SmbProperties.LastWrittenOn = std::move(response.Value.SmbProperties.LastWrittenOn);
-    ret.SmbProperties.ParentFileId = std::move(response.Value.SmbProperties.ParentFileId);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
     ret.LastModified = std::move(response.Value.LastModified);
     ret.NfsProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode);
     ret.NfsProperties.Owner = std::move(response.Value.Owner);

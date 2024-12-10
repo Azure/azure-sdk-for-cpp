@@ -5,6 +5,8 @@
 
 #include <gtest/gtest.h>
 
+/* cSpell:ignore rwsrwsrwt, rwxrwxrwx, rwSrwSrwT */
+
 namespace Azure { namespace Storage { namespace Test {
 
   TEST(ShareUtilityTest, NfsFileMode)

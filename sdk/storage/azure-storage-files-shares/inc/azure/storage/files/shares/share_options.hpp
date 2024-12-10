@@ -1017,13 +1017,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::FilePosixProperties NfsProperties;
 
     /**
-     * Optional, only applicable to NFS Files. If not populated, the desination file will have the
+     * Optional, only applicable to NFS Files. If not populated, the destination file will have the
      * default File Mode.
      */
     Azure::Nullable<Models::ModeCopyMode> ModeCopyMode;
 
     /**
-     * Optional, only applicable to NFS Files. If not populated, the desination file will have the
+     * Optional, only applicable to NFS Files. If not populated, the destination file will have the
      * default Owner and Group.
      */
     Azure::Nullable<Models::OwnerCopyMode> OwnerCopyMode;
