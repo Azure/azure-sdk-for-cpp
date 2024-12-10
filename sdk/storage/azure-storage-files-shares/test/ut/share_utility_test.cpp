@@ -5,7 +5,7 @@
 
 #include <gtest/gtest.h>
 
-/* cSpell:ignore rwsrwsrwt, rwxrwxrwx, rwSrwSrwT */
+/* cSpell:ignore rwsrwsrwt, rwxrwxrwx, rwSrwSrwT, xrwt, rwSr*/
 
 namespace Azure { namespace Storage { namespace Test {
 
