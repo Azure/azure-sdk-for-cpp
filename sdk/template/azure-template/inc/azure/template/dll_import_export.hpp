@@ -11,32 +11,32 @@
 #pragma once
 
 /**
- * @def AZ_TEMPLATE_DLLEXPORT
+ * @def AZURE_TEMPLATE_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
  * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
-#if defined(AZ_TEMPLATE_DLL) || (0 /*@AZ_TEMPLATE_DLL_INSTALLED_AS_PACKAGE@*/)
-#define AZ_TEMPLATE_BUILT_AS_DLL 1
+#if defined(AZURE_TEMPLATE_DLL) || (0 /*@AZURE_TEMPLATE_DLL_INSTALLED_AS_PACKAGE@*/)
+#define AZURE_TEMPLATE_BUILT_AS_DLL 1
 #else
-#define AZ_TEMPLATE_BUILT_AS_DLL 0
+#define AZURE_TEMPLATE_BUILT_AS_DLL 0
 #endif
 
-#if AZ_TEMPLATE_BUILT_AS_DLL
+#if AZURE_TEMPLATE_BUILT_AS_DLL
 #if defined(_MSC_VER)
-#if defined(AZ_TEMPLATE_BEING_BUILT)
-#define AZ_TEMPLATE_DLLEXPORT __declspec(dllexport)
-#else // !defined(AZ_TEMPLATE_BEING_BUILT)
-#define AZ_TEMPLATE_DLLEXPORT __declspec(dllimport)
-#endif // AZ_TEMPLATE_BEING_BUILT
+#if defined(AZURE_TEMPLATE_BEING_BUILT)
+#define AZURE_TEMPLATE_DLLEXPORT __declspec(dllexport)
+#else // !defined(AZURE_TEMPLATE_BEING_BUILT)
+#define AZURE_TEMPLATE_DLLEXPORT __declspec(dllimport)
+#endif // AZURE_TEMPLATE_BEING_BUILT
 #else // !defined(_MSC_VER)
-#define AZ_TEMPLATE_DLLEXPORT
+#define AZURE_TEMPLATE_DLLEXPORT
 #endif // _MSC_VER
-#else // !AZ_TEMPLATE_BUILT_AS_DLL
-#define AZ_TEMPLATE_DLLEXPORT
-#endif // AZ_TEMPLATE_BUILT_AS_DLL
+#else // !AZURE_TEMPLATE_BUILT_AS_DLL
+#define AZURE_TEMPLATE_DLLEXPORT
+#endif // AZURE_TEMPLATE_BUILT_AS_DLL
 
-#undef AZ_TEMPLATE_BUILT_AS_DLL
+#undef AZURE_TEMPLATE_BUILT_AS_DLL
 
 /**
  * @brief Azure SDK abstractions.

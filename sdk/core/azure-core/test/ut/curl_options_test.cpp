@@ -11,7 +11,7 @@
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <openssl/x509.h>
 #endif
 #endif
@@ -238,7 +238,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, setCADirectory)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
     // openssl default cert location will be used only if environment variable SSL_CERT_DIR
     // is not set
     const char* ca = getenv(X509_get_default_cert_dir_env());
@@ -268,7 +268,7 @@ namespace Azure { namespace Core { namespace Test {
     Azure::Core::Url url(AzureSdkHttpbinServer::Get());
     Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
 
-#if defined(AZ_PLATFORM_LINUX)
+#if defined(AZURE_PLATFORM_LINUX)
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
     EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context{}));
     EXPECT_EQ(response->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);

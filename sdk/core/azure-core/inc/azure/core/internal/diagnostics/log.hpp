@@ -63,8 +63,8 @@ namespace Azure { namespace Core { namespace Diagnostics { namespace _internal {
 
     static_assert(ATOMIC_BOOL_LOCK_FREE == 2, "atomic<bool> must be lock-free");
 
-    static AZ_CORE_DLLEXPORT std::atomic<bool> g_isLoggingEnabled;
-    static AZ_CORE_DLLEXPORT std::atomic<Logger::Level> g_logLevel;
+    static AZURE_CORE_DLLEXPORT std::atomic<bool> g_isLoggingEnabled;
+    static AZURE_CORE_DLLEXPORT std::atomic<Logger::Level> g_logLevel;
 
     Log() = delete;
     ~Log() = delete;

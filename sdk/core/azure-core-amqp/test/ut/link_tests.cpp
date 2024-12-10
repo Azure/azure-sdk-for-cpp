@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_internal;
   using namespace Azure::Core::Amqp::_detail;
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZURE_PLATFORM_MAC)
   TEST_F(TestLinks, SimpleLink)
   {
 
@@ -437,5 +437,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     server.StopListening();
   }
-#endif // defined(AZ_PLATFORM_MAC)
+#endif // defined(AZURE_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests
