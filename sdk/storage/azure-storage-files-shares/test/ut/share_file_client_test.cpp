@@ -2372,7 +2372,10 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::GetFileSymbolicLinkResult getSymbolicLinkResult;
     EXPECT_NO_THROW(getSymbolicLinkResult = symbolicLinkClient.GetSymbolicLink().Value);
     EXPECT_TRUE(getSymbolicLinkResult.ETag.HasValue());
-    EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
+    if (!m_testContext.IsPlaybackMode())
+    {
+      EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
+    }
 
     // Create HardLink
     auto hardLinkClient
