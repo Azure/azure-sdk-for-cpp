@@ -2424,7 +2424,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // From buffer
     fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
-    EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize, uploadOptions).Value);
+    EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize, uploadOptions));
     properties = fileClient.GetProperties().Value;
     EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
     EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
@@ -2439,7 +2439,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     // From file
     fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
-    EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename, uploadOptions).Value);
+    EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename, uploadOptions));
     properties = fileClient.GetProperties().Value;
     EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
     EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
@@ -2475,7 +2475,7 @@ namespace Azure { namespace Storage { namespace Test {
     createOptions.NfsProperties.Group = "123";
     createOptions.NfsProperties.Owner = "456";
     createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
-    EXPECT_NO_THROW(sourceClient.Create(256, createOptions).Value);
+    EXPECT_NO_THROW(sourceClient.Create(256, createOptions));
 
     // Copy with override
     auto destFileClient
