@@ -817,6 +817,128 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, CopyWithSmbPropertyFlags)
+  {
+    auto sddlPermission
+        = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
+          "1887927527-513D:(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;S-1-5-21-397955417-626881126-"
+          "188441444-3053964)";
+
+    Files::Shares::CreateFileOptions createOptions;
+    createOptions.SmbProperties.Attributes = Files::Shares::Models::FileAttributes::System
+        | Files::Shares::Models::FileAttributes::NotContentIndexed;
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "1");
+    fileClient.Create(128, createOptions);
+    auto sourceProperties = fileClient.GetProperties().Value;
+
+    auto fileProperties = m_fileClient->GetProperties().Value;
+
+    // None scenario
+    {
+      Files::Shares::StartFileCopyOptions options;
+      options.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+      options.SmbProperties.Attributes = Files::Shares::Models::FileAttributes::ReadOnly;
+      options.SmbProperties.CreatedOn = fileProperties.SmbProperties.CreatedOn;
+      options.SmbProperties.ChangedOn = fileProperties.SmbProperties.ChangedOn;
+      options.SmbProperties.LastWrittenOn = fileProperties.SmbProperties.LastWrittenOn;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      options.Permission = sddlPermission;
+
+      auto destFileClient
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "2");
+      auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto destProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(destProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      destProperties = destFileClient.GetProperties().Value;
+      EXPECT_EQ(
+          destProperties.SmbProperties.Attributes,
+          options.SmbProperties.Attributes | Files::Shares::Models::FileAttributes::Archive);
+      EXPECT_EQ(
+          destProperties.SmbProperties.CreatedOn.Value(), options.SmbProperties.CreatedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.ChangedOn.Value(), options.SmbProperties.ChangedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.LastWrittenOn.Value(),
+          options.SmbProperties.LastWrittenOn.Value());
+      auto destPermissionKey = destProperties.SmbProperties.PermissionKey.Value();
+      std::string destPermission = m_shareClient->GetPermission(destPermissionKey).Value;
+      EXPECT_EQ(destPermission, sddlPermission);
+    }
+
+    // Source scenario
+    {
+      Files::Shares::StartFileCopyOptions options;
+      options.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::All;
+      options.SmbProperties.Attributes = Files::Shares::Models::FileAttributes::ReadOnly;
+      options.SmbProperties.CreatedOn = fileProperties.SmbProperties.CreatedOn;
+      options.SmbProperties.ChangedOn = fileProperties.SmbProperties.ChangedOn;
+      options.SmbProperties.LastWrittenOn = fileProperties.SmbProperties.LastWrittenOn;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      options.SmbProperties.PermissionKey = "";
+
+      auto destFileClient
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "2");
+      auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto destProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(destProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      destProperties = destFileClient.GetProperties().Value;
+      EXPECT_EQ(destProperties.SmbProperties.Attributes, sourceProperties.SmbProperties.Attributes);
+      EXPECT_EQ(
+          destProperties.SmbProperties.CreatedOn.Value(),
+          sourceProperties.SmbProperties.CreatedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.ChangedOn.Value(),
+          sourceProperties.SmbProperties.ChangedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.LastWrittenOn.Value(),
+          sourceProperties.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.PermissionKey.Value(),
+          sourceProperties.SmbProperties.PermissionKey.Value());
+    }
+
+    // Part Source Scenario
+    {
+
+      Files::Shares::StartFileCopyOptions options;
+      options.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::FileAttributes
+          | Files::Shares::CopyableFileSmbPropertyFlags::Permission;
+      options.SmbProperties.Attributes = Files::Shares::Models::FileAttributes::ReadOnly;
+      options.SmbProperties.CreatedOn = fileProperties.SmbProperties.CreatedOn;
+      options.SmbProperties.ChangedOn = fileProperties.SmbProperties.ChangedOn;
+      options.SmbProperties.LastWrittenOn = fileProperties.SmbProperties.LastWrittenOn;
+      options.PermissionCopyMode = Files::Shares::Models::PermissionCopyMode::Override;
+      options.SmbProperties.PermissionKey = "";
+
+      auto destFileClient
+          = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString() + "2");
+      auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl(), options);
+      EXPECT_EQ(
+          copyOperation.GetRawResponse().GetStatusCode(),
+          Azure::Core::Http::HttpStatusCode::Accepted);
+      auto destProperties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+      EXPECT_EQ(destProperties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+      destProperties = destFileClient.GetProperties().Value;
+      EXPECT_EQ(destProperties.SmbProperties.Attributes, sourceProperties.SmbProperties.Attributes);
+      EXPECT_EQ(
+          destProperties.SmbProperties.CreatedOn.Value(), options.SmbProperties.CreatedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.ChangedOn.Value(), options.SmbProperties.ChangedOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.LastWrittenOn.Value(),
+          options.SmbProperties.LastWrittenOn.Value());
+      EXPECT_EQ(
+          destProperties.SmbProperties.PermissionKey.Value(),
+          sourceProperties.SmbProperties.PermissionKey.Value());
+    }
+  }
+
   TEST_F(FileShareFileClientTest, RangeRelated)
   {
     size_t fileSize = 1024 * 3;
@@ -2090,7 +2212,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, PremiumNfsProperties)
+  TEST_F(FileShareFileClientTest, PremiumNfsProperties_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
@@ -2099,6 +2221,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::CreateShareOptions shareOptions;
     shareOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
     EXPECT_NO_THROW(shareClient.Create(shareOptions));
+    auto otherProperties = m_fileClient->GetProperties().Value;
 
     auto fileName = LowercaseRandomString();
     auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
@@ -2210,9 +2333,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto symbolicLinkClient
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     Files::Shares::CreateSymbolicLinkOptions createSymbolicLinkOptions;
-    createSymbolicLinkOptions.CreatedOn = std::chrono::system_clock::now();
-    createSymbolicLinkOptions.LastWrittenOn
-        = std::chrono::system_clock::now() + std::chrono::minutes(60);
+    createSymbolicLinkOptions.CreatedOn = otherProperties.SmbProperties.CreatedOn;
+    createSymbolicLinkOptions.LastWrittenOn = otherProperties.SmbProperties.LastWrittenOn;
 
     createSymbolicLinkOptions.Metadata = RandomMetadata();
     createSymbolicLinkOptions.Group = "123";
@@ -2329,20 +2451,48 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
     EXPECT_EQ(
         properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+  }
 
-    // Copy
+  TEST_F(FileShareFileClientTest, PremiumNfsPropertiesForCopy_PLAYBACKONLY_)
+  {
+    auto shareServiceClient = *m_premiumShareServiceClient;
+
+    auto shareName = LowercaseRandomString();
+    auto shareClient = GetPremiumShareClientForTest(shareName);
+    Files::Shares::CreateShareOptions shareOptions;
+    shareOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+    EXPECT_NO_THROW(shareClient.Create(shareOptions));
+
+    auto sourceName = LowercaseRandomString();
+    auto sourceClient = shareClient.GetRootDirectoryClient().GetFileClient(sourceName);
+
+    std::string sourceMode = "0777";
+
+    // Create a file
+    Files::Shares::CreateFileOptions createOptions;
+    createOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(sourceMode);
+    createOptions.NfsProperties.Group = "123";
+    createOptions.NfsProperties.Owner = "456";
+    createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    EXPECT_NO_THROW(sourceClient.Create(256, createOptions).Value);
+
+    // Copy with override
     auto destFileClient
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     Files::Shares::StartFileCopyOptions copyOptions;
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
     copyOptions.NfsProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0757");
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Override;
     copyOptions.NfsProperties.Group = "888";
     copyOptions.NfsProperties.Owner = "999";
-    auto copyOperation = destFileClient.StartCopy(fileClient.GetUrl(), copyOptions);
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Override;
+    auto copyOperation = destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions);
     EXPECT_EQ(
         copyOperation.GetRawResponse().GetStatusCode(),
         Azure::Core::Http::HttpStatusCode::Accepted);
-    properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+    auto properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
     EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
     EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0757");
@@ -2351,19 +2501,93 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
     EXPECT_EQ(properties.NfsProperties.Owner.Value(), copyOptions.NfsProperties.Owner.Value());
 
-    // Copy without NfsProperties
+    // Copy with source
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
-    copyOperation = destFileClient.StartCopy(fileClient.GetUrl());
+    copyOperation = destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions);
     EXPECT_EQ(
         copyOperation.GetRawResponse().GetStatusCode(),
         Azure::Core::Http::HttpStatusCode::Accepted);
     properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
     EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), sourceMode);
     EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
     EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
+
+    // Copy with source/override
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Override;
+    copyOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0767");
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    copyOperation = destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions);
+    EXPECT_EQ(
+        copyOperation.GetRawResponse().GetStatusCode(),
+        Azure::Core::Http::HttpStatusCode::Accepted);
+    properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+    EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0767");
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
+
+    // Copy without NfsProperties
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    copyOperation = destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions);
+    EXPECT_EQ(
+        copyOperation.GetRawResponse().GetStatusCode(),
+        Azure::Core::Http::HttpStatusCode::Accepted);
+    properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
+    EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
+    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0664");
+    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Group.Value(), "0");
+    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
+    EXPECT_EQ(properties.NfsProperties.Owner.Value(), "0");
+
+    // Copy with invalid input
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
+    copyOptions.NfsProperties.FileMode
+        = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0767");
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
+
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Override;
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
+
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Override;
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
+
+    copyOptions = Files::Shares::StartFileCopyOptions();
+    copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
+    copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
+    copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
+    copyOptions.NfsProperties.Group = "888";
+    destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
   }
 }}} // namespace Azure::Storage::Test

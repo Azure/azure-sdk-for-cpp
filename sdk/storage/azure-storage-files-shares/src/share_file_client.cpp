@@ -406,61 +406,139 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
     protocolLayerOptions.CopySource = std::move(copySource);
-    if (options.SmbProperties.Attributes.GetValues().empty())
+
+    if (options.SmbPropertiesToCopy.HasValue())
     {
-      protocolLayerOptions.FileAttributes = FileCopySourceTime;
-    }
-    else
-    {
-      protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
-    }
-    if (options.SmbProperties.CreatedOn.HasValue())
-    {
-      protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
-          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
-    }
-    else
-    {
-      protocolLayerOptions.FileCreationTime = std::string(FileCopySourceTime);
-    }
-    if (options.SmbProperties.LastWrittenOn.HasValue())
-    {
-      protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
-          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
-    }
-    else
-    {
-      protocolLayerOptions.FileLastWriteTime = std::string(FileCopySourceTime);
-    }
-    if (options.SmbProperties.ChangedOn.HasValue())
-    {
-      protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
-          Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
-    }
-    if (options.PermissionCopyMode.HasValue())
-    {
-      protocolLayerOptions.FilePermissionCopyMode = options.PermissionCopyMode.Value();
-      if (options.PermissionCopyMode.Value() == Models::PermissionCopyMode::Override)
+      if ((options.SmbPropertiesToCopy.Value() & CopyableFileSmbPropertyFlags::FileAttributes)
+          == CopyableFileSmbPropertyFlags::FileAttributes)
       {
-        if (options.Permission.HasValue())
+        protocolLayerOptions.FileAttributes = FileCopySourceTime;
+      }
+      else if (!options.SmbProperties.Attributes.GetValues().empty())
+      {
+        protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+      }
+
+      if ((options.SmbPropertiesToCopy.Value() & CopyableFileSmbPropertyFlags::CreatedOn)
+          == CopyableFileSmbPropertyFlags::CreatedOn)
+      {
+        protocolLayerOptions.FileCreationTime = std::string(FileCopySourceTime);
+      }
+      else if (options.SmbProperties.CreatedOn.HasValue())
+      {
+        protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+
+      if ((options.SmbPropertiesToCopy.Value() & CopyableFileSmbPropertyFlags::LastWrittenOn)
+          == CopyableFileSmbPropertyFlags::LastWrittenOn)
+      {
+        protocolLayerOptions.FileLastWriteTime = std::string(FileCopySourceTime);
+      }
+      else if (options.SmbProperties.LastWrittenOn.HasValue())
+      {
+        protocolLayerOptions.FileLastWriteTime
+            = options.SmbProperties.LastWrittenOn.Value().ToString(
+                Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+
+      if ((options.SmbPropertiesToCopy.Value() & CopyableFileSmbPropertyFlags::ChangedOn)
+          == CopyableFileSmbPropertyFlags::ChangedOn)
+      {
+        protocolLayerOptions.FileChangeTime = std::string(FileCopySourceTime);
+      }
+      else if (options.SmbProperties.ChangedOn.HasValue())
+      {
+        protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+
+      if ((options.SmbPropertiesToCopy.Value() & CopyableFileSmbPropertyFlags::Permission)
+          == CopyableFileSmbPropertyFlags::Permission)
+      {
+        protocolLayerOptions.FilePermissionCopyMode = Models::PermissionCopyMode::Source;
+      }
+      else if (options.PermissionCopyMode.HasValue())
+      {
+        protocolLayerOptions.FilePermissionCopyMode = options.PermissionCopyMode.Value();
+        if (options.PermissionCopyMode.Value() == Models::PermissionCopyMode::Override)
         {
-          protocolLayerOptions.FilePermission = options.Permission;
-          protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
-        }
-        else if (options.SmbProperties.PermissionKey.HasValue())
-        {
-          protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
-        }
-        else
-        {
-          AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set.");
+          if (options.Permission.HasValue())
+          {
+            protocolLayerOptions.FilePermission = options.Permission;
+            protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+          }
+          else if (options.SmbProperties.PermissionKey.HasValue())
+          {
+            protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
+          }
+          else
+          {
+            AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set.");
+          }
         }
       }
     }
     else
     {
-      protocolLayerOptions.FilePermissionCopyMode = Models::PermissionCopyMode::Source;
+      if (options.SmbProperties.Attributes.GetValues().empty())
+      {
+        protocolLayerOptions.FileAttributes = FileCopySourceTime;
+      }
+      else
+      {
+        protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+      }
+      if (options.SmbProperties.CreatedOn.HasValue())
+      {
+        protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+      else
+      {
+        protocolLayerOptions.FileCreationTime = std::string(FileCopySourceTime);
+      }
+      if (options.SmbProperties.LastWrittenOn.HasValue())
+      {
+        protocolLayerOptions.FileLastWriteTime
+            = options.SmbProperties.LastWrittenOn.Value().ToString(
+                Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+      else
+      {
+        protocolLayerOptions.FileLastWriteTime = std::string(FileCopySourceTime);
+      }
+      if (options.SmbProperties.ChangedOn.HasValue())
+      {
+        protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
+      }
+      if (options.PermissionCopyMode.HasValue())
+      {
+        protocolLayerOptions.FilePermissionCopyMode = options.PermissionCopyMode.Value();
+        if (options.PermissionCopyMode.Value() == Models::PermissionCopyMode::Override)
+        {
+          if (options.Permission.HasValue())
+          {
+            protocolLayerOptions.FilePermission = options.Permission;
+            protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
+          }
+          else if (options.SmbProperties.PermissionKey.HasValue())
+          {
+            protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
+          }
+          else
+          {
+            AZURE_ASSERT_MSG(false, "Either FilePermission or FilePermissionKey must be set.");
+          }
+        }
+      }
+      else
+      {
+        protocolLayerOptions.FilePermissionCopyMode = Models::PermissionCopyMode::Source;
+      }
     }
+
     protocolLayerOptions.IgnoreReadOnly = options.IgnoreReadOnly;
     protocolLayerOptions.SetArchiveAttribute = options.SetArchiveAttribute;
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -470,14 +548,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (options.NfsProperties.FileMode.HasValue())
     {
       protocolLayerOptions.FileMode = options.NfsProperties.FileMode.Value().ToOctalFileMode();
-      protocolLayerOptions.FileModeCopyMode = Models::ModeCopyMode::Override;
     }
+    protocolLayerOptions.FileModeCopyMode = options.ModeCopyMode;
     protocolLayerOptions.Owner = options.NfsProperties.Owner;
     protocolLayerOptions.Group = options.NfsProperties.Group;
-    if (options.NfsProperties.Owner.HasValue() || options.NfsProperties.Group.HasValue())
-    {
-      protocolLayerOptions.FileOwnerCopyMode = Models::OwnerCopyMode::Override;
-    }
+    protocolLayerOptions.FileOwnerCopyMode = options.OwnerCopyMode;
+
     auto response = _detail::FileClient::StartCopy(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 

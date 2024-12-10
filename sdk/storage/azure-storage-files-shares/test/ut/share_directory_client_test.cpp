@@ -1378,7 +1378,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, PremiumNfsProperties)
+  TEST_F(FileShareDirectoryClientTest, PremiumNfsProperties_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
