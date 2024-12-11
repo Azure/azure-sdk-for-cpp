@@ -23,11 +23,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         }
         if ((permissionValue & 2) == 2)
         {
-          permissions = permissions | RolePermissions::Read;
+          permissions = permissions | RolePermissions::Write;
         }
         if ((permissionValue & 1) == 1)
         {
-          permissions = permissions | RolePermissions::Read;
+          permissions = permissions | RolePermissions::Execute;
         }
         return permissions;
       }

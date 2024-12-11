@@ -164,32 +164,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::DirectoryClient::CreateDirectoryOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    if (options.SmbProperties.Attributes.GetValues().empty())
-    {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::Directory.ToString();
-    }
-    else
-    {
-      protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
-    }
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
-    }
+
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
-    }
+
     if (options.SmbProperties.ChangedOn.HasValue())
     {
       protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
@@ -203,10 +191,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
     }
-    else
-    {
-      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
-    }
+
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.DirectoryPermissionFormat;
@@ -457,27 +442,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryPropertiesOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
-    if (protocolLayerOptions.FileAttributes.empty())
-    {
-      protocolLayerOptions.FileAttributes = FilePreserveSmbProperties;
-    }
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileCreationTime = FilePreserveSmbProperties;
-    }
     if (smbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
-    }
-    else
-    {
-      protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
     }
     if (smbProperties.ChangedOn.HasValue())
     {
@@ -491,10 +464,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else if (smbProperties.PermissionKey.HasValue())
     {
       protocolLayerOptions.FilePermissionKey = smbProperties.PermissionKey;
-    }
-    else
-    {
-      protocolLayerOptions.FilePermission = FilePreserveSmbProperties;
     }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;

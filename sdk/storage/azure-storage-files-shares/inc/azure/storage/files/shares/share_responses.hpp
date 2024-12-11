@@ -600,32 +600,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
+
       /**
        * Returns the date and time the share was last modified. Any operation that modifies the
        * directory or its properties updates the last modified time. Operations on files do not
        * affect the last modified time of the directory.
        */
       DateTime LastModified;
+
       /**
-       * Creation time for the file.
+       * The SMB related properties for the file.
        */
-      DateTime FileCreationTime;
-      /**
-       * Last write time for the file.
-       */
-      DateTime FileLastWriteTime;
-      /**
-       * Change time for the file.
-       */
-      DateTime FileChangeTime;
-      /**
-       * The fileId of the file.
-       */
-      std::string FileId;
-      /**
-       * The parent fileId of the directory.
-       */
-      std::string FileParentId;
+      FileSmbProperties SmbProperties;
+
       /**
        * The NFS related properties for the file.
        */
@@ -662,32 +649,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The ETag contains a value which represents the version of the file, in quotes.
        */
       Azure::ETag ETag;
+
       /**
        * Returns the date and time the share was last modified. Any operation that modifies the
        * directory or its properties updates the last modified time. Operations on files do not
        * affect the last modified time of the directory.
        */
       DateTime LastModified;
+
       /**
-       * Creation time for the file.
+       * The SMB related properties for the file.
        */
-      DateTime FileCreationTime;
-      /**
-       * Last write time for the file.
-       */
-      DateTime FileLastWriteTime;
-      /**
-       * Change time for the file.
-       */
-      DateTime FileChangeTime;
-      /**
-       * The fileId of the file.
-       */
-      std::string FileId;
-      /**
-       * The parent fileId of the directory.
-       */
-      std::string FileParentId;
+      FileSmbProperties SmbProperties;
+
       /**
        * The NFS related properties for the file.
        */
