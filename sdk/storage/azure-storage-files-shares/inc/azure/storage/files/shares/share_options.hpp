@@ -77,18 +77,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * @brief Set effective user ID (setuid) on the file or directory.
        */
-      bool EffectiveUserIdentity;
+      bool EffectiveUserIdentity = false;
 
       /**
        * @brief Set effective group ID (setgid) on the file or directory.
        */
-      bool EffectiveGroupIdentity;
+      bool EffectiveGroupIdentity = false;
 
       /**
        * @brief The sticky bit may be set on directories. The files in that directory may only be
        * renamed or deleted by the file's owner, the directory's owner, or the root user.
        */
-      bool StickyBit;
+      bool StickyBit = false;
 
       /**
        * @brief Returns the octal representation of NfsFileMode as a string.
@@ -147,6 +147,78 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       Nullable<std::int64_t> LinkCount;
     };
   } // namespace Models
+
+  /**
+   * Smb Properties to copy from the source file.
+   */
+  enum class CopyableFileSmbPropertyFlags
+  {
+    /**
+     * None.
+     */
+    None = 0,
+
+    /**
+     * File Attributes.
+     */
+    FileAttributes = 1,
+
+    /**
+     * Created On.
+     */
+    CreatedOn = 2,
+
+    /**
+     * Last Written On.
+     */
+    LastWrittenOn = 4,
+
+    /**
+     * Changed On.
+     */
+    ChangedOn = 8,
+
+    /**
+     * Permission
+     */
+    Permission = 16,
+
+    /**
+     * All.
+     */
+    All = ~None
+  };
+
+  inline CopyableFileSmbPropertyFlags operator|(
+      CopyableFileSmbPropertyFlags lhs,
+      CopyableFileSmbPropertyFlags rhs)
+  {
+    using type = std::underlying_type_t<CopyableFileSmbPropertyFlags>;
+    return static_cast<CopyableFileSmbPropertyFlags>(
+        static_cast<type>(lhs) | static_cast<type>(rhs));
+  }
+  inline CopyableFileSmbPropertyFlags& operator|=(
+      CopyableFileSmbPropertyFlags& lhs,
+      CopyableFileSmbPropertyFlags rhs)
+  {
+    lhs = lhs | rhs;
+    return lhs;
+  }
+  inline CopyableFileSmbPropertyFlags operator&(
+      CopyableFileSmbPropertyFlags lhs,
+      CopyableFileSmbPropertyFlags rhs)
+  {
+    using type = std::underlying_type_t<CopyableFileSmbPropertyFlags>;
+    return static_cast<CopyableFileSmbPropertyFlags>(
+        static_cast<type>(lhs) & static_cast<type>(rhs));
+  }
+  inline CopyableFileSmbPropertyFlags& operator&=(
+      CopyableFileSmbPropertyFlags& lhs,
+      CopyableFileSmbPropertyFlags rhs)
+  {
+    lhs = lhs & rhs;
+    return lhs;
+  }
 
   /**
    * @brief Audiences available for share service
@@ -912,6 +984,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<Models::PermissionCopyMode> PermissionCopyMode;
 
     /**
+     * Smb Properties to copy from the source file.
+     * If this flag is nullable, it will use the value of source file(except ChangedOn, it will be
+     * default value) if the property is not set.
+     * If this flag is disabled, it will use the default
+     * value of destination file if the property is not set.
+     * If this flag is enabled, it will use the value of source file no
+     * matter the property is set or not.
+     */
+    Azure::Nullable<CopyableFileSmbPropertyFlags> SmbPropertiesToCopy;
+
+    /**
      * Specifies the option to overwrite the target file if it already exists and has
      * read-only attribute set.
      */
@@ -932,6 +1015,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties NfsProperties;
+
+    /**
+     * Optional, only applicable to NFS Files. If not populated, the destination file will have the
+     * default File Mode.
+     */
+    Azure::Nullable<Models::ModeCopyMode> ModeCopyMode;
+
+    /**
+     * Optional, only applicable to NFS Files. If not populated, the destination file will have the
+     * default Owner and Group.
+     */
+    Azure::Nullable<Models::OwnerCopyMode> OwnerCopyMode;
   };
 
   /**
