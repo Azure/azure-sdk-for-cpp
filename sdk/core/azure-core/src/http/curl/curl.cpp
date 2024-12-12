@@ -182,7 +182,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   {
     // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
-    // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
+    // https://learn.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
     setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
   }
 }

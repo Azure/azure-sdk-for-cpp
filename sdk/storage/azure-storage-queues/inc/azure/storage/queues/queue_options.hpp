@@ -121,7 +121,7 @@ namespace Azure { namespace Storage { namespace Queues {
      * operation against another host. If SecondaryHostForRetryReads is "" (the default) then
      * operations are not retried against another host. NOTE: Before setting this field, make sure
      * you understand the issues around reading stale & potentially-inconsistent data at this
-     * webpage: https://docs.microsoft.com/azure/storage/common/geo-redundant-design.
+     * webpage: https://learn.microsoft.com/azure/storage/common/geo-redundant-design.
      */
     std::string SecondaryHostForRetryReads;
 

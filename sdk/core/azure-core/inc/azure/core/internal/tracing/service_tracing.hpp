@@ -193,7 +193,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      * @param options Client Options for tracing.
      * @param serviceName Name of the resource provider for the service [See
-     * also](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
+     * also](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
      * @param packageName Name of the package containing this service client.
      * @param packageVersion Optional package version number for the package containing this
      * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
@@ -220,7 +220,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
      *
      * @param options Client Options for tracing.
      * @param serviceName Name of the resource provider for the service [See
-     * also](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
+     * also](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers).
      * @param packageVersion Package version number for the package containing this
      * service. (https://opentelemetry.io/docs/reference/specification/trace/api/#get-a-tracer).
      *
@@ -310,7 +310,7 @@ namespace Azure { namespace Core { namespace Tracing { namespace _internal {
 
     /**
      * @brief
-     * [Namespace](https://docs.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers)
+     * [Namespace](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers)
      * of Azure service request is made against.
      *
      * @remarks Azure Specific attribute.

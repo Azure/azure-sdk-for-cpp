@@ -13,7 +13,7 @@
 /**
  * @def AZ_STORAGE_COMMON_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
- * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ * @note See https://learn.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
 #if defined(AZ_STORAGE_COMMON_DLL) || (0 /*@AZ_STORAGE_COMMON_DLL_INSTALLED_AS_PACKAGE@*/)
