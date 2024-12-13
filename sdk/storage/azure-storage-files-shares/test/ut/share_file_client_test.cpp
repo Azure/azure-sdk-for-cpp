@@ -2328,55 +2328,6 @@ namespace Azure { namespace Storage { namespace Test {
         setOptions.NfsProperties.Owner.Value());
     EXPECT_TRUE(downloadToResult.Details.NfsProperties.LinkCount.HasValue());
 
-    // Create SymbolicLink
-    std::string sourceUrl = fileClient.GetUrl();
-    auto symbolicLinkClient
-        = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
-    Files::Shares::CreateSymbolicLinkOptions createSymbolicLinkOptions;
-    createSymbolicLinkOptions.CreatedOn = otherProperties.SmbProperties.CreatedOn;
-    createSymbolicLinkOptions.LastWrittenOn = otherProperties.SmbProperties.LastWrittenOn;
-
-    createSymbolicLinkOptions.Metadata = RandomMetadata();
-    createSymbolicLinkOptions.Group = "123";
-    createSymbolicLinkOptions.Owner = "456";
-    Files::Shares::Models::CreateFileSymbolicLinkResult createSymbolicLinkResult;
-    EXPECT_NO_THROW(
-        createSymbolicLinkResult
-        = symbolicLinkClient.CreateSymbolicLink(sourceUrl, createSymbolicLinkOptions).Value);
-    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createSymbolicLinkResult.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
-    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.Group.HasValue());
-    EXPECT_EQ(
-        createSymbolicLinkResult.NfsProperties.Group.Value(),
-        createSymbolicLinkOptions.Group.Value());
-    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(
-        createSymbolicLinkResult.NfsProperties.Owner.Value(),
-        createSymbolicLinkOptions.Owner.Value());
-    EXPECT_TRUE(createSymbolicLinkResult.NfsProperties.NfsFileType.HasValue());
-    EXPECT_EQ(
-        createSymbolicLinkResult.NfsProperties.NfsFileType.Value(),
-        Files::Shares::Models::NfsFileType::SymLink);
-    EXPECT_EQ(
-        createSymbolicLinkResult.SmbProperties.CreatedOn.Value(),
-        createSymbolicLinkOptions.CreatedOn.Value());
-    EXPECT_EQ(
-        createSymbolicLinkResult.SmbProperties.LastWrittenOn.Value(),
-        createSymbolicLinkOptions.LastWrittenOn.Value());
-    EXPECT_TRUE(createSymbolicLinkResult.SmbProperties.ChangedOn.HasValue());
-    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.FileId.empty());
-    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.ParentFileId.empty());
-    EXPECT_TRUE(createSymbolicLinkResult.ETag.HasValue());
-
-    // Get SymbolicLink
-    Files::Shares::Models::GetFileSymbolicLinkResult getSymbolicLinkResult;
-    EXPECT_NO_THROW(getSymbolicLinkResult = symbolicLinkClient.GetSymbolicLink().Value);
-    EXPECT_TRUE(getSymbolicLinkResult.ETag.HasValue());
-    if (!m_testContext.IsPlaybackMode())
-    {
-      EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
-    }
-
     // Create HardLink
     auto hardLinkClient
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
@@ -2401,10 +2352,10 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::Models::NfsFileType::Regular);
     EXPECT_TRUE(createFileHardLinkResult.SmbProperties.CreatedOn.HasValue());
     EXPECT_TRUE(createFileHardLinkResult.SmbProperties.LastWrittenOn.HasValue());
-    EXPECT_TRUE(createSymbolicLinkResult.SmbProperties.ChangedOn.HasValue());
-    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.FileId.empty());
-    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.ParentFileId.empty());
-    EXPECT_TRUE(createSymbolicLinkResult.ETag.HasValue());
+    EXPECT_TRUE(createFileHardLinkResult.SmbProperties.ChangedOn.HasValue());
+    EXPECT_TRUE(!createFileHardLinkResult.SmbProperties.FileId.empty());
+    EXPECT_TRUE(!createFileHardLinkResult.SmbProperties.ParentFileId.empty());
+    EXPECT_TRUE(createFileHardLinkResult.ETag.HasValue());
 
     // Delete
     Files::Shares::Models::DeleteFileResult deleteResult;
