@@ -13,7 +13,7 @@
 /**
  * @def AZ_DATA_TABLES_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
- * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ * @note See https://learn.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
 #if defined(AZ_DATA_TABLES_DLL) || (0 /*@AZ_DATA_TABLES_DLL_INSTALLED_AS_PACKAGE@*/)

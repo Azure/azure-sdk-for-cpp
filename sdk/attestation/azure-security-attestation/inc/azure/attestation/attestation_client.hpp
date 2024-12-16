@@ -233,7 +233,7 @@ namespace Azure { namespace Security { namespace Attestation {
     /**
      * @brief Sends TPM-based attestation data to the service.
      * The TPM attestation protocol is defined
-     * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     * [here](https://learn.microsoft.com/azure/attestation/virtualization-based-security-protocol)
      *
      *
      * @param dataToAttest - Attestation request data.

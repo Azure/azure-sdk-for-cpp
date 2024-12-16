@@ -372,7 +372,7 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlobContainerClientTest, ListBlobsOtherStuff)
   {
     // NOTE: This test Requires storage account with versioning enabled!
-    // https://docs.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal
+    // https://learn.microsoft.com/en-us/azure/storage/blobs/versioning-enable?tabs=portal
     auto containerClient = *m_blobContainerClient;
 
     std::string blobName = "blob" + m_containerName;

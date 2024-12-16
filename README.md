@@ -306,7 +306,7 @@ The following SDK library releases are available on [vcpkg](https://github.com/m
 - `azure-storage-files-shares-cpp`
 - `azure-storage-queues-cpp`
 
-> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://github.com/microsoft/vcpkg-docs/blob/main/vcpkg/users/triplets.md) being consumed matches the [CRT link flags](https://docs.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
+> NOTE: In case of getting linker errors when consuming the SDK on Windows, make sure that [vcpkg triplet](https://github.com/microsoft/vcpkg-docs/blob/main/vcpkg/users/triplets.md) being consumed matches the [CRT link flags](https://learn.microsoft.com/cpp/build/reference/md-mt-ld-use-run-time-library?view=msvc-160) being set for your app or library build. See also `MSVC_USE_STATIC_CRT` build flag.
 
 ## OpenSSL Version
 
@@ -355,7 +355,7 @@ which allows you to use the system package manager to install dependencies.
 ## Need help
 
 - For reference documentation visit the [Azure SDK for C++ documentation](https://azure.github.io/azure-sdk-for-cpp).
-- For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://docs.microsoft.com/azure/).
+- For tutorials, samples, quick starts and other documentation, visit [Azure for C++ Developers](https://learn.microsoft.com/azure/).
 - File an issue via [GitHub Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose).
 
 ## Navigating the repository

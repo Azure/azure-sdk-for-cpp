@@ -458,7 +458,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /** @brief Attestation response data.
      *
      * The TPM attestation protocol is defined
-     * [here](https://docs.microsoft.com/azure/attestation/virtualization-based-security-protocol')
+     * [here](https://learn.microsoft.com/azure/attestation/virtualization-based-security-protocol')
      *
      */
     std::vector<uint8_t> TpmResult;
