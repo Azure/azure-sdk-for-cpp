@@ -651,9 +651,5 @@ namespace Azure { namespace Data { namespace Test {
       return stringValue;
     }
   } // namespace
-  INSTANTIATE_TEST_SUITE_P(
-      Tables,
-      TablesClientTest,
-      ::testing::Values(AuthType::Key),
-      GetSuffix);
+  INSTANTIATE_TEST_SUITE_P(Tables, TablesClientTest, ::testing::Values(AuthType::Key), GetSuffix);
 }}} // namespace Azure::Data::Test
