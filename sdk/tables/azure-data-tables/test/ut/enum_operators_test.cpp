@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #include "enum_operators_test.hpp"
-
-using namespace Azure::Data::Tables::Sas;
+#include "azure/data/tables/enum_operators.hpp"
 using namespace Azure::Data::Tables;
 namespace Azure { namespace Data { namespace Test {
   TEST(EnumOperator, AndTest)

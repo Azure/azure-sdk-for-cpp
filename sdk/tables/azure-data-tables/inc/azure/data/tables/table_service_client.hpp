@@ -51,20 +51,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl A url referencing the table that includes the name of the account and the
-     * name of the table.
-     * @param credential The SAS credential used to sign requests.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
      * @brief Creates a new table under the given account.
      *
      * @param context for canceling long running operations.

@@ -3,9 +3,6 @@
 
 #include "table_client_test.hpp"
 
-#include "azure/data/tables/account_sas_builder.hpp"
-#include "azure/data/tables/tables_sas_builder.hpp"
-
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
@@ -63,33 +60,6 @@ namespace Azure { namespace Data { namespace Test {
               m_tableName,
               m_credential,
               tableClientOptions));
-          break;
-        case AuthType::SAS:
-          auto creds = std::make_shared<Azure::Data::Tables::Credentials::NamedKeyCredential>(
-              GetAccountName(), GetAccountKey());
-          Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
-          sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResourceType::All;
-          sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
-          sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
-          sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
-          std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
-          auto sasCreds = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
-              sasBuilder.GenerateSasToken(*creds));
-          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
-              Tables::TableServiceClient(serviceUrl, sasCreds, clientOptions));
-
-          Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
-          tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
-          tableSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
-          tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
-          tableSasBuilder.TableName = m_tableName;
-          auto tableSasCreds
-              = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
-                  tableSasBuilder.GenerateSasToken(*creds));
-          m_tableClient = std::make_shared<Tables::TableClient>(
-              Tables::TableClient(serviceUrl, tableSasCreds, m_tableName, tableClientOptions));
           break;
       }
     }
@@ -674,9 +644,6 @@ namespace Azure { namespace Data { namespace Test {
         case AuthType::Key:
           stringValue = "key";
           break;
-        case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
-          break;
         default:
           stringValue = "key";
           break;
@@ -687,6 +654,6 @@ namespace Azure { namespace Data { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       Tables,
       TablesClientTest,
-      ::testing::Values(AuthType::Key, AuthType::SAS),
+      ::testing::Values(AuthType::Key),
       GetSuffix);
 }}} // namespace Azure::Data::Test

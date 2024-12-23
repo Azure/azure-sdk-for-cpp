@@ -19,7 +19,6 @@ add_executable (
     enum_operators_test.hpp
     enum_operators_test.cpp
     macro_guard.cpp
-    sas_test.cpp
     serializers_test.hpp
     serializers_test.cpp
     table_client_test.cpp
