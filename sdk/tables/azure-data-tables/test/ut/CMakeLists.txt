@@ -16,8 +16,6 @@ SetUpTestProxy("sdk/tables")
 
 add_executable (
   azure-data-tables-test
-    enum_operators_test.hpp
-    enum_operators_test.cpp
     macro_guard.cpp
     serializers_test.hpp
     serializers_test.cpp

@@ -42,7 +42,6 @@ endif()
 set(
   AZURE_DATA_TABLES_HEADER
     inc/azure/data/tables/dll_import_export.hpp
-    inc/azure/data/tables/enum_operators.hpp
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
     inc/azure/data/tables.hpp

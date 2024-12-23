@@ -9,7 +9,6 @@
 #pragma once
 
 #include "azure/data/tables/dll_import_export.hpp"
-#include "azure/data/tables/enum_operators.hpp"
 #include "azure/data/tables/models.hpp"
 #include "azure/data/tables/rtti.hpp"
 #include "azure/data/tables/table_client.hpp"
