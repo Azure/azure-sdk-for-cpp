@@ -476,7 +476,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   request.SetHeader(PreferHeader, PreferNoContent);
   if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader(IfMatch, Azure::Core::Url::Encode(tableEntity.GetETag().Value));
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
@@ -521,7 +521,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   request.SetHeader(PreferHeader, PreferNoContent);
   if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader(IfMatch, Azure::Core::Url::Encode(tableEntity.GetETag().Value));
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
@@ -555,7 +555,7 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 
   if (!tableEntity.GetETag().Value.empty())
   {
-    request.SetHeader(IfMatch, Azure::Core::Url::Encode(tableEntity.GetETag().Value));
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   else
   {
