@@ -617,8 +617,9 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
 {
   auto url = m_url;
   url.AppendPath(
-      Azure::Core::Url::Encode(m_tableName) + PartitionKeyFragment + Azure::Core::Url::Encode(partitionKey) + RowKeyFragment
-      + Azure::Core::Url::Encode(rowKey) + ClosingFragment);
+      Azure::Core::Url::Encode(m_tableName) + PartitionKeyFragment
+      + Azure::Core::Url::Encode(partitionKey) + RowKeyFragment + Azure::Core::Url::Encode(rowKey)
+      + ClosingFragment);
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
   request.SetHeader(AcceptHeader, AcceptFullMeta);
