@@ -36,18 +36,18 @@ jobs:
         displayName: Update vcpkg Daily Branch
 
       # This step will skip creating the PR if the PR already exists
-      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-        parameters:
-          # Force push so this recreates the $(TargetPrBranch)
-          PushArgs: --force
-          BaseBranchName: $(DefaultBranch)
-          PRBranchName: $(TargetPrBranch)
-          RepoOwner: Microsoft
-          RepoName: vcpkg
-          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-          CommitMsg: Update with changes from $(DailyBranchName)
-          PRTitle: "[DO NOT MERGE] Daily Azure SDK for C++ CI validation"
-          PRBody: This is a long-lived draft PR should not be merged. Its branch is be updated periodically to validate the Azure SDK for C++ against the vcpkg CI.
-          ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-          OpenAsDraft: true
-          SkipCheckingForChanges: true
+      # - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+      #   parameters:
+      #     # Force push so this recreates the $(TargetPrBranch)
+      #     PushArgs: --force
+      #     BaseBranchName: $(DefaultBranch)
+      #     PRBranchName: $(TargetPrBranch)
+      #     RepoOwner: Microsoft
+      #     RepoName: vcpkg
+      #     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+      #     CommitMsg: Update with changes from $(DailyBranchName)
+      #     PRTitle: "[DO NOT MERGE] Daily Azure SDK for C++ CI validation"
+      #     PRBody: This is a long-lived draft PR should not be merged. Its branch is be updated periodically to validate the Azure SDK for C++ against the vcpkg CI.
+      #     ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
+      #     OpenAsDraft: true
+      #     SkipCheckingForChanges: true
