@@ -3,13 +3,13 @@
 
 #include "azure/core/platform.hpp"
 
-#if defined(AZ_PLATFORM_POSIX)
+#if defined(AZURE_PLATFORM_POSIX)
 #include <errno.h>
 #include <fcntl.h> // for open and _O_RDONLY
 #include <unistd.h> // for lseek
 
 #include <sys/types.h> // for lseek
-#elif defined(AZ_PLATFORM_WINDOWS)
+#elif defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -35,7 +35,7 @@
 using Azure::Core::Context;
 using namespace Azure::Core::IO;
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 // For an abundance of caution, adding this as a compile time check since we are using static_cast
 // between windows HANDLE and void* to avoid having windows.h headers exposed in public headers.
 static_assert(sizeof(void*) >= sizeof(HANDLE), "We must be able to cast HANDLE to void* and back.");
@@ -95,7 +95,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
 {
   AZURE_ASSERT_MSG(filename.size() > 0, "The file name must not be an empty string.");
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   HANDLE fileHandle = INVALID_HANDLE_VALUE;
   try
   {
@@ -141,7 +141,7 @@ FileBodyStream::FileBodyStream(const std::string& filename)
     throw;
   }
 
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 
   try
   {
@@ -169,13 +169,13 @@ FileBodyStream::FileBodyStream(const std::string& filename)
 
 FileBodyStream::~FileBodyStream()
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   if (m_filehandle)
   {
     CloseHandle(static_cast<HANDLE>(m_filehandle));
     m_filehandle = NULL;
   }
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
   if (m_fileDescriptor)
   {
     close(m_fileDescriptor);

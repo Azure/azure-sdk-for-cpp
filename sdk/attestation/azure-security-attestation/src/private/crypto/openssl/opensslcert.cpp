@@ -414,7 +414,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       // This certificate expires in 8 hours.
       struct std::tm currentTime;
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
       gmtime_s(&currentTime, &utcTime);
 #else
       gmtime_r(&utcTime, &currentTime);
@@ -424,7 +424,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // Normalize the expiration time based on the adjustments. This will handle
       // wrapping hours, days, etc.
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
       expirationTime = _mkgmtime(&currentTime); // cspell:disable-line
 #else
       expirationTime = timegm(&currentTime); // cspell:disable-line

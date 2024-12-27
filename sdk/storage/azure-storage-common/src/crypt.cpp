@@ -5,7 +5,7 @@
 
 #include <azure/core/platform.hpp>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
@@ -13,7 +13,7 @@
 #include <windows.h>
 
 #include <bcrypt.h>
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage {
     }
   } // namespace _internal
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 
   namespace _internal {
 
@@ -198,7 +198,7 @@ namespace Azure { namespace Storage {
     }
   } // namespace _internal
 
-#elif defined(AZ_PLATFORM_POSIX)
+#elif defined(AZURE_PLATFORM_POSIX)
 
   namespace _internal {
 

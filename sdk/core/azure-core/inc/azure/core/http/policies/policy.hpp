@@ -44,8 +44,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
   namespace _detail {
     std::shared_ptr<HttpTransport> GetTransportAdapter(TransportOptions const& transportOptions);
 
-    AZ_CORE_DLLEXPORT extern std::set<std::string> const g_defaultAllowedHttpQueryParameters;
-    AZ_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
+    AZURE_CORE_DLLEXPORT extern std::set<std::string> const g_defaultAllowedHttpQueryParameters;
+    AZURE_CORE_DLLEXPORT extern CaseInsensitiveSet const g_defaultAllowedHttpHeaders;
   } // namespace _detail
 
   namespace _internal {

@@ -44,13 +44,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 
     switch (logCategory)
     {
-      case AZ_LOG_ERROR:
+      case AZURE_LOG_ERROR:
         logLevel = Logger::Level::Warning;
         break;
-      case AZ_LOG_INFO:
+      case AZURE_LOG_INFO:
         logLevel = Logger::Level::Informational;
         break;
-      case AZ_LOG_TRACE:
+      case AZURE_LOG_TRACE:
         logLevel = Logger::Level::Verbose;
         break;
       default:
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     std::stringstream ss;
     // We don't want to log header information for outgoing and incoming frames, the header
     // information gets in the way of the message.
-    if (logCategory == AZ_LOG_TRACE
+    if (logCategory == AZURE_LOG_TRACE
         && (strcmp(func, "log_outgoing_frame") == 0 || strcmp(func, "log_incoming_frame") == 0
             || strcmp(func, "log_message_chunk") == 0 || strcmp(func, "_log_outgoing_frame") == 0
             || strcmp(func, "_log_incoming_frame") == 0))

@@ -55,7 +55,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Default Audience. Use to acquire a token for authorizing requests to any Azure
      * Storage account.
      */
-    AZ_STORAGE_BLOBS_DLLEXPORT const static BlobAudience DefaultAudience;
+    AZURE_STORAGE_BLOBS_DLLEXPORT const static BlobAudience DefaultAudience;
   };
 
   /**

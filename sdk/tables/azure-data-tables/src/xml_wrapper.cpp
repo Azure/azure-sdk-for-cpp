@@ -10,7 +10,7 @@
 #include <memory>
 #include <stdexcept>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #if !defined(WIN32_LEAN_AND_MEAN)
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -25,7 +25,7 @@
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail { namespace Xml {
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 
   struct XmlReaderContext
   {

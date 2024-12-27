@@ -24,7 +24,7 @@ using Azure::Identity::AzureCliCredentialOptions;
 
 namespace {
 constexpr auto InfiniteCommand =
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     "for /l %q in (0) do timeout 10";
 #else
     "while true; do sleep 10; done"
@@ -32,7 +32,7 @@ constexpr auto InfiniteCommand =
 ;
 
 constexpr auto EmptyOutputCommand =
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
     "rem";
 #else
     "clear"
@@ -41,7 +41,7 @@ constexpr auto EmptyOutputCommand =
 
 std::string EchoCommand(std::string const text)
 {
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
   return std::string("echo ") + text;
 #else
   return std::string("echo \'") + text + "\'";
@@ -88,7 +88,7 @@ public:
 };
 } // namespace
 
-#if !defined(AZ_PLATFORM_WINDOWS) \
+#if !defined(AZURE_PLATFORM_WINDOWS) \
     || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
 TEST(AzureCliCredential, Success)
 #else
@@ -104,7 +104,7 @@ TEST(AzureCliCredential, NotAvailable)
 
   TokenRequestContext trc;
   trc.Scopes.push_back("https://storage.azure.com/.default");
-#if !defined(AZ_PLATFORM_WINDOWS) \
+#if !defined(AZURE_PLATFORM_WINDOWS) \
     || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
   auto const token = azCliCred.GetToken(trc, {});
 
@@ -124,7 +124,7 @@ TEST(AzureCliCredential, NotAvailable)
 #endif // UWP
 }
 
-#if !defined(AZ_PLATFORM_WINDOWS) \
+#if !defined(AZURE_PLATFORM_WINDOWS) \
     || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
 TEST(AzureCliCredential, Error)
 {
@@ -150,7 +150,7 @@ TEST(AzureCliCredential, Error)
   log.clear();
   auto const errorMsg = "Identity: AzureCliCredential didn't get the token:"
                         " \"ERROR: Please run az login to setup account."
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
                         "\r"
 #endif
                         "\n\"";

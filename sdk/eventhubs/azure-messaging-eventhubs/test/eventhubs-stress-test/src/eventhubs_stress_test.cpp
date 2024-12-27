@@ -19,7 +19,7 @@
 #include <iostream>
 #include <memory>
 
-#if defined(AZ_PLATFORM_WINDOWS)
+#if defined(AZURE_PLATFORM_WINDOWS)
 #include <winsock.h>
 #else // Assume POSIX
 #include <unistd.h>

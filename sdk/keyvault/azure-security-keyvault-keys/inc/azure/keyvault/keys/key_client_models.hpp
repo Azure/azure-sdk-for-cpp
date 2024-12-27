@@ -96,49 +96,49 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief The key can be used to encrypt with the #Encrypt method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Encrypt;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Encrypt;
 
     /**
      * @brief The key can be used to decrypt with the #Decrypt method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Decrypt;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Decrypt;
 
     /**
      * @brief The key can be used to sign with the Sign method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Sign;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Sign;
 
     /**
      * @brief The key can be used to verify with the Verify method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Verify;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Verify;
 
     /**
      * @brief The key can be used to wrap another key with the WrapKey method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation WrapKey;
 
     /**
      * @brief The key can be used to unwrap another key with the UnwrapKey method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation UnwrapKey;
 
     /**
      * @brief The key can be imported during creation using the ImportKey method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Import;
 
     /**
      * @brief The key can be exported during creation using the ImportKey method.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Export;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyOperation Export;
   };
 
   /**
@@ -184,38 +184,38 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Ec;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Ec;
 
     /**
      * @brief An Elliptic Curve Cryptographic (ECC) algorithm backed by a Hardware Security Module
      * (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType EcHsm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType EcHsm;
 
     /**
      * @brief An RSA cryptographic algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Rsa;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Rsa;
 
     /**
      * @brief An RSA cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType RsaHsm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType RsaHsm;
 
     /**
      * @brief An AES cryptographic algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Oct;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType Oct;
 
     /**
      * @brief An AES cryptographic algorithm backed by a Hardware Security Module (HSM).
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyVaultKeyType OctHsm;
   };
 
   /**
@@ -268,7 +268,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256;
 
     /**
      * @brief Gets the SECG SECP256K1 elliptic curve.
@@ -278,7 +278,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256K;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P256K;
 
     /**
      * @brief Gets the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
@@ -288,7 +288,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P384;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P384;
 
     /**
      * @brief Gets the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
@@ -298,7 +298,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * types</a>.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P521;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyCurveName P521;
   };
 
   /**
@@ -323,14 +323,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     [[deprecated("Use "
                  "KeyEncryptionAlgorithm::"
                  "CkmRsaAesKeyWrap"
-                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+                 ".")]] AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
         CKM_RSA_AES_KEY_WRAP;
 #endif // !CKM_RSA_AES_KEY_WRAP
     /**
      * @brief Gets the CKM_RSA_AES_KEY_WRAP algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CkmRsaAesKeyWrap;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm CkmRsaAesKeyWrap;
 
 #ifndef RSA_AES_KEY_WRAP_256
     /**
@@ -341,14 +341,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     [[deprecated("Use "
                  "KeyEncryptionAlgorithm::"
                  "RsaAesKeyWrap256"
-                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+                 ".")]] AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
         RSA_AES_KEY_WRAP_256;
 #endif // !RSA_AES_KEY_WRAP_256
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_256 algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap256;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap256;
 
 #ifndef RSA_AES_KEY_WRAP_384
     /**
@@ -359,14 +359,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     [[deprecated("Use "
                  "KeyEncryptionAlgorithm::"
                  "RsaAesKeyWrap384"
-                 ".")]] AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
+                 ".")]] AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm
         RSA_AES_KEY_WRAP_384;
 #endif // !RSA_AES_KEY_WRAP_384
     /**
      * @brief Gets the RSA_AES_KEY_WRAP_384 algorithm.
      *
      */
-    AZ_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap384;
+    AZURE_SECURITY_KEYVAULT_KEYS_DLLEXPORT static const KeyEncryptionAlgorithm RsaAesKeyWrap384;
   };
 
   /**
