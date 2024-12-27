@@ -125,6 +125,14 @@ jobs:
           )
         displayName: Set Xcode version
 
+      - pwsh: /usr/bin/xcodebuild --version
+        condition: >-
+          and(
+            succeeded(),
+            contains(variables['OSVmImage'], 'macOS')
+          )
+        displayName: Xcode version
+
       - template: /eng/pipelines/templates/steps/vcpkg.yml
 
       # Validate all the files are formatted correctly according to the
