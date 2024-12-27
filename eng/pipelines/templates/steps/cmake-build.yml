@@ -17,6 +17,11 @@ steps:
 
   - script: vcpkg --version
     workingDirectory: build
+    condition: >-
+      and(
+        succeeded(),
+        not contains(variables['OSVmImage'], 'macOS')
+      )
     displayName: vcpkg --version
 
   - script: |
