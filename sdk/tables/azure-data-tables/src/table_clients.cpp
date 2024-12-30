@@ -297,10 +297,10 @@ TableClient::TableClient(
     const std::string& tableName,
     const TableClientOptions& options)
     : TableClient(
-          std::string{
-              Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
-          tableName,
-          options)
+        std::string{
+            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
+        tableName,
+        options)
 {
 }
 

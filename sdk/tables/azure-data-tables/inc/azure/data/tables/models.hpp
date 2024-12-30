@@ -104,7 +104,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
-          : m_tableServiceClient(std::move(tableServiceClient)) {};
+          : m_tableServiceClient(std::move(tableServiceClient)){};
 
       friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
@@ -719,7 +719,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
-          : m_tableClient(std::move(tableClient)) {};
+          : m_tableClient(std::move(tableClient)){};
 
       std::shared_ptr<TableClient> m_tableClient;
       friend class Azure::Data::Tables::TableClient;
