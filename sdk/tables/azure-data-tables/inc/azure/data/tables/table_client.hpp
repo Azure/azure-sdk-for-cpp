@@ -107,7 +107,6 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Add entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Add entity result.
      */
@@ -119,7 +118,6 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Update entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Update entity result.
      */
@@ -131,7 +129,6 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Merge entity in a table.
      *
      * @param tableEntity The TableEntity to merge.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Merge entity result.
      */
