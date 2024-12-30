@@ -378,7 +378,7 @@ namespace Azure { namespace Data { namespace Test {
     options.UpsertType = Azure::Data::Tables::Models::UpsertKind::Update;
 
     entity.Properties["Product"] = TableEntityProperty("Tables2");
-    auto updateResponse = m_tableClient->MergeEntity(entity, options);
+    auto updateResponse = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -388,7 +388,7 @@ namespace Azure { namespace Data { namespace Test {
     options2.UpsertType = Azure::Data::Tables::Models::UpsertKind::Merge;
     entity.Properties["Product3"] = TableEntityProperty("Tables3");
     entity.SetETag(updateResponse.Value.ETag);
-    auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);
+    auto updateResponse2 = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);

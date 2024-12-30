@@ -113,7 +113,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::AddEntityResult> AddEntity(
         Models::TableEntity const& tableEntity,
-        Models::AddEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
@@ -126,7 +125,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpdateEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
@@ -139,7 +137,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::MergeEntityResult> MergeEntity(
         Models::TableEntity const& tableEntity,
-        Models::MergeEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**

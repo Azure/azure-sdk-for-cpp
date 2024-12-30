@@ -104,7 +104,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
-          : m_tableServiceClient(std::move(tableServiceClient)){};
+          : m_tableServiceClient(std::move(tableServiceClient)) {};
 
       friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
@@ -569,20 +569,6 @@ namespace Azure { namespace Data { namespace Tables {
        */
       UpsertKind UpsertType = UpsertKind::Update;
     };
-    /**
-     * @brief Add Entity options.
-     *
-     */
-    struct AddEntityOptions : public UpsertEntityOptions
-    {
-      AddEntityOptions() = default;
-      /**
-       * @brief Create Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      explicit AddEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
 
     /**
      * @brief Add Entity result.
@@ -597,25 +583,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Update Entity options.
-     *
-     */
-    struct UpdateEntityOptions final
-    {
-      /**
-       * @brief Update Entity options default constructor.
-       *
-       */
-      UpdateEntityOptions() = default;
-      /**
-       * @brief Update Entity options constructor.
-       *
-       * @param other Update Entity options.
-       */
-      UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
-
-    /**
      * @brief Update Entity result.
      *
      */
@@ -625,25 +592,6 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       std::string ETag;
-    };
-
-    /**
-     * @brief Merge Entity options.
-     *
-     */
-    struct MergeEntityOptions final
-    {
-      /**
-       * @brief Merge Entity options default constructor.
-       *
-       */
-      MergeEntityOptions() = default;
-      /**
-       * @brief Merge Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
@@ -771,7 +719,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
-          : m_tableClient(std::move(tableClient)){};
+          : m_tableClient(std::move(tableClient)) {};
 
       std::shared_ptr<TableClient> m_tableClient;
       friend class Azure::Data::Tables::TableClient;
