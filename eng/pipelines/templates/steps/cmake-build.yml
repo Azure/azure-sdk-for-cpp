@@ -15,6 +15,19 @@ steps:
     workingDirectory: build
     displayName: cmake --version
 
+  - script: vcpkg --version
+    workingDirectory: build
+    condition: >-
+      and(
+        succeeded(),
+        not(contains(variables['OSVmImage'], 'macOS'))
+      )
+    displayName: vcpkg --version
+
+  - script: clang --version
+    workingDirectory: build
+    displayName: clang --version
+
   - script: |
       ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
     workingDirectory: build
