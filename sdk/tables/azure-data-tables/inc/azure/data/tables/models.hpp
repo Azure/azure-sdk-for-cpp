@@ -569,20 +569,6 @@ namespace Azure { namespace Data { namespace Tables {
        */
       UpsertKind UpsertType = UpsertKind::Update;
     };
-    /**
-     * @brief Add Entity options.
-     *
-     */
-    struct AddEntityOptions : public UpsertEntityOptions
-    {
-      AddEntityOptions() = default;
-      /**
-       * @brief Create Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      explicit AddEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
 
     /**
      * @brief Add Entity result.
@@ -597,25 +583,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Update Entity options.
-     *
-     */
-    struct UpdateEntityOptions final
-    {
-      /**
-       * @brief Update Entity options default constructor.
-       *
-       */
-      UpdateEntityOptions() = default;
-      /**
-       * @brief Update Entity options constructor.
-       *
-       * @param other Update Entity options.
-       */
-      UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
-
-    /**
      * @brief Update Entity result.
      *
      */
@@ -625,25 +592,6 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       std::string ETag;
-    };
-
-    /**
-     * @brief Merge Entity options.
-     *
-     */
-    struct MergeEntityOptions final
-    {
-      /**
-       * @brief Merge Entity options default constructor.
-       *
-       */
-      MergeEntityOptions() = default;
-      /**
-       * @brief Merge Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
