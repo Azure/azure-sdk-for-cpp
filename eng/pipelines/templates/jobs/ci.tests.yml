@@ -129,7 +129,7 @@ jobs:
         condition: >-
           and(
             succeeded(),
-            contains(variables['OSVmImage'], 'macOS')
+            eq(variables['Agent.OS'], 'Darwin')
           )
         displayName: Xcode version
 
