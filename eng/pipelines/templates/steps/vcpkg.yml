@@ -6,7 +6,6 @@ steps:
   
   - pwsh: |
       $env:VCPKG_ROOT\vcpkg --version
-    workingDirectory: build
     condition: >-
         and(
         succeeded(),
