@@ -9,7 +9,7 @@ steps:
     condition: >-
         and(
         succeeded(),
-        not(contains(variables['OSVmImage'], 'macOS'))
+        not(variables['Agent.OS'], 'Darwin')
         )
     displayName: vcpkg --version
 
