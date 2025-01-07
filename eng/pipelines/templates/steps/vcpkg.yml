@@ -5,7 +5,7 @@ steps:
     displayName: Set Vcpkg Variables
   
   - pwsh: |
-      $env:VCPKG_ROOT\vcpkg --version
+      $env:VCPKG_ROOT/vcpkg --version
     condition: >-
         and(
         succeeded(),
