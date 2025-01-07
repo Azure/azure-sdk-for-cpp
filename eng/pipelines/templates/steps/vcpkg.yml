@@ -10,7 +10,7 @@ steps:
     condition: >-
         and(
         succeeded(),
-        not(variables['Agent.OS'], 'Darwin')
+        not(eq(variables['Agent.OS'], 'Darwin'))
         )
     displayName: vcpkg --version
 
