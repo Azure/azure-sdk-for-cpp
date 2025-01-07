@@ -22,6 +22,15 @@ steps:
         Write-Host "##vso[task.setvariable variable=VCPKG_ROOT]$vcpkgRoot"
       displayName: Set VCPKG_ROOT
 
+    - script: $vcpkgRoot\vcpkg --version
+    workingDirectory: build
+    condition: >-
+      and(
+        succeeded(),
+        not(contains(variables['OSVmImage'], 'macOS'))
+      )
+    displayName: vcpkg --version
+
   # Check out the PR branch if it's already in remote. Ignore failures.
   - pwsh: |
       $ErrorActionPreference = "Continue"
