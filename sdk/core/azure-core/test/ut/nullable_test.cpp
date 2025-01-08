@@ -289,3 +289,14 @@ TEST(Nullable, ConstexprAndRvalue)
   std::string str(Nullable<std::string>(std::string("hello")).Value());
   EXPECT_EQ(str, "hello");
 }
+
+TEST(Nullable, ExplicitNull)
+{
+  Nullable<int> x;
+  EXPECT_FALSE(x.HasValue());
+  EXPECT_NE(x, nullptr);
+
+  x = nullptr;
+  EXPECT_FALSE(x.HasValue());
+  EXPECT_EQ(x, nullptr);
+}

@@ -10,6 +10,8 @@
 
 #include "azure/core/azure_assert.hpp"
 
+#include <cstddef>
+#include <cstdint>
 #include <new> // for placement new
 #include <type_traits>
 #include <utility> // for swap and move
@@ -34,14 +36,14 @@ template <class T> class Nullable final {
     T m_value;
   };
 
-  bool m_hasValue;
+  std::int8_t m_hasValue;
 
 public:
   /**
    * @brief Constructs a `%Nullable` that represents the absence of value.
    *
    */
-  constexpr Nullable() : m_disengaged{}, m_hasValue(false) {}
+  constexpr Nullable() : m_disengaged{}, m_hasValue(0) {}
 
   /**
    * @brief Constructs a `%Nullable` having an \p initialValue.
@@ -49,7 +51,16 @@ public:
    * @param initialValue A non-absent value to initialize with.
    */
   constexpr Nullable(T initialValue) noexcept(std::is_nothrow_move_constructible<T>::value)
-      : m_value(std::move(initialValue)), m_hasValue(true)
+      : m_value(std::move(initialValue)), m_hasValue(1)
+  {
+  }
+
+  /**
+   * @brief Constructs a `%Nullable` having a distinguishable null value.
+   *
+   */
+  constexpr Nullable(std::nullptr_t) noexcept(std::is_nothrow_move_constructible<T>::value)
+      : m_hasValue(-1)
   {
   }
 
@@ -61,7 +72,7 @@ public:
   Nullable(const Nullable& other) noexcept(std::is_nothrow_copy_constructible<T>::value)
       : m_disengaged{}, m_hasValue(other.m_hasValue)
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       ::new (static_cast<void*>(&m_value)) T(other.m_value);
     }
@@ -75,7 +86,7 @@ public:
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
       : m_disengaged{}, m_hasValue(other.m_hasValue)
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value));
     }
@@ -88,7 +99,7 @@ public:
    */
   ~Nullable()
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       m_value.~T();
     }
@@ -100,9 +111,9 @@ public:
    */
   void Reset() noexcept(std::is_nothrow_destructible<T>::value) /* enforces termination */
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
-      m_hasValue = false;
+      m_hasValue = 0;
       m_value.~T();
     }
   }
@@ -116,25 +127,24 @@ public:
   // is_nothrow_swappable is added in C++17
   void Swap(Nullable& other) noexcept(std::is_nothrow_move_constructible<T>::value)
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
-      if (other.m_hasValue)
+      if (other.m_hasValue > 0)
       {
-        using std::swap;
         swap(m_value, other.m_value);
       }
       else
       {
         ::new (static_cast<void*>(&other.m_value)) T(std::move(m_value)); // throws
-        other.m_hasValue = true;
-        Reset();
+        std::swap(other.m_hasValue, m_hasValue);
+        m_value.~T();
       }
     }
-    else if (other.m_hasValue)
+    else if (other.m_hasValue > 0)
     {
       ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value)); // throws
-      m_hasValue = true;
-      other.Reset();
+      std::swap(m_hasValue, other.m_hasValue);
+      other.m_value.~T();
     }
   }
 
@@ -168,6 +178,13 @@ public:
     return *this;
   }
 
+  /// Assignment of explicit null.
+  Nullable& operator=(std::nullptr_t) noexcept()
+  {
+    Nullable{nullptr}.Swap(*this);
+    return *this;
+  }
+
   /**
    * @brief Assignment operator from another type.
    *
@@ -193,16 +210,16 @@ public:
           int>::type
       = 0>
   Nullable& operator=(U&& other) noexcept(
-      std::is_nothrow_constructible<T, U>::value&& std::is_nothrow_assignable<T&, U>::value)
+      std::is_nothrow_constructible<T, U>::value && std::is_nothrow_assignable<T&, U>::value)
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       m_value = std::forward<U>(other);
     }
     else
     {
       ::new (static_cast<void*>(&m_value)) T(std::forward<U>(other));
-      m_hasValue = true;
+      m_hasValue = 1;
     }
     return *this;
   }
@@ -218,7 +235,7 @@ public:
   {
     Reset();
     ::new (static_cast<void*>(&m_value)) T(std::forward<U>(Args)...);
-    m_hasValue = true;
+    m_hasValue = 1;
     return m_value;
   }
 
@@ -227,7 +244,14 @@ public:
    *
    * @return `true` If a value is contained, `false` if value is absent.
    */
-  bool HasValue() const noexcept { return m_hasValue; }
+  bool HasValue() const noexcept { return m_hasValue > 0; }
+
+  /**
+   * @brief Check whether a value is explicitly null.
+   *
+   * @return `true` if the value is set to null.
+   */
+  bool operator==(std::nullptr_t) const noexcept { return m_hasValue < 0; }
 
   /**
    * @brief Get the contained value.
@@ -235,7 +259,7 @@ public:
    */
   const T& Value() const& noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue > 0, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -246,7 +270,7 @@ public:
    */
   T& Value() & noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue > 0, "Empty Nullable, check HasValue() first.");
 
     return m_value;
   }
@@ -257,7 +281,7 @@ public:
    */
   T&& Value() && noexcept
   {
-    AZURE_ASSERT_MSG(m_hasValue, "Empty Nullable, check HasValue() first.");
+    AZURE_ASSERT_MSG(m_hasValue > 0, "Empty Nullable, check HasValue() first.");
 
     return std::move(m_value);
   }
@@ -344,7 +368,7 @@ public:
       = 0>
   constexpr typename std::remove_cv<T>::type ValueOr(U&& other) const&
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       return m_value;
     }
@@ -366,7 +390,7 @@ public:
       = 0>
   constexpr typename std::remove_cv<T>::type ValueOr(U&& other) &&
   {
-    if (m_hasValue)
+    if (m_hasValue > 0)
     {
       return std::move(m_value);
     }
