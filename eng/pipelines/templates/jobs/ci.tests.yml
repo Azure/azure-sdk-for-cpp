@@ -100,6 +100,8 @@ jobs:
       value: ${{ parameters.ServiceDirectory }}
     - name: Codeql.SkipTaskAutoInjection
       value: false
+    - name: AZURE_ENABLE_STATIC_ANALYSIS
+      value: true
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
