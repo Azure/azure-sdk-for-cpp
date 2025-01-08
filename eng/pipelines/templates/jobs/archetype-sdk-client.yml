@@ -163,7 +163,8 @@ jobs:
 
         - pwsh: |
             Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
-            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/*" "$(System.DefaultWorkingDirectory)/parser" --recursive
+            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.exe" "$(System.DefaultWorkingDirectory)/parser"
+            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.pdb" "$(System.DefaultWorkingDirectory)/parser"
           displayName: Download ApiView Parser.
 
         - task: Powershell@2
