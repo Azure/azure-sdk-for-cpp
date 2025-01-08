@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/azure_sas_credential.hpp"
-#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -86,21 +84,6 @@ namespace Azure { namespace Data { namespace Tables {
         const std::string& serviceUrl,
         const std::string& tableName,
         std::shared_ptr<Core::Credentials::TokenCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl The service Url
-     * @param credential The SAS credential used to sign requests.
-     * @param tableName The name of the table.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const std::string& tableName,
         const TableClientOptions& options = {});
 
     /**

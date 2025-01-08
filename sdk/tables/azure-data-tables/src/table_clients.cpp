@@ -65,14 +65,6 @@ TableServiceClient::TableServiceClient(
       std::move(perOperationPolicies));
 }
 
-TableServiceClient::TableServiceClient(
-    const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-    const TableClientOptions& options)
-    : TableServiceClient(std::string{serviceUrl + credential->GetSignature()}, options)
-{
-}
-
 TableClient TableServiceClient::GetTableClient(
     const std::string& tableName,
     TableClientOptions const& options) const
@@ -289,19 +281,6 @@ TableClient::TableClient(
       PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perOperationPolicies));
-}
-
-TableClient::TableClient(
-    const std::string& serviceUrl,
-    std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-    const std::string& tableName,
-    const TableClientOptions& options)
-    : TableClient(
-        std::string{
-            Azure::Core::Url(serviceUrl).GetAbsoluteUrl() + "/" + credential->GetSignature()},
-        tableName,
-        options)
-{
 }
 
 Azure::Response<Models::Table> TableServiceClient::CreateTable(
