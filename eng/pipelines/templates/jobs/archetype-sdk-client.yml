@@ -163,8 +163,8 @@ jobs:
 
         - pwsh: |
             Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
-            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.exe" "$(System.DefaultWorkingDirectory)/parser"
-            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.pdb" "$(System.DefaultWorkingDirectory)/parser"
+            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.exe" "$(System.DefaultWorkingDirectory)/parser/ParseAzureSdkCpp.exe"
+            azcopy copy "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/parseazuresdkcpp/${{ variables.apiviewParserVersion }}/RelWithDebInfo/ParseAzureSdkCpp.pdb" "$(System.DefaultWorkingDirectory)/parser/ParseAzureSdkCpp.pdb"
           displayName: Download ApiView Parser.
 
         - task: Powershell@2
@@ -173,7 +173,7 @@ jobs:
             arguments: >
               -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
               -OutPath $(Build.ArtifactStagingDirectory)
-              -ParserPath $(System.DefaultWorkingDirectory)/parser/RelWithDebInfo/ParseAzureSdkCpp.exe
+              -ParserPath $(System.DefaultWorkingDirectory)/parser/ParseAzureSdkCpp.exe
               -ServicePath $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
             pwsh: true
             workingDirectory: $(Pipeline.Workspace)
