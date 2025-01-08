@@ -454,9 +454,8 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
-      Azure::Core::Url::Encode(m_tableName + PartitionKeyFragment
-      + tableEntity.GetPartitionKey().Value + RowKeyFragment
+  url.AppendPath(Azure::Core::Url::Encode(
+      m_tableName + PartitionKeyFragment + tableEntity.GetPartitionKey().Value + RowKeyFragment
       + tableEntity.GetRowKey().Value + ClosingFragment));
 
   std::string jsonBody = Serializers::UpdateEntity(tableEntity);
@@ -497,9 +496,8 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
-      Azure::Core::Url::Encode(m_tableName + PartitionKeyFragment
-      + tableEntity.GetPartitionKey().Value + RowKeyFragment
+  url.AppendPath(Azure::Core::Url::Encode(
+      m_tableName + PartitionKeyFragment + tableEntity.GetPartitionKey().Value + RowKeyFragment
       + tableEntity.GetRowKey().Value + ClosingFragment));
 
   std::string jsonBody = Serializers::MergeEntity(tableEntity);
@@ -540,9 +538,8 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
-      Azure::Core::Url::Encode(m_tableName + PartitionKeyFragment
-      +tableEntity.GetPartitionKey().Value + RowKeyFragment
+  url.AppendPath(Azure::Core::Url::Encode(
+      m_tableName + PartitionKeyFragment + tableEntity.GetPartitionKey().Value + RowKeyFragment
       + tableEntity.GetRowKey().Value + ClosingFragment));
 
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
@@ -609,9 +606,8 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
     Core::Context const& context)
 {
   auto url = m_url;
-  url.AppendPath(
-      Azure::Core::Url::Encode(m_tableName + PartitionKeyFragment
-      + partitionKey + RowKeyFragment + rowKey
+  url.AppendPath(Azure::Core::Url::Encode(
+      m_tableName + PartitionKeyFragment + partitionKey + RowKeyFragment + rowKey
       + ClosingFragment));
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -645,7 +641,8 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   if (!options.NextPartitionKey.empty() && !options.NextRowKey.empty())
   {
     url.AppendPath(Azure::Core::Url::Encode(m_tableName));
-    url.AppendQueryParameter("NextPartitionKey", Azure::Core::Url::Encode(options.NextPartitionKey));
+    url.AppendQueryParameter(
+        "NextPartitionKey", Azure::Core::Url::Encode(options.NextPartitionKey));
     url.AppendQueryParameter("NextRowKey", Azure::Core::Url::Encode(options.NextRowKey));
   }
   else
