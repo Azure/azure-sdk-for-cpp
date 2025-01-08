@@ -90,39 +90,33 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Add entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Add entity result.
      */
     Response<Models::AddEntityResult> AddEntity(
         Models::TableEntity const& tableEntity,
-        Models::AddEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
      * @brief Update entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Update entity result.
      */
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpdateEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**
      * @brief Merge entity in a table.
      *
      * @param tableEntity The TableEntity to merge.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Merge entity result.
      */
     Response<Models::MergeEntityResult> MergeEntity(
         Models::TableEntity const& tableEntity,
-        Models::MergeEntityOptions const& options = {},
         Core::Context const& context = {});
 
     /**

@@ -421,10 +421,8 @@ Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
 
 Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
     Models::TableEntity const& tableEntity,
-    Models::AddEntityOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.AppendPath(m_tableName);
 
@@ -453,10 +451,8 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
     Models::TableEntity const& tableEntity,
-    Models::UpdateEntityOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.AppendPath(
       m_tableName + PartitionKeyFragment
@@ -498,10 +494,8 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
 
 Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
     Models::TableEntity const& tableEntity,
-    Models::MergeEntityOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   auto url = m_url;
   url.AppendPath(
       m_tableName + PartitionKeyFragment
@@ -578,18 +572,17 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::UpsertEntityOptions const& options,
     Core::Context const& context)
 {
-  (void)options;
   try
   {
     switch (options.UpsertType)
     {
       case Models::UpsertKind::Merge: {
-        auto response = MergeEntity(tableEntity, Models::MergeEntityOptions(options), context);
+        auto response = MergeEntity(tableEntity, context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
       default: {
-        auto response = UpdateEntity(tableEntity, Models::UpdateEntityOptions(options), context);
+        auto response = UpdateEntity(tableEntity, context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
@@ -597,7 +590,7 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   }
   catch (const Azure::Core::RequestFailedException&)
   {
-    auto response = AddEntity(tableEntity, Models::AddEntityOptions(options), context);
+    auto response = AddEntity(tableEntity, context);
     return Azure::Response<Models::UpsertEntityResult>(
         Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
   }
@@ -860,7 +853,7 @@ std::string TableClient::PrepDeleteEntity(
       + entity.GetRowKey().Value + ClosingFragment);
   returnValue += "DELETE " + url.GetAbsoluteUrl() + " HTTP/1.1\n";
   returnValue += "Accept: application/json;odata=minimalmetadata\n";
-  // returnValue += "Prefer: return-no-content\n";
+  returnValue += "Prefer: return-no-content\n";
   returnValue += "DataServiceVersion: 3.0;\n";
   if (!entity.GetETag().Value.empty())
   {
