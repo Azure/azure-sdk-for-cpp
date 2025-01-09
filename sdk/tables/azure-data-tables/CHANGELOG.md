@@ -2,6 +2,11 @@
 
 ## 1.0.0-beta.6 (2025-01-14)
 
+### Breaking Changes
+
+- Removed constructor for SAS token authentication in `TableServiceClient` and `TableClient`.
+- Simplified APIs by removing redundant structures.
+
 ## 1.0.0-beta.5 (2024-11-22)
 
 
