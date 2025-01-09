@@ -344,7 +344,6 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
-
     entity.Properties["Product"] = TableEntityProperty("Tables2");
     auto updateResponse = m_tableClient->MergeEntity(entity);
 
