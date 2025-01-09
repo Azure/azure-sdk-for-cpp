@@ -569,12 +569,12 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 
 Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::TableEntity const& tableEntity,
-    Models::UpsertEntityOptions const& options,
+    Models::UpsertKind upsertKind,
     Core::Context const& context)
 {
   try
   {
-    switch (options.UpsertType)
+    switch (upsertKind)
     {
       case Models::UpsertKind::Merge: {
         auto response = MergeEntity(tableEntity, context);
