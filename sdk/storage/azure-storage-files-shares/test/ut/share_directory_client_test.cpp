@@ -1396,54 +1396,56 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Create a file
     Files::Shares::CreateDirectoryOptions createOptions;
-    createOptions.NfsProperties.FileMode
+    createOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(octalMode);
-    createOptions.NfsProperties.Group = "123";
-    createOptions.NfsProperties.Owner = "456";
-    createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    createOptions.PosixProperties.Group = "123";
+    createOptions.PosixProperties.Owner = "456";
+    createOptions.PosixProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
     Files::Shares::Models::CreateDirectoryResult createResult;
     EXPECT_NO_THROW(createResult = directoryClient.Create(createOptions).Value);
-    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
-    EXPECT_TRUE(createResult.NfsProperties.Group.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(createResult.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(createResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(createResult.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(createResult.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        createResult.NfsProperties.NfsFileType.Value(),
+        createResult.PosixProperties.Group.Value(), createOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(createResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createResult.PosixProperties.Owner.Value(), createOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(createResult.PosixProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createResult.PosixProperties.NfsFileType.Value(),
         Files::Shares::Models::NfsFileType::Directory);
 
     // Set Properties
     Files::Shares::SetDirectoryPropertiesOptions setOptions;
-    setOptions.NfsProperties.FileMode
+    setOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0707");
-    setOptions.NfsProperties.Group = "123";
-    setOptions.NfsProperties.Owner = "456";
+    setOptions.PosixProperties.Group = "123";
+    setOptions.PosixProperties.Owner = "456";
     Files::Shares::Models::SetDirectoryPropertiesResult setResult;
     EXPECT_NO_THROW(
         setResult
         = directoryClient.SetProperties(Files::Shares::Models::FileSmbProperties(), setOptions)
               .Value);
-    EXPECT_TRUE(setResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(setResult.NfsProperties.Group.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(setResult.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(setResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(setResult.PosixProperties.Group.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.Group.Value(), setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(setResult.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.Owner.Value(), setOptions.PosixProperties.Owner.Value());
 
     // Get Properties
     Files::Shares::Models::DirectoryProperties properties;
     EXPECT_NO_THROW(properties = directoryClient.GetProperties().Value);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Group.Value(), setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Owner.Value(), setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.NfsFileType.HasValue());
     EXPECT_EQ(
-        properties.NfsProperties.NfsFileType.Value(),
+        properties.PosixProperties.NfsFileType.Value(),
         Files::Shares::Models::NfsFileType::Directory);
   }
 }}} // namespace Azure::Storage::Test

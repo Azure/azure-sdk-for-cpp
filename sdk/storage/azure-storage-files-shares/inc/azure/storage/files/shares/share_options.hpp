@@ -595,7 +595,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
   };
 
   /**
@@ -761,7 +761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
   };
 
   /**
@@ -911,7 +911,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
   };
 
   /**
@@ -1014,7 +1014,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
 
     /**
      * Optional, only applicable to NFS Files. If not populated, the destination file will have the
@@ -1084,7 +1084,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
   };
 
   /**
@@ -1319,7 +1319,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The NFS related properties for the file.
      */
-    Models::FilePosixProperties NfsProperties;
+    Models::FilePosixProperties PosixProperties;
 
     /**
      * @brief Options for parallel transfer.
