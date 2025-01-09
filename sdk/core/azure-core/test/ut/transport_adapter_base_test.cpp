@@ -449,7 +449,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     // public big blob (321MB)
     Azure::Core::Url host(
-      "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/bigtestfiles/321MB");
+        "https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-cpp/bigtestfiles/321MB");
     Azure::Core::Context cancelThis;
 
     auto threadRoutine = [&]() {
