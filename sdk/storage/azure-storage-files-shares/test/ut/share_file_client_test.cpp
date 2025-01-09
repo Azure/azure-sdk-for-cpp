@@ -2230,30 +2230,32 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Create a file
     Files::Shares::CreateFileOptions createOptions;
-    createOptions.NfsProperties.FileMode
+    createOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(octalMode);
-    createOptions.NfsProperties.Group = "123";
-    createOptions.NfsProperties.Owner = "456";
-    createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    createOptions.PosixProperties.Group = "123";
+    createOptions.PosixProperties.Owner = "456";
+    createOptions.PosixProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
     Files::Shares::Models::CreateFileResult createResult;
     EXPECT_NO_THROW(createResult = fileClient.Create(256, createOptions).Value);
-    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
-    EXPECT_TRUE(createResult.NfsProperties.Group.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(createResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createResult.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(createResult.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(createResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(createResult.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(createResult.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        createResult.NfsProperties.NfsFileType.Value(),
+        createResult.PosixProperties.Group.Value(), createOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(createResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createResult.PosixProperties.Owner.Value(), createOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(createResult.PosixProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createResult.PosixProperties.NfsFileType.Value(),
         Files::Shares::Models::NfsFileType::Regular);
 
     // Set Properties
     Files::Shares::SetFilePropertiesOptions setOptions;
-    setOptions.NfsProperties.FileMode
+    setOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0707");
-    setOptions.NfsProperties.Group = "123";
-    setOptions.NfsProperties.Owner = "456";
+    setOptions.PosixProperties.Group = "123";
+    setOptions.PosixProperties.Owner = "456";
     Files::Shares::Models::SetFilePropertiesResult setResult;
     EXPECT_NO_THROW(
         setResult = fileClient
@@ -2262,71 +2264,74 @@ namespace Azure { namespace Storage { namespace Test {
                             Files::Shares::Models::FileSmbProperties(),
                             setOptions)
                         .Value);
-    EXPECT_TRUE(setResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(setResult.NfsProperties.Group.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(setResult.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(setResult.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(setResult.NfsProperties.LinkCount.HasValue());
+    EXPECT_TRUE(setResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(setResult.PosixProperties.Group.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.Group.Value(), setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(setResult.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(setResult.PosixProperties.Owner.Value(), setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(setResult.PosixProperties.LinkCount.HasValue());
 
     // Get Properties
     Files::Shares::Models::FileProperties properties;
     EXPECT_NO_THROW(properties = fileClient.GetProperties().Value);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
-    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Group.Value(), setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Owner.Value(), setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.NfsFileType.HasValue());
     EXPECT_EQ(
-        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+        properties.PosixProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::Regular);
 
     // Download
     Files::Shares::Models::DownloadFileResult downloadResult;
     EXPECT_NO_THROW(downloadResult = fileClient.Download().Value);
-    EXPECT_TRUE(downloadResult.Details.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(downloadResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(downloadResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_TRUE(downloadResult.Details.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadResult.Details.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadResult.Details.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        downloadResult.Details.NfsProperties.Group.Value(), setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(downloadResult.Details.NfsProperties.Owner.HasValue());
+        downloadResult.Details.PosixProperties.Group.Value(),
+        setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(downloadResult.Details.PosixProperties.Owner.HasValue());
     EXPECT_EQ(
-        downloadResult.Details.NfsProperties.Owner.Value(), setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(downloadResult.Details.NfsProperties.LinkCount.HasValue());
+        downloadResult.Details.PosixProperties.Owner.Value(),
+        setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(downloadResult.Details.PosixProperties.LinkCount.HasValue());
 
     // DownloadTo
     Files::Shares::Models::DownloadFileToResult downloadToResult;
     std::string tempFilename = RandomString() + "1";
     EXPECT_NO_THROW(downloadToResult = fileClient.DownloadTo(tempFilename).Value);
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(downloadToResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadToResult.Details.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        downloadToResult.Details.NfsProperties.Group.Value(),
-        setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Owner.HasValue());
+        downloadToResult.Details.PosixProperties.Group.Value(),
+        setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.Owner.HasValue());
     EXPECT_EQ(
-        downloadToResult.Details.NfsProperties.Owner.Value(),
-        setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.LinkCount.HasValue());
+        downloadToResult.Details.PosixProperties.Owner.Value(),
+        setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.LinkCount.HasValue());
     DeleteFile(tempFilename);
 
     std::vector<uint8_t> buff(256);
     EXPECT_NO_THROW(downloadToResult = fileClient.DownloadTo(buff.data(), 256).Value);
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(downloadToResult.Details.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Group.HasValue());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(downloadToResult.Details.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        downloadToResult.Details.NfsProperties.Group.Value(),
-        setOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.Owner.HasValue());
+        downloadToResult.Details.PosixProperties.Group.Value(),
+        setOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.Owner.HasValue());
     EXPECT_EQ(
-        downloadToResult.Details.NfsProperties.Owner.Value(),
-        setOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(downloadToResult.Details.NfsProperties.LinkCount.HasValue());
+        downloadToResult.Details.PosixProperties.Owner.Value(),
+        setOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(downloadToResult.Details.PosixProperties.LinkCount.HasValue());
 
     // Create HardLink
     auto hardLinkClient
@@ -2336,19 +2341,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(
         createFileHardLinkResult
         = hardLinkClient.CreateHardLink(fileName, createHardLinkOptions).Value);
-    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(createFileHardLinkResult.NfsProperties.FileMode.Value().ToOctalFileMode(), "0707");
-    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.Group.HasValue());
+    EXPECT_TRUE(createFileHardLinkResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(createFileHardLinkResult.PosixProperties.FileMode.Value().ToOctalFileMode(), "0707");
+    EXPECT_TRUE(createFileHardLinkResult.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        createFileHardLinkResult.NfsProperties.Group.Value(),
-        createOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.FileMode.HasValue());
+        createFileHardLinkResult.PosixProperties.Group.Value(),
+        createOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(createFileHardLinkResult.PosixProperties.FileMode.HasValue());
     EXPECT_EQ(
-        createFileHardLinkResult.NfsProperties.Owner.Value(),
-        createOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(createFileHardLinkResult.NfsProperties.NfsFileType.HasValue());
+        createFileHardLinkResult.PosixProperties.Owner.Value(),
+        createOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(createFileHardLinkResult.PosixProperties.NfsFileType.HasValue());
     EXPECT_EQ(
-        createFileHardLinkResult.NfsProperties.NfsFileType.Value(),
+        createFileHardLinkResult.PosixProperties.NfsFileType.Value(),
         Files::Shares::Models::NfsFileType::Regular);
     EXPECT_TRUE(createFileHardLinkResult.SmbProperties.CreatedOn.HasValue());
     EXPECT_TRUE(createFileHardLinkResult.SmbProperties.LastWrittenOn.HasValue());
@@ -2370,41 +2375,47 @@ namespace Azure { namespace Storage { namespace Test {
     WriteFile(tempFilename, content);
 
     Files::Shares::UploadFileFromOptions uploadOptions;
-    uploadOptions.NfsProperties.FileMode
+    uploadOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(octalMode);
-    uploadOptions.NfsProperties.Group = "123";
-    uploadOptions.NfsProperties.Owner = "456";
-    uploadOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    uploadOptions.PosixProperties.Group = "123";
+    uploadOptions.PosixProperties.Owner = "456";
+    uploadOptions.PosixProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
 
     // From buffer
     fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), fileSize, uploadOptions));
     properties = fileClient.GetProperties().Value;
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
-    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+        properties.PosixProperties.Group.Value(), uploadOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Owner.Value(), uploadOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::Regular);
 
     // From file
     fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename, uploadOptions));
     properties = fileClient.GetProperties().Value;
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), octalMode);
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), uploadOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), uploadOptions.NfsProperties.Owner.Value());
-    EXPECT_TRUE(properties.NfsProperties.LinkCount.HasValue());
-    EXPECT_TRUE(properties.NfsProperties.NfsFileType.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
     EXPECT_EQ(
-        properties.NfsProperties.NfsFileType.Value(), Files::Shares::Models::NfsFileType::Regular);
+        properties.PosixProperties.Group.Value(), uploadOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Owner.Value(), uploadOptions.PosixProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.LinkCount.HasValue());
+    EXPECT_TRUE(properties.PosixProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::Regular);
   }
 
   TEST_F(FileShareFileClientTest, PremiumNfsPropertiesForCopy_PLAYBACKONLY_)
@@ -2424,11 +2435,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Create a file
     Files::Shares::CreateFileOptions createOptions;
-    createOptions.NfsProperties.FileMode
+    createOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode(sourceMode);
-    createOptions.NfsProperties.Group = "123";
-    createOptions.NfsProperties.Owner = "456";
-    createOptions.NfsProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
+    createOptions.PosixProperties.Group = "123";
+    createOptions.PosixProperties.Owner = "456";
+    createOptions.PosixProperties.NfsFileType = Files::Shares::Models::NfsFileType::Regular;
     EXPECT_NO_THROW(sourceClient.Create(256, createOptions));
 
     // Copy with override
@@ -2436,11 +2447,11 @@ namespace Azure { namespace Storage { namespace Test {
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     Files::Shares::StartFileCopyOptions copyOptions;
     copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
-    copyOptions.NfsProperties.FileMode
+    copyOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0757");
     copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Override;
-    copyOptions.NfsProperties.Group = "888";
-    copyOptions.NfsProperties.Owner = "999";
+    copyOptions.PosixProperties.Group = "888";
+    copyOptions.PosixProperties.Owner = "999";
     copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Override;
     auto copyOperation = destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions);
     EXPECT_EQ(
@@ -2448,12 +2459,12 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Core::Http::HttpStatusCode::Accepted);
     auto properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0757");
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), copyOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), copyOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), "0757");
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Group.Value(), copyOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Owner.Value(), copyOptions.PosixProperties.Owner.Value());
 
     // Copy with source
     copyOptions = Files::Shares::StartFileCopyOptions();
@@ -2467,18 +2478,20 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Core::Http::HttpStatusCode::Accepted);
     properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), sourceMode);
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), sourceMode);
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Group.Value(), createOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Owner.Value(), createOptions.PosixProperties.Owner.Value());
 
     // Copy with source/override
     copyOptions = Files::Shares::StartFileCopyOptions();
     copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
     copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Override;
-    copyOptions.NfsProperties.FileMode
+    copyOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0767");
     copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
@@ -2488,12 +2501,14 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Core::Http::HttpStatusCode::Accepted);
     properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0767");
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), createOptions.NfsProperties.Group.Value());
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), createOptions.NfsProperties.Owner.Value());
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), "0767");
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Group.Value(), createOptions.PosixProperties.Group.Value());
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(
+        properties.PosixProperties.Owner.Value(), createOptions.PosixProperties.Owner.Value());
 
     // Copy without NfsProperties
     copyOptions = Files::Shares::StartFileCopyOptions();
@@ -2505,18 +2520,18 @@ namespace Azure { namespace Storage { namespace Test {
         Azure::Core::Http::HttpStatusCode::Accepted);
     properties = copyOperation.PollUntilDone(std::chrono::milliseconds(1000)).Value;
     EXPECT_EQ(properties.CopyStatus.Value(), Files::Shares::Models::CopyStatus::Success);
-    EXPECT_TRUE(properties.NfsProperties.FileMode.HasValue());
-    EXPECT_EQ(properties.NfsProperties.FileMode.Value().ToOctalFileMode(), "0664");
-    EXPECT_TRUE(properties.NfsProperties.Group.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Group.Value(), "0");
-    EXPECT_TRUE(properties.NfsProperties.Owner.HasValue());
-    EXPECT_EQ(properties.NfsProperties.Owner.Value(), "0");
+    EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), "0664");
+    EXPECT_TRUE(properties.PosixProperties.Group.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Group.Value(), "0");
+    EXPECT_TRUE(properties.PosixProperties.Owner.HasValue());
+    EXPECT_EQ(properties.PosixProperties.Owner.Value(), "0");
 
     // Copy with invalid input
     copyOptions = Files::Shares::StartFileCopyOptions();
     copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
     copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
-    copyOptions.NfsProperties.FileMode
+    copyOptions.PosixProperties.FileMode
         = Files::Shares::Models::NfsFileMode::ParseOctalFileMode("0767");
     copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
@@ -2540,7 +2555,7 @@ namespace Azure { namespace Storage { namespace Test {
     copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
     copyOptions.ModeCopyMode = Files::Shares::Models::ModeCopyMode::Source;
     copyOptions.OwnerCopyMode = Files::Shares::Models::OwnerCopyMode::Source;
-    copyOptions.NfsProperties.Group = "888";
+    copyOptions.PosixProperties.Group = "888";
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
   }

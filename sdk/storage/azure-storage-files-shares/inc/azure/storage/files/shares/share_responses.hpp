@@ -135,7 +135,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -524,7 +524,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -558,7 +558,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -588,7 +588,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -616,7 +616,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -650,7 +650,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
     /**
      * @brief Response type for
@@ -684,7 +684,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
 
     /**
@@ -715,7 +715,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The NFS related properties for the file.
        */
-      FilePosixProperties NfsProperties;
+      FilePosixProperties PosixProperties;
     };
   } // namespace Models
 
