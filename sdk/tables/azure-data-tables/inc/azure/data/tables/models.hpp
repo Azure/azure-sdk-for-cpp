@@ -557,19 +557,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Upsert Entity options.
-     *
-     */
-    struct UpsertEntityOptions
-    {
-      /**
-       * @brief Upsert type.
-       *
-       */
-      UpsertKind UpsertType = UpsertKind::Update;
-    };
-
-    /**
      * @brief Add Entity result.
      *
      */

@@ -134,13 +134,13 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
-     * @param options Optional parameters to execute this function.
+     * @param options Upsert kind(update/merge).
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */
     Response<Models::UpsertEntityResult> UpsertEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpsertEntityOptions const& options = {},
+        Models::UpsertKind upsertKind = Models::UpsertKind::Update,
         Core::Context const& context = {});
 
     /**
