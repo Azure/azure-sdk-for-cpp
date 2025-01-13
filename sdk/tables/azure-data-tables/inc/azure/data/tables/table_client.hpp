@@ -125,7 +125,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
-     * @param updateMode Upsert mode(update/merge), default merge.
+     * @param updateMode Update mode(update/merge), default merge.
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */
