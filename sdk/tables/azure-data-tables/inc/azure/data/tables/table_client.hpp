@@ -112,8 +112,8 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Update entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param context for canceling long running operations.
      * @param updateMode Update mode(update/merge), default merge.
+     * @param context for canceling long running operations.
      * @return Update entity result.
      */
     Response<Models::UpdateEntityResult> UpdateEntity(
@@ -180,25 +180,10 @@ namespace Azure { namespace Data { namespace Tables {
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyUpdateReplaceOp_Test;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyAddOp_Test;
 #endif
-    /**
-     * @brief Update entity in a table.
-     *
-     * @param tableEntity The TableEntity to set.
-     * @param context for canceling long running operations.
-     * @param updateMode Upsert mode(update/merge), default merge.
-     * @return Update entity result.
-     */
     Response<Models::UpdateEntityResult> UpdateEntityImpl(
         Models::TableEntity const& tableEntity,
         Core::Context const& context = {});
 
-    /**
-     * @brief Merge entity in a table.
-     *
-     * @param tableEntity The TableEntity to merge.
-     * @param context for canceling long running operations.
-     * @return Merge entity result.
-     */
     Response<Models::UpdateEntityResult> MergeEntityImpl(
         Models::TableEntity const& tableEntity,
         Core::Context const& context = {});
