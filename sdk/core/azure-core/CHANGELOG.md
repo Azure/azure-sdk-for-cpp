@@ -1,6 +1,6 @@
 # Release History
 
-## 1.15.0-beta.2 (Unreleased)
+## 1.15.0-beta.3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.15.0-beta.2 (2025-01-09)
+
+### Features Added
+
+- Made default constructor for `Azure::Core::Uuid` implicit.
 
 ## 1.15.0-beta.1 (2024-11-13)
 

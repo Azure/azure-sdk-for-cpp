@@ -193,7 +193,7 @@ std::string ConfigurationClient::GetUrl() const { return m_url.GetAbsoluteUrl();
 GetKeysPagedResponse ConfigurationClient::GetKeys(
     std::string const& accept,
     GetKeysOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("keys");
@@ -266,7 +266,7 @@ GetKeysPagedResponse ConfigurationClient::GetKeys(
 
 Azure::Response<CheckKeysResult> ConfigurationClient::CheckKeys(
     CheckKeysOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("keys");
@@ -298,7 +298,7 @@ Azure::Response<CheckKeysResult> ConfigurationClient::CheckKeys(
 GetKeyValuesPagedResponse ConfigurationClient::GetKeyValues(
     std::string const& accept,
     GetKeyValuesOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv");
@@ -455,7 +455,7 @@ GetKeyValuesPagedResponse ConfigurationClient::GetKeyValues(
 
 Azure::Response<CheckKeyValuesResult> ConfigurationClient::CheckKeyValues(
     CheckKeyValuesOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv");
@@ -523,7 +523,7 @@ Azure::Response<GetKeyValueResult> ConfigurationClient::GetKeyValue(
     std::string const& key,
     std::string const& accept,
     GetKeyValueOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv/");
@@ -631,7 +631,7 @@ Azure::Response<PutKeyValueResult> ConfigurationClient::PutKeyValue(
     std::string const& key,
     std::string const& accept,
     PutKeyValueOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv/");
@@ -774,7 +774,7 @@ Azure::Response<DeleteKeyValueResult> ConfigurationClient::DeleteKeyValue(
     std::string const& key,
     std::string const& accept,
     DeleteKeyValueOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv/");
@@ -862,7 +862,7 @@ Azure::Response<DeleteKeyValueResult> ConfigurationClient::DeleteKeyValue(
 Azure::Response<CheckKeyValueResult> ConfigurationClient::CheckKeyValue(
     std::string const& key,
     CheckKeyValueOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("kv/");
@@ -912,7 +912,7 @@ Azure::Response<CheckKeyValueResult> ConfigurationClient::CheckKeyValue(
 GetSnapshotsPagedResponse ConfigurationClient::GetSnapshots(
     std::string const& accept,
     GetSnapshotsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots");
@@ -1102,7 +1102,7 @@ GetSnapshotsPagedResponse ConfigurationClient::GetSnapshots(
 
 Azure::Response<CheckSnapshotsResult> ConfigurationClient::CheckSnapshots(
     CheckSnapshotsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots");
@@ -1133,7 +1133,7 @@ Azure::Response<GetSnapshotResult> ConfigurationClient::GetSnapshot(
     std::string const& name,
     std::string const& accept,
     GetSnapshotOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots/");
@@ -1282,7 +1282,7 @@ Azure::Response<GetSnapshotResult> ConfigurationClient::GetSnapshot(
 Azure::Response<OperationDetails> ConfigurationClient::GetOperationDetails(
     std::string const& snapshot,
     GetOperationDetailsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("operations");
@@ -1382,7 +1382,7 @@ Azure::Response<CreateSnapshotResult> ConfigurationClient::CreateSnapshot(
     std::string const& accept,
     Snapshot const& entity,
     CreateSnapshotOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots/");
@@ -1597,7 +1597,7 @@ Azure::Response<UpdateSnapshotResult> ConfigurationClient::UpdateSnapshot(
     std::string const& accept,
     SnapshotUpdateParameters const& entity,
     UpdateSnapshotOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots/");
@@ -1747,7 +1747,7 @@ Azure::Response<UpdateSnapshotResult> ConfigurationClient::UpdateSnapshot(
 Azure::Response<CheckSnapshotResult> ConfigurationClient::CheckSnapshot(
     std::string const& name,
     CheckSnapshotOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("snapshots/");
@@ -1781,7 +1781,7 @@ Azure::Response<CheckSnapshotResult> ConfigurationClient::CheckSnapshot(
 GetLabelsPagedResponse ConfigurationClient::GetLabels(
     std::string const& accept,
     GetLabelsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("labels");
@@ -1873,7 +1873,7 @@ GetLabelsPagedResponse ConfigurationClient::GetLabels(
 
 Azure::Response<CheckLabelsResult> ConfigurationClient::CheckLabels(
     CheckLabelsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("labels");
@@ -1921,7 +1921,7 @@ Azure::Response<PutLockResult> ConfigurationClient::PutLock(
     std::string const& key,
     std::string const& accept,
     PutLockOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("locks/");
@@ -2010,7 +2010,7 @@ Azure::Response<DeleteLockResult> ConfigurationClient::DeleteLock(
     std::string const& key,
     std::string const& accept,
     DeleteLockOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("locks/");
@@ -2098,7 +2098,7 @@ Azure::Response<DeleteLockResult> ConfigurationClient::DeleteLock(
 GetRevisionsPagedResponse ConfigurationClient::GetRevisions(
     std::string const& accept,
     GetRevisionsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("revisions");
@@ -2253,7 +2253,7 @@ GetRevisionsPagedResponse ConfigurationClient::GetRevisions(
 
 Azure::Response<CheckRevisionsResult> ConfigurationClient::CheckRevisions(
     CheckRevisionsOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("revisions");
