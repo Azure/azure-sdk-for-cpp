@@ -238,7 +238,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = TableEntityProperty("Tables2");
-    auto updateResponse = m_tableClient->UpdateEntity(entity);
+    auto updateResponse
+        = m_tableClient->UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -246,7 +247,8 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.Properties["Product"] = TableEntityProperty("Tables3");
     entity.SetETag(updateResponse.Value.ETag);
-    auto updateResponse2 = m_tableClient->UpdateEntity(entity);
+    auto updateResponse2
+        = m_tableClient->UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
 
     EXPECT_EQ(
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -345,7 +347,8 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_FALSE(response.Value.ETag.empty());
 
     entity.Properties["Product"] = TableEntityProperty("Tables2");
-    auto updateResponse = m_tableClient->UpdateEntity(entity);
+    auto updateResponse
+        = m_tableClient->UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -353,7 +356,8 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.Properties["Product3"] = TableEntityProperty("Tables3");
     entity.SetETag(updateResponse.Value.ETag);
-    auto updateResponse2 = m_tableClient->UpdateEntity(entity);
+    auto updateResponse2
+        = m_tableClient->UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
 
     EXPECT_EQ(
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
