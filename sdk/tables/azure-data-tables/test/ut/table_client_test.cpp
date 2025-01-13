@@ -348,7 +348,7 @@ namespace Azure { namespace Data { namespace Test {
 
     entity.Properties["Product"] = TableEntityProperty("Tables2");
     auto updateResponse
-        = m_tableClient->UpdateEntity(entity);
+        = m_tableClient->UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
