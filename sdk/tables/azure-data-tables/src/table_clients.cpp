@@ -449,7 +449,7 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
   return Response<Models::AddEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
     Models::TableEntity const& tableEntity,
     Core::Context const& context)
 {
@@ -491,7 +491,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   return Response<Models::UpdateEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
+Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
     Models::TableEntity const& tableEntity,
     Core::Context const& context)
 {
@@ -527,10 +527,26 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::MergeEntityResult response{};
+  Models::UpdateEntityResult response{};
 
   response.ETag = rawResponse->GetHeaders().at("ETag");
-  return Response<Models::MergeEntityResult>(std::move(response), std::move(rawResponse));
+  return Response<Models::UpdateEntityResult>(std::move(response), std::move(rawResponse));
+}
+
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
+    Models::TableEntity const& tableEntity,
+    Models::UpdateMode updateMode,
+    Core::Context const& context)
+{
+  switch (updateMode)
+  {
+    case Models::UpdateMode::Merge: {
+      return MergeEntityImpl(tableEntity, context);
+    }
+    default: {
+      return UpdateEntityImpl(tableEntity, context);
+    }
+  }
 }
 
 Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
@@ -566,20 +582,20 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 
 Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::TableEntity const& tableEntity,
-    Models::UpsertKind upsertKind,
+    Models::UpdateMode updateMode,
     Core::Context const& context)
 {
   try
   {
-    switch (upsertKind)
+    switch (updateMode)
     {
-      case Models::UpsertKind::Merge: {
-        auto response = MergeEntity(tableEntity, context);
+      case Models::UpdateMode::Merge: {
+        auto response = MergeEntityImpl(tableEntity, context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }
       default: {
-        auto response = UpdateEntity(tableEntity, context);
+        auto response = UpdateEntityImpl(tableEntity, context);
         return Azure::Response<Models::UpsertEntityResult>(
             Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
       }

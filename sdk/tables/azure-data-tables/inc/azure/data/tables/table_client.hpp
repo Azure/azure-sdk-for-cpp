@@ -98,28 +98,6 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Update entity in a table.
-     *
-     * @param tableEntity The TableEntity to set.
-     * @param context for canceling long running operations.
-     * @return Update entity result.
-     */
-    Response<Models::UpdateEntityResult> UpdateEntity(
-        Models::TableEntity const& tableEntity,
-        Core::Context const& context = {});
-
-    /**
-     * @brief Merge entity in a table.
-     *
-     * @param tableEntity The TableEntity to merge.
-     * @param context for canceling long running operations.
-     * @return Merge entity result.
-     */
-    Response<Models::MergeEntityResult> MergeEntity(
-        Models::TableEntity const& tableEntity,
-        Core::Context const& context = {});
-
-    /**
      * @brief Deletes the specified entity in a table.
      *
      * @param tableEntity The TableEntity to delete.
@@ -131,16 +109,29 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
+     * @brief Update entity in a table.
+     *
+     * @param tableEntity The TableEntity to set.
+     * @param context for canceling long running operations.
+     * @param updateMode Update mode(update/merge), default merge.
+     * @return Update entity result.
+     */
+    Response<Models::UpdateEntityResult> UpdateEntity(
+        Models::TableEntity const& tableEntity,
+        Models::UpdateMode updateMode = Models::UpdateMode::Merge,
+        Core::Context const& context = {});
+
+    /**
      * @brief Upsert specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
-     * @param upsertKind Upsert kind(update/merge), default update.
+     * @param updateMode Upsert mode(update/merge), default merge.
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */
     Response<Models::UpsertEntityResult> UpsertEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpsertKind upsertKind = Models::UpsertKind::Update,
+        Models::UpdateMode updateMode = Models::UpdateMode::Merge,
         Core::Context const& context = {});
 
     /**
@@ -189,6 +180,28 @@ namespace Azure { namespace Data { namespace Tables {
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyUpdateReplaceOp_Test;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyAddOp_Test;
 #endif
+    /**
+     * @brief Update entity in a table.
+     *
+     * @param tableEntity The TableEntity to set.
+     * @param context for canceling long running operations.
+     * @param updateMode Upsert mode(update/merge), default merge.
+     * @return Update entity result.
+     */
+    Response<Models::UpdateEntityResult> UpdateEntityImpl(
+        Models::TableEntity const& tableEntity,
+        Core::Context const& context = {});
+
+    /**
+     * @brief Merge entity in a table.
+     *
+     * @param tableEntity The TableEntity to merge.
+     * @param context for canceling long running operations.
+     * @return Merge entity result.
+     */
+    Response<Models::UpdateEntityResult> MergeEntityImpl(
+        Models::TableEntity const& tableEntity,
+        Core::Context const& context = {});
 
     std::string PreparePayload(
         std::string const& batchId,
