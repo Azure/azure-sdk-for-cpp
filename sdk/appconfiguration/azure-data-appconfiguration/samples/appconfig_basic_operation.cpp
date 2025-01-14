@@ -10,6 +10,7 @@
 #include <azure/identity.hpp>
 
 #include <iostream>
+#include <thread>
 
 using namespace Azure::Data::AppConfiguration;
 using namespace Azure::Identity;
