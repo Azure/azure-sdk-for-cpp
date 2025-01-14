@@ -74,6 +74,103 @@ static void RetreiveLabels(ConfigurationClient& configurationClient)
 #endif
 }
 
+// Create a snapshot
+static void CreateSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    KeyValueFilter filter;
+    filter.Key = "*";
+
+    Snapshot entity;
+    entity.Filters = {filter};
+    entity.RetentionPeriod = 3600; // 1 hour, minimum allowed value
+
+    CreateSnapshotOptions options;
+
+    Azure::Response<CreateSnapshotResult> createSnapshotResult = configurationClient.CreateSnapshot(
+        CreateSnapshotRequestContentType ::ApplicationJson,
+        "snapshot-name",
+        "accept",
+        entity,
+        options);
+
+    CreateSnapshotResult result = createSnapshotResult.Value;
+
+    if (result.Status.HasValue())
+    {
+      std::cout << " : " << result.Status.Value().ToString() << std::endl; // Provisioning
+    }
+
+    // Manually poll for up to a maximum of 30 seconds.
+    GetOperationDetailsOptions getDetailsOptions;
+    for (int i = 0; i < 30; i++)
+    {
+      Azure::Response<OperationDetails> details
+          = configurationClient.GetOperationDetails("snapshot-name", getDetailsOptions);
+
+      std::cout << details.Value.Status.ToString() << std::endl;
+      if (details.Value.Status == OperationState::Succeeded)
+      {
+        break;
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    std::cout << result.Name; // snapshot-name
+
+    if (result.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << result.RetentionPeriod.Value();
+    }
+
+    if (result.Status.HasValue())
+    {
+      // This should be Ready, but there's no way to update the LRO result with the current
+      // approach. So, it incorrectly states Provisioning.
+      std::cout << " : " << result.Status.Value().ToString();
+    }
+    std::cout << std::endl;
+  }
+
+  // Expected
+
+#if 0
+  {
+    KeyValueFilter filter;
+    filter.Key = "*";
+
+    Snapshot entity;
+    entity.Filters = {filter};
+    entity.RetentionPeriod = 3600; // 1 hour, minimum allowed value
+
+    StartCreateSnapshotOptions options;
+
+    StartCreateSnapshotOperation createSnapshotOperation
+        = configurationClient.StartCreateSnapshot("snapshot-name", entity, options);
+
+    // Waits for the operation to finish, checking for status every 1 second.
+    Azure::Response<Snapshot> snapshotResult
+        = createSnapshotOperation.PollUntilDone(std::chrono::milliseconds(1000));
+    Snapshot snapshot = snapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString(); // Ready
+    }
+    std::cout << std::endl;
+  }
+#endif
+}
+
 int main()
 {
   try
@@ -182,6 +279,9 @@ int main()
 
     // Retreive labels based on filters
     RetreiveLabels(configurationClient);
+
+    // Create a snapshot
+    CreateSnapshot(configurationClient);
 
     // Delete a configuration setting
 
