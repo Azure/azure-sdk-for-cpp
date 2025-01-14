@@ -14,6 +14,66 @@
 using namespace Azure::Data::AppConfiguration;
 using namespace Azure::Identity;
 
+// Retreive labels based on filters
+static void RetreiveLabels(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetLabelsOptions options;
+    // To get all labels, don't set Name or use the any wildcard ("*").
+    options.Name = "production*";
+    options.AcceptDatetime = "Fri, 10 Jan 2025 00:00:00 GMT";
+
+    for (GetLabelsPagedResponse labelsPage = configurationClient.GetLabels("accept", options);
+         labelsPage.HasPage();
+         labelsPage.MoveToNextPage())
+    {
+      if (labelsPage.Items.HasValue())
+      {
+        std::vector<Label> list = labelsPage.Items.Value();
+        std::cout << "Label List Size: " << list.size() << std::endl;
+        for (Label label : list)
+        {
+          if (label.Name.HasValue())
+          {
+            std::cout << label.Name.Value() << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetLabelsOptions options;
+    // To get all labels, don't set Name or use the any wildcard ("*").
+    options.Name = "production*";
+    options.AcceptDatetime = Azure::DateTime(2025, 01, 10, 0, 0, 0);
+
+    for (GetLabelsPagedResponse labelsPage = configurationClient.GetLabels(options);
+         labelsPage.HasPage();
+         labelsPage.MoveToNextPage())
+    {
+      if (labelsPage.Items.HasValue())
+      {
+        std::vector<Label> list = labelsPage.Items.Value();
+        std::cout << "Label List Size: " << list.size() << std::endl;
+        for (Label label : list)
+        {
+          if (label.Name.HasValue())
+          {
+            std::cout << label.Name.Value() << std::endl;
+          }
+        }
+      }
+    }
+  }
+#endif
+}
+
 int main()
 {
   try
@@ -119,6 +179,9 @@ int main()
       }
     }
 #endif
+
+    // Retreive labels based on filters
+    RetreiveLabels(configurationClient);
 
     // Delete a configuration setting
 
