@@ -144,6 +144,76 @@ static void RetrieveConfigurationSettings(ConfigurationClient& configurationClie
 #endif
 }
 
+// Retreive configuration settings for a snapshot
+static void RetrieveConfigurationSettingsForSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetKeyValuesOptions options;
+    options.Snapshot = "snapshot-name";
+
+    for (GetKeyValuesPagedResponse keyValuesPage
+         = configurationClient.GetKeyValues("accept", options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetConfigurationSettingsOptions options;
+    options.Snapshot = "snapshot-name";
+
+    for (GetConfigurationSettingsPagedResponse keyValuesPage
+         = configurationClient.GetConfigurationSettings(options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+#endif
+}
+
 // Retreive snapshots based on filters
 static void RetrieveSnapshots(ConfigurationClient& configurationClient)
 {
@@ -389,6 +459,9 @@ int main()
 
     // Retreive configuration settings based on filters
     RetrieveConfigurationSettings(configurationClient);
+
+    // Retreive configuration settings for a snapshot
+    RetrieveConfigurationSettingsForSnapshot(configurationClient);
 
     // Retreive snapshots based on filters
     RetrieveSnapshots(configurationClient);
