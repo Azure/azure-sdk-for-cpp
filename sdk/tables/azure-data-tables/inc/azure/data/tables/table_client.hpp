@@ -131,18 +131,26 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Upsert specified entity in a table.
+     * @brief Update or insert specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
-     * @param upsertKind Upsert kind(update/merge), default update.
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */
-    Response<Models::UpsertEntityResult> UpsertEntity(
+    Response<Models::UpdateEntityResult> UpdateInsertEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpsertKind upsertKind = Models::UpsertKind::Update,
         Core::Context const& context = {});
 
+    /**
+     * @brief Merge or Insert the specified entity in a table.
+     *
+     * @param tableEntity The TableEntity to upsert.
+     * @param context for canceling long running operations.
+     * @return Upsert entity result.
+     */
+    Response<Models::MergeEntityResult> MergeInsertEntity(
+        Models::TableEntity const& tableEntity,
+        Core::Context const& context = {});
     /**
      * @brief Queries entities in a table.
      *

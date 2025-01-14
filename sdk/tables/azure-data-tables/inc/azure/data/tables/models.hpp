@@ -103,7 +103,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryTablesPagedResponse(std::shared_ptr<TableServiceClient> tableServiceClient)
-          : m_tableServiceClient(std::move(tableServiceClient)){};
+          : m_tableServiceClient(std::move(tableServiceClient)) {};
 
       friend class Azure::Data::Tables::TableServiceClient;
       friend class Azure::Core::PagedResponse<QueryTablesPagedResponse>;
@@ -547,16 +547,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Upsert Kind
-     *
-     */
-    enum class UpsertKind
-    {
-      Update,
-      Merge,
-    };
-
-    /**
      * @brief Add Entity result.
      *
      */
@@ -598,47 +588,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct DeleteEntityResult final
     {
-    };
-
-    /**
-     * @brief Upsert Entity result.
-     *
-     */
-    struct UpsertEntityResult final : public MergeEntityResult, UpdateEntityResult, AddEntityResult
-    {
-      /**
-       * ETag
-       */
-      std::string ETag;
-      /**
-       * @brief Upsert Entity result default constructor.
-       *
-       */
-      UpsertEntityResult() = default;
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Merge Entity result.
-       */
-      UpsertEntityResult(MergeEntityResult const& other)
-          : MergeEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Update Entity result.
-       */
-      UpsertEntityResult(UpdateEntityResult const& other)
-          : UpdateEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Add Entity result.
-       */
-      UpsertEntityResult(AddEntityResult const& other) : AddEntityResult(other), ETag(other.ETag) {}
     };
 
     /**
@@ -705,7 +654,7 @@ namespace Azure { namespace Data { namespace Tables {
 
     private:
       QueryEntitiesPagedResponse(std::shared_ptr<TableClient> tableClient)
-          : m_tableClient(std::move(tableClient)){};
+          : m_tableClient(std::move(tableClient)) {};
 
       std::shared_ptr<TableClient> m_tableClient;
       friend class Azure::Data::Tables::TableClient;

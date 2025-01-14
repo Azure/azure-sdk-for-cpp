@@ -564,32 +564,37 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
   return Response<Models::DeleteEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
     Models::TableEntity const& tableEntity,
-    Models::UpsertKind upsertKind,
     Core::Context const& context)
 {
   try
   {
-    switch (upsertKind)
-    {
-      case Models::UpsertKind::Merge: {
-        auto response = MergeEntity(tableEntity, context);
-        return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
-      }
-      default: {
-        auto response = UpdateEntity(tableEntity, context);
-        return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
-      }
-    }
+    return UpdateEntity(tableEntity, context);
   }
   catch (const Azure::Core::RequestFailedException&)
   {
     auto response = AddEntity(tableEntity, context);
-    return Azure::Response<Models::UpsertEntityResult>(
-        Models::UpsertEntityResult(response.Value), std::move(response.RawResponse));
+
+    return Azure::Response<Models::UpdateEntityResult>(
+        Models::UpdateEntityResult{response.Value.ETag}, std::move(response.RawResponse));
+  }
+}
+
+Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
+    Models::TableEntity const& tableEntity,
+    Core::Context const& context)
+{
+  try
+  {
+    return MergeEntity(tableEntity, context);
+  }
+  catch (const Azure::Core::RequestFailedException&)
+  {
+    auto response = AddEntity(tableEntity, context);
+
+    return Azure::Response<Models::MergeEntityResult>(
+        Models::MergeEntityResult{response.Value.ETag}, std::move(response.RawResponse));
   }
 }
 
