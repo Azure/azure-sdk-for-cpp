@@ -2,19 +2,12 @@
 # Licensed under the MIT License.
 # cspell: ignore JOBID depsfile
 
-param (
-  [string]$PackageName
-)
 
 # Load common ES scripts
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
 
+# Create the test binary *outside* the repo root to avoid polluting the repo.
 $WorkingDirectory = ([System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
-
-if (-not $PackageName) {
-  Write-Host "PackageName parameter not provided."
-  exit 1
-}
 
 # Create the working directory if it does not exist.
 Write-Host "Using Working Directory $WorkingDirectory"
@@ -31,16 +24,15 @@ Push-Location -Path $WorkingDirectory
 try {
 
   $repositoryUrl = "https://github.com/Azure/azure-amqp.git"
-  # $repositoryRelease = "v2.6.9"
-  # $cloneCommand = "git clone $repositoryUrl --branch $repositoryRelease"
-  $cloneCommand = "git clone $repositoryUrl"
+  # We would like to use the "hotfix" branch because that is current, but unfortunately it references System.Net.Security version 4.0.0
+  $repositoryBranch = "master"
+  $cloneCommand = "git clone $repositoryUrl --branch $repositoryBranch"
 
   Write-Host "Cloning repository from $repositoryUrl..."
   Invoke-LoggedCommand $cloneCommand
 
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
-  #  Invoke-LoggedCommand "dotnet publish --self-contained --framework net6.0"
   Invoke-LoggedCommand "dotnet build -p RollForward=LatestMajor --framework net6.0"
   if (!$? -ne 0) {
     Write-Error "Failed to build TestAmqpBroker."
@@ -55,20 +47,6 @@ try {
   Write-Host "Starting test broker listening on ${env:TEST_BROKER_ADDRESS} ..."
 
   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0
-
-  #  if ($IsLinux) {
-  #    Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0/linux-x64/publish
-  #  }
-  #  elseif ($IsMacOS) {
-  #    Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0/osx-x64/publish
-  #  }
-  #  else {
-  #    Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0/win-x64/publish
-  #  }
-
-
-  #  $job = ./TestAmqpBroker $($env:TEST_BROKER_ADDRESS) /headless &
-  Get-ChildItem -filter TestAmqpBroker*
 
   $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
 
