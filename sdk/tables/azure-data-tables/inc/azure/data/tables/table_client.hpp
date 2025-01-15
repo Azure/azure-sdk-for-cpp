@@ -133,7 +133,7 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Update or insert specified entity in a table.
      *
-     * @param tableEntity The TableEntity to upsert.
+     * @param tableEntity The TableEntity to update or insert.
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */
@@ -144,7 +144,7 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Merge or insert the specified entity in a table.
      *
-     * @param tableEntity The TableEntity to upsert.
+     * @param tableEntity The TableEntity to merge or insert.
      * @param context for canceling long running operations.
      * @return Upsert entity result.
      */

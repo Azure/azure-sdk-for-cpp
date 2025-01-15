@@ -572,12 +572,19 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
   {
     return UpdateEntity(tableEntity, context);
   }
-  catch (const Azure::Core::RequestFailedException&)
+  catch (const Azure::Core::RequestFailedException& rfe)
   {
-    auto response = AddEntity(tableEntity, context);
+    if (rfe.StatusCode == Core::Http::HttpStatusCode::NotFound)
+    {
+      auto response = AddEntity(tableEntity, context);
 
-    return Azure::Response<Models::UpdateEntityResult>(
-        Models::UpdateEntityResult{response.Value.ETag}, std::move(response.RawResponse));
+      return Azure::Response<Models::UpdateEntityResult>(
+          Models::UpdateEntityResult{response.Value.ETag}, std::move(response.RawResponse));
+    }
+    else
+    {
+      throw rfe;
+    }
   }
 }
 
@@ -589,12 +596,19 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
   {
     return MergeEntity(tableEntity, context);
   }
-  catch (const Azure::Core::RequestFailedException&)
+  catch (const Azure::Core::RequestFailedException& rfe)
   {
-    auto response = AddEntity(tableEntity, context);
+    if (rfe.StatusCode == Core::Http::HttpStatusCode::NotFound)
+    {
+      auto response = AddEntity(tableEntity, context);
 
-    return Azure::Response<Models::MergeEntityResult>(
-        Models::MergeEntityResult{response.Value.ETag}, std::move(response.RawResponse));
+      return Azure::Response<Models::MergeEntityResult>(
+          Models::MergeEntityResult{response.Value.ETag}, std::move(response.RawResponse));
+    }
+    else
+    {
+      throw rfe;
+    }
   }
 }
 
