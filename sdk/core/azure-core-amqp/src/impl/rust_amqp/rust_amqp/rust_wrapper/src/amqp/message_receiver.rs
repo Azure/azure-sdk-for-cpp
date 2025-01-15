@@ -146,21 +146,25 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
                     trace!("Polling for message");
                     let delivery = message_receiver.receive_delivery().await;
                     if let Err(err) = delivery {
-                        error!("Failed to send error to channel: {:?}", err);
-                        break;
-                    }
-                    let delivery = delivery.unwrap();
-                    if let Err(err) = message_receiver.accept_delivery(&delivery).await {
-                        error!("Failed to accept delivery: {:?}", err);
+                        error!("Receive delivery failed: {:?}", err);
                         if let Err(send_err) = tx.send(Err(err)) {
                             error!("Failed to send error to channel: {:?}", send_err);
-                            break;
                         }
                         break;
-                    }
-                    if let Err(err) = tx.send(Ok(delivery.into_message())) {
-                        error!("Failed to send message to channel: {:?}", err);
-                        break;
+                    } else {
+                        let delivery = delivery.unwrap();
+                        if let Err(err) = message_receiver.accept_delivery(&delivery).await {
+                            error!("Failed to accept delivery: {:?}", err);
+                            if let Err(send_err) = tx.send(Err(err)) {
+                                error!("Failed to send error to channel: {:?}", send_err);
+                                break;
+                            }
+                            break;
+                        }
+                        if let Err(err) = tx.send(Ok(delivery.into_message())) {
+                            error!("Failed to send message to channel: {:?}", err);
+                            break;
+                        }
                     }
                 }
             })
@@ -219,88 +223,6 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
         0
     }
 }
-
-// #[no_mangle]
-// unsafe extern "C" fn amqpmessagereceiver_receive_message(
-//     call_context: *mut RustCallContext,
-//     receiver: *mut RustAmqpMessageReceiver,
-// ) -> *mut RustAmqpMessage {
-//     if receiver.is_null() {
-//         call_context_from_ptr_mut(call_context).set_error(error_from_str("Null message receiver."));
-//         return std::ptr::null_mut();
-//     }
-
-//     let receiver = &mut *receiver;
-//     let call_context = call_context_from_ptr_mut(call_context);
-//     trace!("Starting to receive message");
-
-//     let result = call_context
-//         .runtime_context()
-//         .runtime()
-//         .block_on(receiver.inner.receive());
-//     trace!("Received message");
-//     match result {
-//         Ok(message) => Box::into_raw(Box::new(RustAmqpMessage::from(message))),
-//         Err(err) => {
-//             error!("Failed to receive message: {:?}", err);
-//             call_context.set_error(Box::new(err));
-//             std::ptr::null_mut()
-//         }
-//     }
-// }
-
-// struct RustMessageReceiverChannel {
-//     inner: std::sync::mpsc::Receiver<Result<AmqpMessage>>,
-//     task: tokio::task::JoinHandle<()>,
-// }
-
-// impl RustMessageReceiverChannel {
-//     fn new(
-//         receiver: std::sync::mpsc::Receiver<Result<AmqpMessage>>,
-//         task: tokio::task::JoinHandle<()>,
-//     ) -> Self {
-//         Self {
-//             inner: receiver,
-//             task,
-//         }
-//     }
-// }
-
-// /// Destroy a RustMessageReceiverFuture
-// #[no_mangle]
-// unsafe extern "C" fn amqpmessagereceiverchannel_destroy(
-//     call_context: *mut RustCallContext,
-//     channel: *mut RustMessageReceiverChannel,
-// ) {
-//     if !channel.is_null() {
-//         let channel = Box::from_raw(channel);
-//         trace!("Destroying MessageReceiverChannel");
-//         //      let call_context = call_context_from_ptr_mut(call_context);
-//         channel.task.abort();
-//         trace!("Aborted task.");
-//         //        let res = call_context
-//         //            .runtime_context()
-//         //            .runtime()
-//         //            .block_on(async { channel.task.await });
-//         //    trace!("Task joined: {:?}.", res);
-//     }
-// }
-
-// #[no_mangle]
-// unsafe extern "C" fn amqpmessagereceiver_receive_message_async(
-//     call_context: *mut RustCallContext,
-//     receiver: *mut RustAmqpMessageReceiver,
-// ) -> i32 {
-//     let call_context = call_context_from_ptr_mut(call_context);
-//     if receiver.is_null() {
-//         call_context.set_error(error_from_str("Null message receiver."));
-//         return -1;
-//     }
-
-//     let receiver = &mut *receiver;
-
-//     0
-// }
 
 #[no_mangle]
 unsafe extern "C" fn amqpmessagereceiver_receive_message_async_poll(
