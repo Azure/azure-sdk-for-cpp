@@ -592,7 +592,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert Entity result.
      *
      */
-    struct UpsertEntityResult final 
+    struct UpsertEntityResult final
     {
       /**
        * ETag
