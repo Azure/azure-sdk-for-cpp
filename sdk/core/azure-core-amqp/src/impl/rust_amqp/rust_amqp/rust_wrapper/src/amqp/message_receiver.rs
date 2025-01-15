@@ -12,7 +12,7 @@ use crate::{
 };
 use azure_core::Result;
 use azure_core_amqp::{
-    messaging::AmqpMessage,
+    messaging::{AmqpDeliveryApis, AmqpMessage},
     receiver::{AmqpReceiver, AmqpReceiverApis, AmqpReceiverOptions, ReceiverCreditMode},
     value::{AmqpOrderedMap, AmqpSymbol, AmqpValue},
 };
@@ -144,8 +144,21 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
             spawn(async move {
                 loop {
                     trace!("Polling for message");
-                    let message = message_receiver.receive().await;
-                    if let Err(err) = tx.send(message) {
+                    let delivery = message_receiver.receive_delivery().await;
+                    if let Err(err) = delivery {
+                        error!("Failed to send error to channel: {:?}", err);
+                        break;
+                    }
+                    let delivery = delivery.unwrap();
+                    if let Err(err) = message_receiver.accept_delivery(&delivery).await {
+                        error!("Failed to accept delivery: {:?}", err);
+                        if let Err(send_err) = tx.send(Err(err)) {
+                            error!("Failed to send error to channel: {:?}", send_err);
+                            break;
+                        }
+                        break;
+                    }
+                    if let Err(err) = tx.send(Ok(delivery.into_message())) {
                         error!("Failed to send message to channel: {:?}", err);
                         break;
                     }
