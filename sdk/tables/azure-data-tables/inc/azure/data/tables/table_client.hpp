@@ -142,7 +142,7 @@ namespace Azure { namespace Data { namespace Tables {
         Core::Context const& context = {});
 
     /**
-     * @brief Merge or Insert the specified entity in a table.
+     * @brief Merge or insert the specified entity in a table.
      *
      * @param tableEntity The TableEntity to upsert.
      * @param context for canceling long running operations.
