@@ -123,7 +123,7 @@ extends:
     AdditionalArguments: ${{ parameters.AdditionalArguments }}
     InstallLanguageSteps: 
       - pwsh: |
-          Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+          Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://azuresdkartifacts.blob.core.windows.net/public-vcpkg-container,,read"
         displayName: Set Vcpkg Variables
 
     EnvVars: 

@@ -329,7 +329,7 @@
         "issecret",
         "PSScriptRoot",
         "BUILDID",
-        "cppvcpkgcache",
+        "azuresdkartifacts",
         "cmakegenerate",
         "cmakesourcegenerate"
       ]
