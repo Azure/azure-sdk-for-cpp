@@ -33,6 +33,7 @@ uuid = { workspace = true }
 
 [dev-dependencies]
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
+tokio = { workspace = true }
 
 [features]
 default = ["fe2o3-amqp"]
@@ -46,7 +47,6 @@ fe2o3-amqp = [
   "serde_bytes",
 ]
 cplusplus = []
-test_e2e = []
 
 [package.metadata.docs.rs]
 features = ["fe2o3-amqp"]
