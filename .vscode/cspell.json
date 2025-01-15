@@ -331,7 +331,8 @@
         "BUILDID",
         "azuresdkartifacts",
         "cmakegenerate",
-        "cmakesourcegenerate"
+        "cmakesourcegenerate",
+        "rwcl"
       ]
     },
     {
