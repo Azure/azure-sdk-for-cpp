@@ -451,6 +451,7 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
     Models::TableEntity const& tableEntity,
+    bool upsertMode,
     Core::Context const& context)
 {
   auto url = m_url;
@@ -469,15 +470,17 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!tableEntity.GetETag().Value.empty())
+  if (!upsertMode)
   {
-    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    if (!tableEntity.GetETag().Value.empty())
+    {
+      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    }
+    else
+    {
+      request.SetHeader(IfMatch, "*");
+    }
   }
-  else
-  {
-    request.SetHeader(IfMatch, "*");
-  }
-
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -493,6 +496,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
 
 Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
     Models::TableEntity const& tableEntity,
+    bool upsertMode,
     Core::Context const& context)
 {
   auto url = m_url;
@@ -511,15 +515,17 @@ Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!tableEntity.GetETag().Value.empty())
+  if (!upsertMode)
   {
-    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    if (!tableEntity.GetETag().Value.empty())
+    {
+      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    }
+    else
+    {
+      request.SetHeader(IfMatch, "*");
+    }
   }
-  else
-  {
-    request.SetHeader(IfMatch, "*");
-  }
-
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -541,10 +547,10 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   switch (updateMode)
   {
     case Models::UpdateMode::Merge: {
-      return MergeEntityImpl(tableEntity, context);
+      return MergeEntityImpl(tableEntity, false, context);
     }
     default: {
-      return UpdateEntityImpl(tableEntity, context);
+      return UpdateEntityImpl(tableEntity, false, context);
     }
   }
 }
@@ -592,12 +598,12 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   switch (updateMode)
   {
     case Models::UpdateMode::Merge: {
-      auto response = MergeEntityImpl(tableEntityInternal, context);
+      auto response = MergeEntityImpl(tableEntityInternal, true, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
     default: {
-      auto response = UpdateEntityImpl(tableEntityInternal, context);
+      auto response = UpdateEntityImpl(tableEntityInternal, true, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
