@@ -584,7 +584,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  
+
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -618,7 +618,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
- 
+
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
