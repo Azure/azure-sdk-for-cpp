@@ -585,33 +585,21 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::UpdateMode updateMode,
     Core::Context const& context)
 {
-  try
+  Models::TableEntity tableEntityInternal = tableEntity;
+  // since the only diff between update and upsert is the lack of etag in upsert
+  // remove ETag from the entity
+  tableEntityInternal.SetETag("");
+  switch (updateMode)
   {
-    switch (updateMode)
-    {
-      case Models::UpdateMode::Merge: {
-        auto response = MergeEntityImpl(tableEntity, context);
-        return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
-      }
-      default: {
-        auto response = UpdateEntityImpl(tableEntity, context);
-        return Azure::Response<Models::UpsertEntityResult>(
-            Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
-      }
-    }
-  }
-  catch (const Azure::Core::RequestFailedException& rfe)
-  {
-    if (rfe.StatusCode == Core::Http::HttpStatusCode::NotFound)
-    {
-      auto response = AddEntity(tableEntity, context);
+    case Models::UpdateMode::Merge: {
+      auto response = MergeEntityImpl(tableEntityInternal, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
-    else
-    {
-      throw rfe;
+    default: {
+      auto response = UpdateEntityImpl(tableEntityInternal, context);
+      return Azure::Response<Models::UpsertEntityResult>(
+          Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
   }
 }
