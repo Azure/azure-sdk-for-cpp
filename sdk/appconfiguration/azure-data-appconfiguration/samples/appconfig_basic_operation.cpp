@@ -493,6 +493,181 @@ static void RetrieveRevisions(ConfigurationClient& configurationClient)
 #endif
 }
 
+// Retrieve a snapshot
+static void RetrieveSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    Azure::Response<GetSnapshotResult> getSnapshotResult
+        = configurationClient.GetSnapshot("snapshot-name", "accept");
+
+    GetSnapshotResult result = getSnapshotResult.Value;
+
+    std::cout << result.Name; // snapshot-name
+
+    if (result.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << result.RetentionPeriod.Value();
+    }
+
+    if (result.Status.HasValue())
+    {
+      std::cout << " : " << result.Status.Value().ToString();
+    }
+    std::cout << std::endl;
+  }
+
+  // Expected
+
+#if 0
+  {
+    Azure::Response<Snapshot> getSnapshotResult = configurationClient.GetSnapshot("snapshot-name");
+
+    Snapshot snapshot = getSnapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString();
+    }
+    std::cout << std::endl;
+  }
+#endif
+}
+
+// Archive a snapshot
+static void ArchiveSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    SnapshotUpdateParameters entity = {};
+    entity.Status = SnapshotStatus::Archived;
+
+    Azure::Response<UpdateSnapshotResult> updateSnapshotResult = configurationClient.UpdateSnapshot(
+        UpdateSnapshotRequestContentType::ApplicationMergePatchJson,
+        "snapshot-name",
+        "accept",
+        entity);
+
+    UpdateSnapshotResult result = updateSnapshotResult.Value;
+
+    std::cout << result.Name; // snapshot-name
+
+    if (result.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << result.RetentionPeriod.Value();
+    }
+
+    if (result.Status.HasValue())
+    {
+      std::cout << " : " << result.Status.Value().ToString();
+    }
+
+    if (result.Expires.HasValue())
+    {
+      std::cout << " : " << result.Expires.Value();
+    }
+
+    std::cout << std::endl;
+  }
+
+  // Expected
+
+#if 0
+  {
+    Azure::Response<Snapshot> archiveSnapshotResult
+        = configurationClient.ArchiveSnapshot("snapshot-name");
+
+    Snapshot snapshot = archiveSnapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString();
+    }
+
+    if (snapshot.Expires.HasValue())
+    {
+      std::cout << " : " << snapshot.Expires.Value();
+    }
+
+    std::cout << std::endl;
+  }
+#endif
+}
+
+// Recover a snapshot
+static void RecoverSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    SnapshotUpdateParameters entity = {};
+    entity.Status = SnapshotStatus::Ready;
+
+    Azure::Response<UpdateSnapshotResult> updateSnapshotResult = configurationClient.UpdateSnapshot(
+        UpdateSnapshotRequestContentType::ApplicationMergePatchJson,
+        "snapshot-name",
+        "accept",
+        entity);
+
+    UpdateSnapshotResult result = updateSnapshotResult.Value;
+
+    std::cout << result.Name; // snapshot-name
+
+    if (result.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << result.RetentionPeriod.Value();
+    }
+
+    if (result.Status.HasValue())
+    {
+      std::cout << " : " << result.Status.Value().ToString();
+    }
+
+    std::cout << " : Has expires value? " << result.Expires.HasValue() << std::endl;
+  }
+
+  // Expected
+
+#if 0
+  {
+    Azure::Response<Snapshot> recoverSnapshotResult
+        = configurationClient.RecoverSnapshot("snapshot-name");
+
+    Snapshot snapshot = recoverSnapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString();
+    }
+
+    std::cout << " : Has expires value? " << snapshot.Expires.HasValue() << std::endl;
+  }
+#endif
+}
+
 int main()
 {
   try
@@ -635,6 +810,15 @@ int main()
 
     // Retreive revisions based on filters
     RetrieveRevisions(configurationClient);
+
+    // Retrieve a snapshot
+    RetrieveSnapshot(configurationClient);
+
+    // Archive a snapshot
+    ArchiveSnapshot(configurationClient);
+
+    // Recover a snapshot
+    RecoverSnapshot(configurationClient);
 
     // Delete a configuration setting
 
