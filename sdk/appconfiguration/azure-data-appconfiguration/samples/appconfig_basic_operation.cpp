@@ -10,6 +10,7 @@
 #include <azure/identity.hpp>
 
 #include <iostream>
+#include <thread>
 
 using namespace Azure::Data::AppConfiguration;
 using namespace Azure::Identity;
@@ -89,27 +90,27 @@ static void SetConfigurationSetting(ConfigurationClient& configurationClient)
   // Expected
 
 #if 0
+  {
+    ConfigurationSetting setting;
+    setting.Key = "some-key";
+    setting.Value = "another-value";
+
+    SetSettingOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<ConfigurationSetting> setResult
+        = configurationClient.SetConfigurationSetting(setting, options);
+
+    ConfigurationSetting result = setResult.Value;
+    Azure::Nullable<std::string> valueOfKey = result.Value;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (valueOfKey.HasValue())
     {
-      ConfigurationSetting setting;
-      setting.Key = "some-key";
-      setting.Value = "another-value";
-
-      SetSettingOptions options;
-      options.Label = "some-label";
-
-      Azure::Response<ConfigurationSetting> setResult
-          = configurationClient.SetConfigurationSetting(setting, options);
-
-      ConfigurationSetting result = setResult.Value;
-      Azure::Nullable<std::string> valueOfKey = result.Value;
-
-      std::cout << result.Key << std::endl; // some-key
-
-      if (valueOfKey.HasValue())
-      {
-        std::cout << valueOfKey.Value() << std::endl; // another-value
-      }
+      std::cout << valueOfKey.Value() << std::endl; // another-value
     }
+  }
 #endif
 }
 
@@ -668,6 +669,118 @@ static void RecoverSnapshot(ConfigurationClient& configurationClient)
 #endif
 }
 
+// Create a snapshot
+static void CreateSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    KeyValueFilter filter;
+    filter.Key = "*";
+
+    Snapshot entity;
+    entity.Filters = {filter};
+    entity.RetentionPeriod = 3600; // 1 hour, minimum allowed value
+
+    CreateSnapshotOptions options;
+
+    Azure::Response<CreateSnapshotResult> createSnapshotResult = configurationClient.CreateSnapshot(
+        CreateSnapshotRequestContentType ::ApplicationJson,
+        "snapshot-name",
+        "accept",
+        entity,
+        options);
+
+    CreateSnapshotResult result = createSnapshotResult.Value;
+
+    if (result.Status.HasValue())
+    {
+      std::cout << result.Status.Value().ToString() << std::endl; // Provisioning
+    }
+
+    // Manually poll for up to a maximum of 30 seconds.
+    GetOperationDetailsOptions getDetailsOptions;
+    for (int i = 0; i < 30; i++)
+    {
+      Azure::Response<OperationDetails> details
+          = configurationClient.GetOperationDetails("snapshot-name", getDetailsOptions);
+
+      std::cout << details.Value.Status.ToString() << std::endl;
+      if (details.Value.Status == OperationState::Succeeded)
+      {
+        break;
+      }
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
+
+    Azure::Response<GetSnapshotResult> getSnapshotResult
+        = configurationClient.GetSnapshot("snapshot-name", "accept");
+
+    GetSnapshotResult snapshot = getSnapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString(); // Ready
+    }
+    std::cout << std::endl;
+  }
+
+  // Expected
+
+#if 0
+  {
+    KeyValueFilter filter;
+    filter.Key = "*";
+
+    Snapshot entity;
+    entity.Filters = {filter};
+    entity.RetentionPeriod = 3600; // 1 hour, minimum allowed value
+
+    StartCreateSnapshotOptions options;
+
+    StartCreateSnapshotOperation createSnapshotOperation
+        = configurationClient.StartCreateSnapshot("snapshot-name", entity, options);
+
+    Snapshot result = createSnapshotOperation.GetInitialResult();
+
+    if (result.Status.HasValue())
+    {
+      std::cout << result.Status.Value().ToString() << std::endl; // Provisioning
+    }
+
+    // Waits for the operation to finish, checking for status every 1 second.
+    Azure::Response<OperationDetails> operationResult
+        = createSnapshotOperation.PollUntilDone(std::chrono::milliseconds(1000));
+
+    std::cout << operationResult.Value.Status.ToString() << std::endl; // Succeeded
+
+    Azure::Response<Snapshot> getSnapshotResult = configurationClient.GetSnapshot("snapshot-name");
+
+    Snapshot snapshot = getSnapshotResult.Value;
+
+    std::cout << snapshot.Name; // snapshot-name
+
+    if (snapshot.RetentionPeriod.HasValue())
+    {
+      std::cout << " : " << snapshot.RetentionPeriod.Value();
+    }
+
+    if (snapshot.Status.HasValue())
+    {
+      std::cout << " : " << snapshot.Status.Value().ToString(); // Ready
+    }
+    std::cout << std::endl;
+  }
+#endif
+}
+
 int main()
 {
   try
@@ -819,6 +932,9 @@ int main()
 
     // Recover a snapshot
     RecoverSnapshot(configurationClient);
+
+    // Create a snapshot
+    CreateSnapshot(configurationClient);
 
     // Delete a configuration setting
 
