@@ -14,6 +14,151 @@
 using namespace Azure::Data::AppConfiguration;
 using namespace Azure::Identity;
 
+// Make the setting read-only
+static void SetReadOnly(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    PutLockOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<PutLockResult> putLockResult
+        = configurationClient.PutLock("some-key", "accept", options);
+
+    PutLockResult result = putLockResult.Value;
+    Azure::Nullable<bool> isLocked = result.Locked;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (isLocked.HasValue())
+    {
+      std::cout << "isLocked: " << isLocked.Value() << std::endl; // true
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    SetReadOnlyOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<ConfigurationSetting> setReadOnlyResult
+        = configurationClient.SetReadOnly("some-key", true, options);
+
+    ConfigurationSetting result = setReadOnlyResult.Value;
+    Azure::Nullable<bool> isReadOnly = result.IsReadOnly;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (isReadOnly.HasValue())
+    {
+      std::cout << "isReadOnly: " << isReadOnly.Value() << std::endl; // true
+    }
+  }
+#endif
+}
+
+// Try modifying a read-only setting and then modify a read-write setting
+static void SetConfigurationSetting(ConfigurationClient& configurationClient)
+{
+  // Current
+  {
+    KeyValue entity;
+    entity.Value = "another-value";
+
+    PutKeyValueOptions options;
+    options.Label = "some-label";
+    options.Entity = entity;
+
+    Azure::Response<PutKeyValueResult> putKeyValueResult = configurationClient.PutKeyValue(
+        PutKeyValueRequestContentType::ApplicationJson, "some-key", "accept", options);
+
+    PutKeyValueResult result = putKeyValueResult.Value;
+    Azure::Nullable<std::string> valueOfKey = result.Value;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (valueOfKey.HasValue())
+    {
+      std::cout << valueOfKey.Value() << std::endl; // another-value
+    }
+  }
+
+  // Expected
+
+#if 0
+    {
+      ConfigurationSetting setting;
+      setting.Key = "some-key";
+      setting.Value = "another-value";
+
+      SetSettingOptions options;
+      options.Label = "some-label";
+
+      Azure::Response<ConfigurationSetting> setResult
+          = configurationClient.SetConfigurationSetting(setting, options);
+
+      ConfigurationSetting result = setResult.Value;
+      Azure::Nullable<std::string> valueOfKey = result.Value;
+
+      std::cout << result.Key << std::endl; // some-key
+
+      if (valueOfKey.HasValue())
+      {
+        std::cout << valueOfKey.Value() << std::endl; // another-value
+      }
+    }
+#endif
+}
+
+// Make the setting read-write
+static void SetReadWrite(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    DeleteLockOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<DeleteLockResult> deleteLockResult
+        = configurationClient.DeleteLock("some-key", "accept", options);
+
+    DeleteLockResult result = deleteLockResult.Value;
+    Azure::Nullable<bool> isLocked = result.Locked;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (isLocked.HasValue())
+    {
+      std::cout << "isLocked: " << isLocked.Value() << std::endl; // false
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    SetReadOnlyOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<ConfigurationSetting> setReadOnlyResult
+        = configurationClient.SetReadOnly("some-key", false, options);
+
+    ConfigurationSetting result = setReadOnlyResult.Value;
+    Azure::Nullable<bool> isReadOnly = result.IsReadOnly;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (isReadOnly.HasValue())
+    {
+      std::cout << "isReadOnly: " << isReadOnly.Value() << std::endl; // false
+    }
+  }
+#endif
+}
+
 // Retreive labels based on filters
 static void RetrieveLabels(ConfigurationClient& configurationClient)
 {
@@ -454,6 +599,28 @@ int main()
     }
 #endif
 
+    // Make the setting read-only
+    SetReadOnly(configurationClient);
+
+    try
+    {
+      // Trying to modify a read-only setting is expected to throw an exception because it cannot be
+      // updated.
+      SetConfigurationSetting(configurationClient);
+    }
+    catch (Azure::Core::RequestFailedException const& e)
+    {
+      std::cout << "Client request failed error when trying to modify a read-only setting:"
+                << std::endl
+                << e.what() << std::endl;
+    }
+
+    // Make the setting read-write
+    SetReadWrite(configurationClient);
+
+    // Trying to modify a read-write setting should succeed
+    SetConfigurationSetting(configurationClient);
+
     // Retreive labels based on filters
     RetrieveLabels(configurationClient);
 
@@ -484,7 +651,7 @@ int main()
 
       if (valueOfKey.HasValue())
       {
-        std::cout << valueOfKey.Value() << std::endl; // some-value
+        std::cout << valueOfKey.Value() << std::endl; // another-value
       }
       else
       {
@@ -507,7 +674,7 @@ int main()
 
       if (valueOfKey.HasValue())
       {
-        std::cout << valueOfKey.Value() << std::endl; // some-value
+        std::cout << valueOfKey.Value() << std::endl; // another-value
       }
       else
       {
