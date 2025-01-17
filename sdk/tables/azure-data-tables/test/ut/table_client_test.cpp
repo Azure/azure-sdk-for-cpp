@@ -234,6 +234,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
+    entity.SetETag(response.Value.ETag);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -263,6 +264,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
+    entity.SetETag(response.Value.ETag);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -343,7 +345,7 @@ namespace Azure { namespace Data { namespace Test {
     auto response = m_tableClient->UpdateInsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
-
+    entity.SetETag(response.Value.ETag);
     entity.Properties["Product"] = TableEntityProperty("Tables2");
     auto updateResponse = m_tableClient->MergeEntity(entity);
 
@@ -372,7 +374,7 @@ namespace Azure { namespace Data { namespace Test {
     auto response = m_tableClient->MergeInsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
-
+    entity.SetETag(response.Value.ETag);
     entity.Properties["Product"] = TableEntityProperty("Tables2");
     auto updateResponse = m_tableClient->UpdateEntity(entity);
 
