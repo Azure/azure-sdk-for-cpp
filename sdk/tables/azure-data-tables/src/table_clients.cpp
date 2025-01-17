@@ -311,7 +311,6 @@ Azure::Response<Models::Table> TableServiceClient::CreateTable(
   Models::Table response{};
   {
     auto const& responseBody = rawResponse->GetBody();
-    std::string responseString = std::string(responseBody.begin(), responseBody.end());
     if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -361,7 +360,6 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
   Models::QueryTablesPagedResponse response{std::make_shared<TableServiceClient>(*this)};
   {
     auto const& responseBody = rawResponse->GetBody();
-    std::string responseString = std::string(responseBody.begin(), responseBody.end());
     if (responseBody.size() > 0)
     {
       auto const jsonRoot
@@ -623,7 +621,6 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
   Models::TableEntity response{};
   {
     const auto& responseBody = rawResponse->GetBody();
-    std::string responseString = std::string(responseBody.begin(), responseBody.end());
 
     auto const jsonRoot
         = Azure::Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
@@ -683,7 +680,6 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
   Models::QueryEntitiesPagedResponse response(std::make_shared<TableClient>(*this));
   {
     const auto& responseBody = rawResponse->GetBody();
-    std::string responseString = std::string(responseBody.begin(), responseBody.end());
 
     auto headers = rawResponse->GetHeaders();
     if (headers.find("x-ms-continuation-NextPartitionKey") != headers.end())
