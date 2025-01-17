@@ -182,12 +182,10 @@ namespace Azure { namespace Data { namespace Tables {
 #endif
     Response<Models::UpdateEntityResult> UpdateEntityImpl(
         Models::TableEntity const& tableEntity,
-        bool upsertMode,
         Core::Context const& context = {}) const;
 
     Response<Models::UpdateEntityResult> MergeEntityImpl(
         Models::TableEntity const& tableEntity,
-        bool upsertMode,
         Core::Context const& context = {}) const;
 
     std::string PreparePayload(

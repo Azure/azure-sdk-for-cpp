@@ -451,7 +451,6 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
     Models::TableEntity const& tableEntity,
-    bool upsertMode,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -470,16 +469,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!upsertMode)
+  if (!tableEntity.GetETag().Value.empty())
   {
-    if (!tableEntity.GetETag().Value.empty())
-    {
-      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
-    }
-    else
-    {
-      request.SetHeader(IfMatch, "*");
-    }
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -496,7 +488,6 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
 
 Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
     Models::TableEntity const& tableEntity,
-    bool upsertMode,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -515,16 +506,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!upsertMode)
+  if (!tableEntity.GetETag().Value.empty())
   {
-    if (!tableEntity.GetETag().Value.empty())
-    {
-      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
-    }
-    else
-    {
-      request.SetHeader(IfMatch, "*");
-    }
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
@@ -547,10 +531,10 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   switch (updateMode)
   {
     case Models::UpdateMode::Merge: {
-      return MergeEntityImpl(tableEntity, false, context);
+      return MergeEntityImpl(tableEntity, context);
     }
     default: {
-      return UpdateEntityImpl(tableEntity, false, context);
+      return UpdateEntityImpl(tableEntity, context);
     }
   }
 }
@@ -598,12 +582,12 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
   switch (updateMode)
   {
     case Models::UpdateMode::Merge: {
-      auto response = MergeEntityImpl(tableEntityInternal, true, context);
+      auto response = MergeEntityImpl(tableEntityInternal, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
     default: {
-      auto response = UpdateEntityImpl(tableEntityInternal, true, context);
+      auto response = UpdateEntityImpl(tableEntityInternal, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
@@ -840,7 +824,8 @@ std::string TableClient::PreparePayload(
   accumulator += "--" + batchId + "\n";
   return accumulator;
 }
-std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::TableEntity entity) const
+std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::TableEntity entity)
+    const
 {
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
