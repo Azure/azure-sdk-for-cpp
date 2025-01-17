@@ -90,27 +90,27 @@ static void SetConfigurationSetting(ConfigurationClient& configurationClient)
   // Expected
 
 #if 0
+  {
+    ConfigurationSetting setting;
+    setting.Key = "some-key";
+    setting.Value = "another-value";
+
+    SetSettingOptions options;
+    options.Label = "some-label";
+
+    Azure::Response<ConfigurationSetting> setResult
+        = configurationClient.SetConfigurationSetting(setting, options);
+
+    ConfigurationSetting result = setResult.Value;
+    Azure::Nullable<std::string> valueOfKey = result.Value;
+
+    std::cout << result.Key << std::endl; // some-key
+
+    if (valueOfKey.HasValue())
     {
-      ConfigurationSetting setting;
-      setting.Key = "some-key";
-      setting.Value = "another-value";
-
-      SetSettingOptions options;
-      options.Label = "some-label";
-
-      Azure::Response<ConfigurationSetting> setResult
-          = configurationClient.SetConfigurationSetting(setting, options);
-
-      ConfigurationSetting result = setResult.Value;
-      Azure::Nullable<std::string> valueOfKey = result.Value;
-
-      std::cout << result.Key << std::endl; // some-key
-
-      if (valueOfKey.HasValue())
-      {
-        std::cout << valueOfKey.Value() << std::endl; // another-value
-      }
+      std::cout << valueOfKey.Value() << std::endl; // another-value
     }
+  }
 #endif
 }
 
@@ -695,7 +695,7 @@ static void CreateSnapshot(ConfigurationClient& configurationClient)
 
     if (result.Status.HasValue())
     {
-      std::cout << " : " << result.Status.Value().ToString() << std::endl; // Provisioning
+      std::cout << result.Status.Value().ToString() << std::endl; // Provisioning
     }
 
     // Manually poll for up to a maximum of 30 seconds.
@@ -747,6 +747,13 @@ static void CreateSnapshot(ConfigurationClient& configurationClient)
 
     StartCreateSnapshotOperation createSnapshotOperation
         = configurationClient.StartCreateSnapshot("snapshot-name", entity, options);
+
+    Snapshot result = createSnapshotOperation.GetInitialResult();
+
+    if (result.Status.HasValue())
+    {
+      std::cout << result.Status.Value().ToString() << std::endl; // Provisioning
+    }
 
     // Waits for the operation to finish, checking for status every 1 second.
     Azure::Response<OperationDetails> operationResult
