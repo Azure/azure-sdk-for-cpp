@@ -473,7 +473,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
-  
+
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -511,7 +511,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
-  
+
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
