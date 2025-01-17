@@ -107,9 +107,10 @@ public:
   {
     if (m_hasValue > 0)
     {
-      m_hasValue = 0;
       m_value.~T();
     }
+
+    m_hasValue = 0;
   }
 
   /**
