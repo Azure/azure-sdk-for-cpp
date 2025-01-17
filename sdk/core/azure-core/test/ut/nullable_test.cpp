@@ -289,3 +289,109 @@ TEST(Nullable, ConstexprAndRvalue)
   std::string str(Nullable<std::string>(std::string("hello")).Value());
   EXPECT_EQ(str, "hello");
 }
+
+TEST(Nullable, NullValue)
+{
+  {
+    Nullable<int> null = _detail::NullableHelper::CreateNull<int>();
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    null.Reset();
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(null));
+
+    _detail::NullableHelper::SetNull(null);
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+  }
+  {
+    Nullable<int> empty;
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(empty));
+
+    _detail::NullableHelper::SetNull(empty);
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(empty));
+
+    empty = Nullable<int>();
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(empty));
+  }
+  {
+    Nullable<int> value = 1;
+    EXPECT_TRUE(value.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(value));
+    _detail::NullableHelper::SetNull(value);
+
+    EXPECT_FALSE(value.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(value));
+
+    value = 1;
+    EXPECT_TRUE(value.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(value));
+  }
+  {
+    Nullable<int> null{_detail::NullableHelper::CreateNull<int>()};
+    Nullable<int> empty;
+    Nullable<int> value{1};
+
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(empty));
+
+    EXPECT_TRUE(value.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(value));
+
+    null.Swap(empty);
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(empty));
+
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(null));
+
+    empty.Swap(null);
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    EXPECT_FALSE(empty.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(empty));
+
+    null.Swap(value);
+    EXPECT_TRUE(null.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(null));
+
+    EXPECT_FALSE(value.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(value));
+
+    value.Swap(null);
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    EXPECT_TRUE(value.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(value));
+  }
+  {
+    auto null = _detail::NullableHelper::CreateNull<int>();
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    null.Emplace(1);
+    EXPECT_TRUE(null.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(null));
+
+    _detail::NullableHelper::SetNull(null);
+    EXPECT_FALSE(null.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
+
+    Nullable<long> null2 = null;
+    EXPECT_FALSE(null2.HasValue());
+    EXPECT_TRUE(_detail::NullableHelper::IsNull(null2));
+
+    null2 = 2L;
+    EXPECT_TRUE(null2.HasValue());
+    EXPECT_FALSE(_detail::NullableHelper::IsNull(null2));
+  }
+}
