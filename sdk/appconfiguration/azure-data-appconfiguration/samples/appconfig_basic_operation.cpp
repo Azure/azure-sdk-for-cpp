@@ -713,10 +713,10 @@ static void CreateSnapshot(ConfigurationClient& configurationClient)
       std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
-    Azure::Response<Snapshot> getSnapshotResult
+    Azure::Response<GetSnapshotResult> getSnapshotResult
         = configurationClient.GetSnapshot("snapshot-name", "accept");
 
-    Snapshot snapshot = getSnapshotResult.Value;
+    GetSnapshotResult snapshot = getSnapshotResult.Value;
 
     std::cout << snapshot.Name; // snapshot-name
 
