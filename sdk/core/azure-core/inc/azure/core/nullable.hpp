@@ -405,7 +405,7 @@ namespace _detail {
 
     template <typename T> static constexpr bool IsNull(Nullable<T> const& nullable)
     {
-      return nullable.m_hasValue == -1;
+      return nullable.m_hasValue < 0;
     }
   };
 } // namespace _detail
