@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added internal support for representing null values in `Nullable<T>`. 
+
 ## 1.15.0-beta.2 (2025-01-09)
 
 ### Features Added
