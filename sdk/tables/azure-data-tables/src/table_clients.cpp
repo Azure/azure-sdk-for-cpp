@@ -575,19 +575,15 @@ Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::UpdateMode updateMode,
     Core::Context const& context) const
 {
-  Models::TableEntity tableEntityInternal = tableEntity;
-  // since the only diff between update and upsert is the lack of etag in upsert
-  // remove ETag from the entity
-  tableEntityInternal.SetETag("");
   switch (updateMode)
   {
     case Models::UpdateMode::Merge: {
-      auto response = MergeEntityImpl(tableEntityInternal, context);
+      auto response = MergeEntityImpl(tableEntity, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
     default: {
-      auto response = UpdateEntityImpl(tableEntityInternal, context);
+      auto response = UpdateEntityImpl(tableEntity, context);
       return Azure::Response<Models::UpsertEntityResult>(
           Models::UpsertEntityResult{response.Value.ETag}, std::move(response.RawResponse));
     }
