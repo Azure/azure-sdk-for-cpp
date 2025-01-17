@@ -473,11 +473,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
-  else
-  {
-    request.SetHeader(IfMatch, "*");
-  }
-
+  
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -515,11 +511,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
-  else
-  {
-    request.SetHeader(IfMatch, "*");
-  }
-
+  
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -568,68 +560,14 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {
-  auto url = m_url;
-  url.AppendPath(Azure::Core::Url::Encode(
-      m_tableName + PartitionKeyFragment + tableEntity.GetPartitionKey().Value + RowKeyFragment
-      + tableEntity.GetRowKey().Value + ClosingFragment));
-
-  std::string jsonBody = Serializers::UpdateEntity(tableEntity);
-
-  Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
-
-  Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
-
-  request.SetHeader(ContentTypeHeader, ContentTypeJson);
-  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
-  request.SetHeader(AcceptHeader, AcceptFullMeta);
-  request.SetHeader(PreferHeader, PreferNoContent);
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Models::UpdateEntityResult response{};
-
-  response.ETag = rawResponse->GetHeaders().at("ETag");
-  return Response<Models::UpdateEntityResult>(std::move(response), std::move(rawResponse));
+  return UpdateEntity(tableEntity, context);
 }
 
 Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {
-  auto url = m_url;
-  url.AppendPath(Azure::Core::Url::Encode(
-      m_tableName + PartitionKeyFragment + tableEntity.GetPartitionKey().Value + RowKeyFragment
-      + tableEntity.GetRowKey().Value + ClosingFragment));
-
-  std::string jsonBody = Serializers::MergeEntity(tableEntity);
-
-  Core::IO::MemoryBodyStream requestBody(
-      reinterpret_cast<std::uint8_t const*>(jsonBody.data()), jsonBody.length());
-
-  Core::Http::Request request(Core::Http::HttpMethod::Patch, url, &requestBody);
-
-  request.SetHeader(ContentTypeHeader, ContentTypeJson);
-  request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
-  request.SetHeader(AcceptHeader, AcceptFullMeta);
-  request.SetHeader(PreferHeader, PreferNoContent);
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-  if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Models::MergeEntityResult response{};
-
-  response.ETag = rawResponse->GetHeaders().at("ETag");
-  return Response<Models::MergeEntityResult>(std::move(response), std::move(rawResponse));
+  return MergeEntity(tableEntity, context);
 }
 
 void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
