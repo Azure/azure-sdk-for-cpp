@@ -140,7 +140,7 @@ public:
       std::swap(m_hasValue, other.m_hasValue);
       other.m_value.~T();
     }
-    else
+    else if (m_hasValue != other.m_hasValue)
     {
       std::swap(m_value, other.m_value);
     }
@@ -201,7 +201,7 @@ public:
           int>::type
       = 0>
   Nullable& operator=(U&& other) noexcept(
-      std::is_nothrow_constructible<T, U>::value && std::is_nothrow_assignable<T&, U>::value)
+      std::is_nothrow_constructible<T, U>::value&& std::is_nothrow_assignable<T&, U>::value)
   {
     if (m_hasValue > 0)
     {

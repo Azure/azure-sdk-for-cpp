@@ -386,11 +386,11 @@ TEST(Nullable, NullValue)
     EXPECT_FALSE(null.HasValue());
     EXPECT_TRUE(_detail::NullableHelper::IsNull(null));
 
-    Nullable<long> null2 = null;
+    Nullable<int> null2 = null;
     EXPECT_FALSE(null2.HasValue());
     EXPECT_TRUE(_detail::NullableHelper::IsNull(null2));
 
-    null2 = 2L;
+    null2 = 2;
     EXPECT_TRUE(null2.HasValue());
     EXPECT_FALSE(_detail::NullableHelper::IsNull(null2));
   }
