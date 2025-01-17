@@ -15,7 +15,7 @@ using namespace Azure::Data::AppConfiguration;
 using namespace Azure::Identity;
 
 // Retreive labels based on filters
-static void RetreiveLabels(ConfigurationClient& configurationClient)
+static void RetrieveLabels(ConfigurationClient& configurationClient)
 {
   // Current
 
@@ -66,6 +66,280 @@ static void RetreiveLabels(ConfigurationClient& configurationClient)
           if (label.Name.HasValue())
           {
             std::cout << label.Name.Value() << std::endl;
+          }
+        }
+      }
+    }
+  }
+#endif
+}
+
+// Retreive key values based on filters
+static void RetrieveConfigurationSettings(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetKeyValuesOptions options;
+    options.Label = "production*";
+
+    for (GetKeyValuesPagedResponse keyValuesPage
+         = configurationClient.GetKeyValues("accept", options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetConfigurationSettingsOptions options;
+    options.Label = "production*";
+
+    for (GetConfigurationSettingsPagedResponse keyValuesPage
+         = configurationClient.GetConfigurationSettings(options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+#endif
+}
+
+// Retreive configuration settings for a snapshot
+static void RetrieveConfigurationSettingsForSnapshot(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetKeyValuesOptions options;
+    options.Snapshot = "snapshot-name";
+
+    for (GetKeyValuesPagedResponse keyValuesPage
+         = configurationClient.GetKeyValues("accept", options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetConfigurationSettingsOptions options;
+    options.Snapshot = "snapshot-name";
+
+    for (GetConfigurationSettingsPagedResponse keyValuesPage
+         = configurationClient.GetConfigurationSettings(options);
+         keyValuesPage.HasPage();
+         keyValuesPage.MoveToNextPage())
+    {
+      if (keyValuesPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = keyValuesPage.Items.Value();
+        std::cout << "KeyValues List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+#endif
+}
+
+// Retreive snapshots based on filters
+static void RetrieveSnapshots(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetSnapshotsOptions options;
+    options.Name = "production*";
+    options.Status = {SnapshotStatus::Ready, SnapshotStatus::Archived};
+
+    for (GetSnapshotsPagedResponse snapshotsPage
+         = configurationClient.GetSnapshots("accept", options);
+         snapshotsPage.HasPage();
+         snapshotsPage.MoveToNextPage())
+    {
+      if (snapshotsPage.Items.HasValue())
+      {
+        std::vector<Snapshot> list = snapshotsPage.Items.Value();
+        std::cout << "Snapshot List Size: " << list.size() << std::endl;
+        for (Snapshot snapshot : list)
+        {
+          std::cout << snapshot.Name;
+
+          if (snapshot.RetentionPeriod.HasValue())
+            std::cout << " : " << snapshot.RetentionPeriod.Value();
+
+          if (snapshot.Status.HasValue())
+            std::cout << " : " << snapshot.Status.Value().ToString();
+          std::cout << std::endl;
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetSnapshotsOptions options;
+    options.Name = "production*";
+    options.Status = {SnapshotStatus::Ready, SnapshotStatus::Archived};
+
+    for (GetSnapshotsPagedResponse snapshotsPage = configurationClient.GetSnapshots(options);
+         snapshotsPage.HasPage();
+         snapshotsPage.MoveToNextPage())
+    {
+      if (snapshotsPage.Items.HasValue())
+      {
+        std::vector<Snapshot> list = snapshotsPage.Items.Value();
+        std::cout << "Snapshot List Size: " << list.size() << std::endl;
+        for (Snapshot snapshot : list)
+        {
+          std::cout << snapshot.Name;
+
+          if (snapshot.RetentionPeriod.HasValue())
+            std::cout << " : " << snapshot.RetentionPeriod.Value();
+
+          if (snapshot.Status.HasValue())
+            std::cout << " : " << snapshot.Status.Value().ToString();
+          std::cout << std::endl;
+        }
+      }
+    }
+  }
+#endif
+}
+
+// Retreive revisions based on filters
+static void RetrieveRevisions(ConfigurationClient& configurationClient)
+{
+  // Current
+
+  {
+    GetRevisionsOptions options;
+    options.Key = "some-key";
+
+    for (GetRevisionsPagedResponse revisionsPage
+         = configurationClient.GetRevisions("accept", options);
+         revisionsPage.HasPage();
+         revisionsPage.MoveToNextPage())
+    {
+      if (revisionsPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = revisionsPage.Items.Value();
+        std::cout << "Revisions List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
+          }
+        }
+      }
+    }
+  }
+
+  // Expected
+
+#if 0
+  {
+    GetRevisionsOptions options;
+    options.Key = "some-key";
+
+    for (GetRevisionsPagedResponse revisionsPage = configurationClient.GetRevisions(options);
+         revisionsPage.HasPage();
+         revisionsPage.MoveToNextPage())
+    {
+      if (revisionsPage.Items.HasValue())
+      {
+        std::vector<KeyValue> list = revisionsPage.Items.Value();
+        std::cout << "Revisions List Size: " << list.size() << std::endl;
+        for (KeyValue keyValue : list)
+        {
+          Azure::Nullable<std::string> valueOfKey = keyValue.Value;
+          if (valueOfKey.HasValue())
+          {
+            std::cout << keyValue.Key << " : " << valueOfKey.Value() << std::endl;
+          }
+          else
+          {
+            std::cout << "Value for: '" << keyValue.Key << "' does not exist." << std::endl;
           }
         }
       }
@@ -181,7 +455,19 @@ int main()
 #endif
 
     // Retreive labels based on filters
-    RetreiveLabels(configurationClient);
+    RetrieveLabels(configurationClient);
+
+    // Retreive configuration settings based on filters
+    RetrieveConfigurationSettings(configurationClient);
+
+    // Retreive configuration settings for a snapshot
+    RetrieveConfigurationSettingsForSnapshot(configurationClient);
+
+    // Retreive snapshots based on filters
+    RetrieveSnapshots(configurationClient);
+
+    // Retreive revisions based on filters
+    RetrieveRevisions(configurationClient);
 
     // Delete a configuration setting
 
