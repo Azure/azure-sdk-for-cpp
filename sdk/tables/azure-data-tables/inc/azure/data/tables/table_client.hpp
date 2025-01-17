@@ -95,7 +95,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::AddEntityResult> AddEntity(
         Models::TableEntity const& tableEntity,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Deletes the specified entity in a table.
@@ -106,7 +106,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::DeleteEntityResult> DeleteEntity(
         Models::TableEntity const& tableEntity,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Update entity in a table.
@@ -119,7 +119,7 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
         Models::UpdateMode updateMode = Models::UpdateMode::Merge,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Upsert specified entity in a table.
@@ -132,7 +132,7 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::UpsertEntityResult> UpsertEntity(
         Models::TableEntity const& tableEntity,
         Models::UpdateMode updateMode = Models::UpdateMode::Merge,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Queries entities in a table.
@@ -143,7 +143,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Queries a single entity in a table.
@@ -156,7 +156,7 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::TableEntity> GetEntity(
         std::string const& partitionKey,
         std::string const& rowKey,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Submits a transaction.
@@ -167,7 +167,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         std::vector<Models::TransactionStep> const& steps,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
   private:
 #ifdef _azure_TABLES_TESTING_BUILD
@@ -183,22 +183,22 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::UpdateEntityResult> UpdateEntityImpl(
         Models::TableEntity const& tableEntity,
         bool upsertMode,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     Response<Models::UpdateEntityResult> MergeEntityImpl(
         Models::TableEntity const& tableEntity,
         bool upsertMode,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     std::string PreparePayload(
         std::string const& batchId,
         std::string const& changesetId,
-        std::vector<Models::TransactionStep> const& steps);
-    std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepInsertEntity(std::string const& changesetId, Models::TableEntity entity);
+        std::vector<Models::TransactionStep> const& steps) const;
+    std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepInsertEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;

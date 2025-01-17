@@ -82,7 +82,7 @@ TableClient TableServiceClient::GetTableClient(
 
 Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck(
     Models::PreflightCheckOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(options.TableName));
@@ -104,7 +104,7 @@ Azure::Response<Models::PreflightCheckResult> TableServiceClient::PreflightCheck
 
 Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServiceProperties(
     Models::SetServicePropertiesOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   std::string xmlBody = Serializers::SetServiceProperties(options);
   auto url = m_url;
@@ -133,7 +133,7 @@ Azure::Response<Models::SetServicePropertiesResult> TableServiceClient::SetServi
 }
 
 Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServiceProperties(
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendQueryParameter(ResourceTypeHeader, ResourceTypeService);
@@ -156,7 +156,7 @@ Azure::Response<Models::TableServiceProperties> TableServiceClient::GetServicePr
 }
 
 Azure::Response<Models::ServiceStatistics> TableServiceClient::GetStatistics(
-    const Core::Context& context)
+    const Core::Context& context) const
 {
   auto url = m_url;
   std::string host = url.GetHost();
@@ -285,7 +285,7 @@ TableClient::TableClient(
 
 Azure::Response<Models::Table> TableServiceClient::CreateTable(
     std::string const& tableName,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("Tables");
@@ -397,7 +397,7 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
 
 Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
     std::string const& tableName,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("Tables('" + Azure::Core::Url::Encode(tableName) + ClosingFragment);
@@ -421,7 +421,7 @@ Azure::Response<Models::DeleteTableResult> TableServiceClient::DeleteTable(
 
 Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
     Models::TableEntity const& tableEntity,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(m_tableName));
@@ -452,7 +452,7 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
     Models::TableEntity const& tableEntity,
     bool upsertMode,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(
@@ -497,7 +497,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
 Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
     Models::TableEntity const& tableEntity,
     bool upsertMode,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(
@@ -542,7 +542,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::MergeEntityImpl(
 Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
     Models::TableEntity const& tableEntity,
     Models::UpdateMode updateMode,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   switch (updateMode)
   {
@@ -557,7 +557,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
 
 Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
     Models::TableEntity const& tableEntity,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(
@@ -589,7 +589,7 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
 Azure::Response<Models::UpsertEntityResult> TableClient::UpsertEntity(
     Models::TableEntity const& tableEntity,
     Models::UpdateMode updateMode,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   Models::TableEntity tableEntityInternal = tableEntity;
   // since the only diff between update and upsert is the lack of etag in upsert
@@ -620,7 +620,7 @@ void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& 
 Azure::Response<Models::TableEntity> TableClient::GetEntity(
     const std::string& partitionKey,
     const std::string& rowKey,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath(Azure::Core::Url::Encode(
@@ -652,7 +652,7 @@ Azure::Response<Models::TableEntity> TableClient::GetEntity(
 
 Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
     Models::QueryEntitiesOptions const& options,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   if (!options.NextPartitionKey.empty() && !options.NextRowKey.empty())
@@ -739,7 +739,7 @@ Models::QueryEntitiesPagedResponse TableClient::QueryEntities(
 
 Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
     std::vector<Models::TransactionStep> const& steps,
-    Core::Context const& context)
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("$batch");
@@ -808,7 +808,7 @@ Azure::Response<Models::SubmitTransactionResult> TableClient::SubmitTransaction(
 std::string TableClient::PreparePayload(
     std::string const& batchId,
     std::string const& changesetId,
-    std::vector<Models::TransactionStep> const& steps)
+    std::vector<Models::TransactionStep> const& steps) const
 {
   std::string accumulator
       = "--" + batchId + "\nContent-Type: multipart/mixed; boundary=" + changesetId + "\n\n";
@@ -840,7 +840,7 @@ std::string TableClient::PreparePayload(
   accumulator += "--" + batchId + "\n";
   return accumulator;
 }
-std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::TableEntity entity)
+std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::TableEntity entity) const
 {
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
@@ -857,7 +857,7 @@ std::string TableClient::PrepAddEntity(std::string const& changesetId, Models::T
 }
 std::string TableClient::PrepDeleteEntity(
     std::string const& changesetId,
-    Models::TableEntity entity)
+    Models::TableEntity entity) const
 {
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
@@ -883,6 +883,7 @@ std::string TableClient::PrepDeleteEntity(
 }
 
 std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity)
+    const
 {
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
@@ -902,7 +903,7 @@ std::string TableClient::PrepMergeEntity(std::string const& changesetId, Models:
 
 std::string TableClient::PrepUpdateEntity(
     std::string const& changesetId,
-    Models::TableEntity entity)
+    Models::TableEntity entity) const
 {
   std::string returnValue = "--" + changesetId + "\n";
   returnValue += "Content-Type: application/http\n";
@@ -931,7 +932,7 @@ std::string TableClient::PrepUpdateEntity(
 
 std::string TableClient::PrepInsertEntity(
     std::string const& changesetId,
-    Models::TableEntity entity)
+    Models::TableEntity entity) const
 {
   std::string payload = Serializers::UpdateEntity(entity);
   std::string returnValue = "--" + changesetId + "\n";
