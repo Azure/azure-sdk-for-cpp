@@ -131,7 +131,7 @@ public:
       else
       {
         ::new (static_cast<void*>(&other.m_value)) T(std::move(m_value)); // throws
-        std::swap(other.m_hasValue, m_hasValue);
+        std::swap(m_hasValue, other.m_hasValue);
         m_value.~T();
       }
     }
@@ -143,7 +143,7 @@ public:
     }
     else if (m_hasValue != other.m_hasValue)
     {
-      std::swap(m_value, other.m_value);
+      std::swap(m_hasValue, other.m_hasValue);
     }
   }
 
