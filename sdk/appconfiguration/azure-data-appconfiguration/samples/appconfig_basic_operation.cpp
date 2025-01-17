@@ -152,9 +152,15 @@ static void CreateSnapshot(ConfigurationClient& configurationClient)
         = configurationClient.StartCreateSnapshot("snapshot-name", entity, options);
 
     // Waits for the operation to finish, checking for status every 1 second.
-    Azure::Response<Snapshot> snapshotResult
+    Azure::Response<OperationDetails> operationResult
         = createSnapshotOperation.PollUntilDone(std::chrono::milliseconds(1000));
-    Snapshot snapshot = snapshotResult.Value;
+
+    std::cout << operationResult.Value.Status.ToString() << std::endl; // Succeeded
+
+    Azure::Response<Snapshot> getSnapshotResult
+        = configurationClient.GetSnapshot("snapshot-name", "accept");
+
+    Snapshot snapshot = getSnapshotResult.Value;
 
     std::cout << snapshot.Name; // snapshot-name
 
