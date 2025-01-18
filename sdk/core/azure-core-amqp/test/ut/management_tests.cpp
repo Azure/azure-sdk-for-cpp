@@ -14,57 +14,158 @@
 #undef USE_NATIVE_BROKER
 #endif
 
-#if defined(USE_NATIVE_BROKER)
-constexpr const uint16_t nativeBrokerPort = 25672;
-#else
+#if !defined(USE_NATIVE_BROKER)
 #include "mock_amqp_server.hpp"
+#else
+#include <azure/core/internal/environment.hpp>
+#include <azure/core/url.hpp>
 #endif
+
 #include <gtest/gtest.h>
 
 // cspell: ignore abcdabcd
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  using namespace Azure::Core::Amqp::_internal;
 
   class TestManagement : public testing::Test {
   protected:
-    void SetUp() override {}
+    void SetUp() override
+    {
+#if defined(USE_NATIVE_BROKER)
+      auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
+      if (testBrokerUrl.empty())
+      {
+        GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+      }
+      Azure::Core::Url brokerUrl(testBrokerUrl);
+      m_brokerEndpoint = brokerUrl;
+#else
+      m_brokerEndpoint
+          = Azure::Core::Url("amqp://localhost:" + std::to_string(m_mockServer.GetPort()));
+#endif
+    }
     void TearDown() override
-    { // When the test is torn down, the global state MUST be idle. If it is not, something
-      // leaked.
+    { // When the test is torn down, the global state MUST be idle. If it is not,
+      // something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
+
+    std::string GetBrokerEndpoint() { return m_brokerEndpoint.GetAbsoluteUrl(); }
+
+    std::uint16_t GetPort() { return m_brokerEndpoint.GetPort(); }
+
+    auto CreateAmqpConnection(
+        std::string const& containerId
+        = testing::UnitTest::GetInstance()->current_test_info()->name(),
+        bool enableTracing = false,
+        Azure::Core::Context const& context = {})
+    {
+      ConnectionOptions options;
+      options.ContainerId = containerId;
+      options.EnableTrace = enableTracing;
+      options.Port = GetPort();
+
+      auto connection = Connection("localhost", nullptr, options);
+#if ENABLE_RUST_AMQP
+      connection.Open(context);
+#endif
+      return connection;
+      (void)context;
+    }
+    auto CreateAmqpSession(Connection const& connection, Context const& context = {})
+    {
+      auto session = connection.CreateSession();
+#if ENABLE_RUST_AMQP
+      session.Begin(context);
+#endif
+      return session;
+      (void)context;
+    }
+
+    void CloseAmqpConnection(Connection& connection, Azure::Core::Context const& context = {})
+    {
+#if ENABLE_RUST_AMQP
+      connection.Close(context);
+#endif
+      (void)connection;
+      (void)context;
+    }
+    void EndAmqpSession(Session& session, Azure::Core::Context const& context = {})
+    {
+#if ENABLE_RUST_AMQP
+      session.End(context);
+#endif
+      (void)session;
+      (void)context;
+    }
+
+    void StartServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StartListening();
+#endif
+    }
+
+    void StopServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StopListening();
+#endif
+    }
+
+  private:
+    Azure::Core::Url m_brokerEndpoint{};
+#if !defined(USE_NATIVE_BROKER)
+    MessageTests::AmqpServerMock m_mockServer;
+#endif
   };
 
   using namespace Azure::Core::Amqp::Models;
-  using namespace Azure::Core::Amqp::_internal;
 
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZ_PLATFORM_MAC) || defined(ENABLE_RUST_AMQP)
   TEST_F(TestManagement, BasicTests)
   {
     {
-      ConnectionOptions options;
-      options.Port = 5151;
-      Connection connection("localhost", nullptr, options);
+      auto connection{CreateAmqpConnection()};
+      auto session{CreateAmqpSession(connection)};
 
-      Session session{connection.CreateSession({})};
       ManagementClient management(session.CreateManagementClient("Test", {}));
+      EndAmqpSession(session);
+      CloseAmqpConnection(connection);
     }
   }
+
+  #if !defined(ENABLE_RUST_AMQP)
+  // With Rust AMQP, this failure is triggere when the connection is opened, so we can't test it
+  // in the context of the management APIs.
   TEST_F(TestManagement, ManagementOpenCloseNoListener)
   {
     ConnectionOptions options;
     options.Port = 5151;
     Connection connection("localhost", nullptr, options);
 
+#if ENABLE_RUST_AMQP
+    EXPECT_NO_THROW(connection.Open({}));
+#endif
+
     Session session{connection.CreateSession({})};
+#if ENABLE_RUST_AMQP
+    EXPECT_NO_THROW(session.Begin({}));
+#endif
     ManagementClient management(session.CreateManagementClient("Test", {}));
 
     // EXPECT_ANY_THROW(management.Open());
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Error);
-  }
 
-#if ENABLE_UAMQP
+    management.Close();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+  #endif
+
+#if !defined(USE_NATIVE_BROKER)
   namespace {
     class ManagementServiceEndpoint final : public MessageTests::MockServiceEndpoint {
     public:
@@ -159,96 +260,88 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestManagement, ManagementOpenClose)
   {
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
+#if !defined(USE_NATIVE_BROKER)
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(endpoint);
+    m_mockServer.AddServiceEndpoint(endpoint);
 
-    ConnectionOptions connectionOptions;
-    connectionOptions.Port = mockServer.GetPort();
-    Connection connection("localhost", nullptr, connectionOptions);
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
 
-    Session session{connection.CreateSession({})};
     ManagementClientOptions options;
     options.EnableTrace = 1;
     ManagementClient management(session.CreateManagementClient("Test", options));
 
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
 
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
 #else
 #endif
   }
 
   TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
   {
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
+#if !defined(USE_NATIVE_BROKER)
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(endpoint);
+    m_mockServer.AddServiceEndpoint(endpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
         + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
-    ConnectionOptions connectionOptions;
-    connectionOptions.Port = mockServer.GetPort();
-    connectionOptions.EnableTrace = true;
-    Connection connection("localhost", sasCredential, connectionOptions);
+    auto connection{CreateAmqpConnection()};
 
-    Session session{connection.CreateSession({})};
+    auto session{CreateAmqpSession(connection)};
     ManagementClientOptions options;
     options.EnableTrace = 1;
     ManagementClient management(session.CreateManagementClient("Test", options));
 
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
 
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
 #else
 #endif
   }
 
   TEST_F(TestManagement, ManagementOpenCloseAuthenticatedFail)
   {
-#if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
+#if !defined(USE_NATIVE_BROKER)
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(endpoint);
+    m_mockServer.AddServiceEndpoint(endpoint);
 
     auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
         "Endpoint=amqp://localhost:" + std::to_string(mockServer.GetPort())
         + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
-    ConnectionOptions connectionOptions;
-    connectionOptions.Port = mockServer.GetPort();
-    connectionOptions.EnableTrace = true;
-    Connection connection("localhost", sasCredential, connectionOptions);
-
-    Session session{connection.CreateSession({})};
+    auto connection(CreateAmqpConnection());
+    auto session(CreateAmqpSession(connection));
     ManagementClientOptions options;
     options.EnableTrace = 1;
     ManagementClient management(session.CreateManagementClient("Test", options));
 
     // Force an authentication error.
-    mockServer.ForceCbsError(true);
+    m_mockServer.ForceCbsError(true);
 
-    mockServer.StartListening();
+    StartServerListening();
 
     try
     {
@@ -263,7 +356,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     {
       GTEST_LOG_(INFO) << "Caught exception: " << e.what();
     }
-    mockServer.StopListening();
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
 #else
 #endif
   }
@@ -298,7 +393,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
-#if !defined(AZ_PLATFORM_MAC)
+#if !defined(AZ_PLATFORM_MAC) || defined(ENABLE_RUST_AMQP)
 #if ENABLE_UAMQP
   namespace {
 

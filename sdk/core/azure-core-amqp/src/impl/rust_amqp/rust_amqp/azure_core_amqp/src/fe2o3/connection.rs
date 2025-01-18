@@ -173,7 +173,7 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
                     Ok(())
                 }
                 _ => {
-                    warn!("Error detaching receiver: {:?}", e);
+                    warn!("Error closing connection: {:?}", e);
                     Err(e.into())
                 }
             },

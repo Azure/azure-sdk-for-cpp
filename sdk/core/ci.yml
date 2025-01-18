@@ -53,7 +53,9 @@ extends:
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 88
       BranchCoverageTarget: 68
-#      PreTestSteps:
+      PreTestSteps:
+        - pwsh: |
+            $(Build.SourceDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -77,7 +79,9 @@ extends:
 #          displayName: Verify Proxy Server Working Correctly.
 #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-#      PostTestSteps:
+      PostTestSteps:
+        - pwsh: |
+            $(Build.SourceDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
 #        - pwsh: |
 #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
