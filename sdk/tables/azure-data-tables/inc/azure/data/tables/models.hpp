@@ -547,10 +547,10 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Upsert Kind
+     * @brief Update Mode
      *
      */
-    enum class UpsertKind
+    enum class UpdateMode
     {
       Update,
       Merge,
@@ -560,7 +560,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Add Entity result.
      *
      */
-    struct AddEntityResult
+    struct AddEntityResult final
     {
       /**
        * ETag
@@ -572,19 +572,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Update Entity result.
      *
      */
-    struct UpdateEntityResult
-    {
-      /**
-       * ETag
-       */
-      std::string ETag;
-    };
-
-    /**
-     * @brief Merge Entity result.
-     *
-     */
-    struct MergeEntityResult
+    struct UpdateEntityResult final
     {
       /**
        * ETag
@@ -604,41 +592,12 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief Upsert Entity result.
      *
      */
-    struct UpsertEntityResult final : public MergeEntityResult, UpdateEntityResult, AddEntityResult
+    struct UpsertEntityResult final
     {
       /**
        * ETag
        */
       std::string ETag;
-      /**
-       * @brief Upsert Entity result default constructor.
-       *
-       */
-      UpsertEntityResult() = default;
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Merge Entity result.
-       */
-      UpsertEntityResult(MergeEntityResult const& other)
-          : MergeEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Update Entity result.
-       */
-      UpsertEntityResult(UpdateEntityResult const& other)
-          : UpdateEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Add Entity result.
-       */
-      UpsertEntityResult(AddEntityResult const& other) : AddEntityResult(other), ETag(other.ETag) {}
     };
 
     /**

@@ -46,13 +46,14 @@ int main()
   // update entity
   std::cout << response.Value.ETag << std::endl;
   entity.Properties["Product"] = Azure::Data::Tables::Models::TableEntityProperty("Tables2");
-  auto updateResponse = tableClient.UpdateEntity(entity);
+  auto updateResponse
+      = tableClient.UpdateEntity(entity, Azure::Data::Tables::Models::UpdateMode::Update);
   std::cout << updateResponse.Value.ETag << std::endl;
 
   // merge entity
   entity.Properties["Product"] = Azure::Data::Tables::Models::TableEntityProperty("Tables3");
   entity.SetETag(updateResponse.Value.ETag);
-  auto updateResponse2 = tableClient.MergeEntity(entity);
+  auto updateResponse2 = tableClient.UpdateEntity(entity);
 
   // delete entity
   std::cout << updateResponse2.Value.ETag << std::endl;
