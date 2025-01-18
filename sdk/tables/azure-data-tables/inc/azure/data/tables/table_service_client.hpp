@@ -59,7 +59,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::Table> CreateTable(
         std::string const& tableName,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Operation permanently deletes the specified table.
@@ -70,7 +70,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::DeleteTableResult> DeleteTable(
         std::string const& tableName,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Queries tables under the given account.
@@ -91,7 +91,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SetServicePropertiesResult> SetServiceProperties(
         Models::SetServicePropertiesOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Get service properties
@@ -100,7 +100,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Get service properties result.
      */
     Response<Models::TableServiceProperties> GetServiceProperties(
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Get service statistics
@@ -108,7 +108,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param context for canceling long running operations.
      * @return Get service statistics result.
      */
-    Response<Models::ServiceStatistics> GetStatistics(Core::Context const& context = {});
+    Response<Models::ServiceStatistics> GetStatistics(Core::Context const& context = {}) const;
 
     /**
      * @brief Pre flight check
@@ -119,7 +119,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
     /**
      * @brief Get table client.
      *
