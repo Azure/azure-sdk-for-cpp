@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+Changed the `EventData::CorrelationId` and `EventData::MessageId` fields from `Azure::Nullable<AmqpValue>` to `AmqpValue` since `AmqpValue` embeds the concept of nullability already.
+
 ### Bugs Fixed
 
 ### Other Changes
