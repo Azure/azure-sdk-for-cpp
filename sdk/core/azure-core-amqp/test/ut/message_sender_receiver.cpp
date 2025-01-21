@@ -125,11 +125,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
     }
 
-  private:
-    Azure::Core::Url m_brokerEndpoint{};
 #if !defined(USE_NATIVE_BROKER)
+  protected:
     MessageTests::AmqpServerMock m_mockServer;
 #endif
+  private:
+    Azure::Core::Url m_brokerEndpoint{};
   };
 
   using namespace Azure::Core::Amqp::_internal;
@@ -770,14 +771,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     //        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
     //        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
+    std::string entityPath = "testLocation";
     ConnectionOptions connectionOptions;
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
     auto connection{CreateAmqpConnection({})};
     auto session{CreateAmqpSession(connection)};
 #if !defined(USE_NATIVE_BROKER)
-    serviceEndpoint->SetSenderNodeName(
-        sasCredential->GetEndpoint() + sasCredential->GetEntityPath());
+    serviceEndpoint->SetSenderNodeName(GetBrokerEndpoint() + entityPath);
     StartServerListening();
 #endif
 
@@ -799,10 +800,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Send a message.
     {
+      std::string messageId = "Message from line " + std::to_string(__LINE__);
 #if !defined(USE_NATIVE_BROKER)
       serviceEndpoint->ShouldSendMessage(true);
 #else
-      std::string messageId = "Message from line " + std::to_string(__LINE__);
       {
         MessageSender sender(session.CreateMessageSender(
             GetBrokerEndpoint() + testing::UnitTest::GetInstance()->current_test_case()->name(),
@@ -843,11 +844,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     {
       GTEST_LOG_(INFO) << "Trigger message send for polling.";
+      std::string messageId = "Message from line " + std::to_string(__LINE__);
 #if !defined(USE_NATIVE_BROKER)
       serviceEndpoint->ShouldSendMessage(true);
       std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 #else
-      std::string messageId = "Message from line " + std::to_string(__LINE__);
 
       {
         MessageSender sender(session.CreateMessageSender(

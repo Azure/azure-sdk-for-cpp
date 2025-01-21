@@ -33,10 +33,18 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
+set(USE_RUST_AMQP ON CACHE BOOL "Enable Rust AMQP stack" FORCE)
+
+if (NOT ENABLE_RUST_IN_BUILD)
+  message(STATUS "Disabling Rust based functionality in build.")
+  set(USE_RUST_AMQP OFF)
+endif()
+
 
 if (USE_RUST_AMQP)
   message(STATUS "Using RUST based AMQP stack")
   set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
+  set(USE_UAMQP OFF CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
 else()
   set(USE_UAMQP ON CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
   set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)

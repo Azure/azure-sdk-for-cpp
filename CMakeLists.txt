@@ -6,6 +6,10 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
+# Enable Rust based APIs in C++ SDK.
+set(ENABLE_RUST_IN_BUILD ON CACHE BOOL "Enable Rust based APIs in package")
+set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
+
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
@@ -161,8 +165,10 @@ add_subdirectory(sdk/core)
 add_subdirectory(sdk/appconfiguration)
 add_subdirectory(sdk/attestation)
 # AMQP doesn't work for UWP yet, and eventhubs depends on AMQP, so we cannot include eventhubs on UWP.
-if (NOT BUILD_WINDOWS_UWP)
-  add_subdirectory(sdk/eventhubs)
+if (DISABLE_AMQP)
+  if (NOT BUILD_WINDOWS_UWP)
+    add_subdirectory(sdk/eventhubs)
+  endif()
 endif()
 add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)

@@ -313,12 +313,12 @@
       }
     },
     {
-      "name": "rust-amqp",
-      "displayName": "Use Rust AMQP implementation",
-      "description": "Use Rust AMQP implementation (Hidden)",
+      "name": "no-rust-amqp",
+      "displayName": "Disable use of the Rust AMQP implementation",
+      "description": "Disable use of the Rust AMQP implementation (Hidden)",
       "hidden": true,
       "cacheVariables": {
-        "USE_RUST_AMQP": true
+        "ENABLE_RUST_IN_BUILD": false
       }
     },
     {
@@ -480,22 +480,22 @@
       ]
     },
     {
-      "name": "x64-static-debug-perftests-rust",
-      "displayName": "x64 Debug, Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "name": "x64-static-debug-perftests-no-rust",
+      "displayName": "x64 Debug, No Rust, static With Perf Tests and samples, libcurl+winhttp",
       "inherits": [
         "x64-static",
         "debug-build",
         "enable-tests",
         "enable-samples",
         "enable-perf",
-        "rust-amqp",
+        "no-rust-amqp",
         "winhttp-transport",
         "curl-transport"
       ]
     },
     {
-      "name": "x64-static-debug-asan-perftests-rust",
-      "displayName": "x64 Debug, ASAN Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "name": "x64-static-debug-asan-perftests-no-rust",
+      "displayName": "x64 Debug, ASAN No Rust, static With Perf Tests and samples, libcurl+winhttp",
       "inherits": [
         "x64-static",
         "enable-address-sanitizer",
@@ -503,7 +503,7 @@
         "enable-tests",
         "enable-samples",
         "enable-perf",
-        "rust-amqp",
+        "no-rust-amqp",
         "winhttp-transport",
         "curl-transport"
       ],
@@ -800,12 +800,12 @@
       "displayName": "Linux c++ Debug+Tests, samples"
     },
     {
-      "name": "linux-g++-rust-debug-tests-samples",
+      "name": "linux-g++-no-rust-debug-tests-samples",
       "inherits": [
         "linux-g++-debug-tests-samples",
-        "rust-amqp"
+        "no-rust-amqp"
       ],
-      "displayName": "Linux c++ Debug+Tests, samples, Rust AMQP"
+      "displayName": "Linux c++ Debug+Tests, samples, No Rust"
     },
     {
       "name": "linux-g++-11-debug",

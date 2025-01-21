@@ -28,7 +28,7 @@
 #include <random>
 
 #include <gtest/gtest.h>
-#if defined(USE_NATIVE_BROKER)
+#if !defined(USE_NATIVE_BROKER)
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 
@@ -343,7 +343,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         "localhost", nullptr, connectionOptions, &connectionEvents);
 
 #endif
-    auto connection{CreateAmqpConnection()};
 
     {
       constexpr const size_t sessionCount = 30;

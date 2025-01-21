@@ -57,8 +57,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
@@ -458,11 +458,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
+          Azure::Core::Amqp::Models::AmqpValue requestCorrelationId
               = message->Properties.CorrelationId;
-          if (!message->Properties.CorrelationId.HasValue())
+          if (message->Properties.CorrelationId.IsNull())
           {
-            requestCorrelationId = message->Properties.MessageId.Value();
+            requestCorrelationId = message->Properties.MessageId;
           }
           response.Properties.CorrelationId = requestCorrelationId;
 
@@ -509,9 +509,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
+          Azure::Core::Amqp::Models::AmqpValue requestCorrelationId
               = message->Properties.CorrelationId;
-          if (!message->Properties.CorrelationId.HasValue())
+          if (message->Properties.CorrelationId.IsNull())
           {
             requestCorrelationId = message->Properties.MessageId;
           }

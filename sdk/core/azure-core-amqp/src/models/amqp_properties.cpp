@@ -165,20 +165,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     UniquePropertiesHandle returnValue(properties_create());
 #if ENABLE_UAMQP
-    if (properties.MessageId.HasValue())
+    if (!properties.MessageId.IsNull())
     {
       if (properties_set_message_id(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.MessageId)))
       {
         throw std::runtime_error("Could not set message id");
       }
     }
-    if (properties.CorrelationId.HasValue())
+    if (!properties.CorrelationId.IsNull())
     {
       if (properties_set_correlation_id(
               returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value())))
+              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId)))
       {
         throw std::runtime_error("Could not set correlation id");
       }
@@ -195,11 +194,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    if (properties.To.HasValue())
+    if (!properties.To.IsNull())
     {
       if (properties_set_to(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.To)))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -213,11 +211,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    if (properties.ReplyTo.HasValue())
+    if (!properties.ReplyTo.IsNull())
     {
       if (properties_set_reply_to(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo)))
       {
         throw std::runtime_error("Could not set reply to");
       }
