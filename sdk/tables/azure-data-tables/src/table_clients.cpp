@@ -471,7 +471,7 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
 
-  if (isUpsert == false && !tableEntity.GetETag().Value.empty())
+  if (!isUpsert && !tableEntity.GetETag().Value.empty())
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
@@ -511,7 +511,7 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntityImpl(
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
 
-  if (isUpsert == false && !tableEntity.GetETag().Value.empty())
+  if (!isUpsert && !tableEntity.GetETag().Value.empty())
   {
     request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
