@@ -197,13 +197,12 @@ namespace Azure { namespace Data { namespace Tables {
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyUpdateReplaceOp_Test;
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyAddOp_Test;
 #endif
-   
+
     Response<Models::UpdateEntityResult> UpdateEntityImpl(
         Models::TableEntity const& tableEntity,
         bool isUpsert,
         Core::Context const& context = {}) const;
 
-    
     Response<Models::MergeEntityResult> MergeEntityImpl(
         Models::TableEntity const& tableEntity,
         bool isUpsert,
