@@ -10,7 +10,8 @@
 using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
-class EventDataTest : public EventHubsTestBase {};
+class EventDataTest : public EventHubsTestBase {
+};
 
 // Construct an EventData object and convert it to an AMQP message.
 // Verify that the resulting AMQP Message has the expected body and data (empty).
