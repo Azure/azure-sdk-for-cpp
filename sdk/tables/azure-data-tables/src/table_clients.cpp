@@ -471,17 +471,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
 
-  if (isUpsert == false)
-  { // since merge/update requires the IfMatch header present otherwise an insert is performed,
-    // if we do not have the header set the value to * which is allowed accourding to the docs
-    if (!tableEntity.GetETag().Value.empty())
-    {
-      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
-    }
-    else
-    {
-      request.SetHeader(IfMatch, "*");
-    }
+  if (isUpsert == false && !tableEntity.GetETag().Value.empty())
+  {
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -519,17 +511,9 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntityImpl(
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
 
-  if (isUpsert == false)
-  { // since merge/update requires the IfMatch header present otherwise an insert is performed,
-    // if we do not have the header set the value to * which is allowed accourding to the docs
-    if (!tableEntity.GetETag().Value.empty())
-    {
-      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
-    }
-    else
-    {
-      request.SetHeader(IfMatch, "*");
-    }
+  if (isUpsert == false && !tableEntity.GetETag().Value.empty())
+  {
+    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
