@@ -462,144 +462,144 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 // instead.
 #pragma warning(disable : 4996)
 #endif
-      std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
+          std::strftime(buf, std::extent<decltype(buf)>::value, "%c", std::localtime(&time));
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-      return buf;
-    }
-
-    size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
-    {
-      // scratch buffer which will hold the data being logged.
-      std::stringstream ss;
-
-      size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
-
-      ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
-
-      // Write the buffer data out.
-      for (size_t i = 0; i < bytesToWrite; i += 1)
-      {
-        ss << std::hex << std::right << std::setw(2) << std::setfill('0') << static_cast<int>(pb[i])
-           << " ";
-      }
-
-      // Now write the data in string format (similar to what the debugger does).
-      // Start by padding partial lines to a fixed end.
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << "   ";
-      }
-      ss << "  * ";
-      for (size_t i = 0; i < bytesToWrite; i += 1)
-      {
-        if (isprint(pb[i]))
-        {
-          ss << pb[i];
+          return buf;
         }
-        else
+
+        size_t LogRawData(std::ostream& os, size_t startOffset, const uint8_t* const pb, size_t cb)
         {
-          ss << ".";
-        }
-      }
-      for (size_t i = bytesToWrite; i < 0x10; i += 1)
-      {
-        ss << " ";
-      }
+          // scratch buffer which will hold the data being logged.
+          std::stringstream ss;
 
-      ss << " *";
+          size_t bytesToWrite = (cb < 0x10 ? cb : 0x10);
 
-      os << ss.str();
+          ss << std::hex << std::right << std::setw(8) << std::setfill('0') << startOffset << ": ";
 
-      return bytesToWrite;
-    }
-  } // namespace
-
-  std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
-  {
-    os << "MessageProperties {";
-    {
-      if (!properties.MessageId.IsNull())
-      {
-        os << "MessageId: " << properties.MessageId;
-      }
-      else
-      {
-        os << "MessageId: <null>";
-      }
-    }
-    {
-      if (properties.UserId.HasValue())
-      {
-        os << ", UserId: ";
-        const uint8_t* pb = properties.UserId.Value().data();
-        size_t cb = properties.UserId.Value().size();
-        size_t currentOffset = 0;
-        do
-        {
-          auto cbLogged = LogRawData(os, currentOffset, pb, cb);
-          pb += cbLogged;
-          cb -= cbLogged;
-          currentOffset += cbLogged;
-          if (cb)
+          // Write the buffer data out.
+          for (size_t i = 0; i < bytesToWrite; i += 1)
           {
-            os << std::endl;
+            ss << std::hex << std::right << std::setw(2) << std::setfill('0')
+               << static_cast<int>(pb[i]) << " ";
           }
-        } while (cb);
+
+          // Now write the data in string format (similar to what the debugger does).
+          // Start by padding partial lines to a fixed end.
+          for (size_t i = bytesToWrite; i < 0x10; i += 1)
+          {
+            ss << "   ";
+          }
+          ss << "  * ";
+          for (size_t i = 0; i < bytesToWrite; i += 1)
+          {
+            if (isprint(pb[i]))
+            {
+              ss << pb[i];
+            }
+            else
+            {
+              ss << ".";
+            }
+          }
+          for (size_t i = bytesToWrite; i < 0x10; i += 1)
+          {
+            ss << " ";
+          }
+
+          ss << " *";
+
+          os << ss.str();
+
+          return bytesToWrite;
+        }
+      } // namespace
+
+      std::ostream& operator<<(std::ostream& os, MessageProperties const& properties)
+      {
+        os << "MessageProperties {";
+        {
+          if (!properties.MessageId.IsNull())
+          {
+            os << "MessageId: " << properties.MessageId;
+          }
+          else
+          {
+            os << "MessageId: <null>";
+          }
+        }
+        {
+          if (properties.UserId.HasValue())
+          {
+            os << ", UserId: ";
+            const uint8_t* pb = properties.UserId.Value().data();
+            size_t cb = properties.UserId.Value().size();
+            size_t currentOffset = 0;
+            do
+            {
+              auto cbLogged = LogRawData(os, currentOffset, pb, cb);
+              pb += cbLogged;
+              cb -= cbLogged;
+              currentOffset += cbLogged;
+              if (cb)
+              {
+                os << std::endl;
+              }
+            } while (cb);
+          }
+        }
+        if (!properties.To.IsNull())
+        {
+          os << ", To: " << properties.To;
+        }
+
+        if (properties.Subject.HasValue())
+        {
+          os << ", Subject: " << properties.Subject.Value();
+        }
+
+        if (!properties.ReplyTo.IsNull())
+        {
+          os << ", ReplyTo: " << properties.ReplyTo;
+        }
+        if (!properties.CorrelationId.IsNull())
+        {
+          os << ", CorrelationId: " << properties.CorrelationId;
+        }
+
+        if (properties.ContentType.HasValue())
+        {
+          os << ", ContentType: " << properties.ContentType.Value();
+        }
+
+        if (properties.ContentEncoding.HasValue())
+        {
+          os << ", ContentEncoding: " << properties.ContentEncoding.Value();
+        }
+
+        if (properties.AbsoluteExpiryTime.HasValue())
+        {
+          os << ", AbsoluteExpiryTime: " << timeToString(properties.AbsoluteExpiryTime.Value());
+        }
+        if (properties.CreationTime.HasValue())
+        {
+          os << ", CreationTime: " << timeToString(properties.CreationTime.Value());
+        }
+        if (properties.GroupId.HasValue())
+        {
+          os << ", GroupId: " << properties.GroupId.Value();
+        }
+        if (properties.GroupSequence.HasValue())
+        {
+          os << ", GroupSequence: " << properties.GroupSequence.Value();
+        }
+
+        if (properties.ReplyToGroupId.HasValue())
+        {
+          os << ", ReplyToGroupId: " << properties.ReplyToGroupId.Value();
+        }
+        os << "}";
+        return os;
       }
-    }
-    if (!properties.To.IsNull())
-    {
-      os << ", To: " << properties.To;
-    }
-
-    if (properties.Subject.HasValue())
-    {
-      os << ", Subject: " << properties.Subject.Value();
-    }
-
-    if (!properties.ReplyTo.IsNull())
-    {
-      os << ", ReplyTo: " << properties.ReplyTo;
-    }
-    if (!properties.CorrelationId.IsNull())
-    {
-      os << ", CorrelationId: " << properties.CorrelationId;
-    }
-
-    if (properties.ContentType.HasValue())
-    {
-      os << ", ContentType: " << properties.ContentType.Value();
-    }
-
-    if (properties.ContentEncoding.HasValue())
-    {
-      os << ", ContentEncoding: " << properties.ContentEncoding.Value();
-    }
-
-    if (properties.AbsoluteExpiryTime.HasValue())
-    {
-      os << ", AbsoluteExpiryTime: " << timeToString(properties.AbsoluteExpiryTime.Value());
-    }
-    if (properties.CreationTime.HasValue())
-    {
-      os << ", CreationTime: " << timeToString(properties.CreationTime.Value());
-    }
-    if (properties.GroupId.HasValue())
-    {
-      os << ", GroupId: " << properties.GroupId.Value();
-    }
-    if (properties.GroupSequence.HasValue())
-    {
-      os << ", GroupSequence: " << properties.GroupSequence.Value();
-    }
-
-    if (properties.ReplyToGroupId.HasValue())
-    {
-      os << ", ReplyToGroupId: " << properties.ReplyToGroupId.Value();
-    }
-    os << "}";
-    return os;
-  }
 }}}} // namespace Azure::Core::Amqp::Models

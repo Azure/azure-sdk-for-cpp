@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 
 #if !defined(ENABLE_RUST_AMQP)
-  // With Rust AMQP, this failure is triggere when the connection is opened, so we can't test it
+  // With Rust AMQP, this failure is triggered when the connection is opened, so we can't test it
   // in the context of the management APIs.
   TEST_F(TestManagement, ManagementOpenCloseNoListener)
   {
