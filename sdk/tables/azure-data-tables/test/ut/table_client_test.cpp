@@ -342,7 +342,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = TableEntityProperty("Azure");
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->UpdateInsertEntity(entity);
+    auto response = m_tableClient->UpdateOrInsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
     entity.SetETag(response.Value.ETag);
@@ -371,7 +371,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = TableEntityProperty("Azure");
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->MergeInsertEntity(entity);
+    auto response = m_tableClient->MergeOrInsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
     entity.SetETag(response.Value.ETag);
