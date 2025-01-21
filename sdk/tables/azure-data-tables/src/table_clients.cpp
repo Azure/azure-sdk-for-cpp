@@ -449,8 +449,9 @@ Azure::Response<Models::AddEntityResult> TableClient::AddEntity(
   return Response<Models::AddEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntityImpl(
     Models::TableEntity const& tableEntity,
+    bool isUpsert,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -469,9 +470,18 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!tableEntity.GetETag().Value.empty())
-  {
-    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+
+  if (isUpsert == false)
+  { // since merge/update requires the IfMatch header present otherwise an insert is performed, 
+    // if we do not have the header set the value to * which is allowed accourding to the docs
+    if (!tableEntity.GetETag().Value.empty())
+    {
+      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    }
+    else
+    {
+      request.SetHeader(IfMatch, "*");
+    }
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -487,8 +497,9 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
   return Response<Models::UpdateEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
+Azure::Response<Models::MergeEntityResult> TableClient::MergeEntityImpl(
     Models::TableEntity const& tableEntity,
+    bool isUpsert,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -507,11 +518,20 @@ Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
   request.SetHeader(ContentLengthHeader, std::to_string(requestBody.Length()));
   request.SetHeader(AcceptHeader, AcceptFullMeta);
   request.SetHeader(PreferHeader, PreferNoContent);
-  if (!tableEntity.GetETag().Value.empty())
-  {
-    request.SetHeader(IfMatch, tableEntity.GetETag().Value);
-  }
 
+  if (isUpsert == false)
+  { // since merge/update requires the IfMatch header present otherwise an insert is performed, 
+    // if we do not have the header set the value to * which is allowed accourding to the docs
+    if (!tableEntity.GetETag().Value.empty())
+    {
+      request.SetHeader(IfMatch, tableEntity.GetETag().Value);
+    }
+    else
+    {
+      request.SetHeader(IfMatch, "*");
+    }
+  }
+  
   auto rawResponse = m_pipeline->Send(request, context);
   auto const httpStatusCode = rawResponse->GetStatusCode();
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -560,14 +580,28 @@ Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {
-  return UpdateEntity(tableEntity, context);
+  return UpdateEntityImpl(tableEntity,true, context);
 }
 
 Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {
-  return MergeEntity(tableEntity, context);
+  return MergeEntityImpl(tableEntity,true, context);
+}
+
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateEntity(
+    Models::TableEntity const& tableEntity,
+    Core::Context const& context) const
+{
+  return UpdateEntityImpl(tableEntity, false, context);
+}
+
+Azure::Response<Models::MergeEntityResult> TableClient::MergeEntity(
+    Models::TableEntity const& tableEntity,
+    Core::Context const& context) const
+{
+  return MergeEntityImpl(tableEntity, false, context);
 }
 
 void Models::QueryEntitiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
