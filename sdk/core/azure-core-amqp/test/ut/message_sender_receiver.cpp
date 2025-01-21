@@ -837,7 +837,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto result = receiver.TryWaitForIncomingMessage();
       if (result.first)
       {
-        GTEST_LOG_(INFO) << "Found an incoming message, espected no message." << *result.first;
+        GTEST_LOG_(INFO) << "Found an incoming message, expected no message." << *result.first;
       }
       EXPECT_FALSE(result.first);
     }
