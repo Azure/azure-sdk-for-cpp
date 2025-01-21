@@ -80,8 +80,9 @@ extends:
 #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
       PostTestSteps:
-        - pwsh: |
-            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+#        - pwsh: |
+#            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+
 #        - pwsh: |
 #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
