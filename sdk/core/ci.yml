@@ -79,7 +79,7 @@ extends:
 #          displayName: Verify Proxy Server Working Correctly.
 #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-      PostTestSteps:
+#      PostTestSteps:
 #        - pwsh: |
 #            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
 #        - pwsh: |
