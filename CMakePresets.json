@@ -660,6 +660,24 @@
       }
     },
     {
+      "name": "linux-basic-clang-18",
+      "displayName": "Linux clang-18",
+      "description": "Using compilers: C = /usr/bin/clang-18, CXX = /usr/bin/clang++-18",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-18",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-g++",
       "displayName": "Linux G++",
       "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
@@ -762,6 +780,23 @@
         "enable-tests"
       ],
       "displayName": "Linux clang 13 Debug+Tests"
+    },
+    {
+      "name": "linux-clang-18-debug",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build"
+      ],
+      "displayName": "Linux clang 18 Debug"
+    },
+    {
+      "name": "linux-clang-18-debug-tests",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 18 Debug+Tests"
     },
     {
       "name": "linux-g++-debug",

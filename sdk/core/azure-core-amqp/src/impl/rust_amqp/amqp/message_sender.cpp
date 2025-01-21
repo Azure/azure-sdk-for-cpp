@@ -49,7 +49,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::shared_ptr<_detail::SessionImpl> session,
       Models::_internal::MessageTarget const& target,
       _internal::MessageSenderOptions const& options)
-      : m_session{session}, m_target{target}, m_messageSender{amqpmessagesender_create()},
+      : m_messageSender{amqpmessagesender_create()}, m_session{session}, m_target{target},
         m_options{options}
   {
   }

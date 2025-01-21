@@ -341,7 +341,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     OutgoingConnectionEvents connectionEvents;
     Azure::Core::Amqp::_internal::Connection connection(
         "localhost", nullptr, connectionOptions, &connectionEvents);
-
+#else
+    auto connection{CreateAmqpConnection()};
 #endif
 
     {
