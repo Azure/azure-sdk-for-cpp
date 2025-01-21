@@ -560,14 +560,14 @@ Azure::Response<Models::DeleteEntityResult> TableClient::DeleteEntity(
   return Response<Models::DeleteEntityResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Models::UpdateEntityResult> TableClient::UpdateInsertEntity(
+Azure::Response<Models::UpdateEntityResult> TableClient::UpdateOrInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {
   return UpdateEntityImpl(tableEntity, true, context);
 }
 
-Azure::Response<Models::MergeEntityResult> TableClient::MergeInsertEntity(
+Azure::Response<Models::MergeEntityResult> TableClient::MergeOrInsertEntity(
     Models::TableEntity const& tableEntity,
     Core::Context const& context) const
 {

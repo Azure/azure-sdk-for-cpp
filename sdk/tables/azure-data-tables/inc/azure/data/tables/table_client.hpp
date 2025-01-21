@@ -135,9 +135,9 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param tableEntity The TableEntity to update or insert.
      * @param context for canceling long running operations.
-     * @return Upsert entity result.
+     * @return Update entity result.
      */
-    Response<Models::UpdateEntityResult> UpdateInsertEntity(
+    Response<Models::UpdateEntityResult> UpdateOrInsertEntity(
         Models::TableEntity const& tableEntity,
         Core::Context const& context = {}) const;
 
@@ -146,9 +146,9 @@ namespace Azure { namespace Data { namespace Tables {
      *
      * @param tableEntity The TableEntity to merge or insert.
      * @param context for canceling long running operations.
-     * @return Upsert entity result.
+     * @return Merge entity result.
      */
-    Response<Models::MergeEntityResult> MergeInsertEntity(
+    Response<Models::MergeEntityResult> MergeOrInsertEntity(
         Models::TableEntity const& tableEntity,
         Core::Context const& context = {}) const;
     /**
