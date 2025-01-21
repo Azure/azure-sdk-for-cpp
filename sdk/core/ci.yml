@@ -55,7 +55,7 @@ extends:
       BranchCoverageTarget: 68
       PreTestSteps:
         - pwsh: |
-            $(Build.SourceDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
+            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -81,7 +81,7 @@ extends:
 
       PostTestSteps:
         - pwsh: |
-            $(Build.SourceDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
 #        - pwsh: |
 #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
