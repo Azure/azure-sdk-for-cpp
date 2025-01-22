@@ -230,6 +230,8 @@ jobs:
         name: RestoreRecordings
 
       - pwsh: |
+          Write-Host "Broker Test URL=" $BrokerTestUrl
+          $env:TEST_BROKER_ADDRESS=$BrokerTestUrl
           ctest `
             -C Debug `
             -V `
