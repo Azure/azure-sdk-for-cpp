@@ -84,6 +84,17 @@ if (USE_RUST_AMQP)
     message("VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
   if (${VCPKG_TARGET_TRIPLET} MATCHES "x86.*")
     message("Configure rust for x86 builds.")
+
+    execute_process(COMMAND rustup target list)
+
+#    execute_process(COMMAND rustup target add i686-pc-windows-msvc
+#      RESULT_VARIABLE RUST_TARGET_ADD_RESULT
+#      OUTPUT_VARIABLE RUST_TARGET_ADD_OUTPUT
+#      ERROR_VARIABLE RUST_TARGET_ADD_ERROR
+#      OUTPUT_STRIP_TRAILING_WHITESPACE
+#      ERROR_STRIP_TRAILING_WHITESPACE
+#    )
+
     if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
       message("Configure rust for Windows x86 builds.")
       set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
