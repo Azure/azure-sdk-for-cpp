@@ -222,9 +222,6 @@ jobs:
 
       - ${{ parameters.PreTestSteps }}
    
-      - pwsh: |
-          Write-Host "Value of $(BrokerTestUrl)"
-        displayName: Set BrokerTestUrl
       
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
@@ -234,8 +231,8 @@ jobs:
         name: RestoreRecordings
 
       - pwsh: |
-          Write-Host "Broker Test URL=" $BrokerTestUrl
-          $env:TEST_BROKER_ADDRESS=$BrokerTestUrl
+          Write-Host "Broker Test URL=" ${{ variables.BrokerTestUrl }}
+          $env:TEST_BROKER_ADDRESS=${{ variables.BrokerTestUrl }}
           ctest `
             -C Debug `
             -V `
