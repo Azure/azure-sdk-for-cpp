@@ -14,22 +14,6 @@
 // cspell:disable
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys { namespace Test {
 
-  const std::string AttestationServiceUrl()
-  {
-    // default to wus
-    std::string shortLocation
-        = Azure::Core::_internal::Environment::GetVariable("LOCATION_SHORT_NAME");
-    if (shortLocation.length() == 0)
-    {
-      shortLocation = "wus";
-    }
-
-    std::string const endpoint
-        = "https://shared" + shortLocation + "." + shortLocation + ".attest.azure.net";
-
-    return endpoint;
-  }
-
   const std::string RawBackupKey(
       "JkF6dXJlS2V5VmF1bHRLZXlCYWNrdXBWMS5taWNyb3NvZnQuY29tZXlKcmFXUWlPaUkwTXpnMVlqQTNZaTFrTlRRM0xU"
       "UXlaVFV0WVdVNVpTMDJNVEJrWXpNNVpHWmhaamdpTENKaGJHY2lPaUpTVTBFdFQwRkZVQzB5TlRZaUxDSmxibU1pT2lK"
