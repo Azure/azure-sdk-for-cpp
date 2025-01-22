@@ -222,9 +222,7 @@ jobs:
 
       - ${{ parameters.PreTestSteps }}
    
-      - pwsh: |
-          Write-Host "Dummy"
-          displayName: BrokerTestUrl= ${{ variables.BrokerTestUrl }}, $BrokerTestUrl.
+      - displayName: BrokerTestUrl= ${{ variables.BrokerTestUrl }}, $BrokerTestUrl.
       
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
