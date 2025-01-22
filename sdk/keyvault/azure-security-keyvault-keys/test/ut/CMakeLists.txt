@@ -30,7 +30,6 @@ add_executable (
     macro_guard.cpp
     mocked_client_test.cpp
     mocked_transport_adapter_test.hpp
-    test_consts.hpp
 )
 
 target_compile_definitions(azure-security-keyvault-keys-test PRIVATE _azure_BUILDING_TESTS)
