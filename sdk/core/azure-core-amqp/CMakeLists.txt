@@ -79,6 +79,18 @@ if (USE_RUST_AMQP)
 #  install_rustup()
 
   include(FetchContent)
+
+    # If the cmake build is x86, add the x86 target to the rust build
+    message("VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+  if (${VCPKG_TARGET_TRIPLET} MATCHES "x86.*")
+    message("Configure rust for x86 builds.")
+    set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
+  else()
+    message("Configure rust for 64 builds.")
+    set(Rust_CARGO_TARGET "x86_64-pc-windows-msvc")
+  endif()
+
+
   FetchContent_Declare(
     Corrosion
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
@@ -86,6 +98,7 @@ if (USE_RUST_AMQP)
   )
   FetchContent_MakeAvailable(Corrosion)
 
+ 
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
   corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
 endif()

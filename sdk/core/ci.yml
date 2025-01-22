@@ -56,7 +56,8 @@ extends:
       PreTestSteps:
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
-            Write-Host "##vso[task.setvariable variable=BrokerTestUrl;]"$env:TEST_BROKER_ADDRESS
+            Write-Host "Setting BrokerTestUrl to " $env:TEST_BROKER_ADDRESS
+            Write-Host "##vso[task.setvariable variable=BrokerTestUrl;isOutput=true]"$env:TEST_BROKER_ADDRESS
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
