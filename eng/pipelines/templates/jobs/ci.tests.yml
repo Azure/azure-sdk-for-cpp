@@ -219,8 +219,13 @@ jobs:
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
-        
-      - ${{ parameters.PreTestSteps }}
+
+      - displayName: Pre Test Steps.
+          ${{ parameters.PreTestSteps }}
+   
+      - pwsh: |
+          Write-Host "Value of $(BrokerTestUrl)"
+        displayName: Set BrokerTestUrl
       
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
