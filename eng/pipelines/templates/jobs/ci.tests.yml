@@ -243,8 +243,10 @@ jobs:
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
             -T Test
+          Get-Content build/Testing/Temporary/LastTest.log
         workingDirectory: build
         displayName: Test
+
         
       - ${{ parameters.PostTestSteps }}
             

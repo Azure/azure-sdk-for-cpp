@@ -294,6 +294,10 @@ elseif(USE_RUST_AMQP)
 
   if (MSVC)
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+  else()
+    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
   endif()
 endif()
 
