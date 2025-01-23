@@ -225,8 +225,8 @@ jobs:
       - ${{ parameters.PreTestSteps }}
    
       - pwsh: |
-          Write-Host "Broker Test URL=" ${{ AMQP_BROKER_ADDRESS }}
-        displayName: BrokerTestUrl= ${{ variables.BrokerTestUrl }}, $BrokerTestUrl.
+          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
+        displayName: BrokerTestUrl= ${{ variables.AMQP_BROKER_ADDRESS}}.
       
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
@@ -236,8 +236,8 @@ jobs:
         name: RestoreRecordings
 
       - pwsh: |
-          Write-Host "Broker Test URL=" ${{ AMQP_BROKER_ADDRESS }}
-          $env:TEST_BROKER_ADDRESS=${{ AMQP_BROKER_ADDRESS }}
+          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
+          $env:TEST_BROKER_ADDRESS=${{ variables.AMQP_BROKER_ADDRESS }}
           ctest `
             -C Debug `
             -V `
