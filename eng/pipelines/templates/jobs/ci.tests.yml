@@ -243,7 +243,7 @@ jobs:
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
             -T Test
-          if Test-Path build/Testing/Temporary/LastTest.log {
+          if (Test-Path build/Testing/Temporary/LastTest.log) {
             Get-Content build/Testing/Temporary/LastTest.log
           }
         workingDirectory: build
