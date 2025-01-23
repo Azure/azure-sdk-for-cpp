@@ -222,11 +222,15 @@ jobs:
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
 
+      - pwsh: |
+          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
+        displayName: BrokerTestUrl1= ${{ variables.AMQP_BROKER_ADDRESS}}.
+
       - ${{ parameters.PreTestSteps }}
    
       - pwsh: |
           Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
-        displayName: BrokerTestUrl= ${{ variables.AMQP_BROKER_ADDRESS}}.
+        displayName: BrokerTestUrl=${{ variables.AMQP_BROKER_ADDRESS}}.
       
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
