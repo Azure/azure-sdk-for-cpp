@@ -527,7 +527,7 @@
       }
     },
     {
-      "name": "x86-msvc-static-debug-perftests",
+      "name": "x86-msvc-static-dbg-all",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x86-msvc-static",
@@ -540,7 +540,7 @@
       ]
     },
     {
-      "name": "x64-msvc-static-debug-perftests",
+      "name": "x64-msvc-static-debug-all",
       "displayName": "x64 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x64-msvc-static",
