@@ -2,9 +2,17 @@
 # Licensed under the MIT License.
 # cspell: ignore JOBID depsfile
 
+param (
+  [string] $BrokerTestUrl
+)
 
 # Load common ES scripts
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
+
+if ($BrokerTestUrl -eq $null) {
+  Write-Error "BrokerTestUrl is required."
+  exit 1
+}
 
 # Create the test binary *outside* the repo root to avoid polluting the repo.
 $WorkingDirectory = ([System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
@@ -42,7 +50,8 @@ try {
   Write-Host "Test broker built successfully."
 
   # now that the Test broker has been built, launch the broker on a local address.
-  $env:TEST_BROKER_ADDRESS = 'amqp://127.0.0.1:25672'
+#  $env:TEST_BROKER_ADDRESS = 'amqp://127.0.0.1:25672'
+  $env:TEST_BROKER_ADDRESS = $BrokerTestUrl
 
   Write-Host "Starting test broker listening on ${env:TEST_BROKER_ADDRESS} ..."
 

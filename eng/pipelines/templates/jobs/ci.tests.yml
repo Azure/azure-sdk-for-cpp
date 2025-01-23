@@ -102,6 +102,8 @@ jobs:
       value: false
     - name: AZURE_ENABLE_STATIC_ANALYSIS
       value: true
+    - name: AMQP_BROKER_ADDRESS
+      value: "amqp://127.0.0.1:25672"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -223,7 +225,7 @@ jobs:
       - ${{ parameters.PreTestSteps }}
    
       - pwsh: |
-          Write-Host "Broker Test URL=" ${{ variables.BrokerTestUrl }}
+          Write-Host "Broker Test URL=" ${{ AMQP_BROKER_ADDRESS }}
         displayName: BrokerTestUrl= ${{ variables.BrokerTestUrl }}, $BrokerTestUrl.
       
       - pwsh: |
@@ -234,8 +236,8 @@ jobs:
         name: RestoreRecordings
 
       - pwsh: |
-          Write-Host "Broker Test URL=" ${{ variables.BrokerTestUrl }}
-          $env:TEST_BROKER_ADDRESS=${{ variables.BrokerTestUrl }}
+          Write-Host "Broker Test URL=" ${{ AMQP_BROKER_ADDRESS }}
+          $env:TEST_BROKER_ADDRESS=${{ AMQP_BROKER_ADDRESS }}
           ctest `
             -C Debug `
             -V `
