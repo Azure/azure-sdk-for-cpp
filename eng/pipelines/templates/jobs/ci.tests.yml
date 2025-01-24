@@ -239,8 +239,10 @@ jobs:
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
             -T Test
-          if (Test-Path /mnt/vss/_work/1/s/build/Testing/Temporary/LastTest.log) {
-            Get-Content /mnt/vss/_work/1/s/build/Testing/Temporary/LastTest.log
+          Write-Host Test Directory: ${{ Build.SourcesDirectory }}/build/Testing/Temporary
+          Get-ChildItem ${{ Build.SourcesDirectory }}/build/Testing/Temporary -Recurse -Include *.log | ForEach-Object { Get-Content $_.FullName }
+          if (Test-Path ${{Build.SourcesDirectory}}/build/Testing/Temporary/LastTest.log) {
+            Get-Content ${{Build.SourcesDirectory}}/build/Testing/Temporary/LastTest.log
           }
         workingDirectory: build
         displayName: Test
