@@ -5,7 +5,6 @@
 #include "key_client_base_test.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
-#include "test_consts.hpp"
 
 #include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
