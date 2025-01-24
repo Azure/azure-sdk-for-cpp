@@ -87,6 +87,7 @@ if (USE_RUST_AMQP)
 
     if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
       message("Configure rust for Windows x86 builds.")
+      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
       set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
     else()
       message("Configure rust for Linux x86 builds.")
