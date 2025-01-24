@@ -55,10 +55,7 @@ extends:
       BranchCoverageTarget: 68
       PreTestSteps:
         - pwsh: |
-            Write-Host "Broker Address:  " ${{variables.AMQP_BROKER_ADDRESS}}
-            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1 -BrokerTestUrl ${{variables.AMQP_BROKER_ADDRESS}}
-            Write-Host "Setting BrokerTestUrl to " $env:TEST_BROKER_ADDRESS
-            Write-Host "##vso[task.setvariable variable=BrokerTestUrl;isOutput=true]$($env:TEST_BROKER_ADDRESS)"
+            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -104,6 +101,9 @@ extends:
           VcpkgPortName: azure-core-amqp-cpp
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
       TestEnv:
+# AMQP
+        - Name: TEST_BROKER_ADDRESS
+          Value: "amqp://127.0.0.1:25672"
 # Key Vault
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"

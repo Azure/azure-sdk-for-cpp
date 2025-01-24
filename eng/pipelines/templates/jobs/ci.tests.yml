@@ -102,8 +102,6 @@ jobs:
       value: false
     - name: AZURE_ENABLE_STATIC_ANALYSIS
       value: true
-    - name: AMQP_BROKER_ADDRESS
-      value: "amqp://127.0.0.1:25672"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -222,16 +220,8 @@ jobs:
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
 
-      - pwsh: |
-          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
-        displayName: BrokerTestUrl1= ${{ variables.AMQP_BROKER_ADDRESS}}.
-
       - ${{ parameters.PreTestSteps }}
    
-      - pwsh: |
-          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
-        displayName: BrokerTestUrl=${{ variables.AMQP_BROKER_ADDRESS}}.
-      
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
