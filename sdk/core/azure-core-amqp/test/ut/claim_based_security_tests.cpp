@@ -34,7 +34,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_internal;
   class TestCbs : public testing::Test {
   protected:
-    void SetUp() override {
+    void SetUp() override
+    {
       auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
       if (testBrokerUrl.empty())
       {
