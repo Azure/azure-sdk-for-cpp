@@ -230,8 +230,6 @@ jobs:
         name: RestoreRecordings
 
       - pwsh: |
-          Write-Host "Broker Test URL=" ${{ variables.AMQP_BROKER_ADDRESS }}
-          $env:TEST_BROKER_ADDRESS=${{ variables.AMQP_BROKER_ADDRESS }}
           ctest `
             -C Debug `
             -V `
