@@ -18,7 +18,8 @@
 #endif
 
 #if defined(USE_NATIVE_BROKER)
-constexpr const uint16_t nativeBrokerPort = 25672;
+#include <azure/core/internal/environment.hpp>
+#include <azure/core/url.hpp>
 #else
 #include "mock_amqp_server.hpp"
 #endif
@@ -30,43 +31,49 @@ constexpr const uint16_t nativeBrokerPort = 25672;
 #endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  using namespace Azure::Core::Amqp::_internal;
   class TestCbs : public testing::Test {
   protected:
-    void SetUp() override {}
+    void SetUp() override {
+      auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
+      if (testBrokerUrl.empty())
+      {
+        GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+      }
+      GTEST_LOG_(INFO) << "Use broker address: " << testBrokerUrl;
+      Azure::Core::Url brokerUrl(testBrokerUrl);
+      m_brokerEndpoint = brokerUrl;
+    }
     void TearDown() override
     { // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
-    std::uint16_t GetPort()
-    {
-#if defined(USE_NATIVE_BROKER)
-      return nativeBrokerPort;
-#else
-      return m_mockServer.GetPort();
-#endif
-    }
+    std::string GetBrokerEndpoint() { return m_brokerEndpoint.GetAbsoluteUrl(); }
 
-    Azure::Core::Amqp::_internal::Connection CreateConnection(
+    std::uint16_t GetPort() { return m_brokerEndpoint.GetPort(); }
+
+    auto CreateAmqpConnection(
+        std::string const& containerId
+        = testing::UnitTest::GetInstance()->current_test_info()->name(),
+        bool enableTracing = false,
         Azure::Core::Context const& context = {})
     {
-      Azure::Core::Amqp::_internal::ConnectionOptions options;
+      ConnectionOptions options;
+      options.ContainerId = containerId;
+      options.EnableTrace = enableTracing;
       options.Port = GetPort();
-      options.EnableTrace = true;
-      auto connection{Azure::Core::Amqp::_internal::Connection("localhost", nullptr, options)};
 
+      auto connection = Connection("localhost", nullptr, options);
 #if ENABLE_RUST_AMQP
       connection.Open(context);
 #endif
       return connection;
       (void)context;
     }
-
-    Azure::Core::Amqp::_internal::Session CreateSession(
-        Azure::Core::Amqp::_internal::Connection& connection,
-        Azure::Core::Context const& context = {})
+    auto CreateAmqpSession(Connection const& connection, Context const& context = {})
     {
-      auto session{connection.CreateSession()};
+      auto session = connection.CreateSession();
 #if ENABLE_RUST_AMQP
       session.Begin(context);
 #endif
@@ -74,34 +81,43 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       (void)context;
     }
 
-    void Cleanup(Azure::Core::Amqp::_internal::Connection& connection)
+    void CloseAmqpConnection(Connection& connection, Azure::Core::Context const& context = {})
     {
 #if ENABLE_RUST_AMQP
-      connection.Close({});
+      connection.Close(context);
 #endif
       (void)connection;
+      (void)context;
     }
-
-    void Cleanup(Azure::Core::Amqp::_internal::Session& session)
+    void EndAmqpSession(Session& session, Azure::Core::Context const& context = {})
     {
 #if ENABLE_RUST_AMQP
-      session.End({});
+      session.End(context);
 #endif
       (void)session;
+      (void)context;
     }
 
-    void StartListening()
+    void StartServerListening()
     {
 #if !defined(USE_NATIVE_BROKER)
       m_mockServer.StartListening();
 #endif
     }
-    void CleanupListening()
+
+    void StopServerListening()
     {
 #if !defined(USE_NATIVE_BROKER)
       m_mockServer.StopListening();
 #endif
     }
+
+#if !defined(USE_NATIVE_BROKER)
+  protected:
+    MessageTests::AmqpServerMock m_mockServer;
+#endif
+  private:
+    Azure::Core::Url m_brokerEndpoint{};
 #if !defined(USE_NATIVE_BROKER)
     MessageTests::AmqpServerMock m_mockServer;
 #endif
@@ -122,8 +138,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestCbs, SimpleCbs)
   {
-    auto connection{CreateConnection()};
-    auto session{CreateSession(connection)};
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
 
     {
       ClaimsBasedSecurity cbs(session);
@@ -153,8 +169,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "CbsOpens" << static_cast<CbsOpenResult>(32768);
     }
 
-    Cleanup(session);
-    Cleanup(connection);
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 
@@ -182,10 +198,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestCbs, CbsOpen)
   {
-    auto connection{CreateConnection()};
-    auto session{CreateSession(connection)};
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
 
-    StartListening();
+    StartServerListening();
 
     {
       GTEST_LOG_(INFO) << "Create CBS object.";
@@ -198,16 +214,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         cbs.Close();
       }
     }
-    Cleanup(session);
-    Cleanup(connection);
-    CleanupListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+    StopServerListening();
   }
 
   TEST_F(TestCbs, CbsCancelledOpen)
   {
-    auto connection{CreateConnection()};
-    auto session{CreateSession(connection)};
-    StartListening();
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
+    StartServerListening();
 
 #if ENABLE_RUST_CANCEL
     {
@@ -219,9 +235,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(CbsOpenResult::Cancelled, openResult);
     }
 #endif
-    CleanupListening();
-    Cleanup(session);
-    Cleanup(connection);
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 
 #endif // !defined(AZ_PLATFORM_MAC)
@@ -231,10 +247,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(USE_NATIVE_BROKER)
   TEST_F(TestCbs, CbsOpenAndPut)
   {
-    auto connection{CreateConnection()};
-    auto session{CreateSession(connection)};
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
 
-    StartListening();
+    StartServerListening();
     ConnectionOptions options;
 
     {
@@ -255,9 +271,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       cbs.Close();
     }
 
-    CleanupListening();
-    Cleanup(session);
-    Cleanup(connection);
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
   }
 #endif
 #endif // !defined(AZ_PLATFORM_MAC)
@@ -268,9 +284,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestCbs, CbsOpenAndPutError)
   {
     {
-      auto connection{CreateConnection()};
-      auto session{CreateSession(connection)};
-      StartListening();
+      auto connection{CreateAmqpConnection()};
+      auto session{CreateAmqpSession(connection)};
+      StartServerListening();
 
       {
         ClaimsBasedSecurity cbs(session);
@@ -290,9 +306,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         cbs.Close();
       }
 
-      CleanupListening();
-      Cleanup(session);
-      Cleanup(connection);
+      StopServerListening();
+      EndAmqpSession(session);
+      CloseAmqpConnection(connection);
     }
   }
 #endif
@@ -302,9 +318,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestCbs, CbsOpenAndPutCancelled)
   {
     {
-      auto connection{CreateConnection()};
-      auto session{CreateSession(connection)};
-      StartListening();
+      auto connection{CreateAmqpConnection()};
+      auto session{CreateAmqpSession(connection)};
+      StartServerListening();
 
       {
         ClaimsBasedSecurity cbs(session);
@@ -327,9 +343,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
         cbs.Close();
       }
-      CleanupListening();
-      Cleanup(session);
-      Cleanup(connection);
+      StopServerListening();
+      EndAmqpSession(session);
+      CloseAmqpConnection(connection);
     }
   }
 #endif

@@ -219,9 +219,9 @@ jobs:
           rootFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           templateFolder: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
           condition: and(succeeded(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
-
+        
       - ${{ parameters.PreTestSteps }}
-   
+      
       - pwsh: |
           test-proxy restore -a $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         workingDirectory: '$(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}'
@@ -239,10 +239,9 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-
         
       - ${{ parameters.PostTestSteps }}
-            
+           
      
       - pwsh: |
           $ErrorActionPreference = 'SilentlyContinue'

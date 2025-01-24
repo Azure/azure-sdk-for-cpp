@@ -45,21 +45,29 @@ try {
 
   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0
 
-  $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
+#  $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
+  Start-Process -NoNewWindow -FilePath "dotnet" -ArgumentList "exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless" -PassThru
 
-  $env:TEST_BROKER_JOBID = $job.Id
+  if (!$? -ne 0) {
+    Write-Error "Failed to start TestAmqpBroker."
+    exit 1
+  }
+
+  Write-Host "Test broker started successfully: $pid"
+
+#  $env:TEST_BROKER_JOBID = $job.Id
 
   Write-Host "Waiting for test broker to start..."
   Start-Sleep -Seconds 3
 
   Write-Host "Job Output after wait:"
-  Receive-Job $job.Id
-
-  $job = Get-Job -Id $env:TEST_BROKER_JOBID
-  if ($job.State -ne "Running") {
-    Write-Host "Test broker failed to start."
-    exit 1
-  }
+#  Receive-Job $job.Id
+#
+#  $job = Get-Job -Id $env:TEST_BROKER_JOBID
+#  if ($job.State -ne "Running") {
+#    Write-Host "Test broker failed to start."
+#    exit 1
+#  }
 }
 finally {
   Pop-Location
