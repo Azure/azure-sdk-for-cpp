@@ -5,11 +5,6 @@
 # Load common ES scripts
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
 
-if ($BrokerTestUrl -eq $null) {
-  Write-Error "BrokerTestUrl is required."
-  exit 1
-}
-
 # Create the test binary *outside* the repo root to avoid polluting the repo.
 $WorkingDirectory = ([System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
 
