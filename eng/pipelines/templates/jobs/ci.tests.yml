@@ -237,8 +237,8 @@ jobs:
             --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
             --no-compress-output `
             -T Test
-          Write-Host Test Directory: ${{ Build.SourcesDirectory }}/build/Testing/Temporary
-          Get-ChildItem ${{ Build.SourcesDirectory }}/build/Testing/Temporary -Recurse -Include *.log | ForEach-Object { Get-Content $_.FullName }
+          Write-Host Test Directory: ${{Build.SourcesDirectory }}/build/Testing/Temporary
+          Get-ChildItem ${{Build.SourcesDirectory }}/build/Testing/Temporary -Recurse -Include *.log | ForEach-Object { Get-Content $_.FullName }
           if (Test-Path ${{Build.SourcesDirectory}}/build/Testing/Temporary/LastTest.log) {
             Get-Content ${{Build.SourcesDirectory}}/build/Testing/Temporary/LastTest.log
           }
