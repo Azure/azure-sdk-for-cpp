@@ -46,21 +46,21 @@ try {
   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net6.0
 
 #  $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
-  Start-Process -NoNewWindow -FilePath "dotnet" -ArgumentList "exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless" -PassThru
+  $Process = Start-Process -NoNewWindow -FilePath "dotnet" -ArgumentList "exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless" -PassThru  -RedirectStandardOutput $WorkingDirectory/test-broker.log -RedirectStandardError $WorkingDirectory/test-broker-error.log
 
   if (!$? -ne 0) {
     Write-Error "Failed to start TestAmqpBroker."
     exit 1
   }
 
-  Write-Host "Test broker started successfully: $pid"
+  $Process
 
-#  $env:TEST_BROKER_JOBID = $job.Id
+  $env:TEST_BROKER_JOBID = $Process.Id
 
   Write-Host "Waiting for test broker to start..."
   Start-Sleep -Seconds 3
 
-  Write-Host "Job Output after wait:"
+#  Write-Host "Job Output after wait:"
 #  Receive-Job $job.Id
 #
 #  $job = Get-Job -Id $env:TEST_BROKER_JOBID
