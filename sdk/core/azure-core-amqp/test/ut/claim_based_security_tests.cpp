@@ -8,6 +8,7 @@
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/platform.hpp>
+#include <azure/core/url.hpp>
 
 #include <gtest/gtest.h>
 
@@ -19,7 +20,6 @@
 
 #if defined(USE_NATIVE_BROKER)
 #include <azure/core/internal/environment.hpp>
-#include <azure/core/url.hpp>
 #else
 #include "mock_amqp_server.hpp"
 #endif
@@ -36,6 +36,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   protected:
     void SetUp() override
     {
+#if defined(USE_NATIVE_BROKER)
       auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
       if (testBrokerUrl.empty())
       {
@@ -43,6 +44,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       GTEST_LOG_(INFO) << "Use broker address: " << testBrokerUrl;
       Azure::Core::Url brokerUrl(testBrokerUrl);
+#else
+      Azure::Core::Url brokerUrl("amqp://localhost:" + std::to_string(m_mockServer.GetPort()));
+#endif
       m_brokerEndpoint = brokerUrl;
     }
     void TearDown() override
@@ -120,9 +124,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
   private:
     Azure::Core::Url m_brokerEndpoint{};
-#if !defined(USE_NATIVE_BROKER)
-    MessageTests::AmqpServerMock m_mockServer;
-#endif
   };
 
   using namespace Azure::Core::Amqp;
