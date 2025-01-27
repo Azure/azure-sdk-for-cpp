@@ -10,11 +10,9 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_subdirectory(azure-core)
 
-if (NOT BUILD_WINDOWS_UWP)
-  if (NOT DISABLE_AMQP)
-    message(STATUS "Including AMQP library")
-    add_subdirectory(azure-core-amqp)
-  endif()
+if (NOT DISABLE_AMQP)
+  message(STATUS "Including AMQP library")
+  add_subdirectory(azure-core-amqp)
 endif()
 
 if (NOT DISABLE_AZURE_CORE_OPENTELEMETRY)

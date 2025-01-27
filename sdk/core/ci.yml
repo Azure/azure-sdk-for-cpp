@@ -104,6 +104,10 @@ extends:
 # AMQP
         - Name: TEST_BROKER_ADDRESS
           Value: "amqp://127.0.0.1:25672"
+        - Name: RUST_BACKTRACE
+          Value: "1"
+        - Name: RUST_LOG
+          Value: "trace"
 # Key Vault
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"
