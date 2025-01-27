@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.ContainerId = containerId;
       options.EnableTrace = enableTracing;
       options.Port = GetPort();
-
+      GTEST_LOG_(INFO) << "Create connection with container id: " << containerId;
       auto connection = Connection("localhost", nullptr, options);
 #if ENABLE_RUST_AMQP
       connection.Open(context);
@@ -74,6 +74,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     auto CreateAmqpSession(Connection const& connection, Context const& context = {})
     {
+      GTEST_LOG_(INFO) << "Create session on connection";
       auto session = connection.CreateSession();
 #if ENABLE_RUST_AMQP
       session.Begin(context);
@@ -143,11 +144,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto session{CreateAmqpSession(connection)};
 
     {
+      GTEST_LOG_(INFO) << "Create and destroy CBS object.";
       ClaimsBasedSecurity cbs(session);
     }
 
     {
       // Create two cbs objects
+      GTEST_LOG_(INFO) << "Create and destroy Two CBS objects.";
       ClaimsBasedSecurity cbs1(session);
       ClaimsBasedSecurity cbs2(session);
     }

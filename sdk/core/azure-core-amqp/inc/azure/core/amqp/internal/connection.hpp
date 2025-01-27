@@ -233,7 +233,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 #if ENABLE_UAMQP
     uint32_t MaxFrameSize{(std::numeric_limits<uint32_t>::max)()};
 #else
-    uint32_t MaxFrameSize{65536};
+    uint32_t MaxFrameSize{256*1024};
 #endif
 
     /** @brief The maximum number of channels supported.
