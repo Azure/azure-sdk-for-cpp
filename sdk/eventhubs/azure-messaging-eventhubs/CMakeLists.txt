@@ -114,8 +114,10 @@ target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::
 target_compile_definitions(azure-messaging-eventhubs PRIVATE _azure_BUILDING_SDK)
 
 if(USE_RUST_AMQP)
+  message(STATUS "Using Rust AMQP")
   target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_RUST_AMQP)
 else()
+  message(STATUS "Using uAMQP")
   target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_UAMQP)
 endif()
 
