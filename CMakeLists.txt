@@ -47,10 +47,10 @@ endif()
 
 if (BUILD_WINDOWS_UWP)
   if (NOT ENABLE_RUST_IN_BUILD)
-    message(STATUS "uAMQP is incompatable with UWP builds.")
+    message(STATUS "uAMQP is incompatible with UWP builds.")
     set(DISABLE_AMQP ON)
   endif()
-  message(STATUS "opentelemetry-cpp package is incompatable with UWP builds.")
+  message(STATUS "opentelemetry-cpp package is incompatible with UWP builds.")
   set(DISABLE_AZURE_CORE_OPENTELEMETRY ON)
 endif()
 
