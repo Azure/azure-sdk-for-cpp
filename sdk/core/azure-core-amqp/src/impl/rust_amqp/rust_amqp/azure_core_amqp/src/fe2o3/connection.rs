@@ -9,7 +9,7 @@ use async_std::sync::Mutex;
 use azure_core::{Result, Url};
 use fe2o3_amqp::connection::ConnectionHandle;
 use std::{borrow::BorrowMut, sync::OnceLock};
-use tracing::{debug, warn};
+use tracing::{debug, warn, trace};
 
 use super::error::{AmqpConnection, AmqpOpen};
 
@@ -50,6 +50,8 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
                 .alt_tls_establishment(true)
                 .buffer_size(65535)
                 .container_id(id);
+
+            trace!("Builder buffer size: {:?}", builder.buffer_size);
 
             if let Some(options) = options {
                 if let Some(frame_size) = options.max_frame_size {
