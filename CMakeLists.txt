@@ -178,7 +178,7 @@ add_subdirectory(sdk/core)
 add_subdirectory(sdk/appconfiguration)
 add_subdirectory(sdk/attestation)
 # AMQP doesn't work for UWP yet, and eventhubs depends on AMQP, so we cannot include eventhubs on UWP.
-if (DISABLE_AMQP)
+if (NOT DISABLE_AMQP)
     add_subdirectory(sdk/eventhubs)
 endif()
 add_subdirectory(sdk/identity)
