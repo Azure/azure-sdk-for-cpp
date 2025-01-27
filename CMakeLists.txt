@@ -11,6 +11,9 @@ set(ENABLE_RUST_IN_BUILD ON CACHE BOOL "Enable Rust based APIs in package")
 set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
 set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
 
+message(STATUS "Disabling Rust temporarily")
+set(ENABLE_RUST_IN_BUILD OFF)
+
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
