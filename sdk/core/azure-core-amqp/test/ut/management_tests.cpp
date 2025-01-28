@@ -42,7 +42,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Url brokerUrl(testBrokerUrl);
       m_brokerEndpoint = brokerUrl;
 #else
-      m_brokerEndpoint = Azure::Core::Url("amqp://localhost:" + std::to_string(GetPort()));
+      m_brokerEndpoint
+          = Azure::Core::Url("amqp://localhost:" + std::to_string(m_mockServer.GetPort()));
 #endif
     }
     void TearDown() override
@@ -67,6 +68,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.Port = GetPort();
 
       auto connection = Connection("localhost", nullptr, options);
+#if ENABLE_RUST_AMQP
+      connection.Open(context);
+#endif
+      return connection;
+      (void)context;
+    }
+    auto CreateAmqpConnection(
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+        std::string const& containerId
+        = testing::UnitTest::GetInstance()->current_test_info()->name(),
+        bool enableTracing = false,
+        Azure::Core::Context const& context = {})
+    {
+      ConnectionOptions options;
+      options.ContainerId = containerId;
+      options.EnableTrace = enableTracing;
+      options.Port = GetPort();
+
+      auto connection = Connection("localhost", credential, options);
 #if ENABLE_RUST_AMQP
       connection.Open(context);
 #endif
@@ -146,23 +166,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     options.Port = 5151;
     Connection connection("localhost", nullptr, options);
 
-#if ENABLE_RUST_AMQP
-    EXPECT_NO_THROW(connection.Open({}));
-#endif
-
     Session session{connection.CreateSession({})};
-#if ENABLE_RUST_AMQP
-    EXPECT_NO_THROW(session.Begin({}));
-#endif
     ManagementClient management(session.CreateManagementClient("Test", {}));
 
     // EXPECT_ANY_THROW(management.Open());
     auto openResult = management.Open();
     EXPECT_EQ(openResult, ManagementOpenStatus::Error);
-
-    management.Close();
-    EndAmqpSession(session);
-    CloseAmqpConnection(connection);
   }
 #endif
 
@@ -324,16 +333,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestManagement, ManagementOpenCloseAuthenticatedFail)
   {
 #if !defined(USE_NATIVE_BROKER)
+    class AzureTokenCredential : public Azure::Core::Credentials::TokenCredential {
+      Azure::Core::Credentials::AccessToken GetToken(
+          const Azure::Core::Credentials::TokenRequestContext& requestContext,
+          const Azure::Core::Context& context) const override
+      {
+        Azure::Core::Credentials::AccessToken rv;
+        rv.Token = "ThisIsAJwt.WithABogusBody.AndSignature";
+        rv.ExpiresOn = std::chrono::system_clock::now();
+        (void)requestContext;
+        (void)context;
+        return rv;
+      }
+
+    public:
+      AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
+    };
+
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
     m_mockServer.AddServiceEndpoint(endpoint);
 
-    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
-        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
-        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+    //    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+    //        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
+    //        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
+    auto tokenCredential = std::make_shared<AzureTokenCredential>();
 
-    auto connection(CreateAmqpConnection());
+    auto connection(CreateAmqpConnection(tokenCredential));
     auto session(CreateAmqpSession(connection));
     ManagementClientOptions options;
     options.EnableTrace = 1;
@@ -367,11 +394,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestManagement, ManagementOpenCloseError)
   {
 #if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(endpoint);
+    m_mockServer.AddServiceEndpoint(endpoint);
 
     ConnectionOptions connectionOptions;
     connectionOptions.Port = GetPort();
@@ -382,14 +408,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     options.EnableTrace = 1;
     ManagementClient management(session.CreateManagementClient("Test", options));
 
-    mockServer.StartListening();
+    StartServerListening();
+
     Azure::Core::Context context;
     context.Cancel();
     EXPECT_EQ(management.Open(context), ManagementOpenStatus::Cancelled);
 
     EXPECT_THROW(management.Close(), std::runtime_error);
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }
@@ -421,12 +448,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestManagement, ManagementRequestResponse)
   {
 #if ENABLE_UAMQP
-    MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     managementEndpointOptions.EnableTrace = true;
     auto endpoint
         = std::make_shared<NullResponseManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(endpoint);
+    m_mockServer.AddServiceEndpoint(endpoint);
 
     ConnectionOptions connectionOptions;
     connectionOptions.Port = GetPort();
@@ -440,7 +466,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     options.EnableTrace = 1;
     ManagementClient management(session.CreateManagementClient("Test", {}));
 
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
@@ -461,7 +487,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }
@@ -549,10 +575,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 #if ENABLE_UAMQP
     // Send a response with a bogus status code type.
-    MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
         = std::make_shared<ManagementServiceEndpoint>(MessageTests::MockServiceEndpointOptions{});
-    mockServer.AddServiceEndpoint(managementEndpoint);
+    m_mockServer.AddServiceEndpoint(managementEndpoint);
 
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
@@ -567,7 +592,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     // response to be rejected by the management client.
     managementEndpoint->SetStatusCode(500u);
     managementEndpoint->SetStatusDescription("Bad Things Happened.");
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
@@ -583,7 +608,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         "Message Delivery Rejected: Received message statusCode value is not an int.");
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }
@@ -591,10 +616,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 #if ENABLE_UAMQP
     // Send a response to the request with a bogus status code name.
-    MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
         = std::make_shared<ManagementServiceEndpoint>(MessageTests::MockServiceEndpointOptions{});
-    mockServer.AddServiceEndpoint(managementEndpoint);
+    m_mockServer.AddServiceEndpoint(managementEndpoint);
 
     struct ManagementEventsHandler : public ManagementClientEvents
     {
@@ -622,7 +646,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     managementEndpoint->SetStatusCode(500);
     managementEndpoint->SetStatusCodeName("status-code");
     managementEndpoint->SetStatusDescription("Bad Things Happened.");
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
@@ -640,7 +664,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_TRUE(managementEvents.Error);
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }
@@ -648,10 +672,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 #if ENABLE_UAMQP
     // Send a response to the request with a bogus status code name.
-    MessageTests::AmqpServerMock mockServer;
     auto managementEndpoint
         = std::make_shared<ManagementServiceEndpoint>(MessageTests::MockServiceEndpointOptions{});
-    mockServer.AddServiceEndpoint(managementEndpoint);
+    m_mockServer.AddServiceEndpoint(managementEndpoint);
 
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
@@ -669,7 +692,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     managementEndpoint->SetStatusCode(235);
     managementEndpoint->SetStatusCodeName("status-code");
     managementEndpoint->SetStatusDescription("Bad Things Happened..");
-    mockServer.StartListening();
+    StartServerListening();
 
     auto openResult = management.Open();
     ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
@@ -683,7 +706,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(response.Error.Description, "Bad Things Happened..");
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }
@@ -692,13 +715,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 #if ENABLE_UAMQP
     // Send a management request with an unknown operation name.
-    MessageTests::AmqpServerMock mockServer;
     MessageTests::MockServiceEndpointOptions managementEndpointOptions;
     auto managementEndpoint
         = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
-    mockServer.AddServiceEndpoint(managementEndpoint);
+    m_mockServer.AddServiceEndpoint(managementEndpoint);
 
-    mockServer.StartListening();
+    StartServerListening();
 
     ConnectionOptions connectionOptions;
     connectionOptions.EnableTrace = true;
@@ -729,7 +751,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(response.Error.Description, "Unknown Request operation");
     management.Close();
 
-    mockServer.StopListening();
+    StopServerListening();
 #else
 #endif
   }

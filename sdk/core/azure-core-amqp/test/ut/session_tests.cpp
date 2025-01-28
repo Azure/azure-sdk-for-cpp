@@ -76,6 +76,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     std::uint16_t GetPort() { return m_brokerEndpoint.GetPort(); }
 
+    void StartServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StartListening();
+#endif
+    }
+
+    void StopServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StopListening();
+#endif
+    }
+
     auto CreateAmqpConnection(
         std::string const& containerId
         = testing::UnitTest::GetInstance()->current_test_info()->name(),
@@ -247,35 +261,37 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
   {
-#if ENABLE_UAMQP
-    class TestListenerEvents : public Network::_detail::SocketListenerEvents {
-    public:
-      std::shared_ptr<Network::_internal::Transport> WaitForResult(
-          Network::_detail::SocketListener const& listener,
-          Azure::Core::Context const& context = {})
-      {
-        auto result = m_listenerQueue.WaitForPolledResult(context, listener);
-        return std::get<0>(*result);
-      }
-
-    private:
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-          std::shared_ptr<Network::_internal::Transport>>
-          m_listenerQueue;
-
-      virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport)
-      {
-        // Capture the XIO into a transport so it won't leak.
-        m_listenerQueue.CompleteOperation(transport);
-      }
-    };
-
-    // Ensure someone is listening on the connection for when we call Session.Begin.
-    TestListenerEvents events;
-    uint16_t testPort = FindAvailableSocket();
-    Network::_detail::SocketListener listener(testPort, &events);
-    listener.Start();
-#endif
+    // #if ENABLE_UAMQP
+    //     class TestListenerEvents : public Network::_detail::SocketListenerEvents {
+    //     public:
+    //       std::shared_ptr<Network::_internal::Transport> WaitForResult(
+    //           Network::_detail::SocketListener const& listener,
+    //           Azure::Core::Context const& context = {})
+    //       {
+    //         auto result = m_listenerQueue.WaitForPolledResult(context, listener);
+    //         return std::get<0>(*result);
+    //       }
+    //
+    //     private:
+    //       Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
+    //           std::shared_ptr<Network::_internal::Transport>>
+    //           m_listenerQueue;
+    //
+    //       virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport)
+    //       {
+    //         // Capture the XIO into a transport so it won't leak.
+    //         m_listenerQueue.CompleteOperation(transport);
+    //       }
+    //     };
+    //
+    //     // Ensure someone is listening on the connection for when we call Session.Begin.
+    //     TestListenerEvents events;
+    //     uint16_t testPort = FindAvailableSocket();
+    //     Network::_detail::SocketListener listener(testPort, &events);
+    //     listener.Start();
+    // #endif
+    //
+    StartServerListening();
     // Create a connection
     auto connection{CreateAmqpConnection()};
 
@@ -299,9 +315,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       session.Begin({});
       session.End("amqp:link:detach-forced", "Forced detach.", {});
     }
-#if ENABLE_UAMQP
-    listener.Stop();
-#endif
+    StopServerListening();
+
     CloseAmqpConnection(connection);
   }
 
