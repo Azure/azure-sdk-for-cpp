@@ -32,7 +32,7 @@ Simple applications that illustrate the different approaches to integrate the Az
 ## Sample Applications
 
 Sometimes we want to illustrate how several APIs or even packages work together in a context of a more complete program. For these cases, we created sample applications that you can look at, download, compile, and execute. These application samples are located on
-[https://docs.microsoft.com/samples/](https://docs.microsoft.com/samples/).
+[https://learn.microsoft.com/samples/](https://learn.microsoft.com/samples/).
 
 ## How-To Guide List
 

@@ -51,7 +51,7 @@
 //   endif()
 //
 // And if the SDK is being consumed using the neither option from the above (neither cmake
-// fetchcontent nor a package, but some custom build process that is unknown to us, yet uncapable of
+// fetchcontent nor a package, but some custom build process that is unknown to us, yet incapable of
 // handling AZ_xxx_BUILT_AS_DLL correctly), there is always an option for th consumer to define
 // AZ_xxx_DLL manually.
 // --
@@ -70,7 +70,7 @@
 /**
  * @def AZ_CORE_DLLEXPORT
  * @brief Applies DLL export attribute, when applicable.
- * @note See https://docs.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
+ * @note See https://learn.microsoft.com/cpp/cpp/dllexport-dllimport?view=msvc-160.
  */
 
 #if defined(AZ_CORE_DLL) || (0 /*@AZ_CORE_DLL_INSTALLED_AS_PACKAGE@*/)

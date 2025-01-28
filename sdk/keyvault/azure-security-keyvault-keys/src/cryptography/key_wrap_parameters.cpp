@@ -3,12 +3,10 @@
 
 #include "../private/cryptography_serializers.hpp"
 #include "../private/key_constants.hpp"
-#include "azure/keyvault/keys/cryptography/cryptography_client_models.hpp"
 
 #include <azure/core/base64.hpp>
 
 #include <string>
-#include <vector>
 
 namespace Azure {
   namespace Security {

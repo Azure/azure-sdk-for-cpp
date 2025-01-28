@@ -4,7 +4,6 @@
 #pragma once
 
 #include "azure/data/tables/dll_import_export.hpp"
-#include "azure/data/tables/enum_operators.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -548,43 +547,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Upsert Kind
-     *
-     */
-    enum class UpsertKind
-    {
-      Update,
-      Merge,
-    };
-
-    /**
-     * @brief Upsert Entity options.
-     *
-     */
-    struct UpsertEntityOptions
-    {
-      /**
-       * @brief Upsert type.
-       *
-       */
-      UpsertKind UpsertType = UpsertKind::Update;
-    };
-    /**
-     * @brief Add Entity options.
-     *
-     */
-    struct AddEntityOptions : public UpsertEntityOptions
-    {
-      AddEntityOptions() = default;
-      /**
-       * @brief Create Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      explicit AddEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
-
-    /**
      * @brief Add Entity result.
      *
      */
@@ -597,25 +559,6 @@ namespace Azure { namespace Data { namespace Tables {
     };
 
     /**
-     * @brief Update Entity options.
-     *
-     */
-    struct UpdateEntityOptions final
-    {
-      /**
-       * @brief Update Entity options default constructor.
-       *
-       */
-      UpdateEntityOptions() = default;
-      /**
-       * @brief Update Entity options constructor.
-       *
-       * @param other Update Entity options.
-       */
-      UpdateEntityOptions(UpsertEntityOptions const& other) { (void)other; }
-    };
-
-    /**
      * @brief Update Entity result.
      *
      */
@@ -625,25 +568,6 @@ namespace Azure { namespace Data { namespace Tables {
        * ETag
        */
       std::string ETag;
-    };
-
-    /**
-     * @brief Merge Entity options.
-     *
-     */
-    struct MergeEntityOptions final
-    {
-      /**
-       * @brief Merge Entity options default constructor.
-       *
-       */
-      MergeEntityOptions() = default;
-      /**
-       * @brief Merge Entity options constructor.
-       *
-       * @param other Upsert Entity options.
-       */
-      MergeEntityOptions(UpsertEntityOptions const& other) { (void)other; }
     };
 
     /**
@@ -664,47 +588,6 @@ namespace Azure { namespace Data { namespace Tables {
      */
     struct DeleteEntityResult final
     {
-    };
-
-    /**
-     * @brief Upsert Entity result.
-     *
-     */
-    struct UpsertEntityResult final : public MergeEntityResult, UpdateEntityResult, AddEntityResult
-    {
-      /**
-       * ETag
-       */
-      std::string ETag;
-      /**
-       * @brief Upsert Entity result default constructor.
-       *
-       */
-      UpsertEntityResult() = default;
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Merge Entity result.
-       */
-      UpsertEntityResult(MergeEntityResult const& other)
-          : MergeEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Update Entity result.
-       */
-      UpsertEntityResult(UpdateEntityResult const& other)
-          : UpdateEntityResult(other), ETag(other.ETag)
-      {
-      }
-      /**
-       * @brief Upsert Entity result constructor.
-       *
-       * @param other Add Entity result.
-       */
-      UpsertEntityResult(AddEntityResult const& other) : AddEntityResult(other), ETag(other.ETag) {}
     };
 
     /**

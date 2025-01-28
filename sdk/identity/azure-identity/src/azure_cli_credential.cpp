@@ -200,7 +200,7 @@ AccessToken AzureCliCredential::GetToken(
         // json::exception gets thrown when a string we provided for parsing is not a json object.
         // It should not get thrown if the string is a valid JSON, but there are specific problems
         // with the token JSON object - missing property, failure to parse a specific property etc.
-        // I.e. this means that the az commnd has rather printed some error message
+        // I.e. this means that the az command has rather printed some error message
         // (such as "ERROR: Please run az login to setup account.") instead of producing a JSON
         // object output. In this case, we want the exception to be thrown with the output from the
         // command (which is likely the error message) and not with the details of the exception

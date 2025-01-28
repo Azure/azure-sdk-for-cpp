@@ -528,5 +528,5 @@ CMakeUserPresets.json
 
 - Now you can push your project up to git, and collaboraters can clone it to work on the project with you. They will need to make sure they have properly set up their C++ compiler, CMake, adn vcpkg. They will also need to create their own `CMakeUsersPresets.json` file to point to where they installed the `vcpkg.cmake` module.
 
-[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/

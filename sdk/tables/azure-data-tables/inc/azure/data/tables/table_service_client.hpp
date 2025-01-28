@@ -51,20 +51,6 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl A url referencing the table that includes the name of the account and the
-     * name of the table.
-     * @param credential The SAS credential used to sign requests.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableServiceClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const TableClientOptions& options = {});
-
-    /**
      * @brief Creates a new table under the given account.
      *
      * @param context for canceling long running operations.
@@ -73,7 +59,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::Table> CreateTable(
         std::string const& tableName,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Operation permanently deletes the specified table.
@@ -84,7 +70,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::DeleteTableResult> DeleteTable(
         std::string const& tableName,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Queries tables under the given account.
@@ -105,7 +91,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SetServicePropertiesResult> SetServiceProperties(
         Models::SetServicePropertiesOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Get service properties
@@ -114,7 +100,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @return Get service properties result.
      */
     Response<Models::TableServiceProperties> GetServiceProperties(
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Get service statistics
@@ -122,7 +108,7 @@ namespace Azure { namespace Data { namespace Tables {
      * @param context for canceling long running operations.
      * @return Get service statistics result.
      */
-    Response<Models::ServiceStatistics> GetStatistics(Core::Context const& context = {});
+    Response<Models::ServiceStatistics> GetStatistics(Core::Context const& context = {}) const;
 
     /**
      * @brief Pre flight check
@@ -133,7 +119,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::PreflightCheckResult> PreflightCheck(
         Models::PreflightCheckOptions const& options,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
     /**
      * @brief Get table client.
      *

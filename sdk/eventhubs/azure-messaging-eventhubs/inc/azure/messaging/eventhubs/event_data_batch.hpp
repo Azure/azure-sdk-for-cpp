@@ -181,7 +181,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       if (!options.PartitionId.empty() && !options.PartitionKey.empty())
       {
-        throw std::runtime_error("Either PartionID or PartitionKey can be set, but not both.");
+        throw std::runtime_error("Either PartitionID or PartitionKey can be set, but not both.");
       }
 
       if (options.PartitionId.empty())

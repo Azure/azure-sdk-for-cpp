@@ -264,7 +264,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
      *
      * @remark For more information, see
-     *  <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
+     *  <a href="https://learn.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
      * types</a>.
      *
      */
@@ -274,7 +274,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the SECG SECP256K1 elliptic curve.
      *
      * @remark For more information, see
-     * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
+     * <a href="https://learn.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
      * types</a>.
      *
      */
@@ -284,7 +284,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
      *
      * @remark For more information, see
-     * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
+     * <a href="https://learn.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
      * types</a>.
      *
      */
@@ -294,7 +294,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Gets the NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
      *
      * @remark For more information, see
-     * <a href="https://docs.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
+     * <a href="https://learn.microsoft.com/azure/key-vault/keys/about-keys#curve-types">Curve
      * types</a>.
      *
      */
@@ -860,7 +860,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /*
      * Only friend classes are permitted to construct a DeleteOperation. This is because a
-     * KeyVaultPipelne is required and it is not exposed to customers.
+     * KeyVaultPipeline is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
@@ -951,7 +951,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /*
      * Only friend classes are permitted to construct a RecoverDeletedKeyOperation. This is
-     * because a KeyVaultPipelne is required and it is not exposed to customers.
+     * because a KeyVaultPipeline is required and it is not exposed to customers.
      *
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */

@@ -29,24 +29,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
 
     Azure::Core::_internal::ClientOptions options;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
 
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes = {"https://management.azure.com/.default"};
-      perRetrypolicies.emplace_back(
+      perRetryPolicies.emplace_back(
           std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
               credential, tokenContext));
     }
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies;
     options.Telemetry.ApplicationId = "eventhubs.test";
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         options,
         "eventhubs.test",
         "1.0.0",
-        std::move(perRetrypolicies),
-        std::move(perCallpolicies));
+        std::move(perRetryPolicies),
+        std::move(perCallPolicies));
   }
 
   EventHubsManagement::EventHubsCreateOrUpdateOperation EventHubsManagement::CreateNamespace(

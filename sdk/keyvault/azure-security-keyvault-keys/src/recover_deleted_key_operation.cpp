@@ -3,7 +3,6 @@
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
-#include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
 #include <azure/core/exception.hpp>
@@ -47,7 +46,7 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation::PollInternal(
   }
 
   // To ensure the success of calling Poll multiple times, even after operation is completed, a
-  // copy of the raw HTTP response is returned instead of transfering the ownership of the raw
+  // copy of the raw HTTP response is returned instead of transferring the ownership of the raw
   // response inside the Operation.
   return rawResponse;
 }

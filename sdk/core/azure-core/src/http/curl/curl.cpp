@@ -182,7 +182,7 @@ void WinSocketSetBuffSize(curl_socket_t socket)
   {
     // if WSAloctl succeeded (returned 0), set the socket buffer size.
     // Specifies the total per-socket buffer space reserved for sends.
-    // https://docs.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
+    // https://learn.microsoft.com/windows/win32/api/winsock/nf-winsock-setsockopt
     setsockopt(socket, SOL_SOCKET, SO_SNDBUF, (const char*)&ideal, sizeof(ideal));
   }
 }
@@ -785,7 +785,7 @@ void CurlSession::ParseChunkSize(Context const& context)
         if (index + 1 == this->m_innerBufferSize)
         {
           /*
-           * index + 1 represents the next possition to Read. If that's equal to the inner buffer
+           * index + 1 represents the next position to Read. If that's equal to the inner buffer
            * size it means that there is no more data and we need to fetch more from network. And
            * whatever we fetch will be the start of the chunk data. The bodyStart is set to 0 to
            * indicate the the next read call should read from the inner buffer start.
@@ -2562,7 +2562,7 @@ CurlConnection::CurlConnection(
   if (result != CURLE_OK)
   {
     throw Http::TransportException(
-        "Broken connection. Couldn't get the active sockect for it."
+        "Broken connection. Couldn't get the active socket for it."
         + std::string(curl_easy_strerror(result)));
   }
 }

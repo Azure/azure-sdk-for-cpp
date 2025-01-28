@@ -16,13 +16,9 @@ SetUpTestProxy("sdk/tables")
 
 add_executable (
   azure-data-tables-test
-    enum_operators_test.hpp
-    enum_operators_test.cpp
     macro_guard.cpp
-    sas_test.cpp
     serializers_test.hpp
     serializers_test.cpp
-    shared_key_lite_policy_test.cpp
     table_client_test.cpp
     table_client_test.hpp
     transactions_test.hpp
@@ -45,6 +41,7 @@ target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-ide
 # gtest_discover_tests will scan the test from azure-data-tables-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-data-tables-test
+     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
      TEST_PREFIX azure-data-tables.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES

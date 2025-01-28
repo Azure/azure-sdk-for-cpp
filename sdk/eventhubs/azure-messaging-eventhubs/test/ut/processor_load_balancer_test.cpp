@@ -128,9 +128,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(ownerships[0].PartitionId == "1" || ownerships[0].PartitionId == "2");
     EXPECT_TRUE(ownerships[1].PartitionId == "1" || ownerships[1].PartitionId == "2");
 
-    auto finalOwneships = loadBalancer.m_checkpointStore->ListOwnership(
+    auto finalOwnerships = loadBalancer.m_checkpointStore->ListOwnership(
         testEventHubFQDN, testEventHubName, testConsumerGroup);
-    EXPECT_EQ(finalOwneships.size(), 4ul);
+    EXPECT_EQ(finalOwnerships.size(), 4ul);
   }
 
   TEST_F(ProcessorLoadBalancerTest, Balanced_UnownedPartitions)
@@ -183,9 +183,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto ownerships = loadBalancer.LoadBalance(std::vector<std::string>{"0", "1", "2", "3"});
 
     EXPECT_FALSE(ownerships.size() == 0);
-    auto finalOwneships = loadBalancer.m_checkpointStore->ListOwnership(
+    auto finalOwnerships = loadBalancer.m_checkpointStore->ListOwnership(
         testEventHubFQDN, testEventHubName, testConsumerGroup);
-    auto ownersMap = GroupByOwner(finalOwneships);
+    auto ownersMap = GroupByOwner(finalOwnerships);
     auto commons = FindCommon(ownersMap);
     EXPECT_EQ(commons.size(), 0ul);
   }

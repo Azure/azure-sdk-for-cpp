@@ -60,12 +60,12 @@ set(
 set(
   AZURE_KEYVAULT_CERTIFICATES_SOURCE
     src/certificate_client.cpp
+    src/certificate_client_models.cpp
     src/certificate_client_operations.cpp
     src/certificate_client_paged_response.cpp
     src/certificate_serializers.cpp
     src/keyvault_certificates_common_request.cpp
     src/private/certificate_constants.hpp
-    src/private/certificate_key_usage.hpp
     src/private/certificate_serializers.hpp
     src/private/keyvault_certificates_common_request.hpp
     src/private/package_version.hpp

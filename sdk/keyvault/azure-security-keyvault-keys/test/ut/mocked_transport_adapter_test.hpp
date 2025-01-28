@@ -24,7 +24,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   namespace _detail {
     // Return a simple key as response so keyvault can parse it to create the T response
-    // Fake key from https://docs.microsoft.com/rest/api/keyvault/GetKey/GetKey#examples
+    // Fake key from https://learn.microsoft.com/rest/api/keyvault/GetKey/GetKey#examples
     static const char FakeKey[]
         = "{  \"key\": {    \"kid\": "
           "\"https://myvault.vault.azure.net/keys/CreateSoftKeyTest/"
@@ -108,14 +108,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         KeyClientOptions const& options = KeyClientOptions())
         : KeyClient(vaultUrl, nullptr, options)
     {
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallpolicies;
-      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetrypolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perCallPolicies;
+      std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
       m_pipeline = std::make_unique<Azure::Core::Http::_internal::HttpPipeline>(
           options,
           "keyvault-keys",
           Azure::Security::KeyVault::Keys::_detail::PackageVersion::ToString(),
-          std::move(perRetrypolicies),
-          std::move(perCallpolicies));
+          std::move(perRetryPolicies),
+          std::move(perCallPolicies));
     }
   };
 

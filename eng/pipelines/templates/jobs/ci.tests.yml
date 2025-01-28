@@ -100,6 +100,8 @@ jobs:
       value: ${{ parameters.ServiceDirectory }}
     - name: Codeql.SkipTaskAutoInjection
       value: false
+    - name: AZURE_ENABLE_STATIC_ANALYSIS
+      value: true
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -124,6 +126,14 @@ jobs:
             ne(variables['XCODE_VERSION'], '')
           )
         displayName: Set Xcode version
+
+      - pwsh: /usr/bin/xcodebuild -version
+        condition: >-
+          and(
+            succeeded(),
+            eq(variables['Agent.OS'], 'Darwin')
+          )
+        displayName: Xcode version
 
       - template: /eng/pipelines/templates/steps/vcpkg.yml
 

@@ -5,13 +5,11 @@
 
 #pragma once
 
-#include "configuration_client_options.hpp"
 #include "dll_import_export.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
-#include <azure/core/paged_response.hpp>
 #include <azure/core/url.hpp>
 #include <azure/core/uuid.hpp>
 
@@ -23,12 +21,6 @@
 #include <vector>
 
 namespace Azure { namespace Data { namespace AppConfiguration {
-  class ConfigurationClient;
-  struct GetKeysOptions;
-  struct GetKeyValuesOptions;
-  struct GetSnapshotsOptions;
-  struct GetLabelsOptions;
-  struct GetRevisionsOptions;
 
   class GetKeysResponseContentType final
       : public Core::_internal::ExtendableEnumeration<GetKeysResponseContentType> {
@@ -521,94 +513,5 @@ namespace Azure { namespace Data { namespace AppConfiguration {
   {
     std::string SyncToken;
     std::string ETag;
-  };
-
-  class GetKeysPagedResponse final : public Core::PagedResponse<GetKeysPagedResponse> {
-    friend class ConfigurationClient;
-    friend class Core::PagedResponse<GetKeysPagedResponse>;
-
-  private:
-    std::shared_ptr<ConfigurationClient> m_client;
-    std::string m_accept;
-    GetKeysOptions m_options;
-
-    void OnNextPage(Core::Context const& context);
-
-  public:
-    Nullable<std::vector<Key>> Items;
-    std::string SyncToken;
-    GetKeysResponseContentType ContentType;
-  };
-
-  class GetKeyValuesPagedResponse final : public Core::PagedResponse<GetKeyValuesPagedResponse> {
-    friend class ConfigurationClient;
-    friend class Core::PagedResponse<GetKeyValuesPagedResponse>;
-
-  private:
-    std::shared_ptr<ConfigurationClient> m_client;
-    std::string m_accept;
-    GetKeyValuesOptions m_options;
-
-    void OnNextPage(Core::Context const& context);
-
-  public:
-    Nullable<std::vector<KeyValue>> Items;
-    Nullable<std::string> Etag;
-    std::string SyncToken;
-    std::string ETag;
-    GetKeyValuesResponseContentType ContentType;
-  };
-
-  class GetSnapshotsPagedResponse final : public Core::PagedResponse<GetSnapshotsPagedResponse> {
-    friend class ConfigurationClient;
-    friend class Core::PagedResponse<GetSnapshotsPagedResponse>;
-
-  private:
-    std::shared_ptr<ConfigurationClient> m_client;
-    std::string m_accept;
-    GetSnapshotsOptions m_options;
-
-    void OnNextPage(Core::Context const& context);
-
-  public:
-    Nullable<std::vector<Snapshot>> Items;
-    std::string SyncToken;
-    GetSnapshotsResponseContentType ContentType;
-  };
-
-  class GetLabelsPagedResponse final : public Core::PagedResponse<GetLabelsPagedResponse> {
-    friend class ConfigurationClient;
-    friend class Core::PagedResponse<GetLabelsPagedResponse>;
-
-  private:
-    std::shared_ptr<ConfigurationClient> m_client;
-    std::string m_accept;
-    GetLabelsOptions m_options;
-
-    void OnNextPage(Core::Context const& context);
-
-  public:
-    Nullable<std::vector<Label>> Items;
-    std::string SyncToken;
-    GetLabelsResponseContentType ContentType;
-  };
-
-  class GetRevisionsPagedResponse final : public Core::PagedResponse<GetRevisionsPagedResponse> {
-    friend class ConfigurationClient;
-    friend class Core::PagedResponse<GetRevisionsPagedResponse>;
-
-  private:
-    std::shared_ptr<ConfigurationClient> m_client;
-    std::string m_accept;
-    GetRevisionsOptions m_options;
-
-    void OnNextPage(Core::Context const& context);
-
-  public:
-    Nullable<std::vector<KeyValue>> Items;
-    Nullable<std::string> Etag;
-    std::string SyncToken;
-    std::string ETag;
-    GetRevisionsResponseContentType ContentType;
   };
 }}} // namespace Azure::Data::AppConfiguration

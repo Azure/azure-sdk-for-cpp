@@ -39,7 +39,7 @@ Add_Policy_Certificates| Adds and removes a policy management certificates for t
 
 ## Next Steps
 
-For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://docs.microsoft.com/azure/attestation/) .
+For more information about the Microsoft Azure Attestation service, please see our [documentation page](https://learn.microsoft.com/azure/attestation/) .
 
 <!-- LINKS -->
 <!-- links are known to be broken, they will be fixed after this initial pull

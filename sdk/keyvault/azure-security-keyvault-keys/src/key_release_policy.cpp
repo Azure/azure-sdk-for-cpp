@@ -5,12 +5,9 @@
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
-#include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 
-#include <map>
 #include <string>
-#include <vector>
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Core::_internal;

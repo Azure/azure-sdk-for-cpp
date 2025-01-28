@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "azure/data/tables/credentials/azure_sas_credential.hpp"
-#include "azure/data/tables/credentials/named_key_credential.hpp"
 #include "azure/data/tables/models.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -89,58 +87,37 @@ namespace Azure { namespace Data { namespace Tables {
         const TableClientOptions& options = {});
 
     /**
-     * @brief Initializes a new instance of tableClient.
-     *
-     * @param serviceUrl The service Url
-     * @param credential The SAS credential used to sign requests.
-     * @param tableName The name of the table.
-     * @param options Optional client options that define the transport pipeline policies for
-     * authentication, retries, etc., that are applied to every request.
-     */
-    explicit TableClient(
-        const std::string& serviceUrl,
-        std::shared_ptr<Azure::Data::Tables::Credentials::AzureSasCredential> credential,
-        const std::string& tableName,
-        const TableClientOptions& options = {});
-
-    /**
      * @brief Add entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Add entity result.
      */
     Response<Models::AddEntityResult> AddEntity(
         Models::TableEntity const& tableEntity,
-        Models::AddEntityOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Update entity in a table.
      *
      * @param tableEntity The TableEntity to set.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Update entity result.
      */
     Response<Models::UpdateEntityResult> UpdateEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpdateEntityOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Merge entity in a table.
      *
      * @param tableEntity The TableEntity to merge.
-     * @param options Optional parameters to execute this function.
      * @param context for canceling long running operations.
      * @return Merge entity result.
      */
     Response<Models::MergeEntityResult> MergeEntity(
         Models::TableEntity const& tableEntity,
-        Models::MergeEntityOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Deletes the specified entity in a table.
@@ -151,21 +128,29 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::DeleteEntityResult> DeleteEntity(
         Models::TableEntity const& tableEntity,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
-     * @brief Upsert specified entity in a table.
+     * @brief Update or insert specified entity in a table.
      *
-     * @param tableEntity The TableEntity to upsert.
-     * @param options Optional parameters to execute this function.
+     * @param tableEntity The TableEntity to update or insert.
      * @param context for canceling long running operations.
-     * @return Upsert entity result.
+     * @return Update entity result.
      */
-    Response<Models::UpsertEntityResult> UpsertEntity(
+    Response<Models::UpdateEntityResult> UpdateOrInsertEntity(
         Models::TableEntity const& tableEntity,
-        Models::UpsertEntityOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
+    /**
+     * @brief Merge or insert the specified entity in a table.
+     *
+     * @param tableEntity The TableEntity to merge or insert.
+     * @param context for canceling long running operations.
+     * @return Merge entity result.
+     */
+    Response<Models::MergeEntityResult> MergeOrInsertEntity(
+        Models::TableEntity const& tableEntity,
+        Core::Context const& context = {}) const;
     /**
      * @brief Queries entities in a table.
      *
@@ -175,7 +160,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Models::QueryEntitiesPagedResponse QueryEntities(
         Models::QueryEntitiesOptions const& options = {},
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Queries a single entity in a table.
@@ -188,7 +173,7 @@ namespace Azure { namespace Data { namespace Tables {
     Response<Models::TableEntity> GetEntity(
         std::string const& partitionKey,
         std::string const& rowKey,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
     /**
      * @brief Submits a transaction.
@@ -199,7 +184,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     Response<Models::SubmitTransactionResult> SubmitTransaction(
         std::vector<Models::TransactionStep> const& steps,
-        Core::Context const& context = {});
+        Core::Context const& context = {}) const;
 
   private:
 #ifdef _azure_TABLES_TESTING_BUILD
@@ -213,15 +198,24 @@ namespace Azure { namespace Data { namespace Tables {
     friend class Azure::Data::Test::TransactionsBodyTest_TransactionBodyAddOp_Test;
 #endif
 
+    Response<Models::UpdateEntityResult> UpdateEntityImpl(
+        Models::TableEntity const& tableEntity,
+        bool isUpsert,
+        Core::Context const& context = {}) const;
+
+    Response<Models::MergeEntityResult> MergeEntityImpl(
+        Models::TableEntity const& tableEntity,
+        bool isUpsert,
+        Core::Context const& context = {}) const;
     std::string PreparePayload(
         std::string const& batchId,
         std::string const& changesetId,
-        std::vector<Models::TransactionStep> const& steps);
-    std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity);
-    std::string PrepInsertEntity(std::string const& changesetId, Models::TableEntity entity);
+        std::vector<Models::TransactionStep> const& steps) const;
+    std::string PrepAddEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepDeleteEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepMergeEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepUpdateEntity(std::string const& changesetId, Models::TableEntity entity) const;
+    std::string PrepInsertEntity(std::string const& changesetId, Models::TableEntity entity) const;
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
     Core::Url m_url;
     std::string m_tableName;

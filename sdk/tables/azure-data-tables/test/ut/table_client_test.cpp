@@ -3,9 +3,6 @@
 
 #include "table_client_test.hpp"
 
-#include "azure/data/tables/account_sas_builder.hpp"
-#include "azure/data/tables/tables_sas_builder.hpp"
-
 #include <azure/core/internal/strings.hpp>
 
 #include <chrono>
@@ -63,33 +60,6 @@ namespace Azure { namespace Data { namespace Test {
               m_tableName,
               m_credential,
               tableClientOptions));
-          break;
-        case AuthType::SAS:
-          auto creds = std::make_shared<Azure::Data::Tables::Credentials::NamedKeyCredential>(
-              GetAccountName(), GetAccountKey());
-          Azure::Data::Tables::Sas::AccountSasBuilder sasBuilder;
-          sasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          sasBuilder.ResourceTypes = Azure::Data::Tables::Sas::AccountSasResourceType::All;
-          sasBuilder.Services = Azure::Data::Tables::Sas::AccountSasServices::All;
-          sasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
-          sasBuilder.SetPermissions(Azure::Data::Tables::Sas::AccountSasPermissions::All);
-          std::string serviceUrl = "https://" + GetAccountName() + ".table.core.windows.net/";
-          auto sasCreds = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
-              sasBuilder.GenerateSasToken(*creds));
-          m_tableServiceClient = std::make_shared<Tables::TableServiceClient>(
-              Tables::TableServiceClient(serviceUrl, sasCreds, clientOptions));
-
-          Azure::Data::Tables::Sas::TablesSasBuilder tableSasBuilder;
-          tableSasBuilder.Protocol = Azure::Data::Tables::Sas::SasProtocol::HttpsOnly;
-          tableSasBuilder.StartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
-          tableSasBuilder.ExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
-          tableSasBuilder.SetPermissions(Azure::Data::Tables::Sas::TablesSasPermissions::All);
-          tableSasBuilder.TableName = m_tableName;
-          auto tableSasCreds
-              = std::make_shared<Azure::Data::Tables::Credentials::AzureSasCredential>(
-                  tableSasBuilder.GenerateSasToken(*creds));
-          m_tableClient = std::make_shared<Tables::TableClient>(
-              Tables::TableClient(serviceUrl, tableSasCreds, m_tableName, tableClientOptions));
           break;
       }
     }
@@ -264,6 +234,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
+    entity.SetETag(response.Value.ETag);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -293,6 +264,7 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     auto response = m_tableClient->AddEntity(entity);
+    entity.SetETag(response.Value.ETag);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
 
@@ -361,7 +333,7 @@ namespace Azure { namespace Data { namespace Test {
     }
   }
 
-  TEST_P(TablesClientTest, EntityUpsert)
+  TEST_P(TablesClientTest, EntityUpdateInsert)
   {
     Azure::Data::Tables::Models::TableEntity entity;
 
@@ -370,25 +342,49 @@ namespace Azure { namespace Data { namespace Test {
     entity.Properties["Name"] = TableEntityProperty("Azure");
     entity.Properties["Product"] = TableEntityProperty("Tables");
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
-    auto response = m_tableClient->UpsertEntity(entity);
+    auto response = m_tableClient->UpdateOrInsertEntity(entity);
     EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(response.Value.ETag.empty());
-
-    Azure::Data::Tables::Models::UpsertEntityOptions options;
-    options.UpsertType = Azure::Data::Tables::Models::UpsertKind::Update;
-
+    entity.SetETag(response.Value.ETag);
     entity.Properties["Product"] = TableEntityProperty("Tables2");
-    auto updateResponse = m_tableClient->MergeEntity(entity, options);
+    auto updateResponse = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
         updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
     EXPECT_FALSE(updateResponse.Value.ETag.empty());
 
-    Azure::Data::Tables::Models::UpsertEntityOptions options2;
-    options2.UpsertType = Azure::Data::Tables::Models::UpsertKind::Merge;
     entity.Properties["Product3"] = TableEntityProperty("Tables3");
     entity.SetETag(updateResponse.Value.ETag);
-    auto updateResponse2 = m_tableClient->MergeEntity(entity, options2);
+    auto updateResponse2 = m_tableClient->UpdateEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse2.Value.ETag.empty());
+  }
+
+  TEST_P(TablesClientTest, EntityMergeInsert)
+  {
+    Azure::Data::Tables::Models::TableEntity entity;
+
+    entity.SetPartitionKey("P1");
+    entity.SetRowKey("R1");
+    entity.Properties["Name"] = TableEntityProperty("Azure");
+    entity.Properties["Product"] = TableEntityProperty("Tables");
+    auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
+    auto response = m_tableClient->MergeOrInsertEntity(entity);
+    EXPECT_EQ(response.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(response.Value.ETag.empty());
+    entity.SetETag(response.Value.ETag);
+    entity.Properties["Product"] = TableEntityProperty("Tables2");
+    auto updateResponse = m_tableClient->UpdateEntity(entity);
+
+    EXPECT_EQ(
+        updateResponse.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
+    EXPECT_FALSE(updateResponse.Value.ETag.empty());
+
+    entity.Properties["Product3"] = TableEntityProperty("Tables3");
+    entity.SetETag(updateResponse.Value.ETag);
+    auto updateResponse2 = m_tableClient->MergeEntity(entity);
 
     EXPECT_EQ(
         updateResponse2.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::NoContent);
@@ -674,9 +670,6 @@ namespace Azure { namespace Data { namespace Test {
         case AuthType::Key:
           stringValue = "key";
           break;
-        case AuthType::SAS:
-          stringValue = "sas_LIVEONLY_";
-          break;
         default:
           stringValue = "key";
           break;
@@ -684,9 +677,5 @@ namespace Azure { namespace Data { namespace Test {
       return stringValue;
     }
   } // namespace
-  INSTANTIATE_TEST_SUITE_P(
-      Tables,
-      TablesClientTest,
-      ::testing::Values(AuthType::Key, AuthType::SAS),
-      GetSuffix);
+  INSTANTIATE_TEST_SUITE_P(Tables, TablesClientTest, ::testing::Values(AuthType::Key), GetSuffix);
 }}} // namespace Azure::Data::Test

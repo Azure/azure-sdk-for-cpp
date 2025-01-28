@@ -1,17 +1,27 @@
 # Release History
 
-## 1.15.0-beta.1 (Unreleased)
+## 1.15.0-beta.3 (Unreleased)
 
 ### Features Added
-
-- Added mTLS support to WinHTTP transport.
-  - To enable mTLS, first create an appropriate Windows `PCCERT_CONTEXT` object and set the `TlsClientCertificate` field in `WinHttpTransportOptions` to that certificate before creating the `WinHttpTransport` object.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.15.0-beta.2 (2025-01-09)
+
+### Features Added
+
+- Made default constructor for `Azure::Core::Uuid` implicit.
+
+## 1.15.0-beta.1 (2024-11-13)
+
+### Features Added
+
+- Added mTLS support to WinHTTP transport.
+  - To enable mTLS, first create an appropriate Windows `PCCERT_CONTEXT` object and set the `TlsClientCertificate` field in `WinHttpTransportOptions` to that certificate before creating the `WinHttpTransport` object.
 
 ## 1.14.1 (2024-11-01)
 

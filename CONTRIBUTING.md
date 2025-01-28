@@ -115,7 +115,7 @@ cmake --build .
 
 #### Static Analysis
 
-When the project is built using MSVC on Windows, the compiler can run [static analysis](https://docs.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
+When the project is built using MSVC on Windows, the compiler can run [static analysis](https://learn.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
 
 Keep in mind that enabling static analysis will significantly impact build time. It is recommended to run it right before submitting the PR, but not in your inner developer loop.
 

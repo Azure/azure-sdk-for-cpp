@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #include "azure/core/http/policies/policy.hpp"
-#include "azure/core/platform.hpp"
 
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"

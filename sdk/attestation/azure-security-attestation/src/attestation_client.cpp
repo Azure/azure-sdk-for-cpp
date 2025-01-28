@@ -3,7 +3,6 @@
 
 #include "azure/attestation/attestation_client.hpp"
 
-#include "azure/attestation/attestation_administration_client.hpp"
 #include "private/attestation_client_models_private.hpp"
 #include "private/attestation_client_private.hpp"
 #include "private/attestation_common_request.hpp"
@@ -13,7 +12,6 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/diagnostics/log.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 
 #include <shared_mutex>
@@ -41,23 +39,23 @@ AttestationClient::AttestationClient(
           "azure-security-attestation-cpp",
           PackageVersion::ToString()}
 {
-  std::vector<std::unique_ptr<HttpPolicy>> perRetrypolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
   if (credential)
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
     tokenContext.Scopes = {"https://attest.azure.net/.default"};
 
-    perRetrypolicies.emplace_back(
+    perRetryPolicies.emplace_back(
         std::make_unique<BearerTokenAuthenticationPolicy>(credential, tokenContext));
   }
-  std::vector<std::unique_ptr<HttpPolicy>> perCallpolicies;
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
 
   m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
       options,
       "security.attestation",
       PackageVersion::ToString(),
-      std::move(perRetrypolicies),
-      std::move(perCallpolicies));
+      std::move(perRetryPolicies),
+      std::move(perCallPolicies));
 }
 
 Azure::Response<OpenIdMetadata> AttestationClient::GetOpenIdMetadata(

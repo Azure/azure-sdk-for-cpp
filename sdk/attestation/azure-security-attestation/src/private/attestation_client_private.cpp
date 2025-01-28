@@ -12,8 +12,6 @@
 
 #include <azure/core/internal/json/json.hpp>
 
-#include <chrono>
-#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
