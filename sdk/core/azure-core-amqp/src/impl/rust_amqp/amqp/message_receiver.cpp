@@ -73,6 +73,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   std::pair<std::shared_ptr<Models::AmqpMessage>, Models::_internal::AmqpError>
   MessageReceiverImpl::WaitForIncomingMessage(Context const& context)
   {
+    context.ThrowIfCancelled();
+
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
