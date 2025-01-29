@@ -117,7 +117,7 @@ if(USE_RUST_AMQP)
   message(STATUS "Using Rust AMQP")
   target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_RUST_AMQP)
 else()
-  message(STATUS "Using uAMQP")
+  message(STATUS "Using uAMQP.")
   target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_UAMQP)
 endif()
 

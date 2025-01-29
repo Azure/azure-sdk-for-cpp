@@ -318,7 +318,7 @@
       "description": "Disable use of the Rust AMQP implementation (Hidden)",
       "hidden": true,
       "cacheVariables": {
-        "ENABLE_RUST_IN_BUILD": false
+        "DISABLE_RUST_IN_BUILD": true
       }
     },
     {

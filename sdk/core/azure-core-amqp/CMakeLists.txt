@@ -35,7 +35,7 @@ endif()
 
 set(USE_RUST_AMQP ON CACHE BOOL "Enable Rust AMQP stack" FORCE)
 
-if (NOT ENABLE_RUST_IN_BUILD)
+if (DISABLE_RUST_IN_BUILD)
   message(STATUS "Disabling Rust based functionality in build.")
   set(USE_RUST_AMQP OFF CACHE BOOL "Enable Rust AMQP stack" FORCE)
 endif()

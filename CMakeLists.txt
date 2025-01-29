@@ -7,12 +7,12 @@ cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Enable Rust based APIs in C++ SDK.
-set(ENABLE_RUST_IN_BUILD ON CACHE BOOL "Enable Rust based APIs in package")
+set(DISABLE_RUST_IN_BUILD OFF CACHE BOOL "Disable Rust based APIs in package")
 set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
 set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
 
 message(STATUS "Disabling Rust temporarily")
-set(ENABLE_RUST_IN_BUILD OFF)
+set(DISABLE_RUST_IN_BUILD ON)
 
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
@@ -49,7 +49,7 @@ if ((${VCPKG_TARGET_TRIPLET} MATCHES ".*-uwp"))
 endif()
 
 if (BUILD_WINDOWS_UWP)
-  if (NOT ENABLE_RUST_IN_BUILD)
+  if (DISABLE_RUST_IN_BUILD)
     message(STATUS "uAMQP is incompatible with UWP builds.")
     set(DISABLE_AMQP ON)
   endif()
