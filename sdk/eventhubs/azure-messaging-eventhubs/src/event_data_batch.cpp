@@ -51,7 +51,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Core::Amqp::Models::AmqpMessage messageToSend{*message};
 
     // Fix up some properties in the message to send if they have not been already set.
-    if (!message->Properties.MessageId.HasValue())
+    if (message->Properties.MessageId.IsNull())
     {
       messageToSend.Properties.MessageId
           = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());

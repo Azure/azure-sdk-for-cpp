@@ -33,10 +33,18 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
+set(USE_RUST_AMQP ON CACHE BOOL "Enable Rust AMQP stack" FORCE)
+
+if (DISABLE_RUST_IN_BUILD)
+  message(STATUS "Disabling Rust based functionality in build.")
+  set(USE_RUST_AMQP OFF CACHE BOOL "Enable Rust AMQP stack" FORCE)
+endif()
+
 
 if (USE_RUST_AMQP)
   message(STATUS "Using RUST based AMQP stack")
   set(VENDOR_UAMQP OFF CACHE BOOL "Use vendored uAMQP" FORCE)
+  set(USE_UAMQP OFF CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
 else()
   set(USE_UAMQP ON CACHE BOOL "Enable uAMQP AMQP stack" FORCE)
   set(VENDOR_UAMQP ON CACHE BOOL "Use vendored uamqp" FORCE)
@@ -71,6 +79,30 @@ if (USE_RUST_AMQP)
 #  install_rustup()
 
   include(FetchContent)
+
+    # If the cmake build is x86, add the x86 target to the rust build
+    message("VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+  if (${VCPKG_TARGET_TRIPLET} MATCHES "x86.*")
+    message("Configure rust for x86 builds.")
+
+    if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
+      message("Configure rust for Windows x86 builds.")
+
+      # Run the rustup command to install the toolchain
+      execute_process(COMMAND rustup toolchain install stable-i686-pc-windows-msvc)
+
+      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
+      set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
+    else()
+      message("Configure rust for Linux x86 builds.")
+      execute_process(COMMAND rustup toolchain install stable-i686-unknown-linux-gnu)
+      set(Rust_CARGO_TARGET "i686-unknown-linux-gnu")
+    endif()
+  else()
+    message("Configure rust for 64 builds.")
+  endif()
+
+
   FetchContent_Declare(
     Corrosion
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
@@ -78,6 +110,7 @@ if (USE_RUST_AMQP)
   )
   FetchContent_MakeAvailable(Corrosion)
 
+ 
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
   corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
 endif()
@@ -257,6 +290,12 @@ elseif(USE_RUST_AMQP)
 
   if (MSVC)
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
+  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+#    target_link_libraries()
+  else()
+    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
   endif()
 endif()
 

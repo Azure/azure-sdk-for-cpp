@@ -565,21 +565,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       _internal::MessageReceiver const&,
       std::shared_ptr<Models::AmqpMessage> const& message)
   {
-    if (!message->Properties.CorrelationId.HasValue())
+    if (message->Properties.CorrelationId.IsNull())
     {
       return IndicateError(
           "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID not found.");
     }
-    else if (message->Properties.CorrelationId.Value().GetType() != Models::AmqpValueType::String)
+    else if (message->Properties.CorrelationId.GetType() != Models::AmqpValueType::String)
     {
       return IndicateError(
           "",
           Models::_internal::AmqpErrorCondition::InternalError.ToString(),
           "Received message correlation ID is not a ulong.");
     }
-    std::string requestId = static_cast<std::string>(message->Properties.CorrelationId.Value());
+    std::string requestId = static_cast<std::string>(message->Properties.CorrelationId);
 
     // Ensure nobody else is messing with the message queues right now.
     std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);

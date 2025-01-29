@@ -33,7 +33,7 @@ macro(az_vcpkg_integrate)
       FetchContent_GetProperties(vcpkg)
       # make sure to pull vcpkg only once.
       if(NOT vcpkg_POPULATED) 
-          FetchContent_Populate(vcpkg)
+          FetchContent_MakeAvailable(vcpkg)
       endif()
       # use the vcpkg source path 
       set(CMAKE_TOOLCHAIN_FILE "${vcpkg_SOURCE_DIR}/scripts/buildsystems/vcpkg.cmake" CACHE STRING "")
