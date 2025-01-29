@@ -9,7 +9,7 @@ use async_std::sync::Mutex;
 use azure_core::{Result, Url};
 use fe2o3_amqp::connection::ConnectionHandle;
 use std::{borrow::BorrowMut, sync::OnceLock};
-use tracing::{debug, warn, trace};
+use tracing::{debug, warn};
 
 use super::error::{AmqpConnection, AmqpOpen};
 
