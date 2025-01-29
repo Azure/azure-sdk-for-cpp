@@ -313,12 +313,12 @@
       }
     },
     {
-      "name": "rust-amqp",
-      "displayName": "Use Rust AMQP implementation",
-      "description": "Use Rust AMQP implementation (Hidden)",
+      "name": "no-rust-amqp",
+      "displayName": "Disable use of the Rust AMQP implementation",
+      "description": "Disable use of the Rust AMQP implementation (Hidden)",
       "hidden": true,
       "cacheVariables": {
-        "USE_RUST_AMQP": true
+        "DISABLE_RUST_IN_BUILD": true
       }
     },
     {
@@ -480,22 +480,22 @@
       ]
     },
     {
-      "name": "x64-static-debug-perftests-rust",
-      "displayName": "x64 Debug, Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "name": "x64-static-debug-perftests-no-rust",
+      "displayName": "x64 Debug, No Rust, static With Perf Tests and samples, libcurl+winhttp",
       "inherits": [
         "x64-static",
         "debug-build",
         "enable-tests",
         "enable-samples",
         "enable-perf",
-        "rust-amqp",
+        "no-rust-amqp",
         "winhttp-transport",
         "curl-transport"
       ]
     },
     {
-      "name": "x64-static-debug-asan-perftests-rust",
-      "displayName": "x64 Debug, ASAN Rust AMQP, static With Perf Tests and samples, libcurl+winhttp",
+      "name": "x64-static-debug-asan-perftests-no-rust",
+      "displayName": "x64 Debug, ASAN No Rust, static With Perf Tests and samples, libcurl+winhttp",
       "inherits": [
         "x64-static",
         "enable-address-sanitizer",
@@ -503,7 +503,7 @@
         "enable-tests",
         "enable-samples",
         "enable-perf",
-        "rust-amqp",
+        "no-rust-amqp",
         "winhttp-transport",
         "curl-transport"
       ],
@@ -527,7 +527,7 @@
       }
     },
     {
-      "name": "x86-msvc-static-debug-perftests",
+      "name": "x86-msvc-static-dbg-all",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x86-msvc-static",
@@ -540,7 +540,7 @@
       ]
     },
     {
-      "name": "x64-msvc-static-debug-perftests",
+      "name": "x64-msvc-static-debug-all",
       "displayName": "x64 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x64-msvc-static",
@@ -660,6 +660,24 @@
       }
     },
     {
+      "name": "linux-basic-clang-18",
+      "displayName": "Linux clang-18",
+      "description": "Using compilers: C = /usr/bin/clang-18, CXX = /usr/bin/clang++-18",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-18",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-g++",
       "displayName": "Linux G++",
       "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
@@ -764,6 +782,23 @@
       "displayName": "Linux clang 13 Debug+Tests"
     },
     {
+      "name": "linux-clang-18-debug",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build"
+      ],
+      "displayName": "Linux clang 18 Debug"
+    },
+    {
+      "name": "linux-clang-18-debug-tests",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 18 Debug+Tests"
+    },
+    {
       "name": "linux-g++-debug",
       "displayName": "Linux c++ Debug",
       "inherits": [
@@ -800,12 +835,12 @@
       "displayName": "Linux c++ Debug+Tests, samples"
     },
     {
-      "name": "linux-g++-rust-debug-tests-samples",
+      "name": "linux-g++-no-rust-debug-tests-samples",
       "inherits": [
         "linux-g++-debug-tests-samples",
-        "rust-amqp"
+        "no-rust-amqp"
       ],
-      "displayName": "Linux c++ Debug+Tests, samples, Rust AMQP"
+      "displayName": "Linux c++ Debug+Tests, samples, No Rust"
     },
     {
       "name": "linux-g++-11-debug",

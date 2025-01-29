@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#define TRACE_MESSAGE_BODY
 #include "azure/core/amqp/models/amqp_message.hpp"
 
 #include "../amqp/private/unique_handle.hpp"
@@ -1038,7 +1039,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
       break;
       case MessageBodyType::Value:
+#if defined(TRACE_MESSAGE_BODY)
+        os << "AmqpValue: " << message.GetBodyAsAmqpValue();
+#else
         os << "AmqpValue, type=" << message.GetBodyAsAmqpValue().GetType();
+#endif
         break;
     }
     os << std::endl << ">";

@@ -135,7 +135,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ASSERT_TRUE(receivedEvents[0]->ContentType);
       EXPECT_EQ("application/binary", receivedEvents[0]->ContentType.Value());
       ASSERT_TRUE(receivedEvents[0]->MessageId);
-      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId.Value()));
+      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId));
     }
   }
 

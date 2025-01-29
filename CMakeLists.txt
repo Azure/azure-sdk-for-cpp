@@ -6,6 +6,14 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
+# Enable Rust based APIs in C++ SDK.
+set(DISABLE_RUST_IN_BUILD OFF CACHE BOOL "Disable Rust based APIs in package")
+set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
+set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
+
+message(STATUS "Disabling Rust temporarily")
+set(DISABLE_RUST_IN_BUILD ON)
+
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
@@ -38,6 +46,15 @@ message(STATUS "VCPKG_TARGET_TRIPLET=" ${VCPKG_TARGET_TRIPLET} ";")
 if ((${VCPKG_TARGET_TRIPLET} MATCHES ".*-uwp"))
   set(BUILD_WINDOWS_UWP True)
   message(STATUS "Building for Windows Store, CMAKE_SYSTEM_NAME=" ${CMAKE_SYSTEM_NAME})
+endif()
+
+if (BUILD_WINDOWS_UWP)
+  if (DISABLE_RUST_IN_BUILD)
+    message(STATUS "uAMQP is incompatible with UWP builds.")
+    set(DISABLE_AMQP ON)
+  endif()
+  message(STATUS "opentelemetry-cpp package is incompatible with UWP builds.")
+  set(DISABLE_AZURE_CORE_OPENTELEMETRY ON)
 endif()
 
 # For MSVC, ensure that the compiler is operating in strict compliance mode.
@@ -161,8 +178,8 @@ add_subdirectory(sdk/core)
 add_subdirectory(sdk/appconfiguration)
 add_subdirectory(sdk/attestation)
 # AMQP doesn't work for UWP yet, and eventhubs depends on AMQP, so we cannot include eventhubs on UWP.
-if (NOT BUILD_WINDOWS_UWP)
-  add_subdirectory(sdk/eventhubs)
+if (NOT DISABLE_AMQP)
+    add_subdirectory(sdk/eventhubs)
 endif()
 add_subdirectory(sdk/identity)
 add_subdirectory(sdk/keyvault)
