@@ -185,9 +185,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           Models::_detail::AmqpValueFactory::ToImplementation(m_options.Properties.AsAmqpValue()));
     }
 
-    Common::_detail::InvokeAmqpApi(
-        amqpconnectionoptions_set_buffer_size, connectionOptions, m_options.BufferSize);
-
+    if (m_options.BufferSize.HasValue())
+    {
+      Common::_detail::InvokeAmqpApi(
+          amqpconnectionoptions_set_buffer_size, connectionOptions, m_options.BufferSize.Value());
+    }
     m_connectionOptions = std::move(connectionOptions);
   }
 

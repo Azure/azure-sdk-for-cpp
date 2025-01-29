@@ -48,10 +48,7 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
             let mut builder = fe2o3_amqp::Connection::builder()
                 .sasl_profile(fe2o3_amqp::sasl_profile::SaslProfile::Anonymous)
                 .alt_tls_establishment(true)
-                .buffer_size(65535)
                 .container_id(id);
-
-            trace!("Builder buffer size: {:?}", builder.buffer_size);
 
             if let Some(options) = options {
                 if let Some(frame_size) = options.max_frame_size {

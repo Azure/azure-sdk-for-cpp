@@ -82,7 +82,7 @@ add_executable (
     policy_test.cpp
     request_activity_policy_test.cpp
     request_id_policy_test.cpp
-    resource_identifier_test
+    resource_identifier_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp
     service_tracing_test.cpp
