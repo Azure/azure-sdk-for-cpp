@@ -12307,7 +12307,7 @@ namespace Azure { namespace Core { namespace Json { namespace _internal { namesp
           locale's decimal point is used instead of `.` to work with the
           locale-dependent converters.
     */
-    token_type scan_number() // lgtm [cpp/use-of-goto]
+    token_type scan_number() // lgtm [cpp/use-of-goto] `goto` is used in this function to implement the number-parsing state machine described above. By design, any finite input will eventually reach the "done" state or return token_type::parse_error. In each intermediate state, 1 byte of the input is appended to the token_buffer vector, and only the already initialized variables token_buffer, number_type, and error_message are manipulated.
     {
       // reset token_buffer to store the number's bytes
       reset();
