@@ -28,7 +28,7 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
-   * @brief
+   * @brief Generated secret client
    *
    */
   class GeneratedSecretClient final {
@@ -172,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * This operation requires the secrets/purge permission.
      * @param secretName The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
-     * @return
+     * @return The purge deleted secret result.
      *
      */
     Response<PurgeDeletedSecretResult> PurgeDeletedSecret(
