@@ -20,7 +20,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GeneratedSecretClientOptions final : public Core::_internal::ClientOptions
   {
-    ///
+    /// fdgdfgdfgdf
     std::string ApiVersion = "7.6-preview.1";
   };
 
@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GeneratedSecretClientGetPropertiesOfSecretsOptions final
   {
-    ///
+    /// fgdfgdfgdf
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up
@@ -44,7 +44,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GeneratedSecretClientGetPropertiesOfSecretsVersionsOptions final
   {
-    ///
+    /// fdgdgdfgdf
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up
@@ -58,7 +58,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct GeneratedSecretClientGetDeletedSecretsOptions final
   {
-    ///
+    /// fggdfgdfgdf
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up
