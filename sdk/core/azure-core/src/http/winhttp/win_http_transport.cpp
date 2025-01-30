@@ -50,7 +50,7 @@ using namespace Azure::Core::Diagnostics::_internal;
 namespace {
 
 constexpr static const size_t DefaultUploadChunkSize = 1024 * 64;
-constexpr static const size_t MaximumUploadChunkSize = 1024 * 1024;
+constexpr static const size_t MaximumUploadChunkSize = 9 * 1024 * 1024;
 
 std::string GetErrorMessage(DWORD error)
 {
