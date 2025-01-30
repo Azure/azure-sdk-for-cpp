@@ -29,6 +29,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     DeletionRecoveryLevel() = default;
 
+    /**
+     * @brief Constructs the DeletionRecoveryLevel.
+     * @param deletionRecoveryLevel The URL of the service.
+     *
+     */
     explicit DeletionRecoveryLevel(std::string deletionRecoveryLevel)
         : ExtendableEnumeration(std::move(deletionRecoveryLevel))
     {
