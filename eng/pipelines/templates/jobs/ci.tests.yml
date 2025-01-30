@@ -64,11 +64,6 @@ jobs:
     displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
-    templateContext:
-      outputs:
-      - output: pipelineArtifact
-        path: $(System.DefaultWorkingDirectory)/build
-        artifact: tests
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
       maxParallel: 12
@@ -216,6 +211,8 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - template: /eng/pipelines/templates/steps/show-failure-logs.yml
+
       - task: 1ES.PublishPipelineArtifact@1
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
@@ -224,9 +221,7 @@ jobs:
       - task: 1ES.PublishPipelineArtifact@1
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
-          artifact: test
-
-      - template: /eng/pipelines/templates/steps/show-failure-logs.yml
+          artifact: drop
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
