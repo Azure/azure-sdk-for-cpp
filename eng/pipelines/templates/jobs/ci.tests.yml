@@ -239,7 +239,23 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
+
+      # Upload the contents of $(Build.SourcesDirectory)/build to the artifacts store.
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: $(Build.SourcesDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut
+          ArtifactName: build
+        displayName: Publish build artifacts
+        condition: succeededOrFailed()
+      # Upload the contents of $(Build.SourcesDirectory)/build to the artifacts store.
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: $(Build.SourcesDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut
+          ArtifactName: build
+        displayName: Publish build artifacts
+        condition: succeededOrFailed()
         
+                
       - ${{ parameters.PostTestSteps }}
            
      
