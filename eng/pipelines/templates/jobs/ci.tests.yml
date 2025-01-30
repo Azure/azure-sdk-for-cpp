@@ -216,6 +216,19 @@ jobs:
           VcpkgArgs: "$(VcpkgArgs)"
           Env: "$(CmakeEnvArg)"
 
+      - task: 1ES.PublishPipelineArtifact@1
+        inputs:
+          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
+          artifact: drop
+        displayName: Publish drop artifact eventhubs-test
+      - task: 1ES.PublishPipelineArtifact@1
+        inputs:
+          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
+          artifact: test
+        displayName: Publish drop artifact eventhubs-checkpointstore-blob-test
+        
+                
+
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -245,17 +258,6 @@ jobs:
         workingDirectory: build
         displayName: Test
 
-      - task: 1ES.PublishPipelineArtifact@1
-        inputs:
-          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
-          artifact: drop
-
-      - task: 1ES.PublishPipelineArtifact@1
-        inputs:
-          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
-          artifact: test
-        
-                
       - ${{ parameters.PostTestSteps }}
            
      
