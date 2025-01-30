@@ -64,6 +64,11 @@ jobs:
     displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
+    templateContext:
+      outputs:
+      - output: testArtifact
+        path: $(System.DefaultWorkingDirectory)/out
+        artifact: tests
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
       maxParallel: 12
@@ -240,20 +245,15 @@ jobs:
         workingDirectory: build
         displayName: Test
 
-      # Upload the contents of $(Build.SourcesDirectory)/build to the artifacts store.
-      - task: PublishBuildArtifacts@1
+      - task: 1ES.PublishPipelineArtifact@1
         inputs:
-          PathtoPublish: $(Build.SourcesDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut
-          ArtifactName: build
-        displayName: Publish build artifacts
-        condition: succeededOrFailed()
-      # Upload the contents of $(Build.SourcesDirectory)/build to the artifacts store.
-      - task: PublishBuildArtifacts@1
+          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
+          artifact: drop
+
+      - task: 1ES.PublishPipelineArtifact@1
         inputs:
-          PathtoPublish: $(Build.SourcesDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut
-          ArtifactName: build
-        displayName: Publish build artifacts
-        condition: succeededOrFailed()
+          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
+          artifact: test
         
                 
       - ${{ parameters.PostTestSteps }}
