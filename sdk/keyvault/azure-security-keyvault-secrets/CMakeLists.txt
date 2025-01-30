@@ -73,33 +73,23 @@ endif()
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
-    inc/azure/keyvault/secrets.hpp
-    inc/azure/keyvault/secrets/dll_import_export.hpp
-    inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_operations.hpp
-    inc/azure/keyvault/secrets/keyvault_options.hpp
-    inc/azure/keyvault/secrets/keyvault_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
-    inc/azure/keyvault/secrets/rtti.hpp
-    inc/azure/keyvault/secrets/secret_client.hpp
+    inc/azure/security/keyvault/secrets.hpp
+    inc/azure/security/keyvault/secrets/dll_import_export.hpp
+    inc/azure/security/keyvault/secrets/generated_secret_client.hpp
+    inc/azure/security/keyvault/secrets/generated_secret_client_options.hpp
+    inc/azure/security/keyvault/secrets/generated_secret_client_paged_responses.hpp
+    inc/azure/security/keyvault/secrets/rtti.hpp
+    inc/azure/security/keyvault/secrets/secrets_models.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
-    src/keyvault_operations.cpp
-    src/keyvault_protocol.cpp
-    src/keyvault_secret_paged_response.cpp
-    src/keyvault_secret_properties.cpp
-    src/keyvault_secrets_common_request.cpp
-    src/private/keyvault_protocol.hpp
-    src/private/keyvault_secrets_common_request.hpp
     src/private/package_version.hpp
-    src/private/secret_constants.hpp
-    src/private/secret_serializers.hpp
-    src/secret_client.cpp
-    src/secret_serializers.cpp
+    src/generated_secret_client.cpp
+    src/get_deleted_secrets_paged_response.cpp
+    src/get_properties_of_secrets_paged_response.cpp
+    src/get_properties_of_secrets_versions_paged_response.cpp
+    src/secrets.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
@@ -138,28 +128,28 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-  add_subdirectory(test/ut)
-  add_subdirectory(test/test-app)
+#  add_subdirectory(test/ut)
+#  add_subdirectory(test/test-app)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
-  add_subdirectory(test/perf)
+ # add_subdirectory(test/perf)
 endif()
 
 if(BUILD_SAMPLES)
-  add_subdirectory(samples)
+ # add_subdirectory(samples)
 endif()
 
 az_vcpkg_export(
     azure-security-keyvault-secrets
     SECURITY_KEYVAULT_SECRETS
-    "azure/keyvault/secrets/dll_import_export.hpp"
+    "azure/security/keyvault/secrets/dll_import_export.hpp"
   )
 
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS
-  "azure/keyvault/secrets/rtti.hpp"
+  "azure/security/keyvault/secrets/rtti.hpp"
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)

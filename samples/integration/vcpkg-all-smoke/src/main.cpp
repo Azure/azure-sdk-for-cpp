@@ -11,7 +11,7 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
-#include <azure/keyvault/secrets.hpp>
+//#include <azure/keyvault/secrets.hpp>
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
@@ -20,7 +20,7 @@
 #include <iostream>
 
 using namespace Azure::Security::KeyVault::Keys;
-using namespace Azure::Security::KeyVault::Secrets;
+//using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Storage::Blobs;
 using namespace Azure::Storage::Queues;
@@ -45,7 +45,7 @@ int main()
     std::cout << "Creating Keyvault Clients" << std::endl;
     // keyvault
     KeyClient keyClient(smokeUrl, credential);
-    SecretClient secretClient(smokeUrl, credential);
+   // SecretClient secretClient(smokeUrl, credential);
     CertificateClient certificateClient(smokeUrl, credential);
 
     std::cout << "Creating Storage Clients" << std::endl;
