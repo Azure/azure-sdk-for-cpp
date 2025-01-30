@@ -127,7 +127,7 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_REPO_PATH TSP_SERVICE_PATH CODEGEN
     ${DOWNLOAD_TSP_FOLDER} to \n\
     ${DOWNLOAD_CODEGEN_FOLDER}")
     #copy tsp files to the codegen folder
-    file(COPY ${DOWNLOAD_TSP_FOLDER} 
+    file(COPY ${DOWNLOAD_TSP_FOLDER}/ 
     DESTINATION ${DOWNLOAD_CODEGEN_FOLDER})
     message("\
     Will copy tsp generation scripts from \n\
