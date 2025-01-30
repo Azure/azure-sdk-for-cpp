@@ -35,6 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     /**
      * @brief Constructs the GeneratedSecretClient.
+     * @param url The URL of the service.
      * @param credential Credential to authenticate with the service.
      * @param options Optional parameters.
      *
