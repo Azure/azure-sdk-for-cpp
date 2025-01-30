@@ -216,12 +216,12 @@ jobs:
       - task: 1ES.PublishPipelineArtifact@1
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
-          artifact: drop
+          artifact: drop-eventhubs
 
       - task: 1ES.PublishPipelineArtifact@1
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
-          artifact: drop
+          artifact: drop-eventhubs-checkpoint
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
