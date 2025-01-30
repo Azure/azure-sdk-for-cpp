@@ -214,11 +214,14 @@ jobs:
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
       - task: 1ES.PublishPipelineArtifact@1
+        condition: always()
+        outputs:
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
           artifact: drop-eventhubs
 
       - task: 1ES.PublishPipelineArtifact@1
+        condition: always()
         inputs:
           path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-checkpointstore-blob-test
           artifact: drop-eventhubs-checkpoint
