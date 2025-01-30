@@ -212,8 +212,6 @@
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
-          "CC": "/usr/bin/clang-11",
-          "CXX": "/usr/bin/clang++-11",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
           "RunProxyTests": true
@@ -221,13 +219,15 @@
       },
       "BuildSettings": {
         "clang-11": {
+          "CC": "/usr/bin/clang-11",
+          "CXX": "/usr/bin/clang++-11",
           "CHECK_CLANG_FORMAT": "1",
-          "CHECK_ASCII_CHARACTERS": "1",
+          "CHECK_ASCII_CHARACTERS": "1"
+        },
+        "clang-13": {
           "CC": "/usr/bin/clang-13",
           "CXX": "/usr/bin/clang++-13",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON"
-        },
-        "clang-13": {
         },
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release"

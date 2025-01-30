@@ -67,7 +67,7 @@ jobs:
     templateContext:
       outputs:
       - output: pipelineArtifact
-        path: $(System.DefaultWorkingDirectory)/out
+        path: $(System.DefaultWorkingDirectory)/build
         artifact: tests
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
