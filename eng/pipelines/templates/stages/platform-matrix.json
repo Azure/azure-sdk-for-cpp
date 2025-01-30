@@ -224,10 +224,10 @@
           "CHECK_CLANG_FORMAT": "1",
           "CHECK_ASCII_CHARACTERS": "1"
         },
-        "clang-13": {
-          "AptDependencies": "clang-13",
-          "CC": "/usr/bin/clang-13",
-          "CXX": "/usr/bin/clang++-13"
+        "clang-12": {
+          "AptDependencies": "clang-12",
+          "CC": "/usr/bin/clang-12",
+          "CXX": "/usr/bin/clang++-12"
         },
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release"
