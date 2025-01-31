@@ -12,7 +12,8 @@ message(STATUS "Detecting compiler.")
 cmake_host_system_information(RESULT OS_NAME QUERY OS_NAME)
 cmake_host_system_information(RESULT OS_RELEASE QUERY OS_RELEASE)
 
-if (LINUX)
+if(NOT MSVC AND APPLE)
+if (LINUX OR UNIX)
   execute_process(COMMAND lsb_release -ir OUTPUT_VARIABLE LINUX_DISTRO_INFO)
 
   message(STATUS "CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}")
@@ -30,6 +31,8 @@ if (LINUX)
     endif()
   endif()
 endif()
+endif()
+
 
 add_subdirectory(azure-messaging-eventhubs)
 add_subdirectory(azure-messaging-eventhubs-checkpointstore-blob)
