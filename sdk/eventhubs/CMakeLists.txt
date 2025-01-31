@@ -20,7 +20,6 @@ cmake_host_system_information(RESULT OS_RELEASE QUERY OS_RELEASE)
   message(STATUS "LINUX: ${LINUX}")
   message(STATUS "UNIX: ${UNIX}")
 
-if(NOT MSVC AND APPLE)
 if (LINUX OR UNIX)
   execute_process(COMMAND lsb_release -ir OUTPUT_VARIABLE LINUX_DISTRO_INFO)
 
@@ -34,7 +33,6 @@ if (LINUX OR UNIX)
       endif()
     endif()
   endif()
-endif()
 endif()
 
 
