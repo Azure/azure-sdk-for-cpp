@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if (LINUX OR UNIX)
-message(STATUS "Detecting Linux distribution.")
+  message(STATUS "Detecting Linux distribution.")
   execute_process(COMMAND lsb_release -ir OUTPUT_VARIABLE LINUX_DISTRO_INFO)
 
   message(STATUS "LINUX_INFO=${LINUX_DISTRO_INFO}")
