@@ -16,8 +16,8 @@ rust-version = "1.76"
 path = "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/azure_core_amqp"
 
 [workspace.dependencies]
-azure_core = { version = "0.18" }
-azure_identity = "0.18"
+azure_core = { version = "0.21" }
+azure_identity = "0.21"
 async-lock = "3.0"
 async-process = "2.0"
 async-std = { version = "1.12", features = ["attributes"] }
@@ -26,7 +26,7 @@ async-trait = "0.1"
 base64 = "0.22"
 bytes = "1.0"
 cargo_metadata = "0.18.1"
-cbindgen = "0.26.0"
+cbindgen = "0.28.0"
 clap = { version = "4.4.16", features = ["derive"] }
 dyn-clone = "1.0"
 fe2o3-amqp = { version = "0.13", features = ["native-tls", "tracing", "uuid"] }
