@@ -190,7 +190,6 @@
     {
       "StaticConfigs": {
         "Ubuntu20": {
-          "AptDependencies": "lsb_release",
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
