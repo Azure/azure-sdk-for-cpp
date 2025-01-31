@@ -14,14 +14,6 @@ set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
-message(STATUS "Detecting compiler.")
-if (CMAKE_CXX_COMPILER MATCHES "clang")
-  if($ENV{CXX} MATCHES "-11")
-    message(STATUS "Disabling RUST AMQP For CLANG-11 builds because the eventhubs tests segfault for unknown reasons.")
-    set(DISABLE_RUST_IN_BUILD ON)
-  endif()
-endif()
-
 # Compile Options
 include(FolderList)
 SetGlobalOptions()
