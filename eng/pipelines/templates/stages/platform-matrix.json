@@ -210,6 +210,7 @@
         "Ubuntu20": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
+          "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
@@ -224,13 +225,11 @@
           "CHECK_ASCII_CHARACTERS": "1"
         },
         "clang-12": {
-          "BuildArgs": "-j 10",
           "AptDependencies": "clang-12",
           "CC": "/usr/bin/clang-12",
           "CXX": "/usr/bin/clang++-12"
         },
         "included_release": {
-          "BuildArgs": "-j 10",
           "CMAKE_BUILD_TYPE": "Release"
         }
       }

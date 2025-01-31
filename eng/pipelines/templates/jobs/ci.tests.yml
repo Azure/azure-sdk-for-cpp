@@ -118,6 +118,13 @@ jobs:
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
 
+      - pwsh: |
+          Write-Host "Update APT modules."
+          sudo apt update
+          sudo apt upgrade -y
+        displayName: Update APT modules
+        condition: succeeded()
+
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
           and(
@@ -202,12 +209,6 @@ jobs:
       - pwsh: |
           Write-Host "##vso[task.setvariable variable=DOTNET_ROLL_FORWARD]Major"
         displayName: Set DOTNET_ROLL_FORWARD to Major globally
-
-      - bash: |
-          echo "Update APT modules."
-          sudo apt update
-          sudo apt upgrade
-        displayName: Update APT modules
 
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
