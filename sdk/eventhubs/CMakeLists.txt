@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# cspell: ignore DISTRO
+
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-messaging LANGUAGES CXX)
