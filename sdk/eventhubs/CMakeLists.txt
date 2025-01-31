@@ -9,6 +9,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 message(STATUS "Detecting compiler.")
+cmake_host_system_information(RESULT OS_NAME QUERY OS_NAME)
+cmake_host_system_information(RESULT OS_RELEASE QUERY OS_RELEASE)
+
+message(STATUS "CMAKE_SYSTEM_NAME=${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM_VERSION=${CMAKE_SYSTEM_VERSION}")
+message(STATUS "OS Name: ${OS_NAME}")
+message(STATUS "OS Release: ${OS_RELEASE}")
+
 if (CMAKE_CXX_COMPILER MATCHES "clang")
   if($ENV{CXX} MATCHES "-1[12]")
     message(STATUS "Disabling test discovery in EventHubs library for CLANG-11 and CLANG-12 builds because the eventhubs tests segfault for unknown reasons.")
