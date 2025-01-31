@@ -118,13 +118,6 @@ jobs:
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
         displayName: Install dependencies from apt
 
-      - pwsh: |
-          Write-Host "Update APT modules."
-          sudo apt update
-          sudo apt upgrade -y
-        displayName: Update APT modules
-        condition: succeeded()
-
       - pwsh: sudo xcode-select -s /Applications/Xcode_$(XCODE_VERSION).app/Contents/Developer
         condition: >-
           and(

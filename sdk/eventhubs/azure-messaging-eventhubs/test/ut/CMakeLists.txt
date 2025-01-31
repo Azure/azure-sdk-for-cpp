@@ -66,6 +66,9 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
+message(STATUS "BUILD_TESTING: ${BUILD_TESTING}")
+message(STATUS "DISABLE_TEST_DISCOVERY: ${DISABLE_TEST_DISCOVERY}")
+
 if (NOT DISABLE_TEST_DISCOVERY)
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

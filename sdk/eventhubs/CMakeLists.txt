@@ -12,7 +12,7 @@ message(STATUS "Detecting compiler.")
 if (CMAKE_CXX_COMPILER MATCHES "clang")
   if($ENV{CXX} MATCHES "-11")
     message(STATUS "Disabling test discovery in EventHubs library for CLANG-11 builds because the eventhubs tests segfault for unknown reasons.")
-    set(DISABLE_TEST_DISCOVERY ON)
+    set(DISABLE_TEST_DISCOVERY ON CACHE BOOL "Disable test discovery for library.")
   endif()
 endif()
 
