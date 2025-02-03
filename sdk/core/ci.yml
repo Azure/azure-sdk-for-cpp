@@ -102,8 +102,7 @@ extends:
 
 # AMQP
       EnvVars:
-        - Name: TEST_BROKER_ADDRESS
-          Value: "amqp://127.0.0.1:25672"
+        TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
       TestEnv:
