@@ -761,8 +761,12 @@
       "inherits": [
         "linux-basic-clang-11",
         "debug-build",
-        "enable-tests"
-      ]
+        "enable-tests",
+        "enable-perf"
+      ],
+      "cacheVariables": {
+        "RUN_LONG_UNIT_TESTS": true
+      }
     },
     {
       "name": "linux-clang-13-debug",

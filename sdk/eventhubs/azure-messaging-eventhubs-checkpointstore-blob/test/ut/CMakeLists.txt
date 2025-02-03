@@ -48,6 +48,7 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
+if(NOT DISABLE_TEST_DISCOVERY)
 # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-messaging-eventhubs-blobstore-test
@@ -55,3 +56,4 @@ gtest_discover_tests(azure-messaging-eventhubs-blobstore-test
   NO_PRETTY_TYPES
   NO_PRETTY_VALUES
   DISCOVERY_TIMEOUT 600)
+endif()
