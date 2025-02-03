@@ -56,6 +56,8 @@ extends:
       PreTestSteps:
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
+          env:
+            ${{ insert }}: ${{ parameters.EnvVars }}
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -100,11 +102,13 @@ extends:
           Path: azure-core-amqp
           VcpkgPortName: azure-core-amqp-cpp
 
-# AMQP
+      # Environment variables for Live tests.
       EnvVars:
+        # AMQP
         TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
+      # Environment variables for CI tests.
       TestEnv:
 # AMQP
         - Name: TEST_BROKER_ADDRESS
