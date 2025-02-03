@@ -209,9 +209,7 @@ jobs:
         workingDirectory: build
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-        ${{ insert }}: 
-          - ${{ parameters.EnvVars }}
-            ${{ parameters.LiveTestEnv }}
+        ${{ insert }}: ${{ parameters.EnvVars }} ${{ parameters.LiveTestEnv }}
 
   - ${{ else }}:
       # For non multi-config generator use the same build configuration to run tests
@@ -234,9 +232,7 @@ jobs:
       # Then unit-tests runs, samples should not run.
       condition: and(succeeded(), ne(variables['RunSamples'], '1'))
       env:
-        ${{ insert }}: 
-          - ${{ parameters.EnvVars }}
-            ${{ parameters.LiveTestEnv }}
+        ${{ insert }}: ${{ parameters.EnvVars }} ${{ parameters.LiveTestEnv }}
 
   - ${{ parameters.PostTestSteps }}
 
