@@ -100,8 +100,8 @@ extends:
           Path: azure-core-amqp
           VcpkgPortName: azure-core-amqp-cpp
 
-      LiveTestEnv:
 # AMQP
+      EnvVars:
         - Name: TEST_BROKER_ADDRESS
           Value: "amqp://127.0.0.1:25672"
 

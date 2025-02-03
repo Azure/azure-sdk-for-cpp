@@ -33,9 +33,6 @@ parameters:
 - name: UsePlatformContainer
   type: boolean
   default: false
-- name: LiveTestEnv
-  type: object
-  default: []
 - name: PreTestSteps
   type: stepList
   default: []
@@ -101,16 +98,6 @@ jobs:
       # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     - name: AZURE_SERVICE_DIRECTORY
       value: ${{ parameters.ServiceDirectory }}
-    - ${{ each testEnvVar in parameters.LiveTestEnv }}:
-      - name: ${{ testEnvVar.Name }}
-        value: ${{ testEnvVar.Value }}
-    - name: LiveTestEnvValues
-      ${{ each testEnvVar in parameters.LiveTestEnv }}:
-        name: ${{ testEnvVar.Name }}
-        value: ${{ testEnvVar.Value }}
-      ${{ each envVar in parameters.EnvVar}}:
-        name: ${{ envVar.Name }}
-        value: ${{ envVar.Value }}
 
   steps:
   - checkout: self
@@ -216,7 +203,7 @@ jobs:
         workingDirectory: build
       env:
         SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-        ${{ insert }}: ${{ parameters.EnvVars }} ${{ parameters.LiveTestEnv }}
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ else }}:
       # For non multi-config generator use the same build configuration to run tests
@@ -239,7 +226,7 @@ jobs:
       # Then unit-tests runs, samples should not run.
       condition: and(succeeded(), ne(variables['RunSamples'], '1'))
       env:
-        ${{ insert }}: ${{ parameters.EnvVars }} ${{ parameters.LiveTestEnv }}
+        ${{ insert }}: ${{ parameters.EnvVars }}
 
   - ${{ parameters.PostTestSteps }}
 
