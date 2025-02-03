@@ -104,6 +104,10 @@ jobs:
     - ${{ each testEnvVar in parameters.LiveTestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
+    - name: LiveTestEnvValues
+      value: -
+        ${{ parameters.EnvVars }}
+        ${{ parameters.LiveTestEnv }}
 
   steps:
   - checkout: self
