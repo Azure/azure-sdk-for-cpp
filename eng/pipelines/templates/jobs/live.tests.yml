@@ -33,6 +33,9 @@ parameters:
 - name: UsePlatformContainer
   type: boolean
   default: false
+- name: LiveTestEnv
+  type: object
+  default: []
 - name: PreTestSteps
   type: stepList
   default: []
@@ -98,6 +101,9 @@ jobs:
       # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     - name: AZURE_SERVICE_DIRECTORY
       value: ${{ parameters.ServiceDirectory }}
+    - ${{ each testEnvVar in parameters.LiveTestEnv }}:
+      - name: ${{ testEnvVar.Name }}
+        value: ${{ testEnvVar.Value }}
 
   steps:
   - checkout: self

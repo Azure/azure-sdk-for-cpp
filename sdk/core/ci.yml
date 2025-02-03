@@ -99,6 +99,12 @@ extends:
         - Name: azure-core-amqp
           Path: azure-core-amqp
           VcpkgPortName: azure-core-amqp-cpp
+
+      LiveTestEnv:
+# AMQP
+        - Name: TEST_BROKER_ADDRESS
+          Value: "amqp://127.0.0.1:25672"
+
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
       TestEnv:
 # AMQP
