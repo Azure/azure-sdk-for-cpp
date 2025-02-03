@@ -98,6 +98,10 @@ jobs:
       # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     - name: AZURE_SERVICE_DIRECTORY
       value: ${{ parameters.ServiceDirectory }}
+    - ${{ each testEnvVar in parameters.TestEnv }}:
+      - name: ${{ testEnvVar.Name }}
+        value: ${{ testEnvVar.Value }}
+
 
   steps:
   - checkout: self

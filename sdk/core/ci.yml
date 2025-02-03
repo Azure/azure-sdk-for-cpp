@@ -57,8 +57,7 @@ extends:
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
           env:
-            Name: TEST_BROKER_ADDRESS
-            Value: "amqp://127.0.0.1:25672"
+            TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
