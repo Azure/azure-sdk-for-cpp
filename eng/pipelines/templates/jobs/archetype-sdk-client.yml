@@ -35,6 +35,9 @@ parameters:
   - name: TestEnv
     type: object
     default: []
+  - name: LiveTestEnv
+    type: object
+    default: []
   - name: PreTestSteps
     type: stepList
     default: []
@@ -75,6 +78,7 @@ jobs:
         LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
         BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
         TestEnv: ${{ parameters.TestEnv }}
+        LiveTestEnv: ${{ parameters.LiveTestEnv }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
 

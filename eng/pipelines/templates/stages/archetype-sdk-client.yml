@@ -67,6 +67,9 @@ parameters:
   - name: UnsupportedClouds
     type: string
     default: ''
+  - name: LiveTestEnv
+    type: object
+    default: {}
   - name: PreTestSteps
     type: stepList
     default: []
@@ -158,6 +161,7 @@ extends:
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
               TestEnv: ${{ parameters.TestEnv }}
+              LiveTestEnv: ${{ parameters.LiveTestEnv }}
               PreTestSteps: ${{ parameters.PreTestSteps }}
               PostTestSteps: ${{ parameters.PostTestSteps }}
               RunMetaJobs: true
