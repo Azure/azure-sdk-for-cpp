@@ -811,9 +811,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       serviceEndpoint->ShouldSendMessage(true, messageId);
 #else
       {
-        MessageSender sender(session.CreateMessageSender(
-            GetBrokerEndpoint() + testing::UnitTest::GetInstance()->current_test_case()->name(),
-            {}));
+        MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.Properties.MessageId = Azure::Core::Amqp::Models::AmqpValue(messageId);
@@ -860,9 +858,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #else
 
       {
-        MessageSender sender(session.CreateMessageSender(
-            GetBrokerEndpoint() + testing::UnitTest::GetInstance()->current_test_case()->name(),
-            {}));
+        MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.Properties.MessageId = Azure::Core::Amqp::Models::AmqpValue(messageId);
@@ -995,9 +991,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       serviceEndpoint->ShouldSendMessage(true, messageId);
 #else
       {
-        MessageSender sender(session.CreateMessageSender(
-            GetBrokerEndpoint() + testing::UnitTest::GetInstance()->current_test_case()->name(),
-            {}));
+        MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.Properties.MessageId = messageId;
@@ -1127,9 +1121,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           true, static_cast<Azure::Core::Amqp::Models::AmqpValue>(messageId));
 #else
       {
-        MessageSender sender(session.CreateMessageSender(
-            GetBrokerEndpoint() + testing::UnitTest::GetInstance()->current_test_case()->name(),
-            {}));
+        MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
         sendMessage.Properties.MessageId = Azure::Core::Amqp::Models::AmqpValue(messageId);

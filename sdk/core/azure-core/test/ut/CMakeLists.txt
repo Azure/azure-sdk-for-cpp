@@ -82,7 +82,7 @@ add_executable (
     policy_test.cpp
     request_activity_policy_test.cpp
     request_id_policy_test.cpp
-    resource_identifier_test
+    resource_identifier_test.cpp
     response_t_test.cpp
     retry_policy_test.cpp
     service_tracing_test.cpp
@@ -140,7 +140,7 @@ set(TEST_ADDITIONAL_FILES
 add_custom_command(TARGET azure-core-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${TEST_ADDITIONAL_FILES} ${CMAKE_CURRENT_BINARY_DIR}
     DEPENDS ${TEST_ADDITIONAL_FILES}
-    COMMENT 'Copying non-source output files')
+    COMMENT "Copying non-source output files")
 
 # Adding private headers from CORE to the tests so we can test the private APIs with no relative paths include.
 target_include_directories (azure-core-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)

@@ -303,7 +303,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks The buffer size is the size of the buffer used to read and write data to the
      * connection.
      */
-    uint32_t BufferSize;
+    Azure::Nullable<uint32_t> BufferSize;
 #endif
 
     /** @brief Defines the ID of the container for this connection. If empty, a unique 128 bit value

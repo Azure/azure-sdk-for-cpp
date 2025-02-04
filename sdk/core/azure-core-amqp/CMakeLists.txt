@@ -106,7 +106,7 @@ if (USE_RUST_AMQP)
   FetchContent_Declare(
     Corrosion
     GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-    GIT_TAG v0.5 # Optionally specify a commit hash, version tag or branch here
+    GIT_TAG v0.5.1 # Optionally specify a commit hash, version tag or branch here
   )
   FetchContent_MakeAvailable(Corrosion)
 
@@ -289,12 +289,15 @@ elseif(USE_RUST_AMQP)
     PUBLIC Azure::azure-core)
 
   if (MSVC)
-    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt)
-  elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    message(STATUS "Assuming Windows crypto libraries")
+    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt RuntimeObject)
+  elseif (APPLE)
+    message(STATUS "Skipping library setting on macOS")
+  elseif(LINUX OR UNIX)
+    message(STATUS "Assuming Linux crypto libraries.")
     target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
-  elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-#    target_link_libraries()
   else()
+    message(STATUS "Unknown operating system, assuming Linux based operating system.")
     target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
   endif()
 endif()

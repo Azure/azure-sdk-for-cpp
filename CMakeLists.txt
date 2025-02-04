@@ -6,13 +6,10 @@
 cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
-# Enable Rust based APIs in C++ SDK.
+# Disable Rust based APIs in C++ SDK.
 set(DISABLE_RUST_IN_BUILD OFF CACHE BOOL "Disable Rust based APIs in package")
 set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
 set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
-
-message(STATUS "Disabling Rust temporarily")
-set(DISABLE_RUST_IN_BUILD ON)
 
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)

@@ -213,6 +213,18 @@ jobs:
 
       - template: /eng/pipelines/templates/steps/show-failure-logs.yml
 
+#      - task: 1ES.PublishPipelineArtifact@1
+#        condition: always()
+#        inputs:
+#          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs/test/ut/azure-messaging-eventhubs-test
+#          artifact: $(System.StageName)-$(Agent.JobName)-drop-eventhubs
+
+#      - task: 1ES.PublishPipelineArtifact@1
+#        condition: always()
+#        inputs:
+#          path: $(System.DefaultWorkingDirectory)/build/sdk/eventhubs/azure-messaging-eventhubs-checkpointstore-blob/test/ut/azure-messaging-eventhubs-blobstore-test
+#          artifact: $(System.StageName)-$(Agent.JobName)-drop-eventhubs-checkpoint
+
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
           runProxy: true
@@ -239,7 +251,7 @@ jobs:
             -T Test
         workingDirectory: build
         displayName: Test
-        
+
       - ${{ parameters.PostTestSteps }}
            
      
