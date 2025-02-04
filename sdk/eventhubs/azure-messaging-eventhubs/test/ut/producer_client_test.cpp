@@ -207,6 +207,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                       ASSERT_NO_THROW(result = client->GetPartitionProperties(partition));
                       EXPECT_EQ(result.Name, ehProperties.Name);
                       EXPECT_EQ(result.PartitionId, partition);
+                      // Attempt to avoid service throttling.
                       std::this_thread::sleep_for(std::chrono::milliseconds(100));
                       iterations++;
                     }
