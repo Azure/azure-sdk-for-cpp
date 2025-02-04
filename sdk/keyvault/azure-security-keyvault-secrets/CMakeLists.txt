@@ -32,10 +32,10 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
+option(AZURE_TSP_KV_SECRETS_GEN2 "Generate KeyVault Secrets from TypeSpec" ON)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
-if(AZURE_TSP_KV_SECRETS_GEN)
+if(AZURE_TSP_KV_SECRETS_GEN2)
     include(TSPCompile) 
     #typespec related repo information
     set(TSP_REPO_PATH "specification/keyvault")
@@ -44,7 +44,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "3d5cd88a2eccf330cd78a9067557edf75fc96fcb")
+    set(CODEGEN_SHA "0f07d2270db3706f3a21ed624569a8d8613ae128")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
@@ -75,9 +75,9 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/security/keyvault/secrets.hpp
     inc/azure/security/keyvault/secrets/dll_import_export.hpp
-    inc/azure/security/keyvault/secrets/generated_secret_client.hpp
-    inc/azure/security/keyvault/secrets/generated_secret_client_options.hpp
-    inc/azure/security/keyvault/secrets/generated_secret_client_paged_responses.hpp
+    inc/azure/security/keyvault/secrets/secret_client.hpp
+    inc/azure/security/keyvault/secrets/secret_client_options.hpp
+    inc/azure/security/keyvault/secrets/secret_client_paged_responses.hpp
     inc/azure/security/keyvault/secrets/rtti.hpp
     inc/azure/security/keyvault/secrets/secrets_models.hpp
 )
@@ -85,7 +85,7 @@ set(
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
-    src/generated_secret_client.cpp
+    src/secret_client.cpp
     src/get_deleted_secrets_paged_response.cpp
     src/get_properties_of_secrets_paged_response.cpp
     src/get_properties_of_secrets_versions_paged_response.cpp

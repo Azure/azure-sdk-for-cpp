@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "azure/security/keyvault/secrets/generated_secret_client_options.hpp"
-#include "azure/security/keyvault/secrets/generated_secret_client_paged_responses.hpp"
+#include "azure/security/keyvault/secrets/secret_client_options.hpp"
+#include "azure/security/keyvault/secrets/secret_client_paged_responses.hpp"
 #include "azure/security/keyvault/secrets/secrets_models.hpp"
 
 #include <azure/core/context.hpp>
@@ -28,26 +28,25 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
-   * @brief Generated secret client
+   * @brief
    *
    */
-  class GeneratedSecretClient final {
+  class SecretClient final {
   public:
     /**
-     * @brief Constructs the GeneratedSecretClient.
-     * @param url The URL of the service.
+     * @brief Constructs the SecretClient.
      * @param credential Credential to authenticate with the service.
      * @param options Optional parameters.
      *
      */
-    explicit GeneratedSecretClient(
+    explicit SecretClient(
         std::string const& url,
         std::shared_ptr<Core::Credentials::TokenCredential> const& credential,
-        GeneratedSecretClientOptions const& options = {});
+        SecretClientOptions const& options = {});
 
     /**
-     * @brief Gets the GeneratedSecretClient URL endpoint.
-     * @return The GeneratedSecretClient's URL endpoint.
+     * @brief Gets the SecretClient URL endpoint.
+     * @return The SecretClient's URL endpoint.
      *
      */
     std::string GetUrl() const;
@@ -125,7 +124,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     GetPropertiesOfSecretsPagedResponse GetPropertiesOfSecrets(
-        GeneratedSecretClientGetPropertiesOfSecretsOptions const& options = {},
+        SecretClientGetPropertiesOfSecretsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -139,7 +138,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     GetPropertiesOfSecretsVersionsPagedResponse GetPropertiesOfSecretsVersions(
         std::string const& secretName,
-        GeneratedSecretClientGetPropertiesOfSecretsVersionsOptions const& options = {},
+        SecretClientGetPropertiesOfSecretsVersionsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -151,7 +150,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     GetDeletedSecretsPagedResponse GetDeletedSecrets(
-        GeneratedSecretClientGetDeletedSecretsOptions const& options = {},
+        SecretClientGetDeletedSecretsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -173,7 +172,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * This operation requires the secrets/purge permission.
      * @param secretName The name of the secret.
      * @param context The context for the operation can be used for request cancellation.
-     * @return The purge deleted secret result.
+     * @return Operation result.
      *
      */
     Response<PurgeDeletedSecretResult> PurgeDeletedSecret(

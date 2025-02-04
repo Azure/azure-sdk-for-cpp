@@ -15,12 +15,12 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
-   * @brief GeneratedSecretClient options.
+   * @brief SecretClient options.
    *
    */
-  struct GeneratedSecretClientOptions final : public Core::_internal::ClientOptions
+  struct SecretClientOptions final : public Core::_internal::ClientOptions
   {
-    /// api version
+    /// The API version to use for this operation.
     std::string ApiVersion = "7.6-preview.1";
   };
 
@@ -28,9 +28,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetPropertiesOfSecrets operation options.
    *
    */
-  struct GeneratedSecretClientGetPropertiesOfSecretsOptions final
+  struct SecretClientGetPropertiesOfSecretsOptions final
   {
-    /// next page token
+    /// The URL to fetch the next page of results.
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up
@@ -42,9 +42,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetPropertiesOfSecretsVersions operation options.
    *
    */
-  struct GeneratedSecretClientGetPropertiesOfSecretsVersionsOptions final
+  struct SecretClientGetPropertiesOfSecretsVersionsOptions final
   {
-    /// next page token for the request
+    /// The URL to fetch the next page of results.
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up
@@ -56,9 +56,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetDeletedSecrets operation options.
    *
    */
-  struct GeneratedSecretClientGetDeletedSecretsOptions final
+  struct SecretClientGetDeletedSecretsOptions final
   {
-    /// next page token
+    /// The URL to fetch the next page of results.
     std::string NextPageToken;
 
     /// Maximum number of results to return in a page. If not specified the service will return up

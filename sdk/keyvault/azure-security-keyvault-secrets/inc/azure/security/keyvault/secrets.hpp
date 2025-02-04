@@ -4,8 +4,8 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #include <azure/security/keyvault/secrets/dll_import_export.hpp>
-#include <azure/security/keyvault/secrets/generated_secret_client.hpp>
-#include <azure/security/keyvault/secrets/generated_secret_client_options.hpp>
-#include <azure/security/keyvault/secrets/generated_secret_client_paged_responses.hpp>
 #include <azure/security/keyvault/secrets/rtti.hpp>
+#include <azure/security/keyvault/secrets/secret_client.hpp>
+#include <azure/security/keyvault/secrets/secret_client_options.hpp>
+#include <azure/security/keyvault/secrets/secret_client_paged_responses.hpp>
 #include <azure/security/keyvault/secrets/secrets_models.hpp>

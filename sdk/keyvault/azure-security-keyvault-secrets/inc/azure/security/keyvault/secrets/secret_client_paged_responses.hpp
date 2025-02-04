@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "azure/security/keyvault/secrets/generated_secret_client_options.hpp"
+#include "azure/security/keyvault/secrets/secret_client_options.hpp"
 #include "azure/security/keyvault/secrets/secrets_models.hpp"
 
 #include <azure/core/datetime.hpp>
@@ -21,7 +21,7 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-  class GeneratedSecretClient;
+  class SecretClient;
 
   /**
    * @brief The secret list result.
@@ -29,12 +29,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   class GetPropertiesOfSecretsPagedResponse final
       : public Core::PagedResponse<GetPropertiesOfSecretsPagedResponse> {
-    friend class GeneratedSecretClient;
+    friend class SecretClient;
     friend class Core::PagedResponse<GetPropertiesOfSecretsPagedResponse>;
 
   private:
-    std::shared_ptr<GeneratedSecretClient> m_client;
-    GeneratedSecretClientGetPropertiesOfSecretsOptions m_options;
+    std::shared_ptr<SecretClient> m_client;
+    SecretClientGetPropertiesOfSecretsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 
@@ -50,13 +50,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   class GetPropertiesOfSecretsVersionsPagedResponse final
       : public Core::PagedResponse<GetPropertiesOfSecretsVersionsPagedResponse> {
-    friend class GeneratedSecretClient;
+    friend class SecretClient;
     friend class Core::PagedResponse<GetPropertiesOfSecretsVersionsPagedResponse>;
 
   private:
-    std::shared_ptr<GeneratedSecretClient> m_client;
+    std::shared_ptr<SecretClient> m_client;
     std::string m_secretName;
-    GeneratedSecretClientGetPropertiesOfSecretsVersionsOptions m_options;
+    SecretClientGetPropertiesOfSecretsVersionsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 
@@ -72,12 +72,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   class GetDeletedSecretsPagedResponse final
       : public Core::PagedResponse<GetDeletedSecretsPagedResponse> {
-    friend class GeneratedSecretClient;
+    friend class SecretClient;
     friend class Core::PagedResponse<GetDeletedSecretsPagedResponse>;
 
   private:
-    std::shared_ptr<GeneratedSecretClient> m_client;
-    GeneratedSecretClientGetDeletedSecretsOptions m_options;
+    std::shared_ptr<SecretClient> m_client;
+    SecretClientGetDeletedSecretsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 

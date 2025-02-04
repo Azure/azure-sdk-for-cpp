@@ -27,13 +27,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   class DeletionRecoveryLevel final
       : public Core::_internal::ExtendableEnumeration<DeletionRecoveryLevel> {
   public:
+    /**
+     * @brief Constructs a new DeletionRecoveryLevel instance.
+     *
+     **/
     DeletionRecoveryLevel() = default;
 
     /**
-     * @brief Constructs the DeletionRecoveryLevel.
-     * @param deletionRecoveryLevel The URL of the service.
+     * @brief Constructs a new DeletionRecoveryLevel instance from a string.
+     * @param deletionRecoveryLevel String value to construct the new instance from.
      *
-     */
+     **/
     explicit DeletionRecoveryLevel(std::string deletionRecoveryLevel)
         : ExtendableEnumeration(std::move(deletionRecoveryLevel))
     {
@@ -102,19 +106,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// Expiry date in UTC.
     Nullable<DateTime> Expires;
 
-    /// Creation time in UTC.
+    /// [out] Creation time in UTC.
     Nullable<DateTime> Created;
 
-    /// Last updated time in UTC.
+    /// [out] Last updated time in UTC.
     Nullable<DateTime> Updated;
 
-    /// softDelete data retention days. Value should be >=7 and <=90 when softDelete enabled,
+    /// [out] softDelete data retention days. Value should be >=7 and <=90 when softDelete enabled,
     /// otherwise 0.
     Nullable<std::int32_t> RecoverableDays;
 
-    /// Reflects the deletion recovery level currently in effect for secrets in the current vault.
-    /// If it contains 'Purgeable', the secret can be permanently deleted by a privileged user;
-    /// otherwise, only the system can purge the secret, at the end of the retention interval.
+    /// [out] Reflects the deletion recovery level currently in effect for secrets in the current
+    /// vault. If it contains 'Purgeable', the secret can be permanently deleted by a privileged
+    /// user; otherwise, only the system can purge the secret, at the end of the retention interval.
     Nullable<DeletionRecoveryLevel> RecoveryLevel;
   };
 
@@ -139,11 +143,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
 
-    /// If this is a secret backing a KV certificate, then this field specifies the corresponding
-    /// key backing the KV certificate.
+    /// [out] If this is a secret backing a KV certificate, then this field specifies the
+    /// corresponding key backing the KV certificate.
     Nullable<std::string> Kid;
 
-    /// True if the secret's lifetime is managed by key vault. If this is a secret backing a
+    /// [out] True if the secret's lifetime is managed by key vault. If this is a secret backing a
     /// certificate, then managed will be true.
     Nullable<bool> Managed;
   };
@@ -189,21 +193,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
 
-    /// If this is a secret backing a KV certificate, then this field specifies the corresponding
-    /// key backing the KV certificate.
+    /// [out] If this is a secret backing a KV certificate, then this field specifies the
+    /// corresponding key backing the KV certificate.
     Nullable<std::string> Kid;
 
-    /// True if the secret's lifetime is managed by key vault. If this is a secret backing a
+    /// [out] True if the secret's lifetime is managed by key vault. If this is a secret backing a
     /// certificate, then managed will be true.
     Nullable<bool> Managed;
 
     /// The url of the recovery object, used to identify and recover the deleted secret.
     Nullable<std::string> RecoveryId;
 
-    /// The time when the secret is scheduled to be purged, in UTC
+    /// [out] The time when the secret is scheduled to be purged, in UTC
     Nullable<DateTime> ScheduledPurgeDate;
 
-    /// The time when the secret was deleted, in UTC
+    /// [out] The time when the secret was deleted, in UTC
     Nullable<DateTime> DeletedDate;
   };
 
@@ -241,7 +245,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// Type of the secret value such as a password.
     Nullable<std::string> ContentType;
 
-    /// True if the secret's lifetime is managed by key vault. If this is a key backing a
+    /// [out] True if the secret's lifetime is managed by key vault. If this is a key backing a
     /// certificate, then managed will be true.
     Nullable<bool> Managed;
   };
@@ -264,17 +268,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// Type of the secret value such as a password.
     Nullable<std::string> ContentType;
 
-    /// True if the secret's lifetime is managed by key vault. If this is a key backing a
+    /// [out] True if the secret's lifetime is managed by key vault. If this is a key backing a
     /// certificate, then managed will be true.
     Nullable<bool> Managed;
 
     /// The url of the recovery object, used to identify and recover the deleted secret.
     Nullable<std::string> RecoveryId;
 
-    /// The time when the secret is scheduled to be purged, in UTC
+    /// [out] The time when the secret is scheduled to be purged, in UTC
     Nullable<DateTime> ScheduledPurgeDate;
 
-    /// The time when the secret was deleted, in UTC
+    /// [out] The time when the secret was deleted, in UTC
     Nullable<DateTime> DeletedDate;
   };
 
@@ -292,7 +296,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    */
   struct BackupSecretResult final
   {
-    /// The backup blob containing the backed up secret.
+    /// [out] The backup blob containing the backed up secret.
     Nullable<std::vector<std::uint8_t>> Value;
   };
 
