@@ -527,6 +527,7 @@ try {
     if ($CI -and $Environment -eq 'AzureCloud' -and $env:PoolSubnet) {
         $templateParameters.Add('azsdkPipelineSubnetList', @($env:PoolSubnet))
     }
+
     $defaultCloudParameters = LoadCloudConfig $Environment
     MergeHashes $defaultCloudParameters $(Get-Variable templateParameters)
     MergeHashes $ArmTemplateParameters $(Get-Variable templateParameters)
