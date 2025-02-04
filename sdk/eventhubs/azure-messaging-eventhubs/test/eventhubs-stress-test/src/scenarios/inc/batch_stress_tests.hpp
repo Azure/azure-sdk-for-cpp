@@ -30,7 +30,6 @@ public:
 private:
   std::string m_eventHubName;
   std::string m_eventHubNamespace;
-  std::string m_eventHubHost;
   std::string m_checkpointStoreConnectionString;
   std::string m_partitionId{"0"};
 

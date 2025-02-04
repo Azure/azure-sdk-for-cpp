@@ -100,10 +100,6 @@ std::vector<EventHubsScenarioOptions> BatchScenarioOptions{
      {"-m", "--maxtimeouts"},
      "Number of consecutive receive timeouts allowed before quitting",
      0},
-    {"UseSasCredential",
-     {"-S", "--useSasCredential"},
-     "Use a SAS credential for authentication",
-     0},
     {"SleepAfter", {"--sleepAfter"}, "Time to sleep after test completes", 1},
 };
 
@@ -177,13 +173,6 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
     throw std::runtime_error("Missing environment variable, aborting.");
   }
 
-  m_eventHubHost = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_HOST");
-  if (m_eventHubHost.empty())
-  {
-    std::cerr << "Missing required environment variable EVENTHUB_HOST" << std::endl;
-    GetLogger()->Fatal("Could not find required environment variable EVENTHUB_HOST");
-    throw std::runtime_error("Missing environment variable, aborting.");
-  }
   m_checkpointStoreConnectionString
       = Azure::Core::_internal::Environment::GetVariable("CHECKPOINT_STORE_CONNECTION_STRING");
 }
