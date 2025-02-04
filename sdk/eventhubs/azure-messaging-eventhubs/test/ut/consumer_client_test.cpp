@@ -183,7 +183,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
-  #if 0
+ #if 0
   TEST_P(ConsumerClientTest, GetPartitionProperties_Multithreaded)
   {
     std::string eventHubName{GetEventHubName()};
@@ -242,7 +242,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
     GTEST_LOG_(INFO) << iterationsPerThread.size() << " threads finished.";
   }
-  #endif
+ #endif
 
   std::string GetRandomName(const char* baseName = "checkpoint")
   {
