@@ -6,7 +6,8 @@
 
 ### Breaking Changes
 
-Changed the `EventData::CorrelationId` and `EventData::MessageId` fields from `Azure::Nullable<AmqpValue>` to `AmqpValue` since `AmqpValue` embeds the concept of nullability already.
+- Changed the `EventData::CorrelationId` and `EventData::MessageId` fields from `Azure::Nullable<AmqpValue>` to `AmqpValue` since `AmqpValue` embeds the concept of nullability already.
+- Removed the insecure ConnectionString authentication mechanism from the eventhubs client as per the latest Azure SDK guidelines.
 
 ### Bugs Fixed
 

@@ -30,7 +30,7 @@ public:
 private:
   std::string m_eventHubName;
   std::string m_eventHubNamespace;
-  std::string m_eventHubConnectionString;
+  std::string m_eventHubHost;
   std::string m_checkpointStoreConnectionString;
   std::string m_partitionId{"0"};
 
@@ -46,7 +46,6 @@ private:
   std::uint32_t m_paddingBytes{1024};
   std::uint32_t m_maxTimeouts{10};
   bool m_verbose{false};
-  bool m_useSasCredential{false};
   std::function<void(Azure::Core::Context)> m_sleepAfterFunction;
 
   std::string m_scenarioName{"BatchStressTest"};

@@ -48,60 +48,60 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   };
 
-  TEST_P(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
-  {
-    if (GetParam() == AuthType::ConnectionString)
-    {
-      std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
-      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-      std::string eventHubName = GetEnv("EVENTHUB_NAME");
+  // TEST_P(ConsumerClientTest, ConnectionStringNoEntityPath_LIVEONLY_)
+  //{
+  //   if (GetParam() == AuthType::ConnectionString)
+  //   {
+  //     std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
+  //     std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
+  //     std::string eventHubName = GetEnv("EVENTHUB_NAME");
 
-      Azure::Messaging::EventHubs::ConsumerClient client(
-          connStringNoEntityPath, eventHubName, consumerGroup);
-      EXPECT_EQ(eventHubName, client.GetEventHubName());
-    }
-  }
+  //    Azure::Messaging::EventHubs::ConsumerClient client(
+  //        connStringNoEntityPath, eventHubName, consumerGroup);
+  //    EXPECT_EQ(eventHubName, client.GetEventHubName());
+  //  }
+  //}
 
-  TEST_P(ConsumerClientTest, ConnectionStringEntityPath_LIVEONLY_)
-  {
-    if (GetParam() == AuthType::ConnectionString)
-    {
-      std::string const connStringWithEntityPath
-          = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
+  // TEST_P(ConsumerClientTest, ConnectionStringEntityPath_LIVEONLY_)
+  //{
+  //   if (GetParam() == AuthType::ConnectionString)
+  //   {
+  //     std::string const connStringWithEntityPath
+  //         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
 
-      std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
-      std::string eventHubName = GetEnv("EVENTHUB_NAME");
+  //    std::string consumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
+  //    std::string eventHubName = GetEnv("EVENTHUB_NAME");
 
-      // The eventHubName parameter must match the name in the connection string.because the
-      // eventhub name is in the connection string.
-      EXPECT_ANY_THROW(Azure::Messaging::EventHubs::ConsumerClient client(
-          connStringWithEntityPath, eventHubName, "$DefaultZ"));
-    }
-  }
+  //    // The eventHubName parameter must match the name in the connection string.because the
+  //    // eventhub name is in the connection string.
+  //    EXPECT_ANY_THROW(Azure::Messaging::EventHubs::ConsumerClient client(
+  //        connStringWithEntityPath, eventHubName, "$DefaultZ"));
+  //  }
+  //}
 
-  TEST_P(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup_LIVEONLY_)
-  {
-    if (GetParam() == AuthType::ConnectionString)
-    {
-      std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
-      std::string eventHubName = GetEnv("EVENTHUB_NAME");
-      Azure::Messaging::EventHubs::ConsumerClient client(connStringNoEntityPath, eventHubName);
-      EXPECT_EQ(eventHubName, client.GetEventHubName());
-      EXPECT_EQ("$Default", client.GetConsumerGroup());
-    }
-  }
+  // TEST_P(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroup_LIVEONLY_)
+  //{
+  //   if (GetParam() == AuthType::ConnectionString)
+  //   {
+  //     std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
+  //     std::string eventHubName = GetEnv("EVENTHUB_NAME");
+  //     Azure::Messaging::EventHubs::ConsumerClient client(connStringNoEntityPath, eventHubName);
+  //     EXPECT_EQ(eventHubName, client.GetEventHubName());
+  //     EXPECT_EQ("$Default", client.GetConsumerGroup());
+  //   }
+  // }
 
-  TEST_P(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroupNoEventHub_LIVEONLY_)
-  {
-    if (GetParam() == AuthType::ConnectionString)
-    {
-      std::string const connStringNoEntityPath
-          = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
-      Azure::Messaging::EventHubs::ConsumerClient client(connStringNoEntityPath);
-      EXPECT_EQ("hehe", client.GetEventHubName());
-      EXPECT_EQ("$Default", client.GetConsumerGroup());
-    }
-  }
+  // TEST_P(ConsumerClientTest, ConnectionStringEntityPathNoConsumerGroupNoEventHub_LIVEONLY_)
+  //{
+  //   if (GetParam() == AuthType::ConnectionString)
+  //   {
+  //     std::string const connStringNoEntityPath
+  //         = GetEnv("EVENTHUB_CONNECTION_STRING") + ";EntityPath=hehe";
+  //     Azure::Messaging::EventHubs::ConsumerClient client(connStringNoEntityPath);
+  //     EXPECT_EQ("hehe", client.GetEventHubName());
+  //     EXPECT_EQ("$Default", client.GetConsumerGroup());
+  //   }
+  // }
 
   TEST_P(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
   {
@@ -401,9 +401,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "ConnectionString_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
           break;
@@ -417,6 +414,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ConsumerClientTest,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key /*, AuthType::Emulator*/),
       GetSuffix);
 }}}} // namespace Azure::Messaging::EventHubs::Test

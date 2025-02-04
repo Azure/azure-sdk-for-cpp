@@ -12,7 +12,7 @@
 enum class AuthType
 {
   Key,
-  ConnectionString,
+//  ConnectionString,
   Emulator,
 };
 
@@ -43,24 +43,20 @@ protected:
     std::string eventConsumerGroup = GetEnv("EVENTHUB_CONSUMER_GROUP");
     switch (GetParam())
     {
-      case AuthType::ConnectionString: {
-        return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
-            GetEnv("EVENTHUB_CONNECTION_STRING"), eventHubName, eventConsumerGroup, options);
-      }
       case AuthType::Key: {
         std::string eventHubNamespace = GetEnv("EVENTHUBS_HOST");
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
             eventHubNamespace, eventHubName, GetTestCredential(), eventConsumerGroup, options);
       }
-      case AuthType::Emulator: {
-        return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
-            "Endpoint=sb://localhost:5672/"
-            ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
-            "UseDevelopmentEmulator=true",
-            "eh1",
-            "$default",
-            options);
-      }
+      //case AuthType::Emulator: {
+      //  return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
+      //      "Endpoint=sb://localhost:5672/"
+      //      ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
+      //      "UseDevelopmentEmulator=true",
+      //      "eh1",
+      //      "$default",
+      //      options);
+      //}
     }
     return nullptr;
   }
@@ -77,27 +73,20 @@ protected:
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> producer;
     switch (GetParam())
     {
-      case AuthType::ConnectionString: {
-        std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
-        producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            connStringNoEntityPath, eventHubName, options);
-        EXPECT_EQ(eventHubName, producer->GetEventHubName());
-        break;
-      }
       case AuthType::Key: {
         std::string eventHubNamespace = GetEnv("EVENTHUBS_HOST");
         producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
             eventHubNamespace, eventHubName, GetTestCredential(), options);
         break;
       }
-      case AuthType::Emulator: {
-        producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            "Endpoint=sb://localhost:5672/"
-            ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
-            "UseDevelopmentEmulator=true",
-            "eh1",
-            options);
-      }
+      //case AuthType::Emulator: {
+      //  producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
+      //      "Endpoint=sb://localhost:5672/"
+      //      ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
+      //      "UseDevelopmentEmulator=true",
+      //      "eh1",
+      //      options);
+      //}
     }
     return producer;
   }
