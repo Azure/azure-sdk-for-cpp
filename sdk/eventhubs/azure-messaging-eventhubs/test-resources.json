@@ -105,7 +105,6 @@
       "dependsOn": [ "[resourceId('Microsoft.EventHub/Namespaces', variables('eventHubsNamespace'))]" ],
       "properties": {
         "messageRetentionInDays": 1,
-        "disableLocalAuth": true,
         "partitionCount": 4
       }
     },
