@@ -12,7 +12,7 @@
 enum class AuthType
 {
   Key,
-//  ConnectionString,
+  //  ConnectionString,
   Emulator,
 };
 
@@ -48,15 +48,15 @@ protected:
         return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
             eventHubNamespace, eventHubName, GetTestCredential(), eventConsumerGroup, options);
       }
-      //case AuthType::Emulator: {
-      //  return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
-      //      "Endpoint=sb://localhost:5672/"
-      //      ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
-      //      "UseDevelopmentEmulator=true",
-      //      "eh1",
-      //      "$default",
-      //      options);
-      //}
+        // case AuthType::Emulator: {
+        //   return std::make_unique<Azure::Messaging::EventHubs::ConsumerClient>(
+        //       "Endpoint=sb://localhost:5672/"
+        //       ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
+        //       "UseDevelopmentEmulator=true",
+        //       "eh1",
+        //       "$default",
+        //       options);
+        // }
     }
     return nullptr;
   }
@@ -79,14 +79,14 @@ protected:
             eventHubNamespace, eventHubName, GetTestCredential(), options);
         break;
       }
-      //case AuthType::Emulator: {
-      //  producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-      //      "Endpoint=sb://localhost:5672/"
-      //      ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
-      //      "UseDevelopmentEmulator=true",
-      //      "eh1",
-      //      options);
-      //}
+        // case AuthType::Emulator: {
+        //   producer = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
+        //       "Endpoint=sb://localhost:5672/"
+        //       ";SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=abcdefabcdef;"
+        //       "UseDevelopmentEmulator=true",
+        //       "eh1",
+        //       options);
+        // }
     }
     return producer;
   }
