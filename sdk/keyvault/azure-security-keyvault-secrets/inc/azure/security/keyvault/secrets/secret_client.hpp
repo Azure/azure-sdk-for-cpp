@@ -28,13 +28,15 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
-   * @brief
+   * @brief The key vault client performs cryptographic key operations and vault operations against
+   * the Key Vault service.
    *
    */
   class SecretClient final {
   public:
     /**
      * @brief Constructs the SecretClient.
+     * @param url The URL of the vault to access.
      * @param credential Credential to authenticate with the service.
      * @param options Optional parameters.
      *
