@@ -100,6 +100,23 @@ If the CMake option _-DCMAKE_TOOLCHAIN_FILE=..._ is not defined to generate the 
 
 </center>
 
+### Ubuntu Required packages:
+On Ubuntu Linux distributions, the following packages are required to build the Azure SDK for C++:
+
+- cmake
+- ninja-build
+- curl 
+- zip 
+- unzip 
+- tar
+- pkg-config
+
+### Rust dependencies.
+
+Some C++ packages (azure_core_amqp) require a Rust compiler to be built. If your installation does not have a Rust compiler, you can disable this functionality by
+setting the CMAKE option `DISABLE_RUST_IN_BUILD` to `ON`.
+
+
 
 ## Building the project
 
