@@ -17,6 +17,7 @@ SetUpTestProxy("sdk/eventhubs")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
+    azure_messaging_eventhubs_test.cpp
     checkpoint_store_test.cpp
     consumer_client_test.cpp
     event_data_test.cpp
@@ -31,24 +32,6 @@ add_executable (
     round_trip_test.cpp
     test_checkpoint_store.hpp
 )
-
-#add_executable (
-#  azure-messaging-eventhubs-test
-#    azure_messaging_eventhubs_test.cpp
-#    checkpoint_store_test.cpp
-#    consumer_client_test.cpp
-#    event_data_test.cpp
-#    eventhubs_admin_client_test.cpp
-#    eventhubs_admin_client.cpp
-#    eventhubs_admin_client.hpp
-#    eventhubs_test_base.hpp
-#    processor_load_balancer_test.cpp
-#    processor_test.cpp
-#    producer_client_test.cpp
-#    retry_operation_test.cpp
-#    round_trip_test.cpp
-#    test_checkpoint_store.hpp
-#)
 
 target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS)
 
