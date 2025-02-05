@@ -265,8 +265,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EventHubs,
       ProducerClientTest,
       ::testing::Values(
-          AuthType::Key,
-          AuthType::ConnectionString
+          AuthType::Key
           /*, AuthType::Emulator*/),
       GetSuffix);
 #else

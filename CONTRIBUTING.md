@@ -116,6 +116,8 @@ On Ubuntu Linux distributions, the following packages are required to build the 
 Some C++ packages (azure_core_amqp) require a Rust compiler to be built. If your installation does not have a Rust compiler, you can disable this functionality by
 setting the CMAKE option `DISABLE_RUST_IN_BUILD` to `ON`.
 
+To install a Rust compiler, follow the instructions [here](https://www.rust-lang.org/tools/install).
+
 
 
 ## Building the project
