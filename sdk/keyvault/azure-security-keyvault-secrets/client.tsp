@@ -7,7 +7,7 @@ using Azure.Core.Traits;
 using TypeSpec.Rest;
 using TypeSpec.Http;
 
-namespace KeyVault;
+using KeyVault;
 @@clientName(KeyVault, "SecretClient"); // This is the name of the client
 @@clientName(KeyVault.SecretProperties,"SecretKeyProperties");
 @@clientName(KeyVault.SecretAttributes, "SecretProperties");

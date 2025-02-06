@@ -38,13 +38,11 @@ message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
     #typespec related repo information
-    set(TSP_REPO_PATH "specification/keyvault")
     set(TSP_SERVICE_PATH "Security.KeyVault.Secrets")
-    set(TSP_SHA "202f7841ed7576ebd9d2e08d6de7342787bb6733")
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "0f07d2270db3706f3a21ed624569a8d8613ae128")
+    set(CODEGEN_SHA "fe0ede6b2f25c0aeb6f6505d4be8b791dc26af6e")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
@@ -52,7 +50,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
     #generate code from typespec
-    GenerateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH} ${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
     #update code files left this as a separate step as generating and moving result around
     #conceptually are two different steps
     UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${TSP_SERVICE_PATH} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
