@@ -164,32 +164,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::DirectoryClient::CreateDirectoryOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    if (options.SmbProperties.Attributes.GetValues().empty())
-    {
-      protocolLayerOptions.FileAttributes = Models::FileAttributes::Directory.ToString();
-    }
-    else
-    {
-      protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
-    }
+    protocolLayerOptions.FileAttributes = options.SmbProperties.Attributes.ToString();
+
     if (options.SmbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = options.SmbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileCreationTime = std::string(FileDefaultTimeValue);
-    }
+
     if (options.SmbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = options.SmbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileLastWriteTime = std::string(FileDefaultTimeValue);
-    }
+
     if (options.SmbProperties.ChangedOn.HasValue())
     {
       protocolLayerOptions.FileChangeTime = options.SmbProperties.ChangedOn.Value().ToString(
@@ -203,13 +191,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
     }
-    else
-    {
-      protocolLayerOptions.FilePermission = std::string(FileInheritPermission);
-    }
+
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.DirectoryPermissionFormat;
+    if (options.PosixProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.PosixProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.PosixProperties.Owner;
+    protocolLayerOptions.Group = options.PosixProperties.Group;
     auto result = _detail::DirectoryClient::Create(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::CreateDirectoryResult ret;
@@ -218,7 +209,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.IsServerEncrypted = result.Value.IsServerEncrypted;
     ret.LastModified = std::move(result.Value.LastModified);
     ret.SmbProperties = std::move(result.Value.SmbProperties);
-
+    if (result.Value.FileMode.HasValue())
+    {
+      ret.PosixProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(result.Value.FileMode.Value());
+    }
+    ret.PosixProperties.Owner = std::move(result.Value.Owner);
+    ret.PosixProperties.Group = std::move(result.Value.Group);
+    ret.PosixProperties.NfsFileType = std::move(result.Value.NfsFileType);
     return Azure::Response<Models::CreateDirectoryResult>(
         std::move(ret), std::move(result.RawResponse));
   }
@@ -417,8 +415,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::DirectoryClient::GetDirectoryPropertiesOptions();
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
-    return _detail::DirectoryClient::GetProperties(
+    auto response = _detail::DirectoryClient::GetProperties(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
+    Models::DirectoryProperties ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.Metadata = std::move(response.Value.Metadata);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
+    if (response.Value.FileMode.HasValue())
+    {
+      ret.PosixProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode.Value());
+    }
+    ret.PosixProperties.Owner = std::move(response.Value.Owner);
+    ret.PosixProperties.Group = std::move(response.Value.Group);
+    ret.PosixProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    return Azure::Response<Models::DirectoryProperties>(
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetDirectoryPropertiesResult> ShareDirectoryClient::SetProperties(
@@ -428,27 +442,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryPropertiesOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
-    if (protocolLayerOptions.FileAttributes.empty())
-    {
-      protocolLayerOptions.FileAttributes = FilePreserveSmbProperties;
-    }
     if (smbProperties.CreatedOn.HasValue())
     {
       protocolLayerOptions.FileCreationTime = smbProperties.CreatedOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
     }
-    else
-    {
-      protocolLayerOptions.FileCreationTime = FilePreserveSmbProperties;
-    }
     if (smbProperties.LastWrittenOn.HasValue())
     {
       protocolLayerOptions.FileLastWriteTime = smbProperties.LastWrittenOn.Value().ToString(
           Azure::DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::AllDigits);
-    }
-    else
-    {
-      protocolLayerOptions.FileLastWriteTime = FilePreserveSmbProperties;
     }
     if (smbProperties.ChangedOn.HasValue())
     {
@@ -463,15 +465,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = smbProperties.PermissionKey;
     }
-    else
-    {
-      protocolLayerOptions.FilePermission = FilePreserveSmbProperties;
-    }
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
-    return _detail::DirectoryClient::SetProperties(
+    if (options.PosixProperties.FileMode.HasValue())
+    {
+      protocolLayerOptions.FileMode = options.PosixProperties.FileMode.Value().ToOctalFileMode();
+    }
+    protocolLayerOptions.Owner = options.PosixProperties.Owner;
+    protocolLayerOptions.Group = options.PosixProperties.Group;
+    auto response = _detail::DirectoryClient::SetProperties(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
+    Models::SetDirectoryPropertiesResult ret;
+    ret.ETag = std::move(response.Value.ETag);
+    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.SmbProperties = std::move(response.Value.SmbProperties);
+    if (response.Value.FileMode.HasValue())
+    {
+      ret.PosixProperties.FileMode
+          = Models::NfsFileMode::ParseOctalFileMode(response.Value.FileMode.Value());
+    }
+    ret.PosixProperties.Owner = std::move(response.Value.Owner);
+    ret.PosixProperties.Group = std::move(response.Value.Group);
+    return Azure::Response<Models::SetDirectoryPropertiesResult>(
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetDirectoryMetadataResult> ShareDirectoryClient::SetMetadata(
