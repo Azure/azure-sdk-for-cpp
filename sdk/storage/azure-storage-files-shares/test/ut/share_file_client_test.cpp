@@ -2212,7 +2212,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, PremiumNfsProperties_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, PremiumPosixProperties_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
@@ -2333,6 +2333,56 @@ namespace Azure { namespace Storage { namespace Test {
         setOptions.PosixProperties.Owner.Value());
     EXPECT_TRUE(downloadToResult.Details.PosixProperties.LinkCount.HasValue());
 
+    // Create SymbolicLink
+    std::string sourceUrl = fileClient.GetUrl();
+    auto symbolicLinkClient
+        = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
+    Files::Shares::CreateSymbolicLinkOptions createSymbolicLinkOptions;
+    createSymbolicLinkOptions.CreatedOn = otherProperties.SmbProperties.CreatedOn;
+    createSymbolicLinkOptions.LastWrittenOn = otherProperties.SmbProperties.LastWrittenOn;
+
+    createSymbolicLinkOptions.Metadata = RandomMetadata();
+    createSymbolicLinkOptions.Group = "123";
+    createSymbolicLinkOptions.Owner = "456";
+    Files::Shares::Models::CreateFileSymbolicLinkResult createSymbolicLinkResult;
+    EXPECT_NO_THROW(
+        createSymbolicLinkResult
+        = symbolicLinkClient.CreateSymbolicLink(sourceUrl, createSymbolicLinkOptions).Value);
+    EXPECT_TRUE(createSymbolicLinkResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
+    EXPECT_TRUE(createSymbolicLinkResult.PosixProperties.Group.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.PosixProperties.Group.Value(),
+        createSymbolicLinkOptions.Group.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.PosixProperties.FileMode.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.PosixProperties.Owner.Value(),
+        createSymbolicLinkOptions.Owner.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.PosixProperties.NfsFileType.HasValue());
+    EXPECT_EQ(
+        createSymbolicLinkResult.PosixProperties.NfsFileType.Value(),
+        Files::Shares::Models::NfsFileType::SymLink);
+    EXPECT_EQ(
+        createSymbolicLinkResult.SmbProperties.CreatedOn.Value(),
+        createSymbolicLinkOptions.CreatedOn.Value());
+    EXPECT_EQ(
+        createSymbolicLinkResult.SmbProperties.LastWrittenOn.Value(),
+        createSymbolicLinkOptions.LastWrittenOn.Value());
+    EXPECT_TRUE(createSymbolicLinkResult.SmbProperties.ChangedOn.HasValue());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.FileId.empty());
+    EXPECT_TRUE(!createSymbolicLinkResult.SmbProperties.ParentFileId.empty());
+    EXPECT_TRUE(createSymbolicLinkResult.ETag.HasValue());
+
+    // Get SymbolicLink
+    Files::Shares::Models::GetFileSymbolicLinkResult getSymbolicLinkResult;
+    EXPECT_NO_THROW(getSymbolicLinkResult = symbolicLinkClient.GetSymbolicLink().Value);
+    EXPECT_TRUE(getSymbolicLinkResult.ETag.HasValue());
+    if (!m_testContext.IsPlaybackMode())
+    {
+      EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
+    }
+
     // Create HardLink
     auto hardLinkClient
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
@@ -2418,7 +2468,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::Models::NfsFileType::Regular);
   }
 
-  TEST_F(FileShareFileClientTest, PremiumNfsPropertiesForCopy_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, PremiumPosixPropertiesForCopy_PLAYBACKONLY_)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
@@ -2510,7 +2560,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         properties.PosixProperties.Owner.Value(), createOptions.PosixProperties.Owner.Value());
 
-    // Copy without NfsProperties
+    // Copy without PosixProperties
     copyOptions = Files::Shares::StartFileCopyOptions();
     copyOptions.SmbPropertiesToCopy = Files::Shares::CopyableFileSmbPropertyFlags::None;
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
