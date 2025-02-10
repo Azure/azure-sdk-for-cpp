@@ -6,6 +6,7 @@
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
+#include <azure/storage/files/shares.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
@@ -465,6 +466,41 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(destBlobClient.AppendBlockFromUri(sourceBlobClient.GetUrl(), options));
     auto properties = destBlobClient.GetProperties().Value;
     EXPECT_EQ(blobContent.size(), properties.BlobSize);
+  }
+
+  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri_SourceFileShare)
+  {
+    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    auto oauthCredential = GetTestCredential();
+    auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), shareClientOptions);
+    shareServiceClient = Files::Shares::ShareServiceClient(
+        shareServiceClient.GetUrl(), oauthCredential, shareClientOptions);
+    auto shareClient = shareServiceClient.GetShareClient(LowercaseRandomString());
+    shareClient.Create();
+
+    size_t fileSize = 1 * 1024;
+    std::string fileName = RandomString() + "file";
+    std::vector<uint8_t> fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
+    auto sourceFileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    sourceFileClient.Create(fileSize);
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, memBodyStream));
+
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+
+    auto oauthToken = oauthCredential->GetToken(requestContext, Azure::Core::Context());
+
+    auto destBlobClient = GetAppendBlobClientForTest(RandomString());
+    EXPECT_NO_THROW(destBlobClient.Create());
+    Storage::Blobs::AppendBlockFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+    options.FileRequestIntent = Blobs::Models::FileShareTokenIntent::Backup;
+    EXPECT_NO_THROW(destBlobClient.AppendBlockFromUri(sourceFileClient.GetUrl(), options));
+
+    EXPECT_NO_THROW(shareClient.DeleteIfExists());
   }
 
 }}} // namespace Azure::Storage::Test

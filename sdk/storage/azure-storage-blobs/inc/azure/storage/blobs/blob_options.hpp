@@ -640,6 +640,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source.
      */
     std::string SourceAuthorization;
+
+    /**
+     * Optional, only applicable (but required) when the source is Azure Storage Files and using
+     * token authentication. Used to indicate the intent of the request.
+     */
+    Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
   };
 
   /**
@@ -1017,6 +1023,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source.
      */
     std::string SourceAuthorization;
+
+    /**
+     * Optional, only applicable (but required) when the source is Azure Storage Files and using
+     * token authentication. Used to indicate the intent of the request.
+     */
+    Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
   };
 
   /**
@@ -1073,6 +1085,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source.
      */
     std::string SourceAuthorization;
+
+    /**
+     * Optional, only applicable (but required) when the source is Azure Storage Files and using
+     * token authentication. Used to indicate the intent of the request.
+     */
+    Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
   };
 
   /**
@@ -1366,6 +1384,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source.
      */
     std::string SourceAuthorization;
+
+    /**
+     * Optional, only applicable (but required) when the source is Azure Storage Files and using
+     * token authentication. Used to indicate the intent of the request.
+     */
+    Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
   };
 
   /**
@@ -1477,6 +1501,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * source.
      */
     std::string SourceAuthorization;
+
+    /**
+     * Optional, only applicable (but required) when the source is Azure Storage Files and using
+     * token authentication. Used to indicate the intent of the request.
+     */
+    Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
   };
 
   /**

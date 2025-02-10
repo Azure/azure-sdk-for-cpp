@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2024-08-04/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2025-07-05/blob.json
 ```
 
 ## ModelFour Options
@@ -52,12 +52,13 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));  
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
+      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
           delete $[h];
         }
       }
@@ -100,12 +101,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"]
+        "enum": ["2025-07-05"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum[0] = "2025-07-05";
 ```
 
 ### Rename Operations
@@ -293,6 +294,7 @@ directive:
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
       $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
       delete $.FilterBlobsInclude;
+      $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
   - from: swagger-document
     where: $.definitions
     transform: >

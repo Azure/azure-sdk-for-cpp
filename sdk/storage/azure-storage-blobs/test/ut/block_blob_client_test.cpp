@@ -5,6 +5,7 @@
 
 #include <azure/core/cryptography/hash.hpp>
 #include <azure/storage/common/crypt.hpp>
+#include <azure/storage/files/shares.hpp>
 
 #include <future>
 #include <random>
@@ -489,6 +490,87 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
     EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+  }
+
+  TEST_F(BlockBlobClientTest, OAuthCopyFromUri_SourceFileShare)
+  {
+    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    auto oauthCredential = GetTestCredential();
+    auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), shareClientOptions);
+    shareServiceClient = Files::Shares::ShareServiceClient(
+        shareServiceClient.GetUrl(), oauthCredential, shareClientOptions);
+    auto shareClient = shareServiceClient.GetShareClient(LowercaseRandomString());
+    shareClient.Create();
+
+    size_t fileSize = 1 * 1024;
+    std::string fileName = RandomString() + "file";
+    std::vector<uint8_t> fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
+    auto sourceFileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    sourceFileClient.Create(fileSize);
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, memBodyStream));
+
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential->GetToken(requestContext, Azure::Core::Context());
+
+    const std::string blobName = "dest" + RandomString();
+    auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
+
+    // Copy From Uri
+    Storage::Blobs::CopyBlobFromUriOptions copyOptions;
+    copyOptions.SourceAuthorization = "Bearer " + oauthToken.Token;
+    copyOptions.FileRequestIntent = Azure::Storage::Blobs::Models::FileShareTokenIntent::Backup;
+    auto res = destBlobClient.CopyFromUri(sourceFileClient.GetUrl(), copyOptions);
+    EXPECT_EQ(res.RawResponse->GetStatusCode(), Azure::Core::Http::HttpStatusCode::Accepted);
+    EXPECT_TRUE(res.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(res.Value.LastModified));
+    EXPECT_FALSE(res.Value.CopyId.empty());
+    EXPECT_EQ(res.Value.CopyStatus, Azure::Storage::Blobs::Models::CopyStatus::Success);
+
+    auto downloadResult = destBlobClient.Download();
+    EXPECT_FALSE(downloadResult.Value.Details.CopyId.Value().empty());
+    EXPECT_FALSE(downloadResult.Value.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        downloadResult.Value.Details.CopyStatus.Value()
+        == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(downloadResult.Value.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(downloadResult.Value.Details.CopyCompletedOn.Value()));
+
+    auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Copy);
+    EXPECT_FALSE(blobItem.Details.CopyId.Value().empty());
+    EXPECT_FALSE(blobItem.Details.CopySource.Value().empty());
+    EXPECT_TRUE(
+        blobItem.Details.CopyStatus.Value() == Azure::Storage::Blobs::Models::CopyStatus::Success);
+    EXPECT_FALSE(blobItem.Details.CopyProgress.Value().empty());
+    EXPECT_TRUE(IsValidTime(blobItem.Details.CopyCompletedOn.Value()));
+    ASSERT_TRUE(blobItem.Details.IsIncrementalCopy.HasValue());
+    EXPECT_FALSE(blobItem.Details.IsIncrementalCopy.Value());
+    EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
+
+    // Upload From Uri
+    Storage::Blobs::UploadBlockBlobFromUriOptions uploadOptions;
+    uploadOptions.SourceAuthorization = "Bearer " + oauthToken.Token;
+    uploadOptions.FileRequestIntent = Azure::Storage::Blobs::Models::FileShareTokenIntent::Backup;
+    EXPECT_NO_THROW(destBlobClient.UploadFromUri(sourceFileClient.GetUrl(), uploadOptions));
+
+    // Stage Block From Uri
+    const std::string blockId1 = Base64EncodeText("0");
+    const std::string blobName2 = "dest2" + RandomString();
+    auto destBlobClient2 = m_blobContainerClient->GetBlockBlobClient(blobName2);
+
+    Storage::Blobs::StageBlockFromUriOptions stageBlockOptions;
+    stageBlockOptions.SourceAuthorization = "Bearer " + oauthToken.Token;
+    stageBlockOptions.FileRequestIntent
+        = Azure::Storage::Blobs::Models::FileShareTokenIntent::Backup;
+    EXPECT_NO_THROW(
+        destBlobClient2.StageBlockFromUri(blockId1, sourceFileClient.GetUrl(), stageBlockOptions));
+
+    EXPECT_NO_THROW(destBlobClient2.CommitBlockList({blockId1}));
+
+    EXPECT_NO_THROW(shareClient.DeleteIfExists());
   }
 
   TEST_F(BlockBlobClientTest, SyncCopyFromUriEncryptionScope)
