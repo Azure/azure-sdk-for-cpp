@@ -2182,4 +2182,26 @@ namespace Azure { namespace Storage { namespace Test {
     blobProperties = versionClient.GetProperties().Value;
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
+
+  TEST_F(BlockBlobClientTest, StructuredMessageTest)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    Blobs::UploadBlockBlobOptions uploadOptions;
+    uploadOptions.ValidationOptions = validationOptions;
+    EXPECT_NO_THROW(m_blockBlobClient->Upload(bodyStream, uploadOptions));
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = m_blockBlobClient->Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(content, downloadedData);
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+  }
 }}} // namespace Azure::Storage::Test

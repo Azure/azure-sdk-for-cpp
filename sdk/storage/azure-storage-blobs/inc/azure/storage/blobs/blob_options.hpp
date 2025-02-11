@@ -169,6 +169,14 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * Configures whether to do content validation for blob uploads and downloads.
+   */
+  struct TransferValidationOptions
+  {
+    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
+  };
+
+  /**
    * @brief Client options used to initialize all kinds of blob clients.
    */
   struct BlobClientOptions final : Azure::Core::_internal::ClientOptions
@@ -210,6 +218,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * not set.
      */
     Azure::Nullable<BlobAudience> Audience;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
   };
 
   /**
@@ -673,6 +691,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -707,6 +730,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -889,6 +917,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Indicates whether the blob has a legal hold.
      */
     Azure::Nullable<bool> HasLegalHold;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -948,6 +981,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Indicates whether the blob has a legal hold.
      */
     Azure::Nullable<bool> HasLegalHold;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1335,6 +1373,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     AppendBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1444,6 +1487,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     PageBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
