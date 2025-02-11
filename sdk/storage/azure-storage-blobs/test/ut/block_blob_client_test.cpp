@@ -492,7 +492,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.IncrementalCopyDestinationSnapshot.HasValue());
   }
 
-  TEST_F(BlockBlobClientTest, OAuthCopyFromUri_SourceFileShare)
+  TEST_F(BlockBlobClientTest, OAuthCopyFromUri_SourceFileShare_PLAYBACKONLY_)
   {
     auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;

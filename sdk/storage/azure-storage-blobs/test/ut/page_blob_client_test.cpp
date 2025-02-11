@@ -302,7 +302,7 @@ namespace Azure { namespace Storage { namespace Test {
         pageBlobClient.Download().Value.BodyStream->ReadToEnd());
   }
 
-  TEST_F(PageBlobClientTest, OAuthUploadFromUri_SourceFileShare)
+  TEST_F(PageBlobClientTest, OAuthUploadFromUri_SourceFileShare_PLAYBACKONLY_)
   {
     auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;

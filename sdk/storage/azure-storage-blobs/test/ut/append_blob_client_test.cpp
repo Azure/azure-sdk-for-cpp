@@ -468,7 +468,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobContent.size(), properties.BlobSize);
   }
 
-  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri_SourceFileShare)
+  TEST_F(AppendBlobClientTest, OAuthAppendBlockFromUri_SourceFileShare_PLAYBACKONLY_)
   {
     auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
