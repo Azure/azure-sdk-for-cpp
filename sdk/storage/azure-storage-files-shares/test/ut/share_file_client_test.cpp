@@ -2380,7 +2380,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(getSymbolicLinkResult.ETag.HasValue());
     if (!m_testContext.IsPlaybackMode())
     {
-      EXPECT_EQ(getSymbolicLinkResult.LinkText, sourceUrl);
+      EXPECT_EQ(Azure::Core::Url::Decode(getSymbolicLinkResult.LinkText), sourceUrl);
     }
 
     // Create HardLink
