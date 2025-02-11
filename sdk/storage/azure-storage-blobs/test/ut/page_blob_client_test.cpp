@@ -780,4 +780,37 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 
+  TEST_F(PageBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    auto pageBlob = GetPageBlobClientTestForTest(LowercaseRandomString());
+    pageBlob.Create(contentSize);
+
+    // Append
+    Blobs::UploadPagesOptions uploadOptions;
+    uploadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::UploadPagesResult uploadResult;
+    EXPECT_NO_THROW(uploadResult = pageBlob.UploadPages(0, bodyStream, uploadOptions).Value);
+    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+
+    // Download
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = pageBlob.Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        content,
+        std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+  }
+
 }}} // namespace Azure::Storage::Test

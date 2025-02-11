@@ -418,6 +418,15 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     _detail::BlockBlobClient::StageBlockBlobBlockOptions protocolLayerOptions;
     protocolLayerOptions.BlockId = blockId;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    if (m_customerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+    }
+    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
@@ -431,14 +440,24 @@ namespace Azure { namespace Storage { namespace Blobs {
             = options.TransactionalContentHash.Value().Value;
       }
     }
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    if (m_customerProvidedKey.HasValue())
+    else
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_uploadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
+        protocolLayerOptions.StructuredContentLength = content.Length();
+        _internal::StructuredMessageEncodingStreamOptions encodingStreamOptions;
+        encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
+        auto structuredContent
+            = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
+        return _detail::BlockBlobClient::StageBlock(
+            *m_pipeline, m_blobUrl, structuredContent, protocolLayerOptions, context);
+      }
     }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
     return _detail::BlockBlobClient::StageBlock(
         *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }

@@ -1073,6 +1073,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
