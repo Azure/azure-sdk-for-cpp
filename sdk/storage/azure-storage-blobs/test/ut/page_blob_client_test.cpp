@@ -7,6 +7,7 @@
 #include <azure/storage/blobs/blob_lease_client.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
+#include <azure/storage/files/shares.hpp>
 
 #include <future>
 #include <vector>
@@ -299,6 +300,43 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         pageBlobClient2.Download().Value.BodyStream->ReadToEnd(),
         pageBlobClient.Download().Value.BodyStream->ReadToEnd());
+  }
+
+  TEST_F(PageBlobClientTest, OAuthUploadFromUri_SourceFileShare_PLAYBACKONLY_)
+  {
+    auto shareClientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    shareClientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
+    auto oauthCredential = GetTestCredential();
+    auto shareServiceClient = Files::Shares::ShareServiceClient::CreateFromConnectionString(
+        StandardStorageConnectionString(), shareClientOptions);
+    shareServiceClient = Files::Shares::ShareServiceClient(
+        shareServiceClient.GetUrl(), oauthCredential, shareClientOptions);
+    auto shareClient = shareServiceClient.GetShareClient(LowercaseRandomString());
+    shareClient.Create();
+
+    size_t fileSize = 1 * 1024;
+    std::string fileName = RandomString() + "file";
+    std::vector<uint8_t> fileContent = RandomBuffer(fileSize);
+    auto memBodyStream = Core::IO::MemoryBodyStream(fileContent);
+    auto sourceFileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    sourceFileClient.Create(fileSize);
+    EXPECT_NO_THROW(sourceFileClient.UploadRange(0, memBodyStream));
+
+    auto destBlobClient = GetPageBlobClientTestForTest(RandomString());
+    destBlobClient.Create(fileSize);
+
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto oauthToken = oauthCredential->GetToken(requestContext, Azure::Core::Context());
+
+    Storage::Blobs::UploadPagesFromUriOptions options;
+    options.SourceAuthorization = "Bearer " + oauthToken.Token;
+    options.FileRequestIntent = Blobs::Models::FileShareTokenIntent::Backup;
+    EXPECT_NO_THROW(destBlobClient.UploadPagesFromUri(
+        0, sourceFileClient.GetUrl(), {0, static_cast<int64_t>(fileSize)}, options));
+    EXPECT_EQ(destBlobClient.Download().Value.BodyStream->ReadToEnd(), fileContent);
+
+    EXPECT_NO_THROW(shareClient.DeleteIfExists());
   }
 
   TEST_F(PageBlobClientTest, StartCopyIncremental_LIVEONLY_)
