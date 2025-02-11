@@ -380,6 +380,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief NFS only. Creates a symbolic link to the file specified by path.
+     * @param linkText The absolution or relative path to the file to be linked to.
+     * @param options Optional parameters to create this file's symbolic link.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateFileSymbolicLinkResult> containing the returned
+     * information.
+     */
+    Azure::Response<Models::CreateFileSymbolicLinkResult> CreateSymbolicLink(
+        const std::string& linkText,
+        const CreateSymbolicLinkOptions& options = CreateSymbolicLinkOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief NFS only. Reads the value of the symbolic link.
+     * @param options Optional parameters to get this file's symbolic link.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::GetFileSymbolicLinkResult> containing the returned
+     * information.
+     */
+    Azure::Response<Models::GetFileSymbolicLinkResult> GetSymbolicLink(
+        const GetSymbolicLinkOptions& options = GetSymbolicLinkOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief NFS only. Creates a hard link to the file specified by path.
      * @param targetFile Path of the file to create the hard link to, not including the share.
      * @param options Optional parameters to create this file's symbolic link.
