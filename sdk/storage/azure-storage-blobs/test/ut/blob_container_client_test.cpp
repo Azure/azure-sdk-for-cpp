@@ -508,6 +508,24 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
+  TEST_F(BlobContainerClientTest, AclAndAccountInfoOAuth_PLAYBACKONLY_)
+  {
+    auto credential = GetTestCredential();
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    auto containerClient
+        = Blobs::BlobContainerClient(m_blobContainerClient->GetUrl(), credential, clientOptions);
+
+    Blobs::SetBlobContainerAccessPolicyOptions options;
+    auto ret = containerClient.SetAccessPolicy(options);
+    EXPECT_TRUE(ret.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+
+    EXPECT_NO_THROW(containerClient.GetAccessPolicy());
+
+    auto ret3 = containerClient.GetAccountInfo();
+    EXPECT_FALSE(ret3.Value.IsHierarchicalNamespaceEnabled);
+  }
+
   TEST_F(BlobContainerClientTest, Lease)
   {
     auto containerClient = *m_blobContainerClient;

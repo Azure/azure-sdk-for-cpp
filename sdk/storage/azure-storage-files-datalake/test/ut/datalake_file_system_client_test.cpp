@@ -710,6 +710,21 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileSystemClientTest, AclOAuth_PLAYBACKONLY_)
+  {
+    auto credential = GetTestCredential();
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    auto fileSystemClient = Files::DataLake::DataLakeFileSystemClient(
+        m_fileSystemClient->GetUrl(), credential, clientOptions);
+
+    Files::DataLake::SetFileSystemAccessPolicyOptions options;
+    auto ret = fileSystemClient.SetAccessPolicy(options);
+    EXPECT_TRUE(ret.Value.ETag.HasValue());
+    EXPECT_TRUE(IsValidTime(ret.Value.LastModified));
+
+    EXPECT_NO_THROW(fileSystemClient.GetAccessPolicy());
+  }
+
   TEST_F(DataLakeFileSystemClientTest, RenameFile)
   {
     const std::string oldFilename = RandomString() + "1";

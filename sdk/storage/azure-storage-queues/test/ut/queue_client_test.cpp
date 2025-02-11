@@ -235,6 +235,18 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Delete();
   }
 
+  TEST_F(QueueClientTest, AclOAuth_PLAYBACKONLY_)
+  {
+    auto credential = GetTestCredential();
+    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
+    auto queueClient = Queues::QueueClient(m_queueClient->GetUrl(), credential, clientOptions);
+
+    Queues::Models::QueueAccessPolicy accessPolicy;
+    EXPECT_NO_THROW(queueClient.SetAccessPolicy(accessPolicy));
+
+    EXPECT_NO_THROW(queueClient.GetAccessPolicy());
+  }
+
   TEST_F(QueueClientTest, Audience)
   {
     auto credential = GetTestCredential();
