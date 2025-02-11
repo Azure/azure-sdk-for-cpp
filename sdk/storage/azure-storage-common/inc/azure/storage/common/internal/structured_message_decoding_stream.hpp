@@ -68,8 +68,9 @@ namespace Azure { namespace Storage { namespace _internal {
         StructuredMessageDecodingStreamOptions const options)
         : m_inner(std::move(inner)), m_options(options),
           m_streamHeaderLength(StructuredMessageHelper::StreamHeaderLength),
-          m_segmentHeaderLength(StructuredMessageHelper::SegmentHeaderLength), m_length(0),
-          m_segmentCount(0), m_flags(StructuredMessageFlags::None), m_offset(0),
+          m_segmentHeaderLength(StructuredMessageHelper::SegmentHeaderLength),
+          m_segmentFooterLength(0), m_streamFooterLength(0), m_length(0),
+          m_flags(StructuredMessageFlags::None), m_segmentCount(0), m_offset(0),
           m_currentRegion(StructuredMessageCurrentRegion::StreamHeader), m_currentSegmentNumber(0),
           m_currentSegmentOffset(0), m_currentSegmentLength(0),
           m_segmentHeaderBuffer(StructuredMessageHelper::SegmentHeaderLength),
