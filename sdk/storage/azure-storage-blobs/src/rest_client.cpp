@@ -173,6 +173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::Absolute("Absolute");
     const BlobCopySourceTagsMode BlobCopySourceTagsMode::Replace("REPLACE");
     const BlobCopySourceTagsMode BlobCopySourceTagsMode::Copy("COPY");
+    const FileShareTokenIntent FileShareTokenIntent::Backup("backup");
     namespace _detail {
       const QueryRequestQueryType QueryRequestQueryType::SQL("SQL");
       const QueryFormatType QueryFormatType::Delimited("delimited");
@@ -377,7 +378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -397,7 +398,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -693,7 +694,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "stats");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -793,7 +794,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             _internal::UrlEncodeQueryParameter(
                 ListBlobContainersIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1078,7 +1079,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "userdelegationkey");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1193,7 +1194,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1223,7 +1224,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("Content-Type", options.MultipartContentType);
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1244,7 +1245,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "blobs");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.Where.HasValue() && !options.Where.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1400,7 +1401,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-blob-public-access", options.Access.ToString());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.DefaultEncryptionScope.HasValue()
           && !options.DefaultEncryptionScope.Value().empty())
       {
@@ -1437,7 +1438,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1515,7 +1516,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1549,7 +1550,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Modified-Since",
             options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1576,7 +1577,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1745,7 +1746,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1768,7 +1769,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "undelete");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.DeletedContainerName.HasValue() && !options.DeletedContainerName.Value().empty())
       {
         request.SetHeader("x-ms-deleted-container-name", options.DeletedContainerName.Value());
@@ -1798,7 +1799,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "rename");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (!options.SourceContainerName.empty())
       {
         request.SetHeader("x-ms-source-container-name", options.SourceContainerName);
@@ -1832,7 +1833,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("Content-Type", options.MultipartContentType);
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1854,7 +1855,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "blobs");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.Where.HasValue() && !options.Where.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -2024,7 +2025,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -2065,7 +2066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2105,7 +2106,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2146,7 +2147,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -2191,7 +2192,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2238,7 +2239,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             _internal::UrlEncodeQueryParameter(
                 ListBlobsIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2917,7 +2918,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             _internal::UrlEncodeQueryParameter(
                 ListBlobsIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.ShowOnly.HasValue() && !options.ShowOnly.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -3606,7 +3607,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -3697,7 +3698,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.UserPrincipalName.HasValue())
       {
         request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
@@ -3977,7 +3978,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.UserPrincipalName.HasValue())
       {
         request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
@@ -4243,7 +4244,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -4261,7 +4262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "undelete");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4280,7 +4281,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "expiry");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (!options.ExpiryOptions.ToString().empty())
       {
         request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.ToString());
@@ -4368,7 +4369,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-blob-content-disposition", options.BlobContentDisposition);
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4401,7 +4402,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "immutabilityPolicies");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.IfUnmodifiedSince.HasValue())
       {
         request.SetHeader(
@@ -4444,7 +4445,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
       request.GetUrl().AppendQueryParameter("comp", "immutabilityPolicies");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4464,7 +4465,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "legalhold");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       request.SetHeader("x-ms-legal-hold", options.LegalHold ? "true" : "false");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4536,7 +4537,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4611,7 +4612,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -4669,7 +4670,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4726,7 +4727,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4788,7 +4789,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4846,7 +4847,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -4926,7 +4927,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -5033,7 +5034,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -5152,7 +5153,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.SourceContentMD5.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentMD5.Value()).empty())
       {
@@ -5194,6 +5195,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (options.CopySourceTags.HasValue() && !options.CopySourceTags.Value().ToString().empty())
       {
         request.SetHeader("x-ms-copy-source-tag-option", options.CopySourceTags.Value().ToString());
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
       if (options.SourceContentcrc64.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentcrc64.Value()).empty())
@@ -5262,7 +5268,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -5300,7 +5306,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-rehydrate-priority", options.RehydratePriority.Value().ToString());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -5329,7 +5335,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -5627,7 +5633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.EncryptionScope.HasValue() && !options.EncryptionScope.Value().empty())
       {
         request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
@@ -5676,7 +5682,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "tags");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.Snapshot.HasValue() && !options.Snapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -5803,7 +5809,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("comp", "tags");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.VersionId.HasValue() && !options.VersionId.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -5934,7 +5940,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader(
             "x-ms-blob-sequence-number", std::to_string(options.BlobSequenceNumber.Value()));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -6080,7 +6086,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -6206,7 +6212,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -6349,12 +6355,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
         request.SetHeader(
             "x-ms-copy-source-authorization", options.CopySourceAuthorization.Value());
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -6450,7 +6461,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.Marker.HasValue() && !options.Marker.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -6628,7 +6639,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.Marker.HasValue() && !options.Marker.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -6808,7 +6819,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -6874,7 +6885,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader(
             "x-ms-blob-sequence-number", std::to_string(options.BlobSequenceNumber.Value()));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -6932,7 +6943,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-copy-source", options.CopySource);
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -7043,7 +7054,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -7171,7 +7182,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -7325,12 +7336,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
         request.SetHeader(
             "x-ms-copy-source-authorization", options.CopySourceAuthorization.Value());
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -7381,7 +7397,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "seal");
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -7520,7 +7536,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -7703,7 +7719,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-tags", options.SourceIfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.SourceContentMD5.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentMD5.Value()).empty())
       {
@@ -7734,6 +7750,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (options.CopySourceTags.HasValue() && !options.CopySourceTags.Value().ToString().empty())
       {
         request.SetHeader("x-ms-copy-source-tag-option", options.CopySourceTags.Value().ToString());
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
       if (options.SourceContentcrc64.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentcrc64.Value()).empty())
@@ -7835,7 +7856,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -7949,12 +7970,17 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
         request.SetHeader(
             "x-ms-copy-source-authorization", options.CopySourceAuthorization.Value());
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -8116,7 +8142,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -8205,7 +8231,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2025-07-05");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
