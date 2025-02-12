@@ -81,7 +81,7 @@ namespace Azure { namespace Storage { namespace _internal {
           ? StructuredMessageHelper::Crc64Length
           : 0;
       m_segmentCount = static_cast<uint16_t>(
-          std::ceil(static_cast<float>(m_inner->Length()) / m_options.MaxSegmentLength));
+          (m_inner->Length() + m_options.MaxSegmentLength - 1) / m_options.MaxSegmentLength);
     }
 
     int64_t Length() const override
