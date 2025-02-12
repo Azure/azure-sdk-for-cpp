@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#5235]](https://github.com/Azure/azure-sdk-for-cpp/issues/5235) Warnings in `azure/identity.hpp` cause strict builds to fail.
+
 ### Other Changes
 
 ## 1.10.1 (2024-11-08)
