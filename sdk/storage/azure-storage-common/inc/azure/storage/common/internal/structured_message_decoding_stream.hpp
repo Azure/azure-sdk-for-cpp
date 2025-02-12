@@ -21,9 +21,9 @@ namespace Azure { namespace Storage { namespace _internal {
   struct StructuredMessageDecodingStreamOptions final
   {
     /**
-     * The length of the real data in the structured message.
+     * Required. The length of the real data in the structured message.
      */
-    int64_t ContentLength;
+    int64_t ContentLength = 0;
   };
 
   /**
