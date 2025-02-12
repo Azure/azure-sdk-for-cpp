@@ -98,21 +98,21 @@ AzureCliCredential::AzureCliCredential(
 
 AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
     : AzureCliCredential(
-          options,
-          options.TenantId,
-          options.CliProcessTimeout,
-          options.AdditionallyAllowedTenants,
-          options.Subscription)
+        options,
+        options.TenantId,
+        options.CliProcessTimeout,
+        options.AdditionallyAllowedTenants,
+        options.Subscription)
 {
 }
 
 AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialOptions& options)
     : AzureCliCredential(
-          options,
-          AzureCliCredentialOptions{}.TenantId,
-          AzureCliCredentialOptions{}.CliProcessTimeout,
-          AzureCliCredentialOptions{}.AdditionallyAllowedTenants,
-          AzureCliCredentialOptions{}.Subscription)
+        options,
+        AzureCliCredentialOptions{}.TenantId,
+        AzureCliCredentialOptions{}.CliProcessTimeout,
+        AzureCliCredentialOptions{}.AdditionallyAllowedTenants,
+        AzureCliCredentialOptions{}.Subscription)
 {
 }
 
