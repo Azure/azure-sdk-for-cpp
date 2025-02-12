@@ -3,6 +3,7 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <chrono>
 #include <iomanip>
 
 #include <gtest/gtest.h>
