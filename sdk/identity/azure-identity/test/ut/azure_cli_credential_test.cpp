@@ -498,7 +498,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
       exceptionThrown = true;
       EXPECT_EQ(
           e.what(),
-          "AzureCliCredential: Unsafe command line input found in TenantId: " + trc.TenantId);
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + trc.TenantId);
     }
 
     EXPECT_TRUE(exceptionThrown);
@@ -525,7 +525,7 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
       exceptionThrown = true;
       EXPECT_EQ(
           e.what(),
-          "AzureCliCredential: Unsafe command line input found in TenantId: " + trc.TenantId);
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + trc.TenantId);
     }
 
     EXPECT_TRUE(exceptionThrown);
@@ -620,7 +620,7 @@ TEST_P(ParameterizedTestForCharDifferences, ValidCharsForScopeButNotTenantId)
       exceptionThrown = true;
       EXPECT_EQ(
           e.what(),
-          "AzureCliCredential: Unsafe command line input found in TenantId: " + options.TenantId);
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + options.TenantId);
     }
 
     EXPECT_TRUE(exceptionThrown);
