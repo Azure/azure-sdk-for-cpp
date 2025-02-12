@@ -87,7 +87,7 @@ namespace Azure { namespace Storage { namespace _internal {
           {
             m_segmentCrc64Hash->Append(buffer + subreadOffset, bytesRead);
           }
-          if (m_currentRegionOffset == m_options.MaxSegmentLength
+          if (m_currentRegionOffset == static_cast<uint64_t>(m_options.MaxSegmentLength)
               || m_innerOffset >= m_inner->Length())
           {
             m_currentRegion = StructuredMessageCurrentRegion::SegmentFooter;
