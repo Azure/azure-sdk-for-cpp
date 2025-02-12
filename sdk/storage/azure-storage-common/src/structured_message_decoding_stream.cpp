@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace _internal {
       size_t count,
       Context const& context)
   {
-    uint64_t totalReadContent = 0;
+    size_t totalReadContent = 0;
     while (totalReadContent < count && m_offset < m_inner->Length())
     {
       switch (m_currentRegion)
@@ -47,8 +47,9 @@ namespace Azure { namespace Storage { namespace _internal {
           break;
         }
         case StructuredMessageCurrentRegion::SegmentContent: {
-          int64_t readBytes = std::min<int64_t>(
-              count - totalReadContent, m_currentSegmentLength - m_currentSegmentOffset);
+          size_t readBytes = std::min<size_t>(
+              count - totalReadContent,
+              static_cast<size_t>(m_currentSegmentLength - m_currentSegmentOffset));
           auto bytesRead
               = m_inner->Read(buffer + totalReadContent, static_cast<size_t>(readBytes), context);
           if (m_flags == StructuredMessageFlags::Crc64)

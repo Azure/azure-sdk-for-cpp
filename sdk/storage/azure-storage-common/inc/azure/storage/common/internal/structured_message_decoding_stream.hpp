@@ -37,10 +37,10 @@ namespace Azure { namespace Storage { namespace _internal {
     // Configuration for the encode stream
     StructuredMessageDecodingStreamOptions const m_options;
 
-    int64_t m_streamHeaderLength;
-    int64_t m_segmentHeaderLength;
-    int64_t m_segmentFooterLength;
-    int64_t m_streamFooterLength;
+    size_t m_streamHeaderLength;
+    size_t m_segmentHeaderLength;
+    size_t m_segmentFooterLength;
+    size_t m_streamFooterLength;
 
     // Length of the stream
     uint64_t m_length;

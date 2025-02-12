@@ -21,7 +21,7 @@ namespace Azure { namespace Storage { namespace _internal {
   struct StructuredMessageEncodingStreamOptions final
   {
     // configures the maximun segment length
-    int64_t MaxSegmentLength = 4 * 1024 * 1024;
+    size_t MaxSegmentLength = 4 * 1024 * 1024;
 
     StructuredMessageFlags Flags = StructuredMessageFlags::None;
   };
@@ -37,10 +37,10 @@ namespace Azure { namespace Storage { namespace _internal {
     // Configuration for the encode stream
     StructuredMessageEncodingStreamOptions const m_options;
 
-    int64_t m_streamHeaderLength;
-    int64_t m_segmentHeaderLength;
-    int64_t m_segmentFooterLength;
-    int64_t m_streamFooterLength;
+    size_t m_streamHeaderLength;
+    size_t m_segmentHeaderLength;
+    size_t m_segmentFooterLength;
+    size_t m_streamFooterLength;
 
     uint16_t m_segmentCount;
     uint16_t m_segmentNumber;
@@ -49,7 +49,7 @@ namespace Azure { namespace Storage { namespace _internal {
     int64_t m_innerOffset;
 
     StructuredMessageCurrentRegion m_currentRegion;
-    int64_t m_currentRegionOffset;
+    uint64_t m_currentRegionOffset;
 
     std::vector<uint8_t> m_streamHeaderCache;
     std::vector<uint8_t> m_segmentHeaderCache;

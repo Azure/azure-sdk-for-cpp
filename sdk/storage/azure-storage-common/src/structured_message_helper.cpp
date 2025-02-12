@@ -4,14 +4,14 @@
 #include "azure/storage/common/internal/structured_message_helper.hpp"
 
 namespace Azure { namespace Storage { namespace _internal {
-  const int64_t StructuredMessageHelper::Crc64Length = 8;
+  const size_t StructuredMessageHelper::Crc64Length = 8;
   const uint8_t StructuredMessageHelper::StructuredMessageVersion = 1;
-  const int64_t StructuredMessageHelper::StreamHeaderLength = 13;
+  const size_t StructuredMessageHelper::StreamHeaderLength = 13;
   const int64_t StructuredMessageHelper::StreamHeaderVersionOffset = 0;
   const int64_t StructuredMessageHelper::StreamHeaderMessageLengthOffset = 1;
   const int64_t StructuredMessageHelper::StreamHeaderFlagsOffset = 9;
   const int64_t StructuredMessageHelper::StreamHeaderSegmentCountOffset = 11;
-  const int64_t StructuredMessageHelper::SegmentHeaderLength = 10;
+  const size_t StructuredMessageHelper::SegmentHeaderLength = 10;
   const int64_t StructuredMessageHelper::SegmentHeaderNumOffset = 0;
   const int64_t StructuredMessageHelper::SegmentHeaderContentLengthOffset = 2;
 

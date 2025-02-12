@@ -17,15 +17,15 @@ namespace Azure { namespace Storage { namespace _internal {
       size_t count,
       Context const& context)
   {
-    uint64_t totalRead = 0;
+    size_t totalRead = 0;
     while (totalRead < count && m_offset < this->Length())
     {
-      uint64_t subreadOffset = totalRead;
+      size_t subreadOffset = totalRead;
       switch (m_currentRegion)
       {
         case StructuredMessageCurrentRegion::StreamHeader: {
-          int64_t readBytes
-              = std::min<int64_t>(count - totalRead, m_streamHeaderLength - m_currentRegionOffset);
+          size_t readBytes
+              = std::min<size_t>(count - totalRead, m_streamHeaderLength - m_currentRegionOffset);
           if (m_streamHeaderCache.empty())
           {
             m_streamHeaderCache.resize(m_streamHeaderLength);
@@ -47,8 +47,8 @@ namespace Azure { namespace Storage { namespace _internal {
           break;
         }
         case StructuredMessageCurrentRegion::SegmentHeader: {
-          int64_t readBytes
-              = std::min<int64_t>(count - totalRead, m_segmentHeaderLength - m_currentRegionOffset);
+          size_t readBytes
+              = std::min<size_t>(count - totalRead, m_segmentHeaderLength - m_currentRegionOffset);
           if (m_segmentHeaderCache.empty())
           {
             m_segmentHeaderCache.resize(m_segmentHeaderLength);
@@ -56,7 +56,7 @@ namespace Azure { namespace Storage { namespace _internal {
             StructuredMessageHelper::WriteSegmentHeader(
                 m_segmentHeaderCache.data(),
                 m_segmentNumber,
-                std::min<int64_t>(m_options.MaxSegmentLength, m_inner->Length() - m_innerOffset));
+                std::min<uint64_t>(m_options.MaxSegmentLength, m_inner->Length() - m_innerOffset));
           }
           std::memcpy(
               buffer + subreadOffset,
@@ -73,7 +73,7 @@ namespace Azure { namespace Storage { namespace _internal {
           break;
         }
         case StructuredMessageCurrentRegion::SegmentContent: {
-          int64_t readBytes = std::min<int64_t>(
+          size_t readBytes = std::min<size_t>(
               count - totalRead, m_options.MaxSegmentLength - m_currentRegionOffset);
           auto bytesRead
               = m_inner->Read(buffer + subreadOffset, static_cast<size_t>(readBytes), context);
@@ -96,7 +96,7 @@ namespace Azure { namespace Storage { namespace _internal {
         case StructuredMessageCurrentRegion::SegmentFooter: {
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
-            int64_t readBytes = std::min<int64_t>(
+            size_t readBytes = std::min<size_t>(
                 count - totalRead, m_segmentFooterLength - m_currentRegionOffset);
             if (m_segmentFooterCache.empty())
             {
@@ -129,8 +129,8 @@ namespace Azure { namespace Storage { namespace _internal {
         case StructuredMessageCurrentRegion::StreamFooter: {
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
-            int64_t readBytes = std::min<int64_t>(
-                count - totalRead, m_streamFooterLength - m_currentRegionOffset);
+            size_t readBytes
+                = std::min<size_t>(count - totalRead, m_streamFooterLength - m_currentRegionOffset);
             if (readBytes <= 0)
             {
               return totalRead;

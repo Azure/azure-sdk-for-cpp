@@ -28,17 +28,17 @@ namespace Azure { namespace Storage { namespace _internal {
 
   class StructuredMessageHelper final {
   public:
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t Crc64Length;
+    AZ_STORAGE_COMMON_DLLEXPORT static const size_t Crc64Length;
 
     AZ_STORAGE_COMMON_DLLEXPORT static const uint8_t StructuredMessageVersion;
 
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderLength;
+    AZ_STORAGE_COMMON_DLLEXPORT static const size_t StreamHeaderLength;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderVersionOffset;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderMessageLengthOffset;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderFlagsOffset;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderSegmentCountOffset;
 
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t SegmentHeaderLength;
+    AZ_STORAGE_COMMON_DLLEXPORT static const size_t SegmentHeaderLength;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t SegmentHeaderNumOffset;
     AZ_STORAGE_COMMON_DLLEXPORT static const int64_t SegmentHeaderContentLengthOffset;
 
