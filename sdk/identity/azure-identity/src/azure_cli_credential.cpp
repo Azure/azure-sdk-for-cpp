@@ -60,7 +60,8 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
     std::string const& allowedChars,
-    std::string const& description) const
+    std::string const& description,
+    std::string const& details = {}) const
 {
   for (auto const c : input)
   {
@@ -71,8 +72,8 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     if (!StringExtensions::IsAlphaNumeric(c))
     {
       throw AuthenticationException(
-          GetCredentialName() + ": Unsafe command line input found in " + description + ": "
-          + input);
+          GetCredentialName() + ": Unsafe command line input found in " + description + ": " + input
+          + details);
     }
   }
 }
@@ -80,10 +81,12 @@ AzureCliCredential::AzureCliCredential(
     Core::Credentials::TokenCredentialOptions const& options,
     std::string tenantId,
     DateTime::duration cliProcessTimeout,
-    std::vector<std::string> additionallyAllowedTenants)
+    std::vector<std::string> additionallyAllowedTenants,
+    std::string subscription)
     : TokenCredential("AzureCliCredential"),
       m_additionallyAllowedTenants(std::move(additionallyAllowedTenants)),
-      m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout))
+      m_tenantId(std::move(tenantId)), m_cliProcessTimeout(std::move(cliProcessTimeout)),
+      m_subscription(std::move(subscription))
 {
   static_cast<void>(options);
 
@@ -99,7 +102,8 @@ AzureCliCredential::AzureCliCredential(AzureCliCredentialOptions const& options)
         options,
         options.TenantId,
         options.CliProcessTimeout,
-        options.AdditionallyAllowedTenants)
+        options.AdditionallyAllowedTenants,
+        options.Subscription)
 {
 }
 
@@ -108,22 +112,36 @@ AzureCliCredential::AzureCliCredential(const Core::Credentials::TokenCredentialO
         options,
         AzureCliCredentialOptions{}.TenantId,
         AzureCliCredentialOptions{}.CliProcessTimeout,
-        AzureCliCredentialOptions{}.AdditionallyAllowedTenants)
+        AzureCliCredentialOptions{}.AdditionallyAllowedTenants,
+        AzureCliCredentialOptions{}.Subscription)
 {
 }
 
-std::string AzureCliCredential::GetAzCommand(std::string const& scopes, std::string const& tenantId)
-    const
+std::string AzureCliCredential::GetAzCommand(
+    std::string const& scopes,
+    std::string const& tenantId,
+    std::string const& subscription) const
 {
   // The OAuth 2.0 RFC (https://datatracker.ietf.org/doc/html/rfc6749#section-3.3) allows space as
   // well for a list of scopes, but that isn't currently required.
   ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
   ThrowIfNotSafeCmdLineInput(tenantId, ".-", "TenantID");
+  ThrowIfNotSafeCmdLineInput(
+      subscription,
+      ".-_ ",
+      "Subscription",
+      ". If this is the name of a subscription, use its ID instead.");
+
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())
   {
     command += " --tenant \"" + tenantId + "\"";
+  }
+
+  if (!subscription.empty())
+  {
+    command += " --subscription \"" + subscription + "\"";
   }
 
   return command;
@@ -164,7 +182,7 @@ AccessToken AzureCliCredential::GetToken(
   auto const scopes = TokenCredentialImpl::FormatScopes(tokenRequestContext.Scopes, false, false);
   auto const tenantId
       = TenantIdResolver::Resolve(m_tenantId, tokenRequestContext, m_additionallyAllowedTenants);
-  auto const command = GetAzCommand(scopes, tenantId);
+  auto const command = GetAzCommand(scopes, tenantId, m_subscription);
 
   // TokenCache::GetToken() can only use the lambda argument when they are being executed. They
   // are not supposed to keep a reference to lambda argument to call it later. Therefore, any

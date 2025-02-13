@@ -53,10 +53,14 @@ private:
   std::string m_command;
   int m_localTimeToUtcDiffSeconds = 0;
 
-  std::string GetAzCommand(std::string const& resource, std::string const& tenantId) const override
+  std::string GetAzCommand(
+      std::string const& resource,
+      std::string const& tenantId,
+      std::string const& subscription) const override
   {
     static_cast<void>(resource);
     static_cast<void>(tenantId);
+    static_cast<void>(subscription);
 
     return m_command;
   }
@@ -76,13 +80,17 @@ public:
   {
   }
 
-  std::string GetOriginalAzCommand(std::string const& resource, std::string const& tenantId) const
+  std::string GetOriginalAzCommand(
+      std::string const& resource,
+      std::string const& tenantId,
+      std::string const& subscription) const
   {
-    return AzureCliCredential::GetAzCommand(resource, tenantId);
+    return AzureCliCredential::GetAzCommand(resource, tenantId, subscription);
   }
 
-  decltype(m_tenantId) const& GetTenantId() const { return m_tenantId; }
-  decltype(m_cliProcessTimeout) const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
+  auto const& GetTenantId() const { return m_tenantId; }
+  auto const& GetSubscription() const { return m_subscription; }
+  auto const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
 
   void SetLocalTimeToUtcDiffSeconds(int diff) { m_localTimeToUtcDiffSeconds = diff; }
 };
@@ -329,6 +337,7 @@ TEST(AzureCliCredential, Defaults)
       AzureCliTestCredential azCliCred({});
       EXPECT_EQ(azCliCred.GetTenantId(), DefaultOptions.TenantId);
       EXPECT_EQ(azCliCred.GetCliProcessTimeout(), DefaultOptions.CliProcessTimeout);
+      EXPECT_EQ(azCliCred.GetSubscription(), DefaultOptions.Subscription);
     }
 
     {
@@ -336,6 +345,7 @@ TEST(AzureCliCredential, Defaults)
       AzureCliTestCredential azCliCred({}, options);
       EXPECT_EQ(azCliCred.GetTenantId(), DefaultOptions.TenantId);
       EXPECT_EQ(azCliCred.GetCliProcessTimeout(), DefaultOptions.CliProcessTimeout);
+      EXPECT_EQ(azCliCred.GetSubscription(), DefaultOptions.Subscription);
     }
   }
 
@@ -343,11 +353,13 @@ TEST(AzureCliCredential, Defaults)
     AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
     options.CliProcessTimeout = std::chrono::seconds(12345);
+    options.Subscription = "Azure Sub_scrip-t1.0n";
 
     AzureCliTestCredential azCliCred({}, options);
 
     EXPECT_EQ(azCliCred.GetTenantId(), "01234567-89AB-CDEF-0123-456789ABCDEF");
     EXPECT_EQ(azCliCred.GetCliProcessTimeout(), std::chrono::seconds(12345));
+    EXPECT_EQ(azCliCred.GetSubscription(), "Azure Sub_scrip-t1.0n");
   }
 }
 
@@ -356,10 +368,18 @@ TEST(AzureCliCredential, CmdLine)
   AzureCliTestCredential azCliCred({});
 
   auto const cmdLineWithoutTenant
-      = azCliCred.GetOriginalAzCommand("https://storage.azure.com/.default", {});
+      = azCliCred.GetOriginalAzCommand("https://storage.azure.com/.default", {}, {});
 
   auto const cmdLineWithTenant = azCliCred.GetOriginalAzCommand(
-      "https://storage.azure.com/.default", "01234567-89AB-CDEF-0123-456789ABCDEF");
+      "https://storage.azure.com/.default", "01234567-89AB-CDEF-0123-456789ABCDEF", {});
+
+  auto const cmdLineWithoutTenantAndWithSubscription = azCliCred.GetOriginalAzCommand(
+      "https://storage.azure.com/.default", {}, "Azure Sub_scrip-t1.0n");
+
+  auto const cmdLineWithTenantAndWithSubscription = azCliCred.GetOriginalAzCommand(
+      "https://storage.azure.com/.default",
+      "01234567-89AB-CDEF-0123-456789ABCDEF",
+      "Azure Sub_scrip-t1.0n");
 
   EXPECT_EQ(
       cmdLineWithoutTenant,
@@ -369,16 +389,27 @@ TEST(AzureCliCredential, CmdLine)
       cmdLineWithTenant,
       "az account get-access-token --output json --scope \"https://storage.azure.com/.default\""
       " --tenant \"01234567-89AB-CDEF-0123-456789ABCDEF\"");
+
+  EXPECT_EQ(
+      cmdLineWithoutTenantAndWithSubscription,
+      "az account get-access-token --output json --scope \"https://storage.azure.com/.default\""
+      " --subscription \"Azure Sub_scrip-t1.0n\"");
+
+  EXPECT_EQ(
+      cmdLineWithTenantAndWithSubscription,
+      "az account get-access-token --output json --scope \"https://storage.azure.com/.default\""
+      " --tenant \"01234567-89AB-CDEF-0123-456789ABCDEF\""
+      " --subscription \"Azure Sub_scrip-t1.0n\"");
 }
 
 TEST(AzureCliCredential, UnsafeChars)
 {
-  std::string const Exploit = std::string("\" | echo OWNED | ") + InfiniteCommand + " | echo \"";
+  std::string const Unsafe = std::string("\" | echo UNSAFE | ") + InfiniteCommand + " | echo \"";
 
   {
     AzureCliCredentialOptions options;
     options.TenantId = "01234567-89AB-CDEF-0123-456789ABCDEF";
-    options.TenantId += Exploit;
+    options.TenantId += Unsafe;
     AzureCliCredential azCliCred(options);
 
     TokenRequestContext trc;
@@ -392,8 +423,19 @@ TEST(AzureCliCredential, UnsafeChars)
     AzureCliCredential azCliCred(options);
 
     TokenRequestContext trc;
-    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + Exploit);
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + Unsafe);
 
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+  }
+
+  {
+    AzureCliCredentialOptions options;
+    options.Subscription = "Azure Sub_scrip-t1.0n";
+    options.Subscription += Unsafe;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
   }
 }
@@ -418,14 +460,20 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
-      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + options.TenantId);
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 
   // Tenant ID test via TokenRequestContext, using a wildcard for AdditionallyAllowedTenants.
@@ -440,14 +488,20 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     trc.TenantId = InvalidValue;
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
-      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + trc.TenantId);
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 
   // Tenant ID test via TokenRequestContext, using a specific AdditionallyAllowedTenants value.
@@ -461,14 +515,20 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     trc.TenantId = InvalidValue;
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
-      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + trc.TenantId);
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 
   // Scopes test via TokenRequestContext.
@@ -481,14 +541,49 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + InvalidValue);
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
-      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in Scopes: " + trc.Scopes.at(0));
     }
+
+    EXPECT_TRUE(exceptionThrown);
+  }
+
+  if (InvalidValue != " ")
+  {
+    AzureCliCredentialOptions options;
+    options.Subscription = "Azure Sub_scrip-t1.0n";
+    options.Subscription += InvalidValue;
+    AzureCliCredential azCliCred(options);
+
+    TokenRequestContext trc;
+    trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
+    EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
+
+    auto exceptionThrown = false;
+    try
+    {
+      auto const token = azCliCred.GetToken(trc, {});
+    }
+    catch (AuthenticationException const& e)
+    {
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in Subscription: "
+              + options.Subscription
+              + ". If this is the name of a subscription, use its ID instead.");
+    }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 }
 
@@ -516,14 +611,20 @@ TEST_P(ParameterizedTestForCharDifferences, ValidCharsForScopeButNotTenantId)
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
     EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
-      EXPECT_TRUE(std::string(e.what()).find("Unsafe") != std::string::npos) << e.what();
+      exceptionThrown = true;
+      EXPECT_EQ(
+          e.what(),
+          "AzureCliCredential: Unsafe command line input found in TenantID: " + options.TenantId);
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 
   {
@@ -536,14 +637,18 @@ TEST_P(ParameterizedTestForCharDifferences, ValidCharsForScopeButNotTenantId)
         std::string("https://storage.azure.com/.default") + ValidScopeButNotTenantId);
 
     // We expect the GetToken to fail, but not because of the unsafe chars.
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
+      exceptionThrown = true;
       EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 }
 
@@ -571,14 +676,18 @@ TEST_P(ParameterizedTestForAllowedChars, ValidCharsForScopeAndTenantId)
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default"));
 
     // We expect the GetToken to fail, but not because of the unsafe chars.
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
+      exceptionThrown = true;
       EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 
   {
@@ -590,14 +699,18 @@ TEST_P(ParameterizedTestForAllowedChars, ValidCharsForScopeAndTenantId)
     trc.Scopes.push_back(std::string("https://storage.azure.com/.default") + ValidChars);
 
     // We expect the GetToken to fail, but not because of the unsafe chars.
+    auto exceptionThrown = false;
     try
     {
       auto const token = azCliCred.GetToken(trc, {});
     }
     catch (AuthenticationException const& e)
     {
+      exceptionThrown = true;
       EXPECT_TRUE(std::string(e.what()).find("Unsafe") == std::string::npos) << e.what();
     }
+
+    EXPECT_TRUE(exceptionThrown);
   }
 }
 

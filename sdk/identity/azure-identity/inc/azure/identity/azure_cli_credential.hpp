@@ -43,6 +43,12 @@ namespace Azure { namespace Identity {
      * for any tenant in which the application is installed.
      */
     std::vector<std::string> AdditionallyAllowedTenants;
+
+    /**
+     * @brief The name or ID of an Azure subscription. If not empty, it enables acquiring tokens for
+     * a subscription other than the Azure CLI's current subscription.
+     */
+    std::string Subscription;
   };
 
   /**
@@ -54,7 +60,12 @@ namespace Azure { namespace Identity {
       final
 #endif
       : public Core::Credentials::TokenCredential {
+#if !defined(_azure_TESTING_BUILD)
+  private:
+#else
   protected:
+#endif
+
     /** @brief The cache for the access token. */
     _detail::TokenCache m_tokenCache;
 
@@ -67,17 +78,22 @@ namespace Azure { namespace Identity {
     /** @brief The CLI process timeout. */
     DateTime::duration m_cliProcessTimeout;
 
+    /** @brief Subscription name or ID. */
+    std::string m_subscription;
+
   private:
     explicit AzureCliCredential(
         Core::Credentials::TokenCredentialOptions const& options,
         std::string tenantId,
         DateTime::duration cliProcessTimeout,
-        std::vector<std::string> additionallyAllowedTenants);
+        std::vector<std::string> additionallyAllowedTenants,
+        std::string subscription);
 
     void ThrowIfNotSafeCmdLineInput(
         std::string const& input,
         std::string const& allowedChars,
-        std::string const& description) const;
+        std::string const& description,
+        std::string const& details) const;
 
   public:
     /**
@@ -111,7 +127,11 @@ namespace Azure { namespace Identity {
 #else
   protected:
 #endif
-    virtual std::string GetAzCommand(std::string const& scopes, std::string const& tenantId) const;
+    virtual std::string GetAzCommand(
+        std::string const& scopes,
+        std::string const& tenantId,
+        std::string const& subscription) const;
+
     virtual int GetLocalTimeToUtcDiffSeconds() const;
   };
 
