@@ -63,7 +63,10 @@ namespace Azure { namespace Storage { namespace _internal {
         StructuredMessageFlags& flags,
         uint16_t& segmentCount);
 
-    static void ReadSegmentHeader(const uint8_t* buffer, uint16_t& segmentCount, uint64_t& segmentLength);
+    static void ReadSegmentHeader(
+        const uint8_t* buffer,
+        uint16_t& segmentCount,
+        uint64_t& segmentLength);
 
     static void ReadSegmentFooter(const uint8_t* buffer, uint8_t* crc64);
 

@@ -75,7 +75,8 @@ namespace Azure { namespace Storage { namespace _internal {
             if (calculatedCrc64 != m_segmentFooterBuffer)
             {
               throw StorageException(
-                  "Segment Compared checksums did not match. Invalid data may have been written to the "
+                  "Segment Compared checksums did not match. Invalid data may have been written to "
+                  "the "
                   "destination. calculatedChecksum:"
                   + std::string(calculatedCrc64.begin(), calculatedCrc64.end())
                   + "reportedChecksum: "
@@ -103,7 +104,8 @@ namespace Azure { namespace Storage { namespace _internal {
             if (calculatedCrc64 != streamFooterBuffer)
             {
               throw StorageException(
-                  "Stream Compared checksums did not match. Invalid data may have been written to the "
+                  "Stream Compared checksums did not match. Invalid data may have been written to "
+                  "the "
                   "destination. calculatedChecksum:"
                   + std::string(calculatedCrc64.begin(), calculatedCrc64.end())
                   + "reportedChecksum: "
