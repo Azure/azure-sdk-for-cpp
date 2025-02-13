@@ -88,9 +88,9 @@ public:
     return AzureCliCredential::GetAzCommand(resource, tenantId, subscription);
   }
 
-  decltype(m_tenantId) const& GetTenantId() const { return m_tenantId; }
-  decltype(m_subscription) const& GetSubscription() const { return m_subscription; }
-  decltype(m_cliProcessTimeout) const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
+  auto const& GetTenantId() const { return m_tenantId; }
+  auto const& GetSubscription() const { return m_subscription; }
+  auto const& GetCliProcessTimeout() const { return m_cliProcessTimeout; }
 
   void SetLocalTimeToUtcDiffSeconds(int diff) { m_localTimeToUtcDiffSeconds = diff; }
 };
