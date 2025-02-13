@@ -58,6 +58,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
   url.AppendPath(Core::Url::Encode(secretName));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
@@ -266,6 +267,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::StartDeleteSecret(
   url.AppendPath(Core::Url::Encode(secretName));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
   request.SetHeader("Accept", "application/json");
@@ -432,6 +434,7 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
   url.AppendPath(Core::Url::Encode(secretVersion));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
@@ -644,6 +647,7 @@ Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
   url.AppendPath(Core::Url::Encode(secretVersion));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
   request.SetHeader("Accept", "application/json");
@@ -773,9 +777,10 @@ GetPropertiesOfSecretsPagedResponse SecretClient::GetPropertiesOfSecrets(
     SecretClientGetPropertiesOfSecretsOptions const& options,
     Core::Context const& context) const
 {
-  auto url = m_url;
+  Core::Url url;
   if (options.NextPageToken.empty())
   {
+    url = m_url;
     url.AppendPath("secrets");
 
     url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
@@ -784,16 +789,29 @@ GetPropertiesOfSecretsPagedResponse SecretClient::GetPropertiesOfSecrets(
       url.AppendQueryParameter("maxresults", std::to_string(options.Maxresults.Value()));
     }
   }
-  else if (
-      options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
-  {
-    url = Core::Url(options.NextPageToken);
-    url.SetPort(m_url.GetPort());
-  }
   else
   {
-    url.SetPath(
-        options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1) : options.NextPageToken);
+    if (options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
+    {
+      url = Core::Url(options.NextPageToken);
+      if (url.GetPort() == 0 && m_url.GetPort() != 0 && url.GetHost() == m_url.GetHost())
+      {
+        url.SetPort(m_url.GetPort());
+      }
+    }
+    else
+    {
+      url = Core::Url(
+          m_url.GetScheme() + "://" + m_url.GetHost() + ':' + std::to_string(m_url.GetPort()) + '/'
+          + (options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1)
+                                             : options.NextPageToken));
+    }
+
+    const auto qps = url.GetQueryParameters();
+    if (qps.find("api-version") != qps.cend())
+    {
+      url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+    }
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -940,9 +958,10 @@ GetPropertiesOfSecretsVersionsPagedResponse SecretClient::GetPropertiesOfSecrets
     SecretClientGetPropertiesOfSecretsVersionsOptions const& options,
     Core::Context const& context) const
 {
-  auto url = m_url;
+  Core::Url url;
   if (options.NextPageToken.empty())
   {
+    url = m_url;
     url.AppendPath("secrets/");
     if (secretName.empty())
     {
@@ -957,16 +976,29 @@ GetPropertiesOfSecretsVersionsPagedResponse SecretClient::GetPropertiesOfSecrets
       url.AppendQueryParameter("maxresults", std::to_string(options.Maxresults.Value()));
     }
   }
-  else if (
-      options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
-  {
-    url = Core::Url(options.NextPageToken);
-    url.SetPort(m_url.GetPort());
-  }
   else
   {
-    url.SetPath(
-        options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1) : options.NextPageToken);
+    if (options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
+    {
+      url = Core::Url(options.NextPageToken);
+      if (url.GetPort() == 0 && m_url.GetPort() != 0 && url.GetHost() == m_url.GetHost())
+      {
+        url.SetPort(m_url.GetPort());
+      }
+    }
+    else
+    {
+      url = Core::Url(
+          m_url.GetScheme() + "://" + m_url.GetHost() + ':' + std::to_string(m_url.GetPort()) + '/'
+          + (options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1)
+                                             : options.NextPageToken));
+    }
+
+    const auto qps = url.GetQueryParameters();
+    if (qps.find("api-version") != qps.cend())
+    {
+      url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+    }
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -1113,9 +1145,10 @@ GetDeletedSecretsPagedResponse SecretClient::GetDeletedSecrets(
     SecretClientGetDeletedSecretsOptions const& options,
     Core::Context const& context) const
 {
-  auto url = m_url;
+  Core::Url url;
   if (options.NextPageToken.empty())
   {
+    url = m_url;
     url.AppendPath("deletedsecrets");
 
     url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
@@ -1124,16 +1157,29 @@ GetDeletedSecretsPagedResponse SecretClient::GetDeletedSecrets(
       url.AppendQueryParameter("maxresults", std::to_string(options.Maxresults.Value()));
     }
   }
-  else if (
-      options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
-  {
-    url = Core::Url(options.NextPageToken);
-    url.SetPort(m_url.GetPort());
-  }
   else
   {
-    url.SetPath(
-        options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1) : options.NextPageToken);
+    if (options.NextPageToken.find("https://") == 0 || options.NextPageToken.find("http://") == 0)
+    {
+      url = Core::Url(options.NextPageToken);
+      if (url.GetPort() == 0 && m_url.GetPort() != 0 && url.GetHost() == m_url.GetHost())
+      {
+        url.SetPort(m_url.GetPort());
+      }
+    }
+    else
+    {
+      url = Core::Url(
+          m_url.GetScheme() + "://" + m_url.GetHost() + ':' + std::to_string(m_url.GetPort()) + '/'
+          + (options.NextPageToken[0] == '/' ? options.NextPageToken.substr(1)
+                                             : options.NextPageToken));
+    }
+
+    const auto qps = url.GetQueryParameters();
+    if (qps.find("api-version") != qps.cend())
+    {
+      url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+    }
   }
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -1311,6 +1357,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::GetDeletedSecret(
   url.AppendPath(Core::Url::Encode(secretName));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
 
   request.SetHeader("Accept", "application/json");
@@ -1470,6 +1517,7 @@ Azure::Response<PurgeDeletedSecretResult> SecretClient::PurgeDeletedSecret(
   url.AppendPath(Core::Url::Encode(secretName));
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
 
   request.SetHeader("Accept", "application/json");
@@ -1501,6 +1549,7 @@ Azure::Response<KeyVaultSecret> SecretClient::StartRecoverDeletedSecret(
   url.AppendPath("recover");
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Post, url);
 
   request.SetHeader("Accept", "application/json");
@@ -1640,6 +1689,7 @@ Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
   url.AppendPath("backup");
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   Core::Http::Request request(Core::Http::HttpMethod::Post, url);
 
   request.SetHeader("Accept", "application/json");
@@ -1686,6 +1736,7 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
   url.AppendPath("secrets/restore");
 
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
