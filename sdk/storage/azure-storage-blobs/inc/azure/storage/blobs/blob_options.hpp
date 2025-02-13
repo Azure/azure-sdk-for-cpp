@@ -173,6 +173,9 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct TransferValidationOptions
   {
+    /**
+     * @brief The algorithm used for storage checksum.
+     */
     StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
   };
 
