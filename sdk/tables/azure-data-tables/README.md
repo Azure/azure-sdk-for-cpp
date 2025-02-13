@@ -4,7 +4,7 @@ Azure Data Tables is a NoSQL data storage service that can be accessed from anyw
 Tables scales as needed to support the amount of data inserted, and allows for the storing of data with non-complex accessing.
 The Azure Tables client can be used to access Azure Storage or Cosmos accounts.
 
-[Source code][source_code] | [Package (vcpkg)](https://vcpkg.io/en/package/azure-data-tables-cpp) | [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-data-tables/latest/index.html) | [Product documentation](https://learn.microsoft.com/azure/storage/tables/) | [Samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables/samples)
+[Source code][source_code] | [Package (vcpkg)](https://vcpkg.io/en/package/azure-data-tables-cpp) | [API reference documentation](https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-data-tables/latest/index.html) | [Product documentation](https://learn.microsoft.com/azure/storage/tables/) | [Samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/tables/azure-data-tables/samples)
 
 ## Getting started
 
