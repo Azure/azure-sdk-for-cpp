@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `Subscription` to `AzureCliCredentialOptions` which allows to specify an Azure subscription that does not match the current Azure CLI subscription.
+- Added `Subscription` to `AzureCliCredentialOptions` which allows the caller to specify an Azure subscription that does not match the current Azure CLI subscription.
 
 ### Breaking Changes
 

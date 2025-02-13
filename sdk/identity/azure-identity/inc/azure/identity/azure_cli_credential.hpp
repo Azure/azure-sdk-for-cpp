@@ -45,7 +45,7 @@ namespace Azure { namespace Identity {
     std::vector<std::string> AdditionallyAllowedTenants;
 
     /**
-     * @brief The name or ID of an Azure subscription. If not empty, it allows to acquire tokens for
+     * @brief The name or ID of an Azure subscription. If not empty, it enables acquiring tokens for
      * a subscription other than the Azure CLI's current subscription.
      */
     std::string Subscription;
