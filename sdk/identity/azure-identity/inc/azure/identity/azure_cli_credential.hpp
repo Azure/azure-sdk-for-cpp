@@ -92,7 +92,8 @@ namespace Azure { namespace Identity {
     void ThrowIfNotSafeCmdLineInput(
         std::string const& input,
         std::string const& allowedChars,
-        std::string const& description) const;
+        std::string const& description,
+        std::string const& details) const;
 
   public:
     /**

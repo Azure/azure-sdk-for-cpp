@@ -60,7 +60,8 @@ using Azure::Identity::_detail::TokenCredentialImpl;
 void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     std::string const& input,
     std::string const& allowedChars,
-    std::string const& description) const
+    std::string const& description,
+    std::string const& details = {}) const
 {
   for (auto const c : input)
   {
@@ -71,8 +72,8 @@ void AzureCliCredential::ThrowIfNotSafeCmdLineInput(
     if (!StringExtensions::IsAlphaNumeric(c))
     {
       throw AuthenticationException(
-          GetCredentialName() + ": Unsafe command line input found in " + description + ": "
-          + input);
+          GetCredentialName() + ": Unsafe command line input found in " + description + ": " + input
+          + details);
     }
   }
 }
@@ -125,7 +126,12 @@ std::string AzureCliCredential::GetAzCommand(
   // well for a list of scopes, but that isn't currently required.
   ThrowIfNotSafeCmdLineInput(scopes, ".-:/_", "Scopes");
   ThrowIfNotSafeCmdLineInput(tenantId, ".-", "TenantID");
-  ThrowIfNotSafeCmdLineInput(subscription, ".-_ ", "Subscription");
+  ThrowIfNotSafeCmdLineInput(
+      subscription,
+      ".-_ ",
+      "Subscription",
+      ". If this is the name of a subscription, use its ID instead.");
+
   std::string command = "az account get-access-token --output json --scope \"" + scopes + "\"";
 
   if (!tenantId.empty())

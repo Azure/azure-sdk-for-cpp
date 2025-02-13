@@ -579,7 +579,8 @@ TEST_P(ParameterizedTestForDisallowedChars, DisallowedCharsForScopeAndTenantId)
       EXPECT_EQ(
           e.what(),
           "AzureCliCredential: Unsafe command line input found in Subscription: "
-              + options.Subscription);
+              + options.Subscription
+              + ". If this is the name of a subscription, use its ID instead.");
     }
 
     EXPECT_TRUE(exceptionThrown);
