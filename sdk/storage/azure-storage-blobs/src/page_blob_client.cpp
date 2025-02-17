@@ -8,6 +8,7 @@
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/file_io.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
+#include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
@@ -152,19 +153,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::PageBlobClient::UploadPageBlobPagesOptions protocolLayerOptions;
     protocolLayerOptions.Range
         = "bytes=" + std::to_string(offset) + "-" + std::to_string(offset + content.Length() - 1);
-    if (options.TransactionalContentHash.HasValue())
-    {
-      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
-      {
-        protocolLayerOptions.TransactionalContentMD5
-            = options.TransactionalContentHash.Value().Value;
-      }
-      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
-      {
-        protocolLayerOptions.TransactionalContentCrc64
-            = options.TransactionalContentHash.Value().Value;
-      }
-    }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
@@ -183,6 +171,38 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.TransactionalContentMD5
+            = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.TransactionalContentCrc64
+            = options.TransactionalContentHash.Value().Value;
+      }
+    }
+    else
+    {
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_uploadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
+        protocolLayerOptions.StructuredContentLength = content.Length();
+        _internal::StructuredMessageEncodingStreamOptions encodingStreamOptions;
+        encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
+        auto structuredContent
+            = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
+        return _detail::PageBlobClient::UploadPages(
+            *m_pipeline, m_blobUrl, structuredContent, protocolLayerOptions, context);
+      }
+    }
     return _detail::PageBlobClient::UploadPages(
         *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
   }

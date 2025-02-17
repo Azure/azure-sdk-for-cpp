@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2024-08-04/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2025-01-05/blob.json
 ```
 
 ## ModelFour Options
@@ -100,12 +100,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"]
+        "enum": ["2025-01-05"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum[0] = "2025-01-05";
 ```
 
 ### Rename Operations
@@ -381,6 +381,9 @@ directive:
         }
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
+        }
+        if (h === "x-ms-structured-body" || h === "x-ms-structured-content-length") {
+          $[h]["x-nullable"] = true;
         }
       }
   - from: swagger-document

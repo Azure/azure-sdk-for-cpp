@@ -21,6 +21,7 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* HttpHeaderContentType = "content-type";
   constexpr static const char* HttpHeaderContentLength = "content-length";
   constexpr static const char* HttpHeaderContentRange = "content-range";
+  constexpr static const char* CrcStructuredMessage = "XSM/1.0; properties=crc64";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal

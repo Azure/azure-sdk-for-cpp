@@ -467,4 +467,48 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobContent.size(), properties.BlobSize);
   }
 
+  TEST_F(AppendBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    auto appendBlob = GetAppendBlobClientForTest(LowercaseRandomString());
+    appendBlob.Create();
+
+    // Append
+    Blobs::AppendBlockOptions appendOptions;
+    appendOptions.ValidationOptions = validationOptions;
+    Blobs::Models::AppendBlockResult appendResult;
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    validationOptions.Algorithm = StorageChecksumAlgorithm::None;
+    appendOptions.ValidationOptions = validationOptions;
+    bodyStream.Rewind();
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+    EXPECT_FALSE(appendResult.StructuredBodyType.HasValue());
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Auto;
+    appendOptions.ValidationOptions = validationOptions;
+    bodyStream.Rewind();
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+
+    // Download
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = appendBlob.Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        content,
+        std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize * 3);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+  }
+
 }}} // namespace Azure::Storage::Test
