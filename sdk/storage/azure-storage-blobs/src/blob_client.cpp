@@ -20,6 +20,7 @@
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
+#include <azure/storage/common/internal/structured_message_decoding_stream.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
@@ -110,7 +111,9 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   BlobClient::BlobClient(const std::string& blobUrl, const BlobClientOptions& options)
       : m_blobUrl(blobUrl), m_customerProvidedKey(options.CustomerProvidedKey),
-        m_encryptionScope(options.EncryptionScope)
+        m_encryptionScope(options.EncryptionScope),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -167,6 +170,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DownloadBlobOptions& options,
       const Azure::Core::Context& context) const
   {
+    bool isStructuredMessage = false;
     _detail::BlobClient::DownloadBlobOptions protocolLayerOptions;
     if (options.Range.HasValue())
     {
@@ -187,6 +191,18 @@ namespace Azure { namespace Storage { namespace Blobs {
       else if (options.RangeHashAlgorithm.Value() == HashAlgorithm::Crc64)
       {
         protocolLayerOptions.RangeGetContentCRC64 = true;
+      }
+    }
+    else
+    {
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_downloadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        isStructuredMessage = true;
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
       }
     }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
@@ -243,8 +259,23 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       _internal::ReliableStreamOptions reliableStreamOptions;
       reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
-      downloadResponse.Value.BodyStream = std::make_unique<_internal::ReliableStream>(
+      auto reliableStream = std::make_unique<_internal::ReliableStream>(
           std::move(downloadResponse.Value.BodyStream), reliableStreamOptions, retryFunction);
+      if (isStructuredMessage)
+      {
+        _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+        if (downloadResponse.Value.StructuredContentLength.HasValue())
+        {
+          decodingOptions.ContentLength = downloadResponse.Value.StructuredContentLength.Value();
+        }
+        downloadResponse.Value.BodyStream
+            = std::make_unique<_internal::StructuredMessageDecodingStream>(
+                std::move(reliableStream), decodingOptions);
+      }
+      else
+      {
+        downloadResponse.Value.BodyStream = std::move(reliableStream);
+      }
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {
