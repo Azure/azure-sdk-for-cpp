@@ -111,7 +111,7 @@ function hideSelectors(selectors) {
 function populateOptions(optionSelector, otherSelectors) {
   if (currentPackage()) {
     var versionRequestUrl =
-      "https://azuresdkdocs.blob.core.windows.net/$web/" +
+      "https://azuresdkdocs.z19.web.core.windows.net" +
       SELECTED_LANGUAGE +
       "/" +
       currentPackage() +
@@ -145,7 +145,7 @@ function populateVersionDropDown(selector, values) {
 
 function getPackageUrl(language, package, version) {
   return (
-    "https://azuresdkdocs.blob.core.windows.net/$web/" +
+    "https://azuresdkdocs.z19.web.core.windows.net" +
     language +
     "/" +
     package +
