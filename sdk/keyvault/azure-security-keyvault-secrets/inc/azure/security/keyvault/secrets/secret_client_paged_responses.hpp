@@ -27,14 +27,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief The secret list result.
    *
    */
-  class GetPropertiesOfSecretsPagedResponse final
-      : public Core::PagedResponse<GetPropertiesOfSecretsPagedResponse> {
+  class SecretPropertiesPagedResponse final
+      : public Core::PagedResponse<SecretPropertiesPagedResponse> {
     friend class SecretClient;
-    friend class Core::PagedResponse<GetPropertiesOfSecretsPagedResponse>;
+    friend class Core::PagedResponse<SecretPropertiesPagedResponse>;
 
   private:
     std::shared_ptr<SecretClient> m_client;
-    SecretClientGetPropertiesOfSecretsOptions m_options;
+    GetPropertiesOfSecretsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 
@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   private:
     std::shared_ptr<SecretClient> m_client;
     std::string m_secretName;
-    SecretClientGetPropertiesOfSecretsVersionsOptions m_options;
+    GetPropertiesOfSecretVersionsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 
@@ -70,14 +70,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief The deleted secret list result
    *
    */
-  class GetDeletedSecretsPagedResponse final
-      : public Core::PagedResponse<GetDeletedSecretsPagedResponse> {
+  class DeletedSecretPagedResponse final : public Core::PagedResponse<DeletedSecretPagedResponse> {
     friend class SecretClient;
-    friend class Core::PagedResponse<GetDeletedSecretsPagedResponse>;
+    friend class Core::PagedResponse<DeletedSecretPagedResponse>;
 
   private:
     std::shared_ptr<SecretClient> m_client;
-    SecretClientGetDeletedSecretsOptions m_options;
+    GetDeletedSecretsOptions m_options;
 
     void OnNextPage(Core::Context const& context);
 

@@ -125,8 +125,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The secret list result.
      *
      */
-    GetPropertiesOfSecretsPagedResponse GetPropertiesOfSecrets(
-        SecretClientGetPropertiesOfSecretsOptions const& options = {},
+    SecretPropertiesPagedResponse GetPropertiesOfSecrets(
+        GetPropertiesOfSecretsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -140,7 +140,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     GetPropertiesOfSecretsVersionsPagedResponse GetPropertiesOfSecretsVersions(
         std::string const& secretName,
-        SecretClientGetPropertiesOfSecretsVersionsOptions const& options = {},
+        GetPropertiesOfSecretVersionsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -151,8 +151,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The deleted secret list result
      *
      */
-    GetDeletedSecretsPagedResponse GetDeletedSecrets(
-        SecretClientGetDeletedSecretsOptions const& options = {},
+    DeletedSecretPagedResponse GetDeletedSecrets(
+        GetDeletedSecretsOptions const& options = {},
         Core::Context const& context = {}) const;
 
     /**
@@ -177,7 +177,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Operation result.
      *
      */
-    Response<PurgeDeletedSecretResult> PurgeDeletedSecret(
+    Response<PurgedSecret> PurgeDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 

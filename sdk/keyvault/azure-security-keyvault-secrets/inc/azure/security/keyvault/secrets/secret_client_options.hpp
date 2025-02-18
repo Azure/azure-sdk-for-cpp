@@ -28,7 +28,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetPropertiesOfSecrets operation options.
    *
    */
-  struct SecretClientGetPropertiesOfSecretsOptions final
+  struct GetPropertiesOfSecretsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;
@@ -42,7 +42,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetPropertiesOfSecretsVersions operation options.
    *
    */
-  struct SecretClientGetPropertiesOfSecretsVersionsOptions final
+  struct GetPropertiesOfSecretVersionsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;
@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetDeletedSecrets operation options.
    *
    */
-  struct SecretClientGetDeletedSecretsOptions final
+  struct GetDeletedSecretsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;

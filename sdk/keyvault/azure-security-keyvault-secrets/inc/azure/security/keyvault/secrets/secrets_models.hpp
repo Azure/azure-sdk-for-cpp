@@ -286,7 +286,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief PurgeDeletedSecret operation result.
    *
    */
-  struct PurgeDeletedSecretResult final
+  struct PurgedSecret final
   {
   };
 

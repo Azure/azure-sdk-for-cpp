@@ -73,21 +73,22 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/security/keyvault/secrets.hpp
     inc/azure/security/keyvault/secrets/dll_import_export.hpp
+    inc/azure/security/keyvault/secrets/rtti.hpp
+    inc/azure/security/keyvault/secrets/secrets_models.hpp
     inc/azure/security/keyvault/secrets/secret_client.hpp
     inc/azure/security/keyvault/secrets/secret_client_options.hpp
     inc/azure/security/keyvault/secrets/secret_client_paged_responses.hpp
-    inc/azure/security/keyvault/secrets/rtti.hpp
-    inc/azure/security/keyvault/secrets/secrets_models.hpp
+    inc/azure/security/keyvault/secrets.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
-    src/secret_client.cpp
-    src/get_deleted_secrets_paged_response.cpp
-    src/get_properties_of_secrets_paged_response.cpp
+    src/deleted_secret_paged_response.cpp
     src/get_properties_of_secrets_versions_paged_response.cpp
     src/secrets.cpp
+    src/secret_client.cpp
+    src/secret_properties_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
