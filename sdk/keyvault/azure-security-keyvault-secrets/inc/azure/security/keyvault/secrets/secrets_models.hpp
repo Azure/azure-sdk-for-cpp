@@ -215,7 +215,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief The secret update parameters.
    *
    */
-  struct SecretUpdateParameters final
+  struct UpdateSecretPropertiesOptions final
   {
     /// Type of the secret value such as a password.
     Nullable<std::string> ContentType;

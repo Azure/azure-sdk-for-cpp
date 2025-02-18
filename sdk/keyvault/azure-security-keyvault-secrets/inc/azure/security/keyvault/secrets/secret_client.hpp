@@ -98,7 +98,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Response<KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
         std::string const& secretVersion,
-        SecretUpdateParameters const& parameters,
+        UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const;
 
     /**

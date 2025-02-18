@@ -417,7 +417,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::StartDeleteSecret(
 Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     std::string const& secretName,
     std::string const& secretVersion,
-    SecretUpdateParameters const& parameters,
+    UpdateSecretPropertiesOptions const& parameters,
     Core::Context const& context) const
 {
   auto url = m_url;

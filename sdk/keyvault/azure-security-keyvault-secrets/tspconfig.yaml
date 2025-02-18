@@ -19,3 +19,9 @@ options:
     flavor: azure
     package-dir: "azure-security-keyvault-secrets"
     namespace: "Azure::Security::KeyVault::Secrets"
+    typeRename:
+     - from: "SecretUpdateParameters"
+       to: "UpdateSecretPropertiesOptions"
+     - from: "SecretClientGetPropertiesOfSecretsVersionsOptions"
+       to: "GetPropertiesOfSecretVersionsOptions"
+
