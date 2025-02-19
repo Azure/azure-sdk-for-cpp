@@ -753,8 +753,7 @@ namespace Azure { namespace Identity { namespace Test {
           EXPECT_EQ(
               log[1].second,
               "Identity: ManagedIdentityCredential will be created with App Service 2017 source"
-              " and Client ID 'fedcba98-7654-3210-0123-456789abcdef'."
-            );
+              " and Client ID 'fedcba98-7654-3210-0123-456789abcdef'.");
 
           log.clear();
 
