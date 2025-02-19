@@ -254,7 +254,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
   return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<DeleteSecretOperation> SecretClient::StartDeleteSecret(
+Azure::Response<DeletedSecret> SecretClient::StartDeleteSecret(
     std::string const& secretName,
     Core::Context const& context) const
 {
@@ -280,7 +280,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::StartDeleteSecret(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  DeleteSecretOperation response{};
+  DeletedSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -411,7 +411,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::StartDeleteSecret(
     }
   }
 
-  return Response<DeleteSecretOperation>(std::move(response), std::move(rawResponse));
+  return Response<DeletedSecret>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
@@ -1344,7 +1344,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
   return response;
 }
 
-Azure::Response<DeleteSecretOperation> SecretClient::GetDeletedSecret(
+Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
     std::string const& secretName,
     Core::Context const& context) const
 {
@@ -1370,7 +1370,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::GetDeletedSecret(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  DeleteSecretOperation response{};
+  DeletedSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -1501,7 +1501,7 @@ Azure::Response<DeleteSecretOperation> SecretClient::GetDeletedSecret(
     }
   }
 
-  return Response<DeleteSecretOperation>(std::move(response), std::move(rawResponse));
+  return Response<DeletedSecret>(std::move(response), std::move(rawResponse));
 }
 
 Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(

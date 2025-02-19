@@ -176,7 +176,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * information on when it will be purged.
    *
    */
-  struct DeleteSecretOperation final
+  struct DeletedSecret final
   {
     /// The secret value.
     Nullable<std::string> Value;

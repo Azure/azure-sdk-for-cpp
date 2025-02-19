@@ -80,7 +80,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<DeleteSecretOperation> StartDeleteSecret(
+    Response<DeletedSecret> StartDeleteSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -164,7 +164,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<DeleteSecretOperation> GetDeletedSecret(
+    Response<DeletedSecret> GetDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 

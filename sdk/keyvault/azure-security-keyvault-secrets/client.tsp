@@ -19,6 +19,6 @@ using KeyVault;
 @@clientName(KeyVault.updateSecret, "UpdateSecretProperties");
 @@clientName(KeyVault.restoreSecret, "RestoreSecretBackup");
 @@clientName(KeyVault.deleteSecret, "StartDeleteSecret");// <-- this should be an LRO
-@@clientName(KeyVault.DeletedSecretBundle,"DeleteSecretOperation"); 
+@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret"); 
 @@clientName(KeyVault.recoverDeletedSecret, "StartRecoverDeletedSecret");// <-- this should be an LRO
 
