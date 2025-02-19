@@ -18,7 +18,5 @@ target_link_libraries(eventhubs-${samplename} PRIVATE azure-messaging-eventhubs 
 target_compile_definitions(eventhubs-${samplename} PRIVATE _azure_BUILDING_SAMPLES)
 endmacro()
 
-define_sample(create_producer)
-define_sample(create_consumer)
 define_sample(create_consumer_aad)
 define_sample(create_producer_aad)

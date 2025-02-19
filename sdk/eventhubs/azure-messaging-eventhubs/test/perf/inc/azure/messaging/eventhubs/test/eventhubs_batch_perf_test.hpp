@@ -29,7 +29,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
   class BatchTest : public Azure::Perf::PerfTest {
   private:
     std::string m_eventHubName;
-    std::string m_eventHubConnectionString;
+    std::string m_eventHubHost;
     std::string m_partitionId;
     std::string m_checkpointStoreConnectionString;
     uint32_t m_numberToSend;
@@ -51,8 +51,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     {
       m_eventHubName = m_options.GetOptionOrDefault<std::string>(
           "EventHubName", Azure::Core::_internal::Environment::GetVariable("EVENTHUB_NAME"));
-      m_eventHubConnectionString = m_options.GetOptionOrDefault<std::string>(
-          "EventHubConnectionString",
+      m_eventHubHost = m_options.GetOptionOrDefault<std::string>(
+          "EventHubHost",
           Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING"));
       m_checkpointStoreConnectionString = m_options.GetOptionOrDefault<std::string>(
           "CheckpointStoreConnectionString",
@@ -66,17 +66,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
       m_partitionId = m_options.GetOptionOrDefault<std::string>("PartitionId", "0");
       m_maxDeadlineExceeded = m_options.GetOptionOrDefault<uint32_t>("MaxTimeouts", 10);
 
-      if (m_eventHubConnectionString.empty())
       {
         m_credential = GetTestCredential();
 
         m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            m_eventHubConnectionString, m_eventHubName, m_credential);
-      }
-      else
-      {
-        m_client = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-            m_eventHubConnectionString, m_eventHubName);
+            m_eventHubHost, m_eventHubName, m_credential);
       }
     }
 
@@ -110,7 +104,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
         clientOptions.ApplicationID = "StressConsumerClient";
 
         ConsumerClient consumerClient(
-            m_eventHubConnectionString, m_eventHubName, DefaultConsumerGroup, clientOptions);
+            m_eventHubHost, m_eventHubName, m_credential, DefaultConsumerGroup, clientOptions);
 
         auto consumerProperties = consumerClient.GetEventHubProperties(context);
 

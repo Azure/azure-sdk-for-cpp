@@ -73,38 +73,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ProducerClient final {
 
   public:
-    /** Get the fully qualified namespace from the connection string */
-    std::string const& GetEventHubName() { return m_eventHub; }
-
-    /** Get Retry options for this ProducerClient */
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
-    {
-      return m_producerClientOptions.RetryOptions;
-    }
-
-    /** Create a ProducerClient from another ProducerClient. */
-    ProducerClient(ProducerClient const& other) = delete;
-
-    /** Assign a ProducerClient another ProducerClient. */
-    ProducerClient& operator=(ProducerClient const& other) = delete;
-
-    ProducerClient(ProducerClient&& other) = delete;
-    ProducerClient& operator=(ProducerClient&& other) = delete;
-
-    /** Default Constructor for a ProducerClient */
-    ProducerClient() = default;
-
-    /**@brief Constructs a new ProducerClient instance
-     *
-     * @param connectionString Event hubs connection string
-     * @param eventHub Event hub name
-     * @param options Additional options for creating the client
-     */
-    ProducerClient(
-        std::string const& connectionString,
-        std::string const& eventHub,
-        ProducerClientOptions options = {});
-
     /**@brief Constructs a new ProducerClient instance
      *
      * @param fullyQualifiedNamespace Fully qualified namespace name
@@ -117,6 +85,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& eventHub,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = {});
+
+    /** Create a ProducerClient from another ProducerClient. */
+    ProducerClient(ProducerClient const& other) = delete;
+
+    /** Assign a ProducerClient another ProducerClient. */
+    ProducerClient& operator=(ProducerClient const& other) = delete;
+
+    ProducerClient(ProducerClient&& other) = delete;
+    ProducerClient& operator=(ProducerClient&& other) = delete;
+
+    /** Default Constructor for a ProducerClient */
+    ProducerClient() = default;
 
     ~ProducerClient() { Close(); }
 
@@ -181,6 +161,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Models::EventHubPartitionProperties GetPartitionProperties(
         std::string const& partitionID,
         Core::Context const& context = {});
+
+    /** Get the fully qualified namespace from the connection string */
+    std::string const& GetEventHubName() { return m_eventHub; }
+
+    /** Get Retry options for this ProducerClient */
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
+    {
+      return m_producerClientOptions.RetryOptions;
+    }
 
   private:
     /// The connection string for the Event Hubs namespace
