@@ -12,6 +12,10 @@
     {
       "file": [ "sdk/identity/azure-identity/test/perf/inc/azure/identity/test/externals/perf.combo.pem" ],
       "_justification": "File contains a PEM encoded RSA private key used by perf test code."
+    },
+    {
+      "file": [ "sdk/keyvault/azure-security-keyvault-certificates/samples/certificate-import-certificate/certificate_import_certificate.cpp" ],
+      "_justification": "File contains a PEM encoded RSA private key used by test code."
     }
   ]
 }
