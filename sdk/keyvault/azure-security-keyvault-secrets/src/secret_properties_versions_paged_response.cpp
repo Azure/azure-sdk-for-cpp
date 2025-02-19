@@ -8,7 +8,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 
-void GetPropertiesOfSecretsVersionsPagedResponse::OnNextPage(Core::Context const& context)
+void SecretPropertiesVersionsPagedResponse::OnNextPage(Core::Context const& context)
 {
   auto const pageToken = this->NextPageToken;
   this->m_options.NextPageToken = pageToken.Value();

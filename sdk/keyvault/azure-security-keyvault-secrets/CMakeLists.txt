@@ -85,10 +85,10 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
     src/deleted_secret_paged_response.cpp
-    src/get_properties_of_secrets_versions_paged_response.cpp
     src/secrets.cpp
     src/secret_client.cpp
     src/secret_properties_paged_response.cpp
+    src/secret_properties_versions_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

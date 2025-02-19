@@ -138,7 +138,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The secret list result.
      *
      */
-    GetPropertiesOfSecretsVersionsPagedResponse GetPropertiesOfSecretsVersions(
+    SecretPropertiesVersionsPagedResponse GetPropertiesOfSecretsVersions(
         std::string const& secretName,
         GetPropertiesOfSecretVersionsOptions const& options = {},
         Core::Context const& context = {}) const;

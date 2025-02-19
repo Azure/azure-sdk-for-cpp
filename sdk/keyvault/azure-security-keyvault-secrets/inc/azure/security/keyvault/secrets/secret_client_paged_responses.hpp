@@ -48,10 +48,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief The secret list result.
    *
    */
-  class GetPropertiesOfSecretsVersionsPagedResponse final
-      : public Core::PagedResponse<GetPropertiesOfSecretsVersionsPagedResponse> {
+  class SecretPropertiesVersionsPagedResponse final
+      : public Core::PagedResponse<SecretPropertiesVersionsPagedResponse> {
     friend class SecretClient;
-    friend class Core::PagedResponse<GetPropertiesOfSecretsVersionsPagedResponse>;
+    friend class Core::PagedResponse<SecretPropertiesVersionsPagedResponse>;
 
   private:
     std::shared_ptr<SecretClient> m_client;

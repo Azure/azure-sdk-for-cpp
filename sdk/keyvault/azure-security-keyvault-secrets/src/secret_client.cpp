@@ -953,7 +953,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
   return response;
 }
 
-GetPropertiesOfSecretsVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
+SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
     std::string const& secretName,
     GetPropertiesOfSecretVersionsOptions const& options,
     Core::Context const& context) const
@@ -1013,7 +1013,7 @@ GetPropertiesOfSecretsVersionsPagedResponse SecretClient::GetPropertiesOfSecrets
     throw Core::RequestFailedException(rawResponse);
   }
 
-  GetPropertiesOfSecretsVersionsPagedResponse response{};
+  SecretPropertiesVersionsPagedResponse response{};
   response.m_client = std::make_shared<SecretClient>(*this);
   response.m_secretName = secretName;
   response.m_options = options;
