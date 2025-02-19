@@ -2634,7 +2634,7 @@ namespace Azure { namespace Identity { namespace Test {
     }
     {
       auto const actual = CredentialTestHelper::SimulateTokenRequest(
-          [](auto transport) {
+          [&](auto transport) {
             ManagedIdentityCredentialOptions options;
             options.Transport.Transport = transport;
             options.IdentityId = ManagedIdentityId::FromUserAssignedClientId(
