@@ -225,6 +225,7 @@ void TestProxyManager::SetProxySanitizer()
         "x-ms-file-change-time",
         "x-ms-file-creation-time",
         "x-ms-file-last-write-time",
+        "x-ms-link-text",
         "x-ms-rename-source",
         "x-ms-immutability-policy-until-date",
     };

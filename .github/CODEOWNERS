@@ -6,27 +6,27 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman @ahsonkhan @antkmsft @gearama
+/**                      @rickwinter @LarryOsterman @antkmsft @gearama
 
 #Catch all for files at the root
-/*                       @rickwinter @LarryOsterman @ahsonkhan @antkmsft @gearama
-/sdk/                    @rickwinter
+/*                       @rickwinter @LarryOsterman @antkmsft @gearama
+/sdk/                    @rickwinter @LarryOsterman
 
 # Git Hub integration and bot rules
 /.github/                @rickwinter @ronniegeraghty
 
 # Samples
-/samples/                @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
+/samples/                @rickwinter @antkmsft @gearama @LarryOsterman
 
 # AzureSdkOwners: @gearama
 # ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman
+/sdk/core/               @rickwinter @antkmsft @gearama @LarryOsterman
 
 # AzureSdkOwners: @ahsonkhan
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @schaabs @ahsonkhan @rickwinter @gearama @LarryOsterman @Azure/azure-sdk-write-identity
+/sdk/identity/           @antkmsft @rickwinter @gearama @LarryOsterman @Azure/azure-sdk-write-identity
 
 ###########
 # Client SDKs
@@ -35,7 +35,7 @@
 # AzureSdkOwners: @ahsonkhan
 # ServiceLabel: %App Configuration
 # PRLabel: %App Configuration
-/sdk/appconfiguration/   @ahsonkhan @LarryOsterman @antkmsft @gearama @RickWinter
+/sdk/appconfiguration/   @gearama @LarryOsterman @antkmsft @RickWinter
 
 # ServiceOwners: @gkostal @anilba06 @ahmadmsft
 # ServiceLabel: %Attestation
@@ -46,7 +46,7 @@
 # AzureSdkOwners: @LarryOsterman
 # ServiceLabel: %Event Hubs
 # PRLabel: %Event Hubs
-/sdk/eventhubs/           @LarryOsterman @antkmsft @ahsonkhan @gearama @RickWinter
+/sdk/eventhubs/           @LarryOsterman @antkmsft @gearama @RickWinter
 
 # AzureSdkOwners: @gearama
 # ServiceLabel:  %KeyVault
@@ -62,7 +62,7 @@
 # AzureSdkOwners: @gearama
 # ServiceLabel: %Tables
 # PRLabel: %Tables
-/sdk/tables/            @gearama @LarryOsterman @antkmsft @ahsonkhan
+/sdk/tables/            @gearama @LarryOsterman @antkmsft
 
 # AzureSdkOwners: @danieljurek
 # ServiceLabel: %EngSys

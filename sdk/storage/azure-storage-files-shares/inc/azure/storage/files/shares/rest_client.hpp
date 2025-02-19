@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2025-01-05";
+    constexpr static const char* ApiVersion = "2025-05-05";
   } // namespace _detail
   namespace Models {
     /**
@@ -1088,62 +1088,115 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ParentFileId;
     };
     /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::Create.
+     * @brief NFS only. Type of the file or directory.
      */
-    struct CreateDirectoryResult final
-    {
-      /**
-       * Indicates if the directory was successfully created by this operation.
-       */
-      bool Created = true;
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-      /**
-       * The ETag contains a value which represents the version of the directory, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Returns the date and time the share was last modified. Any operation that modifies the
-       * directory or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the directory.
-       */
-      DateTime LastModified;
-      /**
-       * The value of this header is set to true if the contents of the request are successfully
-       * encrypted using the specified algorithm, and false otherwise.
-       */
-      bool IsServerEncrypted = bool();
+    class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
+    public:
+      /** Constructs a new NfsFileType instance */
+      NfsFileType() = default;
+      /** Constructs a new NfsFileType from a string. */
+      explicit NfsFileType(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type NfsFileType: Regular */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Regular;
+      /** Constant value of type NfsFileType: Directory */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Directory;
+      /** Constant value of type NfsFileType: Symlink */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType SymLink;
     };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::GetProperties.
-     */
-    struct DirectoryProperties final
-    {
+    namespace _detail {
       /**
-       * The SMB related properties for the file.
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::Create.
        */
-      FileSmbProperties SmbProperties;
+      struct CreateDirectoryResult final
+      {
+        /**
+         * Indicates if the directory was successfully created by this operation.
+         */
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the directory, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Nullable<Models::NfsFileType> NfsFileType;
+      };
       /**
-       * A set of name-value pairs that contain metadata for the directory.
+       * @brief Response type for
+       * #Azure::Storage::Files::Shares::ShareDirectoryClient::GetProperties.
        */
-      Core::CaseInsensitiveMap Metadata;
-      /**
-       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Returns the date and time the Directory was last modified. Operations on files within the
-       * directory do not affect the last modified time of the directory.
-       */
-      DateTime LastModified;
-      /**
-       * The value of this header is set to true if the directory metadata is completely encrypted
-       * using the specified algorithm. Otherwise, the value is set to false.
-       */
-      bool IsServerEncrypted = bool();
-    };
+      struct DirectoryProperties final
+      {
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * A set of name-value pairs that contain metadata for the directory.
+         */
+        Core::CaseInsensitiveMap Metadata;
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally, in
+         * quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the Directory was last modified. Operations on files within the
+         * directory do not affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the directory metadata is completely encrypted
+         * using the specified algorithm. Otherwise, the value is set to false.
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Nullable<Models::NfsFileType> NfsFileType;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::Delete.
      */
@@ -1154,31 +1207,46 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       bool Deleted = true;
     };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::SetProperties.
-     */
-    struct SetDirectoryPropertiesResult final
-    {
+    namespace _detail {
       /**
-       * The SMB related properties for the file.
+       * @brief Response type for
+       * #Azure::Storage::Files::Shares::ShareDirectoryClient::SetProperties.
        */
-      FileSmbProperties SmbProperties;
-      /**
-       * The ETag contains a value which represents the version of the file, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Returns the date and time the directory was last modified. Any operation that modifies the
-       * directory or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the directory.
-       */
-      DateTime LastModified;
-      /**
-       * The value of this header is set to true if the contents of the request are successfully
-       * encrypted using the specified algorithm, and false otherwise.
-       */
-      bool IsServerEncrypted = bool();
-    };
+      struct SetDirectoryPropertiesResult final
+      {
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the directory was last modified. Any operation that modifies
+         * the directory or its properties updates the last modified time. Operations on files do
+         * not affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareDirectoryClient::SetMetadata.
      */
@@ -1476,36 +1544,52 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         std::string FileParentId;
       };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::Create.
+       */
+      struct CreateFileResult final
+      {
+        /**
+         * Indicates if the file was successfully created by this operation.
+         */
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Nullable<Models::NfsFileType> NfsFileType;
+      };
     } // namespace _detail
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::Create.
-     */
-    struct CreateFileResult final
-    {
-      /**
-       * Indicates if the file was successfully created by this operation.
-       */
-      bool Created = true;
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-      /**
-       * The ETag contains a value which represents the version of the file, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Returns the date and time the share was last modified. Any operation that modifies the
-       * directory or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the directory.
-       */
-      DateTime LastModified;
-      /**
-       * The value of this header is set to true if the contents of the request are successfully
-       * encrypted using the specified algorithm, and false otherwise.
-       */
-      bool IsServerEncrypted = bool();
-    };
     /**
      * @brief Standard HTTP properties supported files.
      */
@@ -1556,202 +1640,229 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** Constant value of type CopyStatus: Failed */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static CopyStatus Failed;
     };
-    /**
-     * @brief Detailed information of the downloaded file.
-     */
-    struct DownloadFileDetails final
-    {
+    namespace _detail {
       /**
-       * The ETag contains a value that you can use to perform operations conditionally. If the
-       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * @brief Detailed information of the downloaded file.
        */
-      Azure::ETag ETag;
+      struct DownloadFileDetails final
+      {
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally. If the
+         * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the file was last modified. Any operation that modifies the
+         * file, including an update of the file's metadata or properties, changes the last-modified
+         * time of the file.
+         */
+        DateTime LastModified;
+        /**
+         * A set of name-value pairs associated with the share or file.
+         */
+        Core::CaseInsensitiveMap Metadata;
+        /**
+         * String identifier for this copy operation. Use with Get File Properties to check the
+         * status of this copy operation, or pass to Abort Copy File to abort a pending copy.
+         */
+        Nullable<std::string> CopyId;
+        /**
+         * URL up to 2 KB in length that specifies the source file or file used in the last
+         * attempted Copy File operation where this file was the destination file. This header does
+         * not appear if this file has never been the destination in a Copy File operation, or if
+         * this file has been modified after a concluded Copy File operation using Set File
+         * Properties, Put File, or Put Block List.
+         */
+        Nullable<std::string> CopySource;
+        /**
+         * Status of a copy operation.
+         */
+        Nullable<Models::CopyStatus> CopyStatus;
+        /**
+         * Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last
+         * fatal or non-fatal copy operation failure. This header does not appear if this file has
+         * never been the destination in a Copy File operation, or if this file has been modified
+         * after a concluded Copy File operation using Set File Properties, Put File, or Put Block
+         * List.
+         */
+        Nullable<std::string> CopyStatusDescription;
+        /**
+         * Contains the number of bytes copied and the total bytes in the source in the last
+         * attempted Copy File operation where this file was the destination file. Can show between
+         * 0 and Content-Length bytes copied. This header does not appear if this file has never
+         * been the destination in a Copy File operation, or if this file has been modified after a
+         * concluded Copy File operation using Set File Properties, Put File, or Put Block List.
+         */
+        Nullable<std::string> CopyProgress;
+        /**
+         * Conclusion time of the last attempted Copy File operation where this file was the
+         * destination file. This value can specify the time of a completed, aborted, or failed copy
+         * attempt. This header does not appear if a copy is pending, if this file has never been
+         * the destination in a Copy File operation, or if this file has been modified after a
+         * concluded Copy File operation using Set File Properties, Put File, or Put Block List.
+         */
+        Nullable<DateTime> CopyCompletedOn;
+        /**
+         * True if the file data and metadata are completely encrypted using the specified
+         * algorithm. Otherwise, the value is set to false (when the file is unencrypted, or if only
+         * parts of the file/application metadata are encrypted).
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * When a share is leased, specifies whether the lease is of infinite or fixed duration.
+         */
+        Nullable<LeaseDurationType> LeaseDuration;
+        /**
+         * Lease state of the share.
+         */
+        Nullable<Models::LeaseState> LeaseState;
+        /**
+         * The current lease status of the share.
+         */
+        Nullable<Models::LeaseStatus> LeaseStatus;
+        Nullable<std::string> FileMode;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::int64_t> LinkCount;
+      };
       /**
-       * Returns the date and time the file was last modified. Any operation that modifies the file,
-       * including an update of the file's metadata or properties, changes the last-modified time of
-       * the file.
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::Download.
        */
-      DateTime LastModified;
+      struct DownloadFileResult final
+      {
+        /**
+         * Content of the file or file range.
+         */
+        std::unique_ptr<Core::IO::BodyStream> BodyStream;
+        /**
+         * Indicates the range of bytes returned.
+         */
+        Core::Http::HttpRange ContentRange;
+        /**
+         * Size of the file in bytes.
+         */
+        std::int64_t FileSize = std::int64_t();
+        /**
+         * MD5 hash for the downloaded range of data.
+         */
+        Nullable<ContentHash> TransactionalContentHash;
+        /**
+         * Standard HTTP properties supported files.
+         */
+        FileHttpHeaders HttpHeaders;
+        /**
+         * Detailed information of the downloaded file.
+         */
+        DownloadFileDetails Details;
+      };
       /**
-       * A set of name-value pairs associated with the share or file.
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
        */
-      Core::CaseInsensitiveMap Metadata;
-      /**
-       * String identifier for this copy operation. Use with Get File Properties to check the status
-       * of this copy operation, or pass to Abort Copy File to abort a pending copy.
-       */
-      Nullable<std::string> CopyId;
-      /**
-       * URL up to 2 KB in length that specifies the source file or file used in the last attempted
-       * Copy File operation where this file was the destination file. This header does not appear
-       * if this file has never been the destination in a Copy File operation, or if this file has
-       * been modified after a concluded Copy File operation using Set File Properties, Put File, or
-       * Put Block List.
-       */
-      Nullable<std::string> CopySource;
-      /**
-       * Status of a copy operation.
-       */
-      Nullable<Models::CopyStatus> CopyStatus;
-      /**
-       * Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last
-       * fatal or non-fatal copy operation failure. This header does not appear if this file has
-       * never been the destination in a Copy File operation, or if this file has been modified
-       * after a concluded Copy File operation using Set File Properties, Put File, or Put Block
-       * List.
-       */
-      Nullable<std::string> CopyStatusDescription;
-      /**
-       * Contains the number of bytes copied and the total bytes in the source in the last attempted
-       * Copy File operation where this file was the destination file. Can show between 0 and
-       * Content-Length bytes copied. This header does not appear if this file has never been the
-       * destination in a Copy File operation, or if this file has been modified after a concluded
-       * Copy File operation using Set File Properties, Put File, or Put Block List.
-       */
-      Nullable<std::string> CopyProgress;
-      /**
-       * Conclusion time of the last attempted Copy File operation where this file was the
-       * destination file. This value can specify the time of a completed, aborted, or failed copy
-       * attempt. This header does not appear if a copy is pending, if this file has never been the
-       * destination in a Copy File operation, or if this file has been modified after a concluded
-       * Copy File operation using Set File Properties, Put File, or Put Block List.
-       */
-      Nullable<DateTime> CopyCompletedOn;
-      /**
-       * True if the file data and metadata are completely encrypted using the specified algorithm.
-       * Otherwise, the value is set to false (when the file is unencrypted, or if only parts of the
-       * file/application metadata are encrypted).
-       */
-      bool IsServerEncrypted = bool();
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-      /**
-       * When a share is leased, specifies whether the lease is of infinite or fixed duration.
-       */
-      Nullable<LeaseDurationType> LeaseDuration;
-      /**
-       * Lease state of the share.
-       */
-      Nullable<Models::LeaseState> LeaseState;
-      /**
-       * The current lease status of the share.
-       */
-      Nullable<Models::LeaseStatus> LeaseStatus;
-    };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::Download.
-     */
-    struct DownloadFileResult final
-    {
-      /**
-       * Content of the file or file range.
-       */
-      std::unique_ptr<Core::IO::BodyStream> BodyStream;
-      /**
-       * Indicates the range of bytes returned.
-       */
-      Core::Http::HttpRange ContentRange;
-      /**
-       * Size of the file in bytes.
-       */
-      std::int64_t FileSize = std::int64_t();
-      /**
-       * MD5 hash for the downloaded range of data.
-       */
-      Nullable<ContentHash> TransactionalContentHash;
-      /**
-       * Standard HTTP properties supported files.
-       */
-      FileHttpHeaders HttpHeaders;
-      /**
-       * Detailed information of the downloaded file.
-       */
-      DownloadFileDetails Details;
-    };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
-     */
-    struct FileProperties final
-    {
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-      /**
-       * Standard HTTP properties supported files.
-       */
-      FileHttpHeaders HttpHeaders;
-      /**
-       * Returns the date and time the file was last modified. The date format follows RFC 1123. Any
-       * operation that modifies the file or its properties updates the last modified time.
-       */
-      DateTime LastModified;
-      /**
-       * A set of name-value pairs associated with this file as user-defined metadata.
-       */
-      Core::CaseInsensitiveMap Metadata;
-      /**
-       * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
-       * header that is stored with the file.
-       */
-      std::int64_t FileSize = std::int64_t();
-      /**
-       * The ETag contains a value that you can use to perform operations conditionally, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Conclusion time of the last attempted Copy File operation where this file was the
-       * destination file. This value can specify the time of a completed, aborted, or failed copy
-       * attempt.
-       */
-      Nullable<DateTime> CopyCompletedOn;
-      /**
-       * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
-       * non-fatal copy operation failure.
-       */
-      Nullable<std::string> CopyStatusDescription;
-      /**
-       * String identifier for the last attempted Copy File operation where this file was the
-       * destination file.
-       */
-      Nullable<std::string> CopyId;
-      /**
-       * Contains the number of bytes copied and the total bytes in the source in the last attempted
-       * Copy File operation where this file was the destination file. Can show between 0 and
-       * Content-Length bytes copied.
-       */
-      Nullable<std::string> CopyProgress;
-      /**
-       * URL up to 2KB in length that specifies the source file used in the last attempted Copy File
-       * operation where this file was the destination file.
-       */
-      Nullable<std::string> CopySource;
-      /**
-       * State of the copy operation identified by 'x-ms-copy-id'.
-       */
-      Nullable<Models::CopyStatus> CopyStatus;
-      /**
-       * The value of this header is set to true if the file data and application metadata are
-       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
-       * (when the file is unencrypted, or if only parts of the file/application metadata are
-       * encrypted).
-       */
-      bool IsServerEncrypted = bool();
-      /**
-       * When a file is leased, specifies whether the lease is of infinite or fixed duration.
-       */
-      Nullable<LeaseDurationType> LeaseDuration;
-      /**
-       * Lease state of the file.
-       */
-      Nullable<Models::LeaseState> LeaseState;
-      /**
-       * The current lease status of the file.
-       */
-      Nullable<Models::LeaseStatus> LeaseStatus;
-    };
+      struct FileProperties final
+      {
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * Standard HTTP properties supported files.
+         */
+        FileHttpHeaders HttpHeaders;
+        /**
+         * Returns the date and time the file was last modified. The date format follows RFC 1123.
+         * Any operation that modifies the file or its properties updates the last modified time.
+         */
+        DateTime LastModified;
+        /**
+         * A set of name-value pairs associated with this file as user-defined metadata.
+         */
+        Core::CaseInsensitiveMap Metadata;
+        /**
+         * The size of the file in bytes. This header returns the value of the 'x-ms-content-length'
+         * header that is stored with the file.
+         */
+        std::int64_t FileSize = std::int64_t();
+        /**
+         * The ETag contains a value that you can use to perform operations conditionally, in
+         * quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Conclusion time of the last attempted Copy File operation where this file was the
+         * destination file. This value can specify the time of a completed, aborted, or failed copy
+         * attempt.
+         */
+        Nullable<DateTime> CopyCompletedOn;
+        /**
+         * Only appears when x-ms-copy-status is failed or pending. Describes cause of fatal or
+         * non-fatal copy operation failure.
+         */
+        Nullable<std::string> CopyStatusDescription;
+        /**
+         * String identifier for the last attempted Copy File operation where this file was the
+         * destination file.
+         */
+        Nullable<std::string> CopyId;
+        /**
+         * Contains the number of bytes copied and the total bytes in the source in the last
+         * attempted Copy File operation where this file was the destination file. Can show between
+         * 0 and Content-Length bytes copied.
+         */
+        Nullable<std::string> CopyProgress;
+        /**
+         * URL up to 2KB in length that specifies the source file used in the last attempted Copy
+         * File operation where this file was the destination file.
+         */
+        Nullable<std::string> CopySource;
+        /**
+         * State of the copy operation identified by 'x-ms-copy-id'.
+         */
+        Nullable<Models::CopyStatus> CopyStatus;
+        /**
+         * The value of this header is set to true if the file data and application metadata are
+         * completely encrypted using the specified algorithm. Otherwise, the value is set to false
+         * (when the file is unencrypted, or if only parts of the file/application metadata are
+         * encrypted).
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * When a file is leased, specifies whether the lease is of infinite or fixed duration.
+         */
+        Nullable<LeaseDurationType> LeaseDuration;
+        /**
+         * Lease state of the file.
+         */
+        Nullable<Models::LeaseState> LeaseState;
+        /**
+         * The current lease status of the file.
+         */
+        Nullable<Models::LeaseStatus> LeaseStatus;
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+        /**
+         * NFS only. The link count of the file or directory.
+         */
+        Nullable<std::int64_t> LinkCount;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Nullable<Models::NfsFileType> NfsFileType;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::Delete.
      */
@@ -1761,32 +1872,54 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Indicates if the file was successfully deleted by this operation.
        */
       bool Deleted = true;
+      /**
+       * NFS only. The link count of the file or directory.
+       */
+      Nullable<std::int64_t> LinkCount;
     };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetProperties.
-     */
-    struct SetFilePropertiesResult final
-    {
+    namespace _detail {
       /**
-       * The SMB related properties for the file.
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetProperties.
        */
-      FileSmbProperties SmbProperties;
-      /**
-       * The ETag contains a value which represents the version of the file, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * Returns the date and time the directory was last modified. Any operation that modifies the
-       * directory or its properties updates the last modified time. Operations on files do not
-       * affect the last modified time of the directory.
-       */
-      DateTime LastModified;
-      /**
-       * The value of this header is set to true if the contents of the request are successfully
-       * encrypted using the specified algorithm, and false otherwise.
-       */
-      bool IsServerEncrypted = bool();
-    };
+      struct SetFilePropertiesResult final
+      {
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the directory was last modified. Any operation that modifies
+         * the directory or its properties updates the last modified time. Operations on files do
+         * not affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The value of this header is set to true if the contents of the request are successfully
+         * encrypted using the specified algorithm, and false otherwise.
+         */
+        bool IsServerEncrypted = bool();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        Nullable<std::string> FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        Nullable<std::string> Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        Nullable<std::string> Group;
+        /**
+         * NFS only. The link count of the file or directory.
+         */
+        Nullable<std::int64_t> LinkCount;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::SetMetadata.
      */
@@ -1996,6 +2129,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** Constant value of type PermissionCopyMode: Override */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static PermissionCopyMode Override;
     };
+    /**
+     * @brief NFS only. Applicable only when the copy source is a File. Determines the copy behavior
+     * of the mode bits of the file. source: The mode on the destination file is copied from the
+     * source file. override: The mode on the destination file is determined via the x-ms-mode
+     * header.
+     */
+    class ModeCopyMode final : public Core::_internal::ExtendableEnumeration<ModeCopyMode> {
+    public:
+      /** Constructs a new ModeCopyMode instance */
+      ModeCopyMode() = default;
+      /** Constructs a new ModeCopyMode from a string. */
+      explicit ModeCopyMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type ModeCopyMode: Source */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ModeCopyMode Source;
+      /** Constant value of type ModeCopyMode: Override */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static ModeCopyMode Override;
+    };
+    /**
+     * @brief NFS only. Determines the copy behavior of the owner user identifier (UID) and group
+     * identifier (GID) of the file. source: The owner user identifier (UID) and group identifier
+     * (GID) on the destination file is copied from the source file. override: The owner user
+     * identifier (UID) and group identifier (GID) on the destination file is determined via the
+     * x-ms-owner and x-ms-group  headers.
+     */
+    class OwnerCopyMode final : public Core::_internal::ExtendableEnumeration<OwnerCopyMode> {
+    public:
+      /** Constructs a new OwnerCopyMode instance */
+      OwnerCopyMode() = default;
+      /** Constructs a new OwnerCopyMode from a string. */
+      explicit OwnerCopyMode(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type OwnerCopyMode: Source */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static OwnerCopyMode Source;
+      /** Constant value of type OwnerCopyMode: Override */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static OwnerCopyMode Override;
+    };
     namespace _detail {
       /**
        * @brief Response type for #Azure::Storage::Files::Shares::FileClient::StartCopy.
@@ -2108,6 +2278,106 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * The parent fileId of the directory.
          */
         std::string FileParentId;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateSymbolicLink.
+       */
+      struct CreateFileSymbolicLinkResult final
+      {
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        std::string FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        std::string Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        std::string Group;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Models::NfsFileType NfsFileType;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetSymbolicLink.
+       */
+      struct GetFileSymbolicLinkResult final
+      {
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * The path to the original file, the symbolic link is pointing to. The path is of type
+         * string which is not resolved and is stored as is. The path can be absolute path or the
+         * relative path depending on the content stored in the symbolic link file.
+         */
+        std::string LinkText;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::CreateHardLink.
+       */
+      struct CreateFileHardLinkResult final
+      {
+        bool Created = true;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * Returns the date and time the share was last modified. Any operation that modifies the
+         * directory or its properties updates the last modified time. Operations on files do not
+         * affect the last modified time of the directory.
+         */
+        DateTime LastModified;
+        /**
+         * NFS only. The link count of the file or directory.
+         */
+        std::int64_t LinkCount = std::int64_t();
+        /**
+         * NFS only. The mode of the file or directory.
+         */
+        std::string FileMode;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        std::string Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        std::string Group;
+        /**
+         * NFS only. Type of the file or directory.
+         */
+        Models::NfsFileType NfsFileType;
       };
     } // namespace _detail
   } // namespace Models
@@ -2357,8 +2627,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileLastWriteTime;
         Nullable<std::string> FileChangeTime;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> FileMode;
       };
-      static Response<Models::CreateDirectoryResult> Create(
+      static Response<Models::_detail::CreateDirectoryResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const CreateDirectoryOptions& options,
@@ -2369,7 +2642,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Sharesnapshot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
-      static Response<Models::DirectoryProperties> GetProperties(
+      static Response<Models::_detail::DirectoryProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetDirectoryPropertiesOptions& options,
@@ -2395,8 +2668,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileChangeTime;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> FileMode;
       };
-      static Response<Models::SetDirectoryPropertiesResult> SetProperties(
+      static Response<Models::_detail::SetDirectoryPropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const SetDirectoryPropertiesOptions& options,
@@ -2504,8 +2780,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> FileChangeTime;
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> FileMode;
+        Nullable<Models::NfsFileType> NfsFileType;
       };
-      static Response<Models::CreateFileResult> Create(
+      static Response<Models::_detail::CreateFileResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const CreateFileOptions& options,
@@ -2518,7 +2798,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
-      static Response<Models::DownloadFileResult> Download(
+      static Response<Models::_detail::DownloadFileResult> Download(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const DownloadFileOptions& options,
@@ -2530,7 +2810,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
-      static Response<Models::FileProperties> GetProperties(
+      static Response<Models::_detail::FileProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetFilePropertiesOptions& options,
@@ -2565,8 +2845,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> LeaseId;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> FileMode;
       };
-      static Response<Models::SetFilePropertiesResult> SetHttpHeaders(
+      static Response<Models::_detail::SetFilePropertiesResult> SetHttpHeaders(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const SetFileHttpHeadersOptions& options,
@@ -2698,6 +2981,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         Nullable<bool> AllowSourceTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        Nullable<std::string> FileMode;
+        Nullable<Models::ModeCopyMode> FileModeCopyMode;
+        Nullable<Models::OwnerCopyMode> FileOwnerCopyMode;
       };
       static Response<Models::_detail::StartFileCopyResult> StartCopy(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2766,6 +3054,43 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const RenameFileOptions& options,
+          const Core::Context& context);
+      struct CreateFileSymbolicLinkOptions final
+      {
+        std::map<std::string, std::string> Metadata;
+        Nullable<std::string> FileCreationTime;
+        Nullable<std::string> FileLastWriteTime;
+        Nullable<std::string> LeaseId;
+        Nullable<std::string> Owner;
+        Nullable<std::string> Group;
+        std::string LinkText;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::CreateFileSymbolicLinkResult> CreateSymbolicLink(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const CreateFileSymbolicLinkOptions& options,
+          const Core::Context& context);
+      struct GetFileSymbolicLinkOptions final
+      {
+        Nullable<std::string> Sharesnapshot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::GetFileSymbolicLinkResult> GetSymbolicLink(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetFileSymbolicLinkOptions& options,
+          const Core::Context& context);
+      struct CreateFileHardLinkOptions final
+      {
+        Nullable<std::string> LeaseId;
+        std::string TargetFile;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::CreateFileHardLinkResult> CreateHardLink(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const CreateFileHardLinkOptions& options,
           const Core::Context& context);
     };
   } // namespace _detail

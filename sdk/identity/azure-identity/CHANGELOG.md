@@ -4,9 +4,13 @@
 
 ### Features Added
 
+- Added `Subscription` to `AzureCliCredentialOptions` which allows the caller to specify an Azure subscription that does not match the current Azure CLI subscription.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- [[#5235]](https://github.com/Azure/azure-sdk-for-cpp/issues/5235) Warnings in `azure/identity.hpp` cause strict builds to fail.
 
 ### Other Changes
 
