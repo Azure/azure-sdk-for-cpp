@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-module
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
-cmake_minimum_required (VERSION 3.13)
+cmake_minimum_required (VERSION 3.22)
 
 project(azure-core-amqp LANGUAGES CXX)
 
@@ -72,49 +72,6 @@ if (USE_UAMQP)
   find_package(azure_macro_utils_c CONFIG REQUIRED)
   find_package(azure_c_shared_utility CONFIG REQUIRED)
 endif()
-
-if (USE_RUST_AMQP)
-
-#  include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
-#  install_rustup()
-
-  include(FetchContent)
-
-    # If the cmake build is x86, add the x86 target to the rust build
-    message("VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
-  if (${VCPKG_TARGET_TRIPLET} MATCHES "x86.*")
-    message("Configure rust for x86 builds.")
-
-    if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
-      message("Configure rust for Windows x86 builds.")
-
-      # Run the rustup command to install the toolchain
-      execute_process(COMMAND rustup toolchain install stable-i686-pc-windows-msvc)
-
-      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
-      set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
-    else()
-      message("Configure rust for Linux x86 builds.")
-      execute_process(COMMAND rustup toolchain install stable-i686-unknown-linux-gnu)
-      set(Rust_CARGO_TARGET "i686-unknown-linux-gnu")
-    endif()
-  else()
-    message("Configure rust for 64 builds.")
-  endif()
-
-
-  FetchContent_Declare(
-    Corrosion
-    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
-    GIT_TAG v0.5.1 # Optionally specify a commit hash, version tag or branch here
-  )
-  FetchContent_MakeAvailable(Corrosion)
-
- 
-  # Import targets defined in a package or workspace manifest `Cargo.toml` file
-  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
-endif()
-
 
 
 set (AZURE_CORE_AMQP_HEADER
@@ -242,6 +199,78 @@ elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_RUST_AMQP_SOURCE})
 endif()
 
+
+if (USE_RUST_AMQP)
+
+#  include (${CMAKE_SOURCE_DIR}/cmake-modules/acquire_rust.cmake)
+#  install_rustup()
+
+  include(FetchContent)
+
+    # If the cmake build is x86, add the x86 target to the rust build
+    message("VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+  if (${VCPKG_TARGET_TRIPLET} MATCHES "x86.*")
+    message("Configure rust for x86 builds.")
+
+    if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-windows.*")
+      message("Configure rust for Windows x86 builds.")
+
+      # Run the rustup command to install the toolchain
+      execute_process(COMMAND rustup toolchain install stable-i686-pc-windows-msvc)
+
+      set(Rust_TOOLCHAIN "stable-i686-pc-windows-msvc")
+      set(Rust_CARGO_TARGET "i686-pc-windows-msvc")
+    else()
+      message("Configure rust for Linux x86 builds.")
+      execute_process(COMMAND rustup toolchain install stable-i686-unknown-linux-gnu)
+      set(Rust_CARGO_TARGET "i686-unknown-linux-gnu")
+    endif()
+  else()
+    message("Configure rust for 64 builds.")
+  endif()
+
+
+  FetchContent_Declare(
+    Corrosion
+    GIT_REPOSITORY https://github.com/corrosion-rs/corrosion.git
+    GIT_TAG v0.5.1 # Optionally specify a commit hash, version tag or branch here
+  )
+  FetchContent_MakeAvailable(Corrosion)
+
+  if (NOT APPLE)
+if(LINUX OR UNIX)
+  message(STATUS "Adding OpenSSL to target link libraries")
+  include(FindOpenSSL)
+
+  get_cmake_property(_variableNames VARIABLES)
+  foreach (_variableName ${_variableNames})
+    if (${_variableName} MATCHES "OPENSSL")
+      message(STATUS "Found variable: ${_variableName} = ${${_variableName}}")
+    endif()
+  endforeach()
+
+  message(STATUS "OPENSSL_FOUND: ${OPENSSL_FOUND}")
+  message(STATUS "OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")
+  message(STATUS "OPENSSL_LIBRARIES: ${OPENSSL_LIBRARIES}")
+  message(STATUS "OPENSSL_CRYPTO_LIBRARY: ${OPENSSL_CRYPTO_LIBRARY}")
+  message(STATUS "OPENSSL_SSL_LIBRARY: ${OPENSSL_SSL_LIBRARY}")
+  
+  corrosion_set_env_vars(azure-core-amqp
+    OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+    OPENSSL_LIB_DIR=${OPENSSL_LIBRARIES}
+  )
+  
+endif()
+endif()
+
+
+ 
+  # Import targets defined in a package or workspace manifest `Cargo.toml` file
+  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
+
+endif()
+
+
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 target_include_directories(azure-core-amqp PRIVATE src/impl/uamqp/amqp/private src/impl/uamqp/amqp/network ${UAMQP_INC_FOLDER})
@@ -295,10 +324,10 @@ elseif(USE_RUST_AMQP)
     message(STATUS "Skipping library setting on macOS")
   elseif(LINUX OR UNIX)
     message(STATUS "Assuming Linux crypto libraries.")
-    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+    target_link_libraries(azure-core-amqp PRIVATE ${OPENSSL_LIBRARIES})
   else()
     message(STATUS "Unknown operating system, assuming Linux based operating system.")
-    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+    target_link_libraries(azure-core-amqp PRIVATE OpenSSL::SSL OpenSSL::Crypto)
   endif()
 endif()
 

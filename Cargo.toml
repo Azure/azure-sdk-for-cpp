@@ -16,8 +16,8 @@ rust-version = "1.76"
 path = "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/azure_core_amqp"
 
 [workspace.dependencies]
-azure_core = { version = "0.21" }
-azure_identity = "0.21"
+azure_core = { version = "0.22" }
+azure_identity = "0.22"
 async-lock = "3.0"
 async-process = "2.0"
 async-std = { version = "1.12", features = ["attributes"] }

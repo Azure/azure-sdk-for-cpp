@@ -11,7 +11,7 @@ use crate::{
 };
 use async_std::sync::Mutex;
 use azure_core::{
-    auth::AccessToken,
+    credentials::AccessToken,
     error::{ErrorKind, Result},
     Error,
 };
