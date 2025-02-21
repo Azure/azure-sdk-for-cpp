@@ -12,7 +12,7 @@ $PSNativeCommandUseErrorActionPreference = $true
 
 pushd
 cd $PSScriptRoot
-cd ../
+cd ../../../
 $typespecCppDir = Get-Location
 popd
 

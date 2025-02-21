@@ -11,7 +11,7 @@ param(
 npm install -g @microsoft/rush typescript autorest @typespec/compiler @azure-tools/typespec-client-generator-cli @azure-tools/typespec-azure-rulesets
 
 pushd
-cd ..\..\
+cd ..\..\..\..\
 cd codegen.cpp
 
 if ($Reinstall) {
