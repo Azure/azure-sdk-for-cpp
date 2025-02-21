@@ -32,7 +32,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& credName,
         std::string const& url,
         char const* envVarName,
-        std::string const& credSource);
+        std::string const& credSource,
+        std::string const& clientId);
 
     explicit ManagedIdentitySource(
         std::string clientId,
