@@ -3,18 +3,19 @@
 
 find_package(Git)
 
-macro(GenerateCodeFromTypeSpec TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_SHA CODEGEN_DESTINATION)
+macro(GenerateCodeFromTypeSpec TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_SHA CODEGEN_DESTINATION GEN_FILES_DESTINATION)
 
     message("\
     GenerateCodeFromTypeSpec using the following params \n\
     TSP_DESTINATION=${TSP_DESTINATION} \n\
     TSP_SERVICE_PATH=${TSP_SERVICE_PATH} \n\
     CODEGEN_SHA=${CODEGEN_SHA} \n\
-    CODEGEN_DESTINATION=${CODEGEN_DESTINATION}")
+    CODEGEN_DESTINATION=${CODEGEN_DESTINATION} \n\
+    GEN_FILES_DESTINATION=${GEN_FILES_DESTINATION}")
     set(CODEGEN_PATH packages/typespec-cpp)
     DownloadTSPFiles(${TSP_DESTINATION})
     DownloadCodeGenerator(${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH})
+    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH} ${GEN_FILES_DESTINATION})
 endmacro()
 
 macro(DownloadTSPFiles TSP_DESTINATION)
@@ -79,13 +80,14 @@ macro (DownloadCodeGenerator CODEGEN_SHA CODEGEN_DESTINATION)
     endif()
 endmacro()
 
-macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION CODEGEN_PATH)
+macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION CODEGEN_PATH GEN_FILES_DESTINATION)
     message("\
     GenerateCodeFromTSP using the following params \n\
     TSP_DESTINATION=${TSP_DESTINATION}\n\
     TSP_SERVICE_PATH=${TSP_SERVICE_PATH}\n\
     CODEGEN_DESTINATION=${CODEGEN_DESTINATION}\n\
-    CODEGEN_PATH=${CODEGEN_PATH}")
+    CODEGEN_PATH=${CODEGEN_PATH}\n\
+    GEN_FILES_DESTINATION$=${GEN_FILES_DESTINATION}")
     message("Remember to Download the typspec-cpp emitter from npmjs.org")
     #TODO : https://github.com/Azure/azure-sdk-for-cpp/issues/6071
     set(DOWNLOAD_CODEGEN_FOLDER ${CMAKE_SOURCE_DIR}/build/${CODEGEN_DESTINATION}/${CODEGEN_PATH}/specs/${TSP_SERVICE_PATH})
@@ -127,7 +129,7 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION C
     message("\
     Use codegen in folder \n\
     ${TSP_FINAL_LOCATION}")
-    execute_process(COMMAND pwsh Generate-Code.ps1
+    execute_process(COMMAND pwsh Generate-Code.ps1 -outputPath ${GEN_FILES_DESTINATION}
     WORKING_DIRECTORY ${TSP_FINAL_LOCATION})
 endmacro()
 

@@ -32,7 +32,7 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
+option(AZURE_TSP_KV_SECRETS_GEN3 "Generate KeyVault Secrets from TypeSpec" ON)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
@@ -42,18 +42,14 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "a4371398f07ec577cbab98432986c0eda06942f9")
+    set(CODEGEN_SHA "90ae32b3083bdcff31057d2b67766cf0a722a287")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
-    set(INCLUDE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/inc")
-    set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    set(GEN_FILES_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}")
 
     #generate code from typespec
-    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    #update code files left this as a separate step as generating and moving result around
-    #conceptually are two different steps
-    UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${TSP_SERVICE_PATH} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION})
 endif()
 
 if(FETCH_SOURCE_DEPS)
@@ -71,10 +67,10 @@ endif()
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
+    inc/azure/security/keyvault/secrets/models/secrets_models.hpp
     inc/azure/security/keyvault/secrets.hpp
     inc/azure/security/keyvault/secrets/dll_import_export.hpp
     inc/azure/security/keyvault/secrets/rtti.hpp
-    inc/azure/security/keyvault/secrets/secrets_models.hpp
     inc/azure/security/keyvault/secrets/secret_client.hpp
     inc/azure/security/keyvault/secrets/secret_client_options.hpp
     inc/azure/security/keyvault/secrets/secret_client_paged_responses.hpp

@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "azure/security/keyvault/secrets/secrets_models.hpp"
+#include "azure/security/keyvault/secrets/models/secrets_models.hpp"
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/nullable.hpp>

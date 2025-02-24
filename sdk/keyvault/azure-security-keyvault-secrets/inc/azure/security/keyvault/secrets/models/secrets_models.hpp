@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace Models {
   /**
    * @brief Reflects the deletion recovery level currently in effect for secrets in the current
    * vault. If it contains 'Purgeable', the secret can be permanently deleted by a privileged user;
@@ -309,4 +309,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// The backup blob associated with a secret bundle.
     std::vector<std::uint8_t> SecretBundleBackup;
   };
-}}}} // namespace Azure::Security::KeyVault::Secrets
+}}}}} // namespace Azure::Security::KeyVault::Secrets::Models

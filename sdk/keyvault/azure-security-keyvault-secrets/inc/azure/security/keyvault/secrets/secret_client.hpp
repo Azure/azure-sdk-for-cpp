@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include "azure/security/keyvault/secrets/models/secrets_models.hpp"
 #include "azure/security/keyvault/secrets/secret_client_options.hpp"
 #include "azure/security/keyvault/secrets/secret_client_paged_responses.hpp"
-#include "azure/security/keyvault/secrets/secrets_models.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -53,6 +53,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     std::string GetUrl() const;
 
+    // codegen: insert before SecretClient::SetSecret
+  private:
+    // codegen: end insert before SecretClient::SetSecret
+
     /**
      * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
      * exists, Azure Key Vault creates a new version of that secret. This operation requires the
@@ -65,10 +69,63 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<KeyVaultSecret> SetSecret(
+    Response<Models::KeyVaultSecret> SetSecret(
         std::string const& secretName,
-        SecretSetParameters const& parameters,
+        Models::SecretSetParameters const& parameters,
         Core::Context const& context = {}) const;
+
+    // codegen: insert after SecretClient::SetSecret
+  public:
+
+    /**
+     * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
+     * exists, Azure Key Vault creates a new version of that secret. This operation requires the
+     * secrets/set permission.
+     * @param secretName The name of the secret. The value you provide may be copied globally for
+     * the purpose of running the service. The value provided should not include personally
+     * identifiable or sensitive information.
+     * @param name The name of the secret.
+     * @param value The value of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
+    Azure::Response<Models::KeyVaultSecret> SetSecret(
+        const std::string& name,
+        const std::string& value,
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      Models::SecretSetParameters parameters;
+      parameters.Value = value;
+      return SetSecret(name, parameters, context);
+    };
+
+    /**
+     * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
+     * exists, Azure Key Vault creates a new version of that secret. This operation requires the
+     * secrets/set permission.
+     * @param secretName The name of the secret. The value you provide may be copied globally for
+     * the purpose of running the service. The value provided should not include personally
+     * identifiable or sensitive information.
+     * @param name The name of the secret.
+     * @param secret The secret  ofbject to be updated.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
+    Azure::Response<Models::KeyVaultSecret> SetSecret(
+        const std::string& name,
+        const Models::KeyVaultSecret& secret,
+        const Azure::Core::Context& context = Azure::Core::Context()) const
+    {
+      Models::SecretSetParameters parameters;
+      parameters.Value = secret.Value.Value();
+      parameters.ContentType = secret.ContentType;
+      parameters.Tags = secret.Tags;
+      parameters.SecretAttributes = secret.Properties;
+      return SetSecret(name, parameters, context);
+    };
+    // codegen: end insert after SecretClient::SetSecret
 
     /**
      * @brief The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be
@@ -80,7 +137,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<DeletedSecret> StartDeleteSecret(
+    Response<Models::DeletedSecret> StartDeleteSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -95,10 +152,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<KeyVaultSecret> UpdateSecretProperties(
+    Response<Models::KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
         std::string const& secretVersion,
-        UpdateSecretPropertiesOptions const& parameters,
+        Models::UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const;
 
     /**
@@ -111,7 +168,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<KeyVaultSecret> GetSecret(
+    Response<Models::KeyVaultSecret> GetSecret(
         std::string const& secretName,
         std::string const& secretVersion,
         Core::Context const& context = {}) const;
@@ -164,7 +221,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<DeletedSecret> GetDeletedSecret(
+    Response<Models::DeletedSecret> GetDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -177,7 +234,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Operation result.
      *
      */
-    Response<PurgedSecret> PurgeDeletedSecret(
+    Response<Models::PurgedSecret> PurgeDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -190,7 +247,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<KeyVaultSecret> StartRecoverDeletedSecret(
+    Response<Models::KeyVaultSecret> StartRecoverDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -203,7 +260,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The backup secret result, containing the backup blob.
      *
      */
-    Response<BackupSecretResult> BackupSecret(
+    Response<Models::BackupSecretResult> BackupSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -215,8 +272,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<KeyVaultSecret> RestoreSecretBackup(
-        SecretRestoreParameters const& parameters,
+    Response<Models::KeyVaultSecret> RestoreSecretBackup(
+        Models::SecretRestoreParameters const& parameters,
         Core::Context const& context = {}) const;
 
   private:

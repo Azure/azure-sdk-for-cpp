@@ -8,17 +8,17 @@ using TypeSpec.Rest;
 using TypeSpec.Http;
 
 using KeyVault;
-@@clientName(KeyVault, "SecretClient"); // This is the name of the client
-@@clientName(KeyVault.SecretProperties,"SecretKeyProperties");
-@@clientName(KeyVault.SecretAttributes, "SecretProperties");
-@@clientName(KeyVault.getSecrets, "GetPropertiesOfSecrets");
-@@clientName(KeyVault.getSecretVersions, "GetPropertiesOfSecretsVersions");
-@@clientName(KeyVault.SecretBundle, "KeyVaultSecret");
-@@clientName(KeyVault.SecretBundle.attributes, "Properties");
-@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret");
-@@clientName(KeyVault.updateSecret, "UpdateSecretProperties");
-@@clientName(KeyVault.restoreSecret, "RestoreSecretBackup");
-@@clientName(KeyVault.deleteSecret, "StartDeleteSecret");// <-- this should be an LRO
-@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret"); 
-@@clientName(KeyVault.recoverDeletedSecret, "StartRecoverDeletedSecret");// <-- this should be an LRO
+@@clientName(KeyVault, "SecretClient","cpp"); // This is the name of the client
+@@clientName(KeyVault.SecretProperties,"SecretKeyProperties","cpp");
+@@clientName(KeyVault.SecretAttributes, "SecretProperties","cpp");
+@@clientName(KeyVault.getSecrets, "GetPropertiesOfSecrets","cpp");
+@@clientName(KeyVault.getSecretVersions, "GetPropertiesOfSecretsVersions","cpp");
+@@clientName(KeyVault.SecretBundle, "KeyVaultSecret","cpp");
+@@clientName(KeyVault.SecretBundle.attributes, "Properties","cpp");
+@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret","cpp");
+@@clientName(KeyVault.updateSecret, "UpdateSecretProperties","cpp");
+@@clientName(KeyVault.restoreSecret, "RestoreSecretBackup","cpp");
+@@clientName(KeyVault.deleteSecret, "StartDeleteSecret","cpp");// <-- this should be an LRO
+@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret","cpp"); 
+@@clientName(KeyVault.recoverDeletedSecret, "StartRecoverDeletedSecret","cpp");// <-- this should be an LRO
 
