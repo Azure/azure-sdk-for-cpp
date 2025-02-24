@@ -76,7 +76,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     // codegen: insert after SecretClient::SetSecret
   public:
-
     /**
      * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
      * exists, Azure Key Vault creates a new version of that secret. This operation requires the
@@ -84,20 +83,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param secretName The name of the secret. The value you provide may be copied globally for
      * the purpose of running the service. The value provided should not include personally
      * identifiable or sensitive information.
-     * @param name The name of the secret.
      * @param value The value of the secret.
      * @param context The context for the operation can be used for request cancellation.
      * @return A secret consisting of a value, id and its attributes.
      *
      */
     Azure::Response<Models::KeyVaultSecret> SetSecret(
-        const std::string& name,
+        const std::string& secretName,
         const std::string& value,
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
       Models::SecretSetParameters parameters;
       parameters.Value = value;
-      return SetSecret(name, parameters, context);
+      return SetSecret(secretName, parameters, context);
     };
 
     /**
@@ -107,14 +105,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param secretName The name of the secret. The value you provide may be copied globally for
      * the purpose of running the service. The value provided should not include personally
      * identifiable or sensitive information.
-     * @param name The name of the secret.
-     * @param secret The secret  ofbject to be updated.
+     * @param secret The secret object to be updated.
      * @param context The context for the operation can be used for request cancellation.
      * @return A secret consisting of a value, id and its attributes.
      *
      */
     Azure::Response<Models::KeyVaultSecret> SetSecret(
-        const std::string& name,
+        const std::string& secretName,
         const Models::KeyVaultSecret& secret,
         const Azure::Core::Context& context = Azure::Core::Context()) const
     {
@@ -123,7 +120,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       parameters.ContentType = secret.ContentType;
       parameters.Tags = secret.Tags;
       parameters.SecretAttributes = secret.Properties;
-      return SetSecret(name, parameters, context);
+      return SetSecret(secretName, parameters, context);
     };
     // codegen: end insert after SecretClient::SetSecret
 
