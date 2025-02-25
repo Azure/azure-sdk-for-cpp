@@ -99,7 +99,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       return SetSecret(name, parameters, context);
     };
     // codegen: end insert after SecretClient::SetSecret
-
+    // codegen: insert before SecretClient::StartDeleteSecret
+  private:
+    // codegen: end insert before SecretClient::StartDeleteSecret
     /**
      * @brief The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be
      * applied to an individual version of a secret. This operation requires the secrets/delete
@@ -113,11 +115,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Response<Models::DeletedSecret> StartDeleteSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
+    // codegen: insert after SecretClient::StartDeleteSecret
+    
+    //Azure::Security::KeyVault::Secrets::DeleteSecretOperation StartDeleteSecret(
+    //    const std::string& name,
+    //    const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    // codegen: insert before SecretClient::UpdateSecretProperties
+    // codegen: insert before SecretClient::StartDeleteSecret
   private:
     // codegen: end insert before SecretClient::UpdateSecretProperties
-
+    // codegen: end insert after SecretClient::UpdateSecretProperties
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
      * Attributes that are not specified in the request are left unchanged. The value of a secret
@@ -137,6 +144,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     // codegen: insert after SecretClient::UpdateSecretProperties
   public:
+    /**
+     * @brief The UPDATE operation changes specified attributes of an existing stored secret.
+     * Attributes that are not specified in the request are left unchanged. The value of a secret
+     * itself cannot be changed. This operation requires the secrets/set permission.
+     * @param properties The secret properies to be updated. Must contain the name and version fo
+     * the secret to be updated.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
     Response<Models::KeyVaultSecret> UpdateSecretProperties(
         Models::SecretProperties const& properties,
         Azure::Core::Context const& context = Azure::Core::Context()) const
@@ -144,7 +161,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       Models::UpdateSecretPropertiesOptions options;
       options.SecretAttributes = properties;
       return UpdateSecretProperties(
-          properties.Name.Value(), properties.Version.Value(), options, context);
+          properties.Name.ValueOr(""), 
+          properties.Version.ValueOr(""), 
+          options, 
+          context);
     }
     // codegen: end insert after SecretClient::UpdateSecretProperties
 

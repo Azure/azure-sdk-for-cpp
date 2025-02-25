@@ -319,8 +319,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
   };
 
   // codegen: insert after SecretRestoreParameters
+  /**
+   * @brief The get secret options parameters.
+   *
+   */
   struct GetSecretOptions final
   {
+    /// The version of the secret.
     std::string Version;
   };
   // codegen: end insert after SecretRestoreParameters
