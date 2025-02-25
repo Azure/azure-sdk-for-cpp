@@ -78,8 +78,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     Azure::Response<Models::KeyVaultSecret> SetSecret(
         std::string const& name,
-         std::string const& value,
-         Azure::Core::Context const& context = Azure::Core::Context()) const
+        std::string const& value,
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       Models::SecretSetParameters parameters;
       parameters.Value = value;
@@ -87,9 +87,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     };
 
     Azure::Response<Models::KeyVaultSecret> SetSecret(
-         std::string const& name,
-         Models::KeyVaultSecret const& secret,
-         Azure::Core::Context const& context = Azure::Core::Context()) const
+        std::string const& name,
+        Models::KeyVaultSecret const& secret,
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       Models::SecretSetParameters parameters;
       parameters.Value = secret.Value.Value();
@@ -179,9 +179,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     Azure::Response<Models::KeyVaultSecret> GetSecret(
-         std::string const& secretName,
-         Models::GetSecretOptions const& options = Models::GetSecretOptions(),
-         Azure::Core::Context const& context = Azure::Core::Context()) const
+        std::string const& secretName,
+        Models::GetSecretOptions const& options = Models::GetSecretOptions(),
+        Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       return GetSecret(secretName, options.Version, context);
     };
