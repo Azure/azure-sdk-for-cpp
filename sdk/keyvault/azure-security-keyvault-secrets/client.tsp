@@ -9,7 +9,7 @@ using TypeSpec.Http;
 
 using KeyVault;
 @@clientName(KeyVault, "SecretClient","cpp"); // This is the name of the client
-@@clientName(KeyVault.SecretProperties,"SecretKeyProperties","cpp");
+@@clientName(KeyVault.SecretProperties,"ShouldNotGenerate","cpp");
 @@clientName(KeyVault.SecretAttributes, "SecretProperties","cpp");
 @@clientName(KeyVault.getSecrets, "GetPropertiesOfSecrets","cpp");
 @@clientName(KeyVault.getSecretVersions, "GetPropertiesOfSecretsVersions","cpp");
@@ -19,6 +19,4 @@ using KeyVault;
 @@clientName(KeyVault.updateSecret, "UpdateSecretProperties","cpp");
 @@clientName(KeyVault.restoreSecret, "RestoreSecretBackup","cpp");
 @@clientName(KeyVault.deleteSecret, "StartDeleteSecret","cpp");// <-- this should be an LRO
-@@clientName(KeyVault.DeletedSecretBundle,"DeletedSecret","cpp"); 
 @@clientName(KeyVault.recoverDeletedSecret, "StartRecoverDeletedSecret","cpp");// <-- this should be an LRO
-

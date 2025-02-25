@@ -26,8 +26,6 @@ options:
        to: "GetPropertiesOfSecretVersionsOptions"
      - from: "GetPropertiesOfSecretsPagedResponse"
        to: "SecretPropertiesPagedResponse"
-     - from: "DeleteSecretOperation"
-       to: "DeletedSecret"
      - from: "GetDeletedSecretsPagedResponse"
        to: "DeletedSecretPagedResponse"
      - from: "PurgeDeletedSecretResult"
@@ -38,6 +36,4 @@ options:
        to: "GetPropertiesOfSecretsOptions"
      - from: "GetPropertiesOfSecretsVersionsPagedResponse"
        to: "SecretPropertiesVersionsPagedResponse"
-     - from: "DeleteSecretOperation"
-       to: "DeletedSecret"
 
