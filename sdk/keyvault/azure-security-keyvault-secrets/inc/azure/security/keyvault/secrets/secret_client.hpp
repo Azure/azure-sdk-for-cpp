@@ -76,18 +76,42 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     // codegen: insert after SecretClient::SetSecret
   public:
+    /**
+     * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
+     * exists, Azure Key Vault creates a new version of that secret. This operation requires the
+     * secrets/set permission.
+     * @param secretName The name of the secret. The value you provide may be copied globally for
+     * the purpose of running the service. The value provided should not include personally
+     * identifiable or sensitive information.
+     * @param value The value of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
     Azure::Response<Models::KeyVaultSecret> SetSecret(
-        std::string const& name,
+        std::string const& secretName,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       Models::SecretSetParameters parameters;
       parameters.Value = value;
-      return SetSecret(name, parameters, context);
+      return SetSecret(secretName, parameters, context);
     };
 
+    /**
+     * @brief The SET operation adds a secret to the Azure Key Vault. If the named secret already
+     * exists, Azure Key Vault creates a new version of that secret. This operation requires the
+     * secrets/set permission.
+     * @param secretName The name of the secret. The value you provide may be copied globally for
+     * the purpose of running the service. The value provided should not include personally
+     * identifiable or sensitive information.
+     * @param secret The secret to set.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
     Azure::Response<Models::KeyVaultSecret> SetSecret(
-        std::string const& name,
+        std::string const& secretName,
         Models::KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
@@ -96,9 +120,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       parameters.ContentType = secret.ContentType;
       parameters.Tags = secret.Tags;
       parameters.SecretAttributes = secret.Properties;
-      return SetSecret(name, parameters, context);
+      return SetSecret(secretName, parameters, context);
     };
     // codegen: end insert after SecretClient::SetSecret
+
     // codegen: insert before SecretClient::StartDeleteSecret
   private:
     // codegen: end insert before SecretClient::StartDeleteSecret
@@ -116,8 +141,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& secretName,
         Core::Context const& context = {}) const;
     // codegen: insert after SecretClient::StartDeleteSecret
-    
-    //Azure::Security::KeyVault::Secrets::DeleteSecretOperation StartDeleteSecret(
+
+    // Azure::Security::KeyVault::Secrets::DeleteSecretOperation StartDeleteSecret(
     //    const std::string& name,
     //    const Azure::Core::Context& context = Azure::Core::Context()) const;
 
@@ -161,10 +186,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       Models::UpdateSecretPropertiesOptions options;
       options.SecretAttributes = properties;
       return UpdateSecretProperties(
-          properties.Name.ValueOr(""), 
-          properties.Version.ValueOr(""), 
-          options, 
-          context);
+          properties.Name.ValueOr(""), properties.Version.ValueOr(""), options, context);
     }
     // codegen: end insert after SecretClient::UpdateSecretProperties
 
