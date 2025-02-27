@@ -28,6 +28,7 @@ if(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 find_package(OpenSSL REQUIRED)
+
 set(
   AZURE_ATTESTATION_HEADER
     inc/azure/attestation.hpp
