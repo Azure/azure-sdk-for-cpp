@@ -174,22 +174,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     }
     // codegen: end insert after SecretClient::UpdateSecretProperties
 
-    /**
-     * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
-     * operation requires the secrets/get permission.
-     * @param secretName The name of the secret.
-     * @param secretVersion The version of the secret. This URI fragment is optional. If not
-     * specified, the latest version of the secret is returned.
-     * @param context The context for the operation can be used for request cancellation.
-     * @return A secret consisting of a value, id and its attributes.
-     *
-     */
-    Response<Models::KeyVaultSecret> GetSecretImpl(
-        std::string const& secretName,
-        std::string const& secretVersion,
-        Core::Context const& context = {}) const;
-
     // codegen: remove SecretClient::GetSecretImpl
+
+    // codegen: insert after SecretClient::GetSecretImpl
   public:
     /**
      * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
