@@ -80,7 +80,7 @@ if(WIN32)
     target_link_libraries(azure-data-tables PRIVATE bcrypt webservices crypt32)
 else()
     # Required for Hashing (sha ).
-    include(FindOpenSSL)
+    find_package(OpenSSL REQUIRED)
     target_link_libraries(azure-data-tables PRIVATE ${OPENSSL_SSL_LIBRARY})
     find_package(LibXml2 REQUIRED)
     target_include_directories(azure-data-tables SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})

@@ -27,8 +27,7 @@ if(NOT AZ_ALL_LIBRARIES)
     find_package(azure-core-cpp REQUIRED)
   endif()
 endif()
-include(FindOpenSSL)
-
+find_package(OpenSSL REQUIRED)
 set(
   AZURE_ATTESTATION_HEADER
     inc/azure/attestation.hpp
