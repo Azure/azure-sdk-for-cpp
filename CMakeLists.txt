@@ -14,7 +14,7 @@ set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based
 # The Rust OpenSSL library conflicts with the vcpkg based OpenSSL library, which causes TLS operations to fail on Linux.
 # For now, disabling rust functionality on Linux operating systems.
 if(LINUX)
-set(DISABLE_RUST_IN_BUILD ON)
+#set(DISABLE_RUST_IN_BUILD ON)
 endif()
 
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.

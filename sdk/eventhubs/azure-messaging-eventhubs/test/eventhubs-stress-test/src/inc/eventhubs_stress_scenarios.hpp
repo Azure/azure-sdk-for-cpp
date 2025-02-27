@@ -5,6 +5,8 @@
 
 #include "argagg.hpp"
 
+#include <cstdint>
+
 constexpr const char* EventHubsLoggerName = "eventhubs_stress_test";
 
 extern bool LogToConsole;
@@ -32,7 +34,7 @@ struct EventHubsScenarioOptions
    * @brief The number of arguments expected after the sentinel for the test option.
    *
    */
-  uint16_t ExpectedArgs;
+  std::uint16_t ExpectedArgs;
 
   /**
    * @brief Make an option to be mandatory to run the test.
@@ -49,7 +51,7 @@ struct EventHubsScenarioOptions
 
 class EventHubsStressScenario {
 public:
-  EventHubsStressScenario(){};
+  EventHubsStressScenario() {};
   virtual const std::string& GetStressScenarioName() = 0;
   virtual const std::vector<EventHubsScenarioOptions>& GetScenarioOptions() = 0;
   virtual void Initialize(argagg::parser_results const& parserResults) = 0;
@@ -57,5 +59,5 @@ public:
   virtual void Cleanup() = 0;
 
 protected:
-  virtual ~EventHubsStressScenario(){};
+  virtual ~EventHubsStressScenario() {};
 };
