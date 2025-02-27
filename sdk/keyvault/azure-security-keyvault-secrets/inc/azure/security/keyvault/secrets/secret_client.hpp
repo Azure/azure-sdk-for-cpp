@@ -174,10 +174,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     }
     // codegen: end insert after SecretClient::UpdateSecretProperties
 
-    // codegen: insert before SecretClient::GetSecret
-  private:
-    // codegen: end insert before SecretClient::GetSecret
-
     /**
      * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
      * operation requires the secrets/get permission.
@@ -188,12 +184,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> GetSecret(
+    Response<Models::KeyVaultSecret> GetSecretImpl(
         std::string const& secretName,
         std::string const& secretVersion,
         Core::Context const& context = {}) const;
 
-    // codegen: insert after SecretClient::GetSecret
+    // codegen: remove SecretClient::GetSecretImpl
   public:
     /**
      * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
@@ -207,11 +203,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<Models::KeyVaultSecret> GetSecret(
         std::string const& secretName,
         Models::GetSecretOptions const& options = Models::GetSecretOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      return GetSecret(secretName, options.Version, context);
-    };
-    // codegen: end insert after SecretClient::GetSecret
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+    // codegen: end insert after SecretClient::GetSecretImpl
 
     /**
      * @brief The Get Secrets operation is applicable to the entire vault. However, only the base

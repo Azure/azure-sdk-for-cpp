@@ -125,7 +125,7 @@ if(BUILD_TESTING)
     enable_testing ()
   endif()
   
-#  add_subdirectory(test/ut)
+  add_subdirectory(test/ut)
 #  add_subdirectory(test/test-app)
 endif()
 

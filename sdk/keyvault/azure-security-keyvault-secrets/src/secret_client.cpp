@@ -254,164 +254,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
   return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::DeletedSecret>
-SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& context) const
-{
-  auto url = m_url;
-  url.AppendPath("secrets/");
-  if (secretName.empty())
-  {
-    throw std::invalid_argument("Parameter 'secretName' cannot be an empty string.");
-  }
-  url.AppendPath(Core::Url::Encode(secretName));
-
-  url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
-
-  Core::Http::Request request(Core::Http::HttpMethod::Delete, url);
-
-  request.SetHeader("Accept", "application/json");
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Models::DeletedSecret response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      try
-      {
-        auto const jsonRoot
-            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
-        {
-          response.Value = jsonRoot["value"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("id") && !jsonRoot["id"].is_null())
-        {
-          response.Id = jsonRoot["id"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("contentType") && !jsonRoot["contentType"].is_null())
-        {
-          response.ContentType = jsonRoot["contentType"].get<std::string>();
-        }
-
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
-        {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
-        }
-
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
-        {
-          response.Tags = std::map<std::string, std::string>{};
-
-          for (auto const& kv : jsonRoot["tags"].items())
-          {
-            std::string value{};
-            value = kv.value().get<std::string>();
-            response.Tags.Value().emplace(kv.key(), value);
-          }
-        }
-
-        if (jsonRoot.contains("kid") && !jsonRoot["kid"].is_null())
-        {
-          response.Kid = jsonRoot["kid"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("managed") && !jsonRoot["managed"].is_null())
-        {
-          response.Managed = jsonRoot["managed"].get<bool>();
-        }
-
-        if (jsonRoot.contains("recoveryId") && !jsonRoot["recoveryId"].is_null())
-        {
-          response.RecoveryId = jsonRoot["recoveryId"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("scheduledPurgeDate") && !jsonRoot["scheduledPurgeDate"].is_null())
-        {
-          response.ScheduledPurgeDate = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["scheduledPurgeDate"].is_string()
-                  ? std::stoll(jsonRoot["scheduledPurgeDate"].get<std::string>())
-                  : jsonRoot["scheduledPurgeDate"].get<std::int64_t>());
-        }
-
-        if (jsonRoot.contains("deletedDate") && !jsonRoot["deletedDate"].is_null())
-        {
-          response.DeletedDate = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["deletedDate"].is_string()
-                  ? std::stoll(jsonRoot["deletedDate"].get<std::string>())
-                  : jsonRoot["deletedDate"].get<std::int64_t>());
-        }
-      }
-      catch (Core::Json::_internal::json::exception const&)
-      {
-        throw Core::RequestFailedException(rawResponse);
-      }
-    }
-  }
-
-  return Response<Models::DeletedSecret>(std::move(response), std::move(rawResponse));
-}
+// codegen: remove SecretClient::DeleteSecret
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
 SecretClient::UpdateSecretProperties(
@@ -628,7 +471,8 @@ SecretClient::UpdateSecretProperties(
   return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> SecretClient::GetSecret(
+Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
+SecretClient::GetSecretImpl(
     std::string const& secretName,
     std::string const& secretVersion,
     Core::Context const& context) const
@@ -772,7 +616,154 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
 
   return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
+// codegen: remove SecretClient::GetSecretImpl
+// codegen: insert after SecretClient::GetSecretImpl
+Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
+SecretClient::GetSecret(
+    std::string const& secretName,
+    Models::GetSecretOptions const& options,
+    Core::Context const& context) const
+{
+  auto url = m_url;
+  url.AppendPath("secrets/");
+  if (secretName.empty())
+  {
+    throw std::invalid_argument("Parameter 'secretName' cannot be an empty string.");
+  }
+  url.AppendPath(Core::Url::Encode(secretName));
+  if (options.Version.empty())
+  {
+    url.AppendPath(Core::Url::Encode(options.Version));
+  }
 
+  url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
+
+  Core::Http::Request request(Core::Http::HttpMethod::Get, url);
+
+  request.SetHeader("Accept", "application/json");
+
+  auto rawResponse = m_pipeline->Send(request, context);
+  auto const httpStatusCode = rawResponse->GetStatusCode();
+
+  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+  {
+    throw Core::RequestFailedException(rawResponse);
+  }
+
+  Models::KeyVaultSecret response{};
+  {
+    auto const& responseBody = rawResponse->GetBody();
+    if (responseBody.size() > 0)
+    {
+      try
+      {
+        auto const jsonRoot
+            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
+
+        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
+        {
+          response.Value = jsonRoot["value"].get<std::string>();
+        }
+
+        if (jsonRoot.contains("id") && !jsonRoot["id"].is_null())
+        {
+          response.Id = jsonRoot["id"].get<std::string>();
+        }
+
+        if (jsonRoot.contains("contentType") && !jsonRoot["contentType"].is_null())
+        {
+          response.ContentType = jsonRoot["contentType"].get<std::string>();
+        }
+
+        if (jsonRoot["attributes"].contains("enabled")
+            && !jsonRoot["attributes"]["enabled"].is_null())
+        {
+          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+        }
+
+        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+        {
+          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+              jsonRoot["attributes"]["nbf"].is_string()
+                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+        }
+
+        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+        {
+          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+              jsonRoot["attributes"]["exp"].is_string()
+                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+        }
+
+        if (jsonRoot["attributes"].contains("created")
+            && !jsonRoot["attributes"]["created"].is_null())
+        {
+          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+              jsonRoot["attributes"]["created"].is_string()
+                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
+        }
+
+        if (jsonRoot["attributes"].contains("updated")
+            && !jsonRoot["attributes"]["updated"].is_null())
+        {
+          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+              jsonRoot["attributes"]["updated"].is_string()
+                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+        }
+
+        if (jsonRoot["attributes"].contains("recoverableDays")
+            && !jsonRoot["attributes"]["recoverableDays"].is_null())
+        {
+          response.Properties.RecoverableDays
+              = jsonRoot["attributes"]["recoverableDays"].is_string()
+              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+        }
+
+        if (jsonRoot["attributes"].contains("recoveryLevel")
+            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+        {
+          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
+              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+        }
+
+        if (jsonRoot.contains("tags"))
+        {
+          response.Tags = std::map<std::string, std::string>{};
+
+          for (auto const& kv : jsonRoot["tags"].items())
+          {
+            std::string value{};
+            value = kv.value().get<std::string>();
+            response.Tags.Value().emplace(kv.key(), value);
+          }
+        }
+
+        if (jsonRoot.contains("kid") && !jsonRoot["kid"].is_null())
+        {
+          response.Kid = jsonRoot["kid"].get<std::string>();
+        }
+
+        if (jsonRoot.contains("managed") && !jsonRoot["managed"].is_null())
+        {
+          response.Managed = jsonRoot["managed"].get<bool>();
+        }
+      }
+      catch (Core::Json::_internal::json::exception const&)
+      {
+        throw Core::RequestFailedException(rawResponse);
+      }
+    }
+  }
+
+  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+}
+
+// codegen: end insert after SecretClient::GetSecretImpl
 SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
     GetPropertiesOfSecretsOptions const& options,
     Core::Context const& context) const
@@ -1533,145 +1524,7 @@ SecretClient::PurgeDeletedSecret(std::string const& secretName, Core::Context co
   return Response<Models::PurgedSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
-SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context const& context)
-    const
-{
-  auto url = m_url;
-  url.AppendPath("deletedsecrets/");
-  if (secretName.empty())
-  {
-    throw std::invalid_argument("Parameter 'secretName' cannot be an empty string.");
-  }
-  url.AppendPath(Core::Url::Encode(secretName));
-  url.AppendPath("recover");
-
-  url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
-
-  Core::Http::Request request(Core::Http::HttpMethod::Post, url);
-
-  request.SetHeader("Accept", "application/json");
-
-  auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
-
-  if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
-  {
-    throw Core::RequestFailedException(rawResponse);
-  }
-
-  Models::KeyVaultSecret response{};
-  {
-    auto const& responseBody = rawResponse->GetBody();
-    if (responseBody.size() > 0)
-    {
-      try
-      {
-        auto const jsonRoot
-            = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
-
-        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
-        {
-          response.Value = jsonRoot["value"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("id") && !jsonRoot["id"].is_null())
-        {
-          response.Id = jsonRoot["id"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("contentType") && !jsonRoot["contentType"].is_null())
-        {
-          response.ContentType = jsonRoot["contentType"].get<std::string>();
-        }
-
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
-        {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
-        }
-
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
-        {
-          response.Tags = std::map<std::string, std::string>{};
-
-          for (auto const& kv : jsonRoot["tags"].items())
-          {
-            std::string value{};
-            value = kv.value().get<std::string>();
-            response.Tags.Value().emplace(kv.key(), value);
-          }
-        }
-
-        if (jsonRoot.contains("kid") && !jsonRoot["kid"].is_null())
-        {
-          response.Kid = jsonRoot["kid"].get<std::string>();
-        }
-
-        if (jsonRoot.contains("managed") && !jsonRoot["managed"].is_null())
-        {
-          response.Managed = jsonRoot["managed"].get<bool>();
-        }
-      }
-      catch (Core::Json::_internal::json::exception const&)
-      {
-        throw Core::RequestFailedException(rawResponse);
-      }
-    }
-  }
-
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
-}
+// codegen: remove SecretClient::RecoverDeletedSecret
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::BackupSecretResult>
 SecretClient::BackupSecret(std::string const& secretName, Core::Context const& context) const
