@@ -266,11 +266,14 @@ endif()
   # Set the build environment variables for the rust_wrapper crate to use our targetted OpenSSL version.
   if(NOT APPLE)
     if (LINUX OR UNIX)
+      # corrosion_set_env_vars(rust_wrapper
+      #   OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+      #   OPENSSL_LIBS=${OPENSSL_LIBRARIES}
+      # )
       corrosion_set_env_vars(rust_wrapper
         OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
-        OPENSSL_LIBS=${OPENSSL_LIBRARIES}
       )
-    endif()
+      endif()
   endif()
 endif()
 
