@@ -81,7 +81,7 @@ if(WIN32)
 else()
     # Required for Hashing (sha ).
     find_package(OpenSSL REQUIRED)
-    target_link_libraries(azure-data-tables PRIVATE ${OPENSSL_SSL_LIBRARY})
+    target_link_libraries(azure-data-tables PRIVATE OpenSSL::SSL)
     find_package(LibXml2 REQUIRED)
     target_include_directories(azure-data-tables SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
     target_link_libraries(azure-data-tables PRIVATE ${LIBXML2_LIBRARIES})
