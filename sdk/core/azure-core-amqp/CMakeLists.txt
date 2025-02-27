@@ -257,7 +257,7 @@ if(LINUX OR UNIX)
   
   corrosion_set_env_vars(azure-core-amqp
     OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
-    OPENSSL_LIB_DIR=${OPENSSL_LIBRARIES}
+    OPENSSL_LIBS=${OPENSSL_LIBRARIES}
   )
   
 endif()
@@ -327,7 +327,7 @@ elseif(USE_RUST_AMQP)
     target_link_libraries(azure-core-amqp PRIVATE ${OPENSSL_LIBRARIES})
   else()
     message(STATUS "Unknown operating system, assuming Linux based operating system.")
-    target_link_libraries(azure-core-amqp PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+#    target_link_libraries(azure-core-amqp PRIVATE OpenSSL::SSL OpenSSL::Crypto)
   endif()
 endif()
 
