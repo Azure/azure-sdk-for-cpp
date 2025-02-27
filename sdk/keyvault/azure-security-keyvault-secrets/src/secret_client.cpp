@@ -255,7 +255,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::DeletedSecret>
-SecretClient::StartDeleteSecret(std::string const& secretName, Core::Context const& context) const
+SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -1534,7 +1534,7 @@ SecretClient::PurgeDeletedSecret(std::string const& secretName, Core::Context co
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
-SecretClient::StartRecoverDeletedSecret(std::string const& secretName, Core::Context const& context)
+SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context const& context)
     const
 {
   auto url = m_url;

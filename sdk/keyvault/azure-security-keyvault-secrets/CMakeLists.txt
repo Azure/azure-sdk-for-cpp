@@ -70,6 +70,7 @@ set(
     inc/azure/security/keyvault/secrets/models/secrets_models.hpp
     inc/azure/security/keyvault/secrets.hpp
     inc/azure/security/keyvault/secrets/dll_import_export.hpp
+    inc/azure/security/keyvault/secrets/keyvault_operations.hpp
     inc/azure/security/keyvault/secrets/rtti.hpp
     inc/azure/security/keyvault/secrets/secret_client.hpp
     inc/azure/security/keyvault/secrets/secret_client_options.hpp
@@ -81,6 +82,7 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
     src/private/package_version.hpp
     src/deleted_secret_paged_response.cpp
+    src/keyvault_operations.cpp
     src/secrets.cpp
     src/secret_client.cpp
     src/secret_properties_paged_response.cpp
