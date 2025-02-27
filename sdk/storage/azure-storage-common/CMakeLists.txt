@@ -102,7 +102,7 @@ else()
     find_package(LibXml2 REQUIRED)
     target_include_directories(azure-storage-common SYSTEM PRIVATE ${LIBXML2_INCLUDE_DIRS})
     target_link_libraries(azure-storage-common PRIVATE ${LIBXML2_LIBRARIES})
-    find_package(OpenSSL REQUIRED)
+    include(FindOpenSSL)
     target_link_libraries(azure-storage-common PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 endif()
 

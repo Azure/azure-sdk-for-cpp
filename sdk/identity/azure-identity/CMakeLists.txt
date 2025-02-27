@@ -112,7 +112,7 @@ if(WIN32 AND NOT(CMAKE_SYSTEM_NAME STREQUAL "WindowsStore" AND CMAKE_SYSTEM_VERS
   find_package(wil CONFIG REQUIRED)
   target_link_libraries(azure-identity PRIVATE WIL::WIL bcrypt crypt32)
 else()
-  find_package(OpenSSL REQUIRED)
+  include(FindOpenSSL)
   target_link_libraries(azure-identity PRIVATE OpenSSL::Crypto)
 endif()
 

@@ -255,11 +255,6 @@ if(LINUX OR UNIX)
   message(STATUS "OPENSSL_CRYPTO_LIBRARY: ${OPENSSL_CRYPTO_LIBRARY}")
   message(STATUS "OPENSSL_SSL_LIBRARY: ${OPENSSL_SSL_LIBRARY}")
   
-  corrosion_set_env_vars(azure-core-amqp
-    OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
-    OPENSSL_LIBS=${OPENSSL_LIBRARIES}
-  )
-  
 endif()
 endif()
 
@@ -268,6 +263,15 @@ endif()
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
   corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
 
+  # Set the build environment variables for the rust_wrapper crate to use our targetted OpenSSL version.
+  if(NOT APPLE)
+    if (LINUX OR UNIX)
+      corrosion_set_env_vars(rust_wrapper
+        OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+        OPENSSL_LIBS=${OPENSSL_LIBRARIES}
+      )
+    endif()
+  endif()
 endif()
 
 

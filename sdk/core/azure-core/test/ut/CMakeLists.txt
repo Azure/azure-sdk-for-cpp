@@ -40,7 +40,7 @@ endif()
 include(GoogleTest)
 
 if (NOT WIN32)
-  find_package(OpenSSL REQUIRED)
+  include(FindOpenSSL)
   SET(OPENSSLCRYPTO OpenSSL::Crypto)
 endif()
 
