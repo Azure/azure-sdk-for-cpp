@@ -51,7 +51,7 @@ struct EventHubsScenarioOptions
 
 class EventHubsStressScenario {
 public:
-  EventHubsStressScenario() {};
+  EventHubsStressScenario(){};
   virtual const std::string& GetStressScenarioName() = 0;
   virtual const std::vector<EventHubsScenarioOptions>& GetScenarioOptions() = 0;
   virtual void Initialize(argagg::parser_results const& parserResults) = 0;
@@ -59,5 +59,5 @@ public:
   virtual void Cleanup() = 0;
 
 protected:
-  virtual ~EventHubsStressScenario() {};
+  virtual ~EventHubsStressScenario(){};
 };
