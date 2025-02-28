@@ -71,51 +71,54 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
   }
 }
 
-// TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
-//{
-//   auto secretName = GetTestName();
-//   auto const& client = GetClientForTest(secretName);
-//   std::string secretValue{"secretValue"};
-//   std::string secretValue2{"secretValue2"};
-//   std::string version1;
-//   std::string version2;
-//   {
-//     auto secretResponse = client.SetSecret(secretName, secretValue);
-//     CheckValidResponse(secretResponse);
-//     auto secret = secretResponse.Value;
-//     version1 = secret.Properties.Version;
-//     EXPECT_EQ(secret.Value.Value(), secretValue);
-//   }
-//   {
-//     auto secretResponse = client.SetSecret(secretName, secretValue2);
-//     CheckValidResponse(secretResponse);
-//     auto secret = secretResponse.Value;
-//     version2 = secret.Properties.Version;
-//     EXPECT_EQ(secret.Value.Value(), secretValue2);
-//   }
-//   {
-//     auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
-//     EXPECT_EQ(secretResponse.Items.size(), size_t(2));
-//     EXPECT_TRUE(
-//         secretResponse.Items[0].Version == version1 || secretResponse.Items[0].Version ==
-//         version2);
-//     EXPECT_TRUE(
-//         secretResponse.Items[1].Version == version1 || secretResponse.Items[1].Version ==
-//         version2);
-//   }
-//   {
-//     auto operation = client.StartDeleteSecret(secretName);
-//     operation.PollUntilDone(m_defaultWait);
-//     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-//     CheckValidResponse(deletedSecretResponse);
-//     auto secret = deletedSecretResponse.Value;
-//     EXPECT_EQ(secret.Name, secretName);
-//   }
-//   {
-//     auto purgedResponse = client.PurgeDeletedSecret(secretName);
-//     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-//   }
-// }
+ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
+{
+   auto secretName = GetTestName();
+   auto const& client = GetClientForTest(secretName);
+   std::string secretValue{"secretValue"};
+   std::string secretValue2{"secretValue2"};
+   std::string version1;
+   std::string version2;
+   {
+     auto secretResponse = client.SetSecret(secretName, secretValue);
+     CheckValidResponse(secretResponse);
+     auto secret = secretResponse.Value;
+     auto nv = ParseIDUrl(secret.Id.Value());
+     version1 = nv.Version;
+     EXPECT_EQ(nv.Name, secretName);
+     EXPECT_EQ(secret.Value.Value(), secretValue);
+   }
+   {
+     auto secretResponse = client.SetSecret(secretName, secretValue2);
+     CheckValidResponse(secretResponse);
+     auto secret = secretResponse.Value;
+     auto nv = ParseIDUrl(secret.Id.Value());
+     version2 = nv.Version;
+     EXPECT_EQ(nv.Name, secretName);
+     EXPECT_EQ(secret.Value.Value(), secretValue2);
+   }
+   {
+     auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
+     EXPECT_EQ(secretResponse.Value.Value().size(), size_t(2));
+     EXPECT_TRUE(ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version == version1
+     || ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version ==version2);
+     EXPECT_TRUE(
+         ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version1
+         || ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version2);
+   }
+  /* {
+     auto operation = client.StartDeleteSecret(secretName);
+     operation.PollUntilDone(m_defaultWait);
+     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
+     CheckValidResponse(deletedSecretResponse);
+     auto secret = deletedSecretResponse.Value;
+     EXPECT_EQ(secret.Name, secretName);
+   }
+   {
+     auto purgedResponse = client.PurgeDeletedSecret(secretName);
+     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
+   }*/
+ }
 //
 // TEST_F(KeyVaultSecretClientTest, DISABLED_UpdateTest)
 //{
