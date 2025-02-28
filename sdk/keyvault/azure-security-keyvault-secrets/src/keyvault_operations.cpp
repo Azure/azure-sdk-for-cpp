@@ -131,7 +131,8 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 
   try
   {
-    rawResponse = m_secretClient->GetDeletedSecret("m_value..Name.Value()", context).RawResponse;
+    auto nameVersion = ParseIDUrl(m_value.Id.Value());
+    rawResponse = m_secretClient->GetDeletedSecret(nameVersion.Name, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -153,10 +154,6 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
       throw Azure::Core::RequestFailedException(rawResponse);
   }
 
-  if (m_status == Azure::Core::OperationStatus::Succeeded)
-  {
-    // m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
-  }
   return rawResponse;
 }
 
@@ -167,12 +164,13 @@ DeleteSecretOperation::DeleteSecretOperation(
 {
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
-  // m_continuationToken = m_value.Name;
+  auto nameVersion = ParseIDUrl(m_value.Id.Value());
+  m_continuationToken = nameVersion.Name;
 
-  // if ("m_value.Name".empty() == false)
-  //{
-  m_status = Azure::Core::OperationStatus::Succeeded;
-  //}
+  if (m_continuationToken.empty() == false)
+  {
+    m_status = Azure::Core::OperationStatus::Succeeded;
+  }
 }
 
 DeleteSecretOperation::DeleteSecretOperation(
@@ -180,7 +178,6 @@ DeleteSecretOperation::DeleteSecretOperation(
     std::shared_ptr<SecretClient> secretClient)
     : m_secretClient(std::move(secretClient)), m_continuationToken(std::move(resumeToken))
 {
-  // m_value.Name = m_continuationToken;
 }
 
 DeleteSecretOperation DeleteSecretOperation::CreateFromResumeToken(

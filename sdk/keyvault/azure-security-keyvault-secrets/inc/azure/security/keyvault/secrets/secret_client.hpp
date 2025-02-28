@@ -128,7 +128,45 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     };
     // codegen: end insert after SecretClient::SetSecret
 
-    // codegen: remove SecretClient::DeleteSecret
+    // codegen: insert before SecretClient::DeleteSecret
+  private:
+    // codegen: end insert before SecretClient::DeleteSecret
+
+    /**
+     * @brief The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be
+     * applied to an individual version of a secret. This operation requires the secrets/delete
+     * permission.
+     * @param secretName The name of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A Deleted Secret consisting of its previous id, attributes and its tags, as well as
+     * information on when it will be purged.
+     *
+     */
+    Response<Models::DeletedSecret> DeleteSecret(
+        std::string const& secretName,
+        Core::Context const& context = {}) const;
+
+    // codegen: insert after SecretClient::DeleteSecret
+  public:
+    /**
+     * @brief The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be
+     * applied to an individual version of a secret. This operation requires the secrets/delete
+     * permission.
+     * @param secretName The name of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A Deleted Secret consisting of its previous id, attributes and its tags, as well as
+     * information on when it will be purged.
+     *
+     */
+    DeleteSecretOperation StartDeleteSecret(
+        std::string const& secretName,
+        Core::Context const& context = {}) const
+    {
+      return DeleteSecretOperation(
+          std::make_shared<SecretClient>(*this), std::move(DeleteSecret(secretName, context)));
+    }
+
+    // codegen: end insert after SecretClient::DeleteSecret
 
     // codegen: insert before SecretClient::UpdateSecretProperties
   private:

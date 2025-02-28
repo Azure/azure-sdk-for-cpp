@@ -71,54 +71,56 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
   }
 }
 
- TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
+TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
 {
-   auto secretName = GetTestName();
-   auto const& client = GetClientForTest(secretName);
-   std::string secretValue{"secretValue"};
-   std::string secretValue2{"secretValue2"};
-   std::string version1;
-   std::string version2;
-   {
-     auto secretResponse = client.SetSecret(secretName, secretValue);
-     CheckValidResponse(secretResponse);
-     auto secret = secretResponse.Value;
-     auto nv = ParseIDUrl(secret.Id.Value());
-     version1 = nv.Version;
-     EXPECT_EQ(nv.Name, secretName);
-     EXPECT_EQ(secret.Value.Value(), secretValue);
-   }
-   {
-     auto secretResponse = client.SetSecret(secretName, secretValue2);
-     CheckValidResponse(secretResponse);
-     auto secret = secretResponse.Value;
-     auto nv = ParseIDUrl(secret.Id.Value());
-     version2 = nv.Version;
-     EXPECT_EQ(nv.Name, secretName);
-     EXPECT_EQ(secret.Value.Value(), secretValue2);
-   }
-   {
-     auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
-     EXPECT_EQ(secretResponse.Value.Value().size(), size_t(2));
-     EXPECT_TRUE(ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version == version1
-     || ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version ==version2);
-     EXPECT_TRUE(
-         ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version1
-         || ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version2);
-   }
-  /* {
-     auto operation = client.StartDeleteSecret(secretName);
-     operation.PollUntilDone(m_defaultWait);
-     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
-     CheckValidResponse(deletedSecretResponse);
-     auto secret = deletedSecretResponse.Value;
-     EXPECT_EQ(secret.Name, secretName);
-   }
-   {
-     auto purgedResponse = client.PurgeDeletedSecret(secretName);
-     CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
-   }*/
- }
+  auto secretName = GetTestName();
+  auto const& client = GetClientForTest(secretName);
+  std::string secretValue{"secretValue"};
+  std::string secretValue2{"secretValue2"};
+  std::string version1;
+  std::string version2;
+  {
+    auto secretResponse = client.SetSecret(secretName, secretValue);
+    CheckValidResponse(secretResponse);
+    auto secret = secretResponse.Value;
+    auto nv = ParseIDUrl(secret.Id.Value());
+    version1 = nv.Version;
+    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Value.Value(), secretValue);
+  }
+  {
+    auto secretResponse = client.SetSecret(secretName, secretValue2);
+    CheckValidResponse(secretResponse);
+    auto secret = secretResponse.Value;
+    auto nv = ParseIDUrl(secret.Id.Value());
+    version2 = nv.Version;
+    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Value.Value(), secretValue2);
+  }
+  {
+    auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
+    EXPECT_EQ(secretResponse.Value.Value().size(), size_t(2));
+    EXPECT_TRUE(
+        ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version == version1
+        || ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version == version2);
+    EXPECT_TRUE(
+        ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version1
+        || ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version == version2);
+  }
+  {
+    auto operation = client.StartDeleteSecret(secretName);
+    operation.PollUntilDone(m_defaultWait);
+    auto deletedSecretResponse = client.GetDeletedSecret(secretName);
+    CheckValidResponse(deletedSecretResponse);
+    auto secret = deletedSecretResponse.Value;
+    auto nv = ParseIDUrl(secret.Id.Value());
+    EXPECT_EQ(nv.Name, secretName);
+  }
+  {
+    auto purgedResponse = client.PurgeDeletedSecret(secretName);
+    CheckValidResponse(purgedResponse, Azure::Core::Http::HttpStatusCode::NoContent);
+  }
+}
 //
 // TEST_F(KeyVaultSecretClientTest, DISABLED_UpdateTest)
 //{
@@ -250,11 +252,13 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 //     EXPECT_EQ(operation.GetResumeToken(), secretName);
 //     EXPECT_EQ(operation.HasValue(), true);
 //     auto operationResult = operation.Value();
+//     auto onv = ParseIDUrl(operationResult.Id.Value());
 //     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
 //     CheckValidResponse(deletedSecretResponse);
 //     auto secret = deletedSecretResponse.Value;
-//     EXPECT_EQ(secret.Name, secretName);
-//     EXPECT_EQ(operationResult.Name, secretName);
+//     auto nv = ParseIDUrl(secret.Id.Value());
+//     EXPECT_EQ(nv.Name, secretName);
+//     EXPECT_EQ(onv.Name, secretName);
 //     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 //   }
 //   {
@@ -272,35 +276,36 @@ TEST_F(KeyVaultSecretClientTest, FirstCreateTest)
 //     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
 //   }
 // }
-// TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
-//{
-//   std::string const testName(GetTestName());
-//   auto const& client = GetClientForTest(testName);
-//   int capacity = 10; // had to reduce size to workaround test-proxy issue with max payload size
-//   // Create secrets
-//   std::vector<std::string> secretNames;
-//   for (int counter = 0; counter < capacity; counter++)
-//   {
-//     std::string const name(testName + std::to_string(counter));
-//     secretNames.emplace_back(name);
-//     auto secretResponse = client.SetSecret(name, "secretValue");
-//     CheckValidResponse(secretResponse);
-//     auto secret = secretResponse.Value;
-//     EXPECT_EQ(secret.Name, name);
-//     // Avoid server Throttled while creating keys
-//     TestSleep();
-//   }
-//   // Get Secret properties
-//   std::vector<SecretProperties> secretProps;
-//
-//   for (auto secretResponse = client.GetPropertiesOfSecrets(); secretResponse.HasPage();
-//        secretResponse.MoveToNextPage())
-//   {
-//     for (auto& secret : secretResponse.Items)
-//     {
-//       secretProps.emplace_back(secret);
-//     }
-//   }
-//
-//   EXPECT_TRUE(secretProps.size() >= static_cast<size_t>(capacity));
-// }
+TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
+{
+  std::string const testName(GetTestName());
+  auto const& client = GetClientForTest(testName);
+  int capacity = 10; // had to reduce size to workaround test-proxy issue with max payload size
+  // Create secrets
+  std::vector<std::string> secretNames;
+  for (int counter = 0; counter < capacity; counter++)
+  {
+    std::string const name(testName + std::to_string(counter));
+    secretNames.emplace_back(name);
+    auto secretResponse = client.SetSecret(name, "secretValue");
+    CheckValidResponse(secretResponse);
+    auto secret = secretResponse.Value;
+    auto nv = ParseIDUrl(secret.Id.Value());
+    EXPECT_EQ(nv.Name, name);
+    // Avoid server Throttled while creating keys
+    TestSleep();
+  }
+  // Get Secret properties
+  std::vector<Models::SecretItem> secretProps;
+
+  for (auto secretResponse = client.GetPropertiesOfSecrets(); secretResponse.HasPage();
+       secretResponse.MoveToNextPage())
+  {
+    for (auto& secret : secretResponse.Value.Value())
+    {
+      secretProps.emplace_back(secret);
+    }
+  }
+
+  EXPECT_TRUE(secretProps.size() >= static_cast<size_t>(capacity));
+}
