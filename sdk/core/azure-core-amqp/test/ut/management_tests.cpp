@@ -28,9 +28,7 @@
 #undef USE_NATIVE_BROKER
 #endif
 
-#if defined(USE_NATIVE_BROKER)
-constexpr const uint16_t nativeBrokerPort = 25672;
-#else
+#if !defined(USE_NATIVE_BROKER)
 #include "mock_amqp_server.hpp"
 #endif
 #include <gtest/gtest.h>

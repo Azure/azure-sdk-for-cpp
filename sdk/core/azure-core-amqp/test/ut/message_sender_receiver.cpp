@@ -968,11 +968,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     };
 
-#if defined(USE_NATIVE_BROKER)
-    uint16_t port = nativeBrokerPort;
-#else
-    uint16_t port = m_mockServer.GetPort();
-#endif
     auto tokenCredential = std::make_shared<AzureTokenCredential>();
 
     auto connection{CreateAmqpConnection()};
