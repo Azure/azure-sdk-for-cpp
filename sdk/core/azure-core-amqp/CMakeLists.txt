@@ -110,11 +110,50 @@ if (USE_RUST_AMQP)
   )
   FetchContent_MakeAvailable(Corrosion)
 
+  if (NOT APPLE)
+if(LINUX OR UNIX)
+  message(STATUS "Adding OpenSSL to target link libraries")
+  include(FindOpenSSL)
+
+  get_cmake_property(_variableNames VARIABLES)
+  foreach (_variableName ${_variableNames})
+    if (${_variableName} MATCHES "OPENSSL")
+      message(STATUS "Found variable: ${_variableName} = ${${_variableName}}")
+    endif()
+  endforeach()
+
+  message(STATUS "OPENSSL_FOUND: ${OPENSSL_FOUND}")
+  message(STATUS "OPENSSL_INCLUDE_DIR: ${OPENSSL_INCLUDE_DIR}")
+  message(STATUS "OPENSSL_LIBRARIES: ${OPENSSL_LIBRARIES}")
+  message(STATUS "OPENSSL_CRYPTO_LIBRARY: ${OPENSSL_CRYPTO_LIBRARY}")
+  message(STATUS "OPENSSL_SSL_LIBRARY: ${OPENSSL_SSL_LIBRARY}")
+  message(STATUS "OPENSSL_DIR: ${OPENSSL_DIR}")
+  message(STATUS "OPENSSL_ROOT_DIR: ${OPENSSL_ROOT_DIR}")
+  message(STATUS "OPENSSL_VERSION: ${OPENSSL_VERSION}")
+  message(STATUS "OPENSSL_VERSION_STRING: ${OPENSSL_VERSION_STRING}")
+  
+endif()
+endif()
+
+
  
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
   corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
-endif()
 
+  # Set the build environment variables for the rust_wrapper crate to use our targetted OpenSSL version.
+  if(NOT APPLE)
+    if (LINUX OR UNIX)
+      # corrosion_set_env_vars(rust_wrapper
+      #   OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+      #   OPENSSL_LIBS=${OPENSSL_LIBRARIES}
+      # )
+      corrosion_set_env_vars(rust_wrapper
+        OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+        OPENSSL_DIR=${OPENSSL_INCLUDE_DIR}/..
+      )
+      endif()
+  endif()
+endif()
 
 
 set (AZURE_CORE_AMQP_HEADER
@@ -242,6 +281,8 @@ elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_RUST_AMQP_SOURCE})
 endif()
 
+
+
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
 target_include_directories(azure-core-amqp PRIVATE src/impl/uamqp/amqp/private src/impl/uamqp/amqp/network ${UAMQP_INC_FOLDER})
@@ -295,10 +336,10 @@ elseif(USE_RUST_AMQP)
     message(STATUS "Skipping library setting on macOS")
   elseif(LINUX OR UNIX)
     message(STATUS "Assuming Linux crypto libraries.")
-    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+    target_link_libraries(azure-core-amqp PRIVATE ${OPENSSL_LIBRARIES})
   else()
     message(STATUS "Unknown operating system, assuming Linux based operating system.")
-    target_link_libraries(azure-core-amqp PRIVATE "-lssl -lcrypto")
+#    target_link_libraries(azure-core-amqp PRIVATE OpenSSL::SSL OpenSSL::Crypto)
   endif()
 endif()
 

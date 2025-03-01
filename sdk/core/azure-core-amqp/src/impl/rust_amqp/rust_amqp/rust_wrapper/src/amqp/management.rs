@@ -6,7 +6,7 @@ use crate::{
     call_context::{call_context_from_ptr_mut, RustCallContext},
     model::value::RustAmqpValue,
 };
-use azure_core::{auth::AccessToken, Result};
+use azure_core::{credentials::AccessToken, Result};
 use azure_core_amqp::{
     management::{AmqpManagement, AmqpManagementApis},
     value::{AmqpOrderedMap, AmqpValue},

@@ -100,10 +100,6 @@ std::vector<EventHubsScenarioOptions> BatchScenarioOptions{
      {"-m", "--maxtimeouts"},
      "Number of consecutive receive timeouts allowed before quitting",
      0},
-    {"UseSasCredential",
-     {"-S", "--useSasCredential"},
-     "Use a SAS credential for authentication",
-     0},
     {"SleepAfter", {"--sleepAfter"}, "Time to sleep after test completes", 1},
 };
 
@@ -137,7 +133,6 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   m_partitionId = parserResults["PartitionId"].as<std::string>(DefaultPartitionId);
   m_maxTimeouts = parserResults["MaxTimeouts"].as<uint32_t>(DefaultMaxTimeouts);
   m_verbose = parserResults["verbose"].as<bool>(false);
-  m_useSasCredential = static_cast<bool>(parserResults["UseSasCredential"]);
   if (m_rounds == 0xffffffff)
   {
     m_rounds = (std::numeric_limits<uint32_t>::max)();
@@ -153,7 +148,6 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
   span.first->SetAttribute("PartitionId", m_partitionId);
   span.first->SetAttribute("MaxTimeouts", m_maxTimeouts);
   span.first->SetAttribute("Verbose", m_verbose);
-  span.first->SetAttribute("UseSasCredential", m_useSasCredential);
 
   if (parserResults.has_option("SleepAfter"))
   {
@@ -179,19 +173,8 @@ void BatchStressTest::Initialize(argagg::parser_results const& parserResults)
     throw std::runtime_error("Missing environment variable, aborting.");
   }
 
-  if (m_useSasCredential)
-  {
-    m_eventHubConnectionString
-        = Azure::Core::_internal::Environment::GetVariable("EVENTHUB_CONNECTION_STRING");
-    if (m_eventHubConnectionString.empty())
-    {
-      std::cerr << "Missing required environment variable EVENTHUB_CONNECTION_STRING" << std::endl;
-      GetLogger()->Fatal("Could not find required environment variable EVENTHUB_NAME");
-      throw std::runtime_error("Missing environment variable, aborting.");
-    }
-    m_checkpointStoreConnectionString
-        = Azure::Core::_internal::Environment::GetVariable("CHECKPOINT_STORE_CONNECTION_STRING");
-  }
+  m_checkpointStoreConnectionString
+      = Azure::Core::_internal::Environment::GetVariable("CHECKPOINT_STORE_CONNECTION_STRING");
 }
 
 void BatchStressTest::Run()
@@ -218,19 +201,11 @@ std::pair<
 BatchStressTest::SendMessages()
 {
   std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> producerClient;
-  if (m_useSasCredential)
-  {
-    producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-        m_eventHubConnectionString, m_eventHubName);
-  }
-  else
-  {
-    producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
-        m_eventHubNamespace,
-        m_eventHubName,
-        //        std::make_shared<Azure::Identity::EnvironmentCredential>());
-        std::make_shared<Azure::Identity::DefaultAzureCredential>());
-  }
+  producerClient = std::make_unique<Azure::Messaging::EventHubs::ProducerClient>(
+      m_eventHubNamespace,
+      m_eventHubName,
+      //        std::make_shared<Azure::Identity::EnvironmentCredential>());
+      std::make_shared<Azure::Identity::DefaultAzureCredential>());
   Azure::Core::Context context;
   auto scopeGuard{
       sg::make_scope_guard([&context, &producerClient]() { producerClient->Close(context); })};
@@ -267,18 +242,10 @@ void BatchStressTest::ReceiveMessages(
     clientOptions.ApplicationID = "StressConsumerClient";
 
     std::unique_ptr<ConsumerClient> consumerClient;
-    if (m_useSasCredential)
-    {
-      consumerClient = std::make_unique<ConsumerClient>(
-          m_eventHubConnectionString, m_eventHubName, DefaultConsumerGroup, clientOptions);
-    }
-    else
-    {
-      consumerClient = std::make_unique<ConsumerClient>(
-          m_eventHubNamespace,
-          m_eventHubName,
-          std::make_shared<Azure::Identity::EnvironmentCredential>());
-    }
+    consumerClient = std::make_unique<ConsumerClient>(
+        m_eventHubNamespace,
+        m_eventHubName,
+        std::make_shared<Azure::Identity::EnvironmentCredential>());
 
     {
       auto getPartitionPropertiesSpan{

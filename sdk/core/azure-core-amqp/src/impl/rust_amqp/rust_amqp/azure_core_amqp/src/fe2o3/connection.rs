@@ -99,8 +99,10 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
                     builder = builder.buffer_size(buffer_size);
                 }
             }
+
+            let open_result = builder.open(url).await;
             self.connection
-                .set(Mutex::new(builder.open(url).await.map_err(AmqpOpen::from)?))
+                .set(Mutex::new(open_result.map_err(AmqpOpen::from)?))
                 .map_err(|_| {
                     azure_core::Error::new(
                         azure_core::error::ErrorKind::Other,

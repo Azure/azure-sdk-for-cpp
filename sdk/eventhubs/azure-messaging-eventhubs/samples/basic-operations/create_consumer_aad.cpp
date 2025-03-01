@@ -31,12 +31,25 @@ int main()
     return 1;
   }
 
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  try
+  {
 
-  Azure::Messaging::EventHubs::ConsumerClient consumerClient(
-      eventhubsHost, eventhubName, credential);
+    auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
-  auto eventhubProperties{consumerClient.GetEventHubProperties()};
+    std::cout << "Creating consumer client with host " << eventhubsHost << " named " << eventhubName
+              << std::endl;
 
-  std::cout << "Created event hub, properties: " << eventhubProperties << std::endl;
+    Azure::Messaging::EventHubs::ConsumerClient consumerClient(
+        eventhubsHost, eventhubName, credential);
+
+    std::cout << "Getting EventHub Properties for the eventhub" << std::endl;
+    auto eventhubProperties{consumerClient.GetEventHubProperties()};
+
+    std::cout << "Created event hub, properties: " << eventhubProperties << std::endl;
+  }
+  catch (std::exception& ex)
+  {
+    std::cerr << "Exception thrown creating eventhub instance: " << ex.what() << std::endl;
+    return 1;
+  }
 }

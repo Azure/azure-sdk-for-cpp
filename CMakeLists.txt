@@ -11,6 +11,12 @@ set(DISABLE_RUST_IN_BUILD OFF CACHE BOOL "Disable Rust based APIs in package")
 set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
 set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
 
+# The Rust OpenSSL library conflicts with the vcpkg based OpenSSL library, which causes TLS operations to fail on Linux.
+# For now, disabling rust functionality on Linux operating systems.
+if(LINUX)
+#set(DISABLE_RUST_IN_BUILD ON)
+endif()
+
 # Variable to indicate whether the entire SDK is being built, as opposed to an individual library.
 set(AZ_ALL_LIBRARIES ON)
 
