@@ -8,7 +8,7 @@
  */
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/keyvault/secrets.hpp>
+#include <azure/security/keyvault/secrets.hpp>
 
 #include <gtest/gtest.h>
 
@@ -77,29 +77,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
     static inline std::string GetUniqueName() { return Azure::Core::Uuid::CreateUuid().ToString(); }
 
-    static inline void CleanUpKeyVault(SecretClient const& secretClient)
-    {
-
-      std::vector<DeletedSecret> deletedSecrets;
-      for (auto secretResponse = secretClient.GetDeletedSecrets(); secretResponse.HasPage();
-           secretResponse.MoveToNextPage())
-      {
-        for (auto& secret : secretResponse.Items)
-        {
-          deletedSecrets.emplace_back(secret);
-        }
-      }
-      if (deletedSecrets.size() > 0)
-      {
-        for (auto& deletedSecret : deletedSecrets)
-        {
-          secretClient.PurgeDeletedSecret(deletedSecret.Name);
-        }
-        // Wait for purge is completed
-        std::this_thread::sleep_for(std::chrono::minutes(1));
-      }
-    }
-
     // Reads the current test instance name.
     // Name gets also sanitized (special chars are removed) to avoid issues when recording or
     // creating. This also return the name with suffix if the "AZURE_LIVE_TEST_SUFFIX" exists.
@@ -107,39 +84,39 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
-
-    static inline void RemoveAllSecretsFromVault(
-        SecretClient const& secretClient,
-        bool waitForPurge = true)
+    struct NameVersion
     {
-      std::vector<DeleteSecretOperation> deletedSecrets;
-      GetPropertiesOfSecretsOptions options;
-      for (auto secretResponse = secretClient.GetPropertiesOfSecrets(); secretResponse.HasPage();
-           secretResponse.MoveToNextPage())
+      std::string Name;
+      std::string Version;
+    };
+    // parse the ID url to extract relevant data
+    NameVersion ParseIDUrl(std::string const& url)
+    {
+      Azure::Core::Url sid(url);
+      auto const& path = sid.GetPath();
+      NameVersion secretProperties;
+      //  path is in the form of `verb/keyName{/keyVersion}`
+      if (path.length() > 0)
       {
-        for (auto& secret : secretResponse.Items)
+        auto const separatorChar = '/';
+        auto pathEnd = path.end();
+        auto start = path.begin();
+        start = std::find(start, pathEnd, separatorChar);
+        start += 1;
+        auto separator = std::find(start, pathEnd, separatorChar);
+        if (separator != pathEnd)
         {
-          deletedSecrets.emplace_back(secretClient.StartDeleteSecret(secret.Name));
+          secretProperties.Name = std::string(start, separator);
+          start = separator + 1;
+          secretProperties.Version = std::string(start, pathEnd);
+        }
+        else
+        {
+          // Nothing but the name+
+          secretProperties.Name = std::string(start, pathEnd);
         }
       }
-      if (deletedSecrets.size() > 0)
-      {
-        std::cout << std::endl
-                  << "Cleaning vault. " << deletedSecrets.size()
-                  << " Will be deleted and purged now...";
-        for (auto& deletedSecret : deletedSecrets)
-        {
-          auto readyToPurgeSecret = deletedSecret.PollUntilDone(std::chrono::minutes(1));
-          secretClient.PurgeDeletedSecret(readyToPurgeSecret.Value.Name);
-          std::cout << std::endl << "Deleted and purged secret: " + readyToPurgeSecret.Value.Name;
-        }
-        std::cout << std::endl << "Complete purge operation.";
-        // Wait for purge is completed
-        if (waitForPurge)
-        {
-          std::this_thread::sleep_for(std::chrono::minutes(1));
-        }
-      }
+      return secretProperties;
     }
   };
 

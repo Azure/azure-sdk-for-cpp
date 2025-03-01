@@ -12,4 +12,4 @@
 #define max(x, y) small
 #define min(x, y) small
 
-#include "azure/keyvault/secrets.hpp"
+#include "azure/security/keyvault/secrets.hpp"
