@@ -101,7 +101,7 @@ TEST_F(TestProperties, SetCorrelationId)
 
   MessageProperties properties2{properties};
 
-  EXPECT_EQ(properties2.CorrelationId.Value(), AmqpValue{correlationId});
+  EXPECT_EQ(properties2.CorrelationId, AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
 
@@ -176,7 +176,7 @@ TEST_F(TestProperties, SetMessageId)
 
   MessageProperties properties2{properties};
 
-  EXPECT_EQ(properties2.MessageId.Value(), AmqpValue{messageId});
+  EXPECT_EQ(properties2.MessageId, AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
 
   auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
@@ -193,7 +193,7 @@ TEST_F(TestProperties, SetReplyTo)
 
   MessageProperties properties2{properties};
 
-  EXPECT_EQ(properties2.ReplyTo.Value(), AmqpValue{replyTo});
+  EXPECT_EQ(properties2.ReplyTo, AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
 
   auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
@@ -225,7 +225,7 @@ TEST_F(TestProperties, SetTo)
   std::string to = "1234";
   properties.To = AmqpValue{to};
   MessageProperties properties2{properties};
-  EXPECT_EQ(properties2.To.Value(), AmqpValue{to});
+  EXPECT_EQ(properties2.To, AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
 
   auto nativeProperties = _detail::MessagePropertiesFactory::ToImplementation(properties);
@@ -279,12 +279,12 @@ TEST_F(PropertySerialization, SerializePropertyMessageId)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_EQ(AmqpValue("MessageId1"), deserialized.MessageId.Value());
+    EXPECT_EQ(AmqpValue("MessageId1"), deserialized.MessageId);
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -317,12 +317,12 @@ TEST_F(PropertySerialization, SerializePropertyMessageId)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_EQ(AmqpValue("MessageId1"), deserialized.MessageId.Value());
+    EXPECT_EQ(AmqpValue("MessageId1"), deserialized.MessageId);
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -346,13 +346,13 @@ TEST_F(PropertySerialization, SerializePropertyUserId)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_EQ(deserialized.UserId.Value()[0], 1);
     EXPECT_EQ(deserialized.UserId.Value()[5], 9);
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -382,13 +382,13 @@ TEST_F(PropertySerialization, SerializePropertyUserId)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_EQ(deserialized.UserId.Value()[0], 1);
     EXPECT_EQ(deserialized.UserId.Value()[5], 9);
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -412,13 +412,13 @@ TEST_F(PropertySerialization, SerializePropertyTo)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    //    EXPECT_FALSE(deserialized.To.HasValue());
-    EXPECT_EQ(AmqpValue("MessageTo"), deserialized.To.Value());
+    //    EXPECT_TRUE(deserialized.To.IsNull());
+    EXPECT_EQ(AmqpValue("MessageTo"), deserialized.To);
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -452,13 +452,13 @@ TEST_F(PropertySerialization, SerializePropertyTo)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    //    EXPECT_FALSE(deserialized.To.HasValue());
-    EXPECT_EQ(AmqpValue("MessageTo"), deserialized.To.Value());
+    //    EXPECT_TRUE(deserialized.To.IsNull());
+    EXPECT_EQ(AmqpValue("MessageTo"), deserialized.To);
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -482,13 +482,13 @@ TEST_F(PropertySerialization, SerializePropertySubject)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_EQ("Subject", deserialized.Subject.Value());
     //    EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -521,13 +521,13 @@ TEST_F(PropertySerialization, SerializePropertySubject)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_EQ("Subject", deserialized.Subject.Value());
     //    EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -551,13 +551,13 @@ TEST_F(PropertySerialization, SerializePropertyReplyTo)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_EQ(AmqpValue("ReplyTo"), deserialized.ReplyTo.Value());
-    //    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_EQ(AmqpValue("ReplyTo"), deserialized.ReplyTo);
+    //    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -591,13 +591,13 @@ TEST_F(PropertySerialization, SerializePropertyReplyTo)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_EQ(AmqpValue("ReplyTo"), deserialized.ReplyTo.Value());
-    //    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_EQ(AmqpValue("ReplyTo"), deserialized.ReplyTo);
+    //    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -621,14 +621,14 @@ TEST_F(PropertySerialization, SerializePropertyCorrelationId)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_EQ(AmqpValue("CorrelationId"), deserialized.CorrelationId.Value());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_EQ(AmqpValue("CorrelationId"), deserialized.CorrelationId);
 
-    // EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    // EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -669,14 +669,14 @@ TEST_F(PropertySerialization, SerializePropertyCorrelationId)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_EQ(AmqpValue("CorrelationId"), deserialized.CorrelationId.Value());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_EQ(AmqpValue("CorrelationId"), deserialized.CorrelationId);
 
-    // EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    // EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -700,12 +700,12 @@ TEST_F(PropertySerialization, SerializePropertyContentType)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     //    EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_EQ("Text/Plain", deserialized.ContentType.Value());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
@@ -745,12 +745,12 @@ TEST_F(PropertySerialization, SerializePropertyContentType)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     //    EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_EQ("Text/Plain", deserialized.ContentType.Value());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
@@ -775,12 +775,12 @@ TEST_F(PropertySerialization, SerializePropertyContentEncoding)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     // EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_EQ("Utf-8", deserialized.ContentEncoding.Value());
@@ -816,12 +816,12 @@ TEST_F(PropertySerialization, SerializePropertyContentEncoding)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     // EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_EQ("Utf-8", deserialized.ContentEncoding.Value());
@@ -847,12 +847,12 @@ TEST_F(PropertySerialization, SerializePropertyAbsoluteExpiryTime)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     // EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -895,12 +895,12 @@ TEST_F(PropertySerialization, SerializePropertyAbsoluteExpiryTime)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     // EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -930,12 +930,12 @@ TEST_F(PropertySerialization, SerializePropertyCreationTime)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -979,12 +979,12 @@ TEST_F(PropertySerialization, SerializePropertyCreationTime)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1013,12 +1013,12 @@ TEST_F(PropertySerialization, SerializePropertyGroupdId)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1059,12 +1059,12 @@ TEST_F(PropertySerialization, SerializePropertyGroupdId)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1089,12 +1089,12 @@ TEST_F(PropertySerialization, SerializePropertyGroupSequence)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1132,12 +1132,12 @@ TEST_F(PropertySerialization, SerializePropertyGroupSequence)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1162,12 +1162,12 @@ TEST_F(PropertySerialization, SerializePropertyReplyToGroupId)
 
     MessageProperties deserialized = MessageProperties::Deserialize(buffer.data(), buffer.size());
     EXPECT_EQ(properties, deserialized);
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());
@@ -1208,12 +1208,12 @@ TEST_F(PropertySerialization, SerializePropertyReplyToGroupId)
 
     MessageProperties deserialized
         = MessageProperties::Deserialize(testValue.data(), testValue.size());
-    EXPECT_FALSE(deserialized.MessageId.HasValue());
+    EXPECT_TRUE(deserialized.MessageId.IsNull());
     EXPECT_FALSE(deserialized.UserId.HasValue());
-    EXPECT_FALSE(deserialized.To.HasValue());
+    EXPECT_TRUE(deserialized.To.IsNull());
     EXPECT_FALSE(deserialized.Subject.HasValue());
-    EXPECT_FALSE(deserialized.ReplyTo.HasValue());
-    EXPECT_FALSE(deserialized.CorrelationId.HasValue());
+    EXPECT_TRUE(deserialized.ReplyTo.IsNull());
+    EXPECT_TRUE(deserialized.CorrelationId.IsNull());
     EXPECT_FALSE(deserialized.ContentType.HasValue());
     EXPECT_FALSE(deserialized.ContentEncoding.HasValue());
     EXPECT_FALSE(deserialized.AbsoluteExpiryTime.HasValue());

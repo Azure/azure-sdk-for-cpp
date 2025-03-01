@@ -14,34 +14,6 @@ using namespace Azure::Messaging::EventHubs::Models;
 using namespace Azure::Core::Amqp::_internal;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
-  ConsumerClient::ConsumerClient(
-      std::string const& connectionString,
-      std::string const& eventHub,
-      std::string const& consumerGroup,
-      ConsumerClientOptions const& options)
-      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-        m_consumerClientOptions(options)
-  {
-    auto sasCredential
-        = std::make_shared<ServiceBusSasConnectionStringCredential>(m_connectionString, eventHub);
-
-    m_credential = sasCredential;
-    if (!sasCredential->GetEntityPath().empty())
-    {
-      m_eventHub = sasCredential->GetEntityPath();
-    }
-    m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    std::string serviceScheme = _detail::EventHubsServiceScheme;
-    if (sasCredential->UseDevelopmentEmulator())
-    {
-      serviceScheme = _detail::EventHubsServiceScheme_Emulator;
-      m_targetPort = Azure::Core::Amqp::_internal::AmqpPort; // When using the emulator, use the
-                                                             // non-TLS endpoint by default.
-    }
-
-    m_hostUrl = serviceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
-        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
-  }
 
   ConsumerClient::ConsumerClient(
       std::string const& fullyQualifiedNamespace,

@@ -228,10 +228,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * the initial connection negotiation, each peer will send a max frame size. The smaller of the
      * two values will be used as the maximum frame size for the connection.
      *
-     * @remarks The maximum frame size must be at least 512 bytes. The default value is the maximum
-     * value for a uint32.
+     * @remarks The maximum frame size must be at least 512 bytes.
      */
+#if ENABLE_UAMQP
     uint32_t MaxFrameSize{(std::numeric_limits<uint32_t>::max)()};
+#else
+    uint32_t MaxFrameSize{256 * 1024};
+#endif
 
     /** @brief The maximum number of channels supported.
      *
@@ -300,7 +303,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @remarks The buffer size is the size of the buffer used to read and write data to the
      * connection.
      */
-    uint32_t BufferSize;
+    Azure::Nullable<uint32_t> BufferSize;
 #endif
 
     /** @brief Defines the ID of the container for this connection. If empty, a unique 128 bit value

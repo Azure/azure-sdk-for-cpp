@@ -13,7 +13,7 @@ use async_std::sync::Mutex;
 use azure_core::Result;
 use std::borrow::BorrowMut;
 use std::sync::OnceLock;
-use tracing::{info, warn};
+use tracing::{debug, warn};
 
 #[derive(Default)]
 pub(crate) struct Fe2o3AmqpSender {
@@ -93,7 +93,7 @@ impl AmqpSenderApis for Fe2o3AmqpSender {
             Ok(_) => Ok(()),
             Err(e) => match e.0 {
                 fe2o3_amqp::link::DetachError::ClosedByRemote => {
-                    info!("Error detaching sender: {:?}", e);
+                    debug!("Error detaching sender: {:?}", e);
                     Ok(())
                 }
                 _ => {

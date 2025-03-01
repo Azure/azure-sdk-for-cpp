@@ -77,6 +77,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ConsumerClient final {
   public:
+    /** @brief creates a ConsumerClient from a token credential.
+     *
+     * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
+     * myeventhub.servicebus.windows.net)
+     * @param eventHub event hub name
+     * @param consumerGroup consumer group name
+     * @param credential Token credential
+     * @param options client options
+     *
+     */
+    ConsumerClient(
+        std::string const& fullyQualifiedNamespace,
+        std::string const& eventHub,
+        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+        std::string const& consumerGroup = DefaultConsumerGroup,
+        ConsumerClientOptions const& options = {});
+
     /** Copy a new ConsumerClient from an existing one. */
     ConsumerClient(ConsumerClient const& other) = delete;
 
@@ -124,45 +141,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       return m_consumerClientOptions.RetryOptions;
     }
-
-    /** @brief creates a ConsumerClient from a connection string.
-     *
-     * @param connectionString connection string to resource
-     * @param eventHub event hub name
-     * @param consumerGroup consumer group name
-     * @param options client options
-     *
-     * @remark connectionString can be one of two formats - with or without an EntityPath key.
-     *  When the connection string does not have an entity path, as shown below, the eventHub
-     *  parameter cannot be empty and should contain the name of your event hub.
-     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>
-     *  When the connection string DOES have an entity path, as shown below, the eventHub parameter
-     *  must match the entity path.
-     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;
-     *  SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>;EntityPath=\<entitypath\>;
-     */
-    ConsumerClient(
-        std::string const& connectionString,
-        std::string const& eventHub = {},
-        std::string const& consumerGroup = DefaultConsumerGroup,
-        ConsumerClientOptions const& options = {});
-
-    /** @brief creates a ConsumerClient from a token credential.
-     *
-     * @param fullyQualifiedNamespace fully qualified namespace name (e.g.
-     * myeventhub.servicebus.windows.net)
-     * @param eventHub event hub name
-     * @param consumerGroup consumer group name
-     * @param credential Token credential
-     * @param options client options
-     *
-     */
-    ConsumerClient(
-        std::string const& fullyQualifiedNamespace,
-        std::string const& eventHub,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        std::string const& consumerGroup = DefaultConsumerGroup,
-        ConsumerClientOptions const& options = {});
 
     /** @brief Create new Partition client
      *

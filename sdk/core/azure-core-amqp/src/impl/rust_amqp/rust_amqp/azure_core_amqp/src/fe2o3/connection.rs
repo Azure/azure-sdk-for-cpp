@@ -48,8 +48,7 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
             let mut builder = fe2o3_amqp::Connection::builder()
                 .sasl_profile(fe2o3_amqp::sasl_profile::SaslProfile::Anonymous)
                 .alt_tls_establishment(true)
-                .container_id(id)
-                .max_frame_size(65536);
+                .container_id(id);
 
             if let Some(options) = options {
                 if let Some(frame_size) = options.max_frame_size {
@@ -100,8 +99,10 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
                     builder = builder.buffer_size(buffer_size);
                 }
             }
+
+            let open_result = builder.open(url).await;
             self.connection
-                .set(Mutex::new(builder.open(url).await.map_err(AmqpOpen::from)?))
+                .set(Mutex::new(open_result.map_err(AmqpOpen::from)?))
                 .map_err(|_| {
                     azure_core::Error::new(
                         azure_core::error::ErrorKind::Other,
@@ -173,7 +174,7 @@ impl AmqpConnectionApis for Fe2o3AmqpConnection {
                     Ok(())
                 }
                 _ => {
-                    warn!("Error detaching receiver: {:?}", e);
+                    warn!("Error closing connection: {:?}", e);
                     Err(e.into())
                 }
             },

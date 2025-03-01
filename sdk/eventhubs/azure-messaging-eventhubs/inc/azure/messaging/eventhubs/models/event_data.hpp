@@ -30,7 +30,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * Allows an application to specify a context for the event data, such as the type of the event
      * data or the entity that produced the event data.
      */
-    Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> CorrelationId;
+    Azure::Core::Amqp::Models::AmqpValue CorrelationId;
 
     /** @brief The message identifier.
      *
@@ -38,7 +38,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * and its payload. The identifier is a free-form string and can reflect a GUID or an
      * identifier derived from the application context.
      */
-    Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> MessageId;
+    Azure::Core::Amqp::Models::AmqpValue MessageId;
 
     /** @brief The set of free-form event properties.
      *

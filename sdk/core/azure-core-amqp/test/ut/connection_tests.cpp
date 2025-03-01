@@ -10,6 +10,8 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/internal/environment.hpp"
+#include "azure/core/url.hpp"
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
@@ -185,9 +187,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
 #else
     // Create a connection
+    auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
+    if (testBrokerUrl.empty())
+    {
+      GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+    }
+    Azure::Core::Url brokerUrl(testBrokerUrl);
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-    connectionOptions.Port = 25672;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+    connectionOptions.Port = brokerUrl.GetPort();
+    Azure::Core::Amqp::_internal::Connection connection(
+        brokerUrl.GetHost(), nullptr, connectionOptions);
 
     // Open the connection
     connection.Open({});

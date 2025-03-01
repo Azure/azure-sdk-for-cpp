@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks The message producer is usually responsible for setting the message-id in such a
      * way that it is assured to be globally unique.
      */
-    Nullable<AmqpValue> MessageId;
+    AmqpValue MessageId;
 
     /** @brief User ID.
      *
@@ -69,7 +69,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * @remarks A message with no to field is interpreted as being addressed to the implied
      * "anonymous" node.
      */
-    Nullable<AmqpValue> To;
+    AmqpValue To;
 
     /** @brief The subject of the message
      *
@@ -80,11 +80,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     /** @brief This is a client-specific id that can be used to mark or identify messages between
      * clients.
      */
-    Nullable<AmqpValue> CorrelationId;
+    AmqpValue CorrelationId;
 
     /** @brief The address of the node to send replies to.
      */
-    Nullable<AmqpValue> ReplyTo;
+    AmqpValue ReplyTo;
 
     /** @brief The content-type field describes the payload type.
      *

@@ -29,29 +29,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   };
 
-  TEST_P(ProducerClientTest, ConnectionStringNoEntityPath)
+  TEST_P(ProducerClientTest, SimpleProducerClient)
   {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      GTEST_SKIP();
-    }
-    std::string const connStringNoEntityPath = GetEnv("EVENTHUB_CONNECTION_STRING");
+    std::string const connStringNoEntityPath = GetEnv("EVENTHUBS_HOST");
     std::string eventHubName{GetEnv("EVENTHUB_NAME")};
 
-    Azure::Messaging::EventHubs::ProducerClient client{connStringNoEntityPath, eventHubName};
-    EXPECT_EQ(eventHubName, client.GetEventHubName());
-  }
-
-  TEST_P(ProducerClientTest, ConnectionStringEntityPath)
-  {
-    if (GetParam() != AuthType::ConnectionString)
-    {
-      GTEST_SKIP();
-    }
-    std::string eventHubName{GetEnv("EVENTHUB_NAME")};
-    std::string const connString = GetEnv("EVENTHUB_CONNECTION_STRING");
-
-    Azure::Messaging::EventHubs::ProducerClient client{connString, eventHubName};
+    Azure::Messaging::EventHubs::ProducerClient client{
+        connStringNoEntityPath, eventHubName, GetTestCredential()};
     EXPECT_EQ(eventHubName, client.GetEventHubName());
   }
 
@@ -223,7 +207,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                       ASSERT_NO_THROW(result = client->GetPartitionProperties(partition));
                       EXPECT_EQ(result.Name, ehProperties.Name);
                       EXPECT_EQ(result.PartitionId, partition);
-                      std::this_thread::yield();
+                      // Attempt to avoid service throttling.
+                      std::this_thread::sleep_for(std::chrono::milliseconds(100));
                       iterations++;
                     }
                     {
@@ -264,9 +249,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "ConnectionString_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
           break;
@@ -282,17 +264,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProducerClientTest,
-      ::testing::Values(
-          AuthType::Key,
-          AuthType::ConnectionString
-          /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key),
       GetSuffix);
 #else
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProducerClientTest,
-      ::testing::Values(AuthType::Key
-                        /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key),
       GetSuffix);
 #endif
 }}}} // namespace Azure::Messaging::EventHubs::Test

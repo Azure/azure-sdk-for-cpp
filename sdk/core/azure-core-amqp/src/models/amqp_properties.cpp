@@ -165,20 +165,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
     UniquePropertiesHandle returnValue(properties_create());
 #if ENABLE_UAMQP
-    if (properties.MessageId.HasValue())
+    if (!properties.MessageId.IsNull())
     {
       if (properties_set_message_id(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.MessageId)))
       {
         throw std::runtime_error("Could not set message id");
       }
     }
-    if (properties.CorrelationId.HasValue())
+    if (!properties.CorrelationId.IsNull())
     {
       if (properties_set_correlation_id(
               returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value())))
+              _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId)))
       {
         throw std::runtime_error("Could not set correlation id");
       }
@@ -195,11 +194,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    if (properties.To.HasValue())
+    if (!properties.To.IsNull())
     {
       if (properties_set_to(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.To.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.To)))
       {
         throw std::runtime_error("Could not set to");
       }
@@ -213,11 +211,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       }
     }
 
-    if (properties.ReplyTo.HasValue())
+    if (!properties.ReplyTo.IsNull())
     {
       if (properties_set_reply_to(
-              returnValue.get(),
-              _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value())))
+              returnValue.get(), _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo)))
       {
         throw std::runtime_error("Could not set reply to");
       }
@@ -288,19 +285,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     }
 #elif ENABLE_RUST_AMQP
 
-    if (properties.MessageId.HasValue())
+    if (!properties.MessageId.IsNull())
     {
       InvokeAmqpApi(
           properties_set_message_id,
           returnValue,
-          _detail::AmqpValueFactory::ToImplementation(properties.MessageId.Value()));
+          _detail::AmqpValueFactory::ToImplementation(properties.MessageId));
     }
-    if (properties.CorrelationId.HasValue())
+    if (!properties.CorrelationId.IsNull())
     {
       InvokeAmqpApi(
           properties_set_correlation_id,
           returnValue,
-          _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId.Value()));
+          _detail::AmqpValueFactory::ToImplementation(properties.CorrelationId));
     }
 
     if (properties.UserId.HasValue())
@@ -312,10 +309,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           static_cast<uint32_t>(properties.UserId.Value().size()));
     }
 
-    if (properties.To.HasValue())
+    if (!properties.To.IsNull())
     {
       InvokeAmqpApi(
-          properties_set_to, returnValue, static_cast<std::string>(properties.To.Value()).c_str());
+          properties_set_to, returnValue, static_cast<std::string>(properties.To).c_str());
     }
 
     if (properties.Subject.HasValue())
@@ -323,12 +320,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       InvokeAmqpApi(properties_set_subject, returnValue, properties.Subject.Value().data());
     }
 
-    if (properties.ReplyTo.HasValue())
+    if (!properties.ReplyTo.IsNull())
     {
       InvokeAmqpApi(
           properties_set_reply_to,
           returnValue,
-          _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo.Value()));
+          _detail::AmqpValueFactory::ToImplementation(properties.ReplyTo));
     }
 
     if (properties.ContentType.HasValue())
@@ -399,11 +396,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageProperties::operator==(MessageProperties const& that) const noexcept
   {
     return (
-        CompareNullable(MessageId, that.MessageId)
-        && CompareNullable(CorrelationId, that.CorrelationId)
-        && CompareNullable(UserId, that.UserId) && CompareNullable(To, that.To)
-        && CompareNullable(Subject, that.Subject) && CompareNullable(ReplyTo, that.ReplyTo)
-        && CompareNullable(ContentType, that.ContentType)
+        (MessageId == that.MessageId) && (CorrelationId == that.CorrelationId) && (To == that.To)
+        && (ReplyTo == that.ReplyTo) && CompareNullable(UserId, that.UserId)
+        && CompareNullable(Subject, that.Subject) && CompareNullable(ContentType, that.ContentType)
         && CompareNullable(ContentEncoding, that.ContentEncoding)
         && CompareNullable(AbsoluteExpiryTime, that.AbsoluteExpiryTime)
         && CompareNullable(CreationTime, that.CreationTime)
@@ -415,8 +410,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   bool MessageProperties::ShouldSerialize() const noexcept
   {
     return (
-        MessageId.HasValue() || CorrelationId.HasValue() || UserId.HasValue() || To.HasValue()
-        || Subject.HasValue() || ReplyTo.HasValue() || ContentType.HasValue()
+        !MessageId.IsNull() || !CorrelationId.IsNull() || UserId.HasValue() || !To.IsNull()
+        || Subject.HasValue() || !ReplyTo.IsNull() || ContentType.HasValue()
         || ContentEncoding.HasValue() || AbsoluteExpiryTime.HasValue() || CreationTime.HasValue()
         || GroupId.HasValue() || GroupSequence.HasValue() || ReplyToGroupId.HasValue());
   }
@@ -525,9 +520,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       {
         os << "MessageProperties {";
         {
-          if (properties.MessageId.HasValue())
+          if (!properties.MessageId.IsNull())
           {
-            os << "MessageId: " << properties.MessageId.Value();
+            os << "MessageId: " << properties.MessageId;
           }
           else
           {
@@ -554,9 +549,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
             } while (cb);
           }
         }
-        if (properties.To.HasValue())
+        if (!properties.To.IsNull())
         {
-          os << ", To: " << properties.To.Value();
+          os << ", To: " << properties.To;
         }
 
         if (properties.Subject.HasValue())
@@ -564,13 +559,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           os << ", Subject: " << properties.Subject.Value();
         }
 
-        if (properties.ReplyTo.HasValue())
+        if (!properties.ReplyTo.IsNull())
         {
-          os << ", ReplyTo: " << properties.ReplyTo.Value();
+          os << ", ReplyTo: " << properties.ReplyTo;
         }
-        if (properties.CorrelationId.HasValue())
+        if (!properties.CorrelationId.IsNull())
         {
-          os << ", CorrelationId: " << properties.CorrelationId.Value();
+          os << ", CorrelationId: " << properties.CorrelationId;
         }
 
         if (properties.ContentType.HasValue())

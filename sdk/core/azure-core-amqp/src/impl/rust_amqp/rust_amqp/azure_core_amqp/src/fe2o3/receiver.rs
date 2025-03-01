@@ -12,7 +12,7 @@ use async_std::sync::Mutex;
 use azure_core::error::Result;
 use std::borrow::BorrowMut;
 use std::sync::OnceLock;
-use tracing::{info, trace, warn};
+use tracing::{debug, trace, warn};
 
 #[derive(Default)]
 pub(crate) struct Fe2o3AmqpReceiver {
@@ -96,7 +96,7 @@ impl AmqpReceiverApis for Fe2o3AmqpReceiver {
             Ok(_) => Ok(()),
             Err(e) => match e.0 {
                 fe2o3_amqp::link::DetachError::ClosedByRemote => {
-                    info!("Error detaching receiver: {:?} - ignored", e);
+                    debug!("Error detaching receiver: {:?} - ignored", e);
                     Ok(())
                 }
                 _ => {

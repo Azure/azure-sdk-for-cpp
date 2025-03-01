@@ -83,7 +83,7 @@ TEST_F(TestProperties, SetCorrelationId)
   auto data = _detail::MessagePropertiesFactory::ToImplementation(properties);
   MessageProperties properties2(_detail::MessagePropertiesFactory::FromImplementation(data));
 
-  EXPECT_EQ(properties2.CorrelationId.Value(), AmqpValue{correlationId});
+  EXPECT_EQ(properties2.CorrelationId, AmqpValue{correlationId});
   GTEST_LOG_(INFO) << properties;
   GTEST_LOG_(INFO) << properties2;
 }
@@ -142,7 +142,7 @@ TEST_F(TestProperties, SetMessageId)
   auto data = _detail::MessagePropertiesFactory::ToImplementation(properties);
   MessageProperties properties2(_detail::MessagePropertiesFactory::FromImplementation(data));
 
-  EXPECT_EQ(properties2.MessageId.Value(), AmqpValue{messageId});
+  EXPECT_EQ(properties2.MessageId, AmqpValue{messageId});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -155,7 +155,7 @@ TEST_F(TestProperties, SetReplyTo)
   auto data = _detail::MessagePropertiesFactory::ToImplementation(properties);
   MessageProperties properties2(_detail::MessagePropertiesFactory::FromImplementation(data));
 
-  EXPECT_EQ(properties2.ReplyTo.Value(), AmqpValue{replyTo});
+  EXPECT_EQ(properties2.ReplyTo, AmqpValue{replyTo});
   GTEST_LOG_(INFO) << properties;
 }
 
@@ -179,7 +179,7 @@ TEST_F(TestProperties, SetTo)
   properties.To = AmqpValue{to};
   auto data = _detail::MessagePropertiesFactory::ToImplementation(properties);
   MessageProperties properties2(_detail::MessagePropertiesFactory::FromImplementation(data));
-  EXPECT_EQ(properties2.To.Value(), AmqpValue{to});
+  EXPECT_EQ(properties2.To, AmqpValue{to});
   GTEST_LOG_(INFO) << properties;
 }
 
