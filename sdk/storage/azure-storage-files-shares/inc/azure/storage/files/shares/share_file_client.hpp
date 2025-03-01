@@ -379,6 +379,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const UploadFileRangeFromUriOptions& options = UploadFileRangeFromUriOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief NFS only. Creates a hard link to the file specified by path.
+     * @param targetFile Path of the file to create the hard link to, not including the share.
+     * @param options Optional parameters to create this file's symbolic link.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::CreateFileHardLinkResult> containing the returned
+     * information.
+     */
+    Azure::Response<Models::CreateFileHardLinkResult> CreateHardLink(
+        const std::string& targetFile,
+        const CreateHardLinkOptions& options = CreateHardLinkOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_shareFileUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;

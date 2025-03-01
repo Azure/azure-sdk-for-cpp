@@ -779,7 +779,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto serviceEndpoint = std::make_shared<ReceiverServiceEndpoint>(
         brokerEndpoint, MessageTests::MockServiceEndpointOptions{});
     m_mockServer.AddServiceEndpoint(serviceEndpoint);
+        "amqp://localhost:" + std::to_string(m_mockServer.GetPort()) + "/testLocation",
+        MessageTests::MockServiceEndpointOptions{});
+    m_mockServer.AddServiceEndpoint(serviceEndpoint);
 #endif
+
+    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
+        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
+        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
 
     ConnectionOptions connectionOptions;
 
@@ -961,6 +968,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       AzureTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
     };
 
+#if defined(USE_NATIVE_BROKER)
+    uint16_t port = nativeBrokerPort;
+#else
+    uint16_t port = m_mockServer.GetPort();
+#endif
     auto tokenCredential = std::make_shared<AzureTokenCredential>();
 
     auto connection{CreateAmqpConnection()};

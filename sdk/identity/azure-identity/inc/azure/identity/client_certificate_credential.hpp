@@ -21,6 +21,14 @@
 #include <vector>
 
 namespace Azure { namespace Identity {
+
+#if defined(__GNUC__)
+// 'Azure::Identity::ClientCertificateCredential' declared with greater visibility than the type of
+// its field 'Azure::Identity::ClientCertificateCredential::m_pkey' [-Wattributes].
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
   namespace _detail {
     class TokenCredentialImpl;
 
@@ -174,5 +182,9 @@ namespace Azure { namespace Identity {
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
         Core::Context const& context) const override;
   };
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 }} // namespace Azure::Identity

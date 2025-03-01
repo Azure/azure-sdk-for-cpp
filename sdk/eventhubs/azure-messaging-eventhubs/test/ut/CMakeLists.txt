@@ -21,9 +21,9 @@ add_executable (
     checkpoint_store_test.cpp
     consumer_client_test.cpp
     event_data_test.cpp
-    eventhubs_admin_client_test.cpp
     eventhubs_admin_client.cpp
     eventhubs_admin_client.hpp
+    eventhubs_admin_client_test.cpp
     eventhubs_test_base.hpp
     processor_load_balancer_test.cpp
     processor_test.cpp

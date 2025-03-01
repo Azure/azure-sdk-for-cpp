@@ -274,14 +274,11 @@ set(AZURE_RUST_AMQP_SOURCE
 )
 
 endif()
-
 if (USE_UAMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_UAMQP_SOURCE} $<TARGET_OBJECTS:uamqp>)
 elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_RUST_AMQP_SOURCE})
 endif()
-
-
 
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
