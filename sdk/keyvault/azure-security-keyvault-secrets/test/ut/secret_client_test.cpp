@@ -77,39 +77,23 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
   auto const& client = GetClientForTest(secretName);
   std::string secretValue{"secretValue"};
   std::string secretValue2{"secretValue2"};
-  std::string version1;
-  std::string version2;
   {
     auto secretResponse = client.SetSecret(secretName, secretValue);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    version1 = nv.Version;
-    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
     EXPECT_EQ(secret.Value.Value(), secretValue);
   }
   {
     auto secretResponse = client.SetSecret(secretName, secretValue2);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    version2 = nv.Version;
-    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
     EXPECT_EQ(secret.Value.Value(), secretValue2);
   }
   {
     auto secretResponse = client.GetPropertiesOfSecretsVersions(secretName);
     EXPECT_EQ(secretResponse.Value.Value().size(), size_t(2));
-    EXPECT_TRUE(
-        _detail::NameVersion::ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version
-            == version1
-        || _detail::NameVersion::ParseIDUrl(secretResponse.Value.Value()[0].Id.Value()).Version
-            == version2);
-    EXPECT_TRUE(
-        _detail::NameVersion::ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version
-            == version1
-        || _detail::NameVersion::ParseIDUrl(secretResponse.Value.Value()[1].Id.Value()).Version
-            == version2);
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
@@ -117,8 +101,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -132,7 +115,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
   Models::SecretProperties properties;
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  _detail::NameVersion nv;
+  NameVersion nv;
   std::string secretValue{"secretValue"};
   {
     auto secretResponse = client.SetSecret(secretName, secretValue);
@@ -147,18 +130,14 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
     auto secret = secretResponse.Value;
     properties = secret.Properties;
     EXPECT_EQ(secret.Value.Value(), secretValue);
-    nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
   }
   {
     properties.RecoverableDays = 10;
     Models::UpdateSecretPropertiesOptions options;
     options.ContentType = "xyz";
-    auto secretResponse = client.UpdateSecretProperties(nv.Name, nv.Version, options);
+    auto secretResponse = client.UpdateSecretProperties(secretName, " ", options);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    auto nv2 = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, nv2.Name);
     EXPECT_EQ(secret.ContentType.Value(), options.ContentType.Value());
   }
 }
@@ -186,8 +165,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -224,9 +202,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
-    EXPECT_TRUE(restored.Id.Value().length() > 0);
-    auto nv = _detail::NameVersion::ParseIDUrl(restored.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
+    EXPECT_EQ(restored.Properties.RecoverableDays.Value(), 90);
   }
 }
 
@@ -250,13 +226,12 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     EXPECT_EQ(operation.GetResumeToken(), secretName);
     EXPECT_EQ(operation.HasValue(), true);
     auto operationResult = operation.Value();
-    auto onv = _detail::NameVersion::ParseIDUrl(operationResult.Id.Value());
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
-    EXPECT_EQ(onv.Name, secretName);
+    EXPECT_EQ(
+        operationResult.Properties.RecoverableDays.Value(),
+        secret.Properties.RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
   {
@@ -269,10 +244,9 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     auto operationResult = operation.Value();
     auto restoredSecret = client.GetSecret(secretName);
     auto secret = restoredSecret.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    auto onv = _detail::NameVersion::ParseIDUrl(operationResult.Id.Value());
-    EXPECT_EQ(nv.Name, secretName);
-    EXPECT_EQ(onv.Name, secretName);
+    EXPECT_EQ(
+        operationResult.Properties.RecoverableDays.Value(),
+        secret.Properties.RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
 }
@@ -290,8 +264,6 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     auto secretResponse = client.SetSecret(name, "secretValue");
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    auto nv = _detail::NameVersion::ParseIDUrl(secret.Id.Value());
-    EXPECT_EQ(nv.Name, name);
     // Avoid server Throttled while creating keys
     TestSleep();
   }

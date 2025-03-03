@@ -38,8 +38,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 
   try
   {
-    auto nameVersion = _detail::NameVersion::ParseIDUrl(m_value.Id.Value());
-    rawResponse = m_secretClient->GetSecret(nameVersion.Name, Models::GetSecretOptions(), context)
+    rawResponse = m_secretClient->GetSecret(m_continuationToken, Models::GetSecretOptions(), context)
                       .RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
@@ -66,6 +65,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 }
 
 RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
+    std::string const& secretName,
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<Models::KeyVaultSecret> response)
     : m_secretClient(std::move(secretClient))
@@ -74,7 +74,7 @@ RecoverDeletedSecretOperation::RecoverDeletedSecretOperation(
 
   m_rawResponse = std::move(response.RawResponse);
 
-  m_continuationToken = _detail::NameVersion::ParseIDUrl(m_value.Id.Value()).Name;
+  m_continuationToken = secretName;
 
   if (m_value.Id.Value().empty() == false)
   {
@@ -124,8 +124,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 
   try
   {
-    auto nameVersion = _detail::NameVersion::ParseIDUrl(m_value.Id.Value());
-    rawResponse = m_secretClient->GetDeletedSecret(nameVersion.Name, context).RawResponse;
+    rawResponse = m_secretClient->GetDeletedSecret(m_continuationToken, context).RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -151,14 +150,14 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 }
 
 DeleteSecretOperation::DeleteSecretOperation(
+    std::string const& secretName,
     std::shared_ptr<SecretClient> secretClient,
     Azure::Response<Models::DeletedSecret> response)
     : m_secretClient(std::move(secretClient))
 {
   m_value = response.Value;
   m_rawResponse = std::move(response.RawResponse);
-  auto nameVersion = _detail::NameVersion::ParseIDUrl(m_value.Id.Value());
-  m_continuationToken = nameVersion.Name;
+  m_continuationToken = secretName;
 
   if (m_continuationToken.empty() == false)
   {

@@ -85,5 +85,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
   };
-
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test
