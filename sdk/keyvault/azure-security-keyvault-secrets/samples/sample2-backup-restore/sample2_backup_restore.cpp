@@ -11,7 +11,7 @@
  */
 
 #include <azure/identity.hpp>
-#include <azure/keyvault/secrets.hpp>
+#include <azure/security/keyvault/secrets.hpp>
 
 #include <assert.h>
 #include <chrono>
@@ -20,7 +20,9 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
-void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
+void AssertSecretsEqual(
+    Models::KeyVaultSecret const& expected,
+    Models::KeyVaultSecret const& actual);
 
 int main()
 {
@@ -39,17 +41,17 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+    Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << valueString
+    std::cout << "Secret is returned with Id " << secret.Id.Value() << " and value " << valueString
               << std::endl;
 
     size_t backUpSize = 0;
     {
       std::cout << "\t-Backup Secret" << std::endl;
-      auto backupSecretResult = secretClient.BackupSecret(secret.Name).Value;
-      auto const& backedupSecret = backupSecretResult.Secret;
+      auto backupSecretResult = secretClient.BackupSecret(secretName).Value;
+      auto const& backedupSecret = backupSecretResult.Value.Value();
       backUpSize = backedupSecret.size();
 
       // save data to file
@@ -63,14 +65,14 @@ int main()
       savedFile.close();
     }
     // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
     // purge the deleted secret
-    secretClient.PurgeDeletedSecret(secret.Name);
+    secretClient.PurgeDeletedSecret(secretName);
 
     // let's wait for one minute so we know the secret was purged.
     std::this_thread::sleep_for(60s);
@@ -79,9 +81,9 @@ int main()
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
     inFile.open("backup.dat");
-    BackupSecretResult backedUpSecret;
-    backedUpSecret.Secret = std::vector<uint8_t>(backUpSize);
-    inFile >> backedUpSecret.Secret.data();
+    Models::BackupSecretResult backedUpSecret;
+    backedUpSecret.Value = std::vector<uint8_t>(backUpSize);
+    inFile >> backedUpSecret.Value.Value().data();
     inFile.close();
 
     std::cout << "\t-Restore Secret" << std::endl;
@@ -89,10 +91,10 @@ int main()
 
     AssertSecretsEqual(secret, restoredSecret);
 
-    operation = secretClient.StartDeleteSecret(restoredSecret.Name);
+    operation = secretClient.StartDeleteSecret(secretName);
     // You only need to wait for completion if you want to purge or recover the secret.
     operation.PollUntilDone(2s);
-    secretClient.PurgeDeletedSecret(restoredSecret.Name);
+    secretClient.PurgeDeletedSecret(secretName);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
@@ -109,14 +111,15 @@ int main()
   return 0;
 }
 
-void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
+void AssertSecretsEqual(
+    Models::KeyVaultSecret const& expected,
+    Models::KeyVaultSecret const& actual)
 {
 #if defined(NDEBUG)
   // Use (void) to silence unused warnings.
   (void)expected;
   (void)actual;
 #endif
-  assert(expected.Name == actual.Name);
-  assert(expected.Properties.Version == actual.Properties.Version);
-  assert(expected.Id == actual.Id);
+  assert(expected.Id.Value() == actual.Id.Value());
+  assert(expected.Value.Value() == actual.Value.Value());
 }

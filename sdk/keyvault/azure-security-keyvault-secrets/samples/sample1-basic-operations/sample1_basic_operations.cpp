@@ -11,7 +11,7 @@
  */
 
 #include <azure/identity.hpp>
-#include <azure/keyvault/secrets.hpp>
+#include <azure/security/keyvault/secrets.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -41,18 +41,20 @@ int main()
 
     // @begin_snippet: SecretSample1GetSecret
     // get secret
-    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+    Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret is returned with name " << secret.Name << " and value " << valueString
+    std::cout << "Secret is returned with If " << secret.Id.Value() << " and value " << valueString
               << std::endl;
     // @end_snippet
 
     // @begin_snippet: SecretSample1UpdateSecretProperties
     // change one of the properties
-    secret.Properties.ContentType = "my content";
+    Models::UpdateSecretPropertiesOptions options;
+    options.ContentType = "my content";
     // update the secret
-    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
+    Models::KeyVaultSecret updatedSecret
+        = secretClient.UpdateSecretProperties(secretName, " ", options).Value;
     std::string updatedValueString
         = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret's content type is now " << updatedValueString << std::endl;
@@ -60,7 +62,7 @@ int main()
 
     // @begin_snippet: SecretSample1DeleteSecret
     // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
+    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
@@ -68,7 +70,7 @@ int main()
     operation.PollUntilDone(20s);
 
     // purge the deleted secret
-    secretClient.PurgeDeletedSecret(secret.Name);
+    secretClient.PurgeDeletedSecret(secretName);
     // @end_snippet
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)

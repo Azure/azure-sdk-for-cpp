@@ -120,14 +120,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     /// vault. If it contains 'Purgeable', the secret can be permanently deleted by a privileged
     /// user; otherwise, only the system can purge the secret, at the end of the retention interval.
     Nullable<DeletionRecoveryLevel> RecoveryLevel;
-
-    // codegen: insert after SecretProperties::RecoveryLevel
-    /* /// The secret name.
-     Nullable<std::string> Name;
-
-     /// The secret version.
-     Nullable<std::string> Version;*/
-    // codegen: end insert after SecretProperties::RecoveryLevel
   };
 
   /**
