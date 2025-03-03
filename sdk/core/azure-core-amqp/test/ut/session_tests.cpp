@@ -276,12 +276,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       session.End({});
     }
 
-#if ENABLE_RUST_AMQP
-    // Open the connection
-    GTEST_LOG_(INFO) << "Open connection.";
-    connection.Open({});
-#endif
-
     {
       Session session{connection.CreateSession()};
 

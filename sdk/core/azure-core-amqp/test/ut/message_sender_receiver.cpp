@@ -713,7 +713,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiver)
   {
-    std::string brokerEndpoint = GetBrokerEndpoint() + "/testLocation";
+    std::string brokerEndpoint = GetBrokerEndpoint() + "/testLocation"
+        + testing::UnitTest::GetInstance()->current_test_case()->name();
     std::string senderEndpoint
         = GetBrokerEndpoint() + "/" + testing::UnitTest::GetInstance()->current_test_case()->name();
 
@@ -784,10 +785,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     m_mockServer.AddServiceEndpoint(serviceEndpoint);
 #endif
 
-    auto sasCredential = std::make_shared<ServiceBusSasConnectionStringCredential>(
-        "Endpoint=amqp://localhost:" + std::to_string(GetPort())
-        + "/;SharedAccessKeyName=MyTestKey;SharedAccessKey=abcdabcd;EntityPath=testLocation");
-
     ConnectionOptions connectionOptions;
 
     //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
@@ -821,6 +818,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
+        GTEST_LOG_(INFO) << "Setting message id to: " << messageId
+                         << "(" << Azure::Core::Amqp::Models::AmqpValue(messageId) << ")";
         sendMessage.Properties.MessageId = Azure::Core::Amqp::Models::AmqpValue(messageId);
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
         EXPECT_FALSE(sender.Send(sendMessage));

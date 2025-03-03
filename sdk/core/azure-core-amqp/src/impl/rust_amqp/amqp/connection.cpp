@@ -204,6 +204,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Log::Stream(Logger::Level::Verbose)
           << "ConnectionImpl::Open: " << this << " ID: " << m_containerId;
     }
+    if (m_connectionOpened)
+    {
+      Log::Stream(Logger::Level::Error) << "Cannot open already open connection.";
+      throw std::runtime_error("AMQP Connection already open.");
+    }
     if (amqpconnection_open(
             callContext.GetCallContext(),
             m_connection.get(),
