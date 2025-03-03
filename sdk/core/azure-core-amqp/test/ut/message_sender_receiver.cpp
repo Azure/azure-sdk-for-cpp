@@ -782,85 +782,86 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     m_mockServer.AddServiceEndpoint(serviceEndpoint);
         "amqp://localhost:" + std::to_string(m_mockServer.GetPort()) + "/testLocation",
         MessageTests::MockServiceEndpointOptions{});
-    m_mockServer.AddServiceEndpoint(serviceEndpoint);
+        m_mockServer.AddServiceEndpoint(serviceEndpoint);
 #endif
 
-    ConnectionOptions connectionOptions;
+        ConnectionOptions connectionOptions;
 
-    //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
-    auto connection{CreateAmqpConnection({})};
-    auto session{CreateAmqpSession(connection)};
+        //  connectionOptions.IdleTimeout = std::chrono::minutes(5);
+        auto connection{CreateAmqpConnection({})};
+        auto session{CreateAmqpSession(connection)};
 #if !defined(USE_NATIVE_BROKER)
-    serviceEndpoint->SetSenderNodeName(senderEndpoint);
-    StartServerListening();
+        serviceEndpoint->SetSenderNodeName(senderEndpoint);
+        StartServerListening();
 #endif
 
-    GTEST_LOG_(INFO) << "Create receiver on " << senderEndpoint;
+        GTEST_LOG_(INFO) << "Create receiver on " << senderEndpoint;
 
-    MessageReceiverOptions receiverOptions;
-    receiverOptions.Name = "receiver-link";
-    receiverOptions.MessageTarget = "egress";
-    receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
-    receiverOptions.MaxMessageSize = 65536;
-    receiverOptions.MaxLinkCredit = 500; // We allow at most 500 messages to be received.
-    receiverOptions.EnableTrace = true;
-    MessageReceiver receiver(session.CreateMessageReceiver(brokerEndpoint, receiverOptions));
+        MessageReceiverOptions receiverOptions;
+        receiverOptions.Name = "receiver-link";
+        receiverOptions.MessageTarget = "egress";
+        receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+        receiverOptions.MaxMessageSize = 65536;
+        receiverOptions.MaxLinkCredit = 500; // We allow at most 500 messages to be received.
+        receiverOptions.EnableTrace = true;
+        MessageReceiver receiver(session.CreateMessageReceiver(brokerEndpoint, receiverOptions));
 
-    receiver.Open();
+        receiver.Open();
 
-    // Send a message.
-    {
-      std::string messageId = "Message from line " + std::to_string(__LINE__);
+        // Send a message.
+        {
+          std::string messageId = "Message from line " + std::to_string(__LINE__);
 #if !defined(USE_NATIVE_BROKER)
-      serviceEndpoint->ShouldSendMessage(true, messageId);
+          serviceEndpoint->ShouldSendMessage(true, messageId);
 #else
       {
         MessageSender sender(session.CreateMessageSender(brokerEndpoint, {}));
         ASSERT_FALSE(sender.Open());
         Azure::Core::Amqp::Models::AmqpMessage sendMessage;
-        GTEST_LOG_(INFO) << "Setting message id to: " << messageId
-                         << "(" << Azure::Core::Amqp::Models::AmqpValue(messageId) << ")";
+        GTEST_LOG_(INFO) << "Setting message id to: " << messageId << "("
+                         << Azure::Core::Amqp::Models::AmqpValue(messageId) << ")";
         sendMessage.Properties.MessageId = Azure::Core::Amqp::Models::AmqpValue(messageId);
         sendMessage.SetBody(Azure::Core::Amqp::Models::AmqpValue{"This is a message body."});
         EXPECT_FALSE(sender.Send(sendMessage));
         sender.Close();
       }
 #endif
-      auto message = receiver.WaitForIncomingMessage();
-      GTEST_LOG_(INFO) << "Received message." << *message.first;
-      ASSERT_TRUE(message.first);
-      ASSERT_FALSE(message.second);
-      ASSERT_EQ(
-          message.first->Properties.MessageId.GetType(),
-          Azure::Core::Amqp::Models::AmqpValueType::String);
-      EXPECT_EQ(static_cast<std::string>(message.first->Properties.MessageId), messageId);
-      EXPECT_EQ(
-          static_cast<std::string>(message.first->GetBodyAsAmqpValue()), "This is a message body.");
-    }
+          auto message = receiver.WaitForIncomingMessage();
+          GTEST_LOG_(INFO) << "Received message." << *message.first;
+          ASSERT_TRUE(message.first);
+          ASSERT_FALSE(message.second);
+          ASSERT_EQ(
+              message.first->Properties.MessageId.GetType(),
+              Azure::Core::Amqp::Models::AmqpValueType::String);
+          EXPECT_EQ(static_cast<std::string>(message.first->Properties.MessageId), messageId);
+          EXPECT_EQ(
+              static_cast<std::string>(message.first->GetBodyAsAmqpValue()),
+              "This is a message body.");
+        }
 
-    {
-      Azure::Core::Context receiveContext;
-      receiveContext.Cancel();
-      EXPECT_THROW(
-          auto message = receiver.WaitForIncomingMessage(receiveContext),
-          Azure::Core::OperationCancelledException);
-    }
+        {
+          Azure::Core::Context receiveContext;
+          receiveContext.Cancel();
+          EXPECT_THROW(
+              auto message = receiver.WaitForIncomingMessage(receiveContext),
+              Azure::Core::OperationCancelledException);
+        }
 
-    {
-      auto result = receiver.TryWaitForIncomingMessage();
-      if (result.first)
-      {
-        GTEST_LOG_(INFO) << "Found an incoming message, expected no message." << *result.first;
-      }
-      EXPECT_FALSE(result.first);
-    }
+        {
+          auto result = receiver.TryWaitForIncomingMessage();
+          if (result.first)
+          {
+            GTEST_LOG_(INFO) << "Found an incoming message, expected no message." << *result.first;
+          }
+          EXPECT_FALSE(result.first);
+        }
 
-    {
-      GTEST_LOG_(INFO) << "Trigger message send for polling.";
-      std::string messageId = "Message from line " + std::to_string(__LINE__);
+        {
+          GTEST_LOG_(INFO) << "Trigger message send for polling.";
+          std::string messageId = "Message from line " + std::to_string(__LINE__);
 #if !defined(USE_NATIVE_BROKER)
-      serviceEndpoint->ShouldSendMessage(true, messageId);
-      std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+          serviceEndpoint->ShouldSendMessage(true, messageId);
+          std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 #else
 
       {
@@ -873,16 +874,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         sender.Close();
       }
 #endif
-      GTEST_LOG_(INFO) << "Message should have been sent and processed.";
-      auto result = receiver.TryWaitForIncomingMessage();
-      EXPECT_TRUE(result.first);
-      EXPECT_EQ(messageId, static_cast<std::string>(result.first->Properties.MessageId));
-    }
-    receiver.Close();
+          GTEST_LOG_(INFO) << "Message should have been sent and processed.";
+          auto result = receiver.TryWaitForIncomingMessage();
+          EXPECT_TRUE(result.first);
+          EXPECT_EQ(messageId, static_cast<std::string>(result.first->Properties.MessageId));
+        }
+        receiver.Close();
 
-    StopServerListening();
-    EndAmqpSession(session);
-    CloseAmqpConnection(connection);
+        StopServerListening();
+        EndAmqpSession(session);
+        CloseAmqpConnection(connection);
   }
 
   TEST_F(TestMessageSendReceive, AuthenticatedReceiverAzureToken)
