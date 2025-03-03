@@ -163,14 +163,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Core::Context const& context = {}) const
     {
       return DeleteSecretOperation(
-          std::make_shared<SecretClient>(*this), std::move(DeleteSecret(secretName, context)));
+          std::make_shared<SecretClient>(*this), DeleteSecret(secretName, context));
     }
 
     // codegen: end insert after SecretClient::DeleteSecret
 
     // codegen: insert before SecretClient::UpdateSecretProperties
-  //private:
-    // codegen: end insert before SecretClient::UpdateSecretProperties
+    // private:
+    //  codegen: end insert before SecretClient::UpdateSecretProperties
 
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
@@ -190,27 +190,29 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Core::Context const& context = {}) const;
 
     // codegen: insert after SecretClient::UpdateSecretProperties
-  //public:
-  //  /**
-  //   * @brief The UPDATE operation changes specified attributes of an existing stored secret.
-  //   * Attributes that are not specified in the request are left unchanged. The value of a secret
-  //   * itself cannot be changed. This operation requires the secrets/set permission.
-  //   * @param properties The secret properties to be updated. Must contain the name and version of
-  //   * the secret to be updated.
-  //   * @param context The context for the operation can be used for request cancellation.
-  //   * @return A secret consisting of a value, id and its attributes.
-  //   *
-  //   */
-  //  Response<Models::KeyVaultSecret> UpdateSecretProperties(
-  //      Models::SecretProperties const& properties,
-  //      Azure::Core::Context const& context = Azure::Core::Context()) const
-  //  {
-  //    Models::UpdateSecretPropertiesOptions options;
-  //    options.SecretAttributes = properties;
-  //    return UpdateSecretProperties(
-  //        properties.Name.ValueOr(""), properties.Version.ValueOr(""), options, context);
-  //  }
-    // codegen: end insert after SecretClient::UpdateSecretProperties
+    // public:
+    //   /**
+    //    * @brief The UPDATE operation changes specified attributes of an existing stored secret.
+    //    * Attributes that are not specified in the request are left unchanged. The value of a
+    //    secret
+    //    * itself cannot be changed. This operation requires the secrets/set permission.
+    //    * @param properties The secret properties to be updated. Must contain the name and version
+    //    of
+    //    * the secret to be updated.
+    //    * @param context The context for the operation can be used for request cancellation.
+    //    * @return A secret consisting of a value, id and its attributes.
+    //    *
+    //    */
+    //   Response<Models::KeyVaultSecret> UpdateSecretProperties(
+    //       Models::SecretProperties const& properties,
+    //       Azure::Core::Context const& context = Azure::Core::Context()) const
+    //   {
+    //     Models::UpdateSecretPropertiesOptions options;
+    //     options.SecretAttributes = properties;
+    //     return UpdateSecretProperties(
+    //         properties.Name.ValueOr(""), properties.Version.ValueOr(""), options, context);
+    //   }
+    //  codegen: end insert after SecretClient::UpdateSecretProperties
 
     // codegen: remove SecretClient::GetSecretImpl
 
@@ -296,7 +298,45 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
-    // codegen: remove SecretClient::RecoverDeletedSecret
+    // codegen: insert before SecretClient::RecoverDeletedSecret
+  private:
+    // codegen: end insert before SecretClient::RecoverDeletedSecret
+
+    /**
+     * @brief Recovers the deleted secret in the specified vault. This operation can only be
+     * performed on a soft-delete enabled vault. This operation requires the secrets/recover
+     * permission.
+     * @param secretName The name of the deleted secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
+    Response<Models::KeyVaultSecret> RecoverDeletedSecret(
+        std::string const& secretName,
+        Core::Context const& context = {}) const;
+
+    // codegen: insert after SecretClient::RecoverDeletedSecret
+  public:
+    /**
+     * @brief Recovers the deleted secret in the specified vault. This operation can only be
+     * performed on a soft-delete enabled vault. This operation requires the secrets/recover
+     * permission.
+     * @remark Recovers the deleted secret in the specified vault.
+     * This operation can only be performed on a soft-delete enabled vault.
+     * This operation requires the secrets/recover permission.
+     *
+     * @param name The name of the secret.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return RecoverDeletedSecretOperation
+     */
+    Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation StartRecoverDeletedSecret(
+        std::string const& name,
+        Azure::Core::Context const& context = Azure::Core::Context()) const
+    {
+      return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(
+          std::make_shared<SecretClient>(*this), RecoverDeletedSecret(name, context));
+    }
+    // codegen: end insert after SecretClient::RecoverDeletedSecret
 
     /**
      * @brief Requests that a backup of the specified secret be downloaded to the client. All

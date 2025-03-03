@@ -122,11 +122,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<DeletionRecoveryLevel> RecoveryLevel;
 
     // codegen: insert after SecretProperties::RecoveryLevel
-   /* /// The secret name.
-    Nullable<std::string> Name;
+    /* /// The secret name.
+     Nullable<std::string> Name;
 
-    /// The secret version.
-    Nullable<std::string> Version;*/
+     /// The secret version.
+     Nullable<std::string> Version;*/
     // codegen: end insert after SecretProperties::RecoveryLevel
   };
 

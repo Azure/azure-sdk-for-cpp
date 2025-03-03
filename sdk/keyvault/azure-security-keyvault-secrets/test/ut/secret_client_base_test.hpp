@@ -84,40 +84,40 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     {
       return Azure::Core::Test::TestBase::GetTestNameSuffix(sanitize);
     }
-    struct NameVersion
-    {
-      std::string Name;
-      std::string Version;
-    };
-    // parse the ID url to extract relevant data
-    NameVersion ParseIDUrl(std::string const& url)
-    {
-      Azure::Core::Url sid(url);
-      auto const& path = sid.GetPath();
-      NameVersion secretProperties;
-      //  path is in the form of `verb/keyName{/keyVersion}`
-      if (path.length() > 0)
-      {
-        auto const separatorChar = '/';
-        auto pathEnd = path.end();
-        auto start = path.begin();
-        start = std::find(start, pathEnd, separatorChar);
-        start += 1;
-        auto separator = std::find(start, pathEnd, separatorChar);
-        if (separator != pathEnd)
-        {
-          secretProperties.Name = std::string(start, separator);
-          start = separator + 1;
-          secretProperties.Version = std::string(start, pathEnd);
-        }
-        else
-        {
-          // Nothing but the name+
-          secretProperties.Name = std::string(start, pathEnd);
-        }
-      }
-      return secretProperties;
-    }
+    //struct NameVersion
+    //{
+    //  std::string Name;
+    //  std::string Version;
+    //};
+    //// parse the ID url to extract relevant data
+    //NameVersion ParseIDUrl(std::string const& url)
+    //{
+    //  Azure::Core::Url sid(url);
+    //  auto const& path = sid.GetPath();
+    //  NameVersion secretProperties;
+    //  //  path is in the form of `verb/keyName{/keyVersion}`
+    //  if (path.length() > 0)
+    //  {
+    //    auto const separatorChar = '/';
+    //    auto pathEnd = path.end();
+    //    auto start = path.begin();
+    //    start = std::find(start, pathEnd, separatorChar);
+    //    start += 1;
+    //    auto separator = std::find(start, pathEnd, separatorChar);
+    //    if (separator != pathEnd)
+    //    {
+    //      secretProperties.Name = std::string(start, separator);
+    //      start = separator + 1;
+    //      secretProperties.Version = std::string(start, pathEnd);
+    //    }
+    //    else
+    //    {
+    //      // Nothing but the name+
+    //      secretProperties.Name = std::string(start, pathEnd);
+    //    }
+    //  }
+    //  return secretProperties;
+    //}
   };
 
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_test
