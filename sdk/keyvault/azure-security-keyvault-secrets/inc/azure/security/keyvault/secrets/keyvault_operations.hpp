@@ -53,7 +53,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret object.
      *
      * @return A Secret object.
      */
@@ -117,7 +117,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::DeletedSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::Models::DeletedSecret object.
      *
      * @remark The deleted secret contains the recovery id if the key can be recovered.
      *
