@@ -115,7 +115,6 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
   Models::SecretProperties properties;
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
-  NameVersion nv;
   std::string secretValue{"secretValue"};
   {
     auto secretResponse = client.SetSecret(secretName, secretValue);
