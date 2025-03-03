@@ -38,8 +38,9 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 
   try
   {
-    rawResponse = m_secretClient->GetSecret(m_continuationToken, Models::GetSecretOptions(), context)
-                      .RawResponse;
+    rawResponse
+        = m_secretClient->GetSecret(m_continuationToken, Models::GetSecretOptions(), context)
+              .RawResponse;
   }
   catch (Azure::Core::RequestFailedException& error)
   {

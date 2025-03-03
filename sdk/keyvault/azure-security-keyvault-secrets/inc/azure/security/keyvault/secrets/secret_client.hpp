@@ -162,8 +162,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& secretName,
         Core::Context const& context = {}) const
     {
-      return DeleteSecretOperation(secretName,
-          std::make_shared<SecretClient>(*this), DeleteSecret(secretName, context));
+      return DeleteSecretOperation(
+          secretName, std::make_shared<SecretClient>(*this), DeleteSecret(secretName, context));
     }
 
     // codegen: end insert after SecretClient::DeleteSecret
@@ -333,8 +333,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
-      return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(name,
-          std::make_shared<SecretClient>(*this), RecoverDeletedSecret(name, context));
+      return Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation(
+          name, std::make_shared<SecretClient>(*this), RecoverDeletedSecret(name, context));
     }
     // codegen: end insert after SecretClient::RecoverDeletedSecret
 
