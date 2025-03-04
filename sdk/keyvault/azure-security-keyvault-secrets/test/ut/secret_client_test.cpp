@@ -33,7 +33,7 @@ TEST(SecretClient, ServiceVersion)
   // Default - 7.5
   EXPECT_NO_THROW(auto options = SecretClientOptions();
                   SecretClient SecretClient("http://account.vault.azure.net", credential, options);
-                  EXPECT_EQ(options.ApiVersion, "7.6-preview.1"););
+                  EXPECT_EQ(options.ApiVersion, "7.6-preview.2"););
 
   // 7.4
   EXPECT_NO_THROW(auto options = SecretClientOptions(); options.ApiVersion = "7.4";

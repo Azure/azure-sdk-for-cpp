@@ -21,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   struct SecretClientOptions final : public Core::_internal::ClientOptions
   {
     /// The API version to use for this operation.
-    std::string ApiVersion = "7.6-preview.1";
+    std::string ApiVersion = "7.6-preview.2";
   };
 
   /**
