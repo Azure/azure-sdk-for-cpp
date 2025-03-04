@@ -44,7 +44,7 @@ int main()
     Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret is returned with If " << secret.Id.Value() << " and value " << valueString
+    std::cout << "Secret is returned with Id " << secret.Id.Value() << " and value " << valueString
               << std::endl;
     // @end_snippet
 
@@ -56,8 +56,8 @@ int main()
     Models::KeyVaultSecret updatedSecret
         = secretClient.UpdateSecretProperties(secretName, " ", options).Value;
     std::string updatedValueString
-        = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret's content type is now " << updatedValueString << std::endl;
+        = updatedSecret.ContentType.HasValue() ? updatedSecret.ContentType.Value() : "NONE RETURNED";
+    std::cout << "Secret's content type is now : " << updatedValueString << std::endl;
     // @end_snippet
 
     // @begin_snippet: SecretSample1DeleteSecret
@@ -68,7 +68,7 @@ int main()
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
     operation.PollUntilDone(20s);
-
+    std::cout << "Deleted secret with Id " << operation.Value().Id.Value() << std::endl;
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secretName);
     // @end_snippet
