@@ -44,8 +44,8 @@ int main()
     Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret is returned with Id: " << secret.Id.Value() << " and value: " << valueString
-              << std::endl;
+    std::cout << "Secret is returned with Id: " << secret.Id.Value()
+              << " and value: " << valueString << std::endl;
 
     size_t backUpSize = 0;
     {

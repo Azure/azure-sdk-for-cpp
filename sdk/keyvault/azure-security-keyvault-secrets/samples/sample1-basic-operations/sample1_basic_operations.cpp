@@ -55,8 +55,9 @@ int main()
     // update the secret
     Models::KeyVaultSecret updatedSecret
         = secretClient.UpdateSecretProperties(secretName, " ", options).Value;
-    std::string updatedValueString
-        = updatedSecret.ContentType.HasValue() ? updatedSecret.ContentType.Value() : "NONE RETURNED";
+    std::string updatedValueString = updatedSecret.ContentType.HasValue()
+        ? updatedSecret.ContentType.Value()
+        : "NONE RETURNED";
     std::cout << "Secret's content type is now : " << updatedValueString << std::endl;
     // @end_snippet
 
