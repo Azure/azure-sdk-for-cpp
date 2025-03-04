@@ -11,7 +11,7 @@
 
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
-#include <azure/keyvault/secrets.hpp>
+#include <azure/security/keyvault/secrets.hpp>
 #include <azure/perf.hpp>
 
 #include <memory>

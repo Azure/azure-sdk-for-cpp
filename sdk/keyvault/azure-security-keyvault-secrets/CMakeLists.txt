@@ -126,11 +126,11 @@ if(BUILD_TESTING)
   endif()
   
   add_subdirectory(test/ut)
-#  add_subdirectory(test/test-app)
+  add_subdirectory(test/test-app)
 endif()
 
 if (BUILD_PERFORMANCE_TESTS)
- # add_subdirectory(test/perf)
+  add_subdirectory(test/perf)
 endif()
 
 if(BUILD_SAMPLES)
@@ -140,13 +140,13 @@ endif()
 az_vcpkg_export(
     azure-security-keyvault-secrets
     SECURITY_KEYVAULT_SECRETS
-    "azure/security/keyvault/secrets/dll_import_export.hpp"
+    azure/security/keyvault/secrets/dll_import_export.hpp
   )
 
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS
-  "azure/security/keyvault/secrets/rtti.hpp"
+  azure/security/keyvault/secrets/rtti.hpp
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)
