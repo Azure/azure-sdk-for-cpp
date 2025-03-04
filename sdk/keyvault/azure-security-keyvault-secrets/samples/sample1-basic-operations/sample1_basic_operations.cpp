@@ -21,13 +21,12 @@ using namespace std::chrono_literals;
 
 int main()
 {
-  // @begin_snippet: SecretSample1CreateCredential
+  
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
   SecretClient secretClient(keyVaultUrl, credential);
-  // @end_snippet
 
   try
   {
@@ -39,16 +38,13 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
     // @end_snippet
 
-    // @begin_snippet: SecretSample1GetSecret
     // get secret
     Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret is returned with Id " << secret.Id.Value() << " and value " << valueString
               << std::endl;
-    // @end_snippet
 
-    // @begin_snippet: SecretSample1UpdateSecretProperties
     // change one of the properties
     Models::UpdateSecretPropertiesOptions options;
     options.ContentType = "my content";
@@ -59,9 +55,7 @@ int main()
         ? updatedSecret.ContentType.Value()
         : "NONE RETURNED";
     std::cout << "Secret's content type is now : " << updatedValueString << std::endl;
-    // @end_snippet
 
-    // @begin_snippet: SecretSample1DeleteSecret
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);
 
@@ -72,7 +66,6 @@ int main()
     std::cout << "Deleted secret with Id " << operation.Value().Id.Value() << std::endl;
     // purge the deleted secret
     secretClient.PurgeDeletedSecret(secretName);
-    // @end_snippet
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

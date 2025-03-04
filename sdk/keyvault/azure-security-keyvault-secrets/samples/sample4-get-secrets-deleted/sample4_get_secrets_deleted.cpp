@@ -50,7 +50,6 @@ int main()
       }
     }
 
-    // @begin_snippet: SecretSample4ListAllSecrets
     // get all the versions of a secret
     for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secretName);
          secretsVersion.HasPage();
@@ -63,7 +62,6 @@ int main()
         std::cout << "Found Secret with Id: " << secret.Id.Value() << std::endl;
       }
     }
-    // @end_snippet
 
     // start deleting the secret
     DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);

@@ -80,7 +80,6 @@ For detailed samples please review the samples provided.
 
 First step is to create  a SecretClient.
 
-<!-- @insert_snippet: SecretSample1CreateCredential -->
 ```cpp
 auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
 auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
@@ -93,7 +92,6 @@ SecretClient secretClient(keyVaultUrl, credential);
 
 We call the secret client to create a secret.
 
-<!-- @insert_snippet: SecretSample1CreateSecret -->
 ```cpp
 std::string secretName("MySampleSecret");
 std::string secretValue("my secret value");
@@ -105,7 +103,6 @@ secretClient.SetSecret(secretName, secretValue);
 
 We retrieve a secret by name.
 
-<!-- @insert_snippet: SecretSample1GetSecret -->
 ```cpp
 // get secret
 KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
@@ -119,7 +116,6 @@ std::cout << "Secret is returned with name " << secret.Name << " and value " << 
 
 Updating an existing secret
 
-<!-- @insert_snippet: SecretSample1UpdateSecretProperties -->
 ```cpp
 // change one of the properties
 secret.Properties.ContentType = "my content";
@@ -134,7 +130,6 @@ std::cout << "Secret's content type is now " << updatedValueString << std::endl;
 
 Delete an existing secret.
 
-<!-- @insert_snippet: SecretSample1DeleteSecret -->
 ```cpp
 // start deleting the secret
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
@@ -152,7 +147,6 @@ secretClient.PurgeDeletedSecret(secret.Name);
 
 Delete and Purge a secret.
 
-<!-- @insert_snippet: SecretSample1DeleteSecret -->
 ```cpp
 // start deleting the secret
 DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
@@ -170,7 +164,6 @@ secretClient.PurgeDeletedSecret(secret.Name);
 
 List all the secrets in keyvault. 
 
-<!-- @insert_snippet: SecretSample4ListAllSecrets -->
 ```cpp
 // get all the versions of a secret
 for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.Name);
