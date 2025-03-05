@@ -664,9 +664,7 @@ SecretClient::UpdateSecretProperties(
   return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-// codegen: remove SecretClient::GetSecretImpl
-
-// codegen: insert after SecretClient::GetSecretImpl
+// codegen: replace SecretClient::GetSecret
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> SecretClient::GetSecret(
     std::string const& secretName,
     Models::GetSecretOptions const& options,
@@ -820,7 +818,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
   return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-// codegen: end insert after SecretClient::GetSecretImpl
+// codegen: end replace SecretClient::GetSecret
 
 SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
     GetPropertiesOfSecretsOptions const& options,

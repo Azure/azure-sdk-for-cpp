@@ -189,34 +189,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Models::UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const;
 
-    // codegen: insert after SecretClient::UpdateSecretProperties
-    // public:
-    //   /**
-    //    * @brief The UPDATE operation changes specified attributes of an existing stored secret.
-    //    * Attributes that are not specified in the request are left unchanged. The value of a
-    //    secret
-    //    * itself cannot be changed. This operation requires the secrets/set permission.
-    //    * @param properties The secret properties to be updated. Must contain the name and version
-    //    of
-    //    * the secret to be updated.
-    //    * @param context The context for the operation can be used for request cancellation.
-    //    * @return A secret consisting of a value, id and its attributes.
-    //    *
-    //    */
-    //   Response<Models::KeyVaultSecret> UpdateSecretProperties(
-    //       Models::SecretProperties const& properties,
-    //       Azure::Core::Context const& context = Azure::Core::Context()) const
-    //   {
-    //     Models::UpdateSecretPropertiesOptions options;
-    //     options.SecretAttributes = properties;
-    //     return UpdateSecretProperties(
-    //         properties.Name.ValueOr(""), properties.Version.ValueOr(""), options, context);
-    //   }
-    //  codegen: end insert after SecretClient::UpdateSecretProperties
-
-    // codegen: remove SecretClient::GetSecretImpl
-
-    // codegen: insert after SecretClient::GetSecretImpl
+    // codegen: replace SecretClient::GetSecret
   public:
     /**
      * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
@@ -231,7 +204,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& secretName,
         Models::GetSecretOptions const& options = Models::GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-    // codegen: end insert after SecretClient::GetSecretImpl
+    // codegen: end replace SecretClient::GetSecret
 
     /**
      * @brief The Get Secrets operation is applicable to the entire vault. However, only the base
