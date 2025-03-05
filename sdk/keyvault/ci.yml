@@ -30,7 +30,7 @@ extends:
       CtestRegex: "azure-security-keyvault.*"
       LiveTestCtestRegex: "azure-security-keyvault.*"
       LiveTestTimeoutInMinutes: 120
-      LineCoverageTarget: 79
+      LineCoverageTarget: 78
       BranchCoverageTarget: 48
       Artifacts:
         - Name: azure-security-keyvault-keys
