@@ -81,14 +81,14 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
     auto secretResponse = client.SetSecret(secretName, secretValue);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
+    EXPECT_EQ(secret.Properties.Value().RecoverableDays.Value(), 90);
     EXPECT_EQ(secret.Value.Value(), secretValue);
   }
   {
     auto secretResponse = client.SetSecret(secretName, secretValue2);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
+    EXPECT_EQ(secret.Properties.Value().RecoverableDays.Value(), 90);
     EXPECT_EQ(secret.Value.Value(), secretValue2);
   }
   {
@@ -101,7 +101,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
+    EXPECT_EQ(secret.Properties.Value().RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -127,7 +127,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
     auto secretResponse = client.GetSecret(secretName);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    properties = secret.Properties;
+    properties = secret.Properties.Value();
     EXPECT_EQ(secret.Value.Value(), secretValue);
   }
   {
@@ -164,7 +164,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
+    EXPECT_EQ(secret.Properties.Value().RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -201,7 +201,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
-    EXPECT_EQ(restored.Properties.RecoverableDays.Value(), 90);
+    EXPECT_EQ(restored.Properties.Value().RecoverableDays.Value(), 90);
   }
 }
 
@@ -229,8 +229,8 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
     EXPECT_EQ(
-        operationResult.Properties.RecoverableDays.Value(),
-        secret.Properties.RecoverableDays.Value());
+        operationResult.Properties.Value().RecoverableDays.Value(),
+        secret.Properties.Value().RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
   {
@@ -244,8 +244,8 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     auto restoredSecret = client.GetSecret(secretName);
     auto secret = restoredSecret.Value;
     EXPECT_EQ(
-        operationResult.Properties.RecoverableDays.Value(),
-        secret.Properties.RecoverableDays.Value());
+        operationResult.Properties.Value().RecoverableDays.Value(),
+        secret.Properties.Value().RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
 }

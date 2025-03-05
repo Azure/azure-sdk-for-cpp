@@ -62,7 +62,6 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
-
     jsonRoot["value"] = parameters.Value;
     if (parameters.Tags.HasValue())
     {
@@ -79,45 +78,50 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
       jsonRoot["contentType"] = parameters.ContentType.Value();
     }
 
-    if (parameters.SecretAttributes.Enabled.HasValue())
+    if (parameters.SecretAttributes.HasValue())
     {
-      jsonRoot["attributes"]["enabled"] = parameters.SecretAttributes.Enabled.Value();
-    }
+      if (parameters.SecretAttributes.Value().Enabled.HasValue())
+      {
+        jsonRoot["attributes"]["enabled"] = parameters.SecretAttributes.Value().Enabled.Value();
+      }
 
-    if (parameters.SecretAttributes.NotBefore.HasValue())
-    {
-      jsonRoot["attributes"]["nbf"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.NotBefore.Value());
-    }
+      if (parameters.SecretAttributes.Value().NotBefore.HasValue())
+      {
+        jsonRoot["attributes"]["nbf"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+            parameters.SecretAttributes.Value().NotBefore.Value());
+      }
 
-    if (parameters.SecretAttributes.Expires.HasValue())
-    {
-      jsonRoot["attributes"]["exp"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Expires.Value());
-    }
+      if (parameters.SecretAttributes.Value().Expires.HasValue())
+      {
+        jsonRoot["attributes"]["exp"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+            parameters.SecretAttributes.Value().Expires.Value());
+      }
 
-    if (parameters.SecretAttributes.Created.HasValue())
-    {
-      jsonRoot["attributes"]["created"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Created.Value());
-    }
+      if (parameters.SecretAttributes.Value().Created.HasValue())
+      {
+        jsonRoot["attributes"]["created"]
+            = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+                parameters.SecretAttributes.Value().Created.Value());
+      }
 
-    if (parameters.SecretAttributes.Updated.HasValue())
-    {
-      jsonRoot["attributes"]["updated"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Updated.Value());
-    }
+      if (parameters.SecretAttributes.Value().Updated.HasValue())
+      {
+        jsonRoot["attributes"]["updated"]
+            = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+                parameters.SecretAttributes.Value().Updated.Value());
+      }
 
-    if (parameters.SecretAttributes.RecoverableDays.HasValue())
-    {
-      jsonRoot["attributes"]["recoverableDays"]
-          = parameters.SecretAttributes.RecoverableDays.Value();
-    }
+      if (parameters.SecretAttributes.Value().RecoverableDays.HasValue())
+      {
+        jsonRoot["attributes"]["recoverableDays"]
+            = parameters.SecretAttributes.Value().RecoverableDays.Value();
+      }
 
-    if (parameters.SecretAttributes.RecoveryLevel.HasValue())
-    {
-      jsonRoot["attributes"]["recoveryLevel"]
-          = parameters.SecretAttributes.RecoveryLevel.Value().ToString();
+      if (parameters.SecretAttributes.Value().RecoveryLevel.HasValue())
+      {
+        jsonRoot["attributes"]["recoveryLevel"]
+            = parameters.SecretAttributes.Value().RecoveryLevel.Value().ToString();
+      }
     }
 
     jsonBody = jsonRoot.dump();
@@ -166,63 +170,72 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -304,63 +317,72 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -438,52 +460,57 @@ SecretClient::UpdateSecretProperties(
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
-
     if (parameters.ContentType.HasValue())
     {
       jsonRoot["contentType"] = parameters.ContentType.Value();
     }
 
-    if (parameters.SecretAttributes.Enabled.HasValue())
+    if (parameters.SecretAttributes.HasValue())
     {
-      jsonRoot["attributes"]["enabled"] = parameters.SecretAttributes.Enabled.Value();
+      if (parameters.SecretAttributes.Value().Enabled.HasValue())
+      {
+        jsonRoot["attributes"]["enabled"] = parameters.SecretAttributes.Value().Enabled.Value();
+      }
+
+      if (parameters.SecretAttributes.Value().NotBefore.HasValue())
+      {
+        jsonRoot["attributes"]["nbf"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+            parameters.SecretAttributes.Value().NotBefore.Value());
+      }
+
+      if (parameters.SecretAttributes.Value().Expires.HasValue())
+      {
+        jsonRoot["attributes"]["exp"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+            parameters.SecretAttributes.Value().Expires.Value());
+      }
+
+      if (parameters.SecretAttributes.Value().Created.HasValue())
+      {
+        jsonRoot["attributes"]["created"]
+            = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+                parameters.SecretAttributes.Value().Created.Value());
+      }
+
+      if (parameters.SecretAttributes.Value().Updated.HasValue())
+      {
+        jsonRoot["attributes"]["updated"]
+            = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
+                parameters.SecretAttributes.Value().Updated.Value());
+      }
+
+      if (parameters.SecretAttributes.Value().RecoverableDays.HasValue())
+      {
+        jsonRoot["attributes"]["recoverableDays"]
+            = parameters.SecretAttributes.Value().RecoverableDays.Value();
+      }
+
+      if (parameters.SecretAttributes.Value().RecoveryLevel.HasValue())
+      {
+        jsonRoot["attributes"]["recoveryLevel"]
+            = parameters.SecretAttributes.Value().RecoveryLevel.Value().ToString();
+      }
     }
 
-    if (parameters.SecretAttributes.NotBefore.HasValue())
-    {
-      jsonRoot["attributes"]["nbf"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.NotBefore.Value());
-    }
-
-    if (parameters.SecretAttributes.Expires.HasValue())
-    {
-      jsonRoot["attributes"]["exp"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Expires.Value());
-    }
-
-    if (parameters.SecretAttributes.Created.HasValue())
-    {
-      jsonRoot["attributes"]["created"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Created.Value());
-    }
-
-    if (parameters.SecretAttributes.Updated.HasValue())
-    {
-      jsonRoot["attributes"]["updated"] = Core::_internal::PosixTimeConverter::DateTimeToPosixTime(
-          parameters.SecretAttributes.Updated.Value());
-    }
-
-    if (parameters.SecretAttributes.RecoverableDays.HasValue())
-    {
-      jsonRoot["attributes"]["recoverableDays"]
-          = parameters.SecretAttributes.RecoverableDays.Value();
-    }
-
-    if (parameters.SecretAttributes.RecoveryLevel.HasValue())
-    {
-      jsonRoot["attributes"]["recoveryLevel"]
-          = parameters.SecretAttributes.RecoveryLevel.Value().ToString();
-    }
     if (parameters.Tags.HasValue())
     {
       jsonRoot["tags"] = Core::Json::_internal::json::object();
@@ -540,63 +567,72 @@ SecretClient::UpdateSecretProperties(
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -643,7 +679,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
     throw std::invalid_argument("Parameter 'secretName' cannot be an empty string.");
   }
   url.AppendPath(Core::Url::Encode(secretName));
-  if (options.Version.empty())
+  if (!options.Version.empty())
   {
     url.AppendPath(Core::Url::Encode(options.Version));
   }
@@ -687,63 +723,72 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -846,7 +891,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
           response.NextPageToken = jsonRoot["nextLink"].get<std::string>();
         }
 
-        if (jsonRoot.contains("value"))
+        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
           response.Value = std::vector<Models::SecretItem>{};
 
@@ -859,67 +904,75 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
               vectorItem.Id = jsonItem["id"].get<std::string>();
             }
 
-            if (jsonItem["attributes"].contains("enabled")
-                && !jsonItem["attributes"]["enabled"].is_null())
+            if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes.Enabled = jsonItem["attributes"]["enabled"].get<bool>();
+              vectorItem.Attributes = Models::SecretProperties{};
+
+              if (jsonItem["attributes"].contains("enabled")
+                  && !jsonItem["attributes"]["enabled"].is_null())
+              {
+                vectorItem.Attributes.Value().Enabled
+                    = jsonItem["attributes"]["enabled"].get<bool>();
+              }
+
+              if (jsonItem["attributes"].contains("nbf")
+                  && !jsonItem["attributes"]["nbf"].is_null())
+              {
+                vectorItem.Attributes.Value().NotBefore
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["nbf"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
+                            : jsonItem["attributes"]["nbf"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("exp")
+                  && !jsonItem["attributes"]["exp"].is_null())
+              {
+                vectorItem.Attributes.Value().Expires
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["exp"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
+                            : jsonItem["attributes"]["exp"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("created")
+                  && !jsonItem["attributes"]["created"].is_null())
+              {
+                vectorItem.Attributes.Value().Created
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["created"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
+                            : jsonItem["attributes"]["created"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("updated")
+                  && !jsonItem["attributes"]["updated"].is_null())
+              {
+                vectorItem.Attributes.Value().Updated
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["updated"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
+                            : jsonItem["attributes"]["updated"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("recoverableDays")
+                  && !jsonItem["attributes"]["recoverableDays"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoverableDays
+                    = jsonItem["attributes"]["recoverableDays"].is_string()
+                    ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
+                    : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
+              }
+
+              if (jsonItem["attributes"].contains("recoveryLevel")
+                  && !jsonItem["attributes"]["recoveryLevel"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                    jsonItem["attributes"]["recoveryLevel"].get<std::string>());
+              }
             }
 
-            if (jsonItem["attributes"].contains("nbf") && !jsonItem["attributes"]["nbf"].is_null())
-            {
-              vectorItem.Attributes.NotBefore
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["nbf"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
-                          : jsonItem["attributes"]["nbf"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("exp") && !jsonItem["attributes"]["exp"].is_null())
-            {
-              vectorItem.Attributes.Expires
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["exp"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
-                          : jsonItem["attributes"]["exp"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("created")
-                && !jsonItem["attributes"]["created"].is_null())
-            {
-              vectorItem.Attributes.Created
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["created"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
-                          : jsonItem["attributes"]["created"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("updated")
-                && !jsonItem["attributes"]["updated"].is_null())
-            {
-              vectorItem.Attributes.Updated
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["updated"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
-                          : jsonItem["attributes"]["updated"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("recoverableDays")
-                && !jsonItem["attributes"]["recoverableDays"].is_null())
-            {
-              vectorItem.Attributes.RecoverableDays
-                  = jsonItem["attributes"]["recoverableDays"].is_string()
-                  ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
-                  : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
-            }
-
-            if (jsonItem["attributes"].contains("recoveryLevel")
-                && !jsonItem["attributes"]["recoveryLevel"].is_null())
-            {
-              vectorItem.Attributes.RecoveryLevel = Models::DeletionRecoveryLevel(
-                  jsonItem["attributes"]["recoveryLevel"].get<std::string>());
-            }
-
-            if (jsonItem.contains("tags"))
+            if (jsonItem.contains("tags") && !jsonItem["tags"].is_null())
             {
               vectorItem.Tags = std::map<std::string, std::string>{};
 
@@ -1034,7 +1087,7 @@ SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersio
           response.NextPageToken = jsonRoot["nextLink"].get<std::string>();
         }
 
-        if (jsonRoot.contains("value"))
+        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
           response.Value = std::vector<Models::SecretItem>{};
 
@@ -1047,67 +1100,75 @@ SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersio
               vectorItem.Id = jsonItem["id"].get<std::string>();
             }
 
-            if (jsonItem["attributes"].contains("enabled")
-                && !jsonItem["attributes"]["enabled"].is_null())
+            if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes.Enabled = jsonItem["attributes"]["enabled"].get<bool>();
+              vectorItem.Attributes = Models::SecretProperties{};
+
+              if (jsonItem["attributes"].contains("enabled")
+                  && !jsonItem["attributes"]["enabled"].is_null())
+              {
+                vectorItem.Attributes.Value().Enabled
+                    = jsonItem["attributes"]["enabled"].get<bool>();
+              }
+
+              if (jsonItem["attributes"].contains("nbf")
+                  && !jsonItem["attributes"]["nbf"].is_null())
+              {
+                vectorItem.Attributes.Value().NotBefore
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["nbf"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
+                            : jsonItem["attributes"]["nbf"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("exp")
+                  && !jsonItem["attributes"]["exp"].is_null())
+              {
+                vectorItem.Attributes.Value().Expires
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["exp"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
+                            : jsonItem["attributes"]["exp"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("created")
+                  && !jsonItem["attributes"]["created"].is_null())
+              {
+                vectorItem.Attributes.Value().Created
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["created"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
+                            : jsonItem["attributes"]["created"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("updated")
+                  && !jsonItem["attributes"]["updated"].is_null())
+              {
+                vectorItem.Attributes.Value().Updated
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["updated"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
+                            : jsonItem["attributes"]["updated"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("recoverableDays")
+                  && !jsonItem["attributes"]["recoverableDays"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoverableDays
+                    = jsonItem["attributes"]["recoverableDays"].is_string()
+                    ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
+                    : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
+              }
+
+              if (jsonItem["attributes"].contains("recoveryLevel")
+                  && !jsonItem["attributes"]["recoveryLevel"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                    jsonItem["attributes"]["recoveryLevel"].get<std::string>());
+              }
             }
 
-            if (jsonItem["attributes"].contains("nbf") && !jsonItem["attributes"]["nbf"].is_null())
-            {
-              vectorItem.Attributes.NotBefore
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["nbf"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
-                          : jsonItem["attributes"]["nbf"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("exp") && !jsonItem["attributes"]["exp"].is_null())
-            {
-              vectorItem.Attributes.Expires
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["exp"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
-                          : jsonItem["attributes"]["exp"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("created")
-                && !jsonItem["attributes"]["created"].is_null())
-            {
-              vectorItem.Attributes.Created
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["created"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
-                          : jsonItem["attributes"]["created"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("updated")
-                && !jsonItem["attributes"]["updated"].is_null())
-            {
-              vectorItem.Attributes.Updated
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["updated"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
-                          : jsonItem["attributes"]["updated"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("recoverableDays")
-                && !jsonItem["attributes"]["recoverableDays"].is_null())
-            {
-              vectorItem.Attributes.RecoverableDays
-                  = jsonItem["attributes"]["recoverableDays"].is_string()
-                  ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
-                  : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
-            }
-
-            if (jsonItem["attributes"].contains("recoveryLevel")
-                && !jsonItem["attributes"]["recoveryLevel"].is_null())
-            {
-              vectorItem.Attributes.RecoveryLevel = Models::DeletionRecoveryLevel(
-                  jsonItem["attributes"]["recoveryLevel"].get<std::string>());
-            }
-
-            if (jsonItem.contains("tags"))
+            if (jsonItem.contains("tags") && !jsonItem["tags"].is_null())
             {
               vectorItem.Tags = std::map<std::string, std::string>{};
 
@@ -1214,7 +1275,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
           response.NextPageToken = jsonRoot["nextLink"].get<std::string>();
         }
 
-        if (jsonRoot.contains("value"))
+        if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
           response.Value = std::vector<Models::DeletedSecretItem>{};
 
@@ -1227,67 +1288,75 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
               vectorItem.Id = jsonItem["id"].get<std::string>();
             }
 
-            if (jsonItem["attributes"].contains("enabled")
-                && !jsonItem["attributes"]["enabled"].is_null())
+            if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes.Enabled = jsonItem["attributes"]["enabled"].get<bool>();
+              vectorItem.Attributes = Models::SecretProperties{};
+
+              if (jsonItem["attributes"].contains("enabled")
+                  && !jsonItem["attributes"]["enabled"].is_null())
+              {
+                vectorItem.Attributes.Value().Enabled
+                    = jsonItem["attributes"]["enabled"].get<bool>();
+              }
+
+              if (jsonItem["attributes"].contains("nbf")
+                  && !jsonItem["attributes"]["nbf"].is_null())
+              {
+                vectorItem.Attributes.Value().NotBefore
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["nbf"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
+                            : jsonItem["attributes"]["nbf"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("exp")
+                  && !jsonItem["attributes"]["exp"].is_null())
+              {
+                vectorItem.Attributes.Value().Expires
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["exp"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
+                            : jsonItem["attributes"]["exp"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("created")
+                  && !jsonItem["attributes"]["created"].is_null())
+              {
+                vectorItem.Attributes.Value().Created
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["created"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
+                            : jsonItem["attributes"]["created"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("updated")
+                  && !jsonItem["attributes"]["updated"].is_null())
+              {
+                vectorItem.Attributes.Value().Updated
+                    = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                        jsonItem["attributes"]["updated"].is_string()
+                            ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
+                            : jsonItem["attributes"]["updated"].get<std::int64_t>());
+              }
+
+              if (jsonItem["attributes"].contains("recoverableDays")
+                  && !jsonItem["attributes"]["recoverableDays"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoverableDays
+                    = jsonItem["attributes"]["recoverableDays"].is_string()
+                    ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
+                    : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
+              }
+
+              if (jsonItem["attributes"].contains("recoveryLevel")
+                  && !jsonItem["attributes"]["recoveryLevel"].is_null())
+              {
+                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                    jsonItem["attributes"]["recoveryLevel"].get<std::string>());
+              }
             }
 
-            if (jsonItem["attributes"].contains("nbf") && !jsonItem["attributes"]["nbf"].is_null())
-            {
-              vectorItem.Attributes.NotBefore
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["nbf"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["nbf"].get<std::string>())
-                          : jsonItem["attributes"]["nbf"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("exp") && !jsonItem["attributes"]["exp"].is_null())
-            {
-              vectorItem.Attributes.Expires
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["exp"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["exp"].get<std::string>())
-                          : jsonItem["attributes"]["exp"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("created")
-                && !jsonItem["attributes"]["created"].is_null())
-            {
-              vectorItem.Attributes.Created
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["created"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["created"].get<std::string>())
-                          : jsonItem["attributes"]["created"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("updated")
-                && !jsonItem["attributes"]["updated"].is_null())
-            {
-              vectorItem.Attributes.Updated
-                  = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-                      jsonItem["attributes"]["updated"].is_string()
-                          ? std::stoll(jsonItem["attributes"]["updated"].get<std::string>())
-                          : jsonItem["attributes"]["updated"].get<std::int64_t>());
-            }
-
-            if (jsonItem["attributes"].contains("recoverableDays")
-                && !jsonItem["attributes"]["recoverableDays"].is_null())
-            {
-              vectorItem.Attributes.RecoverableDays
-                  = jsonItem["attributes"]["recoverableDays"].is_string()
-                  ? std::stoi(jsonItem["attributes"]["recoverableDays"].get<std::string>())
-                  : jsonItem["attributes"]["recoverableDays"].get<std::int32_t>();
-            }
-
-            if (jsonItem["attributes"].contains("recoveryLevel")
-                && !jsonItem["attributes"]["recoveryLevel"].is_null())
-            {
-              vectorItem.Attributes.RecoveryLevel = Models::DeletionRecoveryLevel(
-                  jsonItem["attributes"]["recoveryLevel"].get<std::string>());
-            }
-
-            if (jsonItem.contains("tags"))
+            if (jsonItem.contains("tags") && !jsonItem["tags"].is_null())
             {
               vectorItem.Tags = std::map<std::string, std::string>{};
 
@@ -1398,63 +1467,72 @@ SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context cons
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -1589,63 +1667,72 @@ SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context 
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 
@@ -1742,9 +1829,7 @@ SecretClient::RestoreSecretBackup(
   std::string jsonBody;
   {
     auto jsonRoot = Core::Json::_internal::json::object();
-
     jsonRoot["value"] = Core::_internal::Base64Url::Base64UrlEncode(parameters.SecretBundleBackup);
-
     jsonBody = jsonRoot.dump();
   }
 
@@ -1791,63 +1876,72 @@ SecretClient::RestoreSecretBackup(
           response.ContentType = jsonRoot["contentType"].get<std::string>();
         }
 
-        if (jsonRoot["attributes"].contains("enabled")
-            && !jsonRoot["attributes"]["enabled"].is_null())
+        if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties.Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          response.Properties = Models::SecretProperties{};
+
+          if (jsonRoot["attributes"].contains("enabled")
+              && !jsonRoot["attributes"]["enabled"].is_null())
+          {
+            response.Properties.Value().Enabled = jsonRoot["attributes"]["enabled"].get<bool>();
+          }
+
+          if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
+          {
+            response.Properties.Value().NotBefore
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["nbf"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
+                        : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
+          {
+            response.Properties.Value().Expires
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["exp"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
+                        : jsonRoot["attributes"]["exp"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("created")
+              && !jsonRoot["attributes"]["created"].is_null())
+          {
+            response.Properties.Value().Created
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["created"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
+                        : jsonRoot["attributes"]["created"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("updated")
+              && !jsonRoot["attributes"]["updated"].is_null())
+          {
+            response.Properties.Value().Updated
+                = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
+                    jsonRoot["attributes"]["updated"].is_string()
+                        ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
+                        : jsonRoot["attributes"]["updated"].get<std::int64_t>());
+          }
+
+          if (jsonRoot["attributes"].contains("recoverableDays")
+              && !jsonRoot["attributes"]["recoverableDays"].is_null())
+          {
+            response.Properties.Value().RecoverableDays
+                = jsonRoot["attributes"]["recoverableDays"].is_string()
+                ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
+                : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
+          }
+
+          if (jsonRoot["attributes"].contains("recoveryLevel")
+              && !jsonRoot["attributes"]["recoveryLevel"].is_null())
+          {
+            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+          }
         }
 
-        if (jsonRoot["attributes"].contains("nbf") && !jsonRoot["attributes"]["nbf"].is_null())
-        {
-          response.Properties.NotBefore = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["nbf"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["nbf"].get<std::string>())
-                  : jsonRoot["attributes"]["nbf"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("exp") && !jsonRoot["attributes"]["exp"].is_null())
-        {
-          response.Properties.Expires = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["exp"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["exp"].get<std::string>())
-                  : jsonRoot["attributes"]["exp"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("created")
-            && !jsonRoot["attributes"]["created"].is_null())
-        {
-          response.Properties.Created = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["created"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["created"].get<std::string>())
-                  : jsonRoot["attributes"]["created"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("updated")
-            && !jsonRoot["attributes"]["updated"].is_null())
-        {
-          response.Properties.Updated = Core::_internal::PosixTimeConverter::PosixTimeToDateTime(
-              jsonRoot["attributes"]["updated"].is_string()
-                  ? std::stoll(jsonRoot["attributes"]["updated"].get<std::string>())
-                  : jsonRoot["attributes"]["updated"].get<std::int64_t>());
-        }
-
-        if (jsonRoot["attributes"].contains("recoverableDays")
-            && !jsonRoot["attributes"]["recoverableDays"].is_null())
-        {
-          response.Properties.RecoverableDays
-              = jsonRoot["attributes"]["recoverableDays"].is_string()
-              ? std::stoi(jsonRoot["attributes"]["recoverableDays"].get<std::string>())
-              : jsonRoot["attributes"]["recoverableDays"].get<std::int32_t>();
-        }
-
-        if (jsonRoot["attributes"].contains("recoveryLevel")
-            && !jsonRoot["attributes"]["recoveryLevel"].is_null())
-        {
-          response.Properties.RecoveryLevel = Models::DeletionRecoveryLevel(
-              jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
-        }
-
-        if (jsonRoot.contains("tags"))
+        if (jsonRoot.contains("tags") && !jsonRoot["tags"].is_null())
         {
           response.Tags = std::map<std::string, std::string>{};
 

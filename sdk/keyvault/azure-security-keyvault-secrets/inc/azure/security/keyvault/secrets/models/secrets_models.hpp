@@ -138,7 +138,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> ContentType;
 
     /// The secret management attributes.
-    SecretProperties Properties;
+    Nullable<SecretProperties> Properties;
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
@@ -168,7 +168,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> ContentType;
 
     /// The secret management attributes.
-    SecretProperties SecretAttributes;
+    Nullable<SecretProperties> SecretAttributes;
   };
 
   /**
@@ -188,7 +188,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> ContentType;
 
     /// The secret management attributes.
-    SecretProperties Properties;
+    Nullable<SecretProperties> Properties;
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
@@ -221,7 +221,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> ContentType;
 
     /// The secret management attributes.
-    SecretProperties SecretAttributes;
+    Nullable<SecretProperties> SecretAttributes;
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
@@ -237,7 +237,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> Id;
 
     /// The secret management attributes.
-    SecretProperties Attributes;
+    Nullable<SecretProperties> Attributes;
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
@@ -260,7 +260,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::string> Id;
 
     /// The secret management attributes.
-    SecretProperties Attributes;
+    Nullable<SecretProperties> Attributes;
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
