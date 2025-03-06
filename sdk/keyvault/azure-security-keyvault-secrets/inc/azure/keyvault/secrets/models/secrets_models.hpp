@@ -227,6 +227,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
     Nullable<std::map<std::string, std::string>> Tags;
 
     // codegen: insert after UpdateSecretPropertiesOptions::Tags
+    /// Secret version to be updated.
     Nullable<std::string> SecretVersion;
     // codegen: end insert after UpdateSecretPropertiesOptions::Tags
   };
