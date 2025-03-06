@@ -33,8 +33,8 @@ int main()
   try
   {
     // create secret
-    Models::KeyVaultSecret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
-    Models::KeyVaultSecret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
+    KeyVaultSecret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
+    KeyVaultSecret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
     std::cout << "Secret1 Id : " << secret1.Id.Value() << std::endl;
 

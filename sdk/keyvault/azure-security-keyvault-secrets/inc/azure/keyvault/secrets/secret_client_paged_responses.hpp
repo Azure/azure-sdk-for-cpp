@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "azure/keyvault/secrets/models/secrets_models.hpp"
 #include "azure/keyvault/secrets/secret_client_options.hpp"
+#include "azure/keyvault/secrets/secrets_models.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -41,7 +41,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     /// A response message containing a list of secrets in the key vault along with a link to the
     /// next page of secrets.
-    Nullable<std::vector<Models::SecretItem>> Value;
+    Nullable<std::vector<SecretItem>> Value;
   };
 
   /**
@@ -63,7 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     /// A response message containing a list of secrets in the key vault along with a link to the
     /// next page of secrets.
-    Nullable<std::vector<Models::SecretItem>> Value;
+    Nullable<std::vector<SecretItem>> Value;
   };
 
   /**
@@ -83,6 +83,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   public:
     /// A response message containing a list of deleted secrets in the key vault along with a link
     /// to the next page of deleted secrets.
-    Nullable<std::vector<Models::DeletedSecretItem>> Value;
+    Nullable<std::vector<DeletedSecretItem>> Value;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

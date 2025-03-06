@@ -20,9 +20,7 @@
 
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace std::chrono_literals;
-void AssertSecretsEqual(
-    Models::KeyVaultSecret const& expected,
-    Models::KeyVaultSecret const& actual);
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual);
 
 int main()
 {
@@ -41,7 +39,7 @@ int main()
     secretClient.SetSecret(secretName, secretValue);
 
     // get secret
-    Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret is returned with Id: " << secret.Id.Value()
@@ -81,7 +79,7 @@ int main()
     std::cout << "\t-Read from file." << std::endl;
     std::ifstream inFile;
     inFile.open("backup.dat");
-    Models::BackupSecretResult backedUpSecret;
+    BackupSecretResult backedUpSecret;
     backedUpSecret.Value = std::vector<uint8_t>(backUpSize);
     inFile >> backedUpSecret.Value.Value().data();
     inFile.close();
@@ -111,9 +109,7 @@ int main()
   return 0;
 }
 
-void AssertSecretsEqual(
-    Models::KeyVaultSecret const& expected,
-    Models::KeyVaultSecret const& actual)
+void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& actual)
 {
 #if defined(NDEBUG)
   // Use (void) to silence unused warnings.

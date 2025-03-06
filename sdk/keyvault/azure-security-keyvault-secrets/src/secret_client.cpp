@@ -44,9 +44,9 @@ SecretClient::SecretClient(
 
 std::string SecretClient::GetUrl() const { return m_url.GetAbsoluteUrl(); }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> SecretClient::SetSecret(
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& secretName,
-    Models::SecretSetParameters const& parameters,
+    SecretSetParameters const& parameters,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -145,7 +145,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::KeyVaultSecret response{};
+  KeyVaultSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -172,7 +172,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -230,8 +230,8 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -264,11 +264,12 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
     }
   }
 
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+  return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::DeletedSecret>
-SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& context) const
+Azure::Response<DeletedSecret> SecretClient::DeleteSecret(
+    std::string const& secretName,
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -292,7 +293,7 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::DeletedSecret response{};
+  DeletedSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -319,7 +320,7 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -377,8 +378,8 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -432,14 +433,13 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
     }
   }
 
-  return Response<Models::DeletedSecret>(std::move(response), std::move(rawResponse));
+  return Response<DeletedSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
-SecretClient::UpdateSecretProperties(
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     std::string const& secretName,
     std::string const& secretVersion,
-    Models::UpdateSecretPropertiesOptions const& parameters,
+    UpdateSecretPropertiesOptions const& parameters,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -542,7 +542,7 @@ SecretClient::UpdateSecretProperties(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::KeyVaultSecret response{};
+  KeyVaultSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -569,7 +569,7 @@ SecretClient::UpdateSecretProperties(
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -627,8 +627,8 @@ SecretClient::UpdateSecretProperties(
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -661,13 +661,13 @@ SecretClient::UpdateSecretProperties(
     }
   }
 
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+  return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
 // codegen: replace SecretClient::GetSecret
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> SecretClient::GetSecret(
+Azure::Response<Azure::Security::KeyVault::Secrets::KeyVaultSecret> SecretClient::GetSecret(
     std::string const& secretName,
-    Models::GetSecretOptions const& options,
+    GetSecretOptions const& options,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -696,7 +696,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::KeyVaultSecret response{};
+  KeyVaultSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -723,7 +723,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -781,8 +781,8 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -815,7 +815,7 @@ Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret> Secr
     }
   }
 
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+  return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
 // codegen: end replace SecretClient::GetSecret
@@ -891,11 +891,11 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
-          response.Value = std::vector<Models::SecretItem>{};
+          response.Value = std::vector<SecretItem>{};
 
           for (auto const& jsonItem : jsonRoot["value"])
           {
-            Models::SecretItem vectorItem{};
+            SecretItem vectorItem{};
 
             if (jsonItem.contains("id") && !jsonItem["id"].is_null())
             {
@@ -904,7 +904,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
 
             if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes = Models::SecretProperties{};
+              vectorItem.Attributes = SecretProperties{};
 
               if (jsonItem["attributes"].contains("enabled")
                   && !jsonItem["attributes"]["enabled"].is_null())
@@ -965,7 +965,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
               if (jsonItem["attributes"].contains("recoveryLevel")
                   && !jsonItem["attributes"]["recoveryLevel"].is_null())
               {
-                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                vectorItem.Attributes.Value().RecoveryLevel = DeletionRecoveryLevel(
                     jsonItem["attributes"]["recoveryLevel"].get<std::string>());
               }
             }
@@ -1087,11 +1087,11 @@ SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersio
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
-          response.Value = std::vector<Models::SecretItem>{};
+          response.Value = std::vector<SecretItem>{};
 
           for (auto const& jsonItem : jsonRoot["value"])
           {
-            Models::SecretItem vectorItem{};
+            SecretItem vectorItem{};
 
             if (jsonItem.contains("id") && !jsonItem["id"].is_null())
             {
@@ -1100,7 +1100,7 @@ SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersio
 
             if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes = Models::SecretProperties{};
+              vectorItem.Attributes = SecretProperties{};
 
               if (jsonItem["attributes"].contains("enabled")
                   && !jsonItem["attributes"]["enabled"].is_null())
@@ -1161,7 +1161,7 @@ SecretPropertiesVersionsPagedResponse SecretClient::GetPropertiesOfSecretsVersio
               if (jsonItem["attributes"].contains("recoveryLevel")
                   && !jsonItem["attributes"]["recoveryLevel"].is_null())
               {
-                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                vectorItem.Attributes.Value().RecoveryLevel = DeletionRecoveryLevel(
                     jsonItem["attributes"]["recoveryLevel"].get<std::string>());
               }
             }
@@ -1275,11 +1275,11 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
         {
-          response.Value = std::vector<Models::DeletedSecretItem>{};
+          response.Value = std::vector<DeletedSecretItem>{};
 
           for (auto const& jsonItem : jsonRoot["value"])
           {
-            Models::DeletedSecretItem vectorItem{};
+            DeletedSecretItem vectorItem{};
 
             if (jsonItem.contains("id") && !jsonItem["id"].is_null())
             {
@@ -1288,7 +1288,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 
             if (jsonItem.contains("attributes") && !jsonItem["attributes"].is_null())
             {
-              vectorItem.Attributes = Models::SecretProperties{};
+              vectorItem.Attributes = SecretProperties{};
 
               if (jsonItem["attributes"].contains("enabled")
                   && !jsonItem["attributes"]["enabled"].is_null())
@@ -1349,7 +1349,7 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
               if (jsonItem["attributes"].contains("recoveryLevel")
                   && !jsonItem["attributes"]["recoveryLevel"].is_null())
               {
-                vectorItem.Attributes.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
+                vectorItem.Attributes.Value().RecoveryLevel = DeletionRecoveryLevel(
                     jsonItem["attributes"]["recoveryLevel"].get<std::string>());
               }
             }
@@ -1415,8 +1415,9 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
   return response;
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::DeletedSecret>
-SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context const& context) const
+Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
+    std::string const& secretName,
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("deletedsecrets/");
@@ -1440,7 +1441,7 @@ SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context cons
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::DeletedSecret response{};
+  DeletedSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -1467,7 +1468,7 @@ SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context cons
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -1525,8 +1526,8 @@ SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context cons
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -1580,11 +1581,12 @@ SecretClient::GetDeletedSecret(std::string const& secretName, Core::Context cons
     }
   }
 
-  return Response<Models::DeletedSecret>(std::move(response), std::move(rawResponse));
+  return Response<DeletedSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::PurgedSecret>
-SecretClient::PurgeDeletedSecret(std::string const& secretName, Core::Context const& context) const
+Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
+    std::string const& secretName,
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("deletedsecrets/");
@@ -1608,14 +1610,14 @@ SecretClient::PurgeDeletedSecret(std::string const& secretName, Core::Context co
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::PurgedSecret response{};
+  PurgedSecret response{};
 
-  return Response<Models::PurgedSecret>(std::move(response), std::move(rawResponse));
+  return Response<PurgedSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
-SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context const& context)
-    const
+Azure::Response<KeyVaultSecret> SecretClient::RecoverDeletedSecret(
+    std::string const& secretName,
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("deletedsecrets/");
@@ -1640,7 +1642,7 @@ SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context 
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::KeyVaultSecret response{};
+  KeyVaultSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -1667,7 +1669,7 @@ SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context 
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -1725,8 +1727,8 @@ SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context 
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -1759,11 +1761,12 @@ SecretClient::RecoverDeletedSecret(std::string const& secretName, Core::Context 
     }
   }
 
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+  return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::BackupSecretResult>
-SecretClient::BackupSecret(std::string const& secretName, Core::Context const& context) const
+Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
+    std::string const& secretName,
+    Core::Context const& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -1788,7 +1791,7 @@ SecretClient::BackupSecret(std::string const& secretName, Core::Context const& c
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::BackupSecretResult response{};
+  BackupSecretResult response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -1811,12 +1814,11 @@ SecretClient::BackupSecret(std::string const& secretName, Core::Context const& c
     }
   }
 
-  return Response<Models::BackupSecretResult>(std::move(response), std::move(rawResponse));
+  return Response<BackupSecretResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
-SecretClient::RestoreSecretBackup(
-    Models::SecretRestoreParameters const& parameters,
+Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
+    SecretRestoreParameters const& parameters,
     Core::Context const& context) const
 {
   auto url = m_url;
@@ -1849,7 +1851,7 @@ SecretClient::RestoreSecretBackup(
     throw Core::RequestFailedException(rawResponse);
   }
 
-  Models::KeyVaultSecret response{};
+  KeyVaultSecret response{};
   {
     auto const& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
@@ -1876,7 +1878,7 @@ SecretClient::RestoreSecretBackup(
 
         if (jsonRoot.contains("attributes") && !jsonRoot["attributes"].is_null())
         {
-          response.Properties = Models::SecretProperties{};
+          response.Properties = SecretProperties{};
 
           if (jsonRoot["attributes"].contains("enabled")
               && !jsonRoot["attributes"]["enabled"].is_null())
@@ -1934,8 +1936,8 @@ SecretClient::RestoreSecretBackup(
           if (jsonRoot["attributes"].contains("recoveryLevel")
               && !jsonRoot["attributes"]["recoveryLevel"].is_null())
           {
-            response.Properties.Value().RecoveryLevel = Models::DeletionRecoveryLevel(
-                jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
+            response.Properties.Value().RecoveryLevel
+                = DeletionRecoveryLevel(jsonRoot["attributes"]["recoveryLevel"].get<std::string>());
           }
         }
 
@@ -1968,5 +1970,5 @@ SecretClient::RestoreSecretBackup(
     }
   }
 
-  return Response<Models::KeyVaultSecret>(std::move(response), std::move(rawResponse));
+  return Response<KeyVaultSecret>(std::move(response), std::move(rawResponse));
 }

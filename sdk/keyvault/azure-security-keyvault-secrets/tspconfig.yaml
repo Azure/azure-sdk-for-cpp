@@ -20,6 +20,7 @@ options:
     package-dir: "azure-security-keyvault-secrets"
     namespace: "Azure::Security::KeyVault::Secrets"
     headersOutputPath: "azure/keyvault/secrets"
+    removeModelsNamespace: true
     typeRename:
      - from: "SecretUpdateParameters"
        to: "UpdateSecretPropertiesOptions"

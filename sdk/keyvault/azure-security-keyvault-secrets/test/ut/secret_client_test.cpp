@@ -112,7 +112,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
 TEST_F(KeyVaultSecretClientTest, UpdateTest)
 {
   auto secretName = GetTestName();
-  Models::SecretProperties properties;
+  SecretProperties properties;
   auto const& client
       = GetClientForTest(::testing::UnitTest::GetInstance()->current_test_info()->name());
   std::string secretValue{"secretValue"};
@@ -132,7 +132,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
   }
   {
     properties.RecoverableDays = 10;
-    Models::UpdateSecretPropertiesOptions options;
+    UpdateSecretPropertiesOptions options;
     options.ContentType = "xyz";
     auto secretResponse = client.UpdateSecretProperties(secretName, options);
     CheckValidResponse(secretResponse);
@@ -144,7 +144,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
 TEST_F(KeyVaultSecretClientTest, BackupRestore)
 {
   auto secretName = GetTestName();
-  Models::BackupSecretResult backupData;
+  BackupSecretResult backupData;
   auto const& client = GetClientForTest(secretName);
   std::string secretValue{"secretValue"};
   {
@@ -267,7 +267,7 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     TestSleep();
   }
   // Get Secret properties
-  std::vector<Models::SecretItem> secretProps;
+  std::vector<SecretItem> secretProps;
 
   for (auto secretResponse = client.GetPropertiesOfSecrets(); secretResponse.HasPage();
        secretResponse.MoveToNextPage())

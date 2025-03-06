@@ -9,9 +9,9 @@
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 // codegen: end insert before includes
 
-#include "azure/keyvault/secrets/models/secrets_models.hpp"
 #include "azure/keyvault/secrets/secret_client_options.hpp"
 #include "azure/keyvault/secrets/secret_client_paged_responses.hpp"
+#include "azure/keyvault/secrets/secrets_models.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -73,9 +73,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> SetSecret(
+    Response<KeyVaultSecret> SetSecret(
         std::string const& secretName,
-        Models::SecretSetParameters const& parameters,
+        SecretSetParameters const& parameters,
         Core::Context const& context = {}) const;
 
     // codegen: insert after SecretClient::SetSecret
@@ -92,12 +92,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Azure::Response<Models::KeyVaultSecret> SetSecret(
+    Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& secretName,
         std::string const& value,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
-      Models::SecretSetParameters parameters;
+      SecretSetParameters parameters;
       parameters.Value = value;
       return SetSecret(secretName, parameters, context);
     };
@@ -114,12 +114,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Azure::Response<Models::KeyVaultSecret> SetSecret(
+    Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& secretName,
-        Models::KeyVaultSecret const& secret,
+        KeyVaultSecret const& secret,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
-      Models::SecretSetParameters parameters;
+      SecretSetParameters parameters;
       parameters.Value = secret.Value.Value();
       parameters.ContentType = secret.ContentType;
       parameters.Tags = secret.Tags;
@@ -142,7 +142,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<Models::DeletedSecret> DeleteSecret(
+    Response<DeletedSecret> DeleteSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -183,10 +183,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> UpdateSecretProperties(
+    Response<KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
         std::string const& secretVersion,
-        Models::UpdateSecretPropertiesOptions const& parameters,
+        UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const;
 
     //  codegen: insert after SecretClient::UpdateSecretProperties
@@ -201,9 +201,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> UpdateSecretProperties(
+    Response<KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
-        Models::UpdateSecretPropertiesOptions const& parameters,
+        UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const
     {
       return UpdateSecretProperties(
@@ -222,9 +222,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Azure::Response<Models::KeyVaultSecret> GetSecret(
+    Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& secretName,
-        Models::GetSecretOptions const& options = Models::GetSecretOptions(),
+        GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
     // codegen: end replace SecretClient::GetSecret
 
@@ -276,7 +276,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * information on when it will be purged.
      *
      */
-    Response<Models::DeletedSecret> GetDeletedSecret(
+    Response<DeletedSecret> GetDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -289,7 +289,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return Operation result.
      *
      */
-    Response<Models::PurgedSecret> PurgeDeletedSecret(
+    Response<PurgedSecret> PurgeDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -306,7 +306,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> RecoverDeletedSecret(
+    Response<KeyVaultSecret> RecoverDeletedSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -342,7 +342,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The backup secret result, containing the backup blob.
      *
      */
-    Response<Models::BackupSecretResult> BackupSecret(
+    Response<BackupSecretResult> BackupSecret(
         std::string const& secretName,
         Core::Context const& context = {}) const;
 
@@ -358,8 +358,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Response<Models::KeyVaultSecret> RestoreSecretBackup(
-        Models::SecretRestoreParameters const& parameters,
+    Response<KeyVaultSecret> RestoreSecretBackup(
+        SecretRestoreParameters const& parameters,
         Core::Context const& context = {}) const;
 
     // codegen: insert after SecretClient::RestoreSecretBackup
@@ -372,11 +372,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return A secret consisting of a value, id and its attributes.
      *
      */
-    Azure::Response<Models::KeyVaultSecret> RestoreSecretBackup(
-        Models::BackupSecretResult const& backup,
+    Azure::Response<KeyVaultSecret> RestoreSecretBackup(
+        BackupSecretResult const& backup,
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
-      return RestoreSecretBackup(Models::SecretRestoreParameters{backup.Value.Value()}, context);
+      return RestoreSecretBackup(SecretRestoreParameters{backup.Value.Value()}, context);
     }
     // codegen: end insert after SecretClient::RestoreSecretBackup
 

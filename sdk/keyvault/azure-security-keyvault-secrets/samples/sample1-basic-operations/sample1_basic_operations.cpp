@@ -39,18 +39,17 @@ int main()
     // @end_snippet
 
     // get secret
-    Models::KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
+    KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
     std::cout << "Secret is returned with Id " << secret.Id.Value() << " and value " << valueString
               << std::endl;
 
     // change one of the properties
-    Models::UpdateSecretPropertiesOptions options;
+    UpdateSecretPropertiesOptions options;
     options.ContentType = "my content";
     // update the secret
-    Models::KeyVaultSecret updatedSecret
-        = secretClient.UpdateSecretProperties(secretName, options).Value;
+    KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secretName, options).Value;
     std::string updatedValueString = updatedSecret.ContentType.HasValue()
         ? updatedSecret.ContentType.Value()
         : "NONE RETURNED";
