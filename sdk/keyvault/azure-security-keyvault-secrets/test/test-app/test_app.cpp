@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "azure/security/keyvault/secrets.hpp"
+#include "azure/keyvault/secrets.hpp"
 
 #include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>

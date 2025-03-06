@@ -6,10 +6,10 @@
  *
  */
 
-#include "azure/security/keyvault/secrets/keyvault_operations.hpp"
+#include "azure/keyvault/secrets/keyvault_operations.hpp"
 
-#include "azure/security/keyvault/secrets/models/secrets_models.hpp"
-#include "azure/security/keyvault/secrets/secret_client.hpp"
+#include "azure/keyvault/secrets/models/secrets_models.hpp"
+#include "azure/keyvault/secrets/secret_client.hpp"
 using namespace Azure::Security::KeyVault::Secrets;
 
 Azure::Response<Models::KeyVaultSecret> RecoverDeletedSecretOperation::PollUntilDoneInternal(

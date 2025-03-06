@@ -32,7 +32,7 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
+option(AZURE_TSP_KV_SECRETS_GEN3 "Generate KeyVault Secrets from TypeSpec" ON)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
@@ -42,7 +42,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "46cea4e67ad8c80199146b6a27890cd0c4f75a5d")
+    set(CODEGEN_SHA "15e5cf8c755d8c5e777f9d1b31300763e960427d")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
@@ -67,15 +67,14 @@ endif()
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
-    inc/azure/security/keyvault/secrets/models/secrets_models.hpp
-    inc/azure/security/keyvault/secrets.hpp
-    inc/azure/security/keyvault/secrets/dll_import_export.hpp
-    inc/azure/security/keyvault/secrets/keyvault_operations.hpp
-    inc/azure/security/keyvault/secrets/rtti.hpp
-    inc/azure/security/keyvault/secrets/secret_client.hpp
-    inc/azure/security/keyvault/secrets/secret_client_options.hpp
-    inc/azure/security/keyvault/secrets/secret_client_paged_responses.hpp
-    inc/azure/security/keyvault/secrets.hpp
+    inc/azure/keyvault/secrets/models/secrets_models.hpp
+    inc/azure/keyvault/secrets.hpp
+    inc/azure/keyvault/secrets/dll_import_export.hpp
+    inc/azure/keyvault/secrets/keyvault_operations.hpp
+    inc/azure/keyvault/secrets/rtti.hpp
+    inc/azure/keyvault/secrets/secret_client.hpp
+    inc/azure/keyvault/secrets/secret_client_options.hpp
+    inc/azure/keyvault/secrets/secret_client_paged_responses.hpp
 )
 
 set(
@@ -140,13 +139,13 @@ endif()
 az_vcpkg_export(
     azure-security-keyvault-secrets
     SECURITY_KEYVAULT_SECRETS
-    azure/security/keyvault/secrets/dll_import_export.hpp
+    azure/keyvault/secrets/dll_import_export.hpp
   )
 
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS
-  azure/security/keyvault/secrets/rtti.hpp
+  azure/keyvault/secrets/rtti.hpp
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)

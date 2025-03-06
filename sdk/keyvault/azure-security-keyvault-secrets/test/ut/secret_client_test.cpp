@@ -134,7 +134,7 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
     properties.RecoverableDays = 10;
     Models::UpdateSecretPropertiesOptions options;
     options.ContentType = "xyz";
-    auto secretResponse = client.UpdateSecretProperties(secretName, " ", options);
+    auto secretResponse = client.UpdateSecretProperties(secretName, options);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
     EXPECT_EQ(secret.ContentType.Value(), options.ContentType.Value());

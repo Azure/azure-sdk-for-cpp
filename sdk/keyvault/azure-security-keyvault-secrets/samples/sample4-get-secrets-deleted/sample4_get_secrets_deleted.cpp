@@ -11,7 +11,7 @@
  */
 
 #include <azure/identity.hpp>
-#include <azure/security/keyvault/secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 #include <chrono>
 #include <iostream>

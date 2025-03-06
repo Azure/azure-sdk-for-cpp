@@ -8,7 +8,7 @@
  */
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/security/keyvault/secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 #include <gtest/gtest.h>
 

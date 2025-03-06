@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "azure/security/keyvault/secrets/dll_import_export.hpp"
+#include "azure/keyvault/secrets/dll_import_export.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>

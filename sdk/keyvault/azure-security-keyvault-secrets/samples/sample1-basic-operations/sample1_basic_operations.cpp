@@ -11,7 +11,7 @@
  */
 
 #include <azure/identity.hpp>
-#include <azure/security/keyvault/secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 #include <chrono>
 #include <iostream>
@@ -50,7 +50,7 @@ int main()
     options.ContentType = "my content";
     // update the secret
     Models::KeyVaultSecret updatedSecret
-        = secretClient.UpdateSecretProperties(secretName, " ", options).Value;
+        = secretClient.UpdateSecretProperties(secretName, options).Value;
     std::string updatedValueString = updatedSecret.ContentType.HasValue()
         ? updatedSecret.ContentType.Value()
         : "NONE RETURNED";

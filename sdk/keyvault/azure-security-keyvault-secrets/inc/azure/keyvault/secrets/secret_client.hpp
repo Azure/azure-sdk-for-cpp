@@ -6,12 +6,12 @@
 #pragma once
 
 // codegen: insert before includes
-#include "azure/security/keyvault/secrets/keyvault_operations.hpp"
+#include "azure/keyvault/secrets/keyvault_operations.hpp"
 // codegen: end insert before includes
 
-#include "azure/security/keyvault/secrets/models/secrets_models.hpp"
-#include "azure/security/keyvault/secrets/secret_client_options.hpp"
-#include "azure/security/keyvault/secrets/secret_client_paged_responses.hpp"
+#include "azure/keyvault/secrets/models/secrets_models.hpp"
+#include "azure/keyvault/secrets/secret_client_options.hpp"
+#include "azure/keyvault/secrets/secret_client_paged_responses.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
@@ -177,16 +177,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Attributes that are not specified in the request are left unchanged. The value of a secret
      * itself cannot be changed. This operation requires the secrets/set permission.
      * @param secretName The name of the secret.
-     * @param secretVersion The version of the secret.
      * @param parameters The parameters for update secret operation.
+     * @param secretVersion The version of the secret.
      * @param context The context for the operation can be used for request cancellation.
      * @return A secret consisting of a value, id and its attributes.
      *
      */
     Response<Models::KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
-        std::string const& secretVersion,
         Models::UpdateSecretPropertiesOptions const& parameters,
+        std::string const& secretVersion = " ",
         Core::Context const& context = {}) const;
 
     // codegen: replace SecretClient::GetSecret

@@ -19,6 +19,7 @@ options:
     flavor: azure
     package-dir: "azure-security-keyvault-secrets"
     namespace: "Azure::Security::KeyVault::Secrets"
+    headersOutputPath: "azure/keyvault/secrets"
     typeRename:
      - from: "SecretUpdateParameters"
        to: "UpdateSecretPropertiesOptions"

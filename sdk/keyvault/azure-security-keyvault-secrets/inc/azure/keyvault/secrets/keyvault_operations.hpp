@@ -7,7 +7,7 @@
  */
 
 #pragma once
-#include "azure/security/keyvault/secrets/models/secrets_models.hpp"
+#include "azure/keyvault/secrets/models/secrets_models.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>

@@ -11,7 +11,7 @@
 #include <azure/identity.hpp>
 #include <azure/keyvault/certificates.hpp>
 #include <azure/keyvault/keys.hpp>
-#include <azure/security/keyvault/secrets.hpp>
+#include <azure/keyvault/secrets.hpp>
 #include <azure/storage/blobs.hpp>
 #include <azure/storage/files/datalake.hpp>
 #include <azure/storage/files/shares.hpp>
