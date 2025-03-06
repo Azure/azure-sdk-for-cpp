@@ -225,6 +225,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
     /// Application specific metadata in the form of key-value pairs.
     Nullable<std::map<std::string, std::string>> Tags;
+
+    // codegen: insert after UpdateSecretPropertiesOptions::Tags
+    Nullable<std::string> SecretVersion;
+    // codegen: end insert after UpdateSecretPropertiesOptions::Tags
   };
 
   /**

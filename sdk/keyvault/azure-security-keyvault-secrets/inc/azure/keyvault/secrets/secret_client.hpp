@@ -168,6 +168,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     // codegen: end insert after SecretClient::DeleteSecret
 
+    // codegen: insert before SecretClient::UpdateSecretProperties
+  private:
+    // codegen: end insert before SecretClient::UpdateSecretProperties
+
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
      * Attributes that are not specified in the request are left unchanged. The value of a secret
@@ -184,9 +188,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& secretVersion,
         Models::UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const;
-    // codegen: insert after SecretClient::UpdateSecretProperties
 
-    //  codegen: end insert after SecretClient::UpdateSecretProperties
+    //  codegen: insert after SecretClient::UpdateSecretProperties
+  public:
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
      * Attributes that are not specified in the request are left unchanged. The value of a secret
@@ -202,8 +206,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Models::UpdateSecretPropertiesOptions const& parameters,
         Core::Context const& context = {}) const
     {
-      return UpdateSecretProperties(secretName, " ", parameters, context);
+      return UpdateSecretProperties(
+          secretName, parameters.SecretVersion.ValueOr(" "), parameters, context);
     }
+    //  codegen: end insert after SecretClient::UpdateSecretProperties
+
     // codegen: replace SecretClient::GetSecret
   public:
     /**
