@@ -438,8 +438,8 @@ SecretClient::DeleteSecret(std::string const& secretName, Core::Context const& c
 Azure::Response<Azure::Security::KeyVault::Secrets::Models::KeyVaultSecret>
 SecretClient::UpdateSecretProperties(
     std::string const& secretName,
-    Models::UpdateSecretPropertiesOptions const& parameters,
     std::string const& secretVersion,
+    Models::UpdateSecretPropertiesOptions const& parameters,
     Core::Context const& context) const
 {
   auto url = m_url;

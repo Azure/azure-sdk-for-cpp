@@ -168,17 +168,31 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     // codegen: end insert after SecretClient::DeleteSecret
 
-    // codegen: insert before SecretClient::UpdateSecretProperties
-    // private:
-    //  codegen: end insert before SecretClient::UpdateSecretProperties
+    /**
+     * @brief The UPDATE operation changes specified attributes of an existing stored secret.
+     * Attributes that are not specified in the request are left unchanged. The value of a secret
+     * itself cannot be changed. This operation requires the secrets/set permission.
+     * @param secretName The name of the secret.
+     * @param secretVersion The version of the secret.
+     * @param parameters The parameters for update secret operation.
+     * @param context The context for the operation can be used for request cancellation.
+     * @return A secret consisting of a value, id and its attributes.
+     *
+     */
+    Response<Models::KeyVaultSecret> UpdateSecretProperties(
+        std::string const& secretName,
+        std::string const& secretVersion,
+        Models::UpdateSecretPropertiesOptions const& parameters,
+        Core::Context const& context = {}) const;
+    // codegen: insert after SecretClient::UpdateSecretProperties
 
+    //  codegen: end insert after SecretClient::UpdateSecretProperties
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
      * Attributes that are not specified in the request are left unchanged. The value of a secret
      * itself cannot be changed. This operation requires the secrets/set permission.
      * @param secretName The name of the secret.
      * @param parameters The parameters for update secret operation.
-     * @param secretVersion The version of the secret.
      * @param context The context for the operation can be used for request cancellation.
      * @return A secret consisting of a value, id and its attributes.
      *
@@ -186,9 +200,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Response<Models::KeyVaultSecret> UpdateSecretProperties(
         std::string const& secretName,
         Models::UpdateSecretPropertiesOptions const& parameters,
-        std::string const& secretVersion = " ",
-        Core::Context const& context = {}) const;
-
+        Core::Context const& context = {}) const
+    {
+      return UpdateSecretProperties(secretName, " ", parameters, context);
+    }
     // codegen: replace SecretClient::GetSecret
   public:
     /**
