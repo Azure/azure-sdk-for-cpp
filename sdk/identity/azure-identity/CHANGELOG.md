@@ -7,13 +7,9 @@
 - Added `Subscription` to `AzureCliCredentialOptions` which allows the caller to specify an Azure subscription that does not match the current Azure CLI subscription.
 - [[#6321]](https://github.com/Azure/azure-sdk-for-cpp/issues/6321) Log Client ID used in `ManagedIdentityCredential`.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - [[#5235]](https://github.com/Azure/azure-sdk-for-cpp/issues/5235) Warnings in `azure/identity.hpp` cause strict builds to fail.
-
-### Other Changes
 
 ## 1.10.1 (2024-11-08)
 
