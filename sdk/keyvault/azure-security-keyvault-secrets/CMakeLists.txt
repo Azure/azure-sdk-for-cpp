@@ -42,7 +42,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "15e5cf8c755d8c5e777f9d1b31300763e960427d")
+    set(CODEGEN_SHA "a55f84fd881a37051f41771791039155d65bed70")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
@@ -67,11 +67,11 @@ endif()
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
-    inc/azure/keyvault/secrets/models/secrets_models.hpp
     inc/azure/keyvault/secrets.hpp
     inc/azure/keyvault/secrets/dll_import_export.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
     inc/azure/keyvault/secrets/rtti.hpp
+    inc/azure/keyvault/secrets/secrets_models.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
     inc/azure/keyvault/secrets/secret_client_options.hpp
     inc/azure/keyvault/secrets/secret_client_paged_responses.hpp
