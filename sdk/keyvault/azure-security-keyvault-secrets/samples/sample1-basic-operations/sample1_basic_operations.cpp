@@ -21,7 +21,6 @@ using namespace std::chrono_literals;
 
 int main()
 {
-
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
   auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
