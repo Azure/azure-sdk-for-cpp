@@ -32,29 +32,24 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
+option(AZURE_TSP_KV_SECRETS_GEN3 "Generate KeyVault Secrets from TypeSpec" ON)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
     #typespec related repo information
-    set(TSP_REPO_PATH "specification/keyvault/data-plane/Security.KeyVault.Secrets/")
-    set(TSP_SHA "1da5a85c4dc4f4f1caa47fff691e85960ef4bf20")
+    set(TSP_SERVICE_PATH "Security.KeyVault.Secrets")
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "1a9e3b7a337d5553603b8326dd3be5024d53b28a")
+    set(CODEGEN_SHA "a55f84fd881a37051f41771791039155d65bed70")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
-    set(INCLUDE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/inc/azure/keyvault/secrets")
-    set(SOURCE_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/src")
+    set(GEN_FILES_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}")
 
     #generate code from typespec
-    GenerateCodeFromTypeSpec(${TSP_SHA} ${TSP_REPO_PATH}  ${TSP_DESTINATION} ${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    #update code files left this as a separate step as generating and moving result around
-    #conceptually are two different steps
-    UpdateCodeFilesFromGenerated(${CODEGEN_DESTINATION} ${INCLUDE_DESTINATION} ${SOURCE_DESTINATION})
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION})
 endif()
 
 if(FETCH_SOURCE_DEPS)
@@ -74,31 +69,23 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets.hpp
     inc/azure/keyvault/secrets/dll_import_export.hpp
-    inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
-    inc/azure/keyvault/secrets/keyvault_options.hpp
-    inc/azure/keyvault/secrets/keyvault_secret.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
-    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
     inc/azure/keyvault/secrets/rtti.hpp
+    inc/azure/keyvault/secrets/secrets_models.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
+    inc/azure/keyvault/secrets/secret_client_options.hpp
+    inc/azure/keyvault/secrets/secret_client_paged_responses.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
-    src/keyvault_operations.cpp
-    src/keyvault_protocol.cpp
-    src/keyvault_secret_paged_response.cpp
-    src/keyvault_secret_properties.cpp
-    src/keyvault_secrets_common_request.cpp
-    src/private/keyvault_protocol.hpp
-    src/private/keyvault_secrets_common_request.hpp
     src/private/package_version.hpp
-    src/private/secret_constants.hpp
-    src/private/secret_serializers.hpp
+    src/deleted_secret_paged_response.cpp
+    src/keyvault_operations.cpp
+    src/secrets.cpp
     src/secret_client.cpp
-    src/secret_serializers.cpp
+    src/secret_properties_paged_response.cpp
+    src/secret_properties_versions_paged_response.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
@@ -152,13 +139,13 @@ endif()
 az_vcpkg_export(
     azure-security-keyvault-secrets
     SECURITY_KEYVAULT_SECRETS
-    "azure/keyvault/secrets/dll_import_export.hpp"
+    azure/keyvault/secrets/dll_import_export.hpp
   )
 
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS
-  "azure/keyvault/secrets/rtti.hpp"
+  azure/keyvault/secrets/rtti.hpp
 )
 
 unset(FETCH_SOURCE_DEPS CACHE)
