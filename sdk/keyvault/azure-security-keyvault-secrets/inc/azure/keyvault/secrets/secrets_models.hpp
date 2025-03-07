@@ -19,12 +19,15 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
-   * @brief The key vault secret management attributes.
+   * @brief Marker for review
    *
    */
   class MarkerForAPI {
   public:
-    // for api view
+    /**
+     * @brief For review.
+     *
+     **/
     std::string Marker;
   };
   /**
