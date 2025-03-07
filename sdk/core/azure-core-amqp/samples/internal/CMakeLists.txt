@@ -7,7 +7,9 @@
 cmake_minimum_required (VERSION 3.13)
 
 # Include sub-projects.
+if(USE_UAMQP)
 add_subdirectory ("local_server_sample")
+endif()
 add_subdirectory ("local_client_sample")
 add_subdirectory ("local_client_async_sample")
 #add_subdirectory ("eventhub_writer_sample")

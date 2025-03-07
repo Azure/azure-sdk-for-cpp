@@ -3,6 +3,7 @@
 
 #pragma once
 
+#if ENABLE_UAMQP
 #include "transport.hpp"
 
 #include <exception>
@@ -28,3 +29,5 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_internal
+
+#endif

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// #include "../src/models/private/message_impl.hpp"
+#include "../src/models/private/message_impl.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 
 #include <gtest/gtest.h>
@@ -23,6 +23,10 @@ TEST_F(TestMessage, SimpleCreate)
   {
     AmqpMessage nullMessage(nullptr);
     EXPECT_FALSE(nullMessage);
+
+    auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(nullMessage);
+    auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+    EXPECT_EQ(nullMessage, *round_trip_message.get());
   }
 
   {
@@ -64,37 +68,51 @@ TEST_F(TestMessage, TestApplicationProperties)
   EXPECT_EQ(message2.ApplicationProperties["Blah"], AmqpValue(19532));
 
   GTEST_LOG_(INFO) << message;
+
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 TEST_F(TestMessage, TestDeliveryAnnotations)
 {
   AmqpMessage message;
-  message.DeliveryAnnotations["12345"] = 19532;
+  message.DeliveryAnnotations[AmqpSymbol{"12345"}] = 19532;
 
   auto message2(message);
-  EXPECT_EQ(AmqpValue{19532}, message2.DeliveryAnnotations["12345"]);
+  EXPECT_EQ(AmqpValue{19532}, message2.DeliveryAnnotations[AmqpSymbol{"12345"}]);
   GTEST_LOG_(INFO) << message;
+
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 TEST_F(TestMessage, TestAnnotations)
 {
   AmqpMessage message;
-  message.MessageAnnotations["12345"] = 19532;
+  message.MessageAnnotations[AmqpSymbol("12345")] = 19532;
 
   auto message2(message);
-  EXPECT_EQ(AmqpValue{19532}, message2.MessageAnnotations["12345"]);
+  EXPECT_EQ(AmqpValue{19532}, message2.MessageAnnotations[AmqpSymbol{"12345"}]);
   GTEST_LOG_(INFO) << message;
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 TEST_F(TestMessage, TestFooter)
 {
   AmqpMessage message;
-  message.Footer["12345"] = 37.2;
+  message.Footer[AmqpSymbol{"12345"}] = 37.2;
 
   auto message2(message);
-  EXPECT_EQ(AmqpValue{37.2}, message2.Footer["12345"]);
+  EXPECT_EQ(AmqpValue{37.2}, message2.Footer[AmqpSymbol("12345")]);
 
   GTEST_LOG_(INFO) << message;
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 TEST_F(TestMessage, TestHeader)
@@ -107,6 +125,9 @@ TEST_F(TestMessage, TestHeader)
   // Ensure that message values survive across round-trips through MESSAGE.
   EXPECT_EQ(message2->Header.DeliveryCount, 1);
   GTEST_LOG_(INFO) << message;
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 TEST_F(TestMessage, TestProperties)
@@ -121,6 +142,25 @@ TEST_F(TestMessage, TestProperties)
   auto newProperties{message2->Properties};
   EXPECT_EQ(newProperties.Subject.Value(), properties.Subject.Value());
   GTEST_LOG_(INFO) << message;
+
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
+}
+
+TEST_F(TestMessage, TestBodyAmqpValue)
+{
+  {
+    AmqpMessage message;
+
+    message.SetBody(AmqpValue(19532));
+    EXPECT_EQ(19532, static_cast<int32_t>(message.GetBodyAsAmqpValue()));
+    EXPECT_EQ(message.BodyType, MessageBodyType::Value);
+
+    auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+    auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+    EXPECT_EQ(message, *round_trip_message.get());
+  }
 }
 
 TEST_F(TestMessage, TestBodyAmqpSequence)
@@ -143,6 +183,10 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
     EXPECT_EQ(message2->BodyType, MessageBodyType::Sequence);
 
     GTEST_LOG_(INFO) << message;
+
+    auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+    auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+    EXPECT_EQ(message, *round_trip_message.get());
   }
   {
     AmqpMessage message;
@@ -157,6 +201,10 @@ TEST_F(TestMessage, TestBodyAmqpSequence)
     EXPECT_EQ(95, static_cast<int32_t>(message2->GetBodyAsAmqpList()[2].at(1)));
     EXPECT_EQ(message2->BodyType, MessageBodyType::Sequence);
     GTEST_LOG_(INFO) << message;
+
+    auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+    auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+    EXPECT_EQ(message, *round_trip_message.get());
   }
 }
 
@@ -186,6 +234,10 @@ TEST_F(TestMessage, TestBodyAmqpData)
 
   message.SetBody({AmqpBinaryData{1, 3, 5, 7, 9, 10}, AmqpBinaryData{2, 4, 6, 8}});
   GTEST_LOG_(INFO) << message;
+
+  auto nativeMessage = _detail::AmqpMessageFactory::ToImplementation(message);
+  auto round_trip_message = _detail::AmqpMessageFactory::FromImplementation(nativeMessage.get());
+  EXPECT_EQ(message, *round_trip_message.get());
 }
 
 class MessageSerialization : public testing::Test {

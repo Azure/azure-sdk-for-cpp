@@ -7,10 +7,13 @@
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/unique_handle.hpp>
 
+#if ENABLE_UAMQP
 #include <azure_c_shared_utility/gballoc.h>
 #include <azure_c_shared_utility/platform.h>
 #include <azure_c_shared_utility/xlogging.h>
+#endif
 
 #include <algorithm>
 #include <cassert>
@@ -27,6 +30,7 @@ using namespace Azure::Core::Diagnostics;
 // cspell: words gballoc
 namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace _detail {
 
+#if ENABLE_UAMQP
   // Logging callback for uAMQP and azure-c-shared-utility.
   void AmqpLogFunction(
       LOG_CATEGORY logCategory,
@@ -86,9 +90,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     }
     va_end(args);
   }
+#endif
 
   GlobalStateHolder::GlobalStateHolder()
   {
+#if ENABLE_UAMQP
 #if defined(GB_DEBUG_ALLOC)
     gballoc_init();
 #endif
@@ -126,10 +132,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       } while (!m_stopped);
     });
+#endif
   }
 
   GlobalStateHolder::~GlobalStateHolder()
   {
+#if ENABLE_UAMQP
     m_stopped = true;
     if (m_pollingThread.joinable())
     {
@@ -139,8 +147,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 #if defined(GB_DEBUG_ALLOC)
     gballoc_deinit();
 #endif
+#endif
   }
 
+#if ENABLE_UAMQP
   /**
    * @brief Adds a pollable object to the list of objects to be polled.
    *
@@ -191,6 +201,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     while (m_activelyPolling.load())
       ;
   }
+#endif
 
   GlobalStateHolder* GlobalStateHolder::GlobalStateInstance()
   {
@@ -199,3 +210,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   }
 
 }}}}} // namespace Azure::Core::Amqp::Common::_detail
+
+#if ENABLE_RUST_AMQP
+namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+  void UniqueHandleHelper<RustRuntimeContext>::FreeRuntimeContext(RustRuntimeContext* obj)
+  {
+    Azure::Core::Amqp::RustInterop::_detail::runtime_context_delete(obj);
+  }
+
+  void UniqueHandleHelper<RustCallContext>::FreeCallContext(RustCallContext* obj)
+  {
+    Azure::Core::Amqp::RustInterop::_detail::call_context_delete(obj);
+  }
+
+  //  void UniqueHandleHelper<Azure::Core::Amqp::_detail::RustAmqpError>::FreeRustError(
+  //      RustAmqpError* obj)
+  //  {
+  //    Azure::Core::Amqp::_detail::RustInterop::rust_error_delete(obj);
+  //  }
+
+}}}} // namespace Azure::Core::Amqp::_detail
+#endif

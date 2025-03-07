@@ -45,7 +45,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Link link1(session, "MySession", SessionRole::Sender, "Source1", "Target1");
       Link link2(session, "MySession", SessionRole::Sender, "Source2", "Target2");
     }
-
     GTEST_LOG_(INFO) << LinkState::Error << LinkState::Invalid << static_cast<LinkState>(92)
                      << LinkState::HalfAttachedAttachReceived;
   }
@@ -118,7 +117,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_ANY_THROW(link.ResetLinkCredit(92, true));
     }
   }
-
   class LinkSocketListenerEvents
       : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents,
         public Azure::Core::Amqp::_internal::ConnectionEvents,
@@ -164,7 +162,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       sessionOptions.InitialIncomingWindowSize = 10000;
       auto listeningSession = std::make_unique<Azure::Core::Amqp::_internal::Session>(
           connection.CreateSession(endpoint, sessionOptions, this));
-      listeningSession->Begin();
+      listeningSession->Begin({});
       m_session = std::move(listeningSession);
 
       m_listeningSessionQueue.CompleteOperation(true);
@@ -238,12 +236,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
       if (m_session)
       {
-        m_session->End();
+        m_session->End({});
         m_session.reset();
       }
       if (m_connection)
       {
-        m_connection->Close();
+        m_connection->Close({});
         m_connection.reset();
       }
     }

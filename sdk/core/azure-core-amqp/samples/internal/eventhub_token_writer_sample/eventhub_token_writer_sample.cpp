@@ -58,7 +58,7 @@ int main()
   senderOptions.SettleMode = Azure::Core::Amqp::_internal::SenderSettleMode::Settled;
   senderOptions.EnableTrace = true;
   Azure::Core::Amqp::_internal::MessageSender sender(
-      session.CreateMessageSender(eventhubsEntity, senderOptions, nullptr));
+      session.CreateMessageSender(eventhubsEntity, senderOptions));
 
   // Open the connection to the remote. This will authenticate the client and connect to the server.
   if (auto err = sender.Open())
@@ -73,12 +73,21 @@ int main()
   while (messageSendCount < maxMessageSendCount)
   {
     auto result = sender.Send(message);
+#if ENABLE_UAMQP
     if (std::get<0>(result) != Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
     {
       std::cout << "Failed to send message " << messageSendCount << std::endl;
       std::cout << "Message error information: " << std::get<1>(result) << std::endl;
       break;
     }
+#elif ENABLE_RUST_AMQP
+    if (result)
+    {
+      std::cout << "Failed to send message " << messageSendCount << std::endl;
+      std::cout << "Message error information: " << result << std::endl;
+      break;
+    }
+#endif
     messageSendCount += 1;
   }
 

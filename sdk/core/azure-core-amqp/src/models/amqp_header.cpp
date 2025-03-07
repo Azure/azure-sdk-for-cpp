@@ -7,16 +7,23 @@
 #include "private/header_impl.hpp"
 #include "private/value_impl.hpp"
 
+#if ENABLE_UAMQP
+
 #include <azure_uamqp_c/amqp_definitions_milliseconds.h>
 
 #include <azure_uamqp_c/amqp_definitions_header.h>
+#elif ENABLE_RUST_AMQP
+#include "azure/core/amqp/internal/common/runtime_context.hpp"
+
+using namespace Azure::Core::Amqp::RustInterop::_detail;
+#endif
 
 #include <chrono>
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // @cond
-  void UniqueHandleHelper<HEADER_INSTANCE_TAG>::FreeAmqpHeader(HEADER_HANDLE handle)
+  void UniqueHandleHelper<HeaderImplementation>::FreeAmqpHeader(HeaderImplementation* handle)
   {
     header_destroy(handle);
   }
@@ -33,45 +40,57 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
                                         : true);
   }
 
-  MessageHeader _detail::MessageHeaderFactory::FromUamqp(
+  MessageHeader _detail::MessageHeaderFactory::FromImplementation(
       _detail::UniqueMessageHeaderHandle const& handle)
   {
     MessageHeader rv;
     bool boolValue;
-    if (!header_get_durable(handle.get(), &boolValue))
+    if (handle)
     {
-      rv.Durable = boolValue;
-    }
+      if (!header_get_durable(handle.get(), &boolValue))
+      {
+        rv.Durable = boolValue;
+      }
 
-    uint8_t uint8Value;
-    if (!header_get_priority(handle.get(), &uint8Value))
-    {
-      rv.Priority = uint8Value;
-    }
+      uint8_t uint8Value;
+      if (!header_get_priority(handle.get(), &uint8Value))
+      {
+        rv.Priority = uint8Value;
+      }
 
-    milliseconds millisecondsValue;
-    if (!header_get_ttl(handle.get(), &millisecondsValue))
-    {
-      rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
-    }
+#if ENABLE_UAMQP
+      milliseconds millisecondsValue;
+      if (!header_get_ttl(handle.get(), &millisecondsValue))
+      {
+        rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
+      }
+#else
+      uint64_t millisecondsValue;
+      if (!header_get_ttl(handle.get(), &millisecondsValue))
+      {
+        rv.TimeToLive = std::chrono::milliseconds(millisecondsValue);
+      }
+#endif
 
-    if (!header_get_first_acquirer(handle.get(), &boolValue))
-    {
-      rv.IsFirstAcquirer = boolValue;
-    }
+      if (!header_get_first_acquirer(handle.get(), &boolValue))
+      {
+        rv.IsFirstAcquirer = boolValue;
+      }
 
-    uint32_t uint32Value;
-    if (!header_get_delivery_count(handle.get(), &uint32Value))
-    {
-      rv.DeliveryCount = uint32Value;
+      uint32_t uint32Value;
+      if (!header_get_delivery_count(handle.get(), &uint32Value))
+      {
+        rv.DeliveryCount = uint32Value;
+      }
     }
     return rv;
   }
 
-  _detail::UniqueMessageHeaderHandle _detail::MessageHeaderFactory::ToUamqp(
+  _detail::UniqueMessageHeaderHandle _detail::MessageHeaderFactory::ToImplementation(
       MessageHeader const& header)
   {
     _detail::UniqueMessageHeaderHandle rv{header_create()};
+#if ENABLE_UAMQP
     if (header.Durable)
     {
       if (header_set_durable(rv.get(), header.Durable))
@@ -108,7 +127,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         throw std::runtime_error("Could not set delivery count value.");
       }
     }
+#elif ENABLE_RUST_AMQP
+    if (header.Durable)
+    {
+      Common::_detail::InvokeAmqpApi(header_set_durable, rv, header.Durable);
+    }
+    if (header.Priority != 4)
+    {
+      Common::_detail::InvokeAmqpApi(header_set_priority, rv, header.Priority);
+    }
+    if (header.TimeToLive.HasValue())
+    {
+      Common::_detail::InvokeAmqpApi(header_set_ttl, rv, header.TimeToLive.Value().count());
+    }
 
+    if (header.IsFirstAcquirer)
+    {
+      Common::_detail::InvokeAmqpApi(header_set_first_acquirer, rv, header.IsFirstAcquirer);
+    }
+    if (header.DeliveryCount != 0)
+    {
+      Common::_detail::InvokeAmqpApi(header_set_delivery_count, rv, header.DeliveryCount);
+    }
+#endif
     return rv;
   }
 
@@ -135,16 +176,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   size_t MessageHeader::GetSerializedSize(MessageHeader const& header)
   {
-    auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
-    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromUamqp(
+    auto handle = _detail::MessageHeaderFactory::ToImplementation(header);
+    AmqpValue propertiesAsValue{_detail::AmqpValueFactory::FromImplementation(
         _detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return AmqpValue::GetSerializedSize(propertiesAsValue);
   }
 
   std::vector<uint8_t> MessageHeader::Serialize(MessageHeader const& header)
   {
-    auto handle = _detail::MessageHeaderFactory::ToUamqp(header);
-    AmqpValue headerAsValue{_detail::AmqpValueFactory::FromUamqp(
+    auto handle = _detail::MessageHeaderFactory::ToImplementation(header);
+    AmqpValue headerAsValue{_detail::AmqpValueFactory::FromImplementation(
         Models::_detail::UniqueAmqpValueHandle{amqpvalue_create_header(handle.get())})};
     return Models::AmqpValue::Serialize(headerAsValue);
   }
@@ -152,14 +193,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   MessageHeader MessageHeader::Deserialize(std::uint8_t const* data, size_t size)
   {
     AmqpValue value{AmqpValue::Deserialize(data, size)};
-    HEADER_HANDLE handle;
-    if (amqpvalue_get_header(_detail::AmqpValueFactory::ToUamqp(value), &handle))
+
+    Azure::Core::Amqp::_detail::HeaderImplementation* handle;
+    if (amqpvalue_get_header(_detail::AmqpValueFactory::ToImplementation(value), &handle))
     {
       throw std::runtime_error("Could not convert value to AMQP Header.");
     }
     _detail::UniqueMessageHeaderHandle uniqueHandle{handle};
     handle = nullptr;
-    return _detail::MessageHeaderFactory::FromUamqp(uniqueHandle);
+    return _detail::MessageHeaderFactory::FromImplementation(uniqueHandle);
   }
 
 }}}} // namespace Azure::Core::Amqp::Models

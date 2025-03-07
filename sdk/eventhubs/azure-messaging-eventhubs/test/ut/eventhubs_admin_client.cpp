@@ -80,6 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         break;
     }
     jsonBody["properties"] = Azure::Core::Json::_internal::json::object();
+    jsonBody["properties"]["disableLocalAuth"] = true;
     jsonBody["location"] = m_location;
     std::string bodyText = jsonBody.dump();
 

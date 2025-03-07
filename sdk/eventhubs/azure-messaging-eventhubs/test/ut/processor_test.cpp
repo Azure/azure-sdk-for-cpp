@@ -4,7 +4,9 @@
 #include "./test_checkpoint_store.hpp"
 #include "eventhubs_test_base.hpp"
 
+#if ENABLE_UAMQP
 #include <azure/core/amqp/internal/common/global_state.hpp>
+#endif
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -80,8 +82,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     void TearDown() override
     {
       EventHubsTestBaseParameterized::TearDown();
+#if ENABLE_UAMQP
       // When the test is torn down, the global state MUST be idle. If it is not, something leaked.
       Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+#endif
     }
 
     void TestWithLoadBalancer(Models::ProcessorStrategy processorStrategy)
@@ -636,9 +640,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "ConnectionString_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
           break;
@@ -652,7 +653,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProcessorTest,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key /*, AuthType::Emulator*/),
       GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

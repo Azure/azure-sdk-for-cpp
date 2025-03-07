@@ -106,14 +106,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * For more information, see [AMQP Delivery
      * Annotations](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-delivery-annotations).
      */
-    AmqpMap DeliveryAnnotations;
+    AmqpAnnotations DeliveryAnnotations;
 
     /** @brief Message Annotations for the message.
      *
      * For more information, see [AMQP Message
      * Annotations](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-message-annotations).
      */
-    AmqpMap MessageAnnotations;
+    AmqpAnnotations MessageAnnotations;
 
     /** @brief Immutable Properties for the message.
      *
@@ -141,7 +141,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      * For more information, see [AMQP
      * Footer](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-footer).
      */
-    AmqpMap Footer;
+    AmqpAnnotations Footer;
 
     /** Specifies the type of the body.
      *

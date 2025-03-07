@@ -14,6 +14,7 @@ struct SOURCE_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   class MessageSourceImpl;
+  class AmqpSourceFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -26,7 +27,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     Nullable<std::chrono::system_clock::time_point> Timeout;
     Nullable<bool> Dynamic;
     AmqpMap DynamicNodeProperties;
-    Nullable<std::string> DistributionMode;
+    Nullable<AmqpSymbol> DistributionMode;
     AmqpMap Filter;
     AmqpValue DefaultOutcome;
     AmqpArray Outcomes;
@@ -170,7 +171,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
      * [source](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-source)
      * for more information about the fields in a message source.
      */
-    std::string GetDistributionMode() const;
+    AmqpSymbol GetDistributionMode() const;
 
     /** @brief Gets the filter of the source.
      *
@@ -219,5 +220,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     std::unique_ptr<_detail::MessageSourceImpl> m_impl;
     // Declared as friend so it can access the private m_impl member.
     friend std::ostream& operator<<(std::ostream&, MessageSource const&);
+    friend class Models::_detail::AmqpSourceFactory;
   };
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

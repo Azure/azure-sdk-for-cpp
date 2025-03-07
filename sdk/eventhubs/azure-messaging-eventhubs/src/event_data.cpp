@@ -49,7 +49,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       {
         continue;
       }
-      auto key = item.first.AsSymbol();
+      auto key = item.first;
       if (key == _detail::EnqueuedTimeAnnotation)
       {
         auto timePoint = static_cast<std::chrono::milliseconds>(item.second.AsTimestamp());
@@ -142,13 +142,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       os << "  ContentType: " << data.ContentType.Value() << std::endl;
     }
-    if (data.CorrelationId.HasValue())
+    if (!data.CorrelationId.IsNull())
     {
-      os << "  CorrelationId: " << data.CorrelationId.Value() << std::endl;
+      os << "  CorrelationId: " << data.CorrelationId << std::endl;
     }
-    if (data.MessageId.HasValue())
+    if (!data.MessageId.IsNull())
     {
-      os << "  MessageId: " << data.MessageId.Value() << std::endl;
+      os << "  MessageId: " << data.MessageId << std::endl;
     }
 
     os << "]" << std::endl;
@@ -181,9 +181,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       os << "  ContentType: " << data.ContentType.Value() << std::endl;
     }
-    if (data.CorrelationId.HasValue())
+    if (!data.CorrelationId.IsNull())
     {
-      os << "  CorrelationId: " << data.CorrelationId.Value() << std::endl;
+      os << "  CorrelationId: " << data.CorrelationId << std::endl;
     }
     if (data.PartitionKey.HasValue())
     {
@@ -193,9 +193,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     {
       os << "  SequenceNumber: " << data.SequenceNumber.Value() << std::endl;
     }
-    if (data.MessageId.HasValue())
+    if (!data.MessageId.IsNull())
     {
-      os << "  MessageId: " << data.MessageId.Value() << std::endl;
+      os << "  MessageId: " << data.MessageId << std::endl;
     }
     if (data.Offset.HasValue())
     {

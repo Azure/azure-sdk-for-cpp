@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "../../src/amqp/private/connection_impl.hpp"
+#include "../../src/impl/uamqp/amqp/private/connection_impl.hpp"
 
 #include <azure/core/amqp/internal/connection.hpp>
 

@@ -17,6 +17,7 @@ SetUpTestProxy("sdk/eventhubs")
 ################## Unit Tests ##########################
 add_executable (
   azure-messaging-eventhubs-test
+    azure_messaging_eventhubs_test.cpp
     checkpoint_store_test.cpp
     consumer_client_test.cpp
     event_data_test.cpp
@@ -41,6 +42,13 @@ if (MSVC)
   target_compile_options(azure-messaging-eventhubs-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
+
+if(USE_RUST_AMQP)
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_RUST_AMQP)
+else()
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_UAMQP)
+endif()
+
 target_link_libraries(
     azure-messaging-eventhubs-test
       PRIVATE 
@@ -58,10 +66,12 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
-# gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
-# for each test to ctest. This enables `ctest -r` to run specific tests directly.
-gtest_discover_tests(azure-messaging-eventhubs-test
-  TEST_PREFIX azure-messaging-eventhubs.
-  NO_PRETTY_TYPES
-  NO_PRETTY_VALUES
-  DISCOVERY_TIMEOUT 600)
+if (NOT DISABLE_TEST_DISCOVERY)
+  # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
+  # for each test to ctest. This enables `ctest -r` to run specific tests directly.
+  gtest_discover_tests(azure-messaging-eventhubs-test
+    TEST_PREFIX azure-messaging-eventhubs.
+    NO_PRETTY_TYPES
+    NO_PRETTY_VALUES
+    DISCOVERY_TIMEOUT 600)
+endif()

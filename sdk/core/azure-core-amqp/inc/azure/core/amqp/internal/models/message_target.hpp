@@ -9,6 +9,7 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
   class MessageTargetImpl;
+  class AmqpTargetFactory;
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -166,6 +167,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     // Declared as friend so it can use the TARGET_INSTANCE_TAG* overload.
     friend std::ostream& operator<<(std::ostream&, MessageTarget const&);
+
+    friend Models::_detail::AmqpTargetFactory;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Models::_internal

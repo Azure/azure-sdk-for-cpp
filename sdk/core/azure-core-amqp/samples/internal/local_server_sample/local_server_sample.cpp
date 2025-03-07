@@ -89,7 +89,7 @@ private:
     auto newSession = connection.CreateSession(endpoint, sessionOptions, this);
 
     // The new session *must* call `Begin` before returning from the OnNewEndpoint callback.
-    newSession.Begin();
+    newSession.Begin({});
     m_sessionQueue.CompleteOperation(std::move(newSession));
     return true;
   }

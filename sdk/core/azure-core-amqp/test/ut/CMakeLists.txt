@@ -13,6 +13,14 @@ include(AzureBuildTargetForCI)
 include(GoogleTest)
 
 # Unit Tests
+
+IF (USE_UAMQP)
+set(UAMQP_ONLY_TESTS   
+  transport_tests.cpp
+  link_tests.cpp
+)
+ENDIF()
+
 add_executable(azure-core-amqp-tests
   amqp_header_tests.cpp
   amqp_message_tests.cpp
@@ -23,14 +31,23 @@ add_executable(azure-core-amqp-tests
   claim_based_security_tests.cpp
   connection_string_tests.cpp
   connection_tests.cpp
-  link_tests.cpp
   management_tests.cpp
   message_sender_receiver.cpp
   message_source_target.cpp
   mock_amqp_server.hpp
   session_tests.cpp
-  transport_tests.cpp
- "amqp_performative_tests.cpp")
+  amqp_performative_tests.cpp
+  ${UAMQP_ONLY_TESTS}
+)
+
+
+if (USE_UAMQP)
+target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
+endif()
+if (USE_RUST_AMQP)
+target_include_directories(azure-core-amqp-tests PRIVATE ../../src/impl/rust_amqp/rust_amqp/rust_wrapper)
+endif()
+
 add_dependencies(azure-core-amqp-tests Azure::azure-core-amqp)
 
 target_compile_definitions(azure-core-amqp-tests PRIVATE _azure_BUILDING_TESTS)
@@ -50,6 +67,11 @@ if (MSVC)
   # - C6326: Google comparisons
   target_compile_options(azure-core-amqp-tests PUBLIC /wd26495 /wd26812 /wd6326 /wd28204 /wd28020 /wd6330 /wd4389)
 endif()
+
+if (USE_UAMQP)
+  target_compile_definitions(azure-core-amqp-tests PRIVATE ENABLE_UAMQP)
+endif()
+
 
 target_include_directories(azure-core-amqp-tests PRIVATE Azure::azure-core-amqp)
 # Disable the localtime is unsafe warning.

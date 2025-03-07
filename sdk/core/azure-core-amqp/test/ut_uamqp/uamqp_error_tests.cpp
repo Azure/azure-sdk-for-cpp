@@ -40,10 +40,10 @@ TEST_F(TestError, SimpleCreate)
     AmqpValue value{_detail::AmqpErrorFactory::ToAmqp(error)};
     GTEST_LOG_(INFO) << value;
 
-    AMQP_VALUE amqpValue = _detail::AmqpValueFactory::ToUamqp(value);
+    AMQP_VALUE amqpValue = _detail::AmqpValueFactory::ToImplementation(value);
     ERROR_HANDLE errorHandle{};
     ASSERT_EQ(0, amqpvalue_get_error(amqpValue, &errorHandle));
-    AmqpError error2 = _detail::AmqpErrorFactory::FromUamqp(errorHandle);
+    AmqpError error2 = _detail::AmqpErrorFactory::FromImplementation(errorHandle);
     const char* conditionValue;
     error_get_condition(errorHandle, &conditionValue);
     EXPECT_EQ(std::string(conditionValue), AmqpErrorCondition::DecodeError.ToString());

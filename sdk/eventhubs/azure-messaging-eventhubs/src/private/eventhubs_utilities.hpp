@@ -20,6 +20,8 @@
 #include <chrono>
 #include <utility>
 
+using namespace Azure::Core::Amqp::Models;
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   constexpr bool EnableAmqpTrace = true;
@@ -108,6 +110,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::string const& eventHubName,
         Core::Context const& context)
     {
+
       EnsureManagementClient(context);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
@@ -180,10 +183,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           message,
           context);
 
-      Azure::Core::Diagnostics::_internal::Log::Stream(
-          Azure::Core::Diagnostics::Logger::Level::Informational)
-          << "Received partition properties: " << result.Message;
-
       Models::EventHubPartitionProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
       {
@@ -221,6 +220,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       return properties;
     }
 
+    void Close(Azure::Core::Context const& context)
+    {
+      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      if (m_managementClient)
+      {
+        if (m_managementClientIsOpen)
+        {
+          m_managementClient->Close(context);
+          m_managementClientIsOpen = false;
+        }
+        m_session.End(context);
+      }
+    }
+
   private:
     void EnsureManagementClient(Azure::Core::Context const& context)
     {
@@ -228,6 +241,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
       if (!m_managementClient)
       {
+        m_session.Begin(context);
+
         // Create a management client off the session.
         // Eventhubs management APIs return a status code in the "status-code" application
         // properties.
@@ -267,17 +282,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     {
       constexpr const char* packageName = "azure-messaging-eventhubs-cpp";
 
-      options.Properties.emplace("product", packageName);
-      options.Properties.emplace("version", PackageVersion::ToString());
+      options.Properties.emplace(AmqpSymbol{"product"}, packageName);
+      options.Properties.emplace(AmqpSymbol{"version"}, PackageVersion::ToString());
 #if defined(AZ_PLATFORM_WINDOWS)
-      options.Properties.emplace("platform", "Windows");
+      options.Properties.emplace(AmqpSymbol{"platform"}, "Windows");
 #elif defined(AZ_PLATFORM_LINUX)
-      options.Properties.emplace("platform", "Linux");
+      options.Properties.emplace(AmqpSymbol{"platform"}, "Linux");
 #elif defined(AZ_PLATFORM_MAC)
-      options.Properties.emplace("platform", "Mac");
+      options.Properties.emplace(AmqpSymbol{"platform"}, "Mac");
 #endif
       options.Properties.emplace(
-          "user-agent",
+          AmqpSymbol{"user-agent"},
           Azure::Core::Http::_internal::HttpShared::GenerateUserAgent(
               packageName, PackageVersion::ToString(), applicationId, cplusplusValue));
     }

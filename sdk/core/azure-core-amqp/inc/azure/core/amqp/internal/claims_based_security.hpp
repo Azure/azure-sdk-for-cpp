@@ -69,7 +69,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         CbsTokenType type,
         std::string const& audience,
         std::string const& token,
-        Context const& context = {});
+        Azure::DateTime const& tokenExpirationTime,
+        Context const& context);
 
   private:
     std::shared_ptr<ClaimsBasedSecurityImpl> m_impl;

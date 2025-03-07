@@ -313,6 +313,15 @@
       }
     },
     {
+      "name": "no-rust-amqp",
+      "displayName": "Disable use of the Rust AMQP implementation",
+      "description": "Disable use of the Rust AMQP implementation (Hidden)",
+      "hidden": true,
+      "cacheVariables": {
+        "DISABLE_RUST_IN_BUILD": true
+      }
+    },
+    {
       "name": "enable-address-sanitizer",
       "displayName": "Enable Address Sanitizer",
       "description": "Enable Address Sanitizer (Hidden). Note: ASAN can be extremely disruptive, when enabling ASAN, make sure you run your application under the debugger.",
@@ -352,7 +361,6 @@
         "x86-static",
         "release-build"
       ]
-
     },
     {
       "name": "x64-debug-tests",
@@ -472,6 +480,38 @@
       ]
     },
     {
+      "name": "x64-static-debug-perftests-no-rust",
+      "displayName": "x64 Debug, No Rust, static With Perf Tests and samples, libcurl+winhttp",
+      "inherits": [
+        "x64-static",
+        "debug-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "no-rust-amqp",
+        "winhttp-transport",
+        "curl-transport"
+      ]
+    },
+    {
+      "name": "x64-static-debug-asan-perftests-no-rust",
+      "displayName": "x64 Debug, ASAN No Rust, static With Perf Tests and samples, libcurl+winhttp",
+      "inherits": [
+        "x64-static",
+        "enable-address-sanitizer",
+        "debug-build",
+        "enable-tests",
+        "enable-samples",
+        "enable-perf",
+        "no-rust-amqp",
+        "winhttp-transport",
+        "curl-transport"
+      ],
+      "cacheVariables": {
+        "DISABLE_AZURE_CORE_OPENTELEMETRY": true
+      }
+    },
+    {
       "name": "x64-static-release-perftests-asan",
       "displayName": "x64 Release static With Perf Tests and samples, plus ASAN",
       "inherits": [
@@ -487,7 +527,7 @@
       }
     },
     {
-      "name": "x86-msvc-static-debug-perftests",
+      "name": "x86-msvc-static-dbg-all",
       "displayName": "x86 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x86-msvc-static",
@@ -500,7 +540,7 @@
       ]
     },
     {
-      "name": "x64-msvc-static-debug-perftests",
+      "name": "x64-msvc-static-debug-all",
       "displayName": "x64 MSVC Debug static With Perf Tests and samples",
       "inherits": [
         "x64-msvc-static",
@@ -620,6 +660,24 @@
       }
     },
     {
+      "name": "linux-basic-clang-18",
+      "displayName": "Linux clang-18",
+      "description": "Using compilers: C = /usr/bin/clang-18, CXX = /usr/bin/clang++-18",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-18",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-g++",
       "displayName": "Linux G++",
       "description": "Using compilers: C = /usr/bin/gcc, CXX = /usr/bin/g++",
@@ -675,26 +733,47 @@
     {
       "name": "linux-gcc11-debug",
       "displayName": "Linux GCC 11 Debug",
-      "inherits": [ "linux-basic-gcc11", "debug-build" ]
+      "inherits": [
+        "linux-basic-gcc11",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-gcc11-debug-tests",
-      "inherits": [ "linux-basic-gcc11", "debug-build", "enable-tests" ],
+      "inherits": [
+        "linux-basic-gcc11",
+        "debug-build",
+        "enable-tests"
+      ],
       "displayName": "Linux GCC 11 Debug+Tests"
     },
     {
       "name": "linux-clang-11-debug",
       "displayName": "Linux clang 11 Debug",
-      "inherits": [ "linux-basic-clang-11", "debug-build" ]
+      "inherits": [
+        "linux-basic-clang-11",
+        "debug-build"
+      ]
     },
     {
       "name": "linux-clang-11-debug-tests",
       "displayName": "Linux clang 11 Debug+tests",
-      "inherits": [ "linux-basic-clang-11", "debug-build", "enable-tests" ]
+      "inherits": [
+        "linux-basic-clang-11",
+        "debug-build",
+        "enable-tests",
+        "enable-perf"
+      ],
+      "cacheVariables": {
+        "RUN_LONG_UNIT_TESTS": true
+      }
     },
     {
       "name": "linux-clang-13-debug",
-      "inherits": [ "linux-basic-clang-13", "debug-build" ],
+      "inherits": [
+        "linux-basic-clang-13",
+        "debug-build"
+      ],
       "displayName": "Linux clang 13 Debug"
     },
     {
@@ -705,6 +784,23 @@
         "enable-tests"
       ],
       "displayName": "Linux clang 13 Debug+Tests"
+    },
+    {
+      "name": "linux-clang-18-debug",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build"
+      ],
+      "displayName": "Linux clang 18 Debug"
+    },
+    {
+      "name": "linux-clang-18-debug-tests",
+      "inherits": [
+        "linux-basic-clang-18",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 18 Debug+Tests"
     },
     {
       "name": "linux-g++-debug",
@@ -741,6 +837,14 @@
         "enable-samples"
       ],
       "displayName": "Linux c++ Debug+Tests, samples"
+    },
+    {
+      "name": "linux-g++-no-rust-debug-tests-samples",
+      "inherits": [
+        "linux-g++-debug-tests-samples",
+        "no-rust-amqp"
+      ],
+      "displayName": "Linux c++ Debug+Tests, samples, No Rust"
     },
     {
       "name": "linux-g++-11-debug",
