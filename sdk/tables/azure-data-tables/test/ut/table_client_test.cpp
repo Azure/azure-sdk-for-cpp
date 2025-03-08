@@ -22,7 +22,7 @@ using namespace Azure::Data;
 using namespace Azure::Data::Tables::Models;
 
 namespace Azure { namespace Data { namespace Test {
-  std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+  std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
   void TablesClientTest::SetUp()
   {
     auto param = GetParam();

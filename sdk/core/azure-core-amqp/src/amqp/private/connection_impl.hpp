@@ -64,7 +64,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     ConnectionImpl(
         std::string const& hostName,
-        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
+        std::shared_ptr<Credentials::TokenCredential const> tokenCredential,
         _internal::ConnectionOptions const& options,
         _internal::ConnectionEvents* eventHandler);
 
@@ -110,7 +110,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
 
     Models::AmqpMap GetProperties() const;
-    std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
+    std::shared_ptr<Credentials::TokenCredential const> GetCredential() const
+    {
+      return m_credential;
+    }
     void EnableAsyncOperation(bool enable);
     bool IsAsyncOperation() { return m_enableAsyncOperation; }
     bool IsTraceEnabled() { return m_options.EnableTrace; }
@@ -156,7 +159,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // mutex protecting the token acquisition process.
     std::mutex m_tokenMutex;
-    std::shared_ptr<Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<Credentials::TokenCredential const> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
     ConnectionImpl(

@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
     std::unique_ptr<Azure::Security::KeyVault::Keys::KeyClient> m_client;
 
   protected:
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
     int m_testPollingTimeOutMinutes = 20;

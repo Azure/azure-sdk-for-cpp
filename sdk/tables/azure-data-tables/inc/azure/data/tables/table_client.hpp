@@ -83,7 +83,7 @@ namespace Azure { namespace Data { namespace Tables {
     explicit TableClient(
         const std::string& serviceUrl,
         const std::string& tableName,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
         const TableClientOptions& options = {});
 
     /**

@@ -26,7 +26,7 @@ namespace Azure { namespace Identity { namespace Test {
   class EnvironmentCredentialTest : public Azure::Perf::PerfTest {
   private:
     Core::Credentials::TokenRequestContext m_tokenRequestContext;
-    std::unique_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::unique_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
 
   public:
     /**

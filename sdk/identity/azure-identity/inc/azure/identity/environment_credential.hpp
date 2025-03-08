@@ -47,7 +47,7 @@ namespace Azure { namespace Identity {
    */
   class EnvironmentCredential final : public Core::Credentials::TokenCredential {
   private:
-    std::unique_ptr<TokenCredential> m_credentialImpl;
+    std::unique_ptr<TokenCredential const> m_credentialImpl;
 
     explicit EnvironmentCredential(
         Core::Credentials::TokenCredentialOptions const& options,

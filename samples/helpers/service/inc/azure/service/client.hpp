@@ -17,12 +17,12 @@ namespace Azure { namespace Service {
   // Storage Blobs client, etc.
   class Client final {
   private:
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential;
+    std::shared_ptr<Core::Credentials::TokenCredential const> m_credential;
 
   public:
     explicit Client(
         const std::string& serviceUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential)
+        std::shared_ptr<Core::Credentials::TokenCredential const> credential)
         : m_credential(std::move(credential))
     {
       static_cast<void>(serviceUrl); // to suppress the "unused variable" warning.

@@ -65,7 +65,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareClient::ShareClient(
       const std::string& shareUrl,
-      std::shared_ptr<Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Core::Credentials::TokenCredential const> credential,
       const ShareClientOptions& options)
       : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
