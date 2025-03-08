@@ -285,7 +285,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Connection(
         std::string const& hostName,
-        std::shared_ptr<Credentials::TokenCredential> credential,
+        std::shared_ptr<Credentials::TokenCredential const> credential,
         ConnectionOptions const& options,
         ConnectionEvents* eventHandler = nullptr);
 

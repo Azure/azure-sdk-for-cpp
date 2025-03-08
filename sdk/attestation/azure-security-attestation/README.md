@@ -217,8 +217,7 @@ If the attestation APIs require authentication, use the following:
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-    = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 auto client = Azure::Security::Attestation::AttestationClient::Create(m_endpoint, credential);
 ```
 
@@ -262,8 +261,7 @@ All administrative clients are authenticated.
 
 ```cpp
 std::string endpoint = std::getenv("ATTESTATION_AAD_URL");
-std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential
-      = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 AttestationAdministrationClient adminClient(AttestationAdministrationClient::Create(m_endpoint, credential));
 ```
 
