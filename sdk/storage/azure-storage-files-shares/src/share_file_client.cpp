@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareFileClient::ShareFileClient(
       const std::string& shareFileUrl,
-      std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+      std::shared_ptr<const Core::Credentials::TokenCredential> credential,
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),

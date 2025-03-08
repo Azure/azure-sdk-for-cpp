@@ -98,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * @brief The token credential used to initialize the client.
        */
-      std::shared_ptr<Core::Credentials::TokenCredential const> TokenCredential;
+      std::shared_ptr<const Core::Credentials::TokenCredential> TokenCredential;
 
       /**
        * @brief Holds the customer provided key used when making requests.

@@ -76,7 +76,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
   DataLakePathClient::DataLakePathClient(
       const std::string& pathUrl,
-      std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+      std::shared_ptr<const Core::Credentials::TokenCredential> credential,
       const DataLakeClientOptions& options)
       : m_pathUrl(pathUrl), m_blobClient(
                                 _detail::GetBlobUrlFromUrl(pathUrl),

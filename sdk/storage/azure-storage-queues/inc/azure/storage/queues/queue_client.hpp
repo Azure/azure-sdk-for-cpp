@@ -63,7 +63,7 @@ namespace Azure { namespace Storage { namespace Queues {
      */
     explicit QueueClient(
         const std::string& queueUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         const QueueClientOptions& options = QueueClientOptions());
 
     /**
