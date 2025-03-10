@@ -38,7 +38,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
   public:
     explicit KeyVaultChallengeBasedAuthenticationPolicy(
-        std::shared_ptr<const  Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         Core::Credentials::TokenRequestContext const& tokenRequestContext)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
           m_tokenRequestContext(tokenRequestContext)
@@ -116,7 +116,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _internal 
 
       return !authorization.empty() ? authorization
                                     : AuthorizationChallengeParser::GetChallengeParameter(
-                                        challenge, "Bearer", "authorization_uri");
+                                          challenge, "Bearer", "authorization_uri");
     }
 
     static bool TryParseUrl(std::string const& s, Core::Url& outUrl)
