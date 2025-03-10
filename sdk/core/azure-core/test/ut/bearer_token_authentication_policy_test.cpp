@@ -329,7 +329,7 @@ namespace {
 class TestBearerTokenAuthenticationPolicy final : public BearerTokenAuthenticationPolicy {
 public:
   TestBearerTokenAuthenticationPolicy(
-      std::shared_ptr<TokenCredential const> credential,
+      std::shared_ptr<const TokenCredential> credential,
       TokenRequestContext tokenRequestContext)
       : BearerTokenAuthenticationPolicy(credential, tokenRequestContext)
   {
@@ -376,7 +376,7 @@ private:
 
 public:
   TestChallengeBasedAuthenticationPolicy(
-      std::shared_ptr<TokenCredential const> credential,
+      std::shared_ptr<const TokenCredential> credential,
       TokenRequestContext tokenRequestContext,
       bool successfulAuthOnChallenge)
       : BearerTokenAuthenticationPolicy(credential, tokenRequestContext),

@@ -28,7 +28,7 @@ namespace Azure { namespace Identity { namespace Test {
     std::string m_clientId;
     std::string m_certPath;
     Core::Credentials::TokenRequestContext m_tokenRequestContext;
-    std::unique_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
+    std::unique_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
 
   public:
     /**

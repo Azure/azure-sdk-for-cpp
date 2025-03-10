@@ -30,7 +30,7 @@ using namespace Azure::Core::Http::_internal;
 
 BackupClient::BackupClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     BackupClientOptions options)
     : m_vaultBaseUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {

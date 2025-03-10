@@ -26,7 +26,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
 
   protected:
     std::chrono::minutes m_testPollingIntervalMs = std::chrono::minutes(1);
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::chrono::milliseconds m_defaultWait = 1min;
 

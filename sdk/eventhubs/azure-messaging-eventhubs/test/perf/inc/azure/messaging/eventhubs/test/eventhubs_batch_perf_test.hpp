@@ -39,7 +39,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace PerfTest
     uint32_t m_paddingBytes{};
     uint32_t m_maxDeadlineExceeded{};
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
     std::unique_ptr<Azure::Messaging::EventHubs::ProducerClient> m_client;
 
   public:

@@ -31,7 +31,7 @@ namespace Azure { namespace Data { namespace AppConfiguration {
   public:
     explicit ConfigurationClient(
         std::string const& url,
-        std::shared_ptr<Core::Credentials::TokenCredential const> const& credential,
+        const std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
         ConfigurationClientOptions options = {});
 
     std::string GetUrl() const;

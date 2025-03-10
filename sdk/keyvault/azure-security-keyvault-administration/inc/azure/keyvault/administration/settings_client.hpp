@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     explicit SettingsClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         SettingsClientOptions options = SettingsClientOptions());
 
     /**

@@ -109,7 +109,7 @@ class TestKeyVaultClient final {
 public:
   explicit TestKeyVaultClient(
       std::string vaultUrl,
-      std::shared_ptr<TokenCredential const> credential,
+      std::shared_ptr<const TokenCredential> credential,
       std::shared_ptr<TestHttpTransport> testHttpTransport)
       : m_vaultUrl(vaultUrl)
   {
@@ -144,7 +144,7 @@ public:
   }
 };
 
-std::shared_ptr<TokenCredential const> CreateTestCredential(
+std::shared_ptr<const TokenCredential> CreateTestCredential(
     std::shared_ptr<TestHttpTransport> testHttpTransport,
     decltype(ClientSecretCredentialOptions::AdditionallyAllowedTenants) additionallyAllowedTenants
     = {})

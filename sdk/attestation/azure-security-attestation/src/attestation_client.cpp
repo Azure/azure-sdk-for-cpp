@@ -29,7 +29,7 @@ using namespace Azure::Core::Http::_internal;
 
 AttestationClient::AttestationClient(
     std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     AttestationClientOptions options)
     : m_endpoint{endpoint}, m_apiVersion{options.ApiVersion},
       m_tokenValidationOptions{options.TokenValidationOptions},
@@ -282,7 +282,7 @@ void AttestationClient::RetrieveResponseValidationCollateral(Azure::Core::Contex
 
 Azure::Security::Attestation::AttestationClient AttestationClient::Create(
     std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     AttestationClientOptions const& options,
     Azure::Core::Context const& context)
 {

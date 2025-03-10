@@ -160,7 +160,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ConsumerClient(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
         std::string const& consumerGroup = DefaultConsumerGroup,
         ConsumerClientOptions const& options = {});
 
@@ -214,7 +214,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string m_consumerGroup;
 
     /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential const> m_credential;
+    std::shared_ptr<const Core::Credentials::TokenCredential> m_credential;
 
     /// The URL to the Event Hubs namespace
     std::string m_hostUrl;

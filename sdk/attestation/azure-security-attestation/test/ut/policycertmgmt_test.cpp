@@ -30,9 +30,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   };
 
   class CertificateTests : public Azure::Core::Test::TestBase {
-  private:
   protected:
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
 
     // Create
     virtual void SetUp() override
