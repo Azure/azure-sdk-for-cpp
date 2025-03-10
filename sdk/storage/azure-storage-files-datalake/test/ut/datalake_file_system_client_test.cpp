@@ -325,7 +325,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     {
       // Create from client secret credential.
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+      auto credential = GetTestCredential();
       Azure::Storage::Files::DataLake::DataLakeClientOptions options;
 
       auto clientSecretClient = InitTestClient<

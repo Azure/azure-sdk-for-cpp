@@ -33,7 +33,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
   private:
   protected:
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::shared_ptr<Azure::Core::Credentials::TokenCredential const> m_credential;
     std::unique_ptr<AttestationAdministrationClient> m_adminClient;
 
     // Create
@@ -110,7 +110,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+      auto credential = GetTestCredential();
       return AttestationClient::Create(GetInstanceUri(instanceType), credential, options);
     }
 
@@ -120,7 +120,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       AttestationAdministrationClientOptions options
           = InitClientOptions<AttestationAdministrationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+      auto credential = GetTestCredential();
       return AttestationAdministrationClient::Create(
           GetInstanceUri(instanceType), credential, options);
     }

@@ -47,7 +47,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   ProducerClient::ProducerClient(
       std::string const& fullyQualifiedNamespace,
       std::string const& eventHub,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<Azure::Core::Credentials::TokenCredential const> credential,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
         m_targetUrl{_detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub},

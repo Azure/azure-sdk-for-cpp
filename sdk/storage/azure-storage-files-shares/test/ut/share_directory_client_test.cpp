@@ -1103,7 +1103,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string directoryName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+    auto credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 

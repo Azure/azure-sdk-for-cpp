@@ -144,7 +144,7 @@ public:
   }
 };
 
-std::shared_ptr<TokenCredential> CreateTestCredential(
+std::shared_ptr<TokenCredential const> CreateTestCredential(
     std::shared_ptr<TestHttpTransport> testHttpTransport,
     decltype(ClientSecretCredentialOptions::AdditionallyAllowedTenants) additionallyAllowedTenants
     = {})
