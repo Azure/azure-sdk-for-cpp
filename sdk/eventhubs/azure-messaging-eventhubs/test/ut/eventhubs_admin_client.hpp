@@ -23,7 +23,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Basic
     };
     EventHubsManagement(
-        const std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential);
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential);
 
     ~EventHubsManagement() = default;
 

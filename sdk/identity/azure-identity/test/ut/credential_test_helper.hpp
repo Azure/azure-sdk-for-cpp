@@ -63,7 +63,7 @@ namespace Azure { namespace Identity { namespace Test { namespace _detail {
     };
 
     using CreateCredentialCallback
-        = std::function<const std::unique_ptr<Core::Credentials::TokenCredential>(
+        = std::function<std::unique_ptr<const Core::Credentials::TokenCredential>(
             std::shared_ptr<Azure::Core::Http::HttpTransport> const& transport)>;
 
     using GetTokenCallback = std::function<Core::Credentials::AccessToken(
