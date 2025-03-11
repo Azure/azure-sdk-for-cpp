@@ -5,6 +5,8 @@
 
 #include "argagg.hpp"
 
+#include <cstdint>
+
 constexpr const char* EventHubsLoggerName = "eventhubs_stress_test";
 
 extern bool LogToConsole;
@@ -32,7 +34,7 @@ struct EventHubsScenarioOptions
    * @brief The number of arguments expected after the sentinel for the test option.
    *
    */
-  uint16_t ExpectedArgs;
+  std::uint16_t ExpectedArgs;
 
   /**
    * @brief Make an option to be mandatory to run the test.

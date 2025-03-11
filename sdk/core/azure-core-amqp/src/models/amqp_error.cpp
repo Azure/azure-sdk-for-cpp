@@ -8,30 +8,34 @@
 #include "private/error_impl.hpp"
 #include "private/value_impl.hpp"
 
+#if ENABLE_UAMQP
 #include <azure_uamqp_c/amqp_definitions_fields.h>
 
 #include <azure_uamqp_c/amqp_definitions_error.h>
 
 #include <azure_uamqp_c/amqp_definitions_amqp_error.h>
+#endif
 
 #include <iostream>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+#if ENABLE_UAMQP
   // @cond
   void UniqueHandleHelper<ERROR_INSTANCE_TAG>::FreeAmqpError(ERROR_HANDLE handle)
   {
     error_destroy(handle);
   }
-  // @endcond
+// @endcond
+#endif
 }}}} // namespace Azure::Core::Amqp::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _detail {
-
+#if ENABLE_UAMQP
   /*
    * Note that this does not take a unique handle to an AMQP Error - that is because the AMQP
    * code will NOT take ownership of the underlying ERROR_HANDLE object.
    */
-  _internal::AmqpError AmqpErrorFactory::FromUamqp(ERROR_HANDLE handle)
+  _internal::AmqpError AmqpErrorFactory::FromImplementation(ERROR_HANDLE handle)
   {
     _internal::AmqpError rv;
     const char* stringValue;
@@ -50,7 +54,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     {
       // error_get_info returns the AMQP value in place, so we clone it before passing it to the
       // UniqueAmqpValueHandle.
-      rv.Info = _detail::AmqpValueFactory::FromUamqp(
+      rv.Info = _detail::AmqpValueFactory::FromImplementation(
                     _detail::UniqueAmqpValueHandle{amqpvalue_clone(info)})
                     .AsMap();
     }
@@ -68,7 +72,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     if (!error.Info.empty())
     {
       AmqpValue infoValue(error.Info.AsAmqpValue());
-      error_set_info(errorHandle.get(), _detail::AmqpValueFactory::ToUamqp(infoValue));
+      error_set_info(errorHandle.get(), _detail::AmqpValueFactory::ToImplementation(infoValue));
     }
     return errorHandle;
   }
@@ -82,8 +86,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     // The AmqpValue constructor will clone the handle passed into it.
     // The UniqueAmqpValueHandle will take care of freeing the cloned handle.
-    return _detail::AmqpValueFactory::FromUamqp(handleAsValue);
+    return _detail::AmqpValueFactory::FromImplementation(handleAsValue);
   }
+#endif
 }}}}} // namespace Azure::Core::Amqp::Models::_detail
 
 namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace _internal {
@@ -103,6 +108,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
     }
     return os;
   }
+
+#if ENABLE_UAMQP
+#else
+#define amqp_error_internal_error "amqp:internal-error"
+#define amqp_error_not_found "amqp:not-found"
+#define amqp_error_unauthorized_access "amqp:unauthorized-access"
+#define amqp_error_decode_error "amqp:decode-error"
+#define amqp_error_resource_limit_exceeded "amqp:resource-limit-exceeded"
+#define amqp_error_not_allowed "amqp:not-allowed"
+#define amqp_error_invalid_field "amqp:invalid-field"
+#define amqp_error_not_implemented "amqp:not-implemented"
+#define amqp_error_resource_locked "amqp:resource-locked"
+#define amqp_error_precondition_failed "amqp:precondition-failed"
+#define amqp_error_resource_deleted "amqp:resource-deleted"
+#define amqp_error_illegal_state "amqp:illegal-state"
+#define amqp_error_frame_size_too_small "amqp:frame-size-too-small"
+
+#endif
 
   const AmqpErrorCondition AmqpErrorCondition::DecodeError(amqp_error_decode_error);
   const AmqpErrorCondition AmqpErrorCondition::FrameSizeTooSmall(amqp_error_frame_size_too_small);

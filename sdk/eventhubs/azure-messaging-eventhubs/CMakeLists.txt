@@ -51,6 +51,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
 
 endif()
 
+
 set(
   AZURE_MESSAGING_EVENTHUBS_HEADER
     inc/azure/messaging/eventhubs.hpp
@@ -111,6 +112,14 @@ target_include_directories(
 target_link_libraries(azure-messaging-eventhubs PUBLIC Azure::azure-core Azure::azure-core-amqp)
 
 target_compile_definitions(azure-messaging-eventhubs PRIVATE _azure_BUILDING_SDK)
+
+if(USE_RUST_AMQP)
+  message(STATUS "Using Rust AMQP")
+  target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_RUST_AMQP)
+else()
+  message(STATUS "Using uAMQP.")
+  target_compile_definitions(azure-messaging-eventhubs PRIVATE ENABLE_UAMQP)
+endif()
 
 # coverage. Has no effect if BUILD_CODE_COVERAGE is OFF
 create_code_coverage(eventhubs azure-messaging-eventhubs azure-messaging-eventhubs-test "tests?/*;samples?/*")

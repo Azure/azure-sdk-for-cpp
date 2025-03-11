@@ -10,6 +10,8 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/internal/environment.hpp"
+#include "azure/core/url.hpp"
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
@@ -46,6 +48,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
     }
+#if ENABLE_UAMQP
     {
       Azure::Core::Amqp::_internal::ConnectionOptions options;
       auto socketTransport{Azure::Core::Amqp::Network::_internal::SocketTransportFactory::Create(
@@ -54,6 +57,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::_internal::Connection connection(
           socketTransport, options, nullptr, nullptr);
     }
+#endif
   }
 
   TEST_F(TestConnections, ConnectionAttributes)
@@ -82,9 +86,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       auto maxFrameSize = connection.GetMaxFrameSize();
       (void)maxFrameSize;
       EXPECT_EQ(1024 * 64, connection.GetMaxFrameSize());
-
+#if ENABLE_UAMQP
       EXPECT_NO_THROW(
           connection.GetRemoteMaxFrameSize()); // Likely doesn't work unless there's a remote.
+#endif
     }
 
     {
@@ -106,22 +111,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       options.MaxChannelCount = 128;
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
+#if ENABLE_UAMQP
       // Ratio must be a number between 0 and 1.
       EXPECT_NO_THROW(connection.SetIdleEmptyFrameSendPercentage(0.5));
+#endif
     }
 
     {
       Azure::Core::Amqp::_internal::ConnectionOptions options;
       options.MaxChannelCount = 128;
-      options.Properties["test"] = "test";
+      options.Properties[Azure::Core::Amqp::Models::AmqpSymbol{"test"}] = "test";
 
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, options);
-      EXPECT_EQ(Azure::Core::Amqp::Models::AmqpValue{"test"}, connection.GetProperties()["test"]);
+      GTEST_LOG_(INFO) << connection.GetProperties();
+      EXPECT_EQ(
+          Azure::Core::Amqp::Models::AmqpValue{"test"},
+          connection.GetProperties()[Azure::Core::Amqp::Models::AmqpSymbol{"test"}]);
     }
   }
 
   TEST_F(TestConnections, ConnectionOpenClose)
   {
+#if ENABLE_UAMQP
     class TestListener : public Azure::Core::Amqp::Network::_detail::SocketListenerEvents {
     public:
       std::shared_ptr<Azure::Core::Amqp::Network::_internal::Transport> WaitForResult(
@@ -163,7 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
 
       // Open the connection
-      connection.Open();
+      connection.Open({});
 
       // Ensure that we got an OnComplete callback within 5 seconds.
       auto transport = listenerEvents.WaitForResult(
@@ -171,9 +182,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Context{std::chrono::system_clock::now() + std::chrono::seconds(5)});
 
       // Now we can close the connection.
-      connection.Close("xxx", "yyy", {});
+      connection.Close("xxx", "yyy", {}, {});
       listener.Stop();
     }
+#else
+    // Create a connection
+    auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
+    if (testBrokerUrl.empty())
+    {
+      GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+    }
+    Azure::Core::Url brokerUrl(testBrokerUrl);
+    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+    connectionOptions.Port = brokerUrl.GetPort();
+    Azure::Core::Amqp::_internal::Connection connection(
+        brokerUrl.GetHost(), nullptr, connectionOptions);
+
+    // Open the connection
+    connection.Open({});
+
+    connection.Close({});
+
+#endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
 

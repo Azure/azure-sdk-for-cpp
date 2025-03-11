@@ -24,11 +24,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if defined(_azure_TESTING_BUILD)
 // Define the test classes dependant on this class here.
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+#if ENABLE_UAMQP
   namespace MessageTests {
     class AmqpServerMock;
     class MessageListenerEvents;
   } // namespace MessageTests
-
+#endif
   class TestConnections_ConnectionAttributes_Test;
   class TestConnections_ConnectionOpenClose_Test;
   class TestConnections_ConnectionListenClose_Test;
@@ -62,6 +63,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   /** @brief The default port to use to connect to an AMQP server using TLS. */
   constexpr uint16_t AmqpTlsPort = 5671;
 
+#if ENABLE_UAMQP
   /**
    * @brief The state of the connection.
    *
@@ -205,6 +207,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     virtual bool OnNewEndpoint(Connection const& connection, Endpoint& endpoint) = 0;
   };
+#endif
 
   /** @brief Options used to create a connection. */
   struct ConnectionOptions final
@@ -225,10 +228,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * the initial connection negotiation, each peer will send a max frame size. The smaller of the
      * two values will be used as the maximum frame size for the connection.
      *
-     * @remarks The maximum frame size must be at least 512 bytes. The default value is the maximum
-     * value for a uint32.
+     * @remarks The maximum frame size must be at least 512 bytes.
      */
+#if ENABLE_UAMQP
     uint32_t MaxFrameSize{(std::numeric_limits<uint32_t>::max)()};
+#else
+    uint32_t MaxFrameSize{256 * 1024};
+#endif
 
     /** @brief The maximum number of channels supported.
      *
@@ -262,6 +268,43 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * - desired-capabilities
      *
      */
+#if ENABLE_RUST_AMQP
+    /** @brief Locales used for outgoing messages.
+   *
+   * @remarks The outgoing locales are the locales that the client can send messages in.
+   * For more information, see: [AMQP
+   Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+   *
+    */
+    std::vector<std::string> OutgoingLocales;
+    /** @brief Locales used for incoming messages.
+     *
+     * @remarks The incoming locales are the locales that the client can accept messages in.
+     * For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     *
+     */
+    std::vector<std::string> IncomingLocales;
+    /** @brief Capabilities offered by the client.
+     * @remarks The offered capabilities are the capabilities that the client can offer to the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
+    std::vector<std::string> OfferedCapabilities;
+    /** @brief Capabilities desired by the client.
+     * @remarks The desired capabilities are the capabilities that the client can accept from the
+     * server. For more information, see: [AMQP
+     * Open](https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-transport-v1.0-os.html#type-open)
+     */
+    std::vector<std::string> DesiredCapabilities;
+
+    /** @brief The buffer size for the connection.
+     *
+     * @remarks The buffer size is the size of the buffer used to read and write data to the
+     * connection.
+     */
+    Azure::Nullable<uint32_t> BufferSize;
+#endif
 
     /** @brief Defines the ID of the container for this connection. If empty, a unique 128 bit value
      * will be used.
@@ -275,6 +318,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   class Connection final {
   public:
+    // Delete copy constructor and copy assignment operator
+    Connection(const Connection&) = delete;
+    Connection& operator=(const Connection&) = delete;
+
+    // Define move constructor and move assignment operator
+    Connection(Connection&&) noexcept = default;
+    Connection& operator=(Connection&&) noexcept = default;
+#if ENABLE_UAMQP
     /** @brief Construct a new AMQP Connection.
      *
      * @param hostName The name of the host to connect to.
@@ -304,9 +355,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         ConnectionEvents* eventHandler,
         ConnectionEndpointEvents* endpointEvents);
 
+#else
+    /** @brief Construct a new AMQP Connection.
+     *
+     * @param hostName The name of the host to connect to.
+     * @param options The options to use when creating the connection.
+     *
+     * @remarks The requestUri must be a valid AMQP URI.
+     */
+    Connection(
+        std::string const& hostName,
+        std::shared_ptr<Credentials::TokenCredential> credential,
+        ConnectionOptions const& options);
+#endif
+
     /** @brief Destroy an AMQP connection */
     ~Connection();
 
+#if ENABLE_UAMQP
     /** @brief Create a session on the current Connection object.
      *
      * An AMQP Session provides a context for sending and receiving messages. A single connection
@@ -318,7 +384,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Session CreateSession(SessionOptions const& options = {}, SessionEvents* eventHandler = nullptr)
         const;
+#else
+    /** @brief Create a session on the current Connection object.
+     *
+     * An AMQP Session provides a context for sending and receiving messages. A single connection
+     * may have multiple independent sessions active simultaneously up to the negotiated maximum
+     * channel count.
+     *
+     * @param options The options to use when creating the session.
+     */
+    Session CreateSession(SessionOptions const& options = {}) const;
 
+#endif
+
+#if ENABLE_UAMQP
     /** @brief Construct a new session associated with the specified connection over the specified
      * endpoint.
      *
@@ -337,18 +416,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     void Poll();
 
   private:
+#endif
     /** @brief Opens the current connection.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be opened implicitly by a Session object derived from the connection. It primarily
      * exists as a test hook.
+     * @param context Context for the operation.
      *
      * @remarks If you call Open() or Listen(), then you MUST call Close() when you are done with
      * the connection, BEFORE destroying it.
      *
      */
-    void Open();
+    void Open(Azure::Core::Context const& context);
 
+#if ENABLE_UAMQP
     /** @brief Starts listening for incoming connections.
      *
      * @remarks This method should only be called on a connection that was created with a transport
@@ -362,12 +444,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * the connection, BEFORE destroying it.
      */
     void Listen();
+#endif
+
+    /** @brief Closes the current connection.
+     *
+     * @param context Context for the operation.
+     *
+     * @remarks If you have NOT called Open() or Listen(), then calling this is an error.
+     *
+     */
+    void Close(Azure::Core::Context const& context);
 
     /** @brief Closes the current connection.
      *
      * @param condition The condition for closing the connection.
      * @param description The description for closing the connection.
      * @param info Additional information for closing the connection.
+     * @param context Context for the operation.
      *
      * @remarks In general, a customer will not need to call this method, instead the connection
      * will be closed implicitly by a Session object derived from the connection. It primarily
@@ -377,10 +470,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      *
      */
     void Close(
-        std::string const& condition = {},
-        std::string const& description = {},
-        Models::AmqpValue info = {});
+        std::string const& condition,
+        std::string const& description,
+        Models::AmqpValue info,
+        Azure::Core::Context const& context);
 
+#if ENABLE_RUST_AMQP
+  private:
+#endif
     /** @brief Gets host configured by the connection.
      *
      * @return The host used in the connection.
@@ -399,11 +496,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     uint32_t GetMaxFrameSize() const;
 
+#if ENABLE_UAMQP
     /** @brief Gets the max frame size configured for the remote node.
      *
      * @return The configured maximum frame size for the remote node.
      */
     uint32_t GetRemoteMaxFrameSize() const;
+#endif
 
     /** @brief Gets the max channel count configured for the connection.
      *
@@ -423,6 +522,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      */
     Models::AmqpMap GetProperties() const;
 
+#if ENABLE_UAMQP
     /** @brief Sets the percentage of the idle timeout before an empty frame is sent to the remote
      * node.
      *
@@ -440,6 +540,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * connection is opened.
      */
     void SetIdleEmptyFrameSendPercentage(double idleTimeoutEmptyFrameSendRatio);
+#endif
 
   private:
     /** @brief Create an AMQP Connection from an existing connection implementation.
@@ -453,8 +554,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::shared_ptr<_detail::ConnectionImpl> m_impl;
     friend class _detail::ConnectionFactory;
 #if _azure_TESTING_BUILD
+#if ENABLE_UAMQP
     friend class Azure::Core::Amqp::Tests::MessageTests::AmqpServerMock;
     friend class Azure::Core::Amqp::Tests::MessageTests::MessageListenerEvents;
+#endif
     friend class Azure::Core::Amqp::Tests::TestSocketListenerEvents;
     friend class Azure::Core::Amqp::Tests::LinkSocketListenerEvents;
     friend class Azure::Core::Amqp::Tests::TestConnections_ConnectionAttributes_Test;
@@ -468,8 +571,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     friend class Azure::Core::Amqp::Tests::TestMessages_SenderOpenClose_Test;
 
 #endif // _azure_TESTING_BUILD
+#if ENABLE_UAMQP
 #if SAMPLES_BUILD
     friend int LocalServerSample::LocalServerSampleMain();
 #endif // SAMPLES_BUILD
+#endif
   };
 }}}} // namespace Azure::Core::Amqp::_internal
