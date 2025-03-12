@@ -42,13 +42,6 @@ SecretClient::SecretClient(
   generatedOptions.Telemetry = options.Telemetry;
   generatedOptions.PerOperationPolicies = std::move(options.PerOperationPolicies);
   generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
-  /*Azure::Core::Url url(vaultUrl);
-  Azure::Core::Credentials::TokenRequestContext tokenContext;
-  tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(url)};
-  generatedOptions.PerRetryPolicies.emplace_back(
-      std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
-          credential, tokenContext));*/
-
   m_client = std::make_shared<Generated::KeyVaultClient>(
       Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
 };
