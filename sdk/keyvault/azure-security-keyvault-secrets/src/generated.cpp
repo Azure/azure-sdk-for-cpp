@@ -7,13 +7,13 @@
 
 using namespace Azure::Security::KeyVault::Secrets::Generated::Models;
 
-DeletionRecoveryLevel const DeletionRecoveryLevel::Purgeable{"Purgeable"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::RecoverablePurgeable{"Recoverable+Purgeable"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::Recoverable{"Recoverable"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::RecoverableProtectedSubscription{
+const DeletionRecoveryLevel DeletionRecoveryLevel::Purgeable{"Purgeable"};
+const DeletionRecoveryLevel DeletionRecoveryLevel::RecoverablePurgeable{"Recoverable+Purgeable"};
+const DeletionRecoveryLevel DeletionRecoveryLevel::Recoverable{"Recoverable"};
+const DeletionRecoveryLevel DeletionRecoveryLevel::RecoverableProtectedSubscription{
     "Recoverable+ProtectedSubscription"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::CustomizedRecoverablePurgeable{
+const DeletionRecoveryLevel DeletionRecoveryLevel::CustomizedRecoverablePurgeable{
     "CustomizedRecoverable+Purgeable"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::CustomizedRecoverable{"CustomizedRecoverable"};
-DeletionRecoveryLevel const DeletionRecoveryLevel::CustomizedRecoverableProtectedSubscription{
+const DeletionRecoveryLevel DeletionRecoveryLevel::CustomizedRecoverable{"CustomizedRecoverable"};
+const DeletionRecoveryLevel DeletionRecoveryLevel::CustomizedRecoverableProtectedSubscription{
     "CustomizedRecoverable+ProtectedSubscription"};

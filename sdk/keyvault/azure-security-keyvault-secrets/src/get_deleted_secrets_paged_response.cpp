@@ -10,7 +10,7 @@ using namespace Azure::Security::KeyVault::Secrets::Generated;
 
 void GetDeletedSecretsPagedResponse::OnNextPage(Core::Context const& context)
 {
-  auto const pageToken = this->NextPageToken;
+  const auto pageToken = this->NextPageToken;
   this->m_options.NextPageToken = pageToken.Value();
   *this = this->m_client->GetDeletedSecrets(this->m_options, context);
   this->CurrentPageToken = pageToken.Value();

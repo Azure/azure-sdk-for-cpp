@@ -52,42 +52,42 @@ namespace Azure {
       /// possibility for recovery. This level corresponds to no protection being available against
       /// a Delete operation; the data is irretrievably lost upon accepting a Delete operation at
       /// the entity level or higher (vault, resource group, subscription etc.)
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const Purgeable;
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel Purgeable;
 
       /// Denotes a vault state in which deletion is recoverable, and which also permits immediate
       /// and permanent deletion (i.e. purge). This level guarantees the recoverability of the
       /// deleted entity during the retention interval (90 days), unless a Purge operation is
       /// requested, or the subscription is cancelled. System wil permanently delete it after 90
       /// days, if not recovered
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           RecoverablePurgeable;
 
       /// Denotes a vault state in which deletion is recoverable without the possibility for
       /// immediate and permanent deletion (i.e. purge). This level guarantees the recoverability of
       /// the deleted entity during the retention interval (90 days) and while the subscription is
       /// still available. System wil permanently delete it after 90 days, if not recovered
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           Recoverable;
 
       /// Denotes a vault and subscription state in which deletion is recoverable within retention
       /// interval (90 days), immediate and permanent deletion (i.e. purge) is not permitted, and in
       /// which the subscription itself  cannot be permanently canceled. System wil permanently
       /// delete it after 90 days, if not recovered
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           RecoverableProtectedSubscription;
 
       /// Denotes a vault state in which deletion is recoverable, and which also permits immediate
       /// and permanent deletion (i.e. purge when 7 <= SoftDeleteRetentionInDays < 90). This level
       /// guarantees the recoverability of the deleted entity during the retention interval, unless
       /// a Purge operation is requested, or the subscription is cancelled.
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           CustomizedRecoverablePurgeable;
 
       /// Denotes a vault state in which deletion is recoverable without the possibility for
       /// immediate and permanent deletion (i.e. purge when 7 <= SoftDeleteRetentionInDays <
       /// 90).This level guarantees the recoverability of the deleted entity during the retention
       /// interval and while the subscription is still available.
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           CustomizedRecoverable;
 
       /// Denotes a vault and subscription state in which deletion is recoverable, immediate and
@@ -95,7 +95,7 @@ namespace Azure {
       /// cannot be permanently canceled when 7 <= SoftDeleteRetentionInDays < 90. This level
       /// guarantees the recoverability of the deleted entity during the retention interval, and
       /// also reflects the fact that the subscription itself cannot be cancelled.
-      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static DeletionRecoveryLevel const
+      AZ_SECURITY_KEYVAULT_SECRETS_GENERATED_DLLEXPORT static const DeletionRecoveryLevel
           CustomizedRecoverableProtectedSubscription;
     };
 

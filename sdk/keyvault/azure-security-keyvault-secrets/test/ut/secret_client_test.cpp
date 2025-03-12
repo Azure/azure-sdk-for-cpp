@@ -177,7 +177,6 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto operation = client.StartDeleteSecret(secretName);
     operation.PollUntilDone(m_defaultWait);
-    //operation.m_continuationToken = secretName;
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
@@ -259,9 +258,7 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     auto operationResult = operation.Value();
     auto restoredSecret = client.GetSecret(secretName);
     auto secret = restoredSecret.Value;
-    EXPECT_EQ(
-        operationResult.RecoverableDays.Value(),
-        secret.Properties.RecoverableDays.Value());
+    EXPECT_EQ(operationResult.RecoverableDays.Value(), secret.Properties.RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
 }

@@ -8,12 +8,13 @@
 
 #include "azure/keyvault/secrets/secret_client.hpp"
 
+#include "azure/keyvault/secrets/generated.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
 #include "private/secret_constants.hpp"
 #include "private/secret_serializers.hpp"
-#include "azure/keyvault/secrets/generated.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -27,7 +28,6 @@ using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
-
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
@@ -46,11 +46,10 @@ SecretClient::SecretClient(
       Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
 };
 
-
- Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
-     std::string const& name,
-     GetSecretOptions const& options,
-     Azure::Core::Context const& context) const
+Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
+    std::string const& name,
+    GetSecretOptions const& options,
+    Azure::Core::Context const& context) const
 {
   auto secret = m_client->GetSecret(name, options.Version.empty() ? "/" : options.Version, context);
   KeyVaultSecret secretResult(secret.Value);
@@ -58,9 +57,9 @@ SecretClient::SecretClient(
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(secret.RawResponse));
 }
 
- Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
-     std::string const& name,
-     Azure::Core::Context const& context) const
+Azure::Response<DeletedSecret> SecretClient::GetDeletedSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
 {
   auto response = m_client->GetDeletedSecret(name, context);
   DeletedSecret secretResult(response.Value);
@@ -68,10 +67,10 @@ SecretClient::SecretClient(
   return Azure::Response<DeletedSecret>(std::move(secretResult), std::move(response.RawResponse));
 }
 
- Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
-     std::string const& name,
-     std::string const& value,
-     Azure::Core::Context const& context) const
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    std::string const& value,
+    Azure::Core::Context const& context) const
 {
   Generated::Models::SecretSetParameters secretParameters;
   secretParameters.Value = value;
@@ -80,10 +79,10 @@ SecretClient::SecretClient(
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(response.RawResponse));
 }
 
- Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
-     std::string const& name,
-     KeyVaultSecret const& secret,
-     Azure::Core::Context const& context) const
+Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
+    std::string const& name,
+    KeyVaultSecret const& secret,
+    Azure::Core::Context const& context) const
 {
   Generated::Models::SecretSetParameters secretParameters = secret.ToSetSecretParameters();
   auto response = m_client->SetSecret(name, secretParameters, context);
@@ -91,9 +90,9 @@ SecretClient::SecretClient(
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(response.RawResponse));
 }
 
- Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
-     SecretProperties const& properties,
-     Azure::Core::Context const& context) const
+Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
+    SecretProperties const& properties,
+    Azure::Core::Context const& context) const
 {
   Generated::Models::SecretUpdateParameters secretParameters
       = properties.ToSecretUpdateParameters();
@@ -103,9 +102,9 @@ SecretClient::SecretClient(
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(response.RawResponse));
 }
 
- Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
-     std::string const& name,
-     Azure::Core::Context const& context) const
+Azure::Response<BackupSecretResult> SecretClient::BackupSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
 {
   auto response = m_client->BackupSecret(name, context);
   BackupSecretResult backupResult;
@@ -114,9 +113,9 @@ SecretClient::SecretClient(
       std::move(backupResult), std::move(response.RawResponse));
 }
 
- Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
-     BackupSecretResult const& backup,
-     Azure::Core::Context const& context) const
+Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
+    BackupSecretResult const& backup,
+    Azure::Core::Context const& context) const
 {
   Generated::Models::SecretRestoreParameters restoreParameters;
   restoreParameters.SecretBundleBackup = backup.Secret;
@@ -125,18 +124,18 @@ SecretClient::SecretClient(
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(response.RawResponse));
 }
 
- Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
-     std::string const& name,
-     Azure::Core::Context const& context) const
+Azure::Response<PurgedSecret> SecretClient::PurgeDeletedSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
 {
   auto response = m_client->PurgeDeletedSecret(name, context);
   PurgedSecret purgedResult;
   return Azure::Response<PurgedSecret>(std::move(purgedResult), std::move(response.RawResponse));
 }
 
- Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDeleteSecret(
-     std::string const& name,
-     Azure::Core::Context const& context) const
+Azure::Security::KeyVault::Secrets::DeleteSecretOperation SecretClient::StartDeleteSecret(
+    std::string const& name,
+    Azure::Core::Context const& context) const
 {
   auto response = m_client->DeleteSecret(name, context);
   DeletedSecret value(response.Value);
@@ -146,8 +145,8 @@ SecretClient::SecretClient(
   return DeleteSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));
 }
 
- Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
-     StartRecoverDeletedSecret(std::string const& name, Azure::Core::Context const& context) const
+Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation SecretClient::
+    StartRecoverDeletedSecret(std::string const& name, Azure::Core::Context const& context) const
 {
   auto response = m_client->RecoverDeletedSecret(name, context);
   KeyVaultSecret value(response.Value);
@@ -158,9 +157,9 @@ SecretClient::SecretClient(
   return RecoverDeletedSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));
 }
 
- SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
-     GetPropertiesOfSecretsOptions const& options,
-     Azure::Core::Context const& context) const
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
+    GetPropertiesOfSecretsOptions const& options,
+    Azure::Core::Context const& context) const
 {
   Generated::KeyVaultClientGetSecretsOptions generatedOptions;
   if (options.NextPageToken.HasValue())
@@ -174,10 +173,10 @@ SecretClient::SecretClient(
   return secretPropertiesPagedResponse;
 }
 
- SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
-     std::string const& name,
-     GetPropertiesOfSecretVersionsOptions const& options,
-     Azure::Core::Context const& context) const
+SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
+    std::string const& name,
+    GetPropertiesOfSecretVersionsOptions const& options,
+    Azure::Core::Context const& context) const
 {
   Generated::KeyVaultClientGetSecretVersionsOptions generatedOptions;
   if (options.NextPageToken.HasValue())
@@ -191,9 +190,9 @@ SecretClient::SecretClient(
   return secretPropertiesPagedResponse;
 }
 
- DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
-     GetDeletedSecretsOptions const& options,
-     Azure::Core::Context const& context) const
+DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
+    GetDeletedSecretsOptions const& options,
+    Azure::Core::Context const& context) const
 {
   Generated::KeyVaultClientGetDeletedSecretsOptions generatedOptions;
   if (options.NextPageToken.HasValue())

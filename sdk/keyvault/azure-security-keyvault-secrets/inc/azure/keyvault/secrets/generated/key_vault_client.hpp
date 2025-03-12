@@ -46,9 +46,9 @@ namespace Azure {
      *
      */
     explicit KeyVaultClient(
-        std::string const& url,
-        std::shared_ptr<Core::Credentials::TokenCredential> const& credential,
-        KeyVaultClientOptions const& options = {});
+        const std::string& url,
+        const std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
+        const KeyVaultClientOptions& options = {});
 
     /**
      * @brief Gets the KeyVaultClient URL endpoint.
@@ -70,9 +70,9 @@ namespace Azure {
      *
      */
     Response<Models::SecretBundle> SetSecret(
-        std::string const& secretName,
-        Models::SecretSetParameters const& parameters,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Models::SecretSetParameters& parameters,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The DELETE operation applies to any secret stored in Azure Key Vault. DELETE cannot be
@@ -85,8 +85,8 @@ namespace Azure {
      *
      */
     Response<Models::DeletedSecretBundle> DeleteSecret(
-        std::string const& secretName,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The UPDATE operation changes specified attributes of an existing stored secret.
@@ -100,10 +100,10 @@ namespace Azure {
      *
      */
     Response<Models::SecretBundle> UpdateSecret(
-        std::string const& secretName,
-        std::string const& secretVersion,
-        Models::SecretUpdateParameters const& parameters,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const std::string& secretVersion,
+        const Models::SecretUpdateParameters& parameters,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The GET operation is applicable to any secret stored in Azure Key Vault. This
@@ -116,9 +116,9 @@ namespace Azure {
      *
      */
     Response<Models::SecretBundle> GetSecret(
-        std::string const& secretName,
-        std::string const& secretVersion,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const std::string& secretVersion,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The Get Secrets operation is applicable to the entire vault. However, only the base
@@ -130,8 +130,8 @@ namespace Azure {
      *
      */
     GetSecretsPagedResponse GetSecrets(
-        KeyVaultClientGetSecretsOptions const& options = {},
-        Core::Context const& context = {}) const;
+        const KeyVaultClientGetSecretsOptions& options = {},
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The full secret identifier and attributes are provided in the response. No values are
@@ -143,9 +143,9 @@ namespace Azure {
      *
      */
     GetSecretVersionsPagedResponse GetSecretVersions(
-        std::string const& secretName,
-        KeyVaultClientGetSecretVersionsOptions const& options = {},
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const KeyVaultClientGetSecretVersionsOptions& options = {},
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The Get Deleted Secrets operation returns the secrets that have been deleted for a
@@ -156,8 +156,8 @@ namespace Azure {
      *
      */
     GetDeletedSecretsPagedResponse GetDeletedSecrets(
-        KeyVaultClientGetDeletedSecretsOptions const& options = {},
-        Core::Context const& context = {}) const;
+        const KeyVaultClientGetDeletedSecretsOptions& options = {},
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The Get Deleted Secret operation returns the specified deleted secret along with its
@@ -169,8 +169,8 @@ namespace Azure {
      *
      */
     Response<Models::DeletedSecretBundle> GetDeletedSecret(
-        std::string const& secretName,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief The purge deleted secret operation removes the secret permanently, without the
@@ -182,8 +182,8 @@ namespace Azure {
      *
      */
     Response<Models::PurgeDeletedSecretResult> PurgeDeletedSecret(
-        std::string const& secretName,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief Recovers the deleted secret in the specified vault. This operation can only be
@@ -195,8 +195,8 @@ namespace Azure {
      *
      */
     Response<Models::SecretBundle> RecoverDeletedSecret(
-        std::string const& secretName,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief Requests that a backup of the specified secret be downloaded to the client. All
@@ -208,8 +208,8 @@ namespace Azure {
      *
      */
     Response<Models::BackupSecretResult> BackupSecret(
-        std::string const& secretName,
-        Core::Context const& context = {}) const;
+        const std::string& secretName,
+        const Core::Context& context = {}) const;
 
     /**
      * @brief Restores a backed up secret, and all its versions, to a vault. This operation requires
@@ -220,8 +220,8 @@ namespace Azure {
      *
      */
     Response<Models::SecretBundle> RestoreSecret(
-        Models::SecretRestoreParameters const& parameters,
-        Core::Context const& context = {}) const;
+        const Models::SecretRestoreParameters& parameters,
+        const Core::Context& context = {}) const;
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;

@@ -18,9 +18,9 @@
 using namespace Azure::Security::KeyVault::Secrets::Generated;
 
 KeyVaultClient::KeyVaultClient(
-    std::string const& url,
-    std::shared_ptr<Core::Credentials::TokenCredential> const& credential,
-    KeyVaultClientOptions const& options)
+    const std::string& url,
+    const std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
+    const KeyVaultClientOptions& options)
     : m_url(url), m_apiVersion(options.ApiVersion)
 {
   std::vector<std::unique_ptr<Core::Http::Policies::HttpPolicy>> perRetryPolicies;
@@ -46,9 +46,9 @@ std::string KeyVaultClient::GetUrl() const { return m_url.GetAbsoluteUrl(); }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
 KeyVaultClient::SetSecret(
-    std::string const& secretName,
-    Models::SecretSetParameters const& parameters,
-    Core::Context const& context) const
+    const std::string& secretName,
+    const Models::SecretSetParameters& parameters,
+    const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -139,7 +139,7 @@ KeyVaultClient::SetSecret(
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -148,12 +148,12 @@ KeyVaultClient::SetSecret(
 
   Models::SecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -258,9 +258,9 @@ KeyVaultClient::SetSecret(
           response.Managed = jsonRoot["managed"].get<bool>();
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -269,7 +269,7 @@ KeyVaultClient::SetSecret(
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::DeletedSecretBundle>
-KeyVaultClient::DeleteSecret(std::string const& secretName, Core::Context const& context) const
+KeyVaultClient::DeleteSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -286,7 +286,7 @@ KeyVaultClient::DeleteSecret(std::string const& secretName, Core::Context const&
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -295,12 +295,12 @@ KeyVaultClient::DeleteSecret(std::string const& secretName, Core::Context const&
 
   Models::DeletedSecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -426,9 +426,9 @@ KeyVaultClient::DeleteSecret(std::string const& secretName, Core::Context const&
                   : jsonRoot["deletedDate"].get<std::int64_t>());
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -438,10 +438,10 @@ KeyVaultClient::DeleteSecret(std::string const& secretName, Core::Context const&
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
 KeyVaultClient::UpdateSecret(
-    std::string const& secretName,
-    std::string const& secretVersion,
-    Models::SecretUpdateParameters const& parameters,
-    Core::Context const& context) const
+    const std::string& secretName,
+    const std::string& secretVersion,
+    const Models::SecretUpdateParameters& parameters,
+    const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -536,7 +536,7 @@ KeyVaultClient::UpdateSecret(
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -545,12 +545,12 @@ KeyVaultClient::UpdateSecret(
 
   Models::SecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -655,9 +655,9 @@ KeyVaultClient::UpdateSecret(
           response.Managed = jsonRoot["managed"].get<bool>();
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -667,9 +667,9 @@ KeyVaultClient::UpdateSecret(
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
 KeyVaultClient::GetSecret(
-    std::string const& secretName,
-    std::string const& secretVersion,
-    Core::Context const& context) const
+    const std::string& secretName,
+    const std::string& secretVersion,
+    const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -691,7 +691,7 @@ KeyVaultClient::GetSecret(
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -700,12 +700,12 @@ KeyVaultClient::GetSecret(
 
   Models::SecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -810,9 +810,9 @@ KeyVaultClient::GetSecret(
           response.Managed = jsonRoot["managed"].get<bool>();
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -821,8 +821,8 @@ KeyVaultClient::GetSecret(
 }
 
 GetSecretsPagedResponse KeyVaultClient::GetSecrets(
-    KeyVaultClientGetSecretsOptions const& options,
-    Core::Context const& context) const
+    const KeyVaultClientGetSecretsOptions& options,
+    const Core::Context& context) const
 {
   Core::Url url;
   if (options.NextPageToken.empty())
@@ -866,7 +866,7 @@ GetSecretsPagedResponse KeyVaultClient::GetSecrets(
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -877,12 +877,12 @@ GetSecretsPagedResponse KeyVaultClient::GetSecrets(
   response.m_client = std::make_shared<KeyVaultClient>(*this);
   response.m_options = options;
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
         if (jsonRoot.contains("nextLink") && !jsonRoot["nextLink"].is_null())
         {
@@ -996,9 +996,9 @@ GetSecretsPagedResponse KeyVaultClient::GetSecrets(
           }
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1009,9 +1009,9 @@ GetSecretsPagedResponse KeyVaultClient::GetSecrets(
 }
 
 GetSecretVersionsPagedResponse KeyVaultClient::GetSecretVersions(
-    std::string const& secretName,
-    KeyVaultClientGetSecretVersionsOptions const& options,
-    Core::Context const& context) const
+    const std::string& secretName,
+    const KeyVaultClientGetSecretVersionsOptions& options,
+    const Core::Context& context) const
 {
   Core::Url url;
   if (options.NextPageToken.empty())
@@ -1061,7 +1061,7 @@ GetSecretVersionsPagedResponse KeyVaultClient::GetSecretVersions(
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1073,12 +1073,12 @@ GetSecretVersionsPagedResponse KeyVaultClient::GetSecretVersions(
   response.m_secretName = secretName;
   response.m_options = options;
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
         if (jsonRoot.contains("nextLink") && !jsonRoot["nextLink"].is_null())
         {
@@ -1192,9 +1192,9 @@ GetSecretVersionsPagedResponse KeyVaultClient::GetSecretVersions(
           }
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1205,8 +1205,8 @@ GetSecretVersionsPagedResponse KeyVaultClient::GetSecretVersions(
 }
 
 GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
-    KeyVaultClientGetDeletedSecretsOptions const& options,
-    Core::Context const& context) const
+    const KeyVaultClientGetDeletedSecretsOptions& options,
+    const Core::Context& context) const
 {
   Core::Url url;
   if (options.NextPageToken.empty())
@@ -1250,7 +1250,7 @@ GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1261,12 +1261,12 @@ GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
   response.m_client = std::make_shared<KeyVaultClient>(*this);
   response.m_options = options;
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
         if (jsonRoot.contains("nextLink") && !jsonRoot["nextLink"].is_null())
         {
@@ -1403,9 +1403,9 @@ GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
           }
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1416,7 +1416,7 @@ GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::DeletedSecretBundle>
-KeyVaultClient::GetDeletedSecret(std::string const& secretName, Core::Context const& context) const
+KeyVaultClient::GetDeletedSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("deletedsecrets/");
@@ -1433,7 +1433,7 @@ KeyVaultClient::GetDeletedSecret(std::string const& secretName, Core::Context co
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1442,12 +1442,12 @@ KeyVaultClient::GetDeletedSecret(std::string const& secretName, Core::Context co
 
   Models::DeletedSecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -1573,9 +1573,9 @@ KeyVaultClient::GetDeletedSecret(std::string const& secretName, Core::Context co
                   : jsonRoot["deletedDate"].get<std::int64_t>());
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1584,7 +1584,7 @@ KeyVaultClient::GetDeletedSecret(std::string const& secretName, Core::Context co
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::PurgeDeletedSecretResult>
-KeyVaultClient::PurgeDeletedSecret(std::string const& secretName, Core::Context const& context)
+KeyVaultClient::PurgeDeletedSecret(const std::string& secretName, const Core::Context& context)
     const
 {
   auto url = m_url;
@@ -1602,7 +1602,7 @@ KeyVaultClient::PurgeDeletedSecret(std::string const& secretName, Core::Context 
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
   {
@@ -1615,7 +1615,7 @@ KeyVaultClient::PurgeDeletedSecret(std::string const& secretName, Core::Context 
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
-KeyVaultClient::RecoverDeletedSecret(std::string const& secretName, Core::Context const& context)
+KeyVaultClient::RecoverDeletedSecret(const std::string& secretName, const Core::Context& context)
     const
 {
   auto url = m_url;
@@ -1634,7 +1634,7 @@ KeyVaultClient::RecoverDeletedSecret(std::string const& secretName, Core::Contex
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1643,12 +1643,12 @@ KeyVaultClient::RecoverDeletedSecret(std::string const& secretName, Core::Contex
 
   Models::SecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -1753,9 +1753,9 @@ KeyVaultClient::RecoverDeletedSecret(std::string const& secretName, Core::Contex
           response.Managed = jsonRoot["managed"].get<bool>();
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1764,7 +1764,7 @@ KeyVaultClient::RecoverDeletedSecret(std::string const& secretName, Core::Contex
 }
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::BackupSecretResult>
-KeyVaultClient::BackupSecret(std::string const& secretName, Core::Context const& context) const
+KeyVaultClient::BackupSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/");
@@ -1782,7 +1782,7 @@ KeyVaultClient::BackupSecret(std::string const& secretName, Core::Context const&
   request.SetHeader("Accept", "application/json");
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1791,12 +1791,12 @@ KeyVaultClient::BackupSecret(std::string const& secretName, Core::Context const&
 
   Models::BackupSecretResult response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -1805,9 +1805,9 @@ KeyVaultClient::BackupSecret(std::string const& secretName, Core::Context const&
               = Core::_internal::Base64Url::Base64UrlDecode(jsonRoot["value"].get<std::string>());
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }
@@ -1817,8 +1817,8 @@ KeyVaultClient::BackupSecret(std::string const& secretName, Core::Context const&
 
 Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
 KeyVaultClient::RestoreSecret(
-    Models::SecretRestoreParameters const& parameters,
-    Core::Context const& context) const
+    const Models::SecretRestoreParameters& parameters,
+    const Core::Context& context) const
 {
   auto url = m_url;
   url.AppendPath("secrets/restore");
@@ -1843,7 +1843,7 @@ KeyVaultClient::RestoreSecret(
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
-  auto const httpStatusCode = rawResponse->GetStatusCode();
+  const auto httpStatusCode = rawResponse->GetStatusCode();
 
   if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
   {
@@ -1852,12 +1852,12 @@ KeyVaultClient::RestoreSecret(
 
   Models::SecretBundle response{};
   {
-    auto const& responseBody = rawResponse->GetBody();
+    const auto& responseBody = rawResponse->GetBody();
     if (responseBody.size() > 0)
     {
       try
       {
-        auto const jsonRoot
+        const auto jsonRoot
             = Core::Json::_internal::json::parse(responseBody.begin(), responseBody.end());
 
         if (jsonRoot.contains("value") && !jsonRoot["value"].is_null())
@@ -1962,9 +1962,9 @@ KeyVaultClient::RestoreSecret(
           response.Managed = jsonRoot["managed"].get<bool>();
         }
       }
-      catch (Core::Json::_internal::json::exception const&)
+      catch (Core::Json::_internal::json::exception const& ex)
       {
-        throw Core::RequestFailedException(rawResponse);
+        throw Core::RequestFailedException(ex.what());
       }
     }
   }

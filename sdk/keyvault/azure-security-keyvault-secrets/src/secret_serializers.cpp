@@ -20,4 +20,3 @@ using namespace Azure::Core::Json::_internal;
 using Azure::Core::_internal::PosixTimeConverter;
 using namespace Azure::Security::KeyVault::Secrets;
 using namespace Azure::Security::KeyVault::Secrets::_detail;
-

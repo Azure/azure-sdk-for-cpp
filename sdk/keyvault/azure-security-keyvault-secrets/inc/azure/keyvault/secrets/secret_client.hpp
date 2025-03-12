@@ -89,7 +89,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-    
+
     /**
      * @brief The Get Deleted Secret operation returns
      * the specified deleted secret along with its attributes.
@@ -237,7 +237,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-
     /**
      * @brief List all versions of the specified secret.
      * The full secret identifier and attributes are provided in the response. No values are
@@ -270,7 +269,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecretPagedResponse GetDeletedSecrets(
         GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-
 
     /**
      * @brief Gets the secret client's primary URL endpoint.

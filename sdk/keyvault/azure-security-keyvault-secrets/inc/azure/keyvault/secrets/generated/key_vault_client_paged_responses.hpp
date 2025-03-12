@@ -39,7 +39,7 @@ namespace Azure {
     std::shared_ptr<KeyVaultClient> m_client;
     KeyVaultClientGetSecretsOptions m_options;
 
-    void OnNextPage(Core::Context const& context);
+    void OnNextPage(const Core::Context& context);
 
   public:
     /// A response message containing a list of secrets in the key vault along with a link to the
@@ -61,7 +61,7 @@ namespace Azure {
     std::string m_secretName;
     KeyVaultClientGetSecretVersionsOptions m_options;
 
-    void OnNextPage(Core::Context const& context);
+    void OnNextPage(const Core::Context& context);
 
   public:
     /// A response message containing a list of secrets in the key vault along with a link to the
@@ -82,7 +82,7 @@ namespace Azure {
     std::shared_ptr<KeyVaultClient> m_client;
     KeyVaultClientGetDeletedSecretsOptions m_options;
 
-    void OnNextPage(Core::Context const& context);
+    void OnNextPage(const Core::Context& context);
 
   public:
     /// A response message containing a list of deleted secrets in the key vault along with a link
