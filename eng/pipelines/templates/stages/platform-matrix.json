@@ -127,7 +127,7 @@
         "UWP_release": {
           "CMAKE_SYSTEM_NAME": "WindowsStore",
           "CMAKE_SYSTEM_VERSION": "10.0",
-          "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON ",
+          "CmakeArgs": " -DBUILD_TRANSPORT_WINHTTP=ON ",
           "BuildArgs": "--parallel 8 --config Release"
         }
       },

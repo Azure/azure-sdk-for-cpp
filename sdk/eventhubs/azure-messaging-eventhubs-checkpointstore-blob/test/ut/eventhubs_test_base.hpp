@@ -8,7 +8,6 @@
 enum class AuthType
 {
   ManagedIdentity,
-  ConnectionString,
 };
 
 class EventHubsTestBase : public Azure::Core::Test::TestBase,

@@ -31,12 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Storage::Blobs::BlobContainerClient CreateBlobContainerClient(
         std::string const& testName)
     {
-      if (GetParam() == AuthType::ConnectionString)
-      {
-        return Azure::Storage::Blobs::BlobContainerClient::CreateFromConnectionString(
-            GetEnv("CHECKPOINTSTORE_STORAGE_CONNECTION_STRING"), testName, m_blobClientOptions);
-      }
-      else if (GetParam() == AuthType::ManagedIdentity)
+      if (GetParam() == AuthType::ManagedIdentity)
       {
         return Azure::Storage::Blobs::BlobContainerClient(
             GetEnv("CHECKPOINTSTORE_STORAGE_URL") + "/" + testName,
@@ -189,9 +184,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "ConnectionString_LIVEONLY_";
-          break;
         case AuthType::ManagedIdentity:
           stringValue = "ManagedIdentity";
           break;
@@ -202,7 +194,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       BlobCheckpointStoreTest,
-      ::testing::Values(AuthType::ManagedIdentity, AuthType::ConnectionString),
+      ::testing::Values(AuthType::ManagedIdentity),
       GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

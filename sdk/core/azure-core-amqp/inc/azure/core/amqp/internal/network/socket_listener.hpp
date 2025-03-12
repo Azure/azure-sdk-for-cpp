@@ -3,6 +3,7 @@
 
 #pragma once
 
+#if ENABLE_UAMQP
 #include "transport.hpp"
 
 #include <atomic>
@@ -38,11 +39,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Network { namespac
         void* context,
         const IO_INTERFACE_DESCRIPTION_TAG* interfaceDescription,
         void* io_parameters);
-
     std::atomic_bool m_started{false};
     SocketListenerEvents* m_eventHandler{};
-
     SOCKET_LISTENER_INSTANCE_TAG* m_socket;
   };
 
 }}}}} // namespace Azure::Core::Amqp::Network::_detail
+#endif

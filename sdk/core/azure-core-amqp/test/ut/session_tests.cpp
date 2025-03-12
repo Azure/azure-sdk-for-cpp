@@ -1,24 +1,34 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#if ENABLE_UAMQP
+#undef USE_NATIVE_BROKER
+#elif ENABLE_RUST_AMQP
+#define USE_NATIVE_BROKER
+#endif
+
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
+
+#if defined(USE_NATIVE_BROKER)
 #include "azure/core/amqp/internal/message_receiver.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/internal/network/amqp_header_detect_transport.hpp"
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
-#include "mock_amqp_server.hpp"
+#endif
 
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
+#include <azure/core/url.hpp>
 
 #include <functional>
 #include <random>
 
 #include <gtest/gtest.h>
+#if !defined(USE_NATIVE_BROKER)
 #if defined(AZ_PLATFORM_POSIX)
 #include <poll.h> // for poll()
 
@@ -30,12 +40,93 @@
 #undef max
 #endif
 #endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
+#endif // USE_NATIVE_BROKER
+
+#if !defined(USE_NATIVE_BROKER)
+#include "mock_amqp_server.hpp"
+#else // USE_NATIVE_BROKER
+#include <azure/core/internal/environment.hpp>
+#endif
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   class TestSessions : public testing::Test {
   protected:
-    void SetUp() override {}
-    void TearDown() override {}
+    void SetUp() override
+    {
+#if defined(USE_NATIVE_BROKER)
+      auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
+      if (testBrokerUrl.empty())
+      {
+        GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+      }
+      Azure::Core::Url brokerUrl(testBrokerUrl);
+      m_brokerEndpoint = brokerUrl;
+#else
+      m_brokerEndpoint
+          = Azure::Core::Url("amqp://localhost:" + std::to_string(m_mockServer.GetPort()));
+#endif
+    }
+    void TearDown() override
+    { // When the test is torn down, the global state MUST be idle. If it is not,
+      // something leaked.
+      Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+    }
+
+    std::string GetBrokerEndpoint() { return m_brokerEndpoint.GetAbsoluteUrl(); }
+
+    std::uint16_t GetPort() { return m_brokerEndpoint.GetPort(); }
+
+    void StartServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StartListening();
+#endif
+    }
+
+    void StopServerListening()
+    {
+#if !defined(USE_NATIVE_BROKER)
+      m_mockServer.StopListening();
+#endif
+    }
+
+    auto CreateAmqpConnection(
+        std::string const& containerId
+        = testing::UnitTest::GetInstance()->current_test_info()->name(),
+        bool enableTracing = false,
+        Azure::Core::Context const& context = {})
+    {
+      Azure::Core::Amqp::_internal::ConnectionOptions options;
+      options.ContainerId = containerId;
+      options.EnableTrace = enableTracing;
+      options.Port = GetPort();
+
+      auto connection = Azure::Core::Amqp::_internal::Connection("localhost", nullptr, options);
+#if ENABLE_RUST_AMQP
+      connection.Open(context);
+#endif
+      return connection;
+      (void)context;
+    }
+
+    void CloseAmqpConnection(
+        Azure::Core::Amqp::_internal::Connection& connection,
+        Azure::Core::Context const& context = {})
+    {
+#if ENABLE_RUST_AMQP
+      connection.Close(context);
+#endif
+      (void)connection;
+      (void)context;
+    }
+
+  protected:
+#if !defined(USE_NATIVE_BROKER)
+    MessageTests::AmqpServerMock m_mockServer;
+#endif
+
+  private:
+    Azure::Core::Url m_brokerEndpoint{};
   };
 
   using namespace Azure::Core::Amqp::_internal;
@@ -46,7 +137,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
 
     // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
+    auto connection{CreateAmqpConnection()};
+
     {
       // Create a session
       Session session{connection.CreateSession()};
@@ -57,14 +149,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session1{connection.CreateSession({})};
       Session session2{connection.CreateSession({})};
 
-      EXPECT_ANY_THROW(session1.End("", ""));
+      EXPECT_ANY_THROW(session1.End({}));
     }
+
+    CloseAmqpConnection(connection);
   }
 
   TEST_F(TestSessions, SessionProperties)
   { // Create a connection
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, {});
-
+    auto connection{CreateAmqpConnection()};
     {
       Session session{connection.CreateSession()};
 
@@ -92,8 +185,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       Session session{connection.CreateSession(options)};
       EXPECT_EQ(1909119, session.GetOutgoingWindow());
     }
+    CloseAmqpConnection(connection);
   }
 #endif // !AZ_PLATFORM_MAC
+
+#if !defined(USE_NATIVE_BROKER)
+
   uint16_t FindAvailableSocket()
   {
     // Ensure that the global state for the AMQP stack is initialized. Normally this is done by
@@ -161,70 +258,51 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     throw std::runtime_error("Could not find available test port.");
   }
+#endif
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestSessions, SessionBeginEnd)
   {
-    class TestListenerEvents : public Network::_detail::SocketListenerEvents {
-    public:
-      std::shared_ptr<Network::_internal::Transport> WaitForResult(
-          Network::_detail::SocketListener const& listener,
-          Azure::Core::Context const& context = {})
-      {
-        auto result = m_listenerQueue.WaitForPolledResult(context, listener);
-        return std::get<0>(*result);
-      }
 
-    private:
-      Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-          std::shared_ptr<Network::_internal::Transport>>
-          m_listenerQueue;
-
-      virtual void OnSocketAccepted(std::shared_ptr<Network::_internal::Transport> transport)
-      {
-        // Capture the XIO into a transport so it won't leak.
-        m_listenerQueue.CompleteOperation(transport);
-      }
-    };
-
-    // Ensure someone is listening on the connection for when we call Session.Begin.
-    TestListenerEvents events;
-    uint16_t testPort = FindAvailableSocket();
-    Network::_detail::SocketListener listener(testPort, &events);
-    listener.Start();
+    StartServerListening();
 
     // Create a connection
-    Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-    connectionOptions.Port = testPort;
-    Azure::Core::Amqp::_internal::Connection connection("localhost", nullptr, connectionOptions);
+    auto connection{CreateAmqpConnection()};
 
     {
       Session session{connection.CreateSession()};
 
-      session.Begin();
-      session.End();
+      session.Begin({});
+      session.End({});
     }
 
     {
       Session session{connection.CreateSession()};
 
-      session.Begin();
-      session.End("", "");
+      session.Begin({});
+      session.End("", "", {});
     }
 
-    listener.Stop();
+    {
+      Session session{connection.CreateSession()};
+
+      session.Begin({});
+      session.End("amqp:link:detach-forced", "Forced detach.", {});
+    }
+    StopServerListening();
+
+    CloseAmqpConnection(connection);
   }
 
   TEST_F(TestSessions, MultipleSessionBeginEnd)
   {
-
-    MessageTests::AmqpServerMock mockServer;
-    mockServer.EnableTrace(false);
-    mockServer.StartListening();
+#if ENABLE_UAMQP
+    m_mockServer.EnableTrace(false);
+    StartServerListening();
 
     // Create a connection
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
-    connectionOptions.Port = mockServer.GetPort();
+    connectionOptions.Port = GetPort();
     connectionOptions.EnableTrace = true;
 
     class OutgoingConnectionEvents : public ConnectionEvents {
@@ -251,8 +329,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     OutgoingConnectionEvents connectionEvents;
     Azure::Core::Amqp::_internal::Connection connection(
         "localhost", nullptr, connectionOptions, &connectionEvents);
-
-    connection.Open();
+#else
+    auto connection{CreateAmqpConnection()};
+#endif
 
     {
       constexpr const size_t sessionCount = 30;
@@ -261,7 +340,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       for (size_t i = 0; i < sessionCount; i += 1)
       {
         sessions.push_back(connection.CreateSession());
-        sessions.back().Begin();
+        sessions.back().Begin({});
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
 
@@ -270,13 +349,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       GTEST_LOG_(INFO) << "Closing " << sessionCount << " sessions.";
       for (auto& session : sessions)
       {
-        session.End();
+        session.End({});
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
       }
     }
-    connection.Close();
-
-    mockServer.StopListening();
+    CloseAmqpConnection(connection);
+#if ENABLE_UAMQP
+    StopServerListening();
+#endif
   }
 #endif // !AZ_PLATFORM_MAC
 }}}} // namespace Azure::Core::Amqp::Tests

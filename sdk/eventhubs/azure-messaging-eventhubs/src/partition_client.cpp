@@ -27,7 +27,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Amqp::Models::AmqpValue const& filterValue)
     {
       Azure::Core::Amqp::Models::AmqpDescribed value{description.Code, filterValue};
-      sourceOptions.Filter.emplace(description.Name, value.AsAmqpValue());
+      sourceOptions.Filter.emplace(AmqpSymbol{description.Name}, value.AsAmqpValue());
     }
 
     FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
@@ -104,7 +104,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         return returnValue;
       }
     }
-
+#if ENABLE_UAMQP
     // Helper function to create a message receiver.
     Azure::Core::Amqp::_internal::MessageReceiver CreateMessageReceiver(
         Azure::Core::Amqp::_internal::Session const& session,
@@ -139,6 +139,43 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       return session.CreateMessageReceiver(messageSource, receiverOptions, events);
     }
+#elif ENABLE_RUST_AMQP
+    // Helper function to create a message receiver.
+    Azure::Core::Amqp::_internal::MessageReceiver CreateMessageReceiver(
+        Azure::Core::Amqp::_internal::Session const& session,
+        std::string const& partitionUrl,
+        std::string const& receiverName,
+        PartitionClientOptions const& options)
+    {
+      Azure::Core::Amqp::Models::_internal::MessageSourceOptions sourceOptions;
+      sourceOptions.Address = static_cast<Azure::Core::Amqp::Models::AmqpValue>(partitionUrl);
+      AddFilterElementToSourceOptions(
+          sourceOptions,
+          SelectorFilter,
+          static_cast<Azure::Core::Amqp::Models::AmqpValue>(
+              GetStartExpression(options.StartPosition)));
+
+      Azure::Core::Amqp::Models::_internal::MessageSource messageSource(sourceOptions);
+      Azure::Core::Amqp::_internal::MessageReceiverOptions receiverOptions;
+
+      receiverOptions.EnableTrace = _detail::EnableAmqpTrace;
+      // Set the link credit to the prefetch count. If the user has not set a prefetch count, then
+      // we will use the default value.
+      if (options.Prefetch >= 0)
+      {
+        receiverOptions.MaxLinkCredit = options.Prefetch;
+      }
+      receiverOptions.Name = receiverName;
+      receiverOptions.Properties.emplace(AmqpSymbol{"com.microsoft:receiver-name"}, receiverName);
+      if (options.OwnerLevel.HasValue())
+      {
+        receiverOptions.Properties.emplace(
+            AmqpSymbol{"com.microsoft:epoch"}, options.OwnerLevel.Value());
+      }
+      return session.CreateMessageReceiver(messageSource, receiverOptions);
+    }
+#endif
+
   } // namespace
 
   PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
