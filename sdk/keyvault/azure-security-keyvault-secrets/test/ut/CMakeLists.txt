@@ -18,8 +18,16 @@ add_executable (
   azure-security-keyvault-secrets-test
     challenge_based_authentication_policy_test.cpp
     macro_guard.cpp
+    secret_backup_deserialize_test.cpp
+    secret_backup_deserialize_test.hpp
     secret_client_base_test.hpp
     secret_client_test.cpp
+    secret_get_client_deserialize_test.cpp
+    secret_get_client_deserialize_test.hpp
+    secret_paged_deserialize_test.cpp
+    secret_paged_deserialize_test.hpp
+    secret_set_parameters_serializer_test.cpp
+    secret_update_properties_test.cpp
 )
 
 target_compile_definitions(azure-security-keyvault-secrets-test PRIVATE _azure_BUILDING_TESTS)

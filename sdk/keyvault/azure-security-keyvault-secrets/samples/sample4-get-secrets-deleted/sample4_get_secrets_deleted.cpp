@@ -36,7 +36,7 @@ int main()
     KeyVaultSecret secret1 = secretClient.SetSecret(secretName, secretValue).Value;
     KeyVaultSecret secret2 = secretClient.SetSecret(secretName2, secretValue).Value;
 
-    std::cout << "Secret1 Id : " << secret1.Id.Value() << std::endl;
+    std::cout << "Secret1 Version : " << secret1.Properties.Version << std::endl;
 
     // get properties of secrets
     for (auto secrets = secretClient.GetPropertiesOfSecrets(); secrets.HasPage();
@@ -44,34 +44,37 @@ int main()
     { // go through every secret of each page returned
       // the number of results returned for in a  page is not guaranteed
       // it can be anywhere from 0 to 25
-      for (auto const& secret : secrets.Value.Value())
+      for (auto const& secret : secrets.Items)
       {
-        std::cout << "Found Secret with Id: " << secret.Id.Value() << std::endl;
+        std::cout << "Found Secret with name: " << secret.Name << std::endl;
       }
     }
 
+    // @begin_snippet: SecretSample4ListAllSecrets
     // get all the versions of a secret
-    for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secretName);
+    for (auto secretsVersion = secretClient.GetPropertiesOfSecretsVersions(secret1.Name);
          secretsVersion.HasPage();
          secretsVersion.MoveToNextPage())
     { // go through each version of the secret
       // the number of results returned for in a page is not guaranteed
       // it can be anywhere from 0 to 25
-      for (auto const& secret : secretsVersion.Value.Value())
+      for (auto const& secret : secretsVersion.Items)
       {
-        std::cout << "Found Secret with Id: " << secret.Id.Value() << std::endl;
+        std::cout << "Found Secret with name: " << secret.Name
+                  << " and with version: " << secret.Version << std::endl;
       }
     }
+    // @end_snippet
 
     // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);
+    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret1.Name);
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
     operation.PollUntilDone(2s);
 
     // start deleting the secret
-    operation = secretClient.StartDeleteSecret(secretName2);
+    operation = secretClient.StartDeleteSecret(secret2.Name);
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
@@ -83,19 +86,19 @@ int main()
     { // the number of results returned for in a  page is not guaranteed
       // it can be anywhere from 0 to 25
       // go through each deleted secret
-      for (auto const& deletedSecret : deletedSecrets.Value.Value())
+      for (auto const& deletedSecret : deletedSecrets.Items)
       {
-        std::cout << "Found Secret with Id: " << deletedSecret.Id.Value() << std::endl;
+        std::cout << "Found Secret with name: " << deletedSecret.Name << std::endl;
       }
     }
 
     // get one deleted secret
-    auto deletedSecret = secretClient.GetDeletedSecret(secretName);
-    std::cout << "Deleted Secret with Id: " << deletedSecret.Value.Id.Value();
+    auto deletedSecret = secretClient.GetDeletedSecret(secret1.Name);
+    std::cout << "Deleted Secret with name: " << deletedSecret.Value.Name;
 
     // cleanup
-    secretClient.PurgeDeletedSecret(secretName);
-    secretClient.PurgeDeletedSecret(secretName2);
+    secretClient.PurgeDeletedSecret(secret1.Name);
+    secretClient.PurgeDeletedSecret(secret2.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {

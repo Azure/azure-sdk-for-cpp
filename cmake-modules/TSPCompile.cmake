@@ -3,7 +3,7 @@
 
 find_package(Git)
 
-macro(GenerateCodeFromTypeSpec TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_SHA CODEGEN_DESTINATION GEN_FILES_DESTINATION)
+macro(GenerateCodeFromTypeSpec TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_SHA CODEGEN_DESTINATION GEN_FILES_DESTINATION COPY_CLIENT_TSP)
 
     message("\
     GenerateCodeFromTypeSpec using the following params \n\
@@ -15,7 +15,7 @@ macro(GenerateCodeFromTypeSpec TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_SHA CODE
     set(CODEGEN_PATH packages/typespec-cpp)
     DownloadTSPFiles(${TSP_DESTINATION})
     DownloadCodeGenerator(${CODEGEN_SHA} ${CODEGEN_DESTINATION})
-    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH} ${GEN_FILES_DESTINATION})
+    GenerateCodeFromTSP(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_DESTINATION} ${CODEGEN_PATH} ${GEN_FILES_DESTINATION} ${COPY_CLIENT_TSP})
 endmacro()
 
 macro(DownloadTSPFiles TSP_DESTINATION)
@@ -80,7 +80,7 @@ macro (DownloadCodeGenerator CODEGEN_SHA CODEGEN_DESTINATION)
     endif()
 endmacro()
 
-macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION CODEGEN_PATH GEN_FILES_DESTINATION)
+macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION CODEGEN_PATH GEN_FILES_DESTINATION COPY_CLIENT_TSP )
     message("\
     GenerateCodeFromTSP using the following params \n\
     TSP_DESTINATION=${TSP_DESTINATION}\n\
@@ -107,12 +107,14 @@ macro(GenerateCodeFromTSP TSP_DESTINATION TSP_SERVICE_PATH CODEGEN_DESTINATION C
     ${TSP_FINAL_LOCATION}")
     file(COPY ${SCRIPTS_FOLDER}
     DESTINATION ${TSP_FINAL_LOCATION})
-    message("\
-    Will copy \n\
-    ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp to \n\
-    ${TSP_FINAL_LOCATION}")
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp
-    DESTINATION ${TSP_FINAL_LOCATION})
+    if(${COPY_CLIENT_TSP})
+        message("\
+        Will copy \n\
+        ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp to \n\
+        ${TSP_FINAL_LOCATION}")
+        # file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/client.tsp
+        # DESTINATION ${TSP_FINAL_LOCATION})
+    endif()
     message("\
     Will copy \n\
     ${CMAKE_CURRENT_SOURCE_DIR}/tspconfig.yaml to \n\

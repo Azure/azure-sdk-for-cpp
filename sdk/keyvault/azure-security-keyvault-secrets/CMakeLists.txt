@@ -47,9 +47,8 @@ if(AZURE_TSP_KV_SECRETS_GEN)
        
     #destination folders
     set(GEN_FILES_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}")
-
     #generate code from typespec
-    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION})
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION} OFF)
 endif()
 
 if(FETCH_SOURCE_DEPS)
@@ -69,23 +68,44 @@ set(
   AZURE_SECURITY_KEYVAULT_SECRETS_HEADER
     inc/azure/keyvault/secrets.hpp
     inc/azure/keyvault/secrets/dll_import_export.hpp
+    inc/azure/keyvault/secrets/keyvault_backup_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_deleted_secret.hpp
     inc/azure/keyvault/secrets/keyvault_operations.hpp
+    inc/azure/keyvault/secrets/keyvault_options.hpp
+    inc/azure/keyvault/secrets/keyvault_secret.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_paged_response.hpp
+    inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
     inc/azure/keyvault/secrets/rtti.hpp
-    inc/azure/keyvault/secrets/secrets_models.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
-    inc/azure/keyvault/secrets/secret_client_options.hpp
-    inc/azure/keyvault/secrets/secret_client_paged_responses.hpp
+    inc/azure/keyvault/secrets/generated.hpp
+    inc/azure/keyvault/secrets/generated/dll_import_export.hpp
+    inc/azure/keyvault/secrets/generated/key_vault_client.hpp
+    inc/azure/keyvault/secrets/generated/key_vault_client_options.hpp
+    inc/azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp
+    inc/azure/keyvault/secrets/generated/models/generated_models.hpp
 )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
+    src/private/generated_package_version.hpp
     src/private/package_version.hpp
-    src/deleted_secret_paged_response.cpp
+    src/generated.cpp
+    src/get_deleted_secrets_paged_response.cpp
+    src/get_secrets_paged_response.cpp
+    src/get_secret_versions_paged_response.cpp
+    src/key_vault_client.cpp
     src/keyvault_operations.cpp
-    src/secrets.cpp
+    src/keyvault_protocol.cpp
+    src/keyvault_secret_paged_response.cpp
+    src/keyvault_secret_properties.cpp
+    src/keyvault_secrets_common_request.cpp
+    src/private/keyvault_protocol.hpp
+    src/private/keyvault_secrets_common_request.hpp
+    src/private/package_version.hpp
+    src/private/secret_constants.hpp
+    src/private/secret_serializers.hpp
     src/secret_client.cpp
-    src/secret_properties_paged_response.cpp
-    src/secret_properties_versions_paged_response.cpp
+    src/secret_serializers.cpp
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})

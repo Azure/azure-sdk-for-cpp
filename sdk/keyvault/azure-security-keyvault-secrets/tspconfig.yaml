@@ -18,24 +18,5 @@ options:
   "@azure-tools/typespec-cpp":
     flavor: azure
     package-dir: "azure-security-keyvault-secrets"
-    namespace: "Azure::Security::KeyVault::Secrets"
-    headersOutputPath: "azure/keyvault/secrets"
-    removeModelsNamespace: true
-    typeRename:
-     - from: "SecretUpdateParameters"
-       to: "UpdateSecretPropertiesOptions"
-     - from: "SecretClientGetPropertiesOfSecretsVersionsOptions"
-       to: "GetPropertiesOfSecretVersionsOptions"
-     - from: "GetPropertiesOfSecretsPagedResponse"
-       to: "SecretPropertiesPagedResponse"
-     - from: "GetDeletedSecretsPagedResponse"
-       to: "DeletedSecretPagedResponse"
-     - from: "PurgeDeletedSecretResult"
-       to: "PurgedSecret"
-     - from: "SecretClientGetDeletedSecretsOptions"
-       to: "GetDeletedSecretsOptions"
-     - from: "SecretClientGetPropertiesOfSecretsOptions"
-       to: "GetPropertiesOfSecretsOptions"
-     - from: "GetPropertiesOfSecretsVersionsPagedResponse"
-       to: "SecretPropertiesVersionsPagedResponse"
-
+    namespace: "Azure::Security::KeyVault::Secrets::Generated"
+    headersOutputPath: "azure/keyvault/secrets/generated"

@@ -7,7 +7,8 @@
  */
 
 #pragma once
-#include "azure/keyvault/secrets/secrets_models.hpp"
+#include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
+#include "azure/keyvault/secrets/keyvault_secret.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/operation.hpp>
@@ -21,15 +22,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   /**
    * @brief Represents a long running operation to restore a deleted secret.
    */
-  class RecoverDeletedSecretOperation final : public Azure::Core::Operation<KeyVaultSecret> {
+  class RecoverDeletedSecretOperation final : public Azure::Core::Operation<SecretProperties> {
 
   private:
     friend class SecretClient;
     std::shared_ptr<SecretClient> m_secretClient;
-    KeyVaultSecret m_value;
+    SecretProperties m_value;
     std::string m_continuationToken;
 
-    Azure::Response<KeyVaultSecret> PollUntilDoneInternal(
+    Azure::Response<SecretProperties> PollUntilDoneInternal(
         std::chrono::milliseconds period,
         Azure::Core::Context& context) override;
 
@@ -43,9 +44,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     RecoverDeletedSecretOperation(
-        std::string const& secretName,
         std::shared_ptr<SecretClient> secretClient,
-        Azure::Response<KeyVaultSecret> response);
+        Azure::Response<SecretProperties> response);
 
     RecoverDeletedSecretOperation(
         std::string resumeToken,
@@ -53,11 +53,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
   public:
     /**
-     * @brief Get the #Azure::Security::KeyVault::Secrets::KeyVaultSecret object.
+     * @brief Get the #Azure::Security::KeyVault::Secrets::SecretProperties object.
      *
      * @return A Secret object.
      */
-    KeyVaultSecret Value() const override { return m_value; }
+    SecretProperties Value() const override { return m_value; }
 
     /**
      * @brief Get an Url as string which can be used to get the status of the operation.
@@ -110,7 +110,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * Since C++ doesn't offer `internal` access, we use friends-only instead.
      */
     DeleteSecretOperation(
-        std::string const& secretName,
         std::shared_ptr<SecretClient> secretClient,
         Azure::Response<DeletedSecret> response);
 

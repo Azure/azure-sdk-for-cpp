@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "azure/keyvault/secrets/secrets_models.hpp"
+#include "azure/keyvault/secrets/generated/models/generated_models.hpp"
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/nullable.hpp>
@@ -13,22 +13,26 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+namespace Azure {
+  namespace Security {
+    namespace KeyVault {
+      namespace Secrets {
+        namespace Generated {
   /**
-   * @brief SecretClient options.
+   * @brief KeyVaultClient options.
    *
    */
-  struct SecretClientOptions final : public Core::_internal::ClientOptions
+  struct KeyVaultClientOptions final : public Core::_internal::ClientOptions
   {
     /// The API version to use for this operation.
     std::string ApiVersion = "7.6-preview.2";
   };
 
   /**
-   * @brief GetPropertiesOfSecrets operation options.
+   * @brief GetSecrets operation options.
    *
    */
-  struct GetPropertiesOfSecretsOptions final
+  struct KeyVaultClientGetSecretsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;
@@ -39,10 +43,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   };
 
   /**
-   * @brief GetPropertiesOfSecretsVersions operation options.
+   * @brief GetSecretVersions operation options.
    *
    */
-  struct GetPropertiesOfSecretVersionsOptions final
+  struct KeyVaultClientGetSecretVersionsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;
@@ -56,7 +60,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
    * @brief GetDeletedSecrets operation options.
    *
    */
-  struct GetDeletedSecretsOptions final
+  struct KeyVaultClientGetDeletedSecretsOptions final
   {
     /// The URL to fetch the next page of results.
     std::string NextPageToken;
@@ -65,4 +69,4 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     /// to 25 results.
     Nullable<std::int32_t> Maxresults;
   };
-}}}} // namespace Azure::Security::KeyVault::Secrets
+}}}}} // namespace Azure::Security::KeyVault::Secrets::Generated

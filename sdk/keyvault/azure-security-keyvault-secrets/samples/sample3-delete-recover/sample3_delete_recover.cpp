@@ -41,10 +41,10 @@ int main()
     KeyVaultSecret secret = secretClient.GetSecret(secretName).Value;
 
     std::string valueString = secret.Value.HasValue() ? secret.Value.Value() : "NONE RETURNED";
-    std::cout << "Secret is returned with Id: " << secret.Id.Value()
-              << " and value: " << valueString << std::endl;
+    std::cout << "Secret is returned with name " << secret.Name << " and value " << valueString
+              << std::endl;
     // start deleting the secret
-    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secretName);
+    DeleteSecretOperation operation = secretClient.StartDeleteSecret(secret.Name);
 
     // You only need to wait for completion if you want to purge or recover the secret.
     // The duration of the delete operation might vary
@@ -53,23 +53,23 @@ int main()
 
     // call recover secret
     RecoverDeletedSecretOperation recoverOperation
-        = secretClient.StartRecoverDeletedSecret(secretName);
+        = secretClient.StartRecoverDeletedSecret(secret.Name);
 
     // poll until done
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
-    KeyVaultSecret restoredSecretProperties = recoverOperation.PollUntilDone(2s).Value;
-    KeyVaultSecret restoredSecret = secretClient.GetSecret(secretName).Value;
+    SecretProperties restoredSecretProperties = recoverOperation.PollUntilDone(2s).Value;
+    KeyVaultSecret restoredSecret = secretClient.GetSecret(restoredSecretProperties.Name).Value;
 
     AssertSecretsEqual(secret, restoredSecret);
 
     // cleanup
     // start deleting the secret
-    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(secretName);
+    DeleteSecretOperation cleanupOperation = secretClient.StartDeleteSecret(restoredSecret.Name);
     // The duration of the delete operation might vary
     // in case returns too fast increase the timeout value
     cleanupOperation.PollUntilDone(2s);
-    secretClient.PurgeDeletedSecret(secretName);
+    secretClient.PurgeDeletedSecret(restoredSecret.Name);
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
   {
@@ -93,6 +93,7 @@ void AssertSecretsEqual(KeyVaultSecret const& expected, KeyVaultSecret const& ac
   (void)expected;
   (void)actual;
 #endif
-  assert(expected.Id.Value() == actual.Id.Value());
-  assert(expected.Value.Value() == actual.Value.Value());
+  assert(expected.Name == actual.Name);
+  assert(expected.Properties.Version == actual.Properties.Version);
+  assert(expected.Id == actual.Id);
 }
