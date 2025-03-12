@@ -115,7 +115,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::chrono::milliseconds GetIdleTimeout() const;
 
     Models::AmqpMap GetProperties() const;
-    std::shared_ptr<const Credentials::TokenCredential> GetCredential() const { return m_credential; }
+    std::shared_ptr<const Credentials::TokenCredential> GetCredential() const
+    {
+      return m_credential;
+    }
     bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
 
