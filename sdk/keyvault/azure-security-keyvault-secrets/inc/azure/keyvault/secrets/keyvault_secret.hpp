@@ -86,6 +86,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         Id = secret.Id.Value();
         Properties = SecretProperties::CreateFromURL(secret.Id.Value());
+        Name = Properties.Name;
       }
       Properties.ContentType = secret.ContentType;
       Properties.KeyId = secret.Kid;
@@ -122,6 +123,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       {
         Id = secret.Id.Value();
         Properties = SecretProperties::CreateFromURL(secret.Id.Value());
+        Name = Properties.Name;
       }
       if (secret.Tags.HasValue())
       {

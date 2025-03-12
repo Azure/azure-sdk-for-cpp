@@ -146,18 +146,43 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Generated::Models::SecretUpdateParameters ToSecretUpdateParameters() const
     {
       Generated::Models::SecretUpdateParameters secretParameters;
-      secretParameters.ContentType = ContentType;
+      if (ContentType.HasValue())
+      {
+        secretParameters.ContentType = ContentType.Value();
+      }
+
       secretParameters.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
       secretParameters.SecretAttributes = Generated::Models::SecretAttributes();
-      secretParameters.SecretAttributes.Value().Expires = ExpiresOn;
-      secretParameters.SecretAttributes.Value().NotBefore = NotBefore;
-      secretParameters.SecretAttributes.Value().Enabled = Enabled;
-      secretParameters.SecretAttributes.Value().RecoveryLevel
-          = Generated::Models::DeletionRecoveryLevel(RecoveryLevel.Value());
-      secretParameters.SecretAttributes.Value().RecoverableDays
-          = static_cast<int32_t>(RecoverableDays.Value());
-      secretParameters.SecretAttributes.Value().Created = CreatedOn.Value();
-      secretParameters.SecretAttributes.Value().Updated = UpdatedOn.Value();
+      if (ExpiresOn.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().Expires = ExpiresOn;
+      }
+      if (NotBefore.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().NotBefore = NotBefore;
+      }
+      if (Enabled.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().Enabled = Enabled;
+      }
+      if (RecoveryLevel.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().RecoveryLevel
+            = Generated::Models::DeletionRecoveryLevel(RecoveryLevel.Value());
+      }
+      if (RecoverableDays.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().RecoverableDays
+            = static_cast<int32_t>(RecoverableDays.Value());
+      }
+      if (CreatedOn.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().Created = CreatedOn.Value();
+      }
+      if (UpdatedOn.HasValue())
+      {
+        secretParameters.SecretAttributes.Value().Updated = UpdatedOn.Value();
+      }
       return secretParameters;
     };
     friend class SecretClient;
