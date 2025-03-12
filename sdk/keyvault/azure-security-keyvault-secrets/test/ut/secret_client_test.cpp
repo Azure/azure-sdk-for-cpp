@@ -138,6 +138,8 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
   }
   {
     properties.RecoverableDays = 90;
+    properties.Name = secretName;
+    properties.Version = "/";
     auto secretResponse = client.UpdateSecretProperties(properties);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
