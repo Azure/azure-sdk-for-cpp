@@ -40,7 +40,7 @@ namespace Azure { namespace Perf {
     std::string m_proxy;
     bool m_isPlayBackMode = false;
     bool m_isInsecureEnabled = false;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_testCredential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_testCredential;
 
     /**
      * @brief Updates the performance test to use a test-proxy for running.
@@ -114,7 +114,7 @@ namespace Azure { namespace Perf {
   protected:
     Azure::Perf::TestOptions m_options;
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> GetTestCredential();
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> GetTestCredential();
 
   public:
     BaseTest(Azure::Perf::TestOptions options) : m_options(options) {}

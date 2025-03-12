@@ -45,7 +45,7 @@ namespace Azure { namespace Core { namespace Test {
      */
     bool m_wasSkipped = false;
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_testCredential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_testCredential;
 
     void PrepareOptions(Azure::Core::_internal::ClientOptions& options)
     {
@@ -75,7 +75,8 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
-    void PrepareClientCredential(std::shared_ptr<Core::Credentials::TokenCredential>& credential)
+    void PrepareClientCredential(
+        std::shared_ptr<const Core::Credentials::TokenCredential>& credential)
     {
       if (m_testContext.IsPlaybackMode())
       {
@@ -90,7 +91,7 @@ namespace Azure { namespace Core { namespace Test {
     // If Playback or Record is not set, no changes will be done to the clientOptions or
     // credential. Call this before creating the SDK client
     void PrepareClientOptions(
-        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
         Azure::Core::_internal::ClientOptions& options)
     {
       // Set up client options depending on the test-mode
@@ -206,7 +207,7 @@ namespace Azure { namespace Core { namespace Test {
     template <class T, class O>
     std::unique_ptr<T> InitTestClient(
         std::string const& url,
-        std::shared_ptr<Core::Credentials::TokenCredential>& credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
         O& options)
     {
       // Run instrumentation before creating the client
@@ -224,7 +225,7 @@ namespace Azure { namespace Core { namespace Test {
       return options;
     }
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> GetTestCredential()
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> GetTestCredential()
     {
       if (m_testCredential)
       {

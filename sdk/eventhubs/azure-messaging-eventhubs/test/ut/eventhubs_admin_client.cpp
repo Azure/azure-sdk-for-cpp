@@ -20,7 +20,7 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   EventHubsManagement::EventHubsManagement(
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential)
+      std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential)
       : m_resourceGroup{Azure::Core::_internal::Environment::GetVariable(
           "EVENTHUBS_RESOURCE_GROUP")},
         m_location{Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_LOCATION")},
@@ -80,6 +80,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         break;
     }
     jsonBody["properties"] = Azure::Core::Json::_internal::json::object();
+    jsonBody["properties"]["disableLocalAuth"] = true;
     jsonBody["location"] = m_location;
     std::string bodyText = jsonBody.dump();
 

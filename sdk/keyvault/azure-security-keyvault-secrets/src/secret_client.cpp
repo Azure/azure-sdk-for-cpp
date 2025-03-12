@@ -31,7 +31,7 @@ using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 SecretClient::SecretClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> const credential,
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
     SecretClientOptions options)
 {
   Generated::KeyVaultClientOptions generatedOptions;

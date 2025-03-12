@@ -95,7 +95,7 @@ CryptographyClient::~CryptographyClient() = default;
 
 CryptographyClient::CryptographyClient(
     std::string const& keyId,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     CryptographyClientOptions const& options)
     : m_keyId(Azure::Core::Url(keyId)), m_apiVersion(options.Version)
 {

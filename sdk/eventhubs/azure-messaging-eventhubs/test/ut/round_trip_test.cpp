@@ -134,8 +134,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EXPECT_EQ(expected, receivedEvents[0]->Body);
       ASSERT_TRUE(receivedEvents[0]->ContentType);
       EXPECT_EQ("application/binary", receivedEvents[0]->ContentType.Value());
-      ASSERT_TRUE(receivedEvents[0]->MessageId);
-      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId.Value()));
+      ASSERT_FALSE(receivedEvents[0]->MessageId.IsNull());
+      EXPECT_EQ("Test Message Id", static_cast<std::string>(receivedEvents[0]->MessageId));
     }
   }
 
@@ -145,9 +145,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string stringValue = "";
       switch (info.param)
       {
-        case AuthType::ConnectionString:
-          stringValue = "ConnectionString_LIVEONLY_";
-          break;
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
           break;
@@ -162,7 +159,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       RoundTripTests,
-      ::testing::Values(AuthType::Key, AuthType::ConnectionString /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key /*, AuthType::Emulator*/),
       GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

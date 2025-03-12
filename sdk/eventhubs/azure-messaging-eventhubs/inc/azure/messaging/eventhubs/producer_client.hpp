@@ -73,14 +73,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   class ProducerClient final {
 
   public:
-    /** Get the fully qualified namespace from the connection string */
-    std::string const& GetEventHubName() { return m_eventHub; }
-
-    /** Get Retry options for this ProducerClient */
-    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
-    {
-      return m_producerClientOptions.RetryOptions;
-    }
+    /**@brief Constructs a new ProducerClient instance
+     *
+     * @param fullyQualifiedNamespace Fully qualified namespace name
+     * @param eventHub Event hub name
+     * @param credential Credential to use for authentication
+     * @param options Additional options for creating the client
+     */
+    ProducerClient(
+        std::string const& fullyQualifiedNamespace,
+        std::string const& eventHub,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
+        ProducerClientOptions options = {});
 
     /** Create a ProducerClient from another ProducerClient. */
     ProducerClient(ProducerClient const& other) = delete;
@@ -94,55 +98,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Default Constructor for a ProducerClient */
     ProducerClient() = default;
 
-    /**@brief Constructs a new ProducerClient instance
-     *
-     * @param connectionString Event hubs connection string
-     * @param eventHub Event hub name
-     * @param options Additional options for creating the client
-     */
-    ProducerClient(
-        std::string const& connectionString,
-        std::string const& eventHub,
-        ProducerClientOptions options = {});
-
-    /**@brief Constructs a new ProducerClient instance
-     *
-     * @param fullyQualifiedNamespace Fully qualified namespace name
-     * @param eventHub Event hub name
-     * @param credential Credential to use for authentication
-     * @param options Additional options for creating the client
-     */
-    ProducerClient(
-        std::string const& fullyQualifiedNamespace,
-        std::string const& eventHub,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
-        ProducerClientOptions options = {});
-
     ~ProducerClient() { Close(); }
 
     /** @brief Close all the connections and sessions.
      *
      * @param context Context for the operation can be used for request cancellation.
      */
-    void Close(Azure::Core::Context const& context = {})
-    {
-      for (auto& sender : m_senders)
-      {
-        sender.second.Close(context);
-      }
-      m_senders.clear();
-
-      // Close needs to tear down all outstanding sessions and connections, but the functionality to
-      // tear these down isn't complete yet.
-      //    for (auto& session : m_sessions)
-      //    {
-      // session.second.Close(context);
-      // }
-      //    for (auto& connection : m_connections)
-      //    {
-      // connection.second.Close(context);
-      // }
-    }
+    void Close(Azure::Core::Context const& context = {});
 
     /** @brief Create a new EventDataBatch to be sent to the Event Hub.
      *
@@ -200,6 +162,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& partitionID,
         Core::Context const& context = {});
 
+    /** Get the fully qualified namespace from the connection string */
+    std::string const& GetEventHubName() { return m_eventHub; }
+
+    /** Get Retry options for this ProducerClient */
+    Azure::Core::Http::Policies::RetryOptions const& GetRetryOptions() const
+    {
+      return m_producerClientOptions.RetryOptions;
+    }
+
   private:
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
@@ -216,34 +187,38 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     uint16_t m_targetPort = Azure::Core::Amqp::_internal::AmqpTlsPort;
 
     /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<const Core::Credentials::TokenCredential> m_credential{};
 
     ProducerClientOptions m_producerClientOptions{};
+
+    std::mutex m_propertiesClientLock;
+    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
+
+    std::recursive_mutex m_sessionsLock;
+    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
     // Protects m_senders and m_connection.
     std::mutex m_sendersLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
 
-    std::recursive_mutex m_sessionsLock;
-    std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
-
-    std::mutex m_propertiesClientLock;
-    std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
-
-    Azure::Core::Amqp::_internal::Connection CreateConnection() const;
-    Azure::Core::Amqp::_internal::Session CreateSession(std::string const& partitionId);
+    Azure::Core::Amqp::_internal::Connection CreateConnection(
+        Azure::Core::Context const& context) const;
+    Azure::Core::Amqp::_internal::Session CreateSession(
+        std::string const& partitionId,
+        Azure::Core::Context const& context);
 
     // Ensure that the connection for this producer has been established.
-    void EnsureConnection(const std::string& partitionId);
+    void EnsureConnection(const std::string& partitionId, Azure::Core::Context const& context);
 
     // Ensure that a session for the specified partition ID has been established.
-    void EnsureSession(std::string const& partitionId);
+    void EnsureSession(std::string const& partitionId, Azure::Core::Context const& context);
 
     // Ensure that a message sender for the specified partition has been created.
-    void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context = {});
+    void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
-    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient();
+    std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
+        Azure::Core::Context const& context);
 
     Azure::Core::Amqp::_internal::MessageSender GetSender(std::string const& partitionId);
     Azure::Core::Amqp::_internal::Session GetSession(std::string const& partitionId);

@@ -1609,7 +1609,7 @@ namespace Azure { namespace Core {
           char *host_ptr, *port_ptr, *path_ptr;
           if (!OCSP_parse_url(url.c_str(), &host_ptr, &port_ptr, &path_ptr, &use_ssl))
           {
-            Log::Write(Logger::Level::Error, "Failure parsing URL");
+            Log::Stream(Logger::Level::Error) << "Failure parsing URL: " << url;
             return nullptr;
           }
           host = host_ptr;
@@ -1754,14 +1754,14 @@ namespace Azure { namespace Core {
 
         if (!dp->distpoint)
         {
-          Log::Write(Logger::Level::Informational, "returning, dp->distpoint is null");
+          Log::Write(Logger::Level::Error, "returning, dp->distpoint is null");
           return nullptr;
         }
 
         if (dp->distpoint->type != 0)
         {
           Log::Write(
-              Logger::Level::Informational,
+              Logger::Level::Error,
               "returning, dp->distpoint->type is " + std::to_string(dp->distpoint->type));
           return nullptr;
         }
@@ -1880,7 +1880,7 @@ namespace Azure { namespace Core {
 
           if (!IsCrlValid(crl))
           {
-            Log::Write(Logger::Level::Informational, "Discarding outdated CRL");
+            Log::Write(Logger::Level::Error, "Discarding outdated CRL");
             X509_CRL_free(*it);
             *it = nullptr;
             continue;
@@ -2103,7 +2103,7 @@ int CurlConnection::VerifyCertificateError(int ok, X509_STORE_CTX* storeContext)
     {
       outputString[len - 1] = '\0';
     }
-    Log::Write(Logger::Level::Informational, std::string(outputString));
+    Log::Write(Logger::Level::Error, std::string(outputString));
   }
 
   if (ok)

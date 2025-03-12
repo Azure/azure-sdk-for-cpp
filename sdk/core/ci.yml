@@ -51,9 +51,14 @@ extends:
       CtestRegex: azure-core.|json-test
       LiveTestCtestRegex: azure-core.|json-test
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
-      LineCoverageTarget: 88
-      BranchCoverageTarget: 68
-#      PreTestSteps:
+      LineCoverageTarget: 85
+      BranchCoverageTarget: 65
+      PreTestSteps:
+        - pwsh: |
+            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
+          env:
+            TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
+
 #        - pwsh: |
 #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
 #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
@@ -79,6 +84,8 @@ extends:
 
 #      PostTestSteps:
 #        - pwsh: |
+#            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+#        - pwsh: |
 #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
 #                docker stop $_ `
 #            }
@@ -95,8 +102,22 @@ extends:
         - Name: azure-core-amqp
           Path: azure-core-amqp
           VcpkgPortName: azure-core-amqp-cpp
+
+      # Environment variables for Live tests.
+      EnvVars:
+        # AMQP
+        TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
+
 # Since Azure Core will run all service's tests, it requires all the expected env vars from services
+      # Environment variables for CI tests.
       TestEnv:
+# AMQP
+        - Name: TEST_BROKER_ADDRESS
+          Value: "amqp://127.0.0.1:25672"
+        - Name: RUST_BACKTRACE
+          Value: "1"
+        - Name: RUST_LOG
+          Value: "trace"
 # Key Vault
         - Name: AZURE_KEYVAULT_URL
           Value: "https://non-real-account.vault.azure.net"

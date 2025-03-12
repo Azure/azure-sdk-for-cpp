@@ -259,7 +259,7 @@ namespace Azure { namespace Perf {
     }
   };
 
-  std::shared_ptr<Azure::Core::Credentials::TokenCredential> BaseTest::GetTestCredential()
+  std::shared_ptr<const Azure::Core::Credentials::TokenCredential> BaseTest::GetTestCredential()
   {
     if (m_testCredential)
     {

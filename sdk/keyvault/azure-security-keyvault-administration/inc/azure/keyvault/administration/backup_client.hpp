@@ -56,7 +56,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Administra
      */
     explicit BackupClient(
         std::string const& vaultUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         BackupClientOptions options = BackupClientOptions());
 
     /**

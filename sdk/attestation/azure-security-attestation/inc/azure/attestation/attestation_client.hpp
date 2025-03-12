@@ -134,7 +134,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     static AttestationClient Create(
         std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         AttestationClientOptions const& options = AttestationClientOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{});
 
@@ -263,7 +263,7 @@ namespace Azure { namespace Security { namespace Attestation {
      */
     AttestationClient(
         std::string const& endpoint,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         AttestationClientOptions options = AttestationClientOptions{});
 
     /**

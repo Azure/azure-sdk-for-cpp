@@ -22,6 +22,8 @@
 
 #define NEW_MOCK_SERVER 1
 
+#if ENABLE_UAMQP
+
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   extern uint16_t FindAvailableSocket();
@@ -456,11 +458,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
+          Azure::Core::Amqp::Models::AmqpValue requestCorrelationId
               = message->Properties.CorrelationId;
-          if (!message->Properties.CorrelationId.HasValue())
+          if (message->Properties.CorrelationId.IsNull())
           {
-            requestCorrelationId = message->Properties.MessageId.Value();
+            requestCorrelationId = message->Properties.MessageId;
           }
           response.Properties.CorrelationId = requestCorrelationId;
 
@@ -507,9 +509,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           // Management specification section 3.2: The correlation-id of the response message
           // MUST be the correlation-id from the request message (if present), else the
           // message-id from the request message.
-          Azure::Nullable<Azure::Core::Amqp::Models::AmqpValue> requestCorrelationId
+          Azure::Core::Amqp::Models::AmqpValue requestCorrelationId
               = message->Properties.CorrelationId;
-          if (!message->Properties.CorrelationId.HasValue())
+          if (message->Properties.CorrelationId.IsNull())
           {
             requestCorrelationId = message->Properties.MessageId;
           }
@@ -641,7 +643,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           for (const auto& session : m_sessions)
           {
-            session->End();
+            session->End({});
           }
           // Note: clearing the sessions list destroys the session and calls session_end always, so
           // it does not need to be called here.
@@ -649,7 +651,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         }
         for (const auto& connection : m_connections)
         {
-          connection->Close();
+          connection->Close({});
         }
         m_listening = false;
       }
@@ -712,7 +714,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         auto newSession = std::make_shared<Azure::Core::Amqp::_internal::Session>(
             connection.CreateSession(endpoint, options, this));
         m_sessions.push_back(newSession);
-        newSession->Begin();
+        newSession->Begin({});
         return true;
       }
       virtual void OnIOError(Azure::Core::Amqp::_internal::Connection const&) override
@@ -781,3 +783,4 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     };
   } // namespace MessageTests
 }}}} // namespace Azure::Core::Amqp::Tests
+#endif // ENABLE_UAMQP

@@ -1393,8 +1393,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto sourceBlobClient = containerClient.GetBlockBlobClient(blobName);
     sourceBlobClient.Upload(memBodyStream);
 
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> oauthCredential
-        = GetTestCredential();
+    auto oauthCredential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     clientOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1746,7 +1745,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string fileName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+    auto credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
@@ -1830,7 +1829,7 @@ namespace Azure { namespace Storage { namespace Test {
     const std::string fileName = RandomString();
 
     // Create from client secret credential.
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential = GetTestCredential();
+    auto credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
     options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
 
