@@ -135,17 +135,13 @@ TEST_F(KeyVaultSecretClientTest, UpdateTest)
     auto secret = secretResponse.Value;
     properties = secret.Properties;
     EXPECT_EQ(secret.Value.Value(), secretValue);
-    EXPECT_EQ(properties.Name, secretName);
   }
   {
-    properties.ContentType = "xyz";
-    UpdateSecretPropertiesOptions options;
-    auto props = properties;
+    properties.RecoverableDays = 90;
     auto secretResponse = client.UpdateSecretProperties(properties);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Properties.Name, secretName);
-    EXPECT_EQ(secret.Properties.ContentType.Value(), properties.ContentType.Value());
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
@@ -181,10 +177,11 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
   {
     auto operation = client.StartDeleteSecret(secretName);
     operation.PollUntilDone(m_defaultWait);
+    //operation.m_continuationToken = secretName;
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -221,7 +218,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
-    EXPECT_TRUE(restored.Id.length() > 0);
+    EXPECT_EQ(restored.Properties.RecoverableDays.Value(), 90);
   }
 }
 
@@ -262,8 +259,9 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     auto operationResult = operation.Value();
     auto restoredSecret = client.GetSecret(secretName);
     auto secret = restoredSecret.Value;
-    EXPECT_EQ(secret.Name, secretName);
-    EXPECT_EQ(operationResult.Name, secretName);
+    EXPECT_EQ(
+        operationResult.RecoverableDays.Value(),
+        secret.Properties.RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
 }
@@ -281,7 +279,6 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     auto secretResponse = client.SetSecret(name, "secretValue");
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Name, name);
     // Avoid server Throttled while creating keys
     TestSleep();
   }

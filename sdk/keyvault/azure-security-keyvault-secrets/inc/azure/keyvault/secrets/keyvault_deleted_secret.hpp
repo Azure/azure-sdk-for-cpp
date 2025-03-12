@@ -68,7 +68,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
       if (deletedSecret.Id.HasValue())
       {
-        Properties = SecretProperties::CreateFromURL(deletedSecret.Id.Value());
+        Properties = SecretProperties::CreateFromURL(deletedSecret.RecoveryId.Value());
         Id = deletedSecret.Id.Value();
         Properties.Id = deletedSecret.Id.Value();
         Name = Properties.Name;

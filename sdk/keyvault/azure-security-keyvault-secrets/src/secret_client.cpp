@@ -42,12 +42,12 @@ SecretClient::SecretClient(
   generatedOptions.Telemetry = options.Telemetry;
   generatedOptions.PerOperationPolicies = std::move(options.PerOperationPolicies);
   generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
-  Azure::Core::Url url(vaultUrl);
+  /*Azure::Core::Url url(vaultUrl);
   Azure::Core::Credentials::TokenRequestContext tokenContext;
   tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(url)};
   generatedOptions.PerRetryPolicies.emplace_back(
       std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
-          credential, tokenContext));
+          credential, tokenContext));*/
 
   m_client = std::make_shared<Generated::KeyVaultClient>(
       Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
@@ -158,6 +158,8 @@ SecretClient::SecretClient(
 {
   auto response = m_client->RecoverDeletedSecret(name, context);
   KeyVaultSecret value(response.Value);
+  value.Name = name;
+  value.Properties.Name = name;
   auto responseT = Azure::Response<SecretProperties>(
       std::move(value.Properties), std::move(response.RawResponse));
   return RecoverDeletedSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));

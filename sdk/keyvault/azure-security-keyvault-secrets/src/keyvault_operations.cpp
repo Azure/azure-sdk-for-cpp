@@ -37,7 +37,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
   KeyVaultSecret secretResult;
   try
   {
-    auto response = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context);
+    auto response = m_secretClient->GetSecret(m_continuationToken, GetSecretOptions(), context);
     secretResult = response.Value;
     rawResponse = std::move(response.RawResponse);
   }
@@ -129,7 +129,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
   Azure::Security::KeyVault::Secrets::DeletedSecret secretResult;
   try
   {
-    auto response = m_secretClient->GetDeletedSecret(m_value.Name, context);
+    auto response = m_secretClient->GetDeletedSecret(m_continuationToken, context);
     secretResult = response.Value;
     rawResponse = std::move(response.RawResponse);
   }
