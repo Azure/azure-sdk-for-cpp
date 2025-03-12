@@ -18,7 +18,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   ConsumerClient::ConsumerClient(
       std::string const& fullyQualifiedNamespace,
       std::string const& eventHub,
-      std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+      std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},

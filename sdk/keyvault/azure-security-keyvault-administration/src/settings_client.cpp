@@ -43,7 +43,7 @@ Azure::Core::Http::Request SettingsClient::CreateRequest(
 
 SettingsClient::SettingsClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     SettingsClientOptions options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {

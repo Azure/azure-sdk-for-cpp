@@ -47,7 +47,7 @@ namespace Azure { namespace Data { namespace Tables {
      */
     explicit TableServiceClient(
         const std::string& serviceUrl,
-        std::shared_ptr<Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         const TableClientOptions& options = {});
 
     /**
@@ -135,7 +135,7 @@ namespace Azure { namespace Data { namespace Tables {
 
   private:
     std::shared_ptr<Core::Http::_internal::HttpPipeline> m_pipeline;
-    std::shared_ptr<Core::Credentials::TokenCredential> m_tokenCredential;
+    std::shared_ptr<const Core::Credentials::TokenCredential> m_tokenCredential;
     Core::Url m_url;
   };
 }}} // namespace Azure::Data::Tables

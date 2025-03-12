@@ -55,7 +55,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
       std::string const& hostName,
-      std::shared_ptr<Credentials::TokenCredential> credential,
+      std::shared_ptr<const Credentials::TokenCredential> credential,
       _internal::ConnectionOptions const& options)
       : m_connection{amqpconnection_create()}, m_options{options}, m_credential{credential}
   {

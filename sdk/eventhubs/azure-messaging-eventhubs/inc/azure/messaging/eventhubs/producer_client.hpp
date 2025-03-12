@@ -83,7 +83,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     ProducerClient(
         std::string const& fullyQualifiedNamespace,
         std::string const& eventHub,
-        std::shared_ptr<Azure::Core::Credentials::TokenCredential> credential,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
         ProducerClientOptions options = {});
 
     /** Create a ProducerClient from another ProducerClient. */
@@ -187,7 +187,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     uint16_t m_targetPort = Azure::Core::Amqp::_internal::AmqpTlsPort;
 
     /// Credentials to be used to authenticate the client.
-    std::shared_ptr<Core::Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<const Core::Credentials::TokenCredential> m_credential{};
 
     ProducerClientOptions m_producerClientOptions{};
 

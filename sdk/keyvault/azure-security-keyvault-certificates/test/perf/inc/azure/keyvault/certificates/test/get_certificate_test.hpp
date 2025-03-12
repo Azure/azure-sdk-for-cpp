@@ -35,7 +35,7 @@ namespace Azure {
   private:
     std::string m_vaultUrl;
     std::string m_certificateName;
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
     std::unique_ptr<Azure::Security::KeyVault::Certificates::CertificateClient> m_client;
 
   public:

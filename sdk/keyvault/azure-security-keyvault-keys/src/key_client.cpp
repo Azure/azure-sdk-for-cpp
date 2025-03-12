@@ -67,7 +67,7 @@ Request KeyClient::ContinuationTokenRequest(
 
 KeyClient::KeyClient(
     std::string const& vaultUrl,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     KeyClientOptions const& options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {

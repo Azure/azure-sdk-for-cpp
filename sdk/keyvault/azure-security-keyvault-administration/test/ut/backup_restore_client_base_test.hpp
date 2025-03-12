@@ -52,7 +52,7 @@ namespace Azure {
     std::unique_ptr<Azure::Security::KeyVault::Administration::BackupClient> m_client;
 
   protected:
-    std::shared_ptr<Azure::Core::Credentials::TokenCredential> m_credential;
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> m_credential;
     std::string m_keyVaultUrl;
     std::string m_keyVaultHsmUrl;
     Azure::Core::Url m_blobUrl;

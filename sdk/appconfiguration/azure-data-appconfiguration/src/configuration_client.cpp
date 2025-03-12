@@ -171,7 +171,7 @@ void GetRevisionsPagedResponse::OnNextPage(Core::Context const& context)
 
 ConfigurationClient::ConfigurationClient(
     std::string const& url,
-    std::shared_ptr<Core::Credentials::TokenCredential> const& credential,
+    const std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
     ConfigurationClientOptions options)
     : m_url(url), m_apiVersion(options.ApiVersion)
 {

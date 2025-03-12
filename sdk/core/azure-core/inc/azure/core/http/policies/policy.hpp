@@ -574,7 +574,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
      */
     class BearerTokenAuthenticationPolicy : public HttpPolicy {
     private:
-      std::shared_ptr<Credentials::TokenCredential const> const m_credential;
+      std::shared_ptr<const Credentials::TokenCredential> m_credential;
       Credentials::TokenRequestContext m_tokenRequestContext;
 
       mutable Credentials::AccessToken m_accessToken;
@@ -590,7 +590,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @param tokenRequestContext A context to get the token in.
        */
       explicit BearerTokenAuthenticationPolicy(
-          std::shared_ptr<Credentials::TokenCredential const> credential,
+          std::shared_ptr<const Credentials::TokenCredential> credential,
           Credentials::TokenRequestContext tokenRequestContext)
           : m_credential(std::move(credential)),
             m_tokenRequestContext(std::move(tokenRequestContext))

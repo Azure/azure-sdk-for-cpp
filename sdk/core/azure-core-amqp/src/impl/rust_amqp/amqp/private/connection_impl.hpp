@@ -73,7 +73,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   public:
     ConnectionImpl(
         std::string const& hostName,
-        std::shared_ptr<Credentials::TokenCredential> tokenCredential,
+        std::shared_ptr<const Credentials::TokenCredential> tokenCredential,
         _internal::ConnectionOptions const& options);
 
     virtual ~ConnectionImpl();
@@ -115,7 +115,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::chrono::milliseconds GetIdleTimeout() const;
 
     Models::AmqpMap GetProperties() const;
-    std::shared_ptr<Credentials::TokenCredential> GetCredential() const { return m_credential; }
+    std::shared_ptr<const Credentials::TokenCredential> GetCredential() const
+    {
+      return m_credential;
+    }
     bool IsTraceEnabled() { return m_options.EnableTrace; }
     bool IsSasCredential() const;
 
@@ -152,7 +155,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // mutex protecting the token acquisition process.
     std::mutex m_tokenMutex;
-    std::shared_ptr<Credentials::TokenCredential> m_credential{};
+    std::shared_ptr<const Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
 #if ENABLE_UAMQP

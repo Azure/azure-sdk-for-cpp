@@ -94,7 +94,7 @@ namespace Azure {
      */
     explicit CryptographyClient(
         std::string const& keyId,
-        std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
         CryptographyClientOptions const& options = CryptographyClientOptions());
 
     /**

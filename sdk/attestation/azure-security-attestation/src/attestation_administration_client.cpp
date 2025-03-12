@@ -39,7 +39,7 @@ const Models::PolicyCertificateModification PolicyCertificateModification::IsPre
 
 AttestationAdministrationClient::AttestationAdministrationClient(
     std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     AttestationAdministrationClientOptions const& options)
     : m_endpoint{endpoint}, m_apiVersion{options.ApiVersion},
       m_tokenValidationOptions{options.TokenValidationOptions},
@@ -70,7 +70,7 @@ AttestationAdministrationClient::AttestationAdministrationClient(
 
 AttestationAdministrationClient AttestationAdministrationClient::Create(
     std::string const& endpoint,
-    std::shared_ptr<Core::Credentials::TokenCredential const> credential,
+    std::shared_ptr<const Core::Credentials::TokenCredential> credential,
     AttestationAdministrationClientOptions const& options,
     Azure::Core::Context const& context)
 {
