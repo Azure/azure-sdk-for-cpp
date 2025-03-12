@@ -24,20 +24,6 @@ using namespace Azure::Security::KeyVault::Secrets;
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   struct SecretSerializer final
   {
-    // Creates a new key based on a name and an HTTP raw response.
-    static KeyVaultSecret Deserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Create from HTTP raw response only.
-    static KeyVaultSecret Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Updates a Key based on an HTTP raw response.
-    static void Deserialize(KeyVaultSecret& key, Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Serializes a key vault secret for set action
-    static std::string Serialize(KeyVaultSecret const& parameters);
-
     // Extract the host out of the URL (with port if available)
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
@@ -83,48 +69,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { 
         }
       }
     }
-  };
-
-  struct DeletedSecretSerializer final
-  {
-    // Creates a new deleted secret based on a name and an HTTP raw response.
-    static DeletedSecret Deserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Create deleted secret from HTTP raw response only.
-    static DeletedSecret Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Updates a deleted secret based on an HTTP raw response.
-    static void Deserialize(
-        DeletedSecret& secret,
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  struct SecretPropertiesSerializer final
-  {
-    static std::string Serialize(SecretProperties const& properties);
-  };
-
-  struct BackupSecretSerializer final
-  {
-    static BackupSecretResult Deserialize(Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  struct RestoreSecretSerializer final
-  {
-    static std::string Serialize(std::vector<uint8_t> const& backup);
-  };
-
-  struct SecretPropertiesPagedResultSerializer final
-  {
-    static SecretPropertiesPagedResponse Deserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  struct DeletedSecretPagedResultSerializer final
-  {
-    static DeletedSecretPagedResponse Deserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
   };
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

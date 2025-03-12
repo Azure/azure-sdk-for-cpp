@@ -34,10 +34,12 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-
+  KeyVaultSecret secretResult;
   try
   {
-    rawResponse = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context).RawResponse;
+    auto response = m_secretClient->GetSecret(m_value.Name, GetSecretOptions(), context);
+    secretResult = response.Value;
+    rawResponse = std::move(response.RawResponse);
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -61,8 +63,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedSecretOperation::P
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    auto receivedSecret = _detail::SecretSerializer::Deserialize(m_value.Name, *rawResponse);
-    m_value = receivedSecret.Properties;
+    m_value = secretResult.Properties;
   }
 
   return rawResponse;
@@ -125,10 +126,12 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
     Azure::Core::Context const& context)
 {
   std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse;
-
+  Azure::Security::KeyVault::Secrets::DeletedSecret secretResult;
   try
   {
-    rawResponse = m_secretClient->GetDeletedSecret(m_value.Name, context).RawResponse;
+    auto response = m_secretClient->GetDeletedSecret(m_value.Name, context);
+    secretResult = response.Value;
+    rawResponse = std::move(response.RawResponse);
   }
   catch (Azure::Core::RequestFailedException& error)
   {
@@ -152,7 +155,7 @@ std::unique_ptr<Azure::Core::Http::RawResponse> DeleteSecretOperation::PollInter
 
   if (m_status == Azure::Core::OperationStatus::Succeeded)
   {
-    m_value = _detail::DeletedSecretSerializer::Deserialize(m_value.Name, *rawResponse);
+    m_value = secretResult;
   }
   return rawResponse;
 }

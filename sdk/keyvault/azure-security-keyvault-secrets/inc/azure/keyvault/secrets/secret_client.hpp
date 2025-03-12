@@ -63,19 +63,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     explicit SecretClient(
         std::string const& vaultUrl,
         std::shared_ptr<Azure::Core::Credentials::TokenCredential> const credential,
-        SecretClientOptions options = SecretClientOptions())
-    {
-      Generated::KeyVaultClientOptions generatedOptions;
-      generatedOptions.ApiVersion = options.ApiVersion;
-      generatedOptions.Log = options.Log;
-      generatedOptions.Retry = options.Retry;
-      generatedOptions.Transport = options.Transport;
-      generatedOptions.Telemetry = options.Telemetry;
-      generatedOptions.PerOperationPolicies = std::move(options.PerOperationPolicies);
-      generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
-      m_client = std::make_shared<Generated::KeyVaultClient>(
-          Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
-    };
+        SecretClientOptions options = SecretClientOptions());
 
     /**
      * @brief Construct a new Key Client object from another key client.
@@ -100,15 +88,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> GetSecret(
         std::string const& name,
         GetSecretOptions const& options = GetSecretOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto secret = m_client->GetSecret(name, options.Version.empty()?"/":options.Version, context);
-      KeyVaultSecret secretResult(secret.Value);
-      secretResult.Properties.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
-      return Azure::Response<KeyVaultSecret>(
-          std::move(secretResult), std::move(secret.RawResponse));
-    }
-
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
+    
     /**
      * @brief The Get Deleted Secret operation returns
      * the specified deleted secret along with its attributes.
@@ -121,14 +102,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<DeletedSecret> GetDeletedSecret(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto response = m_client->GetDeletedSecret(name, context);
-      DeletedSecret secretResult(response.Value);
-      secretResult.Properties.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
-      return Azure::Response<DeletedSecret>(
-          std::move(secretResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Set a secret in a specified key vault.
@@ -142,15 +116,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
         std::string const& value,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::Models::SecretSetParameters secretParameters;
-      secretParameters.Value = value;
-      auto response = m_client->SetSecret(name, secretParameters, context);
-      KeyVaultSecret secretResult(response.Value);
-      return Azure::Response<KeyVaultSecret>(
-          std::move(secretResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Set a secret in a specified key vault.
@@ -164,14 +130,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     Azure::Response<KeyVaultSecret> SetSecret(
         std::string const& name,
         KeyVaultSecret const& secret,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::Models::SecretSetParameters secretParameters = secret.ToSetSecretParameters();
-      auto response = m_client->SetSecret(name, secretParameters, context);
-      KeyVaultSecret secretResult(response.Value);
-      return Azure::Response<KeyVaultSecret>(
-          std::move(secretResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Update the attributes associated with a specified secret in a given key vault.
@@ -187,16 +146,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<KeyVaultSecret> UpdateSecretProperties(
         SecretProperties const& properties,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::Models::SecretUpdateParameters secretParameters
-          = properties.ToSecretUpdateParameters();
-      auto response
-          = m_client->UpdateSecret(properties.Name, properties.Version, secretParameters, context);
-      KeyVaultSecret secretResult(response.Value);
-      return Azure::Response<KeyVaultSecret>(
-          std::move(secretResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Back up the specified secret.
@@ -211,14 +161,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<BackupSecretResult> BackupSecret(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto response = m_client->BackupSecret(name, context);
-      BackupSecretResult backupResult;
-      backupResult.Secret = std::move(response.Value.Value.Value());
-      return Azure::Response<BackupSecretResult>(
-          std::move(backupResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Restore a backed up secret to a vault.
@@ -232,15 +175,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<KeyVaultSecret> RestoreSecretBackup(
         BackupSecretResult const& backup,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::Models::SecretRestoreParameters restoreParameters;
-      restoreParameters.SecretBundleBackup = backup.Secret;
-      auto response = m_client->RestoreSecret(restoreParameters, context);
-      KeyVaultSecret secretResult(response.Value);
-      return Azure::Response<KeyVaultSecret>(
-          std::move(secretResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Permanently deletes the specified secret.
@@ -255,13 +190,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Response<PurgedSecret> PurgeDeletedSecret(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto response = m_client->PurgeDeletedSecret(name, context);
-      PurgedSecret purgedResult;
-      return Azure::Response<PurgedSecret>(
-          std::move(purgedResult), std::move(response.RawResponse));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Delete a secret from a specified key vault.
@@ -275,15 +204,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Security::KeyVault::Secrets::DeleteSecretOperation StartDeleteSecret(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto response = m_client->DeleteSecret(name, context);
-      DeletedSecret value(response.Value);
-      auto responseT
-          = Azure::Response<DeletedSecret>(std::move(value), std::move(response.RawResponse));
-
-      return DeleteSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Recover the deleted secret to the latest version.
@@ -297,15 +218,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     Azure::Security::KeyVault::Secrets::RecoverDeletedSecretOperation StartRecoverDeletedSecret(
         std::string const& name,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      auto response = m_client->RecoverDeletedSecret(name, context);
-      KeyVaultSecret value(response.Value);
-      auto responseT = Azure::Response<SecretProperties>(
-          std::move(value.Properties), std::move(response.RawResponse));
-      return RecoverDeletedSecretOperation(
-          std::make_shared<SecretClient>(*this), std::move(responseT));
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief List secrets in a specified key vault.
@@ -322,19 +235,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     SecretPropertiesPagedResponse GetPropertiesOfSecrets(
         GetPropertiesOfSecretsOptions const& options = GetPropertiesOfSecretsOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::KeyVaultClientGetSecretsOptions generatedOptions;
-      if (options.NextPageToken.HasValue())
-      {
-        generatedOptions.NextPageToken = options.NextPageToken.Value();
-      }
-      auto response = m_client->GetSecrets(generatedOptions, context);
-      SecretPropertiesPagedResponse secretPropertiesPagedResponse(
-          response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this));
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-      return secretPropertiesPagedResponse;
-    }
 
     /**
      * @brief List all versions of the specified secret.
@@ -352,19 +254,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         std::string const& name,
         GetPropertiesOfSecretVersionsOptions const& options
         = GetPropertiesOfSecretVersionsOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::KeyVaultClientGetSecretVersionsOptions generatedOptions;
-      if (options.NextPageToken.HasValue())
-      {
-        generatedOptions.NextPageToken = options.NextPageToken.Value();
-      }
-      auto response = m_client->GetSecretVersions(name,generatedOptions, context);
-      SecretPropertiesPagedResponse secretPropertiesPagedResponse(
-          response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this), name);
-
-      return secretPropertiesPagedResponse;
-    }
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
     /**
      * @brief Lists deleted secrets for the specified vault.
@@ -379,20 +269,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      */
     DeletedSecretPagedResponse GetDeletedSecrets(
         GetDeletedSecretsOptions const& options = GetDeletedSecretsOptions(),
-        Azure::Core::Context const& context = Azure::Core::Context()) const
-    {
-      Generated::KeyVaultClientGetDeletedSecretsOptions generatedOptions;
-      if (options.NextPageToken.HasValue())
-      {
-        generatedOptions.NextPageToken = options.NextPageToken.Value();
-      }
-      Generated::GetDeletedSecretsPagedResponse response
-          = m_client->GetDeletedSecrets(generatedOptions, context);
-      DeletedSecretPagedResponse deletedSecretPagedResponse(
-          response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this));
+        Azure::Core::Context const& context = Azure::Core::Context()) const;
 
-      return deletedSecretPagedResponse;
-    }
 
     /**
      * @brief Gets the secret client's primary URL endpoint.
@@ -400,17 +278,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @return The key secret's primary URL endpoint.
      */
     std::string GetUrl() const { return m_client->GetUrl(); }
-
-  private:
-    Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path = {},
-        Azure::Core::IO::BodyStream* content = nullptr) const;
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
-    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

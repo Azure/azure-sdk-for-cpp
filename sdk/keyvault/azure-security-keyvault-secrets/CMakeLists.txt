@@ -98,9 +98,7 @@ set(
     src/keyvault_protocol.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
-    src/keyvault_secrets_common_request.cpp
     src/private/keyvault_protocol.hpp
-    src/private/keyvault_secrets_common_request.hpp
     src/private/package_version.hpp
     src/private/secret_constants.hpp
     src/private/secret_serializers.hpp
