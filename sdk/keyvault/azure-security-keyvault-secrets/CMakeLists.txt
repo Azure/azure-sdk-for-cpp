@@ -35,7 +35,7 @@ include(CreateMapFile)
 option(AZURE_TSP_KV_SECRETS_GEN3 "Generate KeyVault Secrets from TypeSpec" ON)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
-if(AZURE_TSP_KV_SECRETS_GEN3)
+if(AZURE_TSP_KV_SECRETS_GEN)
     include(TSPCompile) 
     #typespec related repo information
     set(TSP_SERVICE_PATH "Security.KeyVault.Secrets")
