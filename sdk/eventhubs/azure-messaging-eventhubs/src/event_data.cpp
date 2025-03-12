@@ -56,24 +56,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
         auto dateTime = Azure::DateTime{Azure::DateTime::time_point{timePoint}};
         EnqueuedTime = dateTime;
       }
-      else if (key == _detail::OffsetNumberAnnotation)
+      else if (key == _detail::OffsetAnnotation)
       {
         switch (item.second.GetType())
         {
-          case Azure::Core::Amqp::Models::AmqpValueType::Ulong:
-            Offset = item.second;
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Long:
-            Offset = static_cast<int64_t>(item.second);
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Uint:
-            Offset = static_cast<uint32_t>(item.second);
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Int:
-            Offset = static_cast<int32_t>(item.second);
-            break;
           case Azure::Core::Amqp::Models::AmqpValueType::String:
-            Offset = std::strtoul(static_cast<std::string>(item.second).c_str(), nullptr, 10);
+            Offset = static_cast<std::string>(item.second);
             break;
           default:
             break;

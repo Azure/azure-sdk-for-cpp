@@ -41,7 +41,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /** The sequence number of the last observed event to be enqueued in the partition. */
     int64_t LastEnqueuedSequenceNumber{};
     /** The offset of the last observed event to be enqueued in the partition */
-    int64_t LastEnqueuedOffset{};
+    std::string LastEnqueuedOffset{};
 
     /** The date and time, in UTC, that the last observed event was enqueued in the partition. */
     Azure::DateTime LastEnqueuedTimeUtc;

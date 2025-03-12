@@ -127,7 +127,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      * The offset is a marker or identifier for an event within the Event Hubs stream.
      * The identifier is unique within a partition of the Event Hubs stream.
      */
-    Azure::Nullable<std::uint64_t> Offset;
+    Azure::Nullable<std::string> Offset;
 
     /** @brief The partition key for sending a message to a partition.
      *

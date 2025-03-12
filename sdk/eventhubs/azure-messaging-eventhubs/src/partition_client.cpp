@@ -65,7 +65,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           throw std::runtime_error(expressionErrorText);
         }
         returnValue = "amqp.annotation.x-opt-offset " + greaterThan + "'"
-            + std::to_string(startPosition.Offset.Value()) + "'";
+            + startPosition.Offset.Value() + "'";
       }
       if (startPosition.SequenceNumber.HasValue())
       {
