@@ -36,6 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     std::string m_secretName;
     std::shared_ptr<SecretClient> m_secretClient;
     Generated::GetSecretsPagedResponse m_generatedResponse;
+    Generated::GetSecretVersionsPagedResponse m_generatedVersionResponse;
     void OnNextPage(const Azure::Core::Context& context);
 
     SecretPropertiesPagedResponse(
@@ -58,6 +59,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
           m_generatedResponse(std::move(secretPagedResponse))
     {
       for (auto& item : m_generatedResponse.Value.Value())
+      {
+        Items.push_back(KeyVaultSecret(item).Properties);
+      }
+      RawResponse = std::move(rawResponse);
+    }
+
+    SecretPropertiesPagedResponse(
+        Generated::GetSecretVersionsPagedResponse& secretPagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<SecretClient> secretClient,
+        std::string const& secretName = std::string())
+        : m_secretName(secretName), m_secretClient(std::move(secretClient)),
+          m_generatedVersionResponse(std::move(secretPagedResponse))
+    {
+      for (auto& item : m_generatedVersionResponse.Value.Value())
       {
         Items.push_back(KeyVaultSecret(item).Properties);
       }

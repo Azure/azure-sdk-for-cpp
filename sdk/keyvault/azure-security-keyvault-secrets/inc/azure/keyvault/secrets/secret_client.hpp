@@ -281,6 +281,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       DeletedSecret value(response.Value);
       auto responseT
           = Azure::Response<DeletedSecret>(std::move(value), std::move(response.RawResponse));
+
       return DeleteSecretOperation(std::make_shared<SecretClient>(*this), std::move(responseT));
     }
 
@@ -324,8 +325,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       Generated::KeyVaultClientGetSecretsOptions generatedOptions;
-      generatedOptions.NextPageToken = options.NextPageToken.Value();
-
+      if (options.NextPageToken.HasValue())
+      {
+        generatedOptions.NextPageToken = options.NextPageToken.Value();
+      }
       auto response = m_client->GetSecrets(generatedOptions, context);
       SecretPropertiesPagedResponse secretPropertiesPagedResponse(
           response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this));
@@ -351,10 +354,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         = GetPropertiesOfSecretVersionsOptions(),
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
-      Generated::KeyVaultClientGetSecretsOptions generatedOptions;
-      generatedOptions.NextPageToken = options.NextPageToken.Value();
-
-      auto response = m_client->GetSecrets(generatedOptions, context);
+      Generated::KeyVaultClientGetSecretVersionsOptions generatedOptions;
+      if (options.NextPageToken.HasValue())
+      {
+        generatedOptions.NextPageToken = options.NextPageToken.Value();
+      }
+      auto response = m_client->GetSecretVersions(name,generatedOptions, context);
       SecretPropertiesPagedResponse secretPropertiesPagedResponse(
           response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this), name);
 
@@ -377,7 +382,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         Azure::Core::Context const& context = Azure::Core::Context()) const
     {
       Generated::KeyVaultClientGetDeletedSecretsOptions generatedOptions;
-      generatedOptions.NextPageToken = options.NextPageToken.Value();
+      if (options.NextPageToken.HasValue())
+      {
+        generatedOptions.NextPageToken = options.NextPageToken.Value();
+      }
       Generated::GetDeletedSecretsPagedResponse response
           = m_client->GetDeletedSecrets(generatedOptions, context);
       DeletedSecretPagedResponse deletedSecretPagedResponse(
