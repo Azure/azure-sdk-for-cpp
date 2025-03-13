@@ -44,7 +44,7 @@ SecretClient::SecretClient(
   generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
   m_client = std::make_shared<Generated::KeyVaultClient>(
       Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
-};
+}
 
 Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
     std::string const& name,
