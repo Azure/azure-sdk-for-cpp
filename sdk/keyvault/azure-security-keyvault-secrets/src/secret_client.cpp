@@ -94,8 +94,7 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  _detail::Models::SecretUpdateParameters secretParameters
-      = properties.ToSecretUpdateParameters();
+  _detail::Models::SecretUpdateParameters secretParameters = properties.ToSecretUpdateParameters();
   auto response
       = m_client->UpdateSecret(properties.Name, properties.Version, secretParameters, context);
   KeyVaultSecret secretResult(response.Value);
