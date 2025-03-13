@@ -105,8 +105,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     friend class SecretClient;
     friend class Azure::Core::PagedResponse<DeletedSecretPagedResponse>;
 
-    Generated::GetDeletedSecretsPagedResponse m_generatedResponse;
     std::shared_ptr<SecretClient> m_secretClient;
+    Generated::GetDeletedSecretsPagedResponse m_generatedResponse;
+
     void OnNextPage(const Azure::Core::Context& context);
 
     DeletedSecretPagedResponse(
@@ -118,6 +119,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     {
       RawResponse = std::move(rawResponse);
     }
+
     DeletedSecretPagedResponse(
         Generated::GetDeletedSecretsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
