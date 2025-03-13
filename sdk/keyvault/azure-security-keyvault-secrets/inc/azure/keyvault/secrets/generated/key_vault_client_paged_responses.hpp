@@ -20,11 +20,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure {
-  namespace Security {
-    namespace KeyVault {
-      namespace Secrets {
-        namespace Generated {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   class KeyVaultClient;
 
   /**
@@ -89,4 +85,4 @@ namespace Azure {
     /// to the next page of deleted secrets.
     Nullable<std::vector<Models::DeletedSecretItem>> Value;
   };
-}}}}} // namespace Azure::Security::KeyVault::Secrets::Generated
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

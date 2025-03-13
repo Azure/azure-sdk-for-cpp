@@ -35,8 +35,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     std::string m_secretName;
     std::shared_ptr<SecretClient> m_secretClient;
-    Generated::GetSecretsPagedResponse m_generatedResponse;
-    Generated::GetSecretVersionsPagedResponse m_generatedVersionResponse;
+    _detail::GetSecretsPagedResponse m_generatedResponse;
+    _detail::GetSecretVersionsPagedResponse m_generatedVersionResponse;
     void OnNextPage(const Azure::Core::Context& context);
 
     SecretPropertiesPagedResponse(
@@ -51,7 +51,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     }
 
     SecretPropertiesPagedResponse(
-        Generated::GetSecretsPagedResponse& secretPagedResponse,
+        _detail::GetSecretsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient,
         std::string const& secretName = std::string())
@@ -66,7 +66,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     }
 
     SecretPropertiesPagedResponse(
-        Generated::GetSecretVersionsPagedResponse& secretPagedResponse,
+        _detail::GetSecretVersionsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient,
         std::string const& secretName = std::string())
@@ -106,7 +106,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     friend class Azure::Core::PagedResponse<DeletedSecretPagedResponse>;
 
     std::shared_ptr<SecretClient> m_secretClient;
-    Generated::GetDeletedSecretsPagedResponse m_generatedResponse;
+    _detail::GetDeletedSecretsPagedResponse m_generatedResponse;
 
     void OnNextPage(const Azure::Core::Context& context);
 
@@ -121,7 +121,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     }
 
     DeletedSecretPagedResponse(
-        Generated::GetDeletedSecretsPagedResponse& secretPagedResponse,
+        _detail::GetDeletedSecretsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient)
         : m_secretClient(std::move(secretClient)),

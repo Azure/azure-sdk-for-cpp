@@ -6,7 +6,7 @@
 #include "azure/keyvault/secrets/generated/key_vault_client.hpp"
 #include "azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp"
 
-using namespace Azure::Security::KeyVault::Secrets::Generated;
+using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 void GetDeletedSecretsPagedResponse::OnNextPage(Core::Context const& context)
 {

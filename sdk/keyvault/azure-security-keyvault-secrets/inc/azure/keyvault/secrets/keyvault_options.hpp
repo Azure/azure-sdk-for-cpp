@@ -22,7 +22,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Service Version used.
      *
      */
-    std::string ApiVersion{Generated::KeyVaultClientOptions().ApiVersion};
+    std::string ApiVersion{_detail::KeyVaultClientOptions().ApiVersion};
   };
 
   /**

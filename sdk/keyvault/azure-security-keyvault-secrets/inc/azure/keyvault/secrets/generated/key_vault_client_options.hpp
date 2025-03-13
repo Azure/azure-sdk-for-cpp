@@ -13,11 +13,7 @@
 #include <cstdint>
 #include <string>
 
-namespace Azure {
-  namespace Security {
-    namespace KeyVault {
-      namespace Secrets {
-        namespace Generated {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   /**
    * @brief KeyVaultClient options.
    *
@@ -69,4 +65,4 @@ namespace Azure {
     /// to 25 results.
     Nullable<std::int32_t> Maxresults;
   };
-}}}}} // namespace Azure::Security::KeyVault::Secrets::Generated
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

@@ -5,7 +5,7 @@
 
 #include "azure/keyvault/secrets/generated/models/generated_models.hpp"
 
-using namespace Azure::Security::KeyVault::Secrets::Generated::Models;
+using namespace Azure::Security::KeyVault::Secrets::_detail::Models;
 
 const DeletionRecoveryLevel DeletionRecoveryLevel::Purgeable{"Purgeable"};
 const DeletionRecoveryLevel DeletionRecoveryLevel::RecoverablePurgeable{"Recoverable+Purgeable"};

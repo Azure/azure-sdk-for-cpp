@@ -48,7 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecret(std::string name) : KeyVaultSecret(std::move(name)) {}
 
   private:
-    DeletedSecret(Generated::Models::DeletedSecretBundle const& deletedSecret)
+    DeletedSecret(_detail::Models::DeletedSecretBundle const& deletedSecret)
     {
       if (deletedSecret.RecoveryId.HasValue())
       {
@@ -100,7 +100,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
             deletedSecret.Tags.Value().begin(), deletedSecret.Tags.Value().end());
       }
     };
-    DeletedSecret(Generated::Models::DeletedSecretItem const& deletedSecret)
+    DeletedSecret(_detail::Models::DeletedSecretItem const& deletedSecret)
     {
       if (deletedSecret.RecoveryId.HasValue())
       {

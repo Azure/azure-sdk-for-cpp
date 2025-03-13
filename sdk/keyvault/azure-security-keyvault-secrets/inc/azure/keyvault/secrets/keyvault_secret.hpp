@@ -79,7 +79,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
     }
 
-    KeyVaultSecret(Generated ::Models::SecretBundle const& secret)
+    KeyVaultSecret(_detail::Models::SecretBundle const& secret)
     {
       Value = secret.Value;
       if (secret.Id.HasValue())
@@ -117,7 +117,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
     }
 
-    KeyVaultSecret(Generated ::Models::SecretItem const& secret)
+    KeyVaultSecret(_detail::Models::SecretItem const& secret)
     {
       if (secret.Id.HasValue())
       {
@@ -153,9 +153,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       }
     }
 
-    Generated::Models::SecretSetParameters ToSetSecretParameters() const
+    _detail::Models::SecretSetParameters ToSetSecretParameters() const
     {
-      Generated::Models::SecretSetParameters secretParameters;
+      _detail::Models::SecretSetParameters secretParameters;
       if (Properties.ContentType.HasValue())
       {
         secretParameters.ContentType = Properties.ContentType;
@@ -168,7 +168,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       secretParameters.Tags
           = std::map<std::string, std::string>(Properties.Tags.begin(), Properties.Tags.end());
 
-      secretParameters.SecretAttributes = Generated::Models::SecretAttributes();
+      secretParameters.SecretAttributes = _detail::Models::SecretAttributes();
       if (Properties.Enabled.HasValue())
       {
         secretParameters.SecretAttributes.Value().Enabled = Properties.Enabled;
@@ -197,7 +197,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       if (Properties.RecoveryLevel.HasValue())
       {
         secretParameters.SecretAttributes.Value().RecoveryLevel
-            = Generated::Models::DeletionRecoveryLevel(Properties.RecoveryLevel.Value());
+            = _detail::Models::DeletionRecoveryLevel(Properties.RecoveryLevel.Value());
       }
       return secretParameters;
     }

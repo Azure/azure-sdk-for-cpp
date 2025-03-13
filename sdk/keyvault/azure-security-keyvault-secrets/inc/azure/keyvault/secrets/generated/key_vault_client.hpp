@@ -26,11 +26,7 @@
 #include <utility>
 #include <vector>
 
-namespace Azure {
-  namespace Security {
-    namespace KeyVault {
-      namespace Secrets {
-        namespace Generated {
+namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
   /**
    * @brief The key vault client performs cryptographic key operations and vault operations against
    * the Key Vault service.
@@ -228,4 +224,4 @@ namespace Azure {
     Core::Url m_url;
     std::string m_apiVersion;
   };
-}}}}} // namespace Azure::Security::KeyVault::Secrets::Generated
+}}}}} // namespace Azure::Security::KeyVault::Secrets::_detail

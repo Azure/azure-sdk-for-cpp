@@ -15,7 +15,7 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
 
-using namespace Azure::Security::KeyVault::Secrets::Generated;
+using namespace Azure::Security::KeyVault::Secrets::_detail;
 
 KeyVaultClient::KeyVaultClient(
     const std::string& url,
@@ -36,7 +36,7 @@ KeyVaultClient::KeyVaultClient(
 
   m_pipeline = std::make_shared<Core::Http::_internal::HttpPipeline>(
       options,
-      "security-keyvault-secrets-generated",
+      "security-keyvault-secrets",
       _detail::PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perCallPolicies));
@@ -44,7 +44,7 @@ KeyVaultClient::KeyVaultClient(
 
 std::string KeyVaultClient::GetUrl() const { return m_url.GetAbsoluteUrl(); }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::SecretBundle>
 KeyVaultClient::SetSecret(
     const std::string& secretName,
     const Models::SecretSetParameters& parameters,
@@ -268,7 +268,7 @@ KeyVaultClient::SetSecret(
   return Response<Models::SecretBundle>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::DeletedSecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::DeletedSecretBundle>
 KeyVaultClient::DeleteSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
@@ -436,7 +436,7 @@ KeyVaultClient::DeleteSecret(const std::string& secretName, const Core::Context&
   return Response<Models::DeletedSecretBundle>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::SecretBundle>
 KeyVaultClient::UpdateSecret(
     const std::string& secretName,
     const std::string& secretVersion,
@@ -665,7 +665,7 @@ KeyVaultClient::UpdateSecret(
   return Response<Models::SecretBundle>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::SecretBundle>
 KeyVaultClient::GetSecret(
     const std::string& secretName,
     const std::string& secretVersion,
@@ -1415,7 +1415,7 @@ GetDeletedSecretsPagedResponse KeyVaultClient::GetDeletedSecrets(
   return response;
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::DeletedSecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::DeletedSecretBundle>
 KeyVaultClient::GetDeletedSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
@@ -1583,7 +1583,7 @@ KeyVaultClient::GetDeletedSecret(const std::string& secretName, const Core::Cont
   return Response<Models::DeletedSecretBundle>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::PurgeDeletedSecretResult>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::PurgeDeletedSecretResult>
 KeyVaultClient::PurgeDeletedSecret(const std::string& secretName, const Core::Context& context)
     const
 {
@@ -1614,7 +1614,7 @@ KeyVaultClient::PurgeDeletedSecret(const std::string& secretName, const Core::Co
   return Response<Models::PurgeDeletedSecretResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::SecretBundle>
 KeyVaultClient::RecoverDeletedSecret(const std::string& secretName, const Core::Context& context)
     const
 {
@@ -1763,7 +1763,7 @@ KeyVaultClient::RecoverDeletedSecret(const std::string& secretName, const Core::
   return Response<Models::SecretBundle>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::BackupSecretResult>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::BackupSecretResult>
 KeyVaultClient::BackupSecret(const std::string& secretName, const Core::Context& context) const
 {
   auto url = m_url;
@@ -1815,7 +1815,7 @@ KeyVaultClient::BackupSecret(const std::string& secretName, const Core::Context&
   return Response<Models::BackupSecretResult>(std::move(response), std::move(rawResponse));
 }
 
-Azure::Response<Azure::Security::KeyVault::Secrets::Generated::Models::SecretBundle>
+Azure::Response<Azure::Security::KeyVault::Secrets::_detail::Models::SecretBundle>
 KeyVaultClient::RestoreSecret(
     const Models::SecretRestoreParameters& parameters,
     const Core::Context& context) const

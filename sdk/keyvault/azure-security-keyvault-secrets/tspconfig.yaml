@@ -18,5 +18,5 @@ options:
   "@azure-tools/typespec-cpp":
     flavor: azure
     package-dir: "azure-security-keyvault-secrets"
-    namespace: "Azure::Security::KeyVault::Secrets::Generated"
+    namespace: "Azure::Security::KeyVault::Secrets::_detail"
     headersOutputPath: "azure/keyvault/secrets/generated"

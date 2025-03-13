@@ -46,7 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   class SecretClient final {
 
   private:
-    std::shared_ptr<Generated::KeyVaultClient> m_client = nullptr;
+    std::shared_ptr<_detail::KeyVaultClient> m_client = nullptr;
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;

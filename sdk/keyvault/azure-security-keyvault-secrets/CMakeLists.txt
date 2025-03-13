@@ -42,7 +42,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "f0ec412b6a19f92a4841e8b074eaf9ae38a8dbdd")
+    set(CODEGEN_SHA "deff0a603a9001da24b8751709075a4a3d40d39a")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders

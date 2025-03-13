@@ -143,16 +143,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     static SecretProperties CreateFromURL(std::string const& url);
 
   private:
-    Generated::Models::SecretUpdateParameters ToSecretUpdateParameters() const
+    _detail::Models::SecretUpdateParameters ToSecretUpdateParameters() const
     {
-      Generated::Models::SecretUpdateParameters secretParameters;
+      _detail::Models::SecretUpdateParameters secretParameters;
       if (ContentType.HasValue())
       {
         secretParameters.ContentType = ContentType.Value();
       }
 
       secretParameters.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
-      secretParameters.SecretAttributes = Generated::Models::SecretAttributes();
+      secretParameters.SecretAttributes = _detail::Models::SecretAttributes();
       if (ExpiresOn.HasValue())
       {
         secretParameters.SecretAttributes.Value().Expires = ExpiresOn;
@@ -168,7 +168,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
       if (RecoveryLevel.HasValue())
       {
         secretParameters.SecretAttributes.Value().RecoveryLevel
-            = Generated::Models::DeletionRecoveryLevel(RecoveryLevel.Value());
+            = _detail::Models::DeletionRecoveryLevel(RecoveryLevel.Value());
       }
       if (RecoverableDays.HasValue())
       {

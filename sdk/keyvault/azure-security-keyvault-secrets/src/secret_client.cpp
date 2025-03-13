@@ -34,7 +34,7 @@ SecretClient::SecretClient(
     std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
     SecretClientOptions options)
 {
-  Generated::KeyVaultClientOptions generatedOptions;
+  _detail::KeyVaultClientOptions generatedOptions;
   generatedOptions.ApiVersion = options.ApiVersion;
   generatedOptions.Log = options.Log;
   generatedOptions.Retry = options.Retry;
@@ -42,8 +42,8 @@ SecretClient::SecretClient(
   generatedOptions.Telemetry = options.Telemetry;
   generatedOptions.PerOperationPolicies = std::move(options.PerOperationPolicies);
   generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
-  m_client = std::make_shared<Generated::KeyVaultClient>(
-      Generated::KeyVaultClient(vaultUrl, credential, generatedOptions));
+  m_client = std::make_shared<_detail::KeyVaultClient>(
+      _detail::KeyVaultClient(vaultUrl, credential, generatedOptions));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
@@ -72,7 +72,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     std::string const& value,
     Azure::Core::Context const& context) const
 {
-  Generated::Models::SecretSetParameters secretParameters;
+  _detail::Models::SecretSetParameters secretParameters;
   secretParameters.Value = value;
   auto response = m_client->SetSecret(name, secretParameters, context);
   KeyVaultSecret secretResult(response.Value);
@@ -84,7 +84,7 @@ Azure::Response<KeyVaultSecret> SecretClient::SetSecret(
     KeyVaultSecret const& secret,
     Azure::Core::Context const& context) const
 {
-  Generated::Models::SecretSetParameters secretParameters = secret.ToSetSecretParameters();
+  _detail::Models::SecretSetParameters secretParameters = secret.ToSetSecretParameters();
   auto response = m_client->SetSecret(name, secretParameters, context);
   KeyVaultSecret secretResult(response.Value);
   return Azure::Response<KeyVaultSecret>(std::move(secretResult), std::move(response.RawResponse));
@@ -94,7 +94,7 @@ Azure::Response<KeyVaultSecret> SecretClient::UpdateSecretProperties(
     SecretProperties const& properties,
     Azure::Core::Context const& context) const
 {
-  Generated::Models::SecretUpdateParameters secretParameters
+  _detail::Models::SecretUpdateParameters secretParameters
       = properties.ToSecretUpdateParameters();
   auto response
       = m_client->UpdateSecret(properties.Name, properties.Version, secretParameters, context);
@@ -117,7 +117,7 @@ Azure::Response<KeyVaultSecret> SecretClient::RestoreSecretBackup(
     BackupSecretResult const& backup,
     Azure::Core::Context const& context) const
 {
-  Generated::Models::SecretRestoreParameters restoreParameters;
+  _detail::Models::SecretRestoreParameters restoreParameters;
   restoreParameters.SecretBundleBackup = backup.Secret;
   auto response = m_client->RestoreSecret(restoreParameters, context);
   KeyVaultSecret secretResult(response.Value);
@@ -161,7 +161,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecrets(
     GetPropertiesOfSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Generated::KeyVaultClientGetSecretsOptions generatedOptions;
+  _detail::KeyVaultClientGetSecretsOptions generatedOptions;
   if (options.NextPageToken.HasValue())
   {
     generatedOptions.NextPageToken = options.NextPageToken.Value();
@@ -178,7 +178,7 @@ SecretPropertiesPagedResponse SecretClient::GetPropertiesOfSecretsVersions(
     GetPropertiesOfSecretVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Generated::KeyVaultClientGetSecretVersionsOptions generatedOptions;
+  _detail::KeyVaultClientGetSecretVersionsOptions generatedOptions;
   if (options.NextPageToken.HasValue())
   {
     generatedOptions.NextPageToken = options.NextPageToken.Value();
@@ -194,12 +194,12 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
     GetDeletedSecretsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  Generated::KeyVaultClientGetDeletedSecretsOptions generatedOptions;
+  _detail::KeyVaultClientGetDeletedSecretsOptions generatedOptions;
   if (options.NextPageToken.HasValue())
   {
     generatedOptions.NextPageToken = options.NextPageToken.Value();
   }
-  Generated::GetDeletedSecretsPagedResponse response
+  _detail::GetDeletedSecretsPagedResponse response
       = m_client->GetDeletedSecrets(generatedOptions, context);
   DeletedSecretPagedResponse deletedSecretPagedResponse(
       response, std::move(response.RawResponse), std::make_unique<SecretClient>(*this));
