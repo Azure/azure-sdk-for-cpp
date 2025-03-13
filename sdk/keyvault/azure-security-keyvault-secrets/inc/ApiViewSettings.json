@@ -5,6 +5,12 @@
     "../../azure-security-keyvault-shared/inc"
   ],
   "sourceFilesToSkip": [
+    "azure/keyvault/secrets/generated/models/generated_models.hpp",
+    "azure/keyvault/secrets/generated/dll_import_export.hpp",
+    "azure/keyvault/secrets/generated/key_vault_client.hpp",
+    "azure/keyvault/secrets/generated/key_vault_client_options.hpp",
+    "azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp",
+    "azure/keyvault/secrets/generated/rtti.hpp"
   ],
   "additionalCompilerSwitches": [
     "-D_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
