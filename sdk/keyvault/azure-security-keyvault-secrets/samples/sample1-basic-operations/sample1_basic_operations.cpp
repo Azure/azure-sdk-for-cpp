@@ -53,8 +53,7 @@ int main()
     secret.Properties.ContentType = "my content";
     // update the secret
     KeyVaultSecret updatedSecret = secretClient.UpdateSecretProperties(secret.Properties).Value;
-    std::string updatedValueString
-        = updatedSecret.Value.HasValue() ? updatedSecret.Value.Value() : "NONE RETURNED";
+    std::string updatedValueString = updatedSecret.Properties.ContentType.ValueOr("NONE RETURNED");
     std::cout << "Secret's content type is now " << updatedValueString << std::endl;
     // @end_snippet
 

@@ -11,6 +11,12 @@
 #include <azure/keyvault/secrets/keyvault_secret.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+  class SecretClient;
+  class DeletedSecretPagedResponse;
+  namespace _detail { namespace Models {
+    struct DeletedSecretBundle;
+    struct DeletedSecretItem;
+  }} // namespace _detail::Models
   /**
    * @brief A Deleted Secret consisting of its previous id, attributes and its tags,
    * as well as information on when it will be purged.
@@ -44,5 +50,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @param name Name of the deleted secret.
      */
     DeletedSecret(std::string name) : KeyVaultSecret(std::move(name)) {}
+
+  private:
+    DeletedSecret(_detail::Models::DeletedSecretBundle const& deletedSecret);
+    DeletedSecret(_detail::Models::DeletedSecretItem const& deletedSecret);
+    friend class SecretClient;
+    friend class DeletedSecretOperation;
+    friend class DeletedSecretPagedResponse;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

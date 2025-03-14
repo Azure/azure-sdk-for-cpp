@@ -16,8 +16,8 @@
 #include <azure/core/response.hpp>
 
 #include <thread>
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+
   class SecretClient;
   /**
    * @brief Represents a long running operation to restore a deleted secret.

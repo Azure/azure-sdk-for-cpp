@@ -15,6 +15,7 @@
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "dll_import_export.hpp"
+#include "generated.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -45,6 +46,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   class SecretClient final {
 
   private:
+    std::shared_ptr<_detail::KeyVaultClient> m_client = nullptr;
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
@@ -68,12 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @param keyClient An existing key vault key client.
      */
-    explicit SecretClient(SecretClient const& keyClient)
-        : m_vaultUrl(keyClient.m_vaultUrl), m_apiVersion(keyClient.m_apiVersion),
-          m_pipeline(keyClient.m_pipeline)
-
-    {
-    }
+    explicit SecretClient(SecretClient const& keyClient) { m_client = keyClient.m_client; }
 
     ~SecretClient() = default;
 
@@ -278,18 +275,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The key secret's primary URL endpoint.
      */
-    std::string GetUrl() const;
-
-  private:
-    Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path = {},
-        Azure::Core::IO::BodyStream* content = nullptr) const;
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
-    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
+    std::string GetUrl() const { return m_client->GetUrl(); }
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

@@ -13,8 +13,11 @@
 #include <azure/core/url.hpp>
 
 #include <unordered_map>
-
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
+  class SecretClient;
+  namespace _detail { namespace Models {
+    struct SecretUpdateParameters;
+  }} // namespace _detail::Models
 
   /**
    * @brief The Secret attributes managed by the KeyVault service.
@@ -141,5 +144,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      */
     static SecretProperties CreateFromURL(std::string const& url);
+
+  private:
+    _detail::Models::SecretUpdateParameters ToSecretUpdateParameters() const;
+    friend class SecretClient;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets

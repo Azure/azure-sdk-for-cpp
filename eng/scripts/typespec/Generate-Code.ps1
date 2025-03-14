@@ -4,7 +4,10 @@
 [CmdletBinding()]
 param(
   [Parameter(Mandatory=$false)]
-  [string] $ClangFormatPath = "clang-format"
+  [string] $ClangFormatPath = "clang-format",
+
+  [Parameter(Mandatory=$false)]
+  [string] $outputPath = ".\generated"
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,13 +15,13 @@ $PSNativeCommandUseErrorActionPreference = $true
 
 pushd
 cd $PSScriptRoot
-cd ../
+cd ../../../
 $typespecCppDir = Get-Location
 popd
 
 pushd
 Write-Host "Invoking: tsp compile ."
-tsp compile --emit $typespecCppDir client.tsp
+tsp compile --emit $typespecCppDir client.tsp --output-dir $outputPath
 
 if (-not (Test-Path ".clang-format")) {
   $oldProgressPreference = $ProgressPreference
@@ -36,7 +39,7 @@ try {
 }
 
 Write-Host "Formatting generated code with clang-format"
-Get-ChildItem generated -Include *.cpp, *.hpp -Recurse | ForEach-Object -Process{ 
+Get-ChildItem $outputPath -Include *.cpp, *.hpp -Recurse | ForEach-Object -Process{ 
   "  Processing: $_"
   & "$ClangFormatPath" -i $_
 }

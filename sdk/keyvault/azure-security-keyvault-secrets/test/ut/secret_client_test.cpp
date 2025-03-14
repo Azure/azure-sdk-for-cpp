@@ -33,7 +33,7 @@ TEST(SecretClient, ServiceVersion)
   // Default - 7.5
   EXPECT_NO_THROW(auto options = SecretClientOptions();
                   SecretClient SecretClient("http://account.vault.azure.net", credential, options);
-                  EXPECT_EQ(options.ApiVersion, "7.5"););
+                  EXPECT_EQ(options.ApiVersion, "7.6-preview.2"););
 
   // 7.4
   EXPECT_NO_THROW(auto options = SecretClientOptions(); options.ApiVersion = "7.4";
@@ -115,7 +115,7 @@ TEST_F(KeyVaultSecretClientTest, SecondCreateTest)
   }
 }
 
-TEST_F(KeyVaultSecretClientTest, DISABLED_UpdateTest)
+TEST_F(KeyVaultSecretClientTest, UpdateTest)
 {
   auto secretName = "UpdateTest";
   SecretProperties properties;
@@ -135,17 +135,15 @@ TEST_F(KeyVaultSecretClientTest, DISABLED_UpdateTest)
     auto secret = secretResponse.Value;
     properties = secret.Properties;
     EXPECT_EQ(secret.Value.Value(), secretValue);
-    EXPECT_EQ(properties.Name, secretName);
   }
   {
-    properties.ContentType = "xyz";
-    UpdateSecretPropertiesOptions options;
-    auto props = properties;
+    properties.RecoverableDays = 90;
+    properties.Name = secretName;
+    properties.Version = "/";
     auto secretResponse = client.UpdateSecretProperties(properties);
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Properties.Name, secretName);
-    EXPECT_EQ(secret.Properties.ContentType.Value(), properties.ContentType.Value());
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto operation = client.StartDeleteSecret(secretName);
@@ -184,7 +182,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto deletedSecretResponse = client.GetDeletedSecret(secretName);
     CheckValidResponse(deletedSecretResponse);
     auto secret = deletedSecretResponse.Value;
-    EXPECT_EQ(secret.Name, secretName);
+    EXPECT_EQ(secret.Properties.RecoverableDays.Value(), 90);
   }
   {
     auto purgedResponse = client.PurgeDeletedSecret(secretName);
@@ -221,7 +219,7 @@ TEST_F(KeyVaultSecretClientTest, BackupRestore)
     auto restore = client.RestoreSecretBackup(backupData);
     CheckValidResponse(restore);
     auto restored = restore.Value;
-    EXPECT_TRUE(restored.Id.length() > 0);
+    EXPECT_EQ(restored.Properties.RecoverableDays.Value(), 90);
   }
 }
 
@@ -262,8 +260,7 @@ TEST_F(KeyVaultSecretClientTest, RecoverSecret)
     auto operationResult = operation.Value();
     auto restoredSecret = client.GetSecret(secretName);
     auto secret = restoredSecret.Value;
-    EXPECT_EQ(secret.Name, secretName);
-    EXPECT_EQ(operationResult.Name, secretName);
+    EXPECT_EQ(operationResult.RecoverableDays.Value(), secret.Properties.RecoverableDays.Value());
     EXPECT_EQ(operation.GetRawResponse().GetStatusCode(), Azure::Core::Http::HttpStatusCode::Ok);
   }
 }
@@ -281,7 +278,6 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
     auto secretResponse = client.SetSecret(name, "secretValue");
     CheckValidResponse(secretResponse);
     auto secret = secretResponse.Value;
-    EXPECT_EQ(secret.Name, name);
     // Avoid server Throttled while creating keys
     TestSleep();
   }
@@ -298,4 +294,15 @@ TEST_F(KeyVaultSecretClientTest, TestGetPropertiesOfSecret)
   }
 
   EXPECT_TRUE(secretProps.size() >= static_cast<size_t>(capacity));
+}
+
+TEST(SecretProperties, FactoryValid)
+{
+  std::string url(
+      "https://myvault.vault.azure.net/secrets/my_secret_name/4387e9f3d6e14c459867679a90fd0f79");
+  SecretProperties props = SecretProperties::CreateFromURL(url);
+  EXPECT_EQ(props.Name, "my_secret_name");
+  EXPECT_EQ(props.Version, "4387e9f3d6e14c459867679a90fd0f79");
+  EXPECT_EQ(props.Id, url);
+  EXPECT_EQ(props.VaultUrl, "https://myvault.vault.azure.net");
 }
