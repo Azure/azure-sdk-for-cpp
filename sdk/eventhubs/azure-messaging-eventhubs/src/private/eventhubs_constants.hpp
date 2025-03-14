@@ -13,7 +13,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
   constexpr const char* PartitionKeyAnnotation = "x-opt-partition-key";
   constexpr const char* SequenceNumberAnnotation = "x-opt-sequence-number";
-  constexpr const char* OffsetNumberAnnotation = "x-opt-offset";
+  constexpr const char* OffsetAnnotation = "x-opt-offset";
   constexpr const char* EnqueuedTimeAnnotation = "x-opt-enqueued-time";
 
   constexpr const char* EventHubsServiceScheme = "amqps://";

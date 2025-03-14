@@ -53,7 +53,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
     /// @brief The partition ID for the corresponding checkpoint.
     std::string PartitionId{};
     /// @brief The offset of the last successfully processed event.
-    Azure::Nullable<int64_t> Offset{};
+    Azure::Nullable<std::string> Offset{};
     /// @brief The sequence number of the last successfully processed event.
     Azure::Nullable<int64_t> SequenceNumber{};
 

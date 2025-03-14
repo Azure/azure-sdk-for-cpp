@@ -29,7 +29,7 @@ void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateCheckpointImpl(
     throw std::runtime_error("missing offset number");
   }
 
-  checkpoint.Offset = std::stol(temp);
+  checkpoint.Offset = temp;
 }
 
 void Azure::Messaging::EventHubs::BlobCheckpointStore::UpdateOwnership(
@@ -59,7 +59,7 @@ Azure::Messaging::EventHubs::BlobCheckpointStore::CreateCheckpointBlobMetadata(
 
   if (checkpoint.Offset.HasValue())
   {
-    metadata["offset"] = std::to_string(checkpoint.Offset.Value());
+    metadata["offset"] = checkpoint.Offset.Value();
   }
   return metadata;
 }
