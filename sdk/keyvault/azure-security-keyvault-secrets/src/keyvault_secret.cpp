@@ -4,6 +4,7 @@
 // Changes may cause incorrect behavior and will be lost if the code is regenerated.
 
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
+
 #include "azure/keyvault/secrets/generated/models/generated_models.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {

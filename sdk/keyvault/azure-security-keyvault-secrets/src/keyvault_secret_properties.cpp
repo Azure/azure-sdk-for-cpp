@@ -8,6 +8,7 @@
 
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "private/secret_serializers.hpp"
+
 #include <azure/keyvault/secrets/generated/models/generated_models.hpp>
 
 using namespace Azure::Security::KeyVault::Secrets;
@@ -63,4 +64,4 @@ _detail::Models::SecretUpdateParameters SecretProperties::ToSecretUpdateParamete
     secretParameters.SecretAttributes.Value().Updated = UpdatedOn.Value();
   }
   return secretParameters;
-};
+}

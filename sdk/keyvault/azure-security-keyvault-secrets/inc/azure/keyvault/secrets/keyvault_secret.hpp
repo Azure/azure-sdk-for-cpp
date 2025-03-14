@@ -67,7 +67,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     KeyVaultSecret(_detail::Models::SecretBundle const& secret);
     KeyVaultSecret(_detail::Models::SecretItem const& secret);
     _detail::Models::SecretSetParameters ToSetSecretParameters() const;
-    
+
     friend struct DeletedSecret;
     friend class SecretClient;
     friend class SecretPropertiesPagedResponse;
