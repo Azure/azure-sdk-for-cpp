@@ -93,9 +93,11 @@ set(
     src/get_deleted_secrets_paged_response.cpp
     src/get_secrets_paged_response.cpp
     src/get_secret_versions_paged_response.cpp
+    src/keyvault_deleted_secret.cpp
     src/key_vault_client.cpp
     src/keyvault_operations.cpp
     src/keyvault_protocol.cpp
+    src/keyvault_secret.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
     src/private/keyvault_protocol.hpp
@@ -106,7 +108,7 @@ set(
     src/secret_serializers.cpp
 )
 
-add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE})
+add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE} "src/keyvault_secret.cpp")
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 create_per_service_target_build(keyvault azure-security-keyvault-secrets)
 
