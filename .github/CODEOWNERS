@@ -6,7 +6,7 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman @antkmsft @gearama
+/**                      @rickwinter @LarryOsterman
 
 #Catch all for files at the root
 /*                       @rickwinter @LarryOsterman @antkmsft @gearama
@@ -23,7 +23,7 @@
 # PRLabel: %Azure.Core
 /sdk/core/               @rickwinter @antkmsft @gearama @LarryOsterman
 
-# AzureSdkOwners: @ahsonkhan
+# AzureSdkOwners: @antkmsft
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @rickwinter @gearama @LarryOsterman @Azure/azure-sdk-write-identity
@@ -32,7 +32,7 @@
 # Client SDKs
 ###########
 
-# AzureSdkOwners: @ahsonkhan
+# AzureSdkOwners: @gearama
 # ServiceLabel: %App Configuration
 # PRLabel: %App Configuration
 /sdk/appconfiguration/   @gearama @LarryOsterman @antkmsft @RickWinter
