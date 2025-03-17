@@ -38,17 +38,3 @@
 #endif // AZ_SECURITY_KEYVAULT_SECRETS_BUILT_AS_DLL
 
 #undef AZ_SECURITY_KEYVAULT_SECRETS_BUILT_AS_DLL
-
-/**
- * @brief Azure SDK abstractions.
- *
- */
-namespace Azure {
-
-/**
- * @brief Azure Template SDK abstractions.
- *
- */
-namespace Template {
-}
-} // namespace Azure
