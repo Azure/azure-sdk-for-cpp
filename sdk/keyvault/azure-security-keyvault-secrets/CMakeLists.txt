@@ -42,7 +42,7 @@ if(AZURE_TSP_KV_SECRETS_GEN)
     set(TSP_DESTINATION "keyvault_secrets")
     
     #codegen related repo information
-    set(CODEGEN_SHA "deff0a603a9001da24b8751709075a4a3d40d39a")
+    set(CODEGEN_SHA "83758baff29b89a8a7bd28fa26a692225f4f208f")
     set(CODEGEN_DESTINATION "typespec-cpp")
        
     #destination folders
@@ -77,33 +77,30 @@ set(
     inc/azure/keyvault/secrets/keyvault_secret_properties.hpp
     inc/azure/keyvault/secrets/rtti.hpp
     inc/azure/keyvault/secrets/secret_client.hpp
-    inc/azure/keyvault/secrets/generated.hpp
-    inc/azure/keyvault/secrets/generated/dll_import_export.hpp
-    inc/azure/keyvault/secrets/generated/key_vault_client.hpp
-    inc/azure/keyvault/secrets/generated/key_vault_client_options.hpp
-    inc/azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp
-    inc/azure/keyvault/secrets/generated/models/generated_models.hpp
-)
+ )
 
 set(
   AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE
-    src/private/generated_package_version.hpp
+    src/generated/get_deleted_secrets_paged_response.cpp
+    src/generated/get_secrets_paged_response.cpp
+    src/generated/get_secret_versions_paged_response.cpp
+    src/generated/key_vault_client.cpp
+    src/generated/key_vault_client.hpp
+    src/generated/key_vault_client_options.hpp
+    src/generated/key_vault_client_paged_responses.hpp
+    src/generated/secrets.cpp
+    src/generated/secrets_models.hpp
     src/private/package_version.hpp
-    src/generated.cpp
-    src/get_deleted_secrets_paged_response.cpp
-    src/get_secrets_paged_response.cpp
-    src/get_secret_versions_paged_response.cpp
+    src/private/keyvault_protocol.hpp
+    src/private/package_version.hpp
+    src/private/secret_constants.hpp
+    src/private/secret_serializers.hpp
     src/keyvault_deleted_secret.cpp
-    src/key_vault_client.cpp
     src/keyvault_operations.cpp
     src/keyvault_protocol.cpp
     src/keyvault_secret.cpp
     src/keyvault_secret_paged_response.cpp
     src/keyvault_secret_properties.cpp
-    src/private/keyvault_protocol.hpp
-    src/private/package_version.hpp
-    src/private/secret_constants.hpp
-    src/private/secret_serializers.hpp
     src/secret_client.cpp
     src/secret_serializers.cpp
 )

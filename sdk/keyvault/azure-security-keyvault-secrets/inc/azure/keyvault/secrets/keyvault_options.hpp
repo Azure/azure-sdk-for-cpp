@@ -6,7 +6,6 @@
  * @brief Keyvault Secret actions options
  */
 #pragma once
-#include "azure/keyvault/secrets/generated/key_vault_client_options.hpp"
 #include "dll_import_export.hpp"
 
 #include <azure/core/internal/client_options.hpp>
@@ -22,7 +21,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      * @brief Service Version used.
      *
      */
-    std::string ApiVersion{_detail::KeyVaultClientOptions().ApiVersion};
+    std::string ApiVersion{"7.6-preview.2"};
   };
 
   /**

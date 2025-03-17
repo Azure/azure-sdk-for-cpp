@@ -5,7 +5,7 @@
 
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 
-#include "azure/keyvault/secrets/generated/models/generated_models.hpp"
+#include "./generated/secrets_models.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   DeletedSecret::DeletedSecret(_detail::Models::DeletedSecretBundle const& deletedSecret)

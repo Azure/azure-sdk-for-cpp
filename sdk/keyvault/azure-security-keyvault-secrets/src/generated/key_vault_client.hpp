@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "azure/keyvault/secrets/generated/key_vault_client_options.hpp"
-#include "azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp"
-#include "azure/keyvault/secrets/generated/models/generated_models.hpp"
+#include "key_vault_client_options.hpp"
+#include "key_vault_client_paged_responses.hpp"
+#include "secrets_models.hpp"
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>

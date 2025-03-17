@@ -19,4 +19,5 @@ options:
     flavor: azure
     package-dir: "azure-security-keyvault-secrets"
     namespace: "Azure::Security::KeyVault::Secrets::_detail"
-    headersOutputPath: "azure/keyvault/secrets/generated"
+    headersOutputPath: "azure/keyvault/secrets"
+    noPublicHeaders: true
