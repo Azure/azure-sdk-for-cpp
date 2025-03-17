@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "azure/keyvault/secrets/generated/key_vault_client_options.hpp"
-#include "azure/keyvault/secrets/generated/models/generated_models.hpp"
+#include "key_vault_client_options.hpp"
+#include "secrets_models.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>

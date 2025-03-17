@@ -8,7 +8,7 @@
 
 #include "azure/keyvault/secrets/secret_client.hpp"
 
-#include "azure/keyvault/secrets/generated.hpp"
+#include "./generated/key_vault_client.hpp"
 #include "azure/keyvault/secrets/keyvault_operations.hpp"
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"
@@ -34,16 +34,12 @@ SecretClient::SecretClient(
     std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
     SecretClientOptions options)
 {
-  _detail::KeyVaultClientOptions generatedOptions;
-  generatedOptions.ApiVersion = options.ApiVersion;
-  generatedOptions.Log = options.Log;
-  generatedOptions.Retry = options.Retry;
-  generatedOptions.Transport = options.Transport;
-  generatedOptions.Telemetry = options.Telemetry;
-  generatedOptions.PerOperationPolicies = std::move(options.PerOperationPolicies);
-  generatedOptions.PerRetryPolicies = std::move(options.PerRetryPolicies);
+  _detail::KeyVaultClientOptions generatedClientOptions;
+  static_cast<Core::_internal::ClientOptions&>(generatedClientOptions)
+      = static_cast<const Core::_internal::ClientOptions&>(options);
+  generatedClientOptions.ApiVersion = options.ApiVersion;
   m_client = std::make_shared<_detail::KeyVaultClient>(
-      _detail::KeyVaultClient(vaultUrl, credential, generatedOptions));
+      _detail::KeyVaultClient(vaultUrl, credential, generatedClientOptions));
 }
 
 Azure::Response<KeyVaultSecret> SecretClient::GetSecret(
@@ -205,3 +201,5 @@ DeletedSecretPagedResponse SecretClient::GetDeletedSecrets(
 
   return deletedSecretPagedResponse;
 }
+
+std::string SecretClient::GetUrl() const { return m_client->GetUrl(); }

@@ -8,7 +8,6 @@
 
 #pragma once
 
-#include "azure/keyvault/secrets/generated/key_vault_client_paged_responses.hpp"
 #include "azure/keyvault/secrets/keyvault_deleted_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_properties.hpp"
 
@@ -19,7 +18,11 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-
+  namespace _detail {
+    class GetSecretsPagedResponse;
+    class GetSecretVersionsPagedResponse;
+    class GetDeletedSecretsPagedResponse;
+  } // namespace _detail
   // forward definition
   class SecretClient;
 
@@ -35,8 +38,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
 
     std::string m_secretName;
     std::shared_ptr<SecretClient> m_secretClient;
-    _detail::GetSecretsPagedResponse m_generatedResponse;
-    _detail::GetSecretVersionsPagedResponse m_generatedVersionResponse;
+    std::shared_ptr<_detail::GetSecretsPagedResponse> m_generatedResponse;
+    std::shared_ptr<_detail::GetSecretVersionsPagedResponse> m_generatedVersionResponse;
     void OnNextPage(const Azure::Core::Context& context);
 
     SecretPropertiesPagedResponse(
@@ -54,31 +57,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
         _detail::GetSecretsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient,
-        std::string const& secretName = std::string())
-        : m_secretName(secretName), m_secretClient(std::move(secretClient)),
-          m_generatedResponse(std::move(secretPagedResponse))
-    {
-      for (auto& item : m_generatedResponse.Value.Value())
-      {
-        Items.push_back(KeyVaultSecret(item).Properties);
-      }
-      RawResponse = std::move(rawResponse);
-    }
+        std::string const& secretName = std::string());
 
     SecretPropertiesPagedResponse(
         _detail::GetSecretVersionsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<SecretClient> secretClient,
-        std::string const& secretName = std::string())
-        : m_secretName(secretName), m_secretClient(std::move(secretClient)),
-          m_generatedVersionResponse(std::move(secretPagedResponse))
-    {
-      for (auto& item : m_generatedVersionResponse.Value.Value())
-      {
-        Items.push_back(KeyVaultSecret(item).Properties);
-      }
-      RawResponse = std::move(rawResponse);
-    }
+        std::string const& secretName = std::string());
 
   public:
     /**
@@ -106,7 +91,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     friend class Azure::Core::PagedResponse<DeletedSecretPagedResponse>;
 
     std::shared_ptr<SecretClient> m_secretClient;
-    _detail::GetDeletedSecretsPagedResponse m_generatedResponse;
+    std::shared_ptr<_detail::GetDeletedSecretsPagedResponse> m_generatedResponse;
 
     void OnNextPage(const Azure::Core::Context& context);
 
@@ -123,16 +108,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     DeletedSecretPagedResponse(
         _detail::GetDeletedSecretsPagedResponse& secretPagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
-        std::shared_ptr<SecretClient> secretClient)
-        : m_secretClient(std::move(secretClient)),
-          m_generatedResponse(std::move(secretPagedResponse))
-    {
-      for (auto& item : m_generatedResponse.Value.Value())
-      {
-        Items.push_back(DeletedSecret(item));
-      }
-      RawResponse = std::move(rawResponse);
-    }
+        std::shared_ptr<SecretClient> secretClient);
 
   public:
     /**

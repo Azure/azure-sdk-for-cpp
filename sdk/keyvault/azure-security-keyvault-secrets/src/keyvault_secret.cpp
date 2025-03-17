@@ -5,7 +5,7 @@
 
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 
-#include "azure/keyvault/secrets/generated/models/generated_models.hpp"
+#include "./generated/secrets_models.hpp"
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
   KeyVaultSecret::KeyVaultSecret(std::string const& name, std::string const& value)

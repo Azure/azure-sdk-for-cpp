@@ -15,7 +15,6 @@
 #include "azure/keyvault/secrets/keyvault_secret.hpp"
 #include "azure/keyvault/secrets/keyvault_secret_paged_response.hpp"
 #include "dll_import_export.hpp"
-#include "generated.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
@@ -29,7 +28,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 }}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
-
+  namespace _detail {
+    class KeyVaultClient;
+  }
   /**
    * @brief Define a model for a purged key.
    *
@@ -275,6 +276,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
      *
      * @return The key secret's primary URL endpoint.
      */
-    std::string GetUrl() const { return m_client->GetUrl(); }
+    std::string GetUrl() const;
   };
 }}}} // namespace Azure::Security::KeyVault::Secrets
