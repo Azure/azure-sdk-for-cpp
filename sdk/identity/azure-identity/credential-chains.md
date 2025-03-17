@@ -42,8 +42,7 @@ A chained credential can offer the following benefits:
 
 ## How to choose a chained credential
 
-With Go, there are two choices for credential chaining:
-
+With C++, there are two choices for credential chaining:
 - **Use a preconfigured chain**: Use the preconfigured chain implemented by the `DefaultAzureCredential` type. For this approach, see the [DefaultAzureCredential overview](#defaultazurecredential-overview) section.
 - **Build a custom credential chain**: Start with an empty chain and include only what you need. For this approach, see the [ChainedTokenCredential overview](#chainedtokencredential-overview) section.
 
