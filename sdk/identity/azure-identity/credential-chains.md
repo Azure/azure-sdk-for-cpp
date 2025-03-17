@@ -164,7 +164,7 @@ DEBUG : Identity: DefaultAzureCredential: Saved this credential at index 2 for s
 In the preceding output, notice that:
 
 - `EnvironmentCredential`, and `WorkloadIdentityCredential` each failed to acquire a Microsoft Entra access token, in that order.
-- The `AzureCliCredential` succeeds, as indicated by the `returns a token`-suffixed entry. Since `AzureCliCredential` succeeded, no credentials beyond it were tried.
+- The `AzureCliCredential` succeeds, as indicated by an entry that starts with "`Successfully got token from AzureCliCredential`". Since `AzureCliCredential` succeeded, no credentials beyond it were tried.
 
 
 <!-- LINKS -->
