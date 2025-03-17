@@ -1,4 +1,4 @@
-<!--
+<!-- cspell: ignore devx mermaidjs
 ---
 title: Credential chains in the Azure Identity client library for C++
 description: This article describes the DefaultAzureCredential and ChainedTokenCredential classes in the Azure Identity client library for C++.
@@ -15,7 +15,7 @@ The Azure Identity client library provides *credentials*&mdash;public types that
 
 At runtime, a credential chain attempts to authenticate using the sequence's first credential. If that credential fails to acquire an access token, the next credential in the sequence is attempted, and so on, until an access token is successfully obtained. The following sequence diagram illustrates this behavior:
 
-<!--:::image type="content" source="img/mermaidjs/chain-sequence.svg" alt-text="Diagram that shows credential chain sequence.":::-->
+<!--:::image type="content" source="../media/mermaidjs/chain-sequence.svg" alt-text="Diagram that shows credential chain sequence.":::-->
 ![Diagram that shows credential chain sequence.](./img/mermaidjs/chain-sequence.svg)
 
 ## Why use credential chains
@@ -51,7 +51,7 @@ With Go, there are two choices for credential chaining:
 
 [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential) is an opinionated, preconfigured chain of credentials. It's designed to support many environments, along with the most common authentication flows and developer tools. In graphical form, the underlying chain looks like this:
 
-<!--:::image type="content" source="img/mermaidjs/DefaultAzureCredentialAuthFlow.svg" alt-text="Diagram that shows DefaultAzureCredential authentication flow.":::-->
+<!--:::image type="content" source="../media/mermaidjs/DefaultAzureCredentialAuthFlow.svg" alt-text="Diagram that shows DefaultAzureCredential authentication flow.":::-->
 ![Diagram that shows DefaultAzureCredential authentication flow.](./img/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
 
 The order in which `DefaultAzureCredential` attempts credentials follows.
@@ -112,7 +112,7 @@ int main()
 
 The preceding code sample creates a tailored credential chain comprised of two credentials. `AzureCliCredential` is attempted first, followed by `ManagedIdentityCredential`, if necessary. In graphical form, the chain looks like this:
 
-<!--:::image type="content" source="img/mermaidjs/chained-token-credential-auth-flow.svg" alt-text="Diagram that shows authentication flow for a ChainedTokenCredential instance that is composed of Azure CLI credential and managed identity credential.":::-->
+<!--:::image type="content" source="../media/mermaidjs/chained-token-credential-auth-flow.svg" alt-text="Diagram that shows authentication flow for a ChainedTokenCredential instance that is composed of Azure CLI credential and managed identity credential.":::-->
 ![Diagram that shows authentication flow for a ChainedTokenCredential instance that is composed of Azure CLI credential and managed identity credential.](./img/mermaidjs/chained-token-credential-auth-flow.svg)
 
 > [!TIP]
