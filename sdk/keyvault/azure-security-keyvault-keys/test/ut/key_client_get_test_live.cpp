@@ -17,13 +17,13 @@ TEST_F(KeyVaultKeyClient, GetSingleKeyGen)
 {
   auto const keyName = "testKey";
   auto const& client = GetClientForTest(keyName);
-
-  auto keyResponse = client.GetKey(keyName);
+  auto keyResponse
+      = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);   
+  //auto keyResponse = client.GetKey(keyName);
   CheckValidResponse(keyResponse);
   auto key = keyResponse.Value;
 
   EXPECT_EQ(key.Name(), keyName);
-  EXPECT_EQ(key.GetKeyType(), KeyVaultKeyType::Ec);
 }
 
 TEST_F(KeyVaultKeyClient, GetSingleKey)

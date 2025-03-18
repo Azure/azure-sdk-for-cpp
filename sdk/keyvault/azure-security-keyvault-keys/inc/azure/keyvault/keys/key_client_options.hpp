@@ -15,7 +15,10 @@
 #include <azure/core/internal/client_options.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
+  class KeyClient;
+  namespace _detail { namespace Models {
+    struct KeyCreateParameters;
+  }} // namespace _detail::Models
   /**
    * @brief The options for calling an operation
    * #Azure::Security::KeyVault::Keys::KeyClient::GetPropertiesOfKeys.
@@ -128,6 +131,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::Nullable<bool> Exportable;
+
+    private:
+    friend KeyClient;
+    _detail::Models::KeyCreateParameters ToKeyCreateParameters() const;
   };
 
   /**

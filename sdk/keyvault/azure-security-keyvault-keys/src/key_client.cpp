@@ -89,7 +89,7 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
   auto result = m_client->GetKey(name, options.Version.empty() ? "/" : options.Version, context);
   KeyVaultKey keyResult(result.Value);
   keyResult.Properties.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
-  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
+  return Azure::Response<KeyVaultKey>(std::move(keyResult), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateKey(
@@ -98,84 +98,64 @@ Azure::Response<KeyVaultKey> KeyClient::CreateKey(
     CreateKeyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  _detail::KeyRequestParameters const params(std::move(keyType), options);
-  auto payload = params.Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, CreateValue}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  Models::KeyCreateParameters keyCreateParameters = options.ToKeyCreateParameters();
+  keyCreateParameters.Kty = Models::JsonWebKeyType(keyType.ToString());
+  auto result = m_client->CreateKey(name, keyCreateParameters, context);
+  KeyVaultKey keyResult(result.Value);
+  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateEcKey(
     CreateEcKeyOptions const& ecKeyOptions,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  std::string const& keyName = ecKeyOptions.GetName();
-  auto payload = _detail::KeyRequestParameters(ecKeyOptions).Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  Models::KeyCreateParameters keyCreateParameters
+      = static_cast<CreateKeyOptions>(ecKeyOptions).ToKeyCreateParameters();
+  keyCreateParameters.Kty = Models::JsonWebKeyType(ecKeyOptions.GetKeyType().ToString());
+  if (ecKeyOptions.CurveName.HasValue())
+  {
+    keyCreateParameters.Curve
+        = Models::JsonWebKeyCurveName(ecKeyOptions.CurveName.Value().ToString());
+  }
+  auto result = m_client->CreateKey(ecKeyOptions.GetName(), keyCreateParameters, context);
+  KeyVaultKey keyResult(result.Value);
+  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateRsaKey(
     CreateRsaKeyOptions const& rsaKeyOptions,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  std::string const& keyName = rsaKeyOptions.GetName();
-  auto payload = _detail::KeyRequestParameters(rsaKeyOptions).Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  Models::KeyCreateParameters keyCreateParameters
+      = static_cast<CreateKeyOptions>(rsaKeyOptions).ToKeyCreateParameters();
+  keyCreateParameters.Kty = Models::JsonWebKeyType(rsaKeyOptions.GetKeyType().ToString());
+  if (rsaKeyOptions.KeySize.HasValue())
+  {
+    keyCreateParameters.KeySize = static_cast<int32_t>(rsaKeyOptions.KeySize.Value());
+  }
+  if (rsaKeyOptions.PublicExponent.HasValue())
+  {
+    keyCreateParameters.PublicExponent = static_cast<int32_t>(rsaKeyOptions.PublicExponent.Value());
+  }
+  auto result = m_client->CreateKey(rsaKeyOptions.GetName(), keyCreateParameters, context);
+  KeyVaultKey keyResult(result.Value);
+  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateOctKey(
     CreateOctKeyOptions const& octKeyOptions,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request.
-  std::string const& keyName = octKeyOptions.GetName();
-  auto payload = _detail::KeyRequestParameters(octKeyOptions).Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, keyName, CreateValue}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(keyName, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  Models::KeyCreateParameters keyCreateParameters
+      = static_cast<CreateKeyOptions>(octKeyOptions).ToKeyCreateParameters();
+  keyCreateParameters.Kty = Models::JsonWebKeyType(octKeyOptions.GetKeyType().ToString());
+  if (octKeyOptions.KeySize.HasValue())
+  {
+    keyCreateParameters.KeySize = static_cast<int32_t>(octKeyOptions.KeySize.Value());
+  }
+  auto result = m_client->CreateKey(octKeyOptions.GetName(), keyCreateParameters, context);
+  KeyVaultKey keyResult(result.Value);
+  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
 }
 
 KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(

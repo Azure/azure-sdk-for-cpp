@@ -219,7 +219,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
   auto jsonParser = json::parse(dataStr);
   auto parsedJson = jsonParser.dump();
   options.ReleasePolicy.Value().EncodedPolicy
-      = Base64Url::Base64UrlEncode(std::vector<uint8_t>(parsedJson.begin(), parsedJson.end()));
+      = parsedJson;
   options.Exportable = true;
   {
     auto keyResponse = client.CreateKey(
@@ -258,8 +258,8 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
     EXPECT_FALSE(policy.Immutable);
 
     EXPECT_EQ(
-        json::parse(Base64Url::Base64UrlDecode(options.ReleasePolicy.Value().EncodedPolicy))
+        json::parse(options.ReleasePolicy.Value().EncodedPolicy)
             .dump(1, ' ', true),
-        json::parse(Base64Url::Base64UrlDecode(policy.EncodedPolicy)).dump(1, ' ', true));
+        json::parse(policy.EncodedPolicy).dump(1, ' ', true));
   }
 }

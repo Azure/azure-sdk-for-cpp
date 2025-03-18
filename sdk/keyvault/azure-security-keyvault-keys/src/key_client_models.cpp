@@ -14,50 +14,11 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
   {
     if (response.Key.Value().Crv.HasValue())
     {
-      if (response.Key.Value().Crv.Value() == Models::JsonWebKeyCurveName::PFiveHundredTwentyOne)
-      {
-        Key.CurveName = KeyCurveName::P256;
-      }
-      else if (
-          response.Key.Value().Crv.Value() == Models::JsonWebKeyCurveName::PThreeHundredEightyFour)
-      {
-        Key.CurveName = KeyCurveName::P384;
-      }
-      else if (response.Key.Value().Crv.Value() == Models::JsonWebKeyCurveName::PTwoHundredFiftySix)
-      {
-        Key.CurveName = KeyCurveName::P256;
-      }
-      else if (response.Key.Value().Crv.Value() == Models::JsonWebKeyCurveName::P256k)
-      {
-        Key.CurveName = KeyCurveName::P256K;
-      }
-      else
-      {
-        throw std::runtime_error("Unsupported curve name");
-      }
+      Key.CurveName = KeyCurveName(response.Key.Value().Crv.Value().ToString());
     }
     if (response.Key.Value().Kty.HasValue())
     {
-      if (response.Key.Value().Kty.Value() == Models::JsonWebKeyType::Rsa)
-      {
-        Key.KeyType = KeyVaultKeyType::Rsa;
-      }
-      else if (response.Key.Value().Kty.Value() == Models::JsonWebKeyType::RsaHsm)
-      {
-        Key.KeyType = KeyVaultKeyType::RsaHsm;
-      }
-      else if (response.Key.Value().Kty.Value() == Models::JsonWebKeyType::EC)
-      {
-        Key.KeyType = KeyVaultKeyType::Ec;
-      }
-      else if (response.Key.Value().Kty.Value() == Models::JsonWebKeyType::ECHsm)
-      {
-        Key.KeyType = KeyVaultKeyType::EcHsm;
-      }
-      else
-      {
-        throw std::runtime_error("Unsupported key type");
-      }
+      Key.KeyType = KeyVaultKeyType(response.Key.Value().Kty.Value().ToString());
     }
     if (response.Key.Value().D.HasValue())
     {
@@ -101,33 +62,12 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
     }
     if (response.Key.Value().KeyOps.HasValue())
     {
+      std::vector<KeyOperation> keyOperations;
       for (auto keyOp : response.Key.Value().KeyOps.Value())
       {
-        if (keyOp == Models::JsonWebKeyOperation::Encrypt.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::Encrypt});
-        }
-        else if (keyOp == Models::JsonWebKeyOperation::Decrypt.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::Decrypt});
-        }
-        else if (keyOp == Models::JsonWebKeyOperation::Sign.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::Sign});
-        }
-        else if (keyOp == Models::JsonWebKeyOperation::Verify.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::Verify});
-        }
-        else if (keyOp == Models::JsonWebKeyOperation::WrapKey.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::WrapKey});
-        }
-        else if (keyOp == Models::JsonWebKeyOperation::UnwrapKey.ToString())
-        {
-          Key.SetKeyOperations({KeyOperation::UnwrapKey});
-        }
+        keyOperations.emplace_back(KeyOperation(keyOp));
       }
+      Key.SetKeyOperations(keyOperations);
     }
     if (response.Key.Value().Kid.HasValue())
     {
