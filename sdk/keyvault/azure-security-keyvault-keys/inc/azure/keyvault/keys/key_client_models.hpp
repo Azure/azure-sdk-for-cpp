@@ -31,7 +31,10 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
+  class KeyClient;
+  namespace _detail { namespace Models {
+    struct KeyBundle;
+  }} // namespace _detail::Models
   /**
    * @brief Define a model for a purged key.
    *
@@ -675,6 +678,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return A vector with the supported operations for the key.
      */
     std::vector<KeyOperation> const& KeyOperations() const { return Key.KeyOperations(); }
+
+  private:
+    friend class KeyClient;
+    KeyVaultKey(_detail::Models::KeyBundle const& response);
   };
 
   /**
@@ -715,8 +722,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::DateTime ScheduledPurgeDate;
   };
-
-  class KeyClient;
 
   /**
    * @brief Define a single page to list the keys from the Key Vault.

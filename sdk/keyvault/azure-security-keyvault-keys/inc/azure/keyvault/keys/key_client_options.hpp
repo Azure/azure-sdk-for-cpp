@@ -59,7 +59,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Service Version used.
      *
      */
-    std::string ApiVersion{"7.5"};
+    std::string ApiVersion{"7.6-preview.2"};
   };
 
   /**

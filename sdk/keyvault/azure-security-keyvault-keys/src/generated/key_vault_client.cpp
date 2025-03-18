@@ -15,8 +15,15 @@
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/io/body_stream.hpp>
 
-using namespace Azure::Security::KeyVault::Keys::_detail;
+// codegen: insert after includes
+#include "azure/keyvault/shared/keyvault_challenge_based_auth.hpp"
+#include "azure/keyvault/shared/keyvault_shared.hpp"
 
+using Azure::Security::KeyVault::_internal::KeyVaultChallengeBasedAuthenticationPolicy;
+using Azure::Security::KeyVault::_internal::UrlScope;
+// codegen: end insert after includes
+using namespace Azure::Security::KeyVault::Keys::_detail;
+// codegen: replace KeyVaultClient::KeyVaultClient
 KeyVaultClient::KeyVaultClient(
     const std::string& url,
     const std::shared_ptr<const Core::Credentials::TokenCredential>& credential,
@@ -29,9 +36,8 @@ KeyVaultClient::KeyVaultClient(
   {
     Core::Credentials::TokenRequestContext tokenRequestContext;
     tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
-    perRetryPolicies.emplace_back(
-        std::make_unique<Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-            credential, tokenRequestContext));
+    perRetryPolicies.emplace_back(std::make_unique<KeyVaultChallengeBasedAuthenticationPolicy>(
+        credential, tokenRequestContext));
   }
 
   m_pipeline = std::make_shared<Core::Http::_internal::HttpPipeline>(
@@ -41,6 +47,7 @@ KeyVaultClient::KeyVaultClient(
       std::move(perRetryPolicies),
       std::move(perCallPolicies));
 }
+// codegen: end replace KeyVaultClient::KeyVaultClient
 
 std::string KeyVaultClient::GetUrl() const { return m_url.GetAbsoluteUrl(); }
 

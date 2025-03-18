@@ -28,7 +28,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 }}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
+  namespace _detail {
+    class KeyVaultClient;
+  };
   /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -48,6 +50,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string m_apiVersion;
     /** @brief the HTTP Pipeline used in this KeyClient. */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<_detail::KeyVaultClient> m_client;
 
   public:
     /**

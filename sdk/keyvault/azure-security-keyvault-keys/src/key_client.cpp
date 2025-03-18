@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "./generated/key_vault_client.hpp"
+
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
 using namespace Azure::Core::Http;
@@ -71,23 +73,12 @@ KeyClient::KeyClient(
     KeyClientOptions const& options)
     : m_vaultUrl(vaultUrl), m_apiVersion(options.ApiVersion)
 {
-  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
-  {
-    Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
-
-    perRetryPolicies.emplace_back(
-        std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
-            std::move(credential), std::move(tokenContext)));
-  }
-  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
-
-  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-      options,
-      KeyVaultServicePackageName,
-      PackageVersion::ToString(),
-      std::move(perRetryPolicies),
-      std::move(perCallPolicies));
+  _detail::KeyVaultClientOptions generatedClientOptions;
+  static_cast<Core::_internal::ClientOptions&>(generatedClientOptions)
+      = static_cast<const Core::_internal::ClientOptions&>(options);
+  generatedClientOptions.ApiVersion = options.ApiVersion;
+  m_client = std::make_shared<_detail::KeyVaultClient>(
+      _detail::KeyVaultClient(vaultUrl, credential, generatedClientOptions));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::GetKey(
@@ -95,13 +86,10 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
     GetKeyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, options.Version});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetKey(name, options.Version.empty() ? "/" : options.Version, context);
+  KeyVaultKey keyResult(result.Value);
+  keyResult.Properties.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
+  return Azure::Response<KeyVaultKey>(keyResult, std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::CreateKey(

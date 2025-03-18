@@ -100,6 +100,7 @@ set(
     src/json_web_key.cpp
     src/key_backup.cpp
     src/key_client.cpp
+    src/key_client_models.cpp
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_encryption_algorithm.cpp
