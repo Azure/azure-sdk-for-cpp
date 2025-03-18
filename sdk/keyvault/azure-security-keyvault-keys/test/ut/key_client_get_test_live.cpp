@@ -18,7 +18,7 @@ TEST_F(KeyVaultKeyClient, GetSingleKeyGen)
   auto const keyName = "testKey";
   auto const& client = GetClientForTest(keyName);
   auto keyResponse
-      = client.CreateKey(keyName, Azure::Security::KeyVault::Keys::KeyVaultKeyType::Ec);   
+      = client.GetDeletedKey(keyName);   
   //auto keyResponse = client.GetKey(keyName);
   CheckValidResponse(keyResponse);
   auto key = keyResponse.Value;

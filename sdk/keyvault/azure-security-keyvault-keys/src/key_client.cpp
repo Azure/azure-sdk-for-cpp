@@ -246,13 +246,9 @@ Azure::Response<DeletedKey> KeyClient::GetDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request = CreateRequest(HttpMethod::Get, {_detail::DeletedKeysPath, name});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, *rawResponse);
-  return Azure::Response<DeletedKey>(std::move(value), std::move(rawResponse));
+  auto response = m_client->GetDeletedKey(name, context);
+  DeletedKey value(response.Value);
+  return Azure::Response<DeletedKey>(std::move(value), std::move(response.RawResponse));
 }
 
 DeletedKeyPagedResponse KeyClient::GetDeletedKeys(

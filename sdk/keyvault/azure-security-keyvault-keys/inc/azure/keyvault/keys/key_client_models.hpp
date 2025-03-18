@@ -34,6 +34,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
   namespace _detail { namespace Models {
     struct KeyBundle;
+    struct DeletedKeyBundle;
   }} // namespace _detail::Models
   /**
    * @brief Define a model for a purged key.
@@ -490,7 +491,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::string EncodedPolicy;
   };
+  /**
+   * @brief The key attestation information.
+   *
+   */
+  struct KeyAttestation final
+  {
+    /// A base64url-encoded string containing certificates in PEM format, used for attestation
+    /// validation.
+    Nullable<std::vector<std::uint8_t>> CertificatePemFile;
 
+    /// The attestation blob bytes encoded as base64url string corresponding to a private key.
+    Nullable<std::vector<std::uint8_t>> PrivateKeyAttestation;
+
+    /// The attestation blob bytes encoded as base64url string corresponding to a public key in
+    /// case of asymmetric key.
+    Nullable<std::vector<std::uint8_t>> PublicKeyAttestation;
+
+    /// The version of the attestation.
+    Nullable<std::string> Version;
+  };
   /**
    * @brief The resource containing all the properties of the KeyVaultKey except JsonWebKey
    * properties.
@@ -599,6 +619,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Nullable<std::string> HsmPlatform;
 
+    /**
+     * @brief The key or key version attestation information.
+     *
+     */
+    Azure::Nullable<KeyAttestation> Attestation;
     /**
      * @brief Construct a new Key Properties object.
      *
@@ -721,6 +746,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::DateTime ScheduledPurgeDate;
+
+  private:
+    friend class KeyClient;
+    DeletedKey(_detail::Models::DeletedKeyBundle const& response);
   };
 
   /**
