@@ -17,7 +17,7 @@ stages:
         condition:  and(succeeded(), not(endsWith(variables['Build.Repository.Name'], '-pr')), ne(variables['Skip.AllRelease'], 'true'))
 
         jobs:
-          - deployment: TagRepository
+          - job: TagRepository
             displayName: "Create release tag"
             condition: ne(variables['Skip.TagRepository'], 'true')
             environment: github
@@ -27,37 +27,34 @@ stages:
               image: azsdk-pool-mms-win-2022-1espt
               os: windows
 
-            strategy:
-              runOnce:
-                deploy:
-                  steps:
-                    - checkout: self
-                    - template: /eng/common/pipelines/templates/steps/retain-run.yml
-                    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-                      parameters:
-                        PackageName: ${{ artifact.Name }}
-                        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-                        TestPipeline: ${{ parameters.TestPipeline }}
-                    - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
-                      displayName: Output Visible Artifacts
-                    - task: Powershell@2
-                      inputs:
-                        filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
-                        arguments: >
-                          -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
-                          -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
-                          -ForRelease $true
-                        pwsh: true
-                      displayName: Verify CHANGELOG.md contents
-                    - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                      parameters:
-                        ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                        PackageRepository: CPP
-                        ReleaseSha: $(Build.SourceVersion)
-                        RepoId: Azure/azure-sdk-for-cpp
+            steps:
+              - checkout: self
+              - template: /eng/common/pipelines/templates/steps/retain-run.yml
+              - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                parameters:
+                  PackageName: ${{ artifact.Name }}
+                  ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                  TestPipeline: ${{ parameters.TestPipeline }}
+              - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
+                displayName: Output Visible Artifacts
+              - task: Powershell@2
+                inputs:
+                  filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                  arguments: >
+                    -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+                    -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+                    -ForRelease $true
+                  pwsh: true
+                displayName: Verify CHANGELOG.md contents
+              - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                parameters:
+                  ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                  PackageRepository: CPP
+                  ReleaseSha: $(Build.SourceVersion)
+                  RepoId: Azure/azure-sdk-for-cpp
 
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
-            - deployment: PublishDocs
+            - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               environment: githubio
@@ -69,23 +66,20 @@ stages:
                 image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
-                      - pwsh: Write-Host 'publish docs'
-                      - pwsh: |
-                          Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
-                        displayName: Output Visible Artifacts
-                      - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
-                        parameters:
-                          FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
-                          TargetLanguage: 'cpp'
-                          ArtifactLocation: '$(Pipeline.Workspace)/packages/${{artifact.Name}}'
+              steps:
+                - checkout: self
+                - pwsh: Write-Host 'publish docs'
+                - pwsh: |
+                    Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
+                  displayName: Output Visible Artifacts
+                - template: ../../../common/pipelines/templates/steps/publish-blobs.yml
+                  parameters:
+                    FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
+                    TargetLanguage: 'cpp'
+                    ArtifactLocation: '$(Pipeline.Workspace)/packages/${{artifact.Name}}'
 
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
-            - deployment: PublishVcpkg
+            - job: PublishVcpkg
               displayName: Publish to vcpkg
               condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
               environment: github
@@ -100,134 +94,137 @@ stages:
                 VcpkgPrRepoOwner: Microsoft
                 VcpkgPrRepoName: vcpkg
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
+              templateContext:
+                type: releaseJob
+                isProduction: true
+                inputs:
+                  - input: pipelineArtifact
+                    artifactName: packages
+                    targetPath: $(Pipeline.Workspace)/packages
 
-                      - pwsh: |
-                          $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
-                          if ('$(VcpkgForkBranchName)') {
-                            Write-Host "Using queue time branch name"
-                            $branchName = '$(VcpkgForkBranchName)'
-                          }
-                          Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
-                        displayName: Set fork branch name
+              steps:
+                - pwsh: |
+                    $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
+                    if ('$(VcpkgForkBranchName)') {
+                      Write-Host "Using queue time branch name"
+                      $branchName = '$(VcpkgForkBranchName)'
+                    }
+                    Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
+                  displayName: Set fork branch name
 
-                      - pwsh: |
-                          $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
-                          $version = $packageSpec.version
-                          Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
-                        displayName: Set PackageVersion variable
+                - pwsh: |
+                    $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                    $version = $packageSpec.version
+                    Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
+                  displayName: Set PackageVersion variable
 
-                      - pwsh: |
-                          $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
+                - pwsh: |
+                    $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
 
-                          if ('$(VcpkgPRTitle)') {
-                            Write-Host "Using queue time PR title"
-                            $title = '$(VcpkgPRTitle)'
-                          }
-                          Write-Host "##vso[task.setvariable variable=PrTitle]$title"
-                        displayName: Set PR title
+                    if ('$(VcpkgPRTitle)') {
+                      Write-Host "Using queue time PR title"
+                      $title = '$(VcpkgPRTitle)'
+                    }
+                    Write-Host "##vso[task.setvariable variable=PrTitle]$title"
+                  displayName: Set PR title
 
-                      # There are potential race conditions if this script runs
-                      # in parallel against the same branch name. Release only
-                      # one package at a time.
-                      # Clone main vcpkg repo
-                      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
-                        parameters:
-                          RepoOwner: azure-sdk
-                          PRBranchName: $(PrBranchName)
+                # There are potential race conditions if this script runs
+                # in parallel against the same branch name. Release only
+                # one package at a time.
+                # Clone main vcpkg repo
+                - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                  parameters:
+                    RepoOwner: azure-sdk
+                    PRBranchName: $(PrBranchName)
 
-                      # Clone Vcpkg Betas
-                      - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
-                        parameters:
-                          RepoOwner: Azure
-                          RepoName: azure-sdk-vcpkg-betas
-                          SetVcpkgRoot: false
+                # Clone Vcpkg Betas
+                - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                  parameters:
+                    RepoOwner: Azure
+                    RepoName: azure-sdk-vcpkg-betas
+                    SetVcpkgRoot: false
 
-                      - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
-                        parameters:
-                          ArtifactName: ${{ artifact.Name }}
-                          VcpkgPortName: ${{ artifact.VcpkgPortName }}
+                - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
+                  parameters:
+                    ArtifactName: ${{ artifact.Name }}
+                    VcpkgPortName: ${{ artifact.VcpkgPortName }}
 
 
-                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+                - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                  parameters:
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
 
-                      # Push changes to vcpkg betas
-                      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
-                          TargetRepoName: azure-sdk-vcpkg-betas
-                          BaseRepoOwner: Azure
-                          CommitMsg: Update vcpkg-configuration.json
-                          BaseRepoBranch: $(DefaultBranch)
+                # Push changes to vcpkg betas
+                - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+                  parameters:
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-betas
+                    TargetRepoName: azure-sdk-vcpkg-betas
+                    BaseRepoOwner: Azure
+                    CommitMsg: Update vcpkg-configuration.json
+                    BaseRepoBranch: $(DefaultBranch)
 
-                      # Set $(HasChanges) to $(PublishToVcpkg) so that
-                      # create-pull-request.yml creates or does not create a PR
-                      # based on the deicision of the step that determines
-                      # whether to publish to vcpkg.
-                      - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
-                        displayName: Set $(HasChanges) to $(PublishToVcpkg) for create-pull-request.yml
+                # Set $(HasChanges) to $(PublishToVcpkg) so that
+                # create-pull-request.yml creates or does not create a PR
+                # based on the deicision of the step that determines
+                # whether to publish to vcpkg.
+                - pwsh: Write-Host "##vso[task.setvariable variable=HasChanges]$(PublishToVcpkg)"
+                  displayName: Set $(HasChanges) to $(PublishToVcpkg) for create-pull-request.yml
 
-                      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-                        parameters:
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                  parameters:
+                    WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
-                      # SkipCheckingForChanges is true to skip the commit step
-                      # (which is already done by Update-VcpkgPort.ps1)
-                      - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoOwner: $(VcpkgPrRepoOwner)
-                          RepoName: $(VcpkgPrRepoName)
-                          WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                          PrBranchName: $(PrBranchName)
-                          PRTitle: $(PrTitle)
-                          PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
-                          SkipCheckingForChanges: true
-                          BaseBranchName: $(DefaultBranch)
-                          OpenAsDraft: ${{ parameters.TestPipeline }}
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                # SkipCheckingForChanges is true to skip the commit step
+                # (which is already done by Update-VcpkgPort.ps1)
+                - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                  parameters:
+                    RepoOwner: $(VcpkgPrRepoOwner)
+                    RepoName: $(VcpkgPrRepoName)
+                    WorkingDirectory: $(Pipeline.Workspace)/vcpkg
+                    PrBranchName: $(PrBranchName)
+                    PRTitle: $(PrTitle)
+                    PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
+                    SkipCheckingForChanges: true
+                    BaseBranchName: $(DefaultBranch)
+                    OpenAsDraft: ${{ parameters.TestPipeline }}
+                    CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
-                      - task: AzureCLI@2
-                        displayName: Authenticate to OpenSource API
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
-                        inputs:
-                          azureSubscription: opensource-api-connection
-                          scriptType: pscore
-                          scriptLocation: inlineScript
-                          inlineScript: |
-                            $jwt_accessToken = az account get-access-token --resource "api://2789159d-8d8b-4d13-b90b-ca29c1707afd" --query "accessToken" --output tsv
-                            Write-Host "##vso[task.setvariable variable=opensource-api-token;isSecret=true]$jwt_accessToken"
+                - task: AzureCLI@2
+                  displayName: Authenticate to OpenSource API
+                  condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
+                  inputs:
+                    azureSubscription: opensource-api-connection
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      $jwt_accessToken = az account get-access-token --resource "api://2789159d-8d8b-4d13-b90b-ca29c1707afd" --query "accessToken" --output tsv
+                      Write-Host "##vso[task.setvariable variable=opensource-api-token;isSecret=true]$jwt_accessToken"
 
-                      # Workaround: -Fallback uses names from CODEOWNERS who
-                      # should be notified about the release in the event of a
-                      # failure to resolve the appropriate aliases.
-                      - pwsh: |
-                          $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
-                            -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
-                            -OpenApiToken "$(opensource-api-token)" `
-                            -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
+                # Workaround: -Fallback uses names from CODEOWNERS who
+                # should be notified about the release in the event of a
+                # failure to resolve the appropriate aliases.
+                - pwsh: |
+                    $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
+                      -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
+                      -OpenApiToken "$(opensource-api-token)" `
+                      -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
 
-                          $prComment = "Adding ${{ artifact.Name }} to release"
-                          if ($notifyUsers) {
-                            $prComment += "`n`ncc: $notifyUsers"
-                          }
+                    $prComment = "Adding ${{ artifact.Name }} to release"
+                    if ($notifyUsers) {
+                      $prComment += "`n`ncc: $notifyUsers"
+                    }
 
-                          ./eng/common/scripts/Add-IssueComment.ps1 `
-                            -AuthToken "$(azuresdk-github-pat)" `
-                            -RepoOwner $(VcpkgPrRepoOwner) `
-                            -RepoName $(VcpkgPrRepoName) `
-                            -IssueNumber "$(Submitted.PullRequest.Number)" `
-                            -Comment $prComment
-                        condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
-                        displayName: Comment notification to PR
+                    ./eng/common/scripts/Add-IssueComment.ps1 `
+                      -AuthToken "$(azuresdk-github-pat)" `
+                      -RepoOwner $(VcpkgPrRepoOwner) `
+                      -RepoName $(VcpkgPrRepoName) `
+                      -IssueNumber "$(Submitted.PullRequest.Number)" `
+                      -Comment $prComment
+                  condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
+                  displayName: Comment notification to PR
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
-            - deployment: UpdatePackageVersion
+            - job: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
               environment: github
@@ -237,21 +234,18 @@ stages:
                 image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
-              strategy:
-                runOnce:
-                  deploy:
-                    steps:
-                      - checkout: self
-                      - pwsh: |
-                          eng/scripts/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
-                        displayName: Increment package version
-                      - template: ../../../common/pipelines/templates/steps/create-pull-request.yml
-                        parameters:
-                          RepoName: azure-sdk-for-cpp
-                          PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-                          CommitMsg: "Increment package version after release of ${{ artifact.name }}"
-                          PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
-                          CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+              steps:
+                - checkout: self
+                - pwsh: |
+                    eng/scripts/Update-PkgVersion.ps1 -ServiceDirectory '${{parameters.ServiceDirectory}}' -PackageName '${{artifact.name}}'
+                  displayName: Increment package version
+                - template: ../../../common/pipelines/templates/steps/create-pull-request.yml
+                  parameters:
+                    RepoName: azure-sdk-for-cpp
+                    PRBranchName: increment-package-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
+                    CommitMsg: "Increment package version after release of ${{ artifact.name }}"
+                    PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
+                    CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
 
   - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
