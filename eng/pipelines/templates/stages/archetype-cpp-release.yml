@@ -38,7 +38,6 @@ stages:
           - job: TagRepository
             displayName: "Create release tag"
             condition: ne(variables['Skip.TagRepository'], 'true')
-            environment: github
             dependsOn: ReleaseGate
 
             pool:
@@ -76,7 +75,6 @@ stages:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
-              environment: githubio
               # Release tag must exist for link substitution to work
               dependsOn: TagRepository
 
@@ -101,7 +99,6 @@ stages:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
               condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
-              environment: github
               # This step requires the tag step
               dependsOn: TagRepository
               pool:
@@ -246,7 +243,6 @@ stages:
             - job: UpdatePackageVersion
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
-              environment: github
               dependsOn: ReleaseGate
 
               pool:
