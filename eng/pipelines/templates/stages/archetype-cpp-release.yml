@@ -17,10 +17,29 @@ stages:
         condition:  and(succeeded(), not(endsWith(variables['Build.Repository.Name'], '-pr')), ne(variables['Skip.AllRelease'], 'true'))
 
         jobs:
+          - deployment: ReleaseGate
+            displayName: "Release Gate"
+            condition: and(succeeded(), ne(variables['Skip.ReleaseGate'], 'true'))
+            environment: github
+
+            variables:
+              - template: /eng/pipelines/templates/variables/image.yml
+            pool:
+              name: $(LINUXPOOL)
+              image: $(LINUXVMIMAGE)
+              os: linux
+
+            strategy:
+              runOnce:
+                deploy:
+                  steps:
+                    - pwsh: Write-Host 'Release gate succeeded. Dependent jobs will run.'
+
           - job: TagRepository
             displayName: "Create release tag"
             condition: ne(variables['Skip.TagRepository'], 'true')
             environment: github
+            dependsOn: ReleaseGate
 
             pool:
               name: azsdk-pool-mms-win-2022-general
@@ -228,6 +247,7 @@ stages:
               displayName: "Update Package Version"
               condition: and(succeeded(), ne(variables['Skip.UpdatePackageVersion'], 'true'))
               environment: github
+              dependsOn: ReleaseGate
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
