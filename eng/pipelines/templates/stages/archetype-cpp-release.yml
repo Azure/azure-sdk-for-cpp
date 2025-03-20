@@ -38,7 +38,8 @@ stages:
           - job: TagRepository
             displayName: "Create release tag"
             condition: ne(variables['Skip.TagRepository'], 'true')
-            dependsOn: ReleaseGate
+            dependsOn:
+              - ReleaseGate
 
             pool:
               name: azsdk-pool-mms-win-2022-general
@@ -76,7 +77,9 @@ stages:
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
               # Release tag must exist for link substitution to work
-              dependsOn: TagRepository
+              dependsOn:
+                - TagRepository
+                - ReleaseGate
 
               pool:
                 name: azsdk-pool-mms-win-2022-general
@@ -100,7 +103,9 @@ stages:
               displayName: Publish to vcpkg
               condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
               # This step requires the tag step
-              dependsOn: TagRepository
+              dependsOn:
+                - TagRepository
+                - ReleaseGate
               pool:
                 name: azsdk-pool-mms-win-2022-general
                 image: azsdk-pool-mms-win-2022-1espt
