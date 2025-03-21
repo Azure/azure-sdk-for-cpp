@@ -25,8 +25,8 @@ stages:
             environment: github
 
             pool:
-              name: $(LINUXPOOL)
-              image: $(LINUXVMIMAGE)
+              name: $(LINUXNEXTPOOL)
+              image: $(LINUXNEXTVMIMAGE)
               os: linux
 
             templateContext:
