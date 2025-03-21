@@ -4,6 +4,10 @@
 
 * Validate template project ahead of release
 
+## Other Changes
+
+* Testing Engineering System changes
+
 ## 1.0.0-beta.25 (2021-01-12)
 
 * Validate vcpkg publishing automation (part 20)
