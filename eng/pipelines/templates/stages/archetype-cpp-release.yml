@@ -19,7 +19,7 @@ stages:
         jobs:
           - deployment: ReleaseGate
             displayName: "Release Gate"
-            environment: github
+            environment: package-publish
 
             pool:
               name: azsdk-pool-mms-win-2022-general
