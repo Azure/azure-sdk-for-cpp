@@ -16,17 +16,14 @@ stages:
         dependsOn: ${{ parameters.DependsOn }}
         condition:  and(succeeded(), not(endsWith(variables['Build.Repository.Name'], '-pr')), ne(variables['Skip.AllRelease'], 'true'))
 
-        variables:
-          - template: /eng/pipelines/templates/variables/image.yml
-
         jobs:
           - deployment: ReleaseGate
             displayName: "Release Gate"
             environment: github
 
             pool:
-              name: $(LINUXNEXTPOOL)
-              image: $(LINUXNEXTVMIMAGE)
+              name: azsdk-pool-mms-ubuntu-2004-general
+              image: azsdk-pool-mms-ubuntu-2004-1espt
               os: linux
 
             templateContext:
