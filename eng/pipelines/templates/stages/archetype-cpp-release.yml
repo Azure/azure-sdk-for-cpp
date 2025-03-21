@@ -132,14 +132,13 @@ stages:
                 VcpkgPrRepoName: vcpkg
 
               templateContext:
-                type: releaseJob
-                isProduction: true
                 inputs:
                   - input: pipelineArtifact
                     artifactName: packages
                     targetPath: $(Pipeline.Workspace)/packages
 
               steps:
+                - checkout: self
                 - pwsh: |
                     $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
                     if ('$(VcpkgForkBranchName)') {
