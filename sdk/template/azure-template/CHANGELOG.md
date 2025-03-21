@@ -8,6 +8,16 @@
 
 * Testing Engineering System changes
 
+## 1.0.0-beta.27 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0-beta.25 (2021-01-12)
 
 * Validate vcpkg publishing automation (part 20)
