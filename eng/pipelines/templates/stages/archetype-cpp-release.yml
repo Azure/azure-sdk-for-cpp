@@ -52,8 +52,6 @@ stages:
               os: windows
 
             templateContext:
-              type: releaseJob
-              isProduction: true
               inputs:
                 - input: pipelineArtifact
                   artifactName: packages
@@ -98,10 +96,6 @@ stages:
                 name: azsdk-pool-mms-win-2022-general
                 image: azsdk-pool-mms-win-2022-1espt
                 os: windows
-
-              templateContext:
-                type: releaseJob
-                isProduction: true
 
               steps:
                 - checkout: self
