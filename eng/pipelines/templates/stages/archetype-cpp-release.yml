@@ -16,6 +16,9 @@ stages:
         dependsOn: ${{ parameters.DependsOn }}
         condition:  and(succeeded(), not(endsWith(variables['Build.Repository.Name'], '-pr')), ne(variables['Skip.AllRelease'], 'true'))
 
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml
+
         jobs:
           - deployment: ReleaseGate
             displayName: "Release Gate"
@@ -43,8 +46,8 @@ stages:
               - ReleaseGate
 
             pool:
-              name: azsdk-pool-mms-win-2022-general
-              image: azsdk-pool-mms-win-2022-1espt
+              name: $(WINDOWSPOOL)
+              image: $(WINDOWSVMIMAGE)
               os: windows
 
             templateContext:
@@ -89,8 +92,8 @@ stages:
                 - ReleaseGate
 
               pool:
-                name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
                 os: windows
 
               templateContext:
@@ -104,7 +107,6 @@ stages:
 
               steps:
                 - checkout: self
-                - pwsh: Write-Host 'publish docs'
                 - pwsh: |
                     Get-ChildItem -Recurse $(Pipeline.Workspace)/docs/${{ artifact.Name }}
                   displayName: Output Visible Artifacts
@@ -123,8 +125,8 @@ stages:
                 - TagRepository
                 - ReleaseGate
               pool:
-                name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
                 os: windows
 
               variables:
@@ -266,8 +268,8 @@ stages:
               dependsOn: ReleaseGate
 
               pool:
-                name: azsdk-pool-mms-win-2022-general
-                image: azsdk-pool-mms-win-2022-1espt
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
                 os: windows
 
               steps:
