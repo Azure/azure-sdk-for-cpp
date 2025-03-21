@@ -22,7 +22,6 @@ stages:
         jobs:
           - deployment: ReleaseGate
             displayName: "Release Gate"
-            condition: and(succeeded(), ne(variables['Skip.ReleaseGate'], 'true'))
             environment: github
 
             pool:
