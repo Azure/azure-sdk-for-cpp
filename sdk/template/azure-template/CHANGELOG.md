@@ -4,9 +4,9 @@
 
 * Validate template project ahead of release
 
-## 1.0.0-beta.26 (2025-03-21)
+### Other Changes
 
-* Validate Engineering System changes
+* Testing Engineering System changes
 
 ## 1.0.0-beta.25 (2021-01-12)
 
