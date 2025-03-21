@@ -584,6 +584,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     Azure::Core::Context context{Azure::DateTime::clock::now() + std::chrono::milliseconds(50)};
     EXPECT_ANY_THROW(processor.NextPartitionClient(context));
 
+    {
+      auto partitionClientIterator = partitionClients.begin();
+      auto partitionClient = partitionClientIterator->second;
+      GTEST_LOG_(INFO) << "Erase client for partition " << partitionClientIterator->first;
+      partitionClients.erase(partitionClientIterator);
+      partitionClient->Close();
+
+      GTEST_LOG_(INFO) << "Get next partition client after releasing one.";
+      auto partitionClientNew = processor.NextPartitionClient();
+
+      GTEST_LOG_(INFO) << "Found client for partition " << partitionClientNew->PartitionId();
+    }
+
     while (!partitionClients.empty())
     {
       auto partitionClientIterator = partitionClients.begin();

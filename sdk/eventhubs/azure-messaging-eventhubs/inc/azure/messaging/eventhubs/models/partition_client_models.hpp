@@ -21,7 +21,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
      *@remark NOTE: offsets are not stable values, and might refer to different events over time
      * as the Event Hub events reach their age limit and are discarded.
      */
-    Azure::Nullable<int64_t> Offset;
+    Azure::Nullable<std::string> Offset;
 
     /**@brief SequenceNumber will start the consumer after the specified sequence number. Can be
      * exclusive or inclusive, based on the Inclusive property.

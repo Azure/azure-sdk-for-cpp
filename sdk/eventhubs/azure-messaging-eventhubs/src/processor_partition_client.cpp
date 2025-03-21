@@ -31,7 +31,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     Azure::Nullable<int64_t> sequenceNumber;
 
-    Azure::Nullable<int64_t> offsetNumber;
+    Azure::Nullable<std::string> offset;
 
     for (auto const& pair : amqpMessage.MessageAnnotations)
     {
@@ -43,13 +43,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
           sequenceNumber = static_cast<int64_t>(pair.second);
       }
-      if (pair.first == _detail::OffsetNumberAnnotation)
+      if (pair.first == _detail::OffsetAnnotation)
       {
-        if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Int
-            || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Uint
-            || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Long
-            || pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::Ulong)
-          offsetNumber = static_cast<int64_t>(pair.second);
+        if (pair.second.GetType() == Azure::Core::Amqp::Models::AmqpValueType::String)
+          offset = static_cast<std::string>(pair.second);
       }
     }
 
@@ -58,8 +55,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
            m_consumerClientDetails.EventHubName,
            m_consumerClientDetails.FullyQualifiedNamespace,
            m_partitionId,
-           sequenceNumber,
-           offsetNumber};
+           offset,
+           sequenceNumber};
 
     m_checkpointStore->UpdateCheckpoint(checkpoint, context);
   }
@@ -77,7 +74,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       sequenceNumber = eventData->SequenceNumber.Value();
     }
-    uint64_t offset{};
+    std::string offset{};
     if (!eventData->Offset.HasValue())
     {
       offset = eventData->Offset.Value();
