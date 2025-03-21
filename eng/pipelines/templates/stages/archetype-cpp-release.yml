@@ -93,6 +93,15 @@ stages:
                 image: azsdk-pool-mms-win-2022-1espt
                 os: windows
 
+              templateContext:
+                inputs:
+                  - input: pipelineArtifact
+                    artifactName: docs
+                    targetPath: $(Pipeline.Workspace)/docs
+                  - input: pipelineArtifact
+                    artifactName: packages
+                    targetPath: $(Pipeline.Workspace)/packages
+
               steps:
                 - checkout: self
                 - pwsh: Write-Host 'publish docs'
