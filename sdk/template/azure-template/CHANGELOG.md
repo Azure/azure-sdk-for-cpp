@@ -4,7 +4,7 @@
 
 * Validate template project ahead of release
 
-## Other Changes
+### Other Changes
 
 * Testing Engineering System changes
 
