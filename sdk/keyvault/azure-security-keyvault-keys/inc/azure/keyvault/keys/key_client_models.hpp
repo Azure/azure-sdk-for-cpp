@@ -36,6 +36,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     struct KeyBundle;
     struct DeletedKeyBundle;
     struct KeyUpdateParameters;
+    struct KeyRotationPolicy;
   }} // namespace _detail::Models
   /**
    * @brief Define a model for a purged key.
@@ -1149,6 +1150,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief The key rotation policy attributes.
      */
     KeyRotationPolicyAttributes Attributes;
+
+    /**
+     * @brief Default constructor.
+     */
+    KeyRotationPolicy() = default;
+  private:
+    friend class KeyClient;
+    KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp);
+    _detail::Models::KeyRotationPolicy ToKeyRotationPolicy() const;
   };
 
   /**

@@ -336,14 +336,9 @@ Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request
-      = CreateRequest(HttpMethod::Get, {_detail::KeysPath, name, _detail::RotationPolicyPath});
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(*rawResponse);
-  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetKeyRotationPolicy(name, context);
+  KeyRotationPolicy value(result.Value);
+  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyRotationPolicy> KeyClient::UpdateKeyRotationPolicy(
@@ -351,20 +346,10 @@ Azure::Response<KeyRotationPolicy> KeyClient::UpdateKeyRotationPolicy(
     KeyRotationPolicy const& rotationPolicy,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  auto payload = _detail::KeyRotationPolicySerializer::KeyRotationPolicySerialize(rotationPolicy);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request = CreateRequest(
-      HttpMethod::Put, {_detail::KeysPath, name, _detail::RotationPolicyPath}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyRotationPolicySerializer::KeyRotationPolicyDeserialize(*rawResponse);
-  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(rawResponse));
+  _detail::Models::KeyRotationPolicy keyRotationPolicy = rotationPolicy.ToKeyRotationPolicy();
+  auto result = m_client->UpdateKeyRotationPolicy(name, keyRotationPolicy, context);
+  KeyRotationPolicy value(result.Value);
+  return Azure::Response<KeyRotationPolicy>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<GetRandomBytesResult> KeyClient::GetRandomBytes(

@@ -369,3 +369,82 @@ _detail::Models::KeyUpdateParameters KeyProperties::ToKeyUpdateParameters(
   kUP.KeyAttributes.Value().Updated = UpdatedOn;
   return kUP;
 }
+
+KeyRotationPolicy::KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp) {
+  if (krp.Id.HasValue())
+  {
+    Id = krp.Id.Value();
+  }
+
+  if (krp.LifetimeActions.HasValue())
+  {
+    for (auto const& action : krp.LifetimeActions.Value())
+    {
+      LifetimeActionsType la;
+      if (action.Action.Value().Type.Value() == _detail::Models::KeyRotationPolicyAction::Rotate)
+      {
+        la.Action = LifetimeActionType::Rotate;
+      }
+      else if (
+          action.Action.Value().Type.Value() == _detail::Models::KeyRotationPolicyAction::Notify)
+      {
+        la.Action = LifetimeActionType::Notify;
+      }
+      if (action.Trigger.HasValue())
+      {
+        la.Trigger.TimeAfterCreate = action.Trigger.Value().TimeAfterCreate;
+        la.Trigger.TimeBeforeExpiry = action.Trigger.Value().TimeBeforeExpiry;
+      }
+      LifetimeActions.emplace_back(la);
+    }
+  }
+  if (krp.Attributes.HasValue())
+  {
+    Attributes.ExpiryTime = krp.Attributes.Value().ExpiryTime;
+    Attributes.Created = krp.Attributes.Value().Created;
+    Attributes.Updated = krp.Attributes.Value().Updated;
+  }
+}
+
+_detail::Models::KeyRotationPolicy KeyRotationPolicy::ToKeyRotationPolicy() const
+{
+  _detail::Models::KeyRotationPolicy krp;
+  if (Id.size() > 0)
+  {
+    krp.Id = Id;
+  }
+  if (LifetimeActions.size() > 0)
+  {
+    krp.LifetimeActions = std::vector<_detail::Models::LifetimeActions>();
+    for (auto const& action : LifetimeActions)
+    {
+      _detail::Models::LifetimeActions la;
+      _detail::Models::LifetimeActionsType laType;
+      if (action.Action == LifetimeActionType::Rotate)
+      {
+        laType.Type = _detail::Models::KeyRotationPolicyAction::Rotate;
+      }
+      else if (action.Action == LifetimeActionType::Notify)
+      {
+        laType.Type = _detail::Models::KeyRotationPolicyAction::Notify;
+      }
+      la.Action = laType;
+      la.Trigger = _detail::Models::LifetimeActionsTrigger();
+      if (action.Trigger.TimeAfterCreate.HasValue())
+      {
+        la.Trigger.Value().TimeAfterCreate = action.Trigger.TimeAfterCreate.Value();
+      }
+      if (action.Trigger.TimeBeforeExpiry.HasValue())
+      {
+        la.Trigger.Value().TimeBeforeExpiry = action.Trigger.TimeBeforeExpiry.Value();
+      }
+      krp.LifetimeActions.Value().emplace_back(la);
+    }
+  }
+
+  krp.Attributes = _detail::Models::KeyRotationPolicyAttributes();
+  krp.Attributes.Value().Created = Attributes.Created;
+  krp.Attributes.Value().Updated = Attributes.Updated;
+  krp.Attributes.Value().ExpiryTime = Attributes.ExpiryTime;
+  return krp;
+}
