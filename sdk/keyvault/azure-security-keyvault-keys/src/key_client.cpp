@@ -324,21 +324,10 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
     ImportKeyOptions const& importKeyOptions,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  auto payload = _detail::ImportKeyOptionsSerializer::ImportKeyOptionsSerialize(importKeyOptions);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request = CreateRequest(
-      HttpMethod::Put, {_detail::KeysPath, importKeyOptions.Name()}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(
-      importKeyOptions.Name(), *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  _detail::Models::KeyImportParameters keyImportParameters = importKeyOptions.ToKeyImportParameters();
+  auto result = m_client->ImportKey(importKeyOptions.Name(),keyImportParameters, context);
+  KeyVaultKey value(result.Value);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::RotateKey(

@@ -41,3 +41,37 @@ _detail::Models::KeyCreateParameters CreateKeyOptions::ToKeyCreateParameters() c
   keyCreateParameters.KeyAttributes = attributes;
   return keyCreateParameters;
 }
+
+_detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() const {
+  _detail::Models::KeyImportParameters kIP;
+  kIP.Hsm = HardwareProtected;
+  kIP.Key = _detail::Models::JsonWebKey();
+  if (Key.CurveName.HasValue())
+  {
+    kIP.Key.Crv = _detail::Models::JsonWebKeyCurveName(Key.CurveName.Value().ToString());
+  }
+  kIP.Key.D = Key.D;
+  kIP.Key.Dp = Key.DP;
+  kIP.Key.Dq = Key.DQ;
+  kIP.Key.E = Key.E;
+  kIP.Key.K = Key.K;
+  auto operations = Key.KeyOperations();
+  if (operations.size() > 0)
+  {
+    kIP.Key.KeyOps = std::vector<std::string>();
+    for (auto op : Key.KeyOperations())
+    {
+      kIP.Key.KeyOps.Value().push_back(op.ToString());
+    }
+  }
+  kIP.Key.Kid = Key.Id;
+  kIP.Key.Kty = _detail::Models::JsonWebKeyType(Key.KeyType.ToString());
+  kIP.Key.N = Key.N;
+  kIP.Key.P = Key.P;
+  kIP.Key.Q = Key.Q;
+  kIP.Key.Qi = Key.QI;
+  kIP.Key.T = Key.T;
+  kIP.Key.X = Key.X;
+  kIP.Key.Y = Key.Y;
+  return kIP;
+}

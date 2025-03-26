@@ -18,6 +18,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
   namespace _detail { namespace Models {
     struct KeyCreateParameters;
+    struct KeyImportParameters;
   }} // namespace _detail::Models
   /**
    * @brief The options for calling an operation
@@ -381,6 +382,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The name of the key.
      */
     std::string const& Name() const { return Properties.Name; }
+
+    private:
+    friend class KeyClient;
+    _detail::Models::KeyImportParameters ToKeyImportParameters() const;
   };
 
   /**
