@@ -103,7 +103,7 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
       Properties.RecoveryLevel = response.Attributes.Value().RecoveryLevel.Value().ToString();
     }
     Properties.UpdatedOn = response.Attributes.Value().Updated;
-    Properties.HsmPlatform = response.Attributes.Value().HsmPlatform.Value();
+    Properties.HsmPlatform = response.Attributes.Value().HsmPlatform;
     if (response.Attributes.Value().Attestation.HasValue())
     {
       Azure::Security::KeyVault::Keys::KeyAttestation attestation;

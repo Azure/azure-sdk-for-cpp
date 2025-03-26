@@ -228,13 +228,9 @@ Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartReco
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request = CreateRequest(HttpMethod::Post, {_detail::DeletedKeysPath, name, "recover"});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
-  auto responseT = Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  auto result = m_client->RecoverDeletedKey(name, context);
+  KeyVaultKey value(result.Value);
+  auto responseT = Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
   return Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation(
       std::make_shared<KeyClient>(*this), std::move(responseT));
 }
