@@ -211,7 +211,7 @@ Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
   Azure::Core::IO::MemoryBodyStream payloadStream(
       reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
 
-  // Request and settings
+  // Request and settings  
   auto request = CreateRequest(
       HttpMethod::Post,
       {_detail::KeysPath, name, options.Version.ValueOr(""), _detail::ReleaseValue},
@@ -273,22 +273,15 @@ Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
     Azure::Nullable<std::vector<KeyOperation>> const& keyOperations,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  _detail::KeyRequestParameters const params(properties, keyOperations);
-  auto payload = params.Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+  auto result = m_client->UpdateKey(
+      properties.Name,
+      properties.Version,
+      properties.ToKeyUpdateParameters(keyOperations),
+      context);
 
-  // Request and settings
-  auto request = CreateRequest(
-      HttpMethod::Patch, {_detail::KeysPath, properties.Name, properties.Version}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value
-      = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(properties.Name, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  KeyVaultKey value(result.Value);
+      
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<BackupKeyResult> KeyClient::BackupKey(
@@ -378,19 +371,11 @@ Azure::Response<GetRandomBytesResult> KeyClient::GetRandomBytes(
     GetRandomBytesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto payload = _detail::GetRandomBytesSerializer::GetRandomBytesOptionsSerialize(options);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request = CreateRequest(HttpMethod::Post, {"rng"}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto response = GetRandomBytesResult{
-      _detail::GetRandomBytesSerializer::GetRandomBytesResponseDeserialize(*rawResponse)};
-  return Azure::Response<GetRandomBytesResult>(std::move(response), std::move(rawResponse));
+  _detail::Models::GetRandomBytesRequest getRandomBytesRequest;
+  getRandomBytesRequest.Count = options.Count;
+  auto result = m_client->GetRandomBytes(getRandomBytesRequest, context);
+  auto value = GetRandomBytesResult{result.Value.Value};
+  return Azure::Response<GetRandomBytesResult>(std::move(value), std::move(result.RawResponse));
 }
 
 Cryptography::CryptographyClient KeyClient::GetCryptographyClient(

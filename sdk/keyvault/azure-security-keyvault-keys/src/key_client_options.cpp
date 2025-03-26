@@ -42,7 +42,8 @@ _detail::Models::KeyCreateParameters CreateKeyOptions::ToKeyCreateParameters() c
   return keyCreateParameters;
 }
 
-_detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() const {
+_detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() const
+{
   _detail::Models::KeyImportParameters kIP;
   kIP.Hsm = HardwareProtected;
   kIP.Key = _detail::Models::JsonWebKey();
@@ -73,5 +74,28 @@ _detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() c
   kIP.Key.T = Key.T;
   kIP.Key.X = Key.X;
   kIP.Key.Y = Key.Y;
+  auto attributes = _detail::Models::KeyAttributes();
+
+  if (Properties.Attestation.HasValue())
+  {
+    attributes.Attestation.Value().CertificatePemFile
+        = Properties.Attestation.Value().CertificatePemFile;
+    attributes.Attestation.Value().PrivateKeyAttestation
+        = Properties.Attestation.Value().PrivateKeyAttestation;
+    attributes.Attestation.Value().PublicKeyAttestation
+        = Properties.Attestation.Value().PublicKeyAttestation;
+    attributes.Attestation.Value().Version = Properties.Attestation.Value().Version;
+  };
+  attributes.Expires = Properties.ExpiresOn;
+  attributes.Enabled = Properties.Enabled;
+  attributes.Created = Properties.CreatedOn;
+  attributes.Exportable = Properties.Exportable;
+  attributes.HsmPlatform = Properties.HsmPlatform;
+  attributes.NotBefore = Properties.NotBefore;
+  attributes.RecoverableDays = Properties.RecoverableDays;
+  attributes.Updated = Properties.UpdatedOn;
+  attributes.RecoveryLevel = _detail::Models::DeletionRecoveryLevel(Properties.RecoveryLevel);
+  kIP.KeyAttributes = attributes;
+
   return kIP;
 }

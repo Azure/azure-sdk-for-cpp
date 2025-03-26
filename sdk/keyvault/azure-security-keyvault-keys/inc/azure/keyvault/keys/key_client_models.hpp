@@ -35,6 +35,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   namespace _detail { namespace Models {
     struct KeyBundle;
     struct DeletedKeyBundle;
+    struct KeyUpdateParameters;
   }} // namespace _detail::Models
   /**
    * @brief Define a model for a purged key.
@@ -636,6 +637,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param name The name of the key.
      */
     KeyProperties(std::string name) : Name(std::move(name)) {}
+
+  private:
+    friend class KeyClient;
+    _detail::Models::KeyUpdateParameters ToKeyUpdateParameters(
+        Azure::Nullable<std::vector<KeyOperation>> const& keyOperations) const;
   };
 
   /**

@@ -305,3 +305,67 @@ DeletedKey::DeletedKey(_detail::Models::DeletedKeyBundle const& response)
     ScheduledPurgeDate = response.ScheduledPurgeDate.Value();
   }
 }
+
+_detail::Models::KeyUpdateParameters KeyProperties::ToKeyUpdateParameters(
+    Azure::Nullable<std::vector<KeyOperation>> const& keyOperations) const
+{
+  _detail::Models::KeyUpdateParameters kUP;
+  if (Tags.size() > 0)
+  {
+    std::map<std::string, std::string> tags;
+    for (auto const& tag : Tags)
+    {
+      tags.insert({tag.first, tag.second});
+    }
+    kUP.Tags = tags;
+  }
+  if (ReleasePolicy.HasValue())
+  {
+    _detail::Models::KeyReleasePolicy releasePolicy;
+    if (ReleasePolicy.Value().ContentType.HasValue())
+    {
+      releasePolicy.ContentType = ReleasePolicy.Value().ContentType.Value();
+    }
+    if (ReleasePolicy.Value().EncodedPolicy.size() > 0)
+    {
+      releasePolicy.EncodedPolicy = std::vector<uint8_t>(
+          ReleasePolicy.Value().EncodedPolicy.begin(), ReleasePolicy.Value().EncodedPolicy.end());
+    }
+    releasePolicy.Immutable = ReleasePolicy.Value().Immutable;
+    kUP.ReleasePolicy = releasePolicy;
+  }
+  if (keyOperations.HasValue())
+  {
+    kUP.KeyOps = std::vector<_detail::Models::JsonWebKeyOperation>();
+    for (auto const& operation : keyOperations.Value())
+    {
+    kUP.KeyOps.Value().push_back(_detail::Models::JsonWebKeyOperation(operation.ToString()));
+    }
+  }
+
+  kUP.KeyAttributes = _detail::Models::KeyAttributes();
+  if (Attestation.HasValue())
+  {
+    kUP.KeyAttributes.Value().Attestation = _detail::Models::KeyAttestation();
+    kUP.KeyAttributes.Value().Attestation.Value().CertificatePemFile
+        = Attestation.Value().CertificatePemFile;
+    kUP.KeyAttributes.Value().Attestation.Value().PrivateKeyAttestation
+        = Attestation.Value().PrivateKeyAttestation;
+    kUP.KeyAttributes.Value().Attestation.Value().PublicKeyAttestation
+        = Attestation.Value().PublicKeyAttestation;
+    kUP.KeyAttributes.Value().Attestation.Value().Version = Attestation.Value().Version;
+  }
+  kUP.KeyAttributes.Value().Created = CreatedOn;
+  kUP.KeyAttributes.Value().Enabled = Enabled;
+  kUP.KeyAttributes.Value().Expires = ExpiresOn;
+  kUP.KeyAttributes.Value().Exportable = Exportable;
+  kUP.KeyAttributes.Value().HsmPlatform = HsmPlatform;
+  kUP.KeyAttributes.Value().NotBefore = NotBefore;
+  kUP.KeyAttributes.Value().RecoverableDays = RecoverableDays;
+  if (RecoveryLevel.size() > 0)
+  {
+    kUP.KeyAttributes.Value().RecoveryLevel = _detail::Models::DeletionRecoveryLevel(RecoveryLevel);
+  }
+  kUP.KeyAttributes.Value().Updated = UpdatedOn;
+  return kUP;
+}
