@@ -194,13 +194,10 @@ Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
+  auto response = m_client->DeleteKey(name, context);
   // Request with no payload
-  auto request = CreateRequest(HttpMethod::Delete, {_detail::KeysPath, name});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::DeletedKeySerializer::DeletedKeyDeserialize(name, *rawResponse);
-  auto responseT = Azure::Response<DeletedKey>(std::move(value), std::move(rawResponse));
+  DeletedKey value(response.Value);
+  auto responseT = Azure::Response<DeletedKey>(std::move(value), std::move(response.RawResponse));
   return Azure::Security::KeyVault::Keys::DeleteKeyOperation(
       std::make_shared<KeyClient>(*this), std::move(responseT));
 }
