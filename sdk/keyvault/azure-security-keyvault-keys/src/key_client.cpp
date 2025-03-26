@@ -299,36 +299,20 @@ Azure::Response<BackupKeyResult> KeyClient::BackupKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, "backup"});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  // the internal backupKey model provides the Deserialize implementation
-  auto internalValue = _detail::KeyBackup::Deserialize(*rawResponse);
-  auto value = BackupKeyResult{internalValue.Value};
-  return Azure::Response<BackupKeyResult>(std::move(value), std::move(rawResponse));
+  auto response = m_client->BackupKey(name, context);
+  auto internalValue = response.Value.Value.Value();
+  auto value = BackupKeyResult{internalValue};
+  return Azure::Response<BackupKeyResult>(std::move(value), std::move(response.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::RestoreKeyBackup(
     std::vector<uint8_t> const& backup,
     Azure::Core::Context const& context) const
 {
-  // Payload for the request
-  _detail::KeyBackup backupModel;
-  backupModel.Value = backup;
-  auto payload = backupModel.Serialize();
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings
-  auto request = CreateRequest(HttpMethod::Post, {_detail::KeysPath, "restore"}, &payloadStream);
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(*rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  _detail::Models::KeyRestoreParameters restoreParameters{backup};
+  auto response = m_client->RestoreKey(restoreParameters, context);
+  KeyVaultKey value(response.Value);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(response.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::ImportKey(
