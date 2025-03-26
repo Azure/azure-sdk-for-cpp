@@ -263,13 +263,9 @@ Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request = CreateRequest(HttpMethod::Delete, {_detail::DeletedKeysPath, name});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
+  auto result = m_client->PurgeDeletedKey(name, context);
   auto value = PurgedKey();
-  return Azure::Response<PurgedKey>(std::move(value), std::move(rawResponse));
+  return Azure::Response<PurgedKey>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
@@ -349,14 +345,9 @@ Azure::Response<KeyVaultKey> KeyClient::RotateKey(
     std::string const& name,
     Azure::Core::Context const& context) const
 {
-  // Request with no payload
-  auto request
-      = CreateRequest(HttpMethod::Post, {_detail::KeysPath, name, _detail::RotateActionsValue});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultKeySerializer::KeyVaultKeyDeserialize(name, *rawResponse);
-  return Azure::Response<KeyVaultKey>(std::move(value), std::move(rawResponse));
+  auto result = m_client->RotateKey(name, context);
+  KeyVaultKey value(result.Value);
+  return Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyRotationPolicy> KeyClient::GetKeyRotationPolicy(
