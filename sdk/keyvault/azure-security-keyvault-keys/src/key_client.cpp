@@ -207,21 +207,10 @@ Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
     KeyReleaseOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto payload = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsSerialize(options);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  // Request and settings  
-  auto request = CreateRequest(
-      HttpMethod::Post,
-      {_detail::KeysPath, name, options.Version.ValueOr(""), _detail::ReleaseValue},
-      &payloadStream);
-
-  request.SetHeader(HttpShared::ContentType, HttpShared::ApplicationJson);
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyReleaseOptionsSerializer::KeyReleaseOptionsDeserialize(*rawResponse);
-  return Azure::Response<ReleaseKeyResult>(value, std::move(rawResponse));
+  _detail::Models::KeyReleaseParameters keyReleaseParameters = options.ToKeyReleaseParameters();
+  auto result = m_client->Release(name, options.Version.ValueOr(""),keyReleaseParameters, context);
+  ReleaseKeyResult value{result.Value.Value.ValueOr("")};
+  return Azure::Response<ReleaseKeyResult>(value, std::move(result.RawResponse));
 }
 
 Azure::Security::KeyVault::Keys::RecoverDeletedKeyOperation KeyClient::StartRecoverDeletedKey(

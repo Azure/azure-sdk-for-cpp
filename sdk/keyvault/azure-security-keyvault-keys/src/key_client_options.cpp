@@ -99,3 +99,14 @@ _detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() c
 
   return kIP;
 }
+
+_detail::Models::KeyReleaseParameters KeyReleaseOptions::ToKeyReleaseParameters() const {
+  _detail::Models::KeyReleaseParameters krp = _detail::Models::KeyReleaseParameters();
+  if (Encryption.HasValue())
+  {
+    krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm(Encryption.Value().ToString());
+  }
+  krp.Nonce = Nonce;
+  krp.TargetAttestationToken = Target;
+  return krp;
+}

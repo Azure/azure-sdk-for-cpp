@@ -19,6 +19,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   namespace _detail { namespace Models {
     struct KeyCreateParameters;
     struct KeyImportParameters;
+    struct KeyReleaseParameters;
   }} // namespace _detail::Models
   /**
    * @brief The options for calling an operation
@@ -430,6 +431,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::Nullable<std::string> Version;
+
+  private:
+    friend class KeyClient;
+    _detail::Models::KeyReleaseParameters ToKeyReleaseParameters() const;
   };
 
 }}}} // namespace Azure::Security::KeyVault::Keys
