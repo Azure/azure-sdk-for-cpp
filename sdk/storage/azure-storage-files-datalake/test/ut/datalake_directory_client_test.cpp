@@ -894,10 +894,13 @@ namespace Azure { namespace Storage { namespace Test {
         "Wed, 29 Sep 2100 09:53:03 GMT", Azure::DateTime::DateFormat::Rfc1123);
     EXPECT_NO_THROW(fileClient.ScheduleDeletion(
         Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
-
-    auto pagedResult = m_directoryClient->ListPaths(true);
-    EXPECT_EQ(1L, pagedResult.Paths.size());
-    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
-    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
+    std::vector<Files::DataLake::Models::PathItem> paths;
+    for (auto page = m_directoryClient->ListPaths(true); page.HasPage(); page.MoveToNextPage())
+    {
+      paths.insert(paths.end(), page.Paths.begin(), page.Paths.end());
+    }
+    EXPECT_EQ(1L, paths.size());
+    ASSERT_TRUE(paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), paths[0].ExpiresOn.Value());
   }
 }}} // namespace Azure::Storage::Test
