@@ -184,3 +184,22 @@ KeyPropertiesPagedResponse::KeyPropertiesPagedResponse(
     }
   }
 }
+
+KeyPropertiesPagedResponse::KeyPropertiesPagedResponse(
+    _detail::GetKeyVersionsPagedResponse const& pagedResponse,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+    std::shared_ptr<KeyClient> keyClient,
+    std::string const& keyName)
+    : m_keyName(keyName), m_keyClient(std::move(keyClient))
+{
+  CurrentPageToken = pagedResponse.CurrentPageToken;
+  NextPageToken = pagedResponse.NextPageToken;
+  RawResponse = std::move(rawResponse);
+  if (pagedResponse.Value.HasValue())
+  {
+    for (auto item : pagedResponse.Value.Value())
+    {
+      Items.emplace_back(KeyProperties(item));
+    }
+  }
+}

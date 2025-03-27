@@ -177,16 +177,14 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(
     GetPropertiesOfKeyVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request
-      = ContinuationTokenRequest({_detail::KeysPath, name, "versions"}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
-      *rawResponse);
+  _detail::KeyVaultClientGetKeyVersionsOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetKeyVersions(name, getOptions, context);
   return KeyPropertiesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<KeyClient>(*this));
+      std::move(result), std::move(result.RawResponse), std::make_unique<KeyClient>(*this));
 }
 
 Azure::Security::KeyVault::Keys::DeleteKeyOperation KeyClient::StartDeleteKey(

@@ -41,6 +41,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       struct KeyItem;
     } // namespace Models
     class GetKeysPagedResponse;
+    class GetKeyVersionsPagedResponse;
   } // namespace _detail
   class KeyPropertiesPagedResponse;
   /**
@@ -805,6 +806,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     }
     KeyPropertiesPagedResponse(
         _detail::GetKeysPagedResponse const& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient,
+        std::string const& keyName = std::string());
+    KeyPropertiesPagedResponse(
+        _detail::GetKeyVersionsPagedResponse const& pagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string());
