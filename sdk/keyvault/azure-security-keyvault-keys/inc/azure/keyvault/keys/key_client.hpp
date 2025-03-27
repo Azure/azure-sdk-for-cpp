@@ -502,19 +502,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The key client's primary URL endpoint.
      */
     std::string GetUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
-
-  private:
-    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
-
-    Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path = {},
-        Azure::Core::IO::BodyStream* content = nullptr) const;
-
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

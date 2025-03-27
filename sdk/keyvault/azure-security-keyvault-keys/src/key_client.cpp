@@ -36,37 +36,6 @@ namespace {
 constexpr const char CreateValue[] = "create";
 } // namespace
 
-std::unique_ptr<RawResponse> KeyClient::SendRequest(
-    Azure::Core::Http::Request& request,
-    Azure::Core::Context const& context) const
-{
-  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::SendRequest(
-      *m_pipeline, request, context);
-}
-
-Request KeyClient::CreateRequest(
-    HttpMethod method,
-    std::vector<std::string> const& path,
-    Azure::Core::IO::BodyStream* content) const
-{
-  return Azure::Security::KeyVault::_detail::KeyVaultKeysCommonRequest::CreateRequest(
-      m_vaultUrl, m_apiVersion, std::move(method), path, content);
-}
-
-Request KeyClient::ContinuationTokenRequest(
-    std::vector<std::string> const& path,
-    const Azure::Nullable<std::string>& NextPageToken) const
-{
-  if (NextPageToken)
-  {
-    // Using a continuation token requires to send the request to the continuation token URL instead
-    // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(NextPageToken.Value());
-    return Request(HttpMethod::Get, nextPageUrl);
-  }
-  return CreateRequest(HttpMethod::Get, path);
-}
-
 KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<const Core::Credentials::TokenCredential> credential,
