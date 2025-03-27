@@ -203,3 +203,21 @@ KeyPropertiesPagedResponse::KeyPropertiesPagedResponse(
     }
   }
 }
+
+DeletedKeyPagedResponse::DeletedKeyPagedResponse(
+    _detail::GetDeletedKeysPagedResponse&& pagedResponse,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+    std::shared_ptr<KeyClient> keyClient)
+    : m_keyClient(std::move(keyClient))
+{
+  CurrentPageToken = pagedResponse.CurrentPageToken;
+  NextPageToken = pagedResponse.NextPageToken;
+  RawResponse = std::move(rawResponse);
+  if (pagedResponse.Value.HasValue())
+  {
+    for (auto item : pagedResponse.Value.Value())
+    {
+      Items.emplace_back(DeletedKey(item));
+    }
+  }
+}

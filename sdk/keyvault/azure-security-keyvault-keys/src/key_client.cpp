@@ -234,15 +234,14 @@ DeletedKeyPagedResponse KeyClient::GetDeletedKeys(
     GetDeletedKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request = ContinuationTokenRequest({_detail::DeletedKeysPath}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value
-      = _detail::KeyPropertiesPagedResultSerializer::DeletedKeyPagedResultDeserialize(*rawResponse);
+  _detail::KeyVaultClientGetDeletedKeysOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetDeletedKeys(getOptions, context);
   return DeletedKeyPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<KeyClient>(*this));
+      std::move(result), std::move(result.RawResponse), std::make_unique<KeyClient>(*this));
 }
 
 Azure::Response<PurgedKey> KeyClient::PurgeDeletedKey(

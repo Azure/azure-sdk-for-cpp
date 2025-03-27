@@ -3,6 +3,7 @@
 
 #include "./generated/keys_models.hpp"
 #include "./private/key_serializers.hpp"
+
 #include <azure/keyvault/keys/key_client_models.hpp>
 
 using namespace Azure::Security::KeyVault::Keys;
@@ -117,7 +118,7 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
       Properties.Attestation = attestation;
     }
   }
-  
+
   if (response.Managed.HasValue())
   {
     Properties.Managed = (response.Managed.ValueOr(false) == true);
@@ -130,7 +131,7 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
       Properties.Tags.emplace(tag.first, tag.second);
     }
   }
-  
+
   if (response.ReleasePolicy.HasValue())
   {
     KeyReleasePolicy policy;
@@ -149,7 +150,6 @@ KeyVaultKey::KeyVaultKey(_detail::Models::KeyBundle const& response)
     }
     Properties.ReleasePolicy = policy;
   }
-
 }
 
 DeletedKey::DeletedKey(_detail::Models::DeletedKeyBundle const& response)
@@ -339,7 +339,7 @@ _detail::Models::KeyUpdateParameters KeyProperties::ToKeyUpdateParameters(
     kUP.KeyOps = std::vector<_detail::Models::JsonWebKeyOperation>();
     for (auto const& operation : keyOperations.Value())
     {
-    kUP.KeyOps.Value().push_back(_detail::Models::JsonWebKeyOperation(operation.ToString()));
+      kUP.KeyOps.Value().push_back(_detail::Models::JsonWebKeyOperation(operation.ToString()));
     }
   }
 
@@ -370,7 +370,8 @@ _detail::Models::KeyUpdateParameters KeyProperties::ToKeyUpdateParameters(
   return kUP;
 }
 
-KeyRotationPolicy::KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp) {
+KeyRotationPolicy::KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp)
+{
   if (krp.Id.HasValue())
   {
     Id = krp.Id.Value();
@@ -449,7 +450,8 @@ _detail::Models::KeyRotationPolicy KeyRotationPolicy::ToKeyRotationPolicy() cons
   return krp;
 }
 
-KeyProperties::KeyProperties(_detail::Models::KeyItem const& response) {
+KeyProperties::KeyProperties(_detail::Models::KeyItem const& response)
+{
   if (response.Attributes.HasValue())
   {
     ExpiresOn = response.Attributes.Value().Expires;
@@ -499,5 +501,73 @@ KeyProperties::KeyProperties(_detail::Models::KeyItem const& response) {
   {
     Id = response.Kid.Value();
     KeyVaultKeySerializer::ParseKeyUrl(*this, Id);
+  }
+}
+
+DeletedKey::DeletedKey(_detail::Models::DeletedKeyItem const& response)
+{
+  if (response.Attributes.HasValue())
+  {
+    Properties.ExpiresOn = response.Attributes.Value().Expires;
+    Properties.CreatedOn = response.Attributes.Value().Created;
+    Properties.Enabled = response.Attributes.Value().Enabled;
+    Properties.NotBefore = response.Attributes.Value().NotBefore;
+    if (response.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      Properties.RecoveryLevel = response.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+    Properties.Exportable = response.Attributes.Value().Exportable;
+    Properties.HsmPlatform = response.Attributes.Value().HsmPlatform;
+    Properties.RecoverableDays = response.Attributes.Value().RecoverableDays;
+    if (response.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      Properties.RecoveryLevel = response.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+    Properties.UpdatedOn = response.Attributes.Value().Updated;
+    if (response.Attributes.Value().Attestation.HasValue())
+    {
+      Azure::Security::KeyVault::Keys::KeyAttestation attestation;
+      attestation.CertificatePemFile
+          = response.Attributes.Value().Attestation.Value().CertificatePemFile;
+      attestation.PrivateKeyAttestation
+          = response.Attributes.Value().Attestation.Value().PrivateKeyAttestation;
+      attestation.PublicKeyAttestation
+          = response.Attributes.Value().Attestation.Value().PublicKeyAttestation;
+      attestation.Version = response.Attributes.Value().Attestation.Value().Version;
+      Properties.Attestation = attestation;
+    }
+  }
+  if (response.Managed.HasValue())
+  {
+    Properties.Managed = (response.Managed.ValueOr(false) == true);
+  }
+  if (response.Tags.HasValue())
+  {
+    for (auto const& tag : response.Tags.Value())
+    {
+      Properties.Tags.emplace(tag.first, tag.second);
+    }
+  }
+  if (response.RecoveryId.HasValue())
+  {
+    RecoveryId = response.RecoveryId.Value();
+  }
+  if (response.DeletedDate.HasValue())
+  {
+    DeletedDate = response.DeletedDate.Value();
+  }
+  if (response.ScheduledPurgeDate.HasValue())
+  {
+    ScheduledPurgeDate = response.ScheduledPurgeDate.Value();
+  }
+  if (response.DeletedDate.HasValue())
+  {
+    DeletedDate = response.DeletedDate.Value();
+  }
+  if (response.Kid.HasValue())
+  {
+    Key.Id = response.Kid.Value();
+    Properties.Id = Key.Id;
+    KeyVaultKeySerializer::ParseKeyUrl(Properties, Key.Id);
   }
 }

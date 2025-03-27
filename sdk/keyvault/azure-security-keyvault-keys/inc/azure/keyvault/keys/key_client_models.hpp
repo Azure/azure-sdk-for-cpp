@@ -39,11 +39,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
       struct KeyUpdateParameters;
       struct KeyRotationPolicy;
       struct KeyItem;
+      struct DeletedKeyItem;
     } // namespace Models
     class GetKeysPagedResponse;
     class GetKeyVersionsPagedResponse;
+    class GetDeletedKeysPagedResponse;
   } // namespace _detail
   class KeyPropertiesPagedResponse;
+  class DeletedKeyPagedResponse;
   /**
    * @brief Define a model for a purged key.
    *
@@ -764,7 +767,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   private:
     friend class KeyClient;
+    friend class DeletedKeyPagedResponse;
     DeletedKey(_detail::Models::DeletedKeyBundle const& response);
+    DeletedKey(_detail::Models::DeletedKeyItem const& response);
   };
 
   /**
@@ -860,7 +865,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       RawResponse = std::move(rawResponse);
     }
-
+    DeletedKeyPagedResponse(
+        _detail::GetDeletedKeysPagedResponse&& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient);
+        
   public:
     /**
      * @brief Construct a new Deleted Key Single Page object
