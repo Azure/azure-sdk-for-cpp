@@ -13,19 +13,6 @@
 using namespace Azure::Security::KeyVault::Keys::Test;
 using namespace Azure::Security::KeyVault::Keys;
 
-TEST_F(KeyVaultKeyClient, GetSingleKeyGen)
-{
-  auto const keyName = "testKey";
-  auto const& client = GetClientForTest(keyName);
-  auto keyResponse
-      = client.GetDeletedKey(keyName);   
-  //auto keyResponse = client.GetKey(keyName);
-  CheckValidResponse(keyResponse);
-  auto key = keyResponse.Value;
-
-  EXPECT_EQ(key.Name(), keyName);
-}
-
 TEST_F(KeyVaultKeyClient, GetSingleKey)
 {
   auto const keyName = GetTestName();
