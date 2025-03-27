@@ -218,8 +218,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
 })JSON";
   auto jsonParser = json::parse(dataStr);
   auto parsedJson = jsonParser.dump();
-  options.ReleasePolicy.Value().EncodedPolicy
-      = parsedJson;
+  options.ReleasePolicy.Value().EncodedPolicy = parsedJson;
   options.Exportable = true;
   {
     auto keyResponse = client.CreateKey(
@@ -258,8 +257,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
     EXPECT_FALSE(policy.Immutable);
 
     EXPECT_EQ(
-        json::parse(options.ReleasePolicy.Value().EncodedPolicy)
-            .dump(1, ' ', true),
+        json::parse(options.ReleasePolicy.Value().EncodedPolicy).dump(1, ' ', true),
         json::parse(policy.EncodedPolicy).dump(1, ' ', true));
   }
 }

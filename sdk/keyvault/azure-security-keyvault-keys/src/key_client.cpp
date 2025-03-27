@@ -3,6 +3,7 @@
 
 #include "azure/keyvault/keys/key_client.hpp"
 
+#include "./generated/key_vault_client.hpp"
 #include "private/cryptography_internal_access.hpp"
 #include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
@@ -22,8 +23,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "./generated/key_vault_client.hpp"
 
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
@@ -193,7 +192,7 @@ Azure::Response<ReleaseKeyResult> KeyClient::ReleaseKey(
     Azure::Core::Context const& context) const
 {
   _detail::Models::KeyReleaseParameters keyReleaseParameters = options.ToKeyReleaseParameters();
-  auto result = m_client->Release(name, options.Version.ValueOr(""),keyReleaseParameters, context);
+  auto result = m_client->Release(name, options.Version.ValueOr(""), keyReleaseParameters, context);
   ReleaseKeyResult value{result.Value.Value.ValueOr("")};
   return Azure::Response<ReleaseKeyResult>(value, std::move(result.RawResponse));
 }
@@ -253,7 +252,7 @@ Azure::Response<KeyVaultKey> KeyClient::UpdateKeyProperties(
       context);
 
   KeyVaultKey value(result.Value);
-      
+
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
 }
 
@@ -290,8 +289,9 @@ Azure::Response<KeyVaultKey> KeyClient::ImportKey(
     ImportKeyOptions const& importKeyOptions,
     Azure::Core::Context const& context) const
 {
-  _detail::Models::KeyImportParameters keyImportParameters = importKeyOptions.ToKeyImportParameters();
-  auto result = m_client->ImportKey(importKeyOptions.Name(),keyImportParameters, context);
+  _detail::Models::KeyImportParameters keyImportParameters
+      = importKeyOptions.ToKeyImportParameters();
+  auto result = m_client->ImportKey(importKeyOptions.Name(), keyImportParameters, context);
   KeyVaultKey value(result.Value);
   return Azure::Response<KeyVaultKey>(std::move(value), std::move(result.RawResponse));
 }

@@ -1,11 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/keyvault/keys/key_client_options.hpp>
 #include "./generated/keys_models.hpp"
+
+#include <azure/keyvault/keys/key_client_options.hpp>
 using namespace Azure::Security::KeyVault::Keys;
 using namespace Azure::Security::KeyVault::Keys::_detail;
-_detail::Models::KeyCreateParameters CreateKeyOptions::ToKeyCreateParameters() const {
+_detail::Models::KeyCreateParameters CreateKeyOptions::ToKeyCreateParameters() const
+{
   Models::KeyCreateParameters keyCreateParameters;
   Models::KeyAttributes attributes;
   std::vector<Models::JsonWebKeyOperation> operations;
@@ -33,8 +35,7 @@ _detail::Models::KeyCreateParameters CreateKeyOptions::ToKeyCreateParameters() c
     }
 
     releasePolicy.EncodedPolicy = std::vector<uint8_t>(
-        ReleasePolicy.Value().EncodedPolicy.begin(),
-        ReleasePolicy.Value().EncodedPolicy.end());
+        ReleasePolicy.Value().EncodedPolicy.begin(), ReleasePolicy.Value().EncodedPolicy.end());
     releasePolicy.Immutable = ReleasePolicy.Value().Immutable;
     keyCreateParameters.ReleasePolicy = releasePolicy;
   }
@@ -100,12 +101,31 @@ _detail::Models::KeyImportParameters ImportKeyOptions::ToKeyImportParameters() c
   return kIP;
 }
 
-_detail::Models::KeyReleaseParameters KeyReleaseOptions::ToKeyReleaseParameters() const {
+_detail::Models::KeyReleaseParameters KeyReleaseOptions::ToKeyReleaseParameters() const
+{
   _detail::Models::KeyReleaseParameters krp = _detail::Models::KeyReleaseParameters();
   if (Encryption.HasValue())
   {
-    krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm(Encryption.Value().ToString());
+    if (Encryption.Value() == KeyEncryptionAlgorithm::CkmRsaAesKeyWrap
+        || Encryption.Value() == KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP)
+    {
+      krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
+    }
+    else if (
+        Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap256
+        || Encryption.Value() == KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256)
+    {
+      krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::
+          RsaAesKeyWrapTwoHundredFiftySix;
+    }
+    if (Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap384
+        || Encryption.Value() == KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384)
+    {
+      krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::
+          RsaAesKeyWrapThreeHundredEightyFour;
+    }
   }
+
   krp.Nonce = Nonce;
   krp.TargetAttestationToken = Target;
   return krp;

@@ -819,6 +819,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient,
         std::string const& keyName = std::string());
+
   public:
     /**
      * @brief Construct a new key properties object.
@@ -869,7 +870,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
         _detail::GetDeletedKeysPagedResponse&& pagedResponse,
         std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
         std::shared_ptr<KeyClient> keyClient);
-        
+
   public:
     /**
      * @brief Construct a new Deleted Key Single Page object
@@ -1181,6 +1182,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief Default constructor.
      */
     KeyRotationPolicy() = default;
+
   private:
     friend class KeyClient;
     KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp);

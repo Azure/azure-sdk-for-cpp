@@ -134,7 +134,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     Azure::Nullable<bool> Exportable;
 
-    private:
+  private:
     friend KeyClient;
     _detail::Models::KeyCreateParameters ToKeyCreateParameters() const;
   };
@@ -384,7 +384,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::string const& Name() const { return Properties.Name; }
 
-    private:
+  private:
     friend class KeyClient;
     _detail::Models::KeyImportParameters ToKeyImportParameters() const;
   };
