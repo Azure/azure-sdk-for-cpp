@@ -448,3 +448,56 @@ _detail::Models::KeyRotationPolicy KeyRotationPolicy::ToKeyRotationPolicy() cons
   krp.Attributes.Value().ExpiryTime = Attributes.ExpiryTime;
   return krp;
 }
+
+KeyProperties::KeyProperties(_detail::Models::KeyItem const& response) {
+  if (response.Attributes.HasValue())
+  {
+    ExpiresOn = response.Attributes.Value().Expires;
+    CreatedOn = response.Attributes.Value().Created;
+    Enabled = response.Attributes.Value().Enabled;
+    NotBefore = response.Attributes.Value().NotBefore;
+    if (response.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      RecoveryLevel = response.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+    Exportable = response.Attributes.Value().Exportable;
+    HsmPlatform = response.Attributes.Value().HsmPlatform;
+    RecoverableDays = response.Attributes.Value().RecoverableDays;
+    if (response.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      RecoveryLevel = response.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+    UpdatedOn = response.Attributes.Value().Updated;
+    HsmPlatform = response.Attributes.Value().HsmPlatform;
+    if (response.Attributes.Value().Attestation.HasValue())
+    {
+      Azure::Security::KeyVault::Keys::KeyAttestation attestation;
+      attestation.CertificatePemFile
+          = response.Attributes.Value().Attestation.Value().CertificatePemFile;
+      attestation.PrivateKeyAttestation
+          = response.Attributes.Value().Attestation.Value().PrivateKeyAttestation;
+      attestation.PublicKeyAttestation
+          = response.Attributes.Value().Attestation.Value().PublicKeyAttestation;
+      attestation.Version = response.Attributes.Value().Attestation.Value().Version;
+      Attestation = attestation;
+    }
+  }
+
+  if (response.Managed.HasValue())
+  {
+    Managed = (response.Managed.ValueOr(false) == true);
+  }
+
+  if (response.Tags.HasValue())
+  {
+    for (auto const& tag : response.Tags.Value())
+    {
+      Tags.emplace(tag.first, tag.second);
+    }
+  }
+  if (response.Kid.HasValue())
+  {
+    Id = response.Kid.Value();
+    KeyVaultKeySerializer::ParseKeyUrl(*this, Id);
+  }
+}

@@ -162,15 +162,14 @@ KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeys(
     GetPropertiesOfKeysOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request = ContinuationTokenRequest({_detail::KeysPath}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyPropertiesPagedResultSerializer::KeyPropertiesPagedResultDeserialize(
-      *rawResponse);
+  _detail::KeyVaultClientGetKeysOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetKeys(getOptions, context);
   return KeyPropertiesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<KeyClient>(*this));
+      std::move(result), std::move(result.RawResponse), std::make_unique<KeyClient>(*this));
 }
 
 KeyPropertiesPagedResponse KeyClient::GetPropertiesOfKeyVersions(

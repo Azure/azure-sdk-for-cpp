@@ -32,12 +32,17 @@
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   class KeyClient;
-  namespace _detail { namespace Models {
-    struct KeyBundle;
-    struct DeletedKeyBundle;
-    struct KeyUpdateParameters;
-    struct KeyRotationPolicy;
-  }} // namespace _detail::Models
+  namespace _detail {
+    namespace Models {
+      struct KeyBundle;
+      struct DeletedKeyBundle;
+      struct KeyUpdateParameters;
+      struct KeyRotationPolicy;
+      struct KeyItem;
+    } // namespace Models
+    class GetKeysPagedResponse;
+  } // namespace _detail
+  class KeyPropertiesPagedResponse;
   /**
    * @brief Define a model for a purged key.
    *
@@ -641,8 +646,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
   private:
     friend class KeyClient;
+    friend class KeyPropertiesPagedResponse;
     _detail::Models::KeyUpdateParameters ToKeyUpdateParameters(
         Azure::Nullable<std::vector<KeyOperation>> const& keyOperations) const;
+    KeyProperties(_detail::Models::KeyItem const& response);
   };
 
   /**
@@ -796,7 +803,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       RawResponse = std::move(rawResponse);
     }
-
+    KeyPropertiesPagedResponse(
+        _detail::GetKeysPagedResponse const& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient,
+        std::string const& keyName = std::string());
   public:
     /**
      * @brief Construct a new key properties object.
