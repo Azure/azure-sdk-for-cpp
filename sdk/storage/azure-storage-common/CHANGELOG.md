@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added support for ICU 75.1 or later.
+
 ## 12.10.0 (2025-03-11)
 
 ### Features Added

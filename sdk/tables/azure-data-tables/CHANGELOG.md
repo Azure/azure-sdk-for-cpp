@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added support for ICU 75.1 or later.
+
 ## 1.0.0-beta.6 (2025-01-22)
 
 ### Breaking Changes
