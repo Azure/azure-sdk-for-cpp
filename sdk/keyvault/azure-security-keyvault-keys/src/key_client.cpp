@@ -79,6 +79,25 @@ KeyClient::KeyClient(
   generatedClientOptions.ApiVersion = options.ApiVersion;
   m_client = std::make_shared<_detail::KeyVaultClient>(
       _detail::KeyVaultClient(vaultUrl, credential, generatedClientOptions));
+
+  // pipeline needed for crypto client
+  std::vector<std::unique_ptr<HttpPolicy>> perRetryPolicies;
+  {
+    Azure::Core::Credentials::TokenRequestContext tokenContext;
+    tokenContext.Scopes = {_internal::UrlScope::GetScopeFromUrl(m_vaultUrl)};
+
+    perRetryPolicies.emplace_back(
+        std::make_unique<_internal::KeyVaultChallengeBasedAuthenticationPolicy>(
+            std::move(credential), std::move(tokenContext)));
+  }
+  std::vector<std::unique_ptr<HttpPolicy>> perCallPolicies;
+
+  m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
+      options,
+      KeyVaultServicePackageName,
+      PackageVersion::ToString(),
+      std::move(perRetryPolicies),
+      std::move(perCallPolicies));
 }
 
 Azure::Response<KeyVaultKey> KeyClient::GetKey(
