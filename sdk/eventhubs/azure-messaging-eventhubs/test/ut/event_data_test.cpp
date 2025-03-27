@@ -204,12 +204,11 @@ TEST_F(EventDataTest, ReceivedEventData)
     std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
         std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
     message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+        Azure::Messaging::EventHubs::_detail::OffsetAnnotation}
                                     .AsAmqpValue()]
         = 54644;
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    ASSERT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 54644);
+    ASSERT_FALSE(receivedEventData.Offset); // Offset must be a string value, not a numeric value.
     EXPECT_FALSE(receivedEventData.SequenceNumber);
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
@@ -218,12 +217,12 @@ TEST_F(EventDataTest, ReceivedEventData)
     std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
         std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
     message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+        Azure::Messaging::EventHubs::_detail::OffsetAnnotation}
                                     .AsAmqpValue()]
         = "54644";
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 54644);
+    EXPECT_EQ(receivedEventData.Offset.Value(), "54644");
     EXPECT_FALSE(receivedEventData.SequenceNumber);
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
@@ -232,54 +231,12 @@ TEST_F(EventDataTest, ReceivedEventData)
     std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
         std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
     message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
+        Azure::Messaging::EventHubs::_detail::OffsetAnnotation}
                                     .AsAmqpValue()]
-        = static_cast<uint32_t>(53);
+        = "53";
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
     ASSERT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 53);
-    EXPECT_FALSE(receivedEventData.SequenceNumber);
-    EXPECT_FALSE(receivedEventData.EnqueuedTime);
-    EXPECT_FALSE(receivedEventData.PartitionKey);
-  }
-  {
-    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
-        std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
-    message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
-                                    .AsAmqpValue()]
-        = static_cast<int32_t>(57);
-    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    EXPECT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 57);
-    EXPECT_FALSE(receivedEventData.SequenceNumber);
-    EXPECT_FALSE(receivedEventData.EnqueuedTime);
-    EXPECT_FALSE(receivedEventData.PartitionKey);
-  }
-  {
-    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
-        std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
-    message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
-                                    .AsAmqpValue()]
-        = static_cast<uint64_t>(661011);
-    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    EXPECT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 661011);
-    EXPECT_FALSE(receivedEventData.SequenceNumber);
-    EXPECT_FALSE(receivedEventData.EnqueuedTime);
-    EXPECT_FALSE(receivedEventData.PartitionKey);
-  }
-  {
-    std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
-        std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
-    message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
-        Azure::Messaging::EventHubs::_detail::OffsetNumberAnnotation}
-                                    .AsAmqpValue()]
-        = static_cast<int64_t>(1412612);
-    Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    EXPECT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), 1412612);
+    EXPECT_EQ(receivedEventData.Offset.Value(), "53");
     EXPECT_FALSE(receivedEventData.SequenceNumber);
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);

@@ -49,7 +49,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   // Round trip a message with a binary body using an offset filter.
   TEST_P(RoundTripTests, SendAndReceiveBinaryDataOffset_LIVEONLY_)
   {
-    int64_t startOffset = 0;
+    std::string startOffset = "0";
     {
       auto producer{CreateProducerClient()};
       auto partitionProperties = producer->GetPartitionProperties("1");

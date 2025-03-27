@@ -207,8 +207,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         properties.BeginningSequenceNumber = bodyMap["begin_sequence_number"];
         properties.LastEnqueuedSequenceNumber = bodyMap["last_enqueued_sequence_number"];
         // For <reasons> the last enqueued offset is returned as a string. Convert to an int64.
-        properties.LastEnqueuedOffset = std::strtoull(
-            static_cast<std::string>(bodyMap["last_enqueued_offset"]).c_str(), nullptr, 10);
+        properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
 
         properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
             std::chrono::duration_cast<std::chrono::seconds>(

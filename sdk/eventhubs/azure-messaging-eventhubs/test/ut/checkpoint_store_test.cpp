@@ -49,7 +49,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         "event-hub-name",
         "ns.servicebus.windows.net",
         "partition-id",
-        101,
+        std::string("101"),
         202,
     });
 
@@ -68,14 +68,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(202, checkpoints[0].SequenceNumber.Value());
-    EXPECT_EQ(101, checkpoints[0].Offset.Value());
+    EXPECT_EQ("101", checkpoints[0].Offset.Value());
 
     checkpointStore->UpdateCheckpoint(Azure::Messaging::EventHubs::Models::Checkpoint{
         consumerGroup,
         "event-hub-name",
         "ns.servicebus.windows.net",
         "partition-id",
-        102,
+        std::string("102"),
         203,
     });
 
@@ -87,7 +87,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("ns.servicebus.windows.net", checkpoints[0].FullyQualifiedNamespaceName);
     EXPECT_EQ("partition-id", checkpoints[0].PartitionId);
     EXPECT_EQ(203, checkpoints[0].SequenceNumber.Value());
-    EXPECT_EQ(102, checkpoints[0].Offset.Value());
+    EXPECT_EQ("102", checkpoints[0].Offset.Value());
   }
 
   TEST_F(CheckpointStoreTest, TestOwnerships)
