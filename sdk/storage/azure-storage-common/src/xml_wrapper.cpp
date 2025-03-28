@@ -20,6 +20,10 @@
 #endif
 #include <webservices.h>
 #else
+// libxml2 uses ICU. ICU 75.1 or later requires C++17 but we use
+// C++14. It causes an error. We can disable ICU C++ API to avoid it
+// because we don't need ICU C++ API.
+#define U_SHOW_CPLUSPLUS_API 0
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 #endif
