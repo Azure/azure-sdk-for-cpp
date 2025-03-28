@@ -15,6 +15,7 @@
 #include <azure/core/internal/client_options.hpp>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+  class KeyClient;
   namespace _detail { namespace Models {
     struct KeyCreateParameters;
     struct KeyImportParameters;

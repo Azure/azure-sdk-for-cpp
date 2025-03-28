@@ -31,6 +31,7 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
+  class KeyClient;
   namespace _detail {
     namespace Models {
       struct KeyBundle;
