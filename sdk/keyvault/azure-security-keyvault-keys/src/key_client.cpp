@@ -69,7 +69,7 @@ Azure::Response<KeyVaultKey> KeyClient::GetKey(
     GetKeyOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto result = m_client->GetKey(name, options.Version.empty() ? "/" : options.Version, context);
+  auto result = m_client->GetKey(name, options.Version, context);
   KeyVaultKey keyResult(result.Value);
   keyResult.Properties.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
   return Azure::Response<KeyVaultKey>(std::move(keyResult), std::move(result.RawResponse));

@@ -35,7 +35,8 @@ KeyVaultClient::KeyVaultClient(
 
   {
     Core::Credentials::TokenRequestContext tokenRequestContext;
-    tokenRequestContext.Scopes = {"https://vault.azure.net/.default"};
+    tokenRequestContext.Scopes
+        = {Azure::Security::KeyVault::_internal::UrlScope::GetScopeFromUrl(Azure::Core::Url(url))};
     perRetryPolicies.emplace_back(std::make_unique<KeyVaultChallengeBasedAuthenticationPolicy>(
         credential, tokenRequestContext));
   }
@@ -2197,7 +2198,7 @@ KeyVaultClient::UpdateKey(
 
   return Response<Models::KeyBundle>(std::move(response), std::move(rawResponse));
 }
-
+// codegen: replace KeyVaultClient::GetKey
 Azure::Response<Azure::Security::KeyVault::Keys::_detail::Models::KeyBundle> KeyVaultClient::GetKey(
     const std::string& keyName,
     const std::string& keyVersion,
@@ -2210,12 +2211,10 @@ Azure::Response<Azure::Security::KeyVault::Keys::_detail::Models::KeyBundle> Key
     throw std::invalid_argument("Parameter 'keyName' cannot be an empty string.");
   }
   url.AppendPath(Core::Url::Encode(keyName));
-  if (keyVersion.empty())
+  if (!keyVersion.empty())
   {
-    throw std::invalid_argument("Parameter 'keyVersion' cannot be an empty string.");
+    url.AppendPath(Core::Url::Encode(keyVersion));
   }
-  url.AppendPath(Core::Url::Encode(keyVersion));
-
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -2520,7 +2519,7 @@ Azure::Response<Azure::Security::KeyVault::Keys::_detail::Models::KeyBundle> Key
 
   return Response<Models::KeyBundle>(std::move(response), std::move(rawResponse));
 }
-
+// codegen: end replace KeyVaultClient::GetKey
 GetKeyVersionsPagedResponse KeyVaultClient::GetKeyVersions(
     const std::string& keyName,
     const KeyVaultClientGetKeyVersionsOptions& options,
