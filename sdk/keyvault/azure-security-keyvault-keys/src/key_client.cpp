@@ -31,10 +31,6 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 
-namespace {
-constexpr const char CreateValue[] = "create";
-} // namespace
-
 KeyClient::KeyClient(
     std::string const& vaultUrl,
     std::shared_ptr<const Core::Credentials::TokenCredential> credential,
