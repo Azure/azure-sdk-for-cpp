@@ -106,20 +106,17 @@ _detail::Models::KeyReleaseParameters KeyReleaseOptions::ToKeyReleaseParameters(
   _detail::Models::KeyReleaseParameters krp = _detail::Models::KeyReleaseParameters();
   if (Encryption.HasValue())
   {
-    if (Encryption.Value() == KeyEncryptionAlgorithm::CkmRsaAesKeyWrap
-        || Encryption.Value() == KeyEncryptionAlgorithm::CKM_RSA_AES_KEY_WRAP)
+    if (Encryption.Value() == KeyEncryptionAlgorithm::CkmRsaAesKeyWrap)
     {
       krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
     }
     else if (
-        Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap256
-        || Encryption.Value() == KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_256)
+        Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap256)
     {
       krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::
           RsaAesKeyWrapTwoHundredFiftySix;
     }
-    if (Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap384
-        || Encryption.Value() == KeyEncryptionAlgorithm::RSA_AES_KEY_WRAP_384)
+    if (Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap384)
     {
       krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::
           RsaAesKeyWrapThreeHundredEightyFour;

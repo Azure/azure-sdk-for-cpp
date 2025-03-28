@@ -50,6 +50,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string m_apiVersion;
     /** @brief the HTTP Pipeline used in this KeyClient. */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+
+  private:
     std::shared_ptr<_detail::KeyVaultClient> m_client;
 
   public:
