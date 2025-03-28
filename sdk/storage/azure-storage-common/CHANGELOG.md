@@ -10,7 +10,13 @@
 
 ### Other Changes
 
-- Added support for ICU 75.1 or later.
+- Added support for ICU 75.1 or later. (A community contribution, courtesy of _[kou](https://github.com/kou)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Storage better with their contributions to this release:
+
+- Sutou Kouhei _([GitHub](https://github.com/kou))_
 
 ## 12.10.0 (2025-03-11)
 
