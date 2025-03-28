@@ -110,8 +110,7 @@ _detail::Models::KeyReleaseParameters KeyReleaseOptions::ToKeyReleaseParameters(
     {
       krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::CkmRsaAesKeyWrap;
     }
-    else if (
-        Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap256)
+    else if (Encryption.Value() == KeyEncryptionAlgorithm::RsaAesKeyWrap256)
     {
       krp.Enc = _detail::Models::KeyEncryptionAlgorithm::KeyEncryptionAlgorithm::
           RsaAesKeyWrapTwoHundredFiftySix;

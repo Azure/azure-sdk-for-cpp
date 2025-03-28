@@ -30,7 +30,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   namespace _detail {
     class KeyVaultClient;
-  };
+  }
   /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
