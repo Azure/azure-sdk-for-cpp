@@ -17,7 +17,6 @@
 #include "dll_import_export.hpp"
 
 #include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
 #include <stdint.h>

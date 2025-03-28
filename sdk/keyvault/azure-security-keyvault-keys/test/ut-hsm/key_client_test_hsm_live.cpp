@@ -12,7 +12,7 @@ using namespace Azure::Security::KeyVault::Keys::Test;
 
 // No tests for octKey since the server does not support it.
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
-TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
+TEST_F(KeyVaultKeyHSMClient, DISABLED_CreateEcHsmKey)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
@@ -59,7 +59,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateEcHsmKey_RECORDEDONLY_)
 }
 
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
-TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey_RECORDEDONLY_)
+TEST_F(KeyVaultKeyHSMClient, DISABLED_CreateRsaHsmKey)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
@@ -105,7 +105,7 @@ TEST_F(KeyVaultKeyHSMClient, CreateRsaHsmKey_RECORDEDONLY_)
 }
 
 // FOR THIS TEST TO WORK MAKE SURE YOU ACTUALLY HAVE A VALID HSM VALUE FOR AZURE_KEYVAULT_HSM_URL
-TEST_F(KeyVaultKeyHSMClient, GetRandomBytes_RECORDEDONLY_)
+TEST_F(KeyVaultKeyHSMClient, DISABLED_GetRandomBytes)
 {
   if (m_keyVaultHsmUrl != m_keyVaultUrl)
   {
