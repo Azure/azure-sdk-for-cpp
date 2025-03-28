@@ -3,6 +3,7 @@
 
 #include "azure/keyvault/keys/key_client.hpp"
 #include "azure/keyvault/keys/key_client_models.hpp"
+#include "generated/key_vault_client_paged_responses.hpp"
 #include "private/key_constants.hpp"
 #include "private/key_serializers.hpp"
 
@@ -162,5 +163,61 @@ void KeyPropertiesPagedResponse::OnNextPage(const Azure::Core::Context& context)
     options.NextPageToken = NextPageToken;
     *this = m_keyClient->GetPropertiesOfKeyVersions(m_keyName, options, context);
     CurrentPageToken = options.NextPageToken.Value();
+  }
+}
+
+KeyPropertiesPagedResponse::KeyPropertiesPagedResponse(
+    _detail::GetKeysPagedResponse const& pagedResponse,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+    std::shared_ptr<KeyClient> keyClient,
+    std::string const& keyName)
+    : m_keyName(keyName), m_keyClient(std::move(keyClient))
+{
+  CurrentPageToken = pagedResponse.CurrentPageToken;
+  NextPageToken = pagedResponse.NextPageToken;
+  RawResponse = std::move(rawResponse);
+  if (pagedResponse.Value.HasValue())
+  {
+    for (auto item : pagedResponse.Value.Value())
+    {
+      Items.emplace_back(KeyProperties(item));
+    }
+  }
+}
+
+KeyPropertiesPagedResponse::KeyPropertiesPagedResponse(
+    _detail::GetKeyVersionsPagedResponse const& pagedResponse,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+    std::shared_ptr<KeyClient> keyClient,
+    std::string const& keyName)
+    : m_keyName(keyName), m_keyClient(std::move(keyClient))
+{
+  CurrentPageToken = pagedResponse.CurrentPageToken;
+  NextPageToken = pagedResponse.NextPageToken;
+  RawResponse = std::move(rawResponse);
+  if (pagedResponse.Value.HasValue())
+  {
+    for (auto item : pagedResponse.Value.Value())
+    {
+      Items.emplace_back(KeyProperties(item));
+    }
+  }
+}
+
+DeletedKeyPagedResponse::DeletedKeyPagedResponse(
+    _detail::GetDeletedKeysPagedResponse&& pagedResponse,
+    std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+    std::shared_ptr<KeyClient> keyClient)
+    : m_keyClient(std::move(keyClient))
+{
+  CurrentPageToken = pagedResponse.CurrentPageToken;
+  NextPageToken = pagedResponse.NextPageToken;
+  RawResponse = std::move(rawResponse);
+  if (pagedResponse.Value.HasValue())
+  {
+    for (auto item : pagedResponse.Value.Value())
+    {
+      Items.emplace_back(DeletedKey(item));
+    }
   }
 }

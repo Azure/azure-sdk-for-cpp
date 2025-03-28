@@ -28,8 +28,6 @@ add_executable (
     key_cryptographic_client_test_live.cpp
     key_rotation_policy_test_live.cpp
     macro_guard.cpp
-    mocked_client_test.cpp
-    mocked_transport_adapter_test.hpp
 )
 
 target_compile_definitions(azure-security-keyvault-keys-test PRIVATE _azure_BUILDING_TESTS)

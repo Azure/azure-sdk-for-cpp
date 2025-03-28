@@ -17,7 +17,6 @@
 #include "dll_import_export.hpp"
 
 #include <azure/core/http/http.hpp>
-#include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/response.hpp>
 
 #include <stdint.h>
@@ -51,7 +50,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Secrets {
     // Using a shared pipeline for a client to share it with LRO (like delete key)
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
-    std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
 
   public:
     /**

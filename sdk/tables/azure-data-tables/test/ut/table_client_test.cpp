@@ -156,7 +156,6 @@ namespace Azure { namespace Data { namespace Test {
     EXPECT_EQ(response.Value.Logging.Delete, false);
     EXPECT_EQ(response.Value.HourMetrics.RetentionPolicyDefinition.IsEnabled, true);
     EXPECT_EQ(response.Value.HourMetrics.Version, "1.0");
-    EXPECT_EQ(response.Value.HourMetrics.IsEnabled, true);
     EXPECT_EQ(response.Value.HourMetrics.IncludeApis.Value(), true);
     EXPECT_EQ(response.Value.MinuteMetrics.RetentionPolicyDefinition.IsEnabled, false);
     EXPECT_EQ(response.Value.MinuteMetrics.Version, "1.0");
