@@ -44,23 +44,6 @@ Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` arg
 
 There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
 
-### Include the package
-
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
-
-To install Azure Identity package via vcpkg:
-
-```cmd
-> vcpkg install azure-identity-cpp
-```
-
-Then, use in your CMake file:
-
-```CMake
-find_package(azure-identity-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-identity)
-```
-
 ### Authenticate the client
 
 When debugging and executing code locally it is typical for a developer to use their own account for authenticating calls to Azure services. There are several developer tools which can be used to perform this authentication in your development environment.
