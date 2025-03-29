@@ -1,31 +1,48 @@
 # Azure Identity client library for C++
+
 The Azure Identity library provides Microsoft Entra ID ([formerly Azure Active Directory](https://learn.microsoft.com/entra/fundamentals/new-name)) token authentication support across the Azure SDK. It provides a set of `TokenCredential` implementations which can be used to construct Azure SDK clients which support Microsoft Entra token authentication.
 This library follows the [Azure SDK Design Guidelines for C++][azure_sdk_cpp_development_guidelines].
 
-  [Source code][source] | [API reference documentation][doxygen] | [Microsoft Entra ID documentation][meid_doc]
+[Source code][source] | [Package (vcpkg)][identity_vcpkg] | [API reference documentation][doxygen] | [Microsoft Entra ID documentation][meid_doc] | [Samples][samples]
 
 ## Getting started
-### Include the package
 
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
+### Prerequisites
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub]
+- The [Azure CLI][azure_cli] can also be useful for authenticating in a development environment, creating accounts, and managing account roles.
 
-To install Azure Identity package via vcpkg:
+### Install the package
+The easiest way to acquire the C++ SDK is leveraging the vcpkg package manager and CMake. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install]. We'll use vcpkg in manifest mode. To start a vcpkg project in manifest mode use the following command at the root of your project: 
 
-```cmd
-> vcpkg install azure-identity-cpp
+```batch
+vcpkg new --application
 ```
 
-Then, use in your CMake file:
+To install the Azure Identity package via vcpkg:
+To add the Azure Identity package to your vcpkg enter the following command:
+
+```batch
+vcpkg add port azure-identity-cpp
+```
+
+Then, add the following in your CMake file:
 
 ```CMake
 find_package(azure-identity-cpp CONFIG REQUIRED)
 target_link_libraries(<your project name> PRIVATE Azure::azure-identity)
 ```
 
-### Prerequisites
+Remember to set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` either by adding the following to your `CMakeLists.txt` file before your project statement:
 
-* An [Azure subscription][azure_sub].
-* The [Azure CLI][azure_cli] can also be useful for authenticating in a development environment, creating accounts, and managing account roles.
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+Or by specifying it in your CMake commands with the `-DCMAKE_TOOLCHAIN_FILE` argument.
+
+There is more than one way to acquire and install this library. Check out [our samples on different ways to set up your Azure C++ project][project_set_up_examples].
 
 ### Authenticate the client
 
@@ -270,7 +287,10 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [default_azure_credential_auth_flow]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
+[samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity/samples
 [blobs_client_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs
 [meid_doc]: https://learn.microsoft.com/entra/identity/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/
+[identity_vcpkg]: https://vcpkg.io/en/package/azure-identity-cpp
+[project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration
