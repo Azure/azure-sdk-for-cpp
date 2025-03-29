@@ -309,5 +309,5 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [meid_doc]: https://learn.microsoft.com/entra/identity/
 [azure_core_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core
 [doxygen]: https://azure.github.io/azure-sdk-for-cpp/
-[vcpkg]: https://vcpkg.io/en/package/azure-identity-cpp
+[identity_vcpkg]: https://vcpkg.io/en/package/azure-identity-cpp
 [project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration
