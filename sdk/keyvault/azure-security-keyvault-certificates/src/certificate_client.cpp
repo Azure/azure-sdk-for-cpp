@@ -80,12 +80,9 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
     std::string const& certificateName,
     Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, certificateName});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetCertificate(certificateName,"", context);
+  auto value = KeyVaultCertificateWithPolicy(result.Value);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
 }
 
 Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
@@ -93,15 +90,10 @@ Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
     std::string const& certificateVersion,
     Context const& context) const
 {
-  // Request with no payload
-  std::vector<std::string> path{{CertificatesPath, certificateName, certificateVersion}};
+  auto result = m_client->GetCertificate(certificateName, certificateVersion, context);
 
-  auto request = CreateRequest(HttpMethod::Get, std::move(path));
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+  auto value = KeyVaultCertificate(result.Value);
+  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(result.RawResponse));
 }
 
 CreateCertificateOperation CertificateClient::StartCreateCertificate(

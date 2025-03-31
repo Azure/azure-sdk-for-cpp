@@ -23,7 +23,11 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
+  namespace _detail { namespace Models {
+    struct CertificateBundle;
+  }} // namespace _detail::Models
   class CertificateClient;
+  class KeyVaultCertificateWithPolicy;
   /**
    * @brief Contains identity and other basic properties of a Certificate.
    *
@@ -131,6 +135,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param name The name of the certificate.
      */
     CertificateProperties(std::string const& name) : Name(name) {}
+
+  private:
+    friend class CertificateClient;
+    friend class KeyVaultCertificate;
+    CertificateProperties(_detail::Models::CertificateBundle const& bundle);
   };
 
   /**
@@ -198,6 +207,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     virtual ~KeyVaultCertificate() = default;
+
+  private:
+    friend class CertificateClient;
+    friend class KeyVaultCertificateWithPolicy;
+    KeyVaultCertificate(_detail::Models::CertificateBundle const& bundle);
   };
 
   /**
@@ -843,6 +857,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     KeyVaultCertificateWithPolicy() = default;
+
+  private:
+    friend class CertificateClient;
+    KeyVaultCertificateWithPolicy(_detail::Models::CertificateBundle const& bundle);
   };
 
   /**

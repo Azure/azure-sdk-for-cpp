@@ -17,7 +17,14 @@ using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Security::KeyVault::Certificates::Test;
 
 using namespace std::chrono_literals;
+TEST_F(KeyVaultCertificateClientTest, GetCertificateTest)
+{
+  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+  std::string const certificateName("testName");
 
+  auto const& client = GetClientForTest(testName);
+  auto cert = client.GetCertificate(certificateName);
+}
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
