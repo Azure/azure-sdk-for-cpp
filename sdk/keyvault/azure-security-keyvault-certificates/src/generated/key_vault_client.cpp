@@ -43,7 +43,7 @@ KeyVaultClient::KeyVaultClient(
 
   m_pipeline = std::make_shared<Core::Http::_internal::HttpPipeline>(
       options,
-      "security-keyvault-keys",
+      "security-keyvault-certificates",
       _detail::PackageVersion::ToString(),
       std::move(perRetryPolicies),
       std::move(perCallPolicies));
