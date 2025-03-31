@@ -28,7 +28,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace _detail {
 }}}} // namespace Azure::Security::KeyVault::_detail
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
+  namespace _detail {
+    class KeyVaultClient;
+  }
   /**
    * @brief The KeyClient provides synchronous methods to manage a KeyVaultKe in the Azure Key
    * Vault. The client supports creating, retrieving, updating, deleting, purging, backing up,
@@ -48,6 +50,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     std::string m_apiVersion;
     /** @brief the HTTP Pipeline used in this KeyClient. */
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+
+  private:
+    std::shared_ptr<_detail::KeyVaultClient> m_client;
 
   public:
     /**
@@ -499,19 +504,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return The key client's primary URL endpoint.
      */
     std::string GetUrl() const { return m_vaultUrl.GetAbsoluteUrl(); }
-
-  private:
-    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
-
-    Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path = {},
-        Azure::Core::IO::BodyStream* content = nullptr) const;
-
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Keys

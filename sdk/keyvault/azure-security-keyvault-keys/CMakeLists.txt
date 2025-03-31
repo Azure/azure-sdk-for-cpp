@@ -45,6 +45,24 @@ elseif(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
+option(AZURE_TSP_KV_KEYS_GEN3 "Generate KeyVault Keys from TypeSpec" ON)
+message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_KEYS_GEN}")
+
+if(AZURE_TSP_KV_KEYS_GEN)
+    include(TSPCompile) 
+    #typespec related repo information
+    set(TSP_SERVICE_PATH "Security.KeyVault.Keys")
+    set(TSP_DESTINATION "keyvault_keys")
+    
+    #codegen related repo information
+    set(CODEGEN_SHA "83758baff29b89a8a7bd28fa26a692225f4f208f")
+    set(CODEGEN_DESTINATION "typespec-cpp")
+       
+    #destination folders
+    set(GEN_FILES_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}")
+    #generate code from typespec
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION} OFF)
+endif()
 set(
   AZURE_KEYVAULT_KEYS_HEADER
     inc/azure/keyvault/keys.hpp
@@ -82,6 +100,8 @@ set(
     src/json_web_key.cpp
     src/key_backup.cpp
     src/key_client.cpp
+    src/key_client_models.cpp
+    src/key_client_options.cpp
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_encryption_algorithm.cpp
@@ -94,6 +114,15 @@ set(
     src/key_type.cpp
     src/keyvault_key.cpp
     src/keyvault_protocol.cpp
+    src/generated/get_deleted_keys_paged_response.cpp
+    src/generated/get_keys_paged_response.cpp
+    src/generated/get_key_versions_paged_response.cpp
+    src/generated/keys.cpp
+    src/generated/keys_models.hpp
+    src/generated/key_vault_client.cpp
+    src/generated/key_vault_client.hpp
+    src/generated/key_vault_client_options.hpp
+    src/generated/key_vault_client_paged_responses.hpp
     src/private/cryptography_internal_access.hpp
     src/private/cryptography_serializers.hpp
     src/private/key_backup.hpp

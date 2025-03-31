@@ -46,7 +46,8 @@
     "sdk/core/azure-core-amqp/**/rust_amqp/azure_core_amqp/**/*",
     "*.toml",
     "sdk/storage/*/NOTICE.txt",
-    "sdk/tables/*/NOTICE.txt"
+    "sdk/tables/*/NOTICE.txt",
+    "sdk/keyvault/azure-security-keyvault-keys/src/generated/*",
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future

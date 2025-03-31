@@ -356,5 +356,6 @@ static std::string GetSuffix(const testing::TestParamInfo<int>& info)
 INSTANTIATE_TEST_SUITE_P(
     Crypto,
     KeyVaultKeyClientWithParam,
-    ::testing::Values(-215, -100, 0, 13, 55, 233, 987, 1597, 2048, 3072, 4096),
+    // supported values are only 2048, 3072, 4096
+    ::testing::Values(2048, 3072, 4096),
     GetSuffix);

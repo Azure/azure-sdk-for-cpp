@@ -31,7 +31,22 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
-
+  class KeyClient;
+  namespace _detail {
+    namespace Models {
+      struct KeyBundle;
+      struct DeletedKeyBundle;
+      struct KeyUpdateParameters;
+      struct KeyRotationPolicy;
+      struct KeyItem;
+      struct DeletedKeyItem;
+    } // namespace Models
+    class GetKeysPagedResponse;
+    class GetKeyVersionsPagedResponse;
+    class GetDeletedKeysPagedResponse;
+  } // namespace _detail
+  class KeyPropertiesPagedResponse;
+  class DeletedKeyPagedResponse;
   /**
    * @brief Define a model for a purged key.
    *
@@ -487,7 +502,26 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      */
     std::string EncodedPolicy;
   };
+  /**
+   * @brief The key attestation information.
+   *
+   */
+  struct KeyAttestation final
+  {
+    /// A base64url-encoded string containing certificates in PEM format, used for attestation
+    /// validation.
+    Nullable<std::vector<std::uint8_t>> CertificatePemFile;
 
+    /// The attestation blob bytes encoded as base64url string corresponding to a private key.
+    Nullable<std::vector<std::uint8_t>> PrivateKeyAttestation;
+
+    /// The attestation blob bytes encoded as base64url string corresponding to a public key in
+    /// case of asymmetric key.
+    Nullable<std::vector<std::uint8_t>> PublicKeyAttestation;
+
+    /// The version of the attestation.
+    Nullable<std::string> Version;
+  };
   /**
    * @brief The resource containing all the properties of the KeyVaultKey except JsonWebKey
    * properties.
@@ -597,6 +631,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     Azure::Nullable<std::string> HsmPlatform;
 
     /**
+     * @brief The key or key version attestation information.
+     *
+     */
+    Azure::Nullable<KeyAttestation> Attestation;
+    /**
      * @brief Construct a new Key Properties object.
      *
      */
@@ -608,6 +647,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @param name The name of the key.
      */
     KeyProperties(std::string name) : Name(std::move(name)) {}
+
+  private:
+    friend class KeyClient;
+    friend class KeyPropertiesPagedResponse;
+    _detail::Models::KeyUpdateParameters ToKeyUpdateParameters(
+        Azure::Nullable<std::vector<KeyOperation>> const& keyOperations) const;
+    KeyProperties(_detail::Models::KeyItem const& response);
   };
 
   /**
@@ -675,6 +721,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @return A vector with the supported operations for the key.
      */
     std::vector<KeyOperation> const& KeyOperations() const { return Key.KeyOperations(); }
+
+  private:
+    friend class KeyClient;
+    KeyVaultKey(_detail::Models::KeyBundle const& response);
   };
 
   /**
@@ -714,9 +764,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      *
      */
     Azure::DateTime ScheduledPurgeDate;
-  };
 
-  class KeyClient;
+  private:
+    friend class KeyClient;
+    friend class DeletedKeyPagedResponse;
+    DeletedKey(_detail::Models::DeletedKeyBundle const& response);
+    DeletedKey(_detail::Models::DeletedKeyItem const& response);
+  };
 
   /**
    * @brief Define a single page to list the keys from the Key Vault.
@@ -755,6 +809,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       RawResponse = std::move(rawResponse);
     }
+    KeyPropertiesPagedResponse(
+        _detail::GetKeysPagedResponse const& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient,
+        std::string const& keyName = std::string());
+    KeyPropertiesPagedResponse(
+        _detail::GetKeyVersionsPagedResponse const& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient,
+        std::string const& keyName = std::string());
 
   public:
     /**
@@ -802,6 +866,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
     {
       RawResponse = std::move(rawResponse);
     }
+    DeletedKeyPagedResponse(
+        _detail::GetDeletedKeysPagedResponse&& pagedResponse,
+        std::unique_ptr<Azure::Core::Http::RawResponse> rawResponse,
+        std::shared_ptr<KeyClient> keyClient);
 
   public:
     /**
@@ -1109,6 +1177,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * @brief The key rotation policy attributes.
      */
     KeyRotationPolicyAttributes Attributes;
+
+    /**
+     * @brief Default constructor.
+     */
+    KeyRotationPolicy() = default;
+
+  private:
+    friend class KeyClient;
+    KeyRotationPolicy(_detail::Models::KeyRotationPolicy const& krp);
+    _detail::Models::KeyRotationPolicy ToKeyRotationPolicy() const;
   };
 
   /**
