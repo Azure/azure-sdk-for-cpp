@@ -46,6 +46,7 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
     {
       Policy.CertificateTransparency = policy.IssuerParameters.Value().CertificateTransparency;
       Policy.CertificateType = policy.IssuerParameters.Value().CertificateType;
+      Policy.IssuerName = policy.IssuerParameters.Value().Name;
     }
     if (policy.SecretProperties.HasValue()
         && policy.SecretProperties.Value().ContentType.HasValue())
@@ -99,14 +100,50 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
         }
       }
     }
-    // Policy.Exportable
-    // Policy.IssuerName
-    // Policy.KeyCurveName
-    // Policy.KeySize
-    // Policy.KeyType
-    // Policy.UpdatedOn
-    // Policy.ReuseKey
-    // Policy.LifetimeActions
+    if (policy.LifetimeActions.HasValue())
+    {
+      auto lifetimeActions = policy.LifetimeActions.Value();
+      for (auto const& item : lifetimeActions)
+      {
+        LifetimeAction action;
+        if (item.Trigger.HasValue())
+        {
+          action.DaysBeforeExpiry = item.Trigger.Value().DaysBeforeExpiry;
+          action.LifetimePercentage = item.Trigger.Value().LifetimePercentage;
+        }
+        if (item.Action.HasValue() && item.Action.Value().ActionType.HasValue())
+
+        {
+          action.Action
+              = CertificatePolicyAction(item.Action.Value().ActionType.Value().ToString());
+        }
+        Policy.LifetimeActions.emplace_back(action);
+      }
+    }
+    if (policy.KeyProperties.HasValue())
+    {
+      auto keyProperties = policy.KeyProperties.Value();
+      if (keyProperties.Exportable.HasValue())
+      {
+        Policy.Exportable = keyProperties.Exportable.Value();
+      }
+      if (keyProperties.ReuseKey.HasValue())
+      {
+        Policy.ReuseKey = keyProperties.ReuseKey.Value();
+      }
+      if (keyProperties.KeySize.HasValue())
+      {
+        Policy.KeySize = keyProperties.KeySize.Value();
+      }
+      if (keyProperties.Curve.HasValue())
+      {
+        Policy.KeyCurveName = CertificateKeyCurveName(keyProperties.Curve.Value().ToString());
+      }
+      if (keyProperties.KeyType.HasValue())
+      {
+        Policy.KeyType = CertificateKeyType(keyProperties.KeyType.Value().ToString());
+      }
+    }
   }
 }
 

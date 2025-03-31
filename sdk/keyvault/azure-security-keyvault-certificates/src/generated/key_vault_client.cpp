@@ -5444,6 +5444,7 @@ KeyVaultClient::UpdateCertificate(
   return Response<Models::CertificateBundle>(std::move(response), std::move(rawResponse));
 }
 
+// codegen: replace KeyVaultClient::GetCertificate
 Azure::Response<Azure::Security::KeyVault::Certificates::_detail::Models::CertificateBundle>
 KeyVaultClient::GetCertificate(
     const std::string& certificateName,
@@ -5457,12 +5458,11 @@ KeyVaultClient::GetCertificate(
     throw std::invalid_argument("Parameter 'certificateName' cannot be an empty string.");
   }
   url.AppendPath(Core::Url::Encode(certificateName));
-  if (certificateVersion.empty())
+  if (!certificateVersion.empty())
   {
-    throw std::invalid_argument("Parameter 'certificateVersion' cannot be an empty string.");
+    url.AppendPath(Core::Url::Encode(certificateVersion));
   }
-  url.AppendPath(Core::Url::Encode(certificateVersion));
-
+  
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);
@@ -5958,6 +5958,7 @@ KeyVaultClient::GetCertificate(
   return Response<Models::CertificateBundle>(std::move(response), std::move(rawResponse));
 }
 
+// codegen: end replace KeyVaultClient::GetCertificate
 Azure::Response<Azure::Security::KeyVault::Certificates::_detail::Models::CertificateOperation>
 KeyVaultClient::UpdateCertificateOperation(
     const std::string& certificateName,
