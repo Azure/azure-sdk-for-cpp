@@ -151,7 +151,7 @@ namespace Azure { namespace Data { namespace Test {
   TEST_P(TablesClientTest, ServiceClientGetProperties)
   {
     auto response = m_tableServiceClient->GetServiceProperties();
-    //TODO : once the TME thing is resolved debug thins thing. 
+    // TODO : once the TME thing is resolved debug thins thing.
     /*EXPECT_EQ(response.Value.Logging.RetentionPolicyDefinition.IsEnabled, false);
     EXPECT_EQ(response.Value.Logging.Version, "1.0");
     EXPECT_EQ(response.Value.Logging.Delete, false);
