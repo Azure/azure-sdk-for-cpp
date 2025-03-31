@@ -27,6 +27,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     class KeyVaultCertificateClientTest;
   }
 #endif
+  namespace _detail {
+    class KeyVaultClient;
+  }
   /**
    * @brief The CertificateClient provides synchronous methods to manage KeyVaultCertificate in
    * Azure Key Vault.
@@ -45,6 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<_detail::KeyVaultClient> m_client;
 
   public:
     /**
