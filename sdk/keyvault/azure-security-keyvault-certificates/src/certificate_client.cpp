@@ -135,22 +135,20 @@ Azure::Response<CertificateIssuer> CertificateClient::GetIssuer(
     std::string const& issuerName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, IssuersPath, issuerName});
-  auto rawResponse = SendRequest(request, context);
+  auto result = m_client->GetCertificateIssuer(issuerName, context);
 
-  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
-  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+  auto value = CertificateIssuer(issuerName, result.Value);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::DeleteIssuer(
     std::string const& issuerName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, IssuersPath, issuerName});
-  auto rawResponse = SendRequest(request, context);
+  auto result = m_client->DeleteCertificateIssuer(issuerName, context);
 
-  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
-  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+  auto value = CertificateIssuer(issuerName, result.Value);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
@@ -158,16 +156,12 @@ Azure::Response<CertificateIssuer> CertificateClient::CreateIssuer(
     CertificateIssuer const& certificateIssuer,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateIssuerSerializer::Serialize(certificateIssuer);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+  _detail::Models::CertificateIssuerSetParameters issuerParameters
+      = (const_cast<CertificateIssuer&>(certificateIssuer)).ToCertificateIssuerSetParameters();
+  auto result = m_client->SetCertificateIssuer(issuerName, issuerParameters, context);
 
-  auto request
-      = CreateRequest(HttpMethod::Put, {CertificatesPath, IssuersPath, issuerName}, &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
-  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+  auto value = CertificateIssuer(issuerName, result.Value);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
@@ -175,16 +169,13 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
     CertificateIssuer const& certificateIssuer,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateIssuerSerializer::Serialize(certificateIssuer);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+  _detail::Models::CertificateIssuerUpdateParameters issuerParameters
+      = (const_cast<CertificateIssuer&>(certificateIssuer)).ToCertificateIssuerUpdateParameters();
+  auto result = m_client->UpdateCertificateIssuer(
+      issuerName, issuerParameters, context);
 
-  auto request = CreateRequest(
-      HttpMethod::Patch, {CertificatesPath, IssuersPath, issuerName}, &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificateIssuerSerializer::Deserialize(issuerName, *rawResponse);
-  return Azure::Response<CertificateIssuer>(std::move(value), std::move(rawResponse));
+  auto value = CertificateIssuer(issuerName, result.Value);
+  return Azure::Response<CertificateIssuer>(std::move(value), std::move(result.RawResponse));
 }
 
 Response<CertificateContactsResult> CertificateClient::GetContacts(

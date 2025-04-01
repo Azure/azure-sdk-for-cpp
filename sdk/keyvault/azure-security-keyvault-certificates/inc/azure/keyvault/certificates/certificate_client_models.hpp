@@ -25,6 +25,9 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
   namespace _detail { namespace Models {
     struct CertificateBundle;
+    struct CertificateIssuerSetParameters;
+    struct CertificateIssuerUpdateParameters;
+    struct IssuerBundle;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -931,7 +934,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
    * @brief Administrator details
    *
    */
-  struct AdministratorDetails final
+  struct    AdministratorDetails final
   {
     /**
      * @brief Administrator first name.
@@ -1043,6 +1046,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     IssuerProperties Properties;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateIssuer() = default;
+  private:
+    friend class CertificateClient;
+    CertificateIssuer(std::string const& name, _detail::Models::IssuerBundle const& issuer);
+    _detail::Models::CertificateIssuerSetParameters ToCertificateIssuerSetParameters();
+    _detail::Models::CertificateIssuerUpdateParameters ToCertificateIssuerUpdateParameters();
   };
 
   /**

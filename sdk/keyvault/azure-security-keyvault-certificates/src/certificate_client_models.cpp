@@ -51,7 +51,8 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
     if (policy.SecretProperties.HasValue()
         && policy.SecretProperties.Value().ContentType.HasValue())
     {
-      Policy.ContentType = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
+      Policy.ContentType
+          = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
     }
     if (policy.Attributes.HasValue())
     {
@@ -78,7 +79,7 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
         }
       }
       Policy.ValidityInMonths = policy.X509CertificateProperties.Value().ValidityInMonths;
-      if(policy.X509CertificateProperties.Value().Subject.HasValue())
+      if (policy.X509CertificateProperties.Value().Subject.HasValue())
       {
         Policy.Subject = policy.X509CertificateProperties.Value().Subject.Value();
       }
@@ -189,4 +190,124 @@ CertificateProperties::CertificateProperties(_detail::Models::CertificateBundle 
   {
     X509Thumbprint = bundle.X509Thumbprint.Value();
   }
+}
+
+_detail::Models::CertificateIssuerSetParameters
+CertificateIssuer::ToCertificateIssuerSetParameters()
+{
+  _detail::Models::CertificateIssuerSetParameters issuer;
+  if (Provider.HasValue())
+  {
+    issuer.Provider = Provider.Value();
+  }
+  {
+    _detail::Models::IssuerCredentials creds;
+    creds.Password = Credentials.Password;
+    creds.AccountId = Credentials.AccountId;
+    issuer.Credentials = creds;
+  }
+  {
+    _detail::Models::OrganizationDetails org;
+    org.Id = Organization.Id;
+    std::vector<_detail::Models::AdministratorDetails> admins;
+    for (auto admin : Organization.AdminDetails)
+    {
+      _detail::Models::AdministratorDetails adminDetails;
+      adminDetails.EmailAddress = admin.EmailAddress;
+      adminDetails.FirstName = admin.FirstName;
+      adminDetails.LastName = admin.LastName;
+      adminDetails.Phone = admin.PhoneNumber;
+      admins.emplace_back(adminDetails);
+    }
+    org.AdminDetails = admins;
+    issuer.OrganizationDetails = org;
+  }
+  {
+    _detail::Models::IssuerAttributes attributes;
+    attributes.Enabled = Properties.Enabled;
+    attributes.Created = Properties.Created;
+    attributes.Updated = Properties.Updated;
+    issuer.Attributes = attributes;
+  }
+  return issuer;
+};
+_detail::Models::CertificateIssuerUpdateParameters
+CertificateIssuer::ToCertificateIssuerUpdateParameters()
+{
+  _detail::Models::CertificateIssuerUpdateParameters issuer;
+  if (Provider.HasValue())
+  {
+    issuer.Provider = Provider.Value();
+  }
+  {
+    _detail::Models::IssuerCredentials creds;
+    creds.Password = Credentials.Password;
+    creds.AccountId = Credentials.AccountId;
+    issuer.Credentials = creds;
+  }
+  {
+    _detail::Models::OrganizationDetails org;
+    org.Id = Organization.Id;
+    std::vector<_detail::Models::AdministratorDetails> admins;
+    for (auto admin : Organization.AdminDetails)
+    {
+      _detail::Models::AdministratorDetails adminDetails;
+      adminDetails.EmailAddress = admin.EmailAddress;
+      adminDetails.FirstName = admin.FirstName;
+      adminDetails.LastName = admin.LastName;
+      adminDetails.Phone = admin.PhoneNumber;
+      admins.emplace_back(adminDetails);
+    }
+    org.AdminDetails = admins;
+    issuer.OrganizationDetails = org;
+  }
+  {
+    _detail::Models::IssuerAttributes attributes;
+    attributes.Enabled = Properties.Enabled;
+    attributes.Created = Properties.Created;
+    attributes.Updated = Properties.Updated;
+    issuer.Attributes = attributes;
+  }
+  return issuer;
+}
+
+CertificateIssuer::CertificateIssuer(
+    std::string const& name,
+    _detail::Models::IssuerBundle const& issuer)
+    : Name(std::move(name))
+{
+
+  Provider = issuer.Provider;
+  if (issuer.Credentials.HasValue())
+  {
+    Credentials.AccountId = issuer.Credentials.Value().AccountId;
+    Credentials.Password = issuer.Credentials.Value().Password;
+  }
+  if (issuer.OrganizationDetails.HasValue())
+  {
+    Organization.Id = issuer.OrganizationDetails.Value().Id;
+    if (issuer.OrganizationDetails.Value().AdminDetails.HasValue())
+    {
+      for (auto admin : issuer.OrganizationDetails.Value().AdminDetails.Value())
+      {
+        AdministratorDetails adminDetails;
+        adminDetails.EmailAddress = admin.EmailAddress;
+        adminDetails.FirstName = admin.FirstName;
+        adminDetails.LastName = admin.LastName;
+        adminDetails.PhoneNumber = admin.Phone;
+        Organization.AdminDetails.emplace_back(adminDetails);
+      }
+    }
+  }
+  if (issuer.Attributes.HasValue())
+  {
+    Properties.Enabled = issuer.Attributes.Value().Enabled;
+    Properties.Created = issuer.Attributes.Value().Created;
+    Properties.Updated = issuer.Attributes.Value().Updated;
+  }
+  if (issuer.Id.HasValue())
+  {
+    IdUrl = issuer.Id.Value();
+  }
+
 }
