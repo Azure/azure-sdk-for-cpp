@@ -36,20 +36,7 @@
           "CODE_COVERAGE": "enabled",
           "CODE_COVERAGE_COLLECT_ONLY": 1,
           "AZURE_CORE_ENABLE_JSON_TESTS": 1
-        }
-      }
-    },
-    {
-      "StaticConfigs": {
-        "Ubu22": {
-          "BuildArgs": "-j 4",
-          "Pool": "env:LINUXPOOL",
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-          "RunProxyTests": true
-        }
-      },
-      "BuildConfig": {
+        },
         "x64_with_unit_test_release": {
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_SAMPLES=ON",
           "AZURE_CORE_ENABLE_JSON_TESTS": 1
