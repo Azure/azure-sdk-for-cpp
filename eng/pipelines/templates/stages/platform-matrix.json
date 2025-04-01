@@ -198,7 +198,8 @@
           "CXX": "/usr/bin/clang++-11",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "RunProxyTests": true,
+          "AptDependencies": "clang-11 clang-format-11"
         }
       },
       "BuildSettings": {
