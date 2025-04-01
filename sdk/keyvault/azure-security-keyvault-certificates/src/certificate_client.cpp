@@ -331,26 +331,24 @@ Azure::Response<BackupCertificateResult> CertificateClient::BackupCertificate(
     std::string certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Post, {CertificatesPath, certificateName, BackupPath});
-  auto rawResponse = SendRequest(request, context);
-
-  auto value = BackupCertificateSerializer::Deserialize(*rawResponse);
-  return Azure::Response<BackupCertificateResult>(std::move(value), std::move(rawResponse));
+  auto result = m_client->BackupCertificate(certificateName, context);
+  BackupCertificateResult value;
+  if (result.Value.Value.HasValue())
+  {
+    value.Certificate = result.Value.Value.Value();
+  }
+  return Azure::Response<BackupCertificateResult>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertificateBackup(
     std::vector<uint8_t> const& certificateBackup,
     Azure::Core::Context const& context) const
 {
-  auto payload = BackupCertificateSerializer::Serialize(certificateBackup);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  auto request = CreateRequest(HttpMethod::Post, {CertificatesPath, RestorePath}, &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize("", *rawResponse);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+  _detail::Models::CertificateRestoreParameters restoreParameters;
+  restoreParameters.CertificateBundleBackup = certificateBackup;
+  auto result = m_client->RestoreCertificate(restoreParameters, context);
+  auto value = KeyVaultCertificateWithPolicy(result.Value);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
 }
 CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
     GetPropertiesOfCertificatesOptions const& options,
