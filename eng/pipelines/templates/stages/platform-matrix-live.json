@@ -41,7 +41,7 @@
     },
     {
       "StaticConfigs": {
-        "Ubu20": {
+        "Ubu22": {
           "BuildArgs": "-j 4",
           "Pool": "env:LINUXPOOL",
           "OSVmImage": "env:LINUXVMIMAGE",
