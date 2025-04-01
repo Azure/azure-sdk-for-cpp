@@ -41,110 +41,8 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
 {
   if (bundle.Policy.HasValue())
   {
-    auto policy = bundle.Policy.Value();
-    if (policy.IssuerParameters.HasValue())
-    {
-      Policy.CertificateTransparency = policy.IssuerParameters.Value().CertificateTransparency;
-      Policy.CertificateType = policy.IssuerParameters.Value().CertificateType;
-      Policy.IssuerName = policy.IssuerParameters.Value().Name;
-    }
-    if (policy.SecretProperties.HasValue()
-        && policy.SecretProperties.Value().ContentType.HasValue())
-    {
-      Policy.ContentType
-          = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
-    }
-    if (policy.Attributes.HasValue())
-    {
-      Policy.Enabled = policy.Attributes.Value().Enabled;
-      Policy.CreatedOn = policy.Attributes.Value().Created;
-      Policy.UpdatedOn = policy.Attributes.Value().Updated;
-    }
-    if (policy.X509CertificateProperties.HasValue())
-    {
-      auto keyUsage = policy.X509CertificateProperties.Value().KeyUsage;
-      if (keyUsage.HasValue())
-      {
-        for (auto const& item : keyUsage.Value())
-        {
-          Policy.KeyUsage.emplace_back(CertificateKeyUsage(item.ToString()));
-        }
-      }
-      auto enhancedKeyUsage = policy.X509CertificateProperties.Value().Ekus;
-      if (enhancedKeyUsage.HasValue())
-      {
-        for (auto const& item : enhancedKeyUsage.Value())
-        {
-          Policy.KeyUsage.emplace_back(CertificateKeyUsage(item));
-        }
-      }
-      Policy.ValidityInMonths = policy.X509CertificateProperties.Value().ValidityInMonths;
-      if (policy.X509CertificateProperties.Value().Subject.HasValue())
-      {
-        Policy.Subject = policy.X509CertificateProperties.Value().Subject.Value();
-      }
-      if (policy.X509CertificateProperties.Value().SubjectAlternativeNames.HasValue())
-      {
-        auto subjectAlternativeNames
-            = policy.X509CertificateProperties.Value().SubjectAlternativeNames.Value();
-        if (subjectAlternativeNames.Emails.HasValue())
-        {
-          Policy.SubjectAlternativeNames.Emails = subjectAlternativeNames.Emails.Value();
-        }
-        if (subjectAlternativeNames.DnsNames.HasValue())
-        {
-          Policy.SubjectAlternativeNames.DnsNames = subjectAlternativeNames.DnsNames.Value();
-        }
-        if (subjectAlternativeNames.Upns.HasValue())
-        {
-          Policy.SubjectAlternativeNames.UserPrincipalNames = subjectAlternativeNames.Upns.Value();
-        }
-      }
-    }
-    if (policy.LifetimeActions.HasValue())
-    {
-      auto lifetimeActions = policy.LifetimeActions.Value();
-      for (auto const& item : lifetimeActions)
-      {
-        LifetimeAction action;
-        if (item.Trigger.HasValue())
-        {
-          action.DaysBeforeExpiry = item.Trigger.Value().DaysBeforeExpiry;
-          action.LifetimePercentage = item.Trigger.Value().LifetimePercentage;
-        }
-        if (item.Action.HasValue() && item.Action.Value().ActionType.HasValue())
-
-        {
-          action.Action
-              = CertificatePolicyAction(item.Action.Value().ActionType.Value().ToString());
-        }
-        Policy.LifetimeActions.emplace_back(action);
-      }
-    }
-    if (policy.KeyProperties.HasValue())
-    {
-      auto keyProperties = policy.KeyProperties.Value();
-      if (keyProperties.Exportable.HasValue())
-      {
-        Policy.Exportable = keyProperties.Exportable.Value();
-      }
-      if (keyProperties.ReuseKey.HasValue())
-      {
-        Policy.ReuseKey = keyProperties.ReuseKey.Value();
-      }
-      if (keyProperties.KeySize.HasValue())
-      {
-        Policy.KeySize = keyProperties.KeySize.Value();
-      }
-      if (keyProperties.Curve.HasValue())
-      {
-        Policy.KeyCurveName = CertificateKeyCurveName(keyProperties.Curve.Value().ToString());
-      }
-      if (keyProperties.KeyType.HasValue())
-      {
-        Policy.KeyType = CertificateKeyType(keyProperties.KeyType.Value().ToString());
-      }
-    }
+    Policy = CertificatePolicy(bundle.Policy.Value());
+   
   }
 }
 
@@ -325,4 +223,297 @@ CertificateContactsResult::CertificateContactsResult(_detail::Models::Contacts c
     contactDetails.Phone = contact.Phone;
     Contacts.emplace_back(contactDetails);
   }
+}
+
+CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& policy) {
+  if (policy.IssuerParameters.HasValue())
+  {
+    CertificateTransparency = policy.IssuerParameters.Value().CertificateTransparency;
+    CertificateType = policy.IssuerParameters.Value().CertificateType;
+    IssuerName = policy.IssuerParameters.Value().Name;
+  }
+  if (policy.SecretProperties.HasValue() && policy.SecretProperties.Value().ContentType.HasValue())
+  {
+    ContentType
+        = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
+  }
+  if (policy.Attributes.HasValue())
+  {
+    Enabled = policy.Attributes.Value().Enabled;
+    CreatedOn = policy.Attributes.Value().Created;
+    UpdatedOn = policy.Attributes.Value().Updated;
+  }
+  if (policy.X509CertificateProperties.HasValue())
+  {
+    auto keyUsage = policy.X509CertificateProperties.Value().KeyUsage;
+    if (keyUsage.HasValue())
+    {
+      for (auto const& item : keyUsage.Value())
+      {
+        KeyUsage.emplace_back(CertificateKeyUsage(item.ToString()));
+      }
+    }
+    auto enhancedKeyUsage = policy.X509CertificateProperties.Value().Ekus;
+    if (enhancedKeyUsage.HasValue())
+    {
+      for (auto const& item : enhancedKeyUsage.Value())
+      {
+        KeyUsage.emplace_back(CertificateKeyUsage(item));
+      }
+    }
+    ValidityInMonths = policy.X509CertificateProperties.Value().ValidityInMonths;
+    if (policy.X509CertificateProperties.Value().Subject.HasValue())
+    {
+      Subject = policy.X509CertificateProperties.Value().Subject.Value();
+    }
+    if (policy.X509CertificateProperties.Value().SubjectAlternativeNames.HasValue())
+    {
+      auto subjectAlternativeNames
+          = policy.X509CertificateProperties.Value().SubjectAlternativeNames.Value();
+      if (subjectAlternativeNames.Emails.HasValue())
+      {
+        SubjectAlternativeNames.Emails = subjectAlternativeNames.Emails.Value();
+      }
+      if (subjectAlternativeNames.DnsNames.HasValue())
+      {
+        SubjectAlternativeNames.DnsNames = subjectAlternativeNames.DnsNames.Value();
+      }
+      if (subjectAlternativeNames.Upns.HasValue())
+      {
+        SubjectAlternativeNames.UserPrincipalNames = subjectAlternativeNames.Upns.Value();
+      }
+    }
+  }
+  if (policy.LifetimeActions.HasValue())
+  {
+    auto lifetimeActions = policy.LifetimeActions.Value();
+    for (auto const& item : lifetimeActions)
+    {
+      LifetimeAction action;
+      if (item.Trigger.HasValue())
+      {
+        action.DaysBeforeExpiry = item.Trigger.Value().DaysBeforeExpiry;
+        action.LifetimePercentage = item.Trigger.Value().LifetimePercentage;
+      }
+      if (item.Action.HasValue() && item.Action.Value().ActionType.HasValue())
+
+      {
+        action.Action = CertificatePolicyAction(item.Action.Value().ActionType.Value().ToString());
+      }
+      LifetimeActions.emplace_back(action);
+    }
+  }
+  if (policy.KeyProperties.HasValue())
+  {
+    auto keyProperties = policy.KeyProperties.Value();
+    if (keyProperties.Exportable.HasValue())
+    {
+      Exportable = keyProperties.Exportable.Value();
+    }
+    if (keyProperties.ReuseKey.HasValue())
+    {
+      ReuseKey = keyProperties.ReuseKey.Value();
+    }
+    if (keyProperties.KeySize.HasValue())
+    {
+      KeySize = keyProperties.KeySize.Value();
+    }
+    if (keyProperties.Curve.HasValue())
+    {
+      KeyCurveName = CertificateKeyCurveName(keyProperties.Curve.Value().ToString());
+    }
+    if (keyProperties.KeyType.HasValue())
+    {
+      KeyType = CertificateKeyType(keyProperties.KeyType.Value().ToString());
+    }
+  }
+}
+_detail::Models::CertificatePolicy CertificatePolicy::ToCertificatePolicy() const
+{
+  _detail::Models::CertificatePolicy result;
+  if (Enabled.HasValue() || CreatedOn.HasValue() || UpdatedOn.HasValue())
+  {
+    _detail::Models::CertificateAttributes attributes;
+    if (CreatedOn.HasValue())
+    {
+      attributes.Created = CreatedOn.Value();
+    }
+    if (Enabled.HasValue())
+    {
+      attributes.Enabled = Enabled.Value();
+    }
+    // attributes.Expires = ;
+    // attributes.NotBefore = ;
+    // attributes.RecoverableDays = ;
+    // attributes.RecoveryLevel = ;
+    if (UpdatedOn.HasValue())
+    {
+      attributes.Updated = UpdatedOn.Value();
+    }
+
+    result.Attributes = attributes;
+  }
+  if (IssuerName.HasValue() || CertificateTransparency.HasValue() || CertificateType.HasValue())
+  {
+    _detail::Models::IssuerParameters issuer;
+    if (IssuerName.HasValue())
+    {
+      issuer.Name = IssuerName.Value();
+    }
+    if (CertificateTransparency.HasValue())
+    {
+      issuer.CertificateTransparency = CertificateTransparency.Value();
+    }
+    if (CertificateType.HasValue())
+    {
+      issuer.CertificateType = CertificateType.Value();
+    }
+    result.IssuerParameters = issuer;
+  }
+  if (Exportable.HasValue() || ReuseKey.HasValue() || KeySize.HasValue() || KeyCurveName.HasValue()
+      || KeyType.HasValue())
+  {
+    _detail::Models::KeyProperties keyProperties;
+    if (Exportable.HasValue())
+    {
+      keyProperties.Exportable = Exportable.Value();
+    }
+    if (ReuseKey.HasValue())
+    {
+      keyProperties.ReuseKey = ReuseKey.Value();
+    }
+    if (KeySize.HasValue())
+    {
+      keyProperties.KeySize = KeySize.Value();
+    }
+    if (KeyCurveName.HasValue())
+    {
+      keyProperties.Curve = _detail::Models::JsonWebKeyCurveName(KeyCurveName.Value().ToString());
+    }
+    if (KeyType.HasValue())
+    {
+      keyProperties.KeyType = _detail::Models::JsonWebKeyType(KeyType.Value().ToString());
+    }
+    result.KeyProperties = keyProperties;
+  }
+  if (LifetimeActions.size() > 0)
+  {
+    std::vector<_detail::Models::LifetimeAction> actions;
+    for (auto const& item : LifetimeActions)
+    {
+      _detail::Models::LifetimeAction action;
+      if (item.DaysBeforeExpiry.HasValue() || item.LifetimePercentage.HasValue())
+      {
+        _detail::Models::Trigger trigger;
+        if (item.DaysBeforeExpiry.HasValue())
+        {
+          trigger.DaysBeforeExpiry = item.DaysBeforeExpiry.Value();
+        }
+        if (item.LifetimePercentage.HasValue())
+        {
+          trigger.LifetimePercentage = item.LifetimePercentage.Value();
+        }
+        action.Trigger = trigger;
+      }
+      _detail::Models::Action actionType;
+      actionType.ActionType = _detail::Models::CertificatePolicyAction(item.Action.ToString());
+      action.Action = actionType;
+      actions.emplace_back(action);
+    }
+    result.LifetimeActions = actions;
+  }
+  if (ContentType.HasValue())
+  {
+    _detail::Models::SecretProperties secretProps;
+    secretProps.ContentType = ContentType.Value().ToString();
+    result.SecretProperties = secretProps;
+  }
+  if (Subject.size() > 0 || EnhancedKeyUsage.size() > 0 || KeyUsage.size() > 0
+      || SubjectAlternativeNames.Emails.size() > 0 || SubjectAlternativeNames.DnsNames.size() > 0
+      || SubjectAlternativeNames.UserPrincipalNames.size() > 0 || ValidityInMonths.HasValue())
+  {
+    _detail::Models::X509CertificateProperties x509Props;
+    if (Subject.size() > 0)
+    {
+      x509Props.Subject = Subject;
+    }
+    if (EnhancedKeyUsage.size() > 0)
+    {
+      std::vector<std::string> keyUsages;
+      for (auto const& item : EnhancedKeyUsage)
+      {
+        keyUsages.emplace_back(item);
+      }
+      x509Props.Ekus = keyUsages;
+    }
+    if (KeyUsage.size() > 0)
+    {
+      std::vector<_detail::Models::KeyUsageType> keyUsages;
+      for (auto const& item : KeyUsage)
+      {
+        if (item == CertificateKeyUsage::DigitalSignature)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::DigitalSignatureValue));
+        }
+        else if (item == CertificateKeyUsage::NonRepudiation)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::NonRepudiationValue));
+        }
+        else if (item == CertificateKeyUsage::KeyEncipherment)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::KeyEnciphermentValue));
+        }
+        else if (item == CertificateKeyUsage::DataEncipherment)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::DataEnciphermentValue));
+        }
+        else if (item == CertificateKeyUsage::KeyAgreement)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::KeyAgreementValue));
+        }
+        else if (item == CertificateKeyUsage::KeyCertSign)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::KeyCertSignValue));
+        }
+        else if (item == CertificateKeyUsage::CrlSign)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::CrlSignValue));
+        }
+        else if (item == CertificateKeyUsage::EncipherOnly)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::EncipherOnlyValue));
+        }
+        else if (item == CertificateKeyUsage::DecipherOnly)
+        {
+          keyUsages.emplace_back(_detail::Models::KeyUsageType(_detail::DecipherOnlyValue));
+        }
+      }
+      x509Props.KeyUsage = keyUsages;
+    }
+    if (SubjectAlternativeNames.Emails.size() > 0 || SubjectAlternativeNames.DnsNames.size() > 0
+        || SubjectAlternativeNames.UserPrincipalNames.size() > 0)
+    {
+      _detail::Models::SubjectAlternativeNames subjectAlternativeNames;
+
+      if (SubjectAlternativeNames.Emails.size() > 0)
+      {
+        subjectAlternativeNames.Emails = SubjectAlternativeNames.Emails;
+      }
+      if (SubjectAlternativeNames.DnsNames.size() > 0)
+      {
+        subjectAlternativeNames.DnsNames = SubjectAlternativeNames.DnsNames;
+      }
+      if (SubjectAlternativeNames.UserPrincipalNames.size() > 0)
+      {
+        subjectAlternativeNames.Upns = SubjectAlternativeNames.UserPrincipalNames;
+      }
+      x509Props.SubjectAlternativeNames = subjectAlternativeNames;
+    }
+    if (ValidityInMonths.HasValue())
+    {
+      x509Props.ValidityInMonths = ValidityInMonths.Value();
+    }
+    result.X509CertificateProperties = x509Props;
+  }
+  return result;
 }

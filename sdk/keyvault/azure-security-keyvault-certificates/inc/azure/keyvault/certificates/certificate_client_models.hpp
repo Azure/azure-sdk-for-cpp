@@ -29,6 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct CertificateIssuerUpdateParameters;
     struct IssuerBundle;
     struct Contacts;
+    struct CertificatePolicy;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -831,6 +832,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::vector<LifetimeAction> LifetimeActions;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificatePolicy() = default;
+  private:
+    friend class CertificateClient;
+    friend struct _detail::Models::CertificatePolicy;
+    friend class KeyVaultCertificateWithPolicy;
+    CertificatePolicy(_detail::Models::CertificatePolicy const& policy);
+    _detail::Models::CertificatePolicy ToCertificatePolicy() const;
   };
 
   /**

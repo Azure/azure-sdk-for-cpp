@@ -304,11 +304,9 @@ Azure::Response<CertificatePolicy> CertificateClient::GetCertificatePolicy(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, certificateName, PolicyPath});
-  auto rawResponse = SendRequest(request, context);
-
-  auto value = CertificatePolicySerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificatePolicy>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetCertificatePolicy(certificateName, context);
+  auto value = CertificatePolicy(result.Value);
+  return Azure::Response<CertificatePolicy>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificatePolicy> CertificateClient::UpdateCertificatePolicy(
@@ -316,15 +314,12 @@ Azure::Response<CertificatePolicy> CertificateClient::UpdateCertificatePolicy(
     CertificatePolicy const& certificatePolicy,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificatePolicySerializer::Serialize(certificatePolicy);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-  auto request = CreateRequest(
-      HttpMethod::Patch, {CertificatesPath, certificateName, PolicyPath}, &payloadStream);
-  auto rawResponse = SendRequest(request, context);
+  auto updatePolicy 
+      = (const_cast<CertificatePolicy&>(certificatePolicy)).ToCertificatePolicy();
+  auto result = m_client->UpdateCertificatePolicy(certificateName, updatePolicy, context);
 
-  auto value = CertificatePolicySerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificatePolicy>(std::move(value), std::move(rawResponse));
+  auto value = CertificatePolicy(result.Value);
+  return Azure::Response<CertificatePolicy>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<BackupCertificateResult> CertificateClient::BackupCertificate(
