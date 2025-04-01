@@ -3,8 +3,8 @@
     "CmakeEnvArg": "",
     "OSConfig": {
       "Linux": {
-        "Pool": "env:LINUXNEXTPOOL",
-        "OSVmImage": "env:LINUXNEXTVMIMAGE",
+        "Pool": "env:LINUXPOOL",
+        "OSVmImage": "env:LINUXVMIMAGE",
         "AptDependencies": "libcurl4-openssl-dev",
         "VCPKG_DEFAULT_TRIPLET": "x64-linux"
       },

@@ -24,8 +24,8 @@
         "Ubu2204": {
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 4",
-          "Pool": "env:LINUXNEXTPOOL",
-          "OSVmImage": "env:LINUXNEXTVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "OSVmImage": "env:LINUXVMIMAGE",
           "RunProxyTests": true
         }
       },

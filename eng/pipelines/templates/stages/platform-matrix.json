@@ -141,8 +141,8 @@
     {
       "StaticConfigs": {
         "Ubuntu22": {
-          "OSVmImage": "env:LINUXNEXTVMIMAGE",
-          "Pool": "env:LINUXNEXTPOOL",
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
