@@ -309,5 +309,20 @@ CertificateIssuer::CertificateIssuer(
   {
     IdUrl = issuer.Id.Value();
   }
+}
 
+CertificateContactsResult::CertificateContactsResult(_detail::Models::Contacts contacts)
+{
+  Contacts = std::vector<CertificateContact>();
+  for (auto contact : contacts.ContactList.Value())
+  {
+    CertificateContact contactDetails;
+    if (contact.EmailAddress.HasValue())
+    {
+      contactDetails.EmailAddress = contact.EmailAddress.Value();
+    }
+    contactDetails.Name = contact.Name;
+    contactDetails.Phone = contact.Phone;
+    Contacts.emplace_back(contactDetails);
+  }
 }

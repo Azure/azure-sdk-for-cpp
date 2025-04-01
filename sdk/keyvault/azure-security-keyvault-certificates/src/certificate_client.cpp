@@ -181,38 +181,39 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
 Response<CertificateContactsResult> CertificateClient::GetContacts(
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, ContactsPath});
+  auto result = m_client->GetCertificateContacts(context);
 
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
+  auto value = CertificateContactsResult(result.Value);
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
 }
 
 Response<CertificateContactsResult> CertificateClient::DeleteContacts(
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, ContactsPath});
+  auto result = m_client->DeleteCertificateContacts(context);
 
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
+  auto value = CertificateContactsResult(result.Value);
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
 }
 
 Response<CertificateContactsResult> CertificateClient::SetContacts(
     std::vector<CertificateContact> const& contacts,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateContactsSerializer::Serialize(contacts);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+  _detail::Models::Contacts setContacts;
+  setContacts.ContactList = std::vector<_detail::Models::Contact>();
+  for (auto& contact : contacts)
+  {
+    _detail::Models::Contact setContact;
+    setContact.EmailAddress = contact.EmailAddress;
+    setContact.Name = contact.Name;
+    setContact.Phone = contact.Phone;
+    setContacts.ContactList.Value().emplace_back(setContact);
+  }
+  auto result = m_client->SetCertificateContacts(setContacts, context);
 
-  auto request = CreateRequest(HttpMethod::Put, {CertificatesPath, ContactsPath}, &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificateContactsSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(rawResponse));
+  auto value = CertificateContactsResult(result.Value);
+  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties> CertificateClient::GetPendingCertificateOperation(
