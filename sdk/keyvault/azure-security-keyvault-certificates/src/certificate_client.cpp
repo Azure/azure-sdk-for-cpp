@@ -263,12 +263,9 @@ Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Delete, {DeletedCertificatesPath, certificateName});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
+  auto result = m_client->PurgeDeletedCertificate(certificateName, context);
   PurgedCertificate value;
-  return Azure::Response<PurgedCertificate>(std::move(value), std::move(rawResponse));
+  return Azure::Response<PurgedCertificate>(std::move(value), std::move(result.RawResponse));
 }
 
 DeleteCertificateOperation CertificateClient::StartDeleteCertificate(
