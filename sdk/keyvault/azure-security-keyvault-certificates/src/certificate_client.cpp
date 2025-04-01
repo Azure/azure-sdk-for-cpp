@@ -123,12 +123,9 @@ Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {DeletedCertificatesPath, certificateName});
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = DeletedCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetDeletedCertificate(certificateName, context);
+  auto value = DeletedCertificate(result.Value);
+  return Azure::Response<DeletedCertificate>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateIssuer> CertificateClient::GetIssuer(

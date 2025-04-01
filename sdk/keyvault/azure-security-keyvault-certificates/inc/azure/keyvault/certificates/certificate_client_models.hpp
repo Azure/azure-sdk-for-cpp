@@ -27,6 +27,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct CertificateBundle;
     struct CertificateIssuerSetParameters;
     struct CertificateIssuerUpdateParameters;
+    struct DeletedCertificateBundle;
     struct IssuerBundle;
     struct Contacts;
     struct CertificatePolicy;
@@ -145,6 +146,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     friend class CertificateClient;
     friend class KeyVaultCertificate;
     CertificateProperties(_detail::Models::CertificateBundle const& bundle);
+    CertificateProperties(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**
@@ -217,6 +219,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     friend class CertificateClient;
     friend class KeyVaultCertificateWithPolicy;
     KeyVaultCertificate(_detail::Models::CertificateBundle const& bundle);
+    KeyVaultCertificate(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**
@@ -877,7 +880,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   private:
     friend class CertificateClient;
+    friend class DeletedCertificate;
     KeyVaultCertificateWithPolicy(_detail::Models::CertificateBundle const& bundle);
+    KeyVaultCertificateWithPolicy(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**
@@ -1244,6 +1249,10 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     DeletedCertificate() = default;
+
+  private:
+    friend class CertificateClient;
+    DeletedCertificate(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**

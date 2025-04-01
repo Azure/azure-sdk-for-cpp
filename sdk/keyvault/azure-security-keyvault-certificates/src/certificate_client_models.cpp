@@ -42,8 +42,31 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
   if (bundle.Policy.HasValue())
   {
     Policy = CertificatePolicy(bundle.Policy.Value());
-   
   }
+}
+KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
+    _detail::Models::DeletedCertificateBundle const& bundle)
+    : KeyVaultCertificate(bundle)
+{
+  if (bundle.Policy.HasValue())
+  {
+    Policy = CertificatePolicy(bundle.Policy.Value());
+  }
+}
+KeyVaultCertificate::KeyVaultCertificate(_detail::Models::DeletedCertificateBundle const& bundle) {
+  if (bundle.Kid.HasValue())
+  {
+    KeyIdUrl = bundle.Kid.Value();
+  }
+  if (bundle.Sid.HasValue())
+  {
+    SecretIdUrl = bundle.Sid.Value();
+  }
+  if (bundle.Cer.HasValue())
+  {
+    Cer = bundle.Cer.Value();
+  }
+  Properties = CertificateProperties(bundle);
 }
 
 KeyVaultCertificate::KeyVaultCertificate(_detail::Models::CertificateBundle const& bundle)
@@ -61,6 +84,33 @@ KeyVaultCertificate::KeyVaultCertificate(_detail::Models::CertificateBundle cons
     Cer = bundle.Cer.Value();
   }
   Properties = CertificateProperties(bundle);
+}
+CertificateProperties::CertificateProperties(
+    _detail::Models::DeletedCertificateBundle const& bundle)
+{
+  if (bundle.Attributes.HasValue())
+  {
+    CreatedOn = bundle.Attributes.Value().Created;
+    Enabled = bundle.Attributes.Value().Enabled;
+    ExpiresOn = bundle.Attributes.Value().Expires;
+    NotBefore = bundle.Attributes.Value().NotBefore;
+    RecoverableDays = bundle.Attributes.Value().RecoverableDays;
+    UpdatedOn = bundle.Attributes.Value().Updated;
+    if (bundle.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      RecoveryLevel = bundle.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+  }
+  _detail::KeyVaultCertificateSerializer::ParseKeyUrl(*this, bundle.Id.Value());
+  if (bundle.Tags.HasValue())
+  {
+    Tags = std::unordered_map<std::string, std::string>(
+        bundle.Tags.Value().begin(), bundle.Tags.Value().end());
+  }
+  if (bundle.X509Thumbprint.HasValue())
+  {
+    X509Thumbprint = bundle.X509Thumbprint.Value();
+  }
 }
 
 CertificateProperties::CertificateProperties(_detail::Models::CertificateBundle const& bundle)
@@ -225,7 +275,8 @@ CertificateContactsResult::CertificateContactsResult(_detail::Models::Contacts c
   }
 }
 
-CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& policy) {
+CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& policy)
+{
   if (policy.IssuerParameters.HasValue())
   {
     CertificateTransparency = policy.IssuerParameters.Value().CertificateTransparency;
@@ -234,8 +285,7 @@ CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& p
   }
   if (policy.SecretProperties.HasValue() && policy.SecretProperties.Value().ContentType.HasValue())
   {
-    ContentType
-        = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
+    ContentType = CertificateContentType(policy.SecretProperties.Value().ContentType.Value());
   }
   if (policy.Attributes.HasValue())
   {
@@ -516,4 +566,21 @@ _detail::Models::CertificatePolicy CertificatePolicy::ToCertificatePolicy() cons
     result.X509CertificateProperties = x509Props;
   }
   return result;
+}
+
+DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateBundle const& bundle)
+    : KeyVaultCertificateWithPolicy(bundle)
+{
+  if (bundle.RecoveryId.HasValue())
+  {
+    RecoveryIdUrl = bundle.RecoveryId.Value();
+  }
+  if (bundle.DeletedDate.HasValue())
+  {
+    DeletedOn = bundle.DeletedDate.Value();
+  }
+  if (bundle.ScheduledPurgeDate.HasValue())
+  {
+    ScheduledPurgeDate = bundle.ScheduledPurgeDate.Value();
+  }
 }
