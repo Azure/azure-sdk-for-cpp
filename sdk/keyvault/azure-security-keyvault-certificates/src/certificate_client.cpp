@@ -104,11 +104,6 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
   _detail::Models::CertificateCreateParameters parameters
       = (const_cast < CertificateCreateOptions&>( options)).ToCertificateCreateParameters();
   auto result = m_client->CreateCertificate(certificateName, parameters, context);
-  /*auto value = _detail::CertificateOperationSerializer::Deserialize(*result.RawResponse);
-  if (value.Name.empty())
-  {
-    value.Name = certificateName;
-  }*/
   return CreateCertificateOperation(certificateName, std::make_shared<CertificateClient>(*this));
 }
 
@@ -262,12 +257,10 @@ DeleteCertificateOperation CertificateClient::StartDeleteCertificate(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Delete, {CertificatesPath, certificateName});
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = DeletedCertificate();
+  auto result = m_client->DeleteCertificate(certificateName, context);
+  auto value = DeletedCertificate(result.Value);
   value.Properties.Name = certificateName;
-  auto responseT = Azure::Response<DeletedCertificate>(std::move(value), std::move(rawResponse));
+  auto responseT = Azure::Response<DeletedCertificate>(std::move(value), std::move(result.RawResponse));
   return DeleteCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
