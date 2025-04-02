@@ -39,10 +39,12 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       struct CertificateOperation;
       struct CertificateItem;
       struct DeletedCertificateItem;
+      struct CertificateIssuerItem;
     } // namespace Models
     class GetCertificatesPagedResponse;
     class GetCertificateVersionsPagedResponse;
     class GetDeletedCertificatesPagedResponse;
+    class GetCertificateIssuersPagedResponse;
   } // namespace _detail
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -1387,6 +1389,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::string Provider;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateIssuerItem() = default;
+
+  private:
+    friend class CertificateClient;
+    friend class IssuerPropertiesPagedResponse;
+    CertificateIssuerItem(_detail::Models::CertificateIssuerItem const& item);
   };
 
   /**
@@ -1466,7 +1479,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
-
+    IssuerPropertiesPagedResponse(_detail::GetCertificateIssuersPagedResponse& pagedResponse);
   public:
     /**
      * @brief Construct a new certificate properties object.

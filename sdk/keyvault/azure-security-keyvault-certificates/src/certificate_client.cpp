@@ -344,14 +344,15 @@ IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(
     GetPropertiesOfIssuersOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request = ContinuationTokenRequest({CertificatesPath, IssuersPath}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = IssuerPropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  KeyVaultClientGetCertificateIssuersOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetCertificateIssuers(getOptions,context);
+  auto value = IssuerPropertiesPagedResponse(result);
   return IssuerPropertiesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+      std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
 }
 
 DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(

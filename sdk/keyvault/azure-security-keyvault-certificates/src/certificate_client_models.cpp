@@ -634,7 +634,8 @@ DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateBundle
     ScheduledPurgeDate = bundle.ScheduledPurgeDate.Value();
   }
 }
-DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateItem const& item) {
+DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateItem const& item)
+{
   if (item.RecoveryId.HasValue())
   {
     RecoveryIdUrl = item.RecoveryId.Value();
@@ -798,3 +799,14 @@ CertificateOperationProperties::CertificateOperationProperties(
   }*/
 }
 
+CertificateIssuerItem::CertificateIssuerItem(_detail::Models::CertificateIssuerItem const& item)
+{
+  if (item.Provider.HasValue())
+  {
+    this->Provider = item.Provider.Value();
+  }
+  if (item.Id.HasValue())
+  {
+    this->IdUrl = item.Id.Value();
+  }
+}

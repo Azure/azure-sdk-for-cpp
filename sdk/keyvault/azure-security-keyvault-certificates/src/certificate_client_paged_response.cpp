@@ -2,9 +2,10 @@
 // Licensed under the MIT License.
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "generated/key_vault_client.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
-#include "generated/key_vault_client.hpp"
+
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/json/json_optional.hpp>
 #include <azure/core/internal/json/json_serializable.hpp>
@@ -97,6 +98,21 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       for (auto& item : pagedResponse.Value.Value())
       {
         this->Items.emplace_back(DeletedCertificate(item));
+      }
+    }
+  }
+
+  IssuerPropertiesPagedResponse::IssuerPropertiesPagedResponse(
+      _detail::GetCertificateIssuersPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(CertificateIssuerItem(item));
       }
     }
   }
