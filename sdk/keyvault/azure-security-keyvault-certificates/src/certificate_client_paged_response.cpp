@@ -85,4 +85,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     }
   }
+
+  DeletedCertificatesPagedResponse::DeletedCertificatesPagedResponse(
+      _detail::GetDeletedCertificatesPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(DeletedCertificate(item));
+      }
+    }
+  }
 }}}} // namespace Azure::Security::KeyVault::Certificates

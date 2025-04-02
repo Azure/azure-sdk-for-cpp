@@ -358,14 +358,15 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
     GetDeletedCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request = ContinuationTokenRequest({DeletedCertificatesPath}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = DeletedCertificatesPagedResponseSerializer::Deserialize(*rawResponse);
+  KeyVaultClientGetDeletedCertificatesOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetDeletedCertificates(getOptions, context); 
+  auto value = DeletedCertificatesPagedResponse(result);
   return DeletedCertificatesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+      std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertificate(

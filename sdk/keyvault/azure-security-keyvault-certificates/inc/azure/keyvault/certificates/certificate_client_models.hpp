@@ -38,9 +38,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       struct CertificateCreateParameters;
       struct CertificateOperation;
       struct CertificateItem;
+      struct DeletedCertificateItem;
     } // namespace Models
     class GetCertificatesPagedResponse;
     class GetCertificateVersionsPagedResponse;
+    class GetDeletedCertificatesPagedResponse;
   } // namespace _detail
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -1288,7 +1290,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
 
   private:
     friend class CertificateClient;
+    friend class DeletedCertificatesPagedResponse;
     DeletedCertificate(_detail::Models::DeletedCertificateBundle const& bundle);
+    DeletedCertificate(_detail::Models::DeletedCertificateItem const& item);
   };
 
   /**
@@ -1500,7 +1504,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
-
+    DeletedCertificatesPagedResponse(_detail::GetDeletedCertificatesPagedResponse& pagedResponse);
   public:
     /**
      * @brief Construct a new certificate properties object.

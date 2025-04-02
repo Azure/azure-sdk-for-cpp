@@ -634,7 +634,20 @@ DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateBundle
     ScheduledPurgeDate = bundle.ScheduledPurgeDate.Value();
   }
 }
-
+DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateItem const& item) {
+  if (item.RecoveryId.HasValue())
+  {
+    RecoveryIdUrl = item.RecoveryId.Value();
+  }
+  if (item.DeletedDate.HasValue())
+  {
+    DeletedOn = item.DeletedDate.Value();
+  }
+  if (item.ScheduledPurgeDate.HasValue())
+  {
+    ScheduledPurgeDate = item.ScheduledPurgeDate.Value();
+  }
+}
 _detail::Models::CertificateMergeParameters MergeCertificateOptions::ToCertificateMergeParameters()
 {
   _detail::Models::CertificateMergeParameters parameters;
