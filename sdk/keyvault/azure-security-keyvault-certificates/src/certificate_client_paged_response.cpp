@@ -70,4 +70,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       }
     }
   };
+
+  CertificatePropertiesPagedResponse::CertificatePropertiesPagedResponse(
+      _detail::GetCertificateVersionsPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(CertificateProperties(item));
+      }
+    }
+  }
 }}}} // namespace Azure::Security::KeyVault::Certificates

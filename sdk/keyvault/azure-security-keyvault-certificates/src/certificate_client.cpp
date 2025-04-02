@@ -329,15 +329,15 @@ CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificate
     GetPropertiesOfCertificateVersionsOptions const& options,
     Azure::Core::Context const& context) const
 {
-  // Request and settings
-  auto request = ContinuationTokenRequest(
-      {CertificatesPath, certificateName, VersionsPath}, options.NextPageToken);
-
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  KeyVaultClientGetCertificateVersionsOptions getOptions;
+  if (options.NextPageToken.HasValue())
+  {
+    getOptions.NextPageToken = options.NextPageToken.Value();
+  }
+  auto result = m_client->GetCertificateVersions(certificateName, getOptions, context);
+  auto value = CertificatePropertiesPagedResponse(result);
   return CertificatePropertiesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+      std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
 }
 
 IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(

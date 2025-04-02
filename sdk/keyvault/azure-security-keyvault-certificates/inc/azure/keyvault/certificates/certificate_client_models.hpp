@@ -40,6 +40,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       struct CertificateItem;
     } // namespace Models
     class GetCertificatesPagedResponse;
+    class GetCertificateVersionsPagedResponse;
   } // namespace _detail
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -1423,6 +1424,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       RawResponse = std::move(rawResponse);
     }
     CertificatePropertiesPagedResponse(_detail::GetCertificatesPagedResponse& pagedResponse); 
+        CertificatePropertiesPagedResponse(_detail::GetCertificateVersionsPagedResponse& pagedResponse); 
   public:
     /**
      * @brief Construct a new certificate properties object.
