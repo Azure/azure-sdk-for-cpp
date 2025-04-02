@@ -242,31 +242,32 @@ std::unique_ptr<Azure::Core::Http::RawResponse> RecoverDeletedCertificateOperati
 
   try
   {
-    rawResponse = m_certificateClient->GetCertificate(m_continuationToken, context).RawResponse;
+    auto result = m_certificateClient->GetCertificate(m_continuationToken, context);
+    rawResponse = std::move(result.RawResponse);
+
+    switch (rawResponse->GetStatusCode())
+    {
+      case Azure::Core::Http::HttpStatusCode::Ok:
+      case Azure::Core::Http::HttpStatusCode::Forbidden: {
+        m_status = Azure::Core::OperationStatus::Succeeded;
+        break;
+      }
+      case Azure::Core::Http::HttpStatusCode::NotFound: {
+        m_status = Azure::Core::OperationStatus::Running;
+        break;
+      }
+      default:
+        throw Azure::Core::RequestFailedException(rawResponse);
+    }
+
+    if (m_status == Azure::Core::OperationStatus::Succeeded)
+    {
+      m_value = std::move(result.Value);
+    }
   }
   catch (Azure::Core::RequestFailedException& error)
   {
     rawResponse = std::move(error.RawResponse);
-  }
-
-  switch (rawResponse->GetStatusCode())
-  {
-    case Azure::Core::Http::HttpStatusCode::Ok:
-    case Azure::Core::Http::HttpStatusCode::Forbidden: {
-      m_status = Azure::Core::OperationStatus::Succeeded;
-      break;
-    }
-    case Azure::Core::Http::HttpStatusCode::NotFound: {
-      m_status = Azure::Core::OperationStatus::Running;
-      break;
-    }
-    default:
-      throw Azure::Core::RequestFailedException(rawResponse);
-  }
-
-  if (m_status == Azure::Core::OperationStatus::Succeeded)
-  {
-    m_value = _detail::KeyVaultCertificateSerializer::Deserialize(m_value.Name(), *rawResponse);
   }
   return rawResponse;
 }

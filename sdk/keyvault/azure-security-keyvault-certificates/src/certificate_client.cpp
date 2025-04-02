@@ -269,14 +269,11 @@ RecoverDeletedCertificateOperation CertificateClient::StartRecoverDeletedCertifi
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request
-      = CreateRequest(HttpMethod::Post, {DeletedCertificatesPath, certificateName, RecoverPath});
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateWithPolicy();
+  auto result = m_client->RecoverDeletedCertificate(certificateName, context);
+  auto value = KeyVaultCertificateWithPolicy(result.Value);
   value.Properties.Name = certificateName;
   auto responseT
-      = Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+      = Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
   return RecoverDeletedCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
