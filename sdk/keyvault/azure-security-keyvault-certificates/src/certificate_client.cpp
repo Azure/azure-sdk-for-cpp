@@ -217,18 +217,9 @@ CertificateClient::CancelPendingCertificateOperation(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  CertificateOperationUpdateOptions option;
-  option.CancelationRequested = true;
-  auto payload = CertificateOperationUpdateOptionSerializer::Serialize(option);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  auto request = CreateRequest(
-      HttpMethod::Patch, {CertificatesPath, certificateName, PendingPath}, &payloadStream);
-  auto rawResponse = SendRequest(request, context);
-
-  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetCertificateOperation(certificateName, context);
+  auto value = CertificateOperationProperties(result.Value);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties>
@@ -236,12 +227,9 @@ CertificateClient::DeletePendingCertificateOperation(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request
-      = CreateRequest(HttpMethod::Delete, {CertificatesPath, certificateName, PendingPath});
-  auto rawResponse = SendRequest(request, context);
-
-  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
+  auto result = m_client->DeleteCertificateOperation(certificateName, context);
+  auto value = CertificateOperationProperties(result.Value);
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
 }
 
 Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(
