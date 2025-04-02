@@ -31,6 +31,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct IssuerBundle;
     struct Contacts;
     struct CertificatePolicy;
+    struct CertificateUpdateParameters;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -147,6 +148,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     friend class KeyVaultCertificate;
     CertificateProperties(_detail::Models::CertificateBundle const& bundle);
     CertificateProperties(_detail::Models::DeletedCertificateBundle const& bundle);
+    _detail::Models::CertificateUpdateParameters ToCertificateUpdateParameters();
   };
 
   /**

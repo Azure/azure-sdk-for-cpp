@@ -140,6 +140,29 @@ CertificateProperties::CertificateProperties(_detail::Models::CertificateBundle 
   }
 }
 
+_detail::Models::CertificateUpdateParameters CertificateProperties::ToCertificateUpdateParameters()
+{
+  _detail::Models::CertificateUpdateParameters update;
+  if (Tags.size() > 0)
+  {
+    update.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
+  }
+  if (Enabled.HasValue() || CreatedOn.HasValue() || ExpiresOn.HasValue() || NotBefore.HasValue()
+      || RecoverableDays.HasValue() || RecoveryLevel.HasValue() || UpdatedOn.HasValue())
+  {
+    _detail::Models::CertificateAttributes attributes;
+    attributes.Enabled = Enabled;
+    attributes.Created = CreatedOn;
+    attributes.Expires = ExpiresOn;
+    attributes.NotBefore = NotBefore;
+    attributes.RecoverableDays = RecoverableDays;
+    attributes.RecoveryLevel = _detail::Models::DeletionRecoveryLevel(RecoveryLevel.Value());
+    attributes.Updated = UpdatedOn;
+    update.CertificateAttributes = attributes;
+  }
+  return update;
+}
+
 _detail::Models::CertificateIssuerSetParameters
 CertificateIssuer::ToCertificateIssuerSetParameters()
 {

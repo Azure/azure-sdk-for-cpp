@@ -444,14 +444,13 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
     CertificateProperties const& certificateProperties,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateUpdateOptionsSerializer::Serialize(certificateProperties);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  auto request = CreateRequest(
-      HttpMethod::Patch, {CertificatesPath, certificateName, certificateVersion}, &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(rawResponse));
+  auto updeateProperties
+      = (const_cast<CertificateProperties&>(certificateProperties)).ToCertificateUpdateParameters();
+  auto result = m_client->UpdateCertificate(
+      certificateName,
+      certificateVersion,
+      updeateProperties,
+      context);
+  auto value = KeyVaultCertificate(result.Value);
+  return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(result.RawResponse));
 }
