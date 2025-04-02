@@ -33,9 +33,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct CertificatePolicy;
     struct CertificateUpdateParameters;
     struct CertificateMergeParameters;
+    struct CertificateImportParameters;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
+  struct ImportCertificateOptions;
   /**
    * @brief Contains identity and other basic properties of a Certificate.
    *
@@ -848,6 +850,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     friend class CertificateClient;
     friend struct _detail::Models::CertificatePolicy;
     friend class KeyVaultCertificateWithPolicy;
+    friend struct ImportCertificateOptions;
     CertificatePolicy(_detail::Models::CertificatePolicy const& policy);
     _detail::Models::CertificatePolicy ToCertificatePolicy() const;
   };
@@ -1537,6 +1540,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    ImportCertificateOptions() = default;
+
+  private:
+    friend class CertificateClient;
+    _detail::Models::CertificateImportParameters ToCertificateImportParameters();
   };
 
   /**

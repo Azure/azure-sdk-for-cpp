@@ -641,3 +641,35 @@ _detail::Models::CertificateMergeParameters MergeCertificateOptions::ToCertifica
   }
   return parameters;
 }
+
+_detail::Models::CertificateImportParameters
+ImportCertificateOptions::ToCertificateImportParameters()
+{
+  _detail::Models::CertificateImportParameters parameters;
+  if (Tags.size() > 0)
+  {
+    parameters.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
+  }
+  parameters.Base64EncodedCertificate = Certificate;
+  parameters.Password = Password;
+  if (Properties.Enabled.HasValue() || Properties.CreatedOn.HasValue()
+      || Properties.ExpiresOn.HasValue() || Properties.NotBefore.HasValue()
+      || Properties.RecoverableDays.HasValue() || Properties.RecoveryLevel.HasValue()
+      || Properties.UpdatedOn.HasValue())
+  {
+    _detail::Models::CertificateAttributes attributes;
+    attributes.Enabled = Properties.Enabled;
+    attributes.Created = Properties.CreatedOn;
+    attributes.Expires = Properties.ExpiresOn;
+    attributes.NotBefore = Properties.NotBefore;
+    attributes.RecoverableDays = Properties.RecoverableDays;
+    attributes.RecoveryLevel
+        = _detail::Models::DeletionRecoveryLevel(Properties.RecoveryLevel.Value());
+    attributes.Updated = Properties.UpdatedOn;
+    parameters.CertificateAttributes = attributes;
+  }
+  parameters.CertificatePolicy = Policy.ToCertificatePolicy();
+  //parameters.PreserveCertOrder;
+  
+  return parameters;
+}
