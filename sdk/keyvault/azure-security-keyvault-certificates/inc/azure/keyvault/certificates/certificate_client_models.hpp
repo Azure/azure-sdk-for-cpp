@@ -32,6 +32,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct Contacts;
     struct CertificatePolicy;
     struct CertificateUpdateParameters;
+    struct CertificateMergeParameters;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -1558,6 +1559,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    MergeCertificateOptions() = default;
+
+    private:
+    friend class CertificateClient;
+      _detail::Models::CertificateMergeParameters ToCertificateMergeParameters();
   };
 
   /**

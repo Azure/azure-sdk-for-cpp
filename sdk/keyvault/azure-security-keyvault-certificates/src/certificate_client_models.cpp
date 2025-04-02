@@ -53,7 +53,8 @@ KeyVaultCertificateWithPolicy::KeyVaultCertificateWithPolicy(
     Policy = CertificatePolicy(bundle.Policy.Value());
   }
 }
-KeyVaultCertificate::KeyVaultCertificate(_detail::Models::DeletedCertificateBundle const& bundle) {
+KeyVaultCertificate::KeyVaultCertificate(_detail::Models::DeletedCertificateBundle const& bundle)
+{
   if (bundle.Kid.HasValue())
   {
     KeyIdUrl = bundle.Kid.Value();
@@ -606,4 +607,37 @@ DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateBundle
   {
     ScheduledPurgeDate = bundle.ScheduledPurgeDate.Value();
   }
+}
+
+_detail::Models::CertificateMergeParameters MergeCertificateOptions::ToCertificateMergeParameters()
+{
+  _detail::Models::CertificateMergeParameters parameters;
+  if (Tags.size() > 0)
+  {
+    parameters.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
+  }
+  if (Properties.Enabled.HasValue() || Properties.CreatedOn.HasValue()
+      || Properties.ExpiresOn.HasValue() || Properties.NotBefore.HasValue()
+      || Properties.RecoverableDays.HasValue() || Properties.RecoveryLevel.HasValue()
+      || Properties.UpdatedOn.HasValue())
+  {
+    _detail::Models::CertificateAttributes attributes;
+    attributes.Enabled = Properties.Enabled;
+    attributes.Created = Properties.CreatedOn;
+    attributes.Expires = Properties.ExpiresOn;
+    attributes.NotBefore = Properties.NotBefore;
+    attributes.RecoverableDays = Properties.RecoverableDays;
+    attributes.RecoveryLevel
+        = _detail::Models::DeletionRecoveryLevel(Properties.RecoveryLevel.Value());
+    attributes.Updated = Properties.UpdatedOn;
+    parameters.CertificateAttributes = attributes;
+  }
+  if (this->Certificates.size() > 0)
+  {
+    for (auto const& cert : this->Certificates)
+    {
+      parameters.X509Certificates.emplace_back(std::vector<uint8_t>(cert.begin(), cert.end()));
+    }
+  }
+  return parameters;
 }

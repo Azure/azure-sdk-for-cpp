@@ -424,18 +424,13 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertifica
     MergeCertificateOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto payload = MergeCertificateOptionsSerializer::Serialize(options);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
+  _detail::Models::CertificateMergeParameters parameters
+      = (const_cast<MergeCertificateOptions&>(options)).ToCertificateMergeParameters();
 
-  auto request = CreateRequest(
-      HttpMethod::Post,
-      {CertificatesPath, certificateName, PendingPath, MergePath},
-      &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = KeyVaultCertificateSerializer::Deserialize(certificateName, *rawResponse);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(rawResponse));
+  auto result = m_client->MergeCertificate(certificateName, parameters, context);
+  auto value = KeyVaultCertificateWithPolicy(result.Value);
+  return Azure::Response<KeyVaultCertificateWithPolicy>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificateProperties(
