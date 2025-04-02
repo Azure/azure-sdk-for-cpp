@@ -101,22 +101,15 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
     CertificateCreateOptions const& options,
     Azure::Core::Context const& context) const
 {
-  auto payload = CertificateCreateOptionsSerializer::Serialize(options);
-  Azure::Core::IO::MemoryBodyStream payloadStream(
-      reinterpret_cast<const uint8_t*>(payload.data()), payload.size());
-
-  auto request = CreateRequest(
-      HttpMethod::Post,
-      {CertificatesPath, certificateName, CertificatesCreatePath},
-      &payloadStream);
-
-  auto rawResponse = SendRequest(request, context);
-  auto value = _detail::CertificateOperationSerializer::Deserialize(*rawResponse);
+  _detail::Models::CertificateCreateParameters parameters
+      = (const_cast < CertificateCreateOptions&>( options)).ToCertificateCreateParameters();
+  auto result = m_client->CreateCertificate(certificateName, parameters, context);
+  /*auto value = _detail::CertificateOperationSerializer::Deserialize(*result.RawResponse);
   if (value.Name.empty())
   {
     value.Name = certificateName;
-  }
-  return CreateCertificateOperation(value.Name, std::make_shared<CertificateClient>(*this));
+  }*/
+  return CreateCertificateOperation(certificateName, std::make_shared<CertificateClient>(*this));
 }
 
 Response<DeletedCertificate> CertificateClient::GetDeletedCertificate(
@@ -217,11 +210,11 @@ Azure::Response<CertificateOperationProperties> CertificateClient::GetPendingCer
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto request = CreateRequest(HttpMethod::Get, {CertificatesPath, certificateName, PendingPath});
-  auto rawResponse = SendRequest(request, context);
-
-  auto value = CertificateOperationSerializer::Deserialize(*rawResponse);
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(rawResponse));
+  auto result = m_client->GetCertificateOperation(certificateName, context);    
+  auto value = CertificateOperationProperties(result.Value);
+  value.Name = certificateName;
+  value.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
+  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties>

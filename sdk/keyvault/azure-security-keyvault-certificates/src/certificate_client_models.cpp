@@ -673,3 +673,88 @@ ImportCertificateOptions::ToCertificateImportParameters()
   
   return parameters;
 }
+
+_detail::Models::CertificateCreateParameters
+CertificateCreateOptions::ToCertificateCreateParameters()
+{
+  _detail::Models::CertificateCreateParameters parameters;
+  {
+    parameters.Tags = std::map<std::string, std::string>(Tags.begin(), Tags.end());
+  }
+  {
+    _detail::Models::CertificatePolicy policy = Policy.ToCertificatePolicy();
+    parameters.CertificatePolicy= policy;
+  }
+  {
+    _detail::Models::CertificateAttributes attributes;
+    attributes.Enabled = Properties.Enabled;
+    attributes.Created = Properties.CreatedOn;
+    attributes.Expires = Properties.ExpiresOn;
+    attributes.NotBefore = Properties.NotBefore;
+    attributes.RecoverableDays = Properties.RecoverableDays;
+    if (Properties.RecoveryLevel.HasValue())
+    {
+      attributes.RecoveryLevel
+          = _detail::Models::DeletionRecoveryLevel(Properties.RecoveryLevel.Value());
+    }
+    attributes.Updated = Properties.UpdatedOn;
+    parameters.CertificateAttributes = attributes;
+  }
+  return parameters;
+}
+
+CertificateOperationProperties::CertificateOperationProperties(
+    _detail::Models::CertificateOperation const& operation)
+{
+  if (operation.Id.HasValue())
+  {
+    IdUrl = operation.Id.Value();
+  }
+  if (operation.Csr.HasValue())
+  {
+    Csr = operation.Csr.Value();
+  }
+  if (operation.CancellationRequested.HasValue())
+  {
+    CancellationRequested = operation.CancellationRequested.Value();
+  }
+  if (operation.Status.HasValue())
+  {
+    Status = operation.Status.Value();
+  }
+  if (operation.StatusDetails.HasValue())
+  {
+    StatusDetails = operation.StatusDetails.Value();
+  }
+  if (operation.Target.HasValue())
+  {
+    Target = operation.Target.Value();
+  }
+  if (operation.RequestId.HasValue())
+  {
+    RequestIdUrl = operation.RequestId.Value();
+  }
+  if (operation.IssuerParameters.HasValue())
+  {
+    IssuerName = operation.IssuerParameters.Value().Name;
+    CertificateTransparency = operation.IssuerParameters.Value().CertificateTransparency;
+    CertificateType = operation.IssuerParameters.Value().CertificateType;
+  }
+  if (operation.Error.HasValue())
+  {
+    Error = ServerError();
+    if (operation.Error.Value().Message.HasValue())
+    {
+      Error.Value().Code = operation.Error.Value().Code.Value();
+    }
+    if (operation.Error.Value().Message.HasValue())
+    {
+      Error.Value().Message = operation.Error.Value().Message.Value();
+    }
+  }
+
+  /*if (operation.PreserveCertOrder.HasValue())
+  {
+    PreserveCertOrder = operation.PreserveCertOrder.Value();
+  }*/
+}

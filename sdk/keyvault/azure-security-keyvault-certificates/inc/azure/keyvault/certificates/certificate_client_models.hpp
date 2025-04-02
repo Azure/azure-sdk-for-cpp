@@ -34,6 +34,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     struct CertificateUpdateParameters;
     struct CertificateMergeParameters;
     struct CertificateImportParameters;
+    struct CertificateCreateParameters;
+    struct CertificateOperation;
   }} // namespace _detail::Models
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
@@ -846,11 +848,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     CertificatePolicy() = default;
+
   private:
     friend class CertificateClient;
     friend struct _detail::Models::CertificatePolicy;
     friend class KeyVaultCertificateWithPolicy;
     friend struct ImportCertificateOptions;
+    friend class CertificateCreateOptions;
     CertificatePolicy(_detail::Models::CertificatePolicy const& policy);
     _detail::Models::CertificatePolicy ToCertificatePolicy() const;
   };
@@ -920,6 +924,16 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Construct a new Certificate Create Options object
+     *
+     */
+    CertificateCreateOptions() = default;
+
+  private:
+    friend class CertificateClient;
+    _detail::Models::CertificateCreateParameters ToCertificateCreateParameters();
   };
 
   /**
@@ -1224,6 +1238,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<ServerError> Error;
 
     ~CertificateOperationProperties() = default;
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateOperationProperties() = default;
+
+  private:
+    friend class CertificateClient;
+    CertificateOperationProperties(_detail::Models::CertificateOperation const& operation);
   };
 
   /**
@@ -1579,9 +1602,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      */
     MergeCertificateOptions() = default;
 
-    private:
+  private:
     friend class CertificateClient;
-      _detail::Models::CertificateMergeParameters ToCertificateMergeParameters();
+    _detail::Models::CertificateMergeParameters ToCertificateMergeParameters();
   };
 
   /**
