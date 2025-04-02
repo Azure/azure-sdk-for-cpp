@@ -10,6 +10,14 @@
 
 ### Other Changes
 
+- Added support for ICU 75.1 or later. (A community contribution, courtesy of _[kou](https://github.com/kou)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Data Tables better with their contributions to this release:
+
+- Sutou Kouhei _([GitHub](https://github.com/kou))_
+
 ## 1.0.0-beta.6 (2025-01-22)
 
 ### Breaking Changes
