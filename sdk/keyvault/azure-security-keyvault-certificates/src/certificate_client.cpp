@@ -29,9 +29,6 @@ using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::_detail;
 
-namespace {
-} // namespace
-
 std::unique_ptr<RawResponse> CertificateClient::SendRequest(
     Azure::Core::Http::Request& request,
     Azure::Core::Context const& context) const
@@ -310,23 +307,21 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertifi
   auto value = KeyVaultCertificateWithPolicy(result.Value);
   return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
 }
+
 CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
     GetPropertiesOfCertificatesOptions const& options,
     Azure::Core::Context const& context) const
 {
-  (void)options;
-  // Request and settings
-  auto request = ContinuationTokenRequest({CertificatesPath}, options.NextPageToken);
-  if (options.IncludePending)
+  KeyVaultClientGetCertificatesOptions getOptions;
+  getOptions.IncludePending = options.IncludePending;
+  if (options.NextPageToken.HasValue())
   {
-    request.GetUrl().AppendQueryParameter(
-        IncludePendingQuery, options.IncludePending.Value() ? TrueQueryValue : FalseQueryValue);
+    getOptions.NextPageToken = options.NextPageToken.Value();
   }
-  // Send and parse response
-  auto rawResponse = SendRequest(request, context);
-  auto value = CertificatePropertiesPagedResponseSerializer::Deserialize(*rawResponse);
+  auto result = m_client->GetCertificates(getOptions, context);
+  auto value = CertificatePropertiesPagedResponse(result);
   return CertificatePropertiesPagedResponse(
-      std::move(value), std::move(rawResponse), std::make_unique<CertificateClient>(*this));
+      std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
 }
 
 CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificateVersions(

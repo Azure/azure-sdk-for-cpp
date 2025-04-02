@@ -113,6 +113,32 @@ CertificateProperties::CertificateProperties(
     X509Thumbprint = bundle.X509Thumbprint.Value();
   }
 }
+CertificateProperties::CertificateProperties(_detail::Models::CertificateItem const& item)
+{
+  if (item.Attributes.HasValue())
+  {
+    CreatedOn = item.Attributes.Value().Created;
+    Enabled = item.Attributes.Value().Enabled;
+    ExpiresOn = item.Attributes.Value().Expires;
+    NotBefore = item.Attributes.Value().NotBefore;
+    RecoverableDays = item.Attributes.Value().RecoverableDays;
+    UpdatedOn = item.Attributes.Value().Updated;
+    if (item.Attributes.Value().RecoveryLevel.HasValue())
+    {
+      RecoveryLevel = item.Attributes.Value().RecoveryLevel.Value().ToString();
+    }
+  }
+  _detail::KeyVaultCertificateSerializer::ParseKeyUrl(*this, item.Id.Value());
+  if (item.Tags.HasValue())
+  {
+    Tags = std::unordered_map<std::string, std::string>(
+        item.Tags.Value().begin(), item.Tags.Value().end());
+  }
+  if (item.X509Thumbprint.HasValue())
+  {
+    X509Thumbprint = item.X509Thumbprint.Value();
+  }
+}
 
 CertificateProperties::CertificateProperties(_detail::Models::CertificateBundle const& bundle)
 {
@@ -669,8 +695,8 @@ ImportCertificateOptions::ToCertificateImportParameters()
     parameters.CertificateAttributes = attributes;
   }
   parameters.CertificatePolicy = Policy.ToCertificatePolicy();
-  //parameters.PreserveCertOrder;
-  
+  // parameters.PreserveCertOrder;
+
   return parameters;
 }
 
@@ -683,7 +709,7 @@ CertificateCreateOptions::ToCertificateCreateParameters()
   }
   {
     _detail::Models::CertificatePolicy policy = Policy.ToCertificatePolicy();
-    parameters.CertificatePolicy= policy;
+    parameters.CertificatePolicy = policy;
   }
   {
     _detail::Models::CertificateAttributes attributes;
@@ -758,3 +784,4 @@ CertificateOperationProperties::CertificateOperationProperties(
     PreserveCertOrder = operation.PreserveCertOrder.Value();
   }*/
 }
+

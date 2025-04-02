@@ -23,20 +23,24 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
-  namespace _detail { namespace Models {
-    struct CertificateBundle;
-    struct CertificateIssuerSetParameters;
-    struct CertificateIssuerUpdateParameters;
-    struct DeletedCertificateBundle;
-    struct IssuerBundle;
-    struct Contacts;
-    struct CertificatePolicy;
-    struct CertificateUpdateParameters;
-    struct CertificateMergeParameters;
-    struct CertificateImportParameters;
-    struct CertificateCreateParameters;
-    struct CertificateOperation;
-  }} // namespace _detail::Models
+  namespace _detail {
+    namespace Models {
+      struct CertificateBundle;
+      struct CertificateIssuerSetParameters;
+      struct CertificateIssuerUpdateParameters;
+      struct DeletedCertificateBundle;
+      struct IssuerBundle;
+      struct Contacts;
+      struct CertificatePolicy;
+      struct CertificateUpdateParameters;
+      struct CertificateMergeParameters;
+      struct CertificateImportParameters;
+      struct CertificateCreateParameters;
+      struct CertificateOperation;
+      struct CertificateItem;
+    } // namespace Models
+    class GetCertificatesPagedResponse;
+  } // namespace _detail
   class CertificateClient;
   class KeyVaultCertificateWithPolicy;
   struct ImportCertificateOptions;
@@ -151,9 +155,11 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   private:
     friend class CertificateClient;
     friend class KeyVaultCertificate;
+    friend class CertificatePropertiesPagedResponse;
     CertificateProperties(_detail::Models::CertificateBundle const& bundle);
     CertificateProperties(_detail::Models::DeletedCertificateBundle const& bundle);
     _detail::Models::CertificateUpdateParameters ToCertificateUpdateParameters();
+    CertificateProperties(_detail::Models::CertificateItem const& item);
   };
 
   /**
@@ -1416,7 +1422,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
-
+    CertificatePropertiesPagedResponse(_detail::GetCertificatesPagedResponse& pagedResponse); 
   public:
     /**
      * @brief Construct a new certificate properties object.
