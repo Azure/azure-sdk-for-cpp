@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0-beta.3 (Unreleased)
+## 4.3.0-beta.3 (2025-04-08)
 
 ### Bugs Fixed
 
