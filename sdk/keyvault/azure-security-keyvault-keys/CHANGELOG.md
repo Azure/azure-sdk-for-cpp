@@ -8,7 +8,7 @@
 
 ### Other Changes
 
-- Use generated code to replace internal functionality.
+- Use generated code to replace hand written client.
 
 ## 4.5.0-beta.2 (2024-06-11)
 
