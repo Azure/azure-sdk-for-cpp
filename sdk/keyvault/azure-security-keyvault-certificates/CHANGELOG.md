@@ -1,16 +1,22 @@
 # Release History
 
-## 4.3.0-beta.3 (2025-04-08)
+## 4.3.0-beta.3 (Unreleased)
 
 ### Bugs Fixed
 
 - Allow the `ApiVersion` field within `CertificateClientOptions` to be settable.
 
+### Other Changes
+
+- Use generated code to replace internal functionality.
+
 ## 4.3.0-beta.2 (2024-06-11)
 
 ### Other Changes
 
-- Use generated code to replace internal functionality.
+- Relocated samples to the `samples` directory.
+- Updated the `README.md` file with the latest information.
+- Updated samples. 
 
 ## 4.3.0-beta.1 (2024-04-09)
 

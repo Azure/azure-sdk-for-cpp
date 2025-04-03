@@ -2,10 +2,6 @@
 
 ## 4.5.0-beta.3 (2025-04-08)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Allow the `ApiVersion` field within `KeyClientOptions` to be settable.

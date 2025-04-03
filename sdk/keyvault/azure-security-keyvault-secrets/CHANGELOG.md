@@ -2,11 +2,9 @@
 
 ## 4.3.0-beta.4 (2025-04-08)
 
-### Features Added
-
-### Breaking Changes
-
 ### Bugs Fixed
+
+- Allow the `ApiVersion` field within `SecretClientOptions` to be settable.
 
 ### Other Changes
 
