@@ -143,8 +143,8 @@ jobs:
       - bash: |
           # Run clang-format recursively on each source and header file within the repo sdk folder.
           echo "Check clang-formatting"
-          clang-format --version
-          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;
+          clang-format-11 --version
+          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format-11 -i {} \;
 
           if [[ `git status | grep modified | awk '{print $2}'` ]]; then
             echo Some files were not formatted correctly according to the .clang-format file.

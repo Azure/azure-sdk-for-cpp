@@ -141,8 +141,8 @@
     {
       "StaticConfigs": {
         "Ubuntu22": {
-          "OSVmImage": "env:LINUXNEXTVMIMAGE",
-          "Pool": "env:LINUXNEXTPOOL",
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
           "RunProxyTests": true
@@ -189,25 +189,7 @@
     },
     {
       "StaticConfigs": {
-        "Ubuntu20": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-          "BuildArgs": "-j 10",
-          "RunProxyTests": true
-        }
-      },
-      "BuildSettings": {
-        "gpp-8": {
-          "AptDependencies": "g++-8",
-          "CC": "/usr/bin/gcc-8",
-          "CXX": "/usr/bin/g++-8"
-        }
-      }
-    },
-    {
-      "StaticConfigs": {
-        "Ubuntu20": {
+        "Ubuntu22": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
@@ -216,7 +198,8 @@
           "CXX": "/usr/bin/clang++-11",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "RunProxyTests": true,
+          "AptDependencies": "clang-11 clang-format-11"
         }
       },
       "BuildSettings": {
