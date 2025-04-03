@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Use generated code to replace internal functionality.
+
 ## 4.5.0-beta.2 (2024-06-11)
 
 ### Breaking Changes

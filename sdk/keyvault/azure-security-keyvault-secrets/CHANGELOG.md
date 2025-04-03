@@ -8,9 +8,9 @@
 
 ### Bugs Fixed
 
-- Allow the `ApiVersion` field within `SecretClientOptions` to be settable.
-
 ### Other Changes
+
+- Use generated code to replace internal functionality.
 
 ## 4.3.0-beta.2 (2024-06-11)
 

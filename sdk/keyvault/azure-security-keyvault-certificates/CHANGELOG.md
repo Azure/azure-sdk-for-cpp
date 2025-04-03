@@ -10,9 +10,7 @@
 
 ### Other Changes
 
-- Relocated samples to the `samples` directory.
-- Updated the `README.md` file with the latest information.
-- Updated samples. 
+- Use generated code to replace internal functionality.
 
 ## 4.3.0-beta.1 (2024-04-09)
 
