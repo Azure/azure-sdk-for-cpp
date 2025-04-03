@@ -6,7 +6,7 @@
 #include "generated/certificates_models.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
-
+// cspell: ignore ekus upns
 using namespace Azure::Security::KeyVault::Certificates;
 
 const CertificateKeyUsage CertificateKeyUsage::DigitalSignature(_detail::DigitalSignatureValue);

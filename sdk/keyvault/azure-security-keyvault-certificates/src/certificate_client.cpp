@@ -381,10 +381,10 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
     CertificateProperties const& certificateProperties,
     Azure::Core::Context const& context) const
 {
-  auto updeateProperties
+  auto updateProperties
       = (const_cast<CertificateProperties&>(certificateProperties)).ToCertificateUpdateParameters();
   auto result = m_client->UpdateCertificate(
-      certificateName, certificateVersion, updeateProperties, context);
+      certificateName, certificateVersion, updateProperties, context);
   auto value = KeyVaultCertificate(result.Value);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(result.RawResponse));
 }
