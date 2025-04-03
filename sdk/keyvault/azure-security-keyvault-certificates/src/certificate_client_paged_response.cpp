@@ -70,7 +70,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
         this->Items.emplace_back(CertificateProperties(item));
       }
     }
-  };
+  }
 
   CertificatePropertiesPagedResponse::CertificatePropertiesPagedResponse(
       _detail::GetCertificateVersionsPagedResponse& pagedResponse)

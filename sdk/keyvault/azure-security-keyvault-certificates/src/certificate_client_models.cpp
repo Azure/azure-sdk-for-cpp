@@ -86,6 +86,7 @@ KeyVaultCertificate::KeyVaultCertificate(_detail::Models::CertificateBundle cons
   }
   Properties = CertificateProperties(bundle);
 }
+
 CertificateProperties::CertificateProperties(
     _detail::Models::DeletedCertificateBundle const& bundle)
 {
@@ -113,6 +114,7 @@ CertificateProperties::CertificateProperties(
     X509Thumbprint = bundle.X509Thumbprint.Value();
   }
 }
+
 CertificateProperties::CertificateProperties(_detail::Models::CertificateItem const& item)
 {
   if (item.Attributes.HasValue())
@@ -228,7 +230,8 @@ CertificateIssuer::ToCertificateIssuerSetParameters()
     issuer.Attributes = attributes;
   }
   return issuer;
-};
+}
+
 _detail::Models::CertificateIssuerUpdateParameters
 CertificateIssuer::ToCertificateIssuerUpdateParameters()
 {
@@ -463,6 +466,7 @@ CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& p
     }
   }
 }
+
 _detail::Models::CertificatePolicy CertificatePolicy::ToCertificatePolicy() const
 {
   _detail::Models::CertificatePolicy result;
