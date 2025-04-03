@@ -5462,7 +5462,7 @@ KeyVaultClient::GetCertificate(
   {
     url.AppendPath(Core::Url::Encode(certificateVersion));
   }
-  
+
   url.AppendQueryParameter("api-version", Core::Url::Encode(m_apiVersion));
 
   Core::Http::Request request(Core::Http::HttpMethod::Get, url);

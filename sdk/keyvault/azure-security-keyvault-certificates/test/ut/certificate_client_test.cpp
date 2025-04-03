@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-  std::string const certificateName(testName); 
+  std::string const certificateName(testName);
 
   auto const& client = GetClientForTest(testName);
   // create certificate method contains all the checks
@@ -30,7 +30,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
     auto response = client.StartDeleteCertificate(certificateName);
     // double polling should not have an impact on the result
     auto result = response.PollUntilDone(m_defaultWait);
-   EXPECT_EQ(result.Value.Name(), certificateName);
+    EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
@@ -71,7 +71,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     result = fromToken.PollUntilDone(m_defaultWait);
 
     auto cert = client.GetCertificate(certificateName);
-//    EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
+    //    EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
     EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
   }
 }
@@ -85,7 +85,7 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 
   auto cert = CreateCertificate(certificateName, client, m_defaultWait);
   EXPECT_EQ(cert.Name(), cert.Properties.Name);
-//  EXPECT_EQ(cert.Properties.Name, certificateName);
+  //  EXPECT_EQ(cert.Properties.Name, certificateName);
 
   // x5t
   EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
@@ -600,8 +600,8 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     }
   }
   {
-    bool retry = true;  
-    int retries=5;
+    bool retry = true;
+    int retries = 5;
     while (retries > 0 && retry)
     {
       try
@@ -789,7 +789,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
 
-//    EXPECT_EQ(imported.Properties.Name, importName);
+    //    EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
     EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());
@@ -821,7 +821,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
 
-//    EXPECT_EQ(imported.Properties.Name, importName);
+    //    EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
     EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());

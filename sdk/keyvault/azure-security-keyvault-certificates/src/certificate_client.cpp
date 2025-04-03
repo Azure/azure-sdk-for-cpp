@@ -5,11 +5,12 @@
 
 #include "azure/keyvault/shared/keyvault_challenge_based_auth.hpp"
 #include "azure/keyvault/shared/keyvault_shared.hpp"
+#include "generated/key_vault_client.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 #include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
-#include "generated/key_vault_client.hpp"
+
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -47,9 +48,10 @@ Response<KeyVaultCertificateWithPolicy> CertificateClient::GetCertificate(
     std::string const& certificateName,
     Context const& context) const
 {
-  auto result = m_client->GetCertificate(certificateName,"", context);
+  auto result = m_client->GetCertificate(certificateName, "", context);
   auto value = KeyVaultCertificateWithPolicy(result.Value);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<KeyVaultCertificateWithPolicy>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Response<KeyVaultCertificate> CertificateClient::GetCertificateVersion(
@@ -69,7 +71,7 @@ CreateCertificateOperation CertificateClient::StartCreateCertificate(
     Azure::Core::Context const& context) const
 {
   _detail::Models::CertificateCreateParameters parameters
-      = (const_cast < CertificateCreateOptions&>( options)).ToCertificateCreateParameters();
+      = (const_cast<CertificateCreateOptions&>(options)).ToCertificateCreateParameters();
   auto result = m_client->CreateCertificate(certificateName, parameters, context);
   return CreateCertificateOperation(certificateName, std::make_shared<CertificateClient>(*this));
 }
@@ -123,8 +125,7 @@ Azure::Response<CertificateIssuer> CertificateClient::UpdateIssuer(
 {
   _detail::Models::CertificateIssuerUpdateParameters issuerParameters
       = (const_cast<CertificateIssuer&>(certificateIssuer)).ToCertificateIssuerUpdateParameters();
-  auto result = m_client->UpdateCertificateIssuer(
-      issuerName, issuerParameters, context);
+  auto result = m_client->UpdateCertificateIssuer(issuerName, issuerParameters, context);
 
   auto value = CertificateIssuer(issuerName, result.Value);
   return Azure::Response<CertificateIssuer>(std::move(value), std::move(result.RawResponse));
@@ -136,7 +137,8 @@ Response<CertificateContactsResult> CertificateClient::GetContacts(
   auto result = m_client->GetCertificateContacts(context);
 
   auto value = CertificateContactsResult(result.Value);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateContactsResult>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Response<CertificateContactsResult> CertificateClient::DeleteContacts(
@@ -145,7 +147,8 @@ Response<CertificateContactsResult> CertificateClient::DeleteContacts(
   auto result = m_client->DeleteCertificateContacts(context);
 
   auto value = CertificateContactsResult(result.Value);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateContactsResult>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Response<CertificateContactsResult> CertificateClient::SetContacts(
@@ -165,18 +168,20 @@ Response<CertificateContactsResult> CertificateClient::SetContacts(
   auto result = m_client->SetCertificateContacts(setContacts, context);
 
   auto value = CertificateContactsResult(result.Value);
-  return Azure::Response<CertificateContactsResult>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateContactsResult>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties> CertificateClient::GetPendingCertificateOperation(
     std::string const& certificateName,
     Azure::Core::Context const& context) const
 {
-  auto result = m_client->GetCertificateOperation(certificateName, context);    
+  auto result = m_client->GetCertificateOperation(certificateName, context);
   auto value = CertificateOperationProperties(result.Value);
   value.Name = certificateName;
   value.VaultUrl = m_vaultUrl.GetAbsoluteUrl();
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateOperationProperties>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties>
@@ -186,7 +191,8 @@ CertificateClient::CancelPendingCertificateOperation(
 {
   auto result = m_client->GetCertificateOperation(certificateName, context);
   auto value = CertificateOperationProperties(result.Value);
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateOperationProperties>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<CertificateOperationProperties>
@@ -196,7 +202,8 @@ CertificateClient::DeletePendingCertificateOperation(
 {
   auto result = m_client->DeleteCertificateOperation(certificateName, context);
   auto value = CertificateOperationProperties(result.Value);
-  return Azure::Response<CertificateOperationProperties>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<CertificateOperationProperties>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Response<PurgedCertificate> CertificateClient::PurgeDeletedCertificate(
@@ -215,7 +222,8 @@ DeleteCertificateOperation CertificateClient::StartDeleteCertificate(
   auto result = m_client->DeleteCertificate(certificateName, context);
   auto value = DeletedCertificate(result.Value);
   value.Properties.Name = certificateName;
-  auto responseT = Azure::Response<DeletedCertificate>(std::move(value), std::move(result.RawResponse));
+  auto responseT
+      = Azure::Response<DeletedCertificate>(std::move(value), std::move(result.RawResponse));
   return DeleteCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
@@ -227,8 +235,8 @@ RecoverDeletedCertificateOperation CertificateClient::StartRecoverDeletedCertifi
   auto result = m_client->RecoverDeletedCertificate(certificateName, context);
   auto value = KeyVaultCertificateWithPolicy(result.Value);
   value.Properties.Name = certificateName;
-  auto responseT
-      = Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
+  auto responseT = Azure::Response<KeyVaultCertificateWithPolicy>(
+      std::move(value), std::move(result.RawResponse));
   return RecoverDeletedCertificateOperation(
       std::make_shared<CertificateClient>(*this), std::move(responseT));
 }
@@ -246,8 +254,7 @@ Azure::Response<CertificatePolicy> CertificateClient::UpdateCertificatePolicy(
     CertificatePolicy const& certificatePolicy,
     Azure::Core::Context const& context) const
 {
-  auto updatePolicy 
-      = (const_cast<CertificatePolicy&>(certificatePolicy)).ToCertificatePolicy();
+  auto updatePolicy = (const_cast<CertificatePolicy&>(certificatePolicy)).ToCertificatePolicy();
   auto result = m_client->UpdateCertificatePolicy(certificateName, updatePolicy, context);
 
   auto value = CertificatePolicy(result.Value);
@@ -275,7 +282,8 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::RestoreCertifi
   restoreParameters.CertificateBundleBackup = certificateBackup;
   auto result = m_client->RestoreCertificate(restoreParameters, context);
   auto value = KeyVaultCertificateWithPolicy(result.Value);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<KeyVaultCertificateWithPolicy>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 CertificatePropertiesPagedResponse CertificateClient::GetPropertiesOfCertificates(
@@ -319,7 +327,7 @@ IssuerPropertiesPagedResponse CertificateClient::GetPropertiesOfIssuers(
   {
     getOptions.NextPageToken = options.NextPageToken.Value();
   }
-  auto result = m_client->GetCertificateIssuers(getOptions,context);
+  auto result = m_client->GetCertificateIssuers(getOptions, context);
   auto value = IssuerPropertiesPagedResponse(result);
   return IssuerPropertiesPagedResponse(
       std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
@@ -334,7 +342,7 @@ DeletedCertificatesPagedResponse CertificateClient::GetDeletedCertificates(
   {
     getOptions.NextPageToken = options.NextPageToken.Value();
   }
-  auto result = m_client->GetDeletedCertificates(getOptions, context); 
+  auto result = m_client->GetDeletedCertificates(getOptions, context);
   auto value = DeletedCertificatesPagedResponse(result);
   return DeletedCertificatesPagedResponse(
       std::move(value), std::move(result.RawResponse), std::make_unique<CertificateClient>(*this));
@@ -347,10 +355,10 @@ Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::ImportCertific
 {
   _detail::Models::CertificateImportParameters parameters
       = (const_cast<ImportCertificateOptions&>(options)).ToCertificateImportParameters();
-  auto result = m_client->ImportCertificate(
-      certificateName, parameters, context);
+  auto result = m_client->ImportCertificate(certificateName, parameters, context);
   auto value = KeyVaultCertificateWithPolicy(result.Value);
-  return Azure::Response<KeyVaultCertificateWithPolicy>(std::move(value), std::move(result.RawResponse));
+  return Azure::Response<KeyVaultCertificateWithPolicy>(
+      std::move(value), std::move(result.RawResponse));
 }
 
 Azure::Response<KeyVaultCertificateWithPolicy> CertificateClient::MergeCertificate(
@@ -376,10 +384,7 @@ Azure::Response<KeyVaultCertificate> CertificateClient::UpdateCertificatePropert
   auto updeateProperties
       = (const_cast<CertificateProperties&>(certificateProperties)).ToCertificateUpdateParameters();
   auto result = m_client->UpdateCertificate(
-      certificateName,
-      certificateVersion,
-      updeateProperties,
-      context);
+      certificateName, certificateVersion, updeateProperties, context);
   auto value = KeyVaultCertificate(result.Value);
   return Azure::Response<KeyVaultCertificate>(std::move(value), std::move(result.RawResponse));
 }

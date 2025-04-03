@@ -96,7 +96,8 @@ int main()
     {
       auto response = certificateClient.StartDeleteCertificate(certificateName);
       auto result = response.PollUntilDone(defaultWait);
-      // since there is a potential delay in the delete process, we need to check the status of purge
+      // since there is a potential delay in the delete process, we need to check the status of
+      // purge
       bool retry = true;
       int retries = 5;
       while (retries > 0 && retry)

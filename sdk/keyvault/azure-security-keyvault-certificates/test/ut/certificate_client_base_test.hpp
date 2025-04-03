@@ -214,8 +214,8 @@ namespace Azure {
       // get the certificate
       auto result = client.GetCertificate(name);
 
-//      EXPECT_EQ(result.Value.Name(), options.Properties.Name);
-      //EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
+      //      EXPECT_EQ(result.Value.Name(), options.Properties.Name);
+      // EXPECT_EQ(result.Value.Properties.Name, options.Properties.Name);
       EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
       EXPECT_EQ(result.Value.Policy.ContentType.Value(), options.Policy.ContentType.Value());
       EXPECT_EQ(result.Value.Policy.Subject, options.Policy.Subject);
@@ -252,12 +252,14 @@ namespace Azure {
       auto response = client.GetCertificate(name, context);
       certificate = response.Value;
 
-        // parse the ID url to extract relevant data
+      // parse the ID url to extract relevant data
       SecretData secretProperties;
       ParseIDUrl(secretProperties, certificate.SecretIdUrl);
       auto secret = secretClient->GetSecret(secretProperties.Name);
 
-      DownloadCertificateResult result{secret.Value.Value.Value(), CertificateContentType( secret.Value.Properties.ContentType.Value())};
+      DownloadCertificateResult result{
+          secret.Value.Value.Value(),
+          CertificateContentType(secret.Value.Properties.ContentType.Value())};
       return Azure::Response<DownloadCertificateResult>(
           std::move(result), std::move(secret.RawResponse));
     }

@@ -172,7 +172,9 @@ KeyVaultCertificateWithPolicy CreateCertificate(
   }
 }
 
-void PurgeCertificate(std::string const& certificateName, CertificateClient const& certificateClient)
+void PurgeCertificate(
+    std::string const& certificateName,
+    CertificateClient const& certificateClient)
 {
   bool retry = true;
   int retries = 5;

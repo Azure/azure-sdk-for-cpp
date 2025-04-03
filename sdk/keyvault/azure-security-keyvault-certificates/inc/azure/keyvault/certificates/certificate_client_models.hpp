@@ -1440,8 +1440,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
-    CertificatePropertiesPagedResponse(_detail::GetCertificatesPagedResponse& pagedResponse); 
-        CertificatePropertiesPagedResponse(_detail::GetCertificateVersionsPagedResponse& pagedResponse); 
+    CertificatePropertiesPagedResponse(_detail::GetCertificatesPagedResponse& pagedResponse);
+    CertificatePropertiesPagedResponse(_detail::GetCertificateVersionsPagedResponse& pagedResponse);
+
   public:
     /**
      * @brief Construct a new certificate properties object.
@@ -1480,6 +1481,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       RawResponse = std::move(rawResponse);
     }
     IssuerPropertiesPagedResponse(_detail::GetCertificateIssuersPagedResponse& pagedResponse);
+
   public:
     /**
      * @brief Construct a new certificate properties object.
@@ -1518,6 +1520,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       RawResponse = std::move(rawResponse);
     }
     DeletedCertificatesPagedResponse(_detail::GetDeletedCertificatesPagedResponse& pagedResponse);
+
   public:
     /**
      * @brief Construct a new certificate properties object.

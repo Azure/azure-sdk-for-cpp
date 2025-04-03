@@ -673,12 +673,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
       /// Attributes of the issuer object.
       Nullable<IssuerAttributes> Attributes;
     };
-
+    // codegen: replace ConfigurationClient declaration
     /**
-     * @brief
+     * @brief Keyvault error.
      *
      */
     struct KeyVaultErrorError final
+    // codegen: end replace ConfigurationClient declaration
     {
       /// [out] The error code.
       Nullable<std::string> Code;
