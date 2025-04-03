@@ -49,7 +49,7 @@ create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)
 # Include shared test headers
 target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 
-target_link_libraries(azure-storage-blobs-test PRIVATE azure-identity azure-storage-blobs azure-core-test-fw gtest gtest_main gmock)
+target_link_libraries(azure-storage-blobs-test PRIVATE azure-identity azure-storage-blobs azure-storage-files-shares azure-core-test-fw gtest gtest_main gmock)
 
 # gtest_discover_tests will scan the test from azure-storage-blobs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

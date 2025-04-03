@@ -383,6 +383,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     }
+    protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
 
     return _detail::BlockBlobClient::UploadFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
@@ -467,6 +468,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     }
+    protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
 
     return _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
