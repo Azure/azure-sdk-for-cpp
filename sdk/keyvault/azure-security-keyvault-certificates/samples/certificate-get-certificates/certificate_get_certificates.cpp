@@ -27,6 +27,10 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     std::string const& certificateName,
     CertificateClient const& certificateClient);
 
+void PurgeCertificate(
+    std::string const& certificateName,
+    CertificateClient const& certificateClient);
+
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
@@ -99,8 +103,8 @@ int main()
     }
     // purge the certificates
     {
-      certificateClient.PurgeDeletedCertificate(certificateName1);
-      certificateClient.PurgeDeletedCertificate(certificateName2);
+      PurgeCertificate(certificateName1, certificateClient);
+      PurgeCertificate(certificateName2, certificateClient);
     }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
@@ -164,6 +168,30 @@ KeyVaultCertificateWithPolicy CreateCertificate(
     {
       throw std::runtime_error(
           "Create certificate with policy result : " + pollResponse.Status.Value());
+    }
+  }
+}
+
+void PurgeCertificate(std::string const& certificateName, CertificateClient const& certificateClient)
+{
+  bool retry = true;
+  int retries = 5;
+  while (retries > 0 && retry)
+  {
+    try
+    {
+      retries--;
+      certificateClient.PurgeDeletedCertificate(certificateName);
+      retry = false;
+    }
+    catch (Azure::Core::RequestFailedException const& e)
+    {
+      retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
+      if (!retry)
+      {
+        throw e;
+      }
+      std::this_thread::sleep_for(std::chrono::seconds(15));
     }
   }
 }

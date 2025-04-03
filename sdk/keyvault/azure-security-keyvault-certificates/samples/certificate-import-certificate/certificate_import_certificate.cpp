@@ -22,6 +22,9 @@ using namespace std::chrono_literals;
 
 std::string GetPemCertificate();
 std::string GetPkcsCertificate();
+void PurgeCertificate(
+    std::string const& certificateName,
+    CertificateClient const& certificateClient);
 
 int main()
 {
@@ -78,8 +81,8 @@ int main()
       response1.PollUntilDone(defaultWait);
       response2.PollUntilDone(defaultWait);
       // purge the certificates
-      certificateClient.PurgeDeletedCertificate(pkcsName);
-      certificateClient.PurgeDeletedCertificate(pemName);
+      PurgeCertificate(pkcsName, certificateClient);
+      PurgeCertificate(pemName, certificateClient);
     }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
@@ -209,5 +212,31 @@ std::string GetPkcsCertificate()
         "XUVmSy2vdQDLfhoIwMTAhMAkGBSsOAwIaBQAEFML9i8YEH4sB00IWeGvF/wz1x/ziBAhT5brnwDl93QICCAA=";
 
   return pkcsCertificate;
+}
+
+void PurgeCertificate(
+    std::string const& certificateName,
+    CertificateClient const& certificateClient)
+{
+  bool retry = true;
+  int retries = 5;
+  while (retries > 0 && retry)
+  {
+    try
+    {
+      retries--;
+      certificateClient.PurgeDeletedCertificate(certificateName);
+      retry = false;
+    }
+    catch (Azure::Core::RequestFailedException const& e)
+    {
+      retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
+      if (!retry)
+      {
+        throw e;
+      }
+      std::this_thread::sleep_for(std::chrono::seconds(15));
+    }
+  }
 }
 /* cSpell:enable */

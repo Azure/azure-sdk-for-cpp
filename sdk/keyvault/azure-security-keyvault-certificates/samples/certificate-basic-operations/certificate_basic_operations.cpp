@@ -96,7 +96,27 @@ int main()
     {
       auto response = certificateClient.StartDeleteCertificate(certificateName);
       auto result = response.PollUntilDone(defaultWait);
-      certificateClient.PurgeDeletedCertificate(certificateName);
+      // since there is a potential delay in the delete process, we need to check the status of purge
+      bool retry = true;
+      int retries = 5;
+      while (retries > 0 && retry)
+      {
+        try
+        {
+          retries--;
+          certificateClient.PurgeDeletedCertificate(certificateName);
+          retry = false;
+        }
+        catch (Azure::Core::RequestFailedException const& e)
+        {
+          retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
+          if (!retry)
+          {
+            throw e;
+          }
+          std::this_thread::sleep_for(std::chrono::seconds(15));
+        }
+      }
     }
   }
   catch (Azure::Core::Credentials::AuthenticationException const& e)
