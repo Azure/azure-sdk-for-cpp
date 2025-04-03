@@ -12,6 +12,7 @@
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/keyvault/certificates.hpp>
+#include <azure/keyvault/secrets.hpp>
 
 #include <chrono>
 #include <thread>
@@ -43,6 +44,23 @@ namespace Azure {
     CertificateContentType ContentType;
   };
 
+  /**
+   * @brief Secrets information.
+   *
+   */
+  struct SecretData
+  {
+    /**
+     * @brief Secret name.
+     *
+     */
+    std::string Name;
+    /**
+     * @brief Secret version.
+     *
+     */
+    std::string Version;
+  };
   class KeyVaultCertificateClientTest : public Azure::Core::Test::TestBase,
                                         public ::testing::WithParamInterface<int> {
   public:
@@ -85,6 +103,8 @@ namespace Azure {
       // Update default time depending on test mode.
       UpdateWaitingTime(m_defaultWait);
     }
+
+    void InitSecretsClient() {}
 
   public:
     // Reads the current test instance name.
@@ -220,23 +240,76 @@ namespace Azure {
     Azure::Response<DownloadCertificateResult> DownloadCertificate(
         std::string const& name,
         CertificateClient const& client,
-        Azure::Core::Context const& context = Azure::Core::Context()) const
+        Azure::Core::Context const& context = Azure::Core::Context())
     {
+
+      Azure::Security::KeyVault::Secrets::SecretClientOptions secretOptions;
+      auto secretClient = InitTestClient<
+          Azure::Security::KeyVault::Secrets::SecretClient,
+          Azure::Security::KeyVault::Secrets::SecretClientOptions>(
+          m_keyVaultUrl, m_credential, secretOptions);
+      KeyVaultCertificateWithPolicy certificate;
+      auto response = client.GetCertificate(name, context);
+      certificate = response.Value;
+
+        // parse the ID url to extract relevant data
+      SecretData secretProperties;
+      ParseIDUrl(secretProperties, certificate.SecretIdUrl);
+      auto secret = secretClient->GetSecret(secretProperties.Name);
+
+      DownloadCertificateResult result{secret.Value.Value.Value(), CertificateContentType( secret.Value.Properties.ContentType.Value())};
+      return Azure::Response<DownloadCertificateResult>(
+          std::move(result), std::move(secret.RawResponse));
+    }
+
+    // parse the ID url to extract relevant data
+    void static inline ParseIDUrl(SecretData& secretProperties, std::string const& url)
+    {
+      Azure::Core::Url sid(url);
+      auto const& path = sid.GetPath();
+      //  path is in the form of `verb/keyName{/keyVersion}`
+      if (path.length() > 0)
       {
-        KeyVaultCertificateWithPolicy certificate;
-        auto response = client.GetCertificate(name, context);
-        certificate = response.Value;
-
-        Azure::Core::Url url(certificate.SecretIdUrl);
-        auto secretRequest
-            = client.CreateRequest(Azure::Core::Http::HttpMethod::Get, {url.GetPath()});
-
-        auto secretResponse = client.SendRequest(secretRequest, context);
-        auto secret = _detail::KeyVaultSecretSerializer::Deserialize(*secretResponse);
-
-        DownloadCertificateResult result{secret.Value, secret.ContentType.Value()};
-        return Azure::Response<DownloadCertificateResult>(
-            std::move(result), std::move(secretResponse));
+        auto const separatorChar = '/';
+        auto pathEnd = path.end();
+        auto start = path.begin();
+        start = std::find(start, pathEnd, separatorChar);
+        start += 1;
+        auto separator = std::find(start, pathEnd, separatorChar);
+        if (separator != pathEnd)
+        {
+          secretProperties.Name = std::string(start, separator);
+          start = separator + 1;
+          secretProperties.Version = std::string(start, pathEnd);
+        }
+        else
+        {
+          // Nothing but the name+
+          secretProperties.Name = std::string(start, pathEnd);
+        }
+      }
+    }
+    void PurgeCertificate(std::string certificateName)
+    {
+      bool retry = true;
+      int retries = 5;
+      while (retries > 0 && retry)
+      {
+        try
+        {
+          retries--;
+          m_client->PurgeDeletedCertificate(certificateName);
+          retry = false;
+        }
+        catch (Azure::Core::RequestFailedException const& e)
+        {
+          retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
+          if (!retry)
+          {
+            throw e;
+          }
+          TestSleep(15s);
+        }
       }
     }
   };

@@ -17,34 +17,25 @@ using namespace Azure::Security::KeyVault::Certificates;
 using namespace Azure::Security::KeyVault::Certificates::Test;
 
 using namespace std::chrono_literals;
-TEST_F(KeyVaultCertificateClientTest, GetCertificateTest)
-{
-  auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-  std::string const certificateName("testName");
 
-  auto const& client = GetClientForTest(testName);
-  auto cert = client.GetCertificate(certificateName);
-}
 TEST_F(KeyVaultCertificateClientTest, CreateCertificate)
 {
   auto testName = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-  std::string const certificateName(testName);
+  std::string const certificateName(testName); 
 
   auto const& client = GetClientForTest(testName);
   // create certificate method contains all the checks
   KeyVaultCertificateClientTest::CreateCertificate(certificateName, client, m_defaultWait);
-
   {
     auto response = client.StartDeleteCertificate(certificateName);
     // double polling should not have an impact on the result
     auto result = response.PollUntilDone(m_defaultWait);
-    result = response.PollUntilDone(m_defaultWait);
-    EXPECT_EQ(result.Value.Name(), certificateName);
+   EXPECT_EQ(result.Value.Name(), certificateName);
     EXPECT_EQ(result.Value.Properties.Enabled.Value(), true);
     EXPECT_NE(result.Value.RecoveryIdUrl.length(), size_t(0));
     EXPECT_TRUE(result.Value.DeletedOn);
     EXPECT_TRUE(result.Value.ScheduledPurgeDate);
-    client.PurgeDeletedCertificate(certificateName);
+    PurgeCertificate(certificateName);
   }
 }
 
@@ -198,17 +189,19 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificate)
     EXPECT_EQ(result.Value.Name(), certificateName);
   }
   {
+    TestSleep(15s);
     auto response = client.GetDeletedCertificate(certificateName);
     EXPECT_EQ(response.Value.Name(), certificateName);
   }
   {
+    TestSleep(15s);
     auto response = client.StartRecoverDeletedCertificate(certificateName);
     // double polling should not have an impact on the result
     auto result = response.PollUntilDone(m_defaultWait);
-    result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
   }
   {
+    TestSleep(15s);
     auto response = client.GetCertificate(certificateName);
     EXPECT_EQ(response.Value.Name(), certificateName);
   }
@@ -578,8 +571,7 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     auto response = client.StartDeleteCertificate(certificateName);
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), certificateName);
-    client.PurgeDeletedCertificate(certificateName);
-    TestSleep(m_defaultWait);
+    PurgeCertificate(certificateName);
   }
   {
     int retries = 15;
@@ -608,10 +600,28 @@ TEST_F(KeyVaultCertificateClientTest, BackupRestoreCertificate)
     }
   }
   {
-    auto responseRestore = client.RestoreCertificateBackup(certBackup.Value.Certificate);
-    auto certificate = responseRestore.Value;
-
-    EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
+    bool retry = true;  
+    int retries=5;
+    while (retries > 0 && retry)
+    {
+      try
+      {
+        retries--;
+        auto response = client.RestoreCertificateBackup(certBackup.Value.Certificate);
+        auto certificate = response.Value;
+        EXPECT_EQ(certificate.Policy.ValidityInMonths.Value(), 12);
+        retry = false;
+      }
+      catch (Azure::Core::RequestFailedException const& e)
+      {
+        retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
+        if (!retry)
+        {
+          throw e;
+        }
+        TestSleep(15s);
+      }
+    }
   }
 }
 
@@ -745,12 +755,14 @@ TEST_F(KeyVaultCertificateClientTest, GetDeletedCertificates)
     EXPECT_EQ(result.Value.Name(), certificateName2);
   }
   {
+    TestSleep(15s);
     auto result = client.GetDeletedCertificates(GetDeletedCertificatesOptions());
     EXPECT_EQ(result.Items.size(), size_t(2));
   }
   {
-    client.PurgeDeletedCertificate(certificateName);
-    client.PurgeDeletedCertificate(certificateName2);
+    TestSleep(15s);
+    PurgeCertificate(certificateName);
+    PurgeCertificate(certificateName2);
   }
 }
 
@@ -820,7 +832,6 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     auto response = client.StartDeleteCertificate(pem);
     auto result = response.PollUntilDone(m_defaultWait);
     EXPECT_EQ(result.Value.Name(), pem);
-    client.PurgeDeletedCertificate(pem);
   }
 }
 

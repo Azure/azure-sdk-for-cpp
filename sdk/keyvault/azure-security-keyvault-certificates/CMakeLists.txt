@@ -81,8 +81,7 @@ set(
     src/certificate_client.cpp
     src/certificate_client_models.cpp
     src/certificate_client_operations.cpp
-    src/certificate_client_paged_response.cpp
-    src/certificate_serializers.cpp
+    src/certificate_client_paged_response.cpp    
     src/keyvault_certificates_common_request.cpp
     src/private/certificate_constants.hpp
     src/private/certificate_serializers.hpp

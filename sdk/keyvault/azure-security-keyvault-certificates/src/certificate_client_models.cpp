@@ -350,7 +350,42 @@ CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& p
     {
       for (auto const& item : keyUsage.Value())
       {
-        KeyUsage.emplace_back(CertificateKeyUsage(item.ToString()));
+        if (item == _detail::Models::KeyUsageType::DigitalSignature)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::DigitalSignature);
+        }
+        else if (item == _detail::Models::KeyUsageType::NonRepudiation)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::NonRepudiation);
+        }
+        else if (item == _detail::Models::KeyUsageType::KeyEncipherment)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::KeyEncipherment);
+        }
+        else if (item == _detail::Models::KeyUsageType::DataEncipherment)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::DataEncipherment);
+        }
+        else if (item == _detail::Models::KeyUsageType::KeyAgreement)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::KeyAgreement);
+        }
+        else if (item == _detail::Models::KeyUsageType::KeyCertSign)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::KeyCertSign);
+        }
+        else if (item == _detail::Models::KeyUsageType::CRLSign)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::CrlSign);
+        }
+        else if (item == _detail::Models::KeyUsageType::EncipherOnly)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::EncipherOnly);
+        }
+        else if (item == _detail::Models::KeyUsageType::DecipherOnly)
+        {
+          KeyUsage.emplace_back(CertificateKeyUsage::DecipherOnly);
+        }
       }
     }
     auto enhancedKeyUsage = policy.X509CertificateProperties.Value().Ekus;
@@ -358,7 +393,7 @@ CertificatePolicy::CertificatePolicy(_detail::Models::CertificatePolicy const& p
     {
       for (auto const& item : enhancedKeyUsage.Value())
       {
-        KeyUsage.emplace_back(CertificateKeyUsage(item));
+        EnhancedKeyUsage.emplace_back(item);
       }
     }
     ValidityInMonths = policy.X509CertificateProperties.Value().ValidityInMonths;

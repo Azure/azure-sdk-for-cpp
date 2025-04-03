@@ -29,36 +29,6 @@ using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
 using namespace Azure::Security::KeyVault::_detail;
 
-std::unique_ptr<RawResponse> CertificateClient::SendRequest(
-    Azure::Core::Http::Request& request,
-    Azure::Core::Context const& context) const
-{
-  return KeyVaultCertificatesCommonRequest::SendRequest(*m_pipeline, request, context);
-}
-
-Request CertificateClient::CreateRequest(
-    HttpMethod method,
-    std::vector<std::string> const& path,
-    Azure::Core::IO::BodyStream* content) const
-{
-  return KeyVaultCertificatesCommonRequest::CreateRequest(
-      m_vaultUrl, m_apiVersion, method, path, content);
-}
-
-Request CertificateClient::ContinuationTokenRequest(
-    std::vector<std::string> const& path,
-    const Azure::Nullable<std::string>& NextPageToken) const
-{
-  if (NextPageToken)
-  {
-    // Using a continuation token requires to send the request to the continuation token URL instead
-    // of the default URL which is used only for the first page.
-    Azure::Core::Url nextPageUrl(NextPageToken.Value());
-    return Request(HttpMethod::Get, nextPageUrl);
-  }
-  return CreateRequest(HttpMethod::Get, path);
-}
-
 CertificateClient::CertificateClient(
     std::string const& vaultUrl,
     std::shared_ptr<const Core::Credentials::TokenCredential> credential,
