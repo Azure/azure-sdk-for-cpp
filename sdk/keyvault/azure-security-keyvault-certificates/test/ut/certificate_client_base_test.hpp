@@ -308,7 +308,7 @@ namespace Azure {
           retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
           if (!retry)
           {
-            throw e;
+            throw;
           }
           TestSleep(15s);
         }
