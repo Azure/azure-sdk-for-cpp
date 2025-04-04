@@ -113,7 +113,7 @@ int main()
           retry = (e.StatusCode == Azure::Core::Http::HttpStatusCode::Conflict);
           if (!retry)
           {
-            throw e;
+            throw;
           }
           std::this_thread::sleep_for(std::chrono::seconds(15));
         }
