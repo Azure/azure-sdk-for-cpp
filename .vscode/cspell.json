@@ -48,6 +48,7 @@
     "sdk/storage/*/NOTICE.txt",
     "sdk/tables/*/NOTICE.txt",
     "sdk/keyvault/azure-security-keyvault-keys/src/generated/*",
+    "sdk/keyvault/azure-security-keyvault-certificates/src/generated/*",
   ],
   // * Unless configured otherwise, these words are not case sensitive
   // * Alphabetize the list when making changes so the list is easier for future
