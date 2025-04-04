@@ -71,6 +71,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     result = fromToken.PollUntilDone(m_defaultWait);
 
     auto cert = client.GetCertificate(certificateName);
+    // TODO: 6510
     //    EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
     EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
   }
@@ -788,7 +789,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
-
+    // TODO: 6510
     //    EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
@@ -820,7 +821,7 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
     auto imported = client.ImportCertificate(importName, options).Value;
-
+    // TODO: 6510
     //    EXPECT_EQ(imported.Properties.Name, importName);
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
