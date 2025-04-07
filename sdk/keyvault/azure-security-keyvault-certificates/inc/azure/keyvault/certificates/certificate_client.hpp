@@ -27,6 +27,9 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     class KeyVaultCertificateClientTest;
   }
 #endif
+  namespace _detail {
+    class KeyVaultClient;
+  }
   /**
    * @brief The CertificateClient provides synchronous methods to manage KeyVaultCertificate in
    * Azure Key Vault.
@@ -45,6 +48,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Core::Url m_vaultUrl;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
+    std::shared_ptr<_detail::KeyVaultClient> m_client;
 
   public:
     /**
@@ -504,18 +508,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Response<CertificateOperationProperties> CancelPendingCertificateOperation(
         std::string const& certificateName,
         Azure::Core::Context const& context = Azure::Core::Context()) const;
-
-    std::unique_ptr<Azure::Core::Http::RawResponse> SendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Context const& context) const;
-
-    Azure::Core::Http::Request CreateRequest(
-        Azure::Core::Http::HttpMethod method,
-        std::vector<std::string> const& path = {},
-        Azure::Core::IO::BodyStream* content = nullptr) const;
-
-    Azure::Core::Http::Request ContinuationTokenRequest(
-        std::vector<std::string> const& path,
-        const Azure::Nullable<std::string>& NextPageToken) const;
   };
 }}}} // namespace Azure::Security::KeyVault::Certificates

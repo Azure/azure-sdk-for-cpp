@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 #include "azure/keyvault/certificates/certificate_client.hpp"
 #include "azure/keyvault/certificates/certificate_client_models.hpp"
+#include "generated/key_vault_client.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
 
@@ -56,4 +57,63 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     CurrentPageToken = options.NextPageToken.Value();
   }
 
+  CertificatePropertiesPagedResponse::CertificatePropertiesPagedResponse(
+      _detail::GetCertificatesPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(CertificateProperties(item));
+      }
+    }
+  }
+
+  CertificatePropertiesPagedResponse::CertificatePropertiesPagedResponse(
+      _detail::GetCertificateVersionsPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(CertificateProperties(item));
+      }
+    }
+  }
+
+  DeletedCertificatesPagedResponse::DeletedCertificatesPagedResponse(
+      _detail::GetDeletedCertificatesPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(DeletedCertificate(item));
+      }
+    }
+  }
+
+  IssuerPropertiesPagedResponse::IssuerPropertiesPagedResponse(
+      _detail::GetCertificateIssuersPagedResponse& pagedResponse)
+  {
+    CurrentPageToken = pagedResponse.CurrentPageToken;
+    NextPageToken = pagedResponse.NextPageToken;
+    RawResponse = std::move(pagedResponse.RawResponse);
+    if (pagedResponse.Value.HasValue())
+    {
+      for (auto& item : pagedResponse.Value.Value())
+      {
+        this->Items.emplace_back(CertificateIssuerItem(item));
+      }
+    }
+  }
 }}}} // namespace Azure::Security::KeyVault::Certificates

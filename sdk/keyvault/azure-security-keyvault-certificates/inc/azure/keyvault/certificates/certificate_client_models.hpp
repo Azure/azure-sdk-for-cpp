@@ -23,7 +23,32 @@
 #include <vector>
 
 namespace Azure { namespace Security { namespace KeyVault { namespace Certificates {
+  namespace _detail {
+    namespace Models {
+      struct CertificateBundle;
+      struct CertificateIssuerSetParameters;
+      struct CertificateIssuerUpdateParameters;
+      struct DeletedCertificateBundle;
+      struct IssuerBundle;
+      struct Contacts;
+      struct CertificatePolicy;
+      struct CertificateUpdateParameters;
+      struct CertificateMergeParameters;
+      struct CertificateImportParameters;
+      struct CertificateCreateParameters;
+      struct CertificateOperation;
+      struct CertificateItem;
+      struct DeletedCertificateItem;
+      struct CertificateIssuerItem;
+    } // namespace Models
+    class GetCertificatesPagedResponse;
+    class GetCertificateVersionsPagedResponse;
+    class GetDeletedCertificatesPagedResponse;
+    class GetCertificateIssuersPagedResponse;
+  } // namespace _detail
   class CertificateClient;
+  class KeyVaultCertificateWithPolicy;
+  struct ImportCertificateOptions;
   /**
    * @brief Contains identity and other basic properties of a Certificate.
    *
@@ -131,6 +156,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @param name The name of the certificate.
      */
     CertificateProperties(std::string const& name) : Name(name) {}
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend class KeyVaultCertificate;
+    friend class CertificatePropertiesPagedResponse;
+    CertificateProperties(_detail::Models::CertificateBundle const& bundle);
+    CertificateProperties(_detail::Models::DeletedCertificateBundle const& bundle);
+    _detail::Models::CertificateUpdateParameters ToCertificateUpdateParameters();
+    CertificateProperties(_detail::Models::CertificateItem const& item);
   };
 
   /**
@@ -198,6 +234,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     virtual ~KeyVaultCertificate() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend class KeyVaultCertificateWithPolicy;
+    KeyVaultCertificate(_detail::Models::CertificateBundle const& bundle);
+    KeyVaultCertificate(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**
@@ -813,6 +857,23 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::vector<LifetimeAction> LifetimeActions;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificatePolicy() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend struct _detail::Models::CertificatePolicy;
+    friend class KeyVaultCertificateWithPolicy;
+    friend struct ImportCertificateOptions;
+    friend class CertificateCreateOptions;
+    CertificatePolicy(_detail::Models::CertificatePolicy const& policy);
+    _detail::Models::CertificatePolicy ToCertificatePolicy() const;
   };
 
   /**
@@ -843,6 +904,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     KeyVaultCertificateWithPolicy() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend class DeletedCertificate;
+    KeyVaultCertificateWithPolicy(_detail::Models::CertificateBundle const& bundle);
+    KeyVaultCertificateWithPolicy(_detail::Models::DeletedCertificateBundle const& bundle);
   };
 
   /**
@@ -874,6 +943,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Construct a new Certificate Create Options object
+     *
+     */
+    CertificateCreateOptions() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    _detail::Models::CertificateCreateParameters ToCertificateCreateParameters();
   };
 
   /**
@@ -1025,6 +1106,20 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     IssuerProperties Properties;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateIssuer() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    CertificateIssuer(std::string const& name, _detail::Models::IssuerBundle const& issuer);
+    _detail::Models::CertificateIssuerSetParameters ToCertificateIssuerSetParameters();
+    _detail::Models::CertificateIssuerUpdateParameters ToCertificateIssuerUpdateParameters();
   };
 
   /**
@@ -1166,6 +1261,17 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<ServerError> Error;
 
     ~CertificateOperationProperties() = default;
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateOperationProperties() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    CertificateOperationProperties(_detail::Models::CertificateOperation const& operation);
   };
 
   /**
@@ -1197,6 +1303,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     DeletedCertificate() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend class DeletedCertificatesPagedResponse;
+    DeletedCertificate(_detail::Models::DeletedCertificateBundle const& bundle);
+    DeletedCertificate(_detail::Models::DeletedCertificateItem const& item);
   };
 
   /**
@@ -1291,6 +1405,19 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::string Provider;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    CertificateIssuerItem() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    friend class IssuerPropertiesPagedResponse;
+    CertificateIssuerItem(_detail::Models::CertificateIssuerItem const& item);
   };
 
   /**
@@ -1300,6 +1427,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   class CertificatePropertiesPagedResponse final
       : public Azure::Core::PagedResponse<CertificatePropertiesPagedResponse> {
   private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
     friend class CertificateClient;
     friend class Azure::Core::PagedResponse<CertificatePropertiesPagedResponse>;
 
@@ -1331,6 +1460,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
+    CertificatePropertiesPagedResponse(_detail::GetCertificatesPagedResponse& pagedResponse);
+    CertificatePropertiesPagedResponse(_detail::GetCertificateVersionsPagedResponse& pagedResponse);
 
   public:
     /**
@@ -1354,6 +1485,8 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
   class IssuerPropertiesPagedResponse final
       : public Azure::Core::PagedResponse<IssuerPropertiesPagedResponse> {
   private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
     friend class CertificateClient;
     friend class Azure::Core::PagedResponse<IssuerPropertiesPagedResponse>;
 
@@ -1369,6 +1502,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
+    IssuerPropertiesPagedResponse(_detail::GetCertificateIssuersPagedResponse& pagedResponse);
 
   public:
     /**
@@ -1407,6 +1541,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     {
       RawResponse = std::move(rawResponse);
     }
+    DeletedCertificatesPagedResponse(_detail::GetDeletedCertificatesPagedResponse& pagedResponse);
 
   public:
     /**
@@ -1478,6 +1613,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    ImportCertificateOptions() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    _detail::Models::CertificateImportParameters ToCertificateImportParameters();
   };
 
   /**
@@ -1500,6 +1647,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::unordered_map<std::string, std::string> Tags;
+
+    /**
+     * @brief Default constructor.
+     *
+     */
+    MergeCertificateOptions() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    _detail::Models::CertificateMergeParameters ToCertificateMergeParameters();
   };
 
   /**
@@ -1531,6 +1690,18 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     std::vector<CertificateContact> Contacts;
+
+    /**
+     * @brief Default constructor
+     *
+     */
+    CertificateContactsResult() = default;
+
+  private:
+    // added friend classes to access private members
+    // for mapping from the old model to the new one
+    friend class CertificateClient;
+    CertificateContactsResult(_detail::Models::Contacts contacts);
   };
 
 }}}} // namespace Azure::Security::KeyVault::Certificates

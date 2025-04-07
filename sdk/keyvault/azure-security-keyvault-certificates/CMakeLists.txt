@@ -46,6 +46,25 @@ elseif(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
+option(AZURE_TSP_KV_CERTIFICATES_GEN "Generate KeyVault Certificates from TypeSpec" OFF)
+message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_CERTIFICATES_GEN}")
+
+if(AZURE_TSP_KV_CERTIFICATES_GEN)
+    include(TSPCompile) 
+    #typespec related repo information
+    set(TSP_SERVICE_PATH "Security.KeyVault.Certificates")
+    set(TSP_DESTINATION "keyvault_certificates")
+    
+    #codegen related repo information
+    set(CODEGEN_SHA "83758baff29b89a8a7bd28fa26a692225f4f208f")
+    set(CODEGEN_DESTINATION "typespec-cpp")
+       
+    #destination folders
+    set(GEN_FILES_DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}")
+    #generate code from typespec
+    GenerateCodeFromTypeSpec(${TSP_DESTINATION} ${TSP_SERVICE_PATH} ${CODEGEN_SHA} ${CODEGEN_DESTINATION} ${GEN_FILES_DESTINATION} OFF)
+endif()
+
 set(
   AZURE_KEYVAULT_CERTIFICATES_HEADER
     inc/azure/keyvault/certificates.hpp
@@ -62,13 +81,24 @@ set(
     src/certificate_client.cpp
     src/certificate_client_models.cpp
     src/certificate_client_operations.cpp
-    src/certificate_client_paged_response.cpp
-    src/certificate_serializers.cpp
+    src/certificate_client_paged_response.cpp    
     src/keyvault_certificates_common_request.cpp
     src/private/certificate_constants.hpp
     src/private/certificate_serializers.hpp
     src/private/keyvault_certificates_common_request.hpp
     src/private/package_version.hpp
+    #generated code
+    src/generated/certificates_models.hpp
+    src/generated/certificates.cpp
+    src/generated/get_certificate_issuers_paged_response.cpp
+    src/generated/get_certificate_versions_paged_response.cpp
+    src/generated/get_certificates_paged_response.cpp
+    src/generated/get_deleted_certificates_paged_response.cpp
+    src/generated/key_vault_client_options.hpp
+    src/generated/key_vault_client_paged_responses.hpp
+    src/generated/key_vault_client.cpp
+    src/generated/key_vault_client.hpp
+    #done generated code
 )
 
 add_library(azure-security-keyvault-certificates
