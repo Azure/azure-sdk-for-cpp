@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Sas {
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion
-        + "\n\n\n\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
+        + "\n\n\n\n\n\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
         + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n"
         + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
         + "\n" + ContentType;
@@ -397,7 +397,7 @@ namespace Azure { namespace Storage { namespace Sas {
     return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
-        + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n"
+        + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n\n\n"
         + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
         + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
