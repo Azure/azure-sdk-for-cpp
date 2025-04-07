@@ -158,7 +158,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     CertificateProperties(std::string const& name) : Name(name) {}
 
   private:
-    // added friend classes to access private members 
+    // added friend classes to access private members
     // for mapping from the old model to the new one
     friend class CertificateClient;
     friend class KeyVaultCertificate;
