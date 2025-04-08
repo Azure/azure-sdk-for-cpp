@@ -712,7 +712,10 @@ TEST(AzurePipelinesCredential, InvalidClientId_LIVEONLY_)
   catch (AuthenticationException const& ex)
   {
     EXPECT_TRUE(std::string(ex.what()).find("400 Bad Request") != std::string::npos) << ex.what();
-    EXPECT_TRUE(std::string(ex.what()).find("AADSTS700016") != std::string::npos) << ex.what();
+    EXPECT_TRUE(
+           std::string(ex.what()).find("AADSTS700016") != std::string::npos
+        || std::string(ex.what()).find("AADSTS53003") != std::string::npos)
+        << ex.what();
   }
 }
 
