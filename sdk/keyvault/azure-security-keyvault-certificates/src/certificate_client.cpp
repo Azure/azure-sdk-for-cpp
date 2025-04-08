@@ -8,7 +8,6 @@
 #include "generated/key_vault_client.hpp"
 #include "private/certificate_constants.hpp"
 #include "private/certificate_serializers.hpp"
-#include "private/keyvault_certificates_common_request.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -28,7 +27,6 @@ using namespace Azure::Core::Http;
 using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 using namespace Azure::Core::Http::_internal;
-using namespace Azure::Security::KeyVault::_detail;
 
 CertificateClient::CertificateClient(
     std::string const& vaultUrl,
