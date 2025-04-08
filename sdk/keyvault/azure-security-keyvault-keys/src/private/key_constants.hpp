@@ -13,16 +13,15 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char KeyVaultServicePackageName[] = "keyvault-keys";
 
   /***************** KeyVault Key *****************/
-  //constexpr static const char KeyPropertyName[] = "key";
+  // constexpr static const char KeyPropertyName[] = "key";
 
   /***************** Key Client *****************/
   constexpr static const char KeysPath[] = "keys";
-  //constexpr static const char DeletedKeysPath[] = "deletedkeys";
+  // constexpr static const char DeletedKeysPath[] = "deletedkeys";
 
   /***************** Key Properties *****************/
   constexpr static const char TagsPropertyName[] = "tags";
-  
-  
+
   /***************** JsonWebKey *****************/
   constexpr static const char KeyIdPropertyName[] = "kid";
 
@@ -34,7 +33,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char OctValue[] = "oct";
   constexpr static const char OctHsmValue[] = "oct-HSM";
 
-  
   /***************** Curve Names *****************/
   constexpr static const char P256Value[] = "P-256";
   constexpr static const char P256KValue[] = "P-256K";
@@ -46,7 +44,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   constexpr static const char P384OidValue[] = "1.3.132.0.34";
   constexpr static const char P521OidValue[] = "1.3.132.0.35";
 
-  
   /***************** Encryption Algorithm *********/
   // cspell: ignore CBCPAD
   constexpr static const char Rsa15Value[] = "RSA1_5";
@@ -95,7 +92,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
 
   /***************** Service *********/
   constexpr static const char ApiVersionValue[] = "api-version";
-
 
   /***************** Get Random Bytes *********/
   constexpr static const char CountPropertiesValue[] = "count";

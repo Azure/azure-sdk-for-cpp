@@ -14,7 +14,7 @@
 namespace Azure { namespace Security { namespace KeyVault { namespace Secrets { namespace _detail {
 
   constexpr static const char KeyVaultServicePackageName[] = "keyvault-secrets";
- 
+
   /**************** KeyVault QueryParameters *********/
   static constexpr char const ApiVersion[] = "api-version";
 }}}}} // namespace Azure::Security::KeyVault::Secrets::_detail
