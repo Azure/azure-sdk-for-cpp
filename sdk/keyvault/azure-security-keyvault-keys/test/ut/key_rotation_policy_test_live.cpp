@@ -27,7 +27,7 @@ TEST_F(KeyVaultKeyClient, RotateKey)
   CheckValidResponse(createKeyResponse);
 
   Azure::Security::KeyVault::Keys::KeyRotationPolicy policy;
-  policy.Attributes.ExpiryTime = "P48D";
+  policy.Attributes.ExpiryTime = "P48M";
 
   LifetimeActionType action1 = LifetimeActionType::Rotate;
   LifetimeActionsTrigger trigger1;
@@ -54,7 +54,7 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   CheckValidResponse(createKeyResponse);
 
   Azure::Security::KeyVault::Keys::KeyRotationPolicy policy;
-  policy.Attributes.ExpiryTime = "P48D";
+  policy.Attributes.ExpiryTime = "P48M";
 
   LifetimeActionType action1 = LifetimeActionType::Rotate;
   LifetimeActionsTrigger trigger1;
