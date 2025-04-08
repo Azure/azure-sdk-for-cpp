@@ -7,8 +7,8 @@
         "CmakeEnvArg": ""
       },
       "Linux": {
-        "Pool": "env:LINUXNEXTPOOL",
-        "OSVmImage": "env:LINUXNEXTVMIMAGE",
+        "Pool": "env:LINUXPOOL",
+        "OSVmImage": "env:LINUXVMIMAGE",
         "CmakeEnvArg": "",
         "AptDependencies": "libcurl4-openssl-dev"
       },
