@@ -27,10 +27,18 @@ TEST_F(KeyVaultKeyClient, RotateKey)
   CheckValidResponse(createKeyResponse);
 
   Azure::Security::KeyVault::Keys::KeyRotationPolicy policy;
-  LifetimeActionsTrigger trigger;
-  trigger.TimeAfterCreate = "P90D";
-  trigger.TimeBeforeExpiry = "P48M";
-  policy.LifetimeActions.push_back(LifetimeActionsType{trigger, LifetimeActionType::Rotate});
+  policy.Attributes.ExpiryTime = "P48D";
+
+  LifetimeActionType action1 = LifetimeActionType::Rotate;
+  LifetimeActionsTrigger trigger1;
+  trigger1.TimeAfterCreate = "P18M";
+
+  LifetimeActionsTrigger trigger2;
+  trigger2.TimeBeforeExpiry = "P30D";
+  LifetimeActionType action2 = LifetimeActionType::Notify;
+
+  policy.LifetimeActions.push_back(LifetimeActionsType{trigger1, action1});
+  policy.LifetimeActions.push_back(LifetimeActionsType{trigger2, action2});
 
   auto putPolicy = client.UpdateKeyRotationPolicy(keyName, policy).Value;
   auto originalKey = client.GetKey(keyName);
@@ -46,10 +54,18 @@ TEST_F(KeyVaultKeyClient, GetKeyRotationPolicy)
   CheckValidResponse(createKeyResponse);
 
   Azure::Security::KeyVault::Keys::KeyRotationPolicy policy;
-  LifetimeActionsTrigger trigger;
-  trigger.TimeAfterCreate = "P90D";
-  trigger.TimeBeforeExpiry = "P48M";
-  policy.LifetimeActions.push_back(LifetimeActionsType{trigger, LifetimeActionType::Rotate});
+  policy.Attributes.ExpiryTime = "P48D";
+
+  LifetimeActionType action1 = LifetimeActionType::Rotate;
+  LifetimeActionsTrigger trigger1;
+  trigger1.TimeAfterCreate = "P18M";
+
+  LifetimeActionsTrigger trigger2;
+  trigger2.TimeBeforeExpiry = "P30D";
+  LifetimeActionType action2 = LifetimeActionType::Notify;
+
+  policy.LifetimeActions.push_back(LifetimeActionsType{trigger1, action1});
+  policy.LifetimeActions.push_back(LifetimeActionsType{trigger2, action2});
   auto putPolicy = client.UpdateKeyRotationPolicy(keyName, policy).Value;
   auto rotationPolicy = client.GetKeyRotationPolicy(keyName).Value;
 
