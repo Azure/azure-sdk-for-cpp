@@ -285,7 +285,7 @@ TEST_F(KeyVaultKeyClient, GetDeletedKey)
 
     auto keyResponseLRO = client.StartDeleteKey(keyName);
     auto expectedStatusToken = m_keyVaultUrl
-        + std::string(Azure::Security::KeyVault::Keys::_detail::DeletedKeysPath) + "/" + keyName;
+        + std::string("deletedkeys") + "/" + keyName;
     auto keyResponse = keyResponseLRO.PollUntilDone(m_testPollingIntervalMs, cancelToken);
   }
   {
