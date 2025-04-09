@@ -61,6 +61,7 @@ set(
     src/private/serializers.hpp
     src/private/tables_constants.hpp
     src/private/url_encode.hpp
+    src/private/url_scope.hpp
     src/private/xml_wrapper.hpp
     src/serializers.cpp
     src/table_clients.cpp

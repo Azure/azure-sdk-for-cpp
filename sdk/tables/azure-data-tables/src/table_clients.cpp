@@ -9,6 +9,7 @@
 #include "private/policies/timeout_policy.hpp"
 #include "private/serializers.hpp"
 #include "private/tables_constants.hpp"
+#include "private/url_scope.hpp"
 
 #include <sstream>
 #include <string>
@@ -51,7 +52,8 @@ TableServiceClient::TableServiceClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(
+        _detail::UrlScope::GetScopeFromUrl(Azure::Core::Url(serviceUrl)));
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
