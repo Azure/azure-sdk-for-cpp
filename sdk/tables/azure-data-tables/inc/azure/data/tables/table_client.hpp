@@ -50,6 +50,11 @@ namespace Azure { namespace Data { namespace Tables {
      * to prompt a challenge in order to discover the correct tenant for the resource.
      */
     bool EnableTenantDiscovery = false;
+
+    /**
+    * Authentication scopes.
+    */
+    std::vector<std::string> Scopes;
   };
 
   /**

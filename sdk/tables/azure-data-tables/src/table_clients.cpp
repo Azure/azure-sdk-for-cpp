@@ -51,8 +51,15 @@ TableServiceClient::TableServiceClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
-
+    // if Scopes passed in are empty, use the default scope
+    if (options.Scopes.empty())
+    {
+      tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
+    }
+    else
+    {
+      tokenContext.Scopes.emplace_back(options.Scopes);
+    }
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
   }
