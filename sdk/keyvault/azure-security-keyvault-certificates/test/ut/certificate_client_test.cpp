@@ -919,7 +919,7 @@ TEST_F(KeyVaultCertificateClientTest, ServiceVersion)
   // Default - 7.5
   EXPECT_NO_THROW(auto options = CertificateClientOptions(); CertificateClient certificateClient(
                       "http://account.vault.azure.net", credential, options);
-                  EXPECT_EQ(options.ApiVersion, "7.5"););
+                  EXPECT_EQ(options.ApiVersion, "7.6-preview.2"););
 
   // 7.4
   EXPECT_NO_THROW(

@@ -205,7 +205,7 @@ namespace Azure {
       action.LifetimePercentage = 80;
       action.Action = CertificatePolicyAction::AutoRenew;
       options.Policy.LifetimeActions.emplace_back(action);
-
+      options.Properties.PreserveCertificateOrder = true;
       auto response = client.StartCreateCertificate(name, options);
       auto pollResult = response.PollUntilDone(defaultWait);
       EXPECT_TRUE(pollResult.Value.Status.HasValue());
@@ -228,6 +228,7 @@ namespace Azure {
           result.Value.Policy.LifetimeActions[0].LifetimePercentage.Value(),
           action.LifetimePercentage.Value());
       EXPECT_EQ(result.Value.Policy.KeyUsage.size(), size_t(2));
+      EXPECT_TRUE(result.Value.Properties.PreserveCertificateOrder.Value());
       auto keyUsage = result.Value.Policy.KeyUsage;
       EXPECT_TRUE(
           (keyUsage[0] == CertificateKeyUsage::DigitalSignature

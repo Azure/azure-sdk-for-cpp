@@ -145,6 +145,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
     Azure::Nullable<bool> Enabled;
 
     /**
+     * @brief Specifies whether the certificate chain preserves its original order. The default
+     * value is false, which sets the leaf certificate at index 0.
+     *
+     */
+    Azure::Nullable<bool> PreserveCertificateOrder;
+
+    /**
      * @brief Construct a new Certificate Properties object
      *
      */
@@ -1259,6 +1266,13 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      *
      */
     Azure::Nullable<ServerError> Error;
+
+    /**
+     * @brief Specifies whether the certificate chain preserves its original order. The default
+     * value is false, which sets the leaf certificate at index 0.
+     *
+     */
+    Azure::Nullable<bool> PreserveCertificateOrder;
 
     ~CertificateOperationProperties() = default;
     /**
