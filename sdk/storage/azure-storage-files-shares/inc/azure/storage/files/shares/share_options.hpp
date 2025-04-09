@@ -1389,6 +1389,53 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   /**
    * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::CreateSymbolicLink.
+   */
+  struct CreateSymbolicLinkOptions final
+  {
+    /**
+     * A name-value pair to associate with a file storage object.
+     */
+    Storage::Metadata Metadata;
+
+    /**
+     * Creation time for the file or directory.
+     */
+    Nullable<DateTime> CreatedOn;
+
+    /**
+     * Last write time for the file or directory.
+     */
+    Nullable<DateTime> LastWrittenOn;
+
+    /**
+     * Specify the access condition for the path.
+     */
+    LeaseAccessConditions AccessConditions;
+
+    /**
+     * NFS only. The owner user identifier (UID) to be set on the symbolic link. The default value
+     * is 0 (root).
+     */
+    Nullable<std::string> Owner;
+
+    /**
+     * NFS only. The owner group identifier (GID) to be set on the symbolic link. The default value
+     * is 0 (root group).
+     */
+    Nullable<std::string> Group;
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareFileClient::GetSymbolicLink.
+   */
+  struct GetSymbolicLinkOptions final
+  {
+  };
+
+  /**
+   * @brief Optional parameters for
    * #Azure::Storage::Files::Shares::ShareFileClient::CreateHardLink.
    */
   struct CreateHardLinkOptions final
