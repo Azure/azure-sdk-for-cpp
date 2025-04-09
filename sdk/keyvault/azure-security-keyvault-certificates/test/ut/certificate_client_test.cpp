@@ -71,8 +71,7 @@ TEST_F(KeyVaultCertificateClientTest, CreateCertificateResumeToken)
     result = fromToken.PollUntilDone(m_defaultWait);
 
     auto cert = client.GetCertificate(certificateName);
-    // TODO: 6510
-    //    EXPECT_EQ(cert.Value.Name(), options.Properties.Name);
+
     EXPECT_EQ(cert.Value.Properties.Enabled.Value(), true);
   }
 }
@@ -86,7 +85,6 @@ TEST_F(KeyVaultCertificateClientTest, GetCertificate)
 
   auto cert = CreateCertificate(certificateName, client, m_defaultWait);
   EXPECT_EQ(cert.Name(), cert.Properties.Name);
-  //  EXPECT_EQ(cert.Properties.Name, certificateName);
 
   // x5t
   EXPECT_NE(cert.Properties.X509Thumbprint.size(), 0);
@@ -788,14 +786,15 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPkcs)
     options.Policy.ContentType = CertificateContentType::Pkcs12;
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
+    options.Properties.PreserveCertificateOrder = true;
     auto imported = client.ImportCertificate(importName, options).Value;
-    // TODO: 6510
-    //    EXPECT_EQ(imported.Properties.Name, importName);
+
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
     EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());
     EXPECT_EQ(imported.Policy.Subject, originalCertificate.Policy.Subject);
     EXPECT_EQ(imported.Cer, originalCertificate.Cer);
+    EXPECT_TRUE(imported.Properties.PreserveCertificateOrder.Value());
   }
 }
 
@@ -820,14 +819,15 @@ TEST_F(KeyVaultCertificateClientTest, DownloadImportPem)
     options.Policy.ContentType = CertificateContentType::Pem;
     options.Policy.Exportable = true;
     options.Properties.Name = importName;
+    options.Properties.PreserveCertificateOrder = true;
     auto imported = client.ImportCertificate(importName, options).Value;
-    // TODO: 6510
-    //    EXPECT_EQ(imported.Properties.Name, importName);
+
     EXPECT_EQ(imported.Policy.ContentType.Value(), originalCertificate.Policy.ContentType.Value());
     EXPECT_EQ(imported.Policy.Enabled.Value(), originalCertificate.Policy.Enabled.Value());
     EXPECT_EQ(imported.Policy.KeySize.Value(), originalCertificate.Policy.KeySize.Value());
     EXPECT_EQ(imported.Policy.Subject, originalCertificate.Policy.Subject);
     EXPECT_EQ(imported.Cer, originalCertificate.Cer);
+    EXPECT_TRUE(imported.Properties.PreserveCertificateOrder.Value());
   }
   {
     auto response = client.StartDeleteCertificate(pem);
