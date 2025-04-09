@@ -113,6 +113,8 @@ CertificateProperties::CertificateProperties(
   {
     X509Thumbprint = bundle.X509Thumbprint.Value();
   }
+
+  PreserveCertificateOrder = bundle.PreserveCertOrder;
 }
 
 CertificateProperties::CertificateProperties(_detail::Models::CertificateItem const& item)
@@ -167,6 +169,7 @@ CertificateProperties::CertificateProperties(_detail::Models::CertificateBundle 
   {
     X509Thumbprint = bundle.X509Thumbprint.Value();
   }
+  PreserveCertificateOrder = bundle.PreserveCertOrder;
 }
 
 _detail::Models::CertificateUpdateParameters CertificateProperties::ToCertificateUpdateParameters()
@@ -672,6 +675,7 @@ DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateBundle
   {
     ScheduledPurgeDate = bundle.ScheduledPurgeDate.Value();
   }
+  Properties.PreserveCertificateOrder = bundle.PreserveCertOrder;
 }
 DeletedCertificate::DeletedCertificate(_detail::Models::DeletedCertificateItem const& item)
 {
@@ -748,7 +752,7 @@ ImportCertificateOptions::ToCertificateImportParameters()
     parameters.CertificateAttributes = attributes;
   }
   parameters.CertificatePolicy = Policy.ToCertificatePolicy();
-  // parameters.PreserveCertOrder;
+  parameters.PreserveCertOrder = Properties.PreserveCertificateOrder;
 
   return parameters;
 }
@@ -779,6 +783,7 @@ CertificateCreateOptions::ToCertificateCreateParameters()
     attributes.Updated = Properties.UpdatedOn;
     parameters.CertificateAttributes = attributes;
   }
+  parameters.PreserveCertOrder = Properties.PreserveCertificateOrder;
   return parameters;
 }
 
@@ -831,11 +836,7 @@ CertificateOperationProperties::CertificateOperationProperties(
       Error.Value().Message = operation.Error.Value().Message.Value();
     }
   }
-
-  /*if (operation.PreserveCertOrder.HasValue())
-  {
-    PreserveCertOrder = operation.PreserveCertOrder.Value();
-  }*/
+  PreserveCertificateOrder = operation.PreserveCertOrder;
 }
 
 CertificateIssuerItem::CertificateIssuerItem(_detail::Models::CertificateIssuerItem const& item)

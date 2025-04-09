@@ -20,24 +20,6 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
   /***************** KeyVault Key *****************/
   class KeyVaultKeySerializer final {
   public:
-    // Creates a new key based on a name and an HTTP raw response.
-    static KeyVaultKey KeyVaultKeyDeserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Create from HTTP raw response only.
-    static KeyVaultKey KeyVaultKeyDeserialize(Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Updates a Key based on an HTTP raw response.
-    static void KeyVaultKeyDeserialize(
-        KeyVaultKey& key,
-        Azure::Core::Http::RawResponse const& rawResponse);
-
-    // Create from json node directly. Used from listKeys
-    static void KeyVaultKeyDeserialize(
-        KeyVaultKey& key,
-        Azure::Core::Json::_internal::json const& json);
-
     static std::string GetUrlAuthorityWithScheme(Azure::Core::Url const& url)
     {
       std::string urlString;
@@ -78,75 +60,5 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys { nam
         keyProperties.Name = std::string(start, pathEnd);
       }
     }
-  };
-
-  /**************** Deleted Key *******************/
-  class DeletedKeySerializer final {
-  public:
-    static DeletedKey DeletedKeyDeserialize(
-        std::string const& name,
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  /**************** Import Key Options ***********/
-  class ImportKeyOptionsSerializer final {
-  public:
-    static std::string ImportKeyOptionsSerialize(ImportKeyOptions const& importKeyOptions);
-  };
-
-  /**************** Key Properties ************/
-  class KeyPropertiesPagedResultSerializer final {
-  public:
-    static KeyPropertiesPagedResponse KeyPropertiesPagedResultDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-    static DeletedKeyPagedResponse DeletedKeyPagedResultDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  /**************** JWK  ************/
-  class JsonWebKeySerializer final {
-  public:
-    static void JsonWebKeySerialize(
-        JsonWebKey const& jwk,
-        Azure::Core::Json::_internal::json& destJson);
-
-    static void JsonWebDeserialize(
-        JsonWebKey& srcKey,
-        Azure::Core::Json::_internal::json const& jsonParser);
-  };
-
-  /**************** Key Properties ************/
-  class KeyRotationPolicySerializer final {
-  public:
-    static KeyRotationPolicy KeyRotationPolicyDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-    static KeyRotationPolicy KeyRotationPolicyDeserialize(std::vector<uint8_t> const& body);
-
-    static std::string KeyRotationPolicySerialize(KeyRotationPolicy const& rotationPolicy);
-  };
-
-  /**************** GetRandomBytes ************/
-  class GetRandomBytesSerializer final {
-  public:
-    static std::string GetRandomBytesOptionsSerialize(GetRandomBytesOptions const& options);
-    static std::vector<uint8_t> GetRandomBytesResponseDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  /**************** KeyReleaseOptionsSerializer  ************/
-  class KeyReleaseOptionsSerializer final {
-  public:
-    static std::string KeyReleaseOptionsSerialize(KeyReleaseOptions const& keyReleaseOptions);
-    static ReleaseKeyResult KeyReleaseOptionsDeserialize(
-        Azure::Core::Http::RawResponse const& rawResponse);
-  };
-
-  /**************** KeyReleasePolicySerializer  ************/
-  class KeyReleasePolicySerializer final {
-  public:
-    static Azure::Core::Json::_internal::json KeyReleasePolicySerialize(
-        KeyReleasePolicy const& policy);
-    static KeyReleasePolicy KeyReleasePolicyDeserialize(
-        Azure::Core::Json::_internal::json const& rawResponse);
   };
 }}}}} // namespace Azure::Security::KeyVault::Keys::_detail

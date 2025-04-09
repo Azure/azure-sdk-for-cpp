@@ -95,24 +95,14 @@ set(
     src/cryptography/verify_result.cpp
     src/cryptography/wrap_result.cpp
     src/delete_key_operation.cpp
-    src/deleted_key.cpp
-    src/import_key_options.cpp
-    src/json_web_key.cpp
-    src/key_backup.cpp
     src/key_client.cpp
     src/key_client_models.cpp
     src/key_client_options.cpp
     src/key_client_paged_responses.cpp
     src/key_curve_name.cpp
     src/key_encryption_algorithm.cpp
-    src/key_get_random_bytes.cpp
     src/key_operation.cpp
-    src/key_release_options.cpp
-    src/key_release_policy.cpp
-    src/key_request_parameters.cpp
-    src/key_rotation_policy.cpp
     src/key_type.cpp
-    src/keyvault_key.cpp
     src/keyvault_protocol.cpp
     src/generated/get_deleted_keys_paged_response.cpp
     src/generated/get_keys_paged_response.cpp
@@ -125,9 +115,7 @@ set(
     src/generated/key_vault_client_paged_responses.hpp
     src/private/cryptography_internal_access.hpp
     src/private/cryptography_serializers.hpp
-    src/private/key_backup.hpp
     src/private/key_constants.hpp
-    src/private/key_request_parameters.hpp
     src/private/key_serializers.hpp
     src/private/key_sign_parameters.hpp
     src/private/key_verify_parameters.hpp

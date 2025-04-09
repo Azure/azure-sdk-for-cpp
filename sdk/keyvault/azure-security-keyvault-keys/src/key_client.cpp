@@ -5,9 +5,7 @@
 
 #include "./generated/key_vault_client.hpp"
 #include "private/cryptography_internal_access.hpp"
-#include "private/key_backup.hpp"
 #include "private/key_constants.hpp"
-#include "private/key_request_parameters.hpp"
 #include "private/key_serializers.hpp"
 #include "private/keyvault_protocol.hpp"
 #include "private/package_version.hpp"

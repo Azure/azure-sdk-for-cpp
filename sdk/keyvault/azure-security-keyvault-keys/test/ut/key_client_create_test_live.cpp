@@ -251,9 +251,7 @@ TEST_F(KeyVaultKeyClient, CreateKeyWithReleasePolicyOptions)
     EXPECT_TRUE(keyResponse.Value.Properties.ReleasePolicy.HasValue());
     auto policy = keyResponse.Value.Properties.ReleasePolicy.Value();
     EXPECT_TRUE(policy.ContentType.HasValue());
-    EXPECT_EQ(
-        policy.ContentType.Value(),
-        Azure::Security::KeyVault::Keys::_detail::ContentTypeDefaultValue);
+    EXPECT_EQ(policy.ContentType.Value(), "application/json; charset=utf-8");
     EXPECT_FALSE(policy.Immutable);
 
     EXPECT_EQ(

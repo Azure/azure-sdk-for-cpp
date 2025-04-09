@@ -29,7 +29,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Certificat
      * @brief Service Version used.
      *
      */
-    std::string ApiVersion{"7.5"};
+    std::string ApiVersion{"7.6-preview.2"};
   };
 
 }}}} // namespace Azure::Security::KeyVault::Certificates
