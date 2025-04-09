@@ -58,7 +58,10 @@ TableServiceClient::TableServiceClient(
     }
     else
     {
-      tokenContext.Scopes.emplace_back(options.Scopes);
+      for (const auto& scope : options.Scopes)
+      {
+        tokenContext.Scopes.emplace_back(scope);
+      }
     }
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
