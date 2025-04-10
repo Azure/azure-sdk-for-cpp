@@ -44,6 +44,7 @@ set(
     inc/azure/data/tables/dll_import_export.hpp
     inc/azure/data/tables/models.hpp
     inc/azure/data/tables/rtti.hpp
+    inc/azure/data/tables/tables_audience.hpp
     inc/azure/data/tables.hpp
     inc/azure/data/tables/table_client.hpp
     inc/azure/data/tables/table_service_client.hpp

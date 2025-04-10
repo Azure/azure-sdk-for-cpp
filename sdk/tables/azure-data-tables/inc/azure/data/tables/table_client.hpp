@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/models.hpp"
+#include "azure/data/tables/tables_audience.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -52,9 +53,11 @@ namespace Azure { namespace Data { namespace Tables {
     bool EnableTenantDiscovery = false;
 
     /**
-    * Authentication scopes.
-    */
-    std::vector<std::string> Scopes;
+     * The Audience to use for authentication with Azure Active Directory (AAD).
+     * #Azure::Data::Tables::Tables::DefaultAudience will be assumed if Audience is
+     * not set.
+     */
+    Azure::Nullable<TablesAudience> Audience;
   };
 
   /**
