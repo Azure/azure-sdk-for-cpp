@@ -9,5 +9,6 @@
 
 namespace Azure { namespace Data { namespace Test {
 
-  class SerializersTest : public Azure::Storage::Test::StorageTest {};
+  class SerializersTest : public Azure::Storage::Test::StorageTest {
+  };
 }}} // namespace Azure::Data::Test

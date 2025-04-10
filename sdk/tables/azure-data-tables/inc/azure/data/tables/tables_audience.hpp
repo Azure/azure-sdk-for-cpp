@@ -4,15 +4,16 @@
 #pragma once
 
 #include "dll_import_export.hpp"
+
 #include <azure/core/internal/extendable_enumeration.hpp>
 namespace Azure { namespace Data { namespace Tables {
   /**
    * @brief Audiences available for table service
    *
    */
-  class TablesAudience final
-      {
+  class TablesAudience final {
     std::string m_audience;
+
   public:
     /**
      * @brief Get the audience value.
@@ -26,9 +27,7 @@ namespace Azure { namespace Data { namespace Tables {
      * cloud where the resource is located. For more information: See
      * https://learn.microsoft.com/azure/storage/tables/authorize-access-azure-active-directory
      */
-    explicit TablesAudience(std::string tablesAudience) : m_audience{std::move(tablesAudience)}
-    {
-    }
+    explicit TablesAudience(std::string tablesAudience) : m_audience{std::move(tablesAudience)} {}
 
     /**
      * @brief The service endpoint for a given storage account. Use this method to acquire a token

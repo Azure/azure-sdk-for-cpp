@@ -19,7 +19,7 @@ using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::_detail;
 
 namespace Azure { namespace Data { namespace Tables { namespace _detail {
-  std::string GetDefaultScopeForAudience(const std::string& audience= "")
+  std::string GetDefaultScopeForAudience(const std::string& audience = "")
   {
     if (!audience.empty() && audience.back() == '/')
     {
@@ -28,7 +28,6 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
     return audience + _detail::AudienceSuffixPath;
   }
 }}}} // namespace Azure::Data::Tables::_detail
-
 
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
