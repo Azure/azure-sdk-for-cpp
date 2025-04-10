@@ -21,7 +21,7 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Construct a new TablesAudience object
      *
-     * @param tableAudience The Azure Active Directory audience to use when forming authorization
+     * @param tablesAudience The Azure Active Directory audience to use when forming authorization
      * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
      * cloud where the resource is located. For more information: See
      * https://learn.microsoft.com/azure/storage/tables/authorize-access-azure-active-directory
