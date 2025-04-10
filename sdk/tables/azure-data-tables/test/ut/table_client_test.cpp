@@ -36,7 +36,7 @@ namespace Azure { namespace Data { namespace Test {
     if (m_tableServiceClient.get() == nullptr)
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
-      // set audience form only one of the clients thus both paths.
+      // set audience for only one of the clients thus both paths.
       clientOptions.Audience
           = Azure::Data::Tables::TablesAudience::CreateTablesServiceAccountAudience(
               GetAccountName());
