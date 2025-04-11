@@ -3,9 +3,6 @@
 
 #pragma once
 
-#include "dll_import_export.hpp"
-
-#include <azure/core/internal/extendable_enumeration.hpp>
 namespace Azure { namespace Data { namespace Tables {
   /**
    * @brief Audiences available for table service
