@@ -18,6 +18,17 @@ using namespace Azure::Data::Tables::_detail::Policies;
 using namespace Azure::Data::Tables::_detail::Xml;
 using namespace Azure::Data::Tables::_detail;
 
+namespace Azure { namespace Data { namespace Tables { namespace _detail {
+  std::string GetDefaultScopeForAudience(const std::string& audience = "")
+  {
+    if (!audience.empty() && audience.back() == '/')
+    {
+      return audience + _detail::AudienceSuffix;
+    }
+    return audience + _detail::AudienceSuffixPath;
+  }
+}}}} // namespace Azure::Data::Tables::_detail
+
 TableServiceClient::TableServiceClient(
     const std::string& serviceUrl,
     const TableClientOptions& options)
@@ -51,7 +62,11 @@ TableServiceClient::TableServiceClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
+    // if Scopes passed in are empty, use the default scope
+    tokenContext.Scopes.emplace_back(
+        options.Audience.HasValue()
+            ? _detail::GetDefaultScopeForAudience(options.Audience.Value().GetAudience())
+            : _detail::GetDefaultScopeForAudience(m_url.GetAbsoluteUrl()));
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));
@@ -269,7 +284,10 @@ TableClient::TableClient(
   perRetryPolicies.emplace_back(std::make_unique<TimeoutPolicy>());
   {
     Azure::Core::Credentials::TokenRequestContext tokenContext;
-    tokenContext.Scopes.emplace_back(m_url.GetAbsoluteUrl() + "/.default");
+    tokenContext.Scopes.emplace_back(
+        options.Audience.HasValue()
+            ? _detail::GetDefaultScopeForAudience(options.Audience.Value().GetAudience())
+            : _detail::GetDefaultScopeForAudience(m_url.GetAbsoluteUrl()));
 
     perRetryPolicies.emplace_back(std::make_unique<TenantBearerTokenAuthenticationPolicy>(
         credential, tokenContext, newOptions.EnableTenantDiscovery));

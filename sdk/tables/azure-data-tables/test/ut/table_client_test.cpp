@@ -36,6 +36,9 @@ namespace Azure { namespace Data { namespace Test {
     if (m_tableServiceClient.get() == nullptr)
     {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
+      // set audience for only one of the clients thus both paths.
+      clientOptions.Audience
+          = Azure::Data::Tables::TableAudience::CreateAccountAudience(GetAccountName());
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       m_tableName = GetTestNameLowerCase();
 
@@ -84,6 +87,8 @@ namespace Azure { namespace Data { namespace Test {
 
   TEST_P(TablesClientTest, CreateTable)
   {
+    Azure::Data::Tables::TableClientOptions tableClientOptions;
+
     auto createResponse = m_tableServiceClient->CreateTable(m_tableName);
     EXPECT_EQ(createResponse.Value.TableName, m_tableName);
     EXPECT_EQ(createResponse.Value.EditLink, "Tables('" + m_tableName + "')");
