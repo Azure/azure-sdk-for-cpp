@@ -4,7 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/models.hpp"
-#include "azure/data/tables/tables_audience.hpp"
+#include "azure/data/tables/table_audience.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -56,7 +56,7 @@ namespace Azure { namespace Data { namespace Tables {
      * The Audience to use for authentication with Azure Active Directory (AAD).
      * Audience will be assumed based on serviceUrl if it is not set.
      */
-    Azure::Nullable<TablesAudience> Audience;
+    Azure::Nullable<TableAudience> Audience;
   };
 
   /**

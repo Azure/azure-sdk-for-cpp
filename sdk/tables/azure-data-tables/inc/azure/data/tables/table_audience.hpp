@@ -9,7 +9,7 @@ namespace Azure { namespace Data { namespace Tables {
 
    *
    */
-  class TablesAudience final {
+  class TableAudience final {
     std::string m_audience;
 
   public:
@@ -20,12 +20,12 @@ namespace Azure { namespace Data { namespace Tables {
     /**
      * @brief Construct a new TablesAudience object
      *
-     * @param tablesAudience The Azure Active Directory audience to use when forming authorization
+     * @param tableAudience The Azure Active Directory audience to use when forming authorization
      * scopes. For the Language service, this value corresponds to a URL that identifies the Azure
      * cloud where the resource is located. For more information: See
      * https://learn.microsoft.com/azure/storage/tables/authorize-access-azure-active-directory
      */
-    explicit TablesAudience(std::string tablesAudience) : m_audience{std::move(tablesAudience)} {}
+    explicit TableAudience(std::string tableAudience) : m_audience{std::move(tableAudience)} {}
 
     /**
      * @brief The service endpoint for a given storage account. Use this method to acquire a token
@@ -34,9 +34,9 @@ namespace Azure { namespace Data { namespace Tables {
      * @param tablesAccountName The storage account name used to populate the service endpoint.
      * @return The service endpoint for a given storage account.
      */
-    static TablesAudience CreateTablesServiceAccountAudience(const std::string& tablesAccountName)
+    static TableAudience CreateTablesServiceAccountAudience(const std::string& tablesAccountName)
     {
-      return TablesAudience("https://" + tablesAccountName + ".table.core.windows.net/");
+      return TableAudience("https://" + tablesAccountName + ".table.core.windows.net/");
     }
   };
 }}} // namespace Azure::Data::Tables
