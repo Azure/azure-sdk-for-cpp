@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <string>
+#include <utility>
+
 namespace Azure { namespace Data { namespace Tables {
   /**
    * @brief Audiences available for Azure Table storage service.
