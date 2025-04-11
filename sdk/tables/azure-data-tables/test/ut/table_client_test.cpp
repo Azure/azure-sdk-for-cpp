@@ -38,8 +38,7 @@ namespace Azure { namespace Data { namespace Test {
       auto clientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       // set audience for only one of the clients thus both paths.
       clientOptions.Audience
-          = Azure::Data::Tables::TableAudience::CreateAccountAudience(
-              GetAccountName());
+          = Azure::Data::Tables::TableAudience::CreateAccountAudience(GetAccountName());
       auto tableClientOptions = InitStorageClientOptions<Tables::TableClientOptions>();
       m_tableName = GetTestNameLowerCase();
 
