@@ -34,12 +34,12 @@ namespace Azure { namespace Data { namespace Tables {
      * @brief The service endpoint for a given storage account. Use this method to acquire a token
      * for authorizing requests to that specific Azure Storage account and service only.
      *
-     * @param tablesAccountName The storage account name used to populate the service endpoint.
+     * @param tableAccountName The storage account name used to populate the service endpoint.
      * @return The service endpoint for a given storage account.
      */
-    static TableAudience CreateTablesServiceAccountAudience(const std::string& tablesAccountName)
+    static TableAudience CreateAccountAudience(const std::string& tableAccountName)
     {
-      return TableAudience("https://" + tablesAccountName + ".table.core.windows.net/");
+      return TableAudience("https://" + tableAccountName + ".table.core.windows.net/");
     }
   };
 }}} // namespace Azure::Data::Tables
