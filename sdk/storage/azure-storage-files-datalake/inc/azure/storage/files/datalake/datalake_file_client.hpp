@@ -295,6 +295,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
     }
 
+    /** @brief Upload TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
+    /** @brief Download TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
+
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
   };

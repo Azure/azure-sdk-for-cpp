@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg97base/specification/storage/data-plane/Microsoft.FileStorage/stable/2025-05-05/file.json
+input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2025-05-05/file.json
 ```
 
 ## ModelFour Options
@@ -43,13 +43,12 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
-      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
           delete $[h];
         }
       }
@@ -335,6 +334,9 @@ directive:
         if (header === "x-ms-meta") {
           $[header]["x-ms-format"] = "caseinsensitivemap";
         }
+        if (header === "x-ms-structured-body" || header === "x-ms-structured-content-length") {
+           $[header]["x-nullable"] = true;
+         }
       }
 ```
 

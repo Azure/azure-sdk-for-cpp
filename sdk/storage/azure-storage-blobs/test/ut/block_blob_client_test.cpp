@@ -2198,11 +2198,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
 
-  TEST_F(BlockBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  TEST_F(BlockBlobClientTest, StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);
     auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    const std::string tempFileName = RandomString();
+    WriteFile(tempFileName, content);
     Blobs::TransferValidationOptions validationOptions;
     validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
 
@@ -2222,9 +2224,59 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
     EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
     EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.BlobSize, contentSize);
+    // partial download
+    downloadOptions.Range = Core::Http::HttpRange();
+    downloadOptions.Range.Value().Length = contentSize / 2;
+    EXPECT_NO_THROW(downloadResult = m_blockBlobClient->Download(downloadOptions).Value);
+    downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        downloadedData, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize / 2);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.BlobSize, contentSize);
+    downloadOptions.Range.Reset();
+
+    // UploadFrom DownloadTo
+    Blobs::UploadBlockBlobFromOptions uploadFromOptions;
+    Blobs::Models::UploadBlockBlobFromResult uploadFromResult;
+    Blobs::DownloadBlobToOptions downloadToOptions;
+    Blobs::Models::DownloadBlobToResult downloadToResult;
+
+    // Stream
+    uploadFromOptions.ValidationOptions = validationOptions;
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient("uploadfromstream_" + LowercaseRandomString());
+    EXPECT_NO_THROW(
+        uploadFromResult = blobClient.UploadFrom(content.data(),contentSize, uploadFromOptions).Value);
+    downloadToOptions.ValidationOptions = validationOptions;
+    auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = blobClient.DownloadTo(downloadBuffer.data(), contentSize, downloadToOptions).Value);
+    EXPECT_EQ(downloadBuffer, content);
+    // partial downloadTo
+    downloadToOptions.Range = Core::Http::HttpRange();
+    downloadToOptions.Range.Value().Length = contentSize / 2;
+    downloadBuffer.resize(static_cast<size_t>(contentSize / 2), '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = blobClient.DownloadTo(downloadBuffer.data(), contentSize / 2, downloadToOptions).Value);
+    EXPECT_EQ(
+        downloadBuffer, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    downloadToOptions.Range.Reset();
+
+    // File
+    blobClient
+        = m_blobContainerClient->GetBlockBlobClient("uploadfromfile_" + LowercaseRandomString());
+    EXPECT_NO_THROW(blobClient.UploadFrom(tempFileName, uploadFromOptions).Value);
+    std::string downloadToFileName = RandomString();
+    EXPECT_NO_THROW(
+        downloadToResult = blobClient.DownloadTo(downloadToFileName, downloadToOptions).Value);
+    EXPECT_EQ(ReadFile(downloadToFileName), content);
 
     // Stage Block
-    auto blobClient = m_blobContainerClient->GetBlockBlobClient(LowercaseRandomString());
+    blobClient = m_blobContainerClient->GetBlockBlobClient(LowercaseRandomString());
     const std::vector<uint8_t> dataPart1 = RandomBuffer(contentSize);
     const std::vector<uint8_t> dataPart2 = RandomBuffer(contentSize);
 

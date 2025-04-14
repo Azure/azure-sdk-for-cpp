@@ -398,6 +398,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Nullable<bool> m_allowTrailingDot;
     Nullable<bool> m_allowSourceTrailingDot;
     Nullable<Models::ShareTokenIntent> m_shareTokenIntent;
+    /** @brief Upload TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
+    /** @brief Download TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
 
     explicit ShareFileClient(
         Azure::Core::Url shareFileUrl,

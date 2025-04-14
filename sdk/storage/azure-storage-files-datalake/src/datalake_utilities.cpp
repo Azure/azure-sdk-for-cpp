@@ -102,6 +102,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     {
       blobOptions.Audience = Blobs::BlobAudience(options.Audience.Value().ToString());
     }
+    if (options.DownloadValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.DownloadValidationOptions.Value().Algorithm;
+      blobOptions.DownloadValidationOptions = std::move(validationOptions);
+    }
+    if (options.UploadValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.UploadValidationOptions.Value().Algorithm;
+      blobOptions.DownloadValidationOptions = std::move(validationOptions);
+    }
     return blobOptions;
   }
 
