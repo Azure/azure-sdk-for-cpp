@@ -45,7 +45,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
   endif()
 endif()
 
-option(AZURE_TSP_KV_KEYS_GEN3 "Generate KeyVault Keys from TypeSpec" ON)
+option(AZURE_TSP_KV_KEYS_GEN "Generate KeyVault Keys from TypeSpec" OFF)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_KEYS_GEN}")
 
 if(AZURE_TSP_KV_KEYS_GEN)
