@@ -32,7 +32,7 @@ include(AzureBuildTargetForCI)
 # Add create_map_file function
 include(CreateMapFile)
 
-option(AZURE_TSP_KV_SECRETS_GEN3 "Generate KeyVault Secrets from TypeSpec" ON)
+option(AZURE_TSP_KV_SECRETS_GEN "Generate KeyVault Secrets from TypeSpec" OFF)
 message("KeyVault Secrets TSP Generation ${AZURE_TSP_KV_SECRETS_GEN}")
 
 if(AZURE_TSP_KV_SECRETS_GEN)
