@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/data/tables/models.hpp"
+#include "azure/data/tables/table_audience.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
@@ -50,6 +51,12 @@ namespace Azure { namespace Data { namespace Tables {
      * to prompt a challenge in order to discover the correct tenant for the resource.
      */
     bool EnableTenantDiscovery = false;
+
+    /**
+     * The Audience to use for authentication with Azure Active Directory (AAD).
+     * Audience will be assumed based on serviceUrl if it is not set.
+     */
+    Azure::Nullable<TableAudience> Audience;
   };
 
   /**

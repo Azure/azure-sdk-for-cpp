@@ -40,4 +40,6 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail {
   constexpr static const char* ODataType = "odata.type";
   constexpr static const char* ODataMeta = "odata.metadata";
   constexpr static const char* ODataError = "odata.error";
+  constexpr static const char* AudienceSuffix = ".default";
+  constexpr static const char* AudienceSuffixPath = "/.default";
 }}}} // namespace Azure::Data::Tables::_detail
