@@ -378,8 +378,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {
-      auto contentLength = std::stoll(
-          downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
       if (isStructuredMessage)
       {
         if (!downloadResponse.Value.StructuredContentLength.HasValue())
@@ -391,10 +389,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
       else
       {
-        downloadResponse.Value.FileSize = contentLength;
+        downloadResponse.Value.FileSize = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
       }
       downloadResponse.Value.ContentRange.Offset = 0;
-      downloadResponse.Value.ContentRange.Length = contentLength;
+      downloadResponse.Value.ContentRange.Length = downloadResponse.Value.FileSize;
     }
     else if (
         downloadResponse.RawResponse->GetStatusCode()

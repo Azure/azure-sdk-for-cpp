@@ -279,8 +279,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {
-      auto contentLength = std::stoll(
-          downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
       if (isStructuredMessage)
       {
         if (!downloadResponse.Value.StructuredContentLength.HasValue())
@@ -292,10 +290,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       else
       {
-        downloadResponse.Value.BlobSize = contentLength;
+        downloadResponse.Value.BlobSize = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
       }
       downloadResponse.Value.ContentRange.Offset = 0;
-      downloadResponse.Value.ContentRange.Length = contentLength;
+      downloadResponse.Value.ContentRange.Length = downloadResponse.Value.BlobSize;
     }
     else if (
         downloadResponse.RawResponse->GetStatusCode()
