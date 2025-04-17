@@ -160,6 +160,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * Indicates the response body contains a structured message and specifies the message
+       * schema version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
+      /**
+       * The length of the blob/file content inside the message body when the response body is
+       * returned as a structured message. Will always be smaller than Content-Length.
+       */
+      Nullable<std::int64_t> StructuredContentLength;
+      /**
        * Standard HTTP properties supported files.
        */
       FileHttpHeaders HttpHeaders;

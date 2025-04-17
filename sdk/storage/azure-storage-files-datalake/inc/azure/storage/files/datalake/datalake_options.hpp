@@ -154,6 +154,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * Configures whether to do content validation for file uploads and downloads.
+   */
+  struct TransferValidationOptions
+  {
+    /**
+     * @brief The algorithm used for storage checksum.
+     */
+    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
+  };
+
+  /**
    * @brief Client options used to initialize all DataLake clients.
    */
   struct DataLakeClientOptions final : Azure::Core::_internal::ClientOptions
@@ -190,6 +201,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * if Audience is not set.
      */
     Azure::Nullable<DataLakeAudience> Audience;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
   };
 
   /**
@@ -481,6 +502,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * be changed using renew or change.
      */
     Azure::Nullable<std::chrono::seconds> LeaseDuration;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file appends.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -837,6 +863,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * https://learn.microsoft.com/entra/identity/hybrid/connect/plan-connect-userprincipalname#what-is-userprincipalname
      */
     Nullable<bool> IncludeUserPrincipalName;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -963,6 +994,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   using AcquireLeaseOptions = Blobs::AcquireLeaseOptions;
