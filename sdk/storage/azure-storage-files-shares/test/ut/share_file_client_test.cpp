@@ -2570,8 +2570,7 @@ namespace Azure { namespace Storage { namespace Test {
     validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
 
     // UploadRange
-    auto fileClient
-        = m_fileShareDirectoryClient->GetFileClient("uploadrange_" + RandomString());
+    auto fileClient = m_fileShareDirectoryClient->GetFileClient("uploadrange_" + RandomString());
     fileClient.Create(contentSize);
     Files::Shares::UploadFileRangeOptions uploadRangeOptions;
     uploadRangeOptions.ValidationOptions = validationOptions;
@@ -2613,8 +2612,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::DownloadFileToResult downloadToResult;
 
     // From stream
-    fileClient
-        = m_fileShareDirectoryClient->GetFileClient("uploadfromstream_" + RandomString());
+    fileClient = m_fileShareDirectoryClient->GetFileClient("uploadfromstream_" + RandomString());
     EXPECT_NO_THROW(
         uploadFromResult
         = fileClient.UploadFrom(content.data(), contentSize, uploadFromOptions).Value);

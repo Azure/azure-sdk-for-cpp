@@ -2246,9 +2246,11 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Stream
     uploadFromOptions.ValidationOptions = validationOptions;
-    auto blobClient = m_blobContainerClient->GetBlockBlobClient("uploadfromstream_" + LowercaseRandomString());
+    auto blobClient
+        = m_blobContainerClient->GetBlockBlobClient("uploadfromstream_" + LowercaseRandomString());
     EXPECT_NO_THROW(
-        uploadFromResult = blobClient.UploadFrom(content.data(),contentSize, uploadFromOptions).Value);
+        uploadFromResult
+        = blobClient.UploadFrom(content.data(), contentSize, uploadFromOptions).Value);
     downloadToOptions.ValidationOptions = validationOptions;
     auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
     EXPECT_NO_THROW(

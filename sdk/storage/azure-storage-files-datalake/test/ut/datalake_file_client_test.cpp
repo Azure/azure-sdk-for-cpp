@@ -1088,8 +1088,8 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::Models::AppendFileResult appendResult;
     EXPECT_NO_THROW(appendResult = m_fileClient->Append(bodyStream, 0, appendOptions).Value);
     EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-    //Serice Bug: Upper Case returned.
-    //EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    // Serice Bug: Upper Case returned.
+    // EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     // Flush
     m_fileClient->Flush(contentSize);
 
