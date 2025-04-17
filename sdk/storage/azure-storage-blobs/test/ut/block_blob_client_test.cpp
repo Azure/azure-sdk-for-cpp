@@ -2271,7 +2271,7 @@ namespace Azure { namespace Storage { namespace Test {
     // File
     blobClient
         = m_blobContainerClient->GetBlockBlobClient("uploadfromfile_" + LowercaseRandomString());
-    EXPECT_NO_THROW(blobClient.UploadFrom(tempFileName, uploadFromOptions).Value);
+    EXPECT_NO_THROW(blobClient.UploadFrom(tempFileName, uploadFromOptions));
     std::string downloadToFileName = RandomString();
     EXPECT_NO_THROW(
         downloadToResult = blobClient.DownloadTo(downloadToFileName, downloadToOptions).Value);
