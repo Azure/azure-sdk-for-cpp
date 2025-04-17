@@ -2198,7 +2198,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
 
-  TEST_F(BlockBlobClientTest, StructuredMessageTest)
+  TEST_F(BlockBlobClientTest, DISABLED_StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);

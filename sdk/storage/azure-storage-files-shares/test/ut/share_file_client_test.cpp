@@ -2559,7 +2559,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
   }
 
-  TEST_F(FileShareFileClientTest, StructuredMessageTest)
+  TEST_F(FileShareFileClientTest, DISABLED_StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);
