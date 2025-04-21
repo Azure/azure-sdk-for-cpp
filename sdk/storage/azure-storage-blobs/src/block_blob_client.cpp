@@ -224,6 +224,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto uploadBlockFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       Azure::Core::IO::MemoryBodyStream contentStream(buffer + offset, static_cast<size_t>(length));
       StageBlockOptions chunkOptions;
+      chunkOptions.ValidationOptions = options.ValidationOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {
@@ -299,6 +300,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Azure::Core::IO::_internal::RandomAccessFileBodyStream contentStream(
           fileReader.GetHandle(), offset, length);
       StageBlockOptions chunkOptions;
+      chunkOptions.ValidationOptions = options.ValidationOptions;
       auto blockInfo = StageBlock(getBlockId(chunkId), contentStream, chunkOptions, context);
       if (chunkId == numChunks - 1)
       {

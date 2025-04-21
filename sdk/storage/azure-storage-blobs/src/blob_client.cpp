@@ -279,8 +279,20 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {
-      downloadResponse.Value.BlobSize = std::stoll(
-          downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
+      if (isStructuredMessage)
+      {
+        if (!downloadResponse.Value.StructuredContentLength.HasValue())
+        {
+          throw StorageException(
+              "Structured message response without x-ms-structured-content-length header.");
+        }
+        downloadResponse.Value.BlobSize = downloadResponse.Value.StructuredContentLength.Value();
+      }
+      else
+      {
+        downloadResponse.Value.BlobSize = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
+      }
       downloadResponse.Value.ContentRange.Offset = 0;
       downloadResponse.Value.ContentRange.Length = downloadResponse.Value.BlobSize;
     }
@@ -366,6 +378,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
+    firstChunkOptions.ValidationOptions = options.ValidationOptions;
 
     auto firstChunk = Download(firstChunkOptions, context);
     const Azure::ETag eTag = firstChunk.Value.Details.ETag;
@@ -421,6 +434,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
+            chunkOptions.ValidationOptions = options.ValidationOptions;
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
@@ -473,6 +487,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
     }
+    firstChunkOptions.ValidationOptions = options.ValidationOptions;
 
     auto firstChunk = Download(firstChunkOptions, context);
     const Azure::ETag eTag = firstChunk.Value.Details.ETag;
@@ -538,6 +553,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
+            chunkOptions.ValidationOptions = options.ValidationOptions;
             auto chunk = Download(chunkOptions, context);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),

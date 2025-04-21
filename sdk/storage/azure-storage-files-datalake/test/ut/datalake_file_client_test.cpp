@@ -1074,4 +1074,89 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, DISABLED_StructuredMessageTest)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    const std::string tempFileName = RandomString();
+    WriteFile(tempFileName, content);
+    Files::DataLake::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    Blobs::TransferValidationOptions blobValidationOptions;
+    blobValidationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    // Append
+    Files::DataLake::AppendFileOptions appendOptions;
+    appendOptions.ValidationOptions = validationOptions;
+    Files::DataLake::Models::AppendFileResult appendResult;
+    EXPECT_NO_THROW(appendResult = m_fileClient->Append(bodyStream, 0, appendOptions).Value);
+    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+    // Serice Bug: Upper Case returned.
+    // EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    // Flush
+    m_fileClient->Flush(contentSize);
+
+    // Download
+    Files::DataLake::DownloadFileOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Files::DataLake::Models::DownloadFileResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = m_fileClient->Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.Body->ReadToEnd();
+    EXPECT_EQ(content, downloadedData);
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    EXPECT_EQ(downloadResult.FileSize, contentSize);
+    // partial download
+    downloadOptions.Range = Core::Http::HttpRange();
+    downloadOptions.Range.Value().Length = contentSize / 2;
+    EXPECT_NO_THROW(downloadResult = m_fileClient->Download(downloadOptions).Value);
+    downloadedData = downloadResult.Body->ReadToEnd();
+    EXPECT_EQ(
+        downloadedData, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize / 2);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    EXPECT_EQ(downloadResult.FileSize, contentSize);
+    downloadOptions.Range.Reset();
+
+    // UploadFrom DownloadTo
+    Files::DataLake::UploadFileFromOptions uploadOptions;
+    uploadOptions.ValidationOptions = validationOptions;
+    Files::DataLake::Models::UploadFileFromResult uploadFromResult;
+    Files::DataLake::DownloadFileToOptions downloadToOptions;
+    downloadToOptions.ValidationOptions = blobValidationOptions;
+    Files::DataLake::Models::DownloadFileToResult downloadToResult;
+
+    // From stream
+    auto fileClient = m_fileSystemClient->GetFileClient("uploadfromstream_" + RandomString());
+    EXPECT_NO_THROW(
+        uploadFromResult = fileClient.UploadFrom(content.data(), contentSize, uploadOptions).Value);
+    auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = fileClient.DownloadTo(downloadBuffer.data(), contentSize, downloadToOptions).Value);
+    EXPECT_EQ(downloadBuffer, content);
+    // partial downloadTo
+    downloadToOptions.Range = Core::Http::HttpRange();
+    downloadToOptions.Range.Value().Length = contentSize / 2;
+    downloadBuffer.resize(static_cast<size_t>(contentSize / 2), '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = fileClient.DownloadTo(downloadBuffer.data(), contentSize / 2, downloadToOptions).Value);
+    EXPECT_EQ(
+        downloadBuffer, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    downloadToOptions.Range.Reset();
+
+    // From file
+    fileClient = m_fileSystemClient->GetFileClient("uploadfromfile_" + RandomString());
+    EXPECT_NO_THROW(uploadFromResult = fileClient.UploadFrom(tempFileName, uploadOptions).Value);
+    auto downloadFileName = RandomString();
+    EXPECT_NO_THROW(
+        downloadToResult = fileClient.DownloadTo(downloadFileName, downloadToOptions).Value);
+  }
+
 }}} // namespace Azure::Storage::Test
