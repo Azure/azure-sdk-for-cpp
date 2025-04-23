@@ -42,6 +42,11 @@ namespace Azure { namespace Core {
     {
       using type = _internal::BasicUniqueHandle<CURL, curl_easy_cleanup>;
     };
+
+    template <> struct UniqueHandleHelper<CURLSH>
+    {
+      using type = _internal::BasicUniqueHandle<CURLSH, curl_share_cleanup>;
+    }
   } // namespace _detail
 
   namespace Http {
