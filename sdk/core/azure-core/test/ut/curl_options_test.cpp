@@ -50,14 +50,14 @@ namespace Azure { namespace Core { namespace Test {
 
     std::unique_ptr<Azure::Core::Http::RawResponse> response;
     EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context{}));
-      auto responseCode = response->GetStatusCode();
-      int expectedCode = 200;
-      EXPECT_PRED2(
-          [](int expected, int code) { return expected == code; },
-          expectedCode,
-          static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              responseCode));
-    }
+    auto responseCode = response->GetStatusCode();
+    int expectedCode = 200;
+    EXPECT_PRED2(
+        [](int expected, int code) { return expected == code; },
+        expectedCode,
+        static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+            responseCode));
+  }
 
   /******************************* SSL options. ************************/
   TEST(CurlTransportOptions, noRevoke)
@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
           expectedCode,
           static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
               responseCode));
-  }
+    }
 
     // Clean the connection from the pool *Windows fails to clean if we leave to be clean upon
     // app-destruction
