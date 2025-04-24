@@ -272,10 +272,14 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient.ScheduleDeletion(
         Files::DataLake::ScheduleFileExpiryOriginType::Absolute, options));
 
-    auto pagedResult = m_fileSystemClient->ListPaths(true);
-    EXPECT_EQ(1L, pagedResult.Paths.size());
-    ASSERT_TRUE(pagedResult.Paths[0].ExpiresOn.HasValue());
-    EXPECT_EQ(options.ExpiresOn.Value(), pagedResult.Paths[0].ExpiresOn.Value());
+    std::vector<Files::DataLake::Models::PathItem> paths;
+    for (auto page = m_fileSystemClient->ListPaths(true); page.HasPage(); page.MoveToNextPage())
+    {
+      paths.insert(paths.end(), page.Paths.begin(), page.Paths.end());
+    }
+    EXPECT_EQ(1L, paths.size());
+    ASSERT_TRUE(paths[0].ExpiresOn.HasValue());
+    EXPECT_EQ(options.ExpiresOn.Value(), paths[0].ExpiresOn.Value());
   }
 
   TEST_F(DataLakeFileSystemClientTest, UnencodedPathDirectoryFileNameWorks)

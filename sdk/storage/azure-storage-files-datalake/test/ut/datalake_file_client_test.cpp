@@ -588,7 +588,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(downloadResult.Value.Details.EncryptionContext.HasValue());
     EXPECT_EQ(encryptionContext, downloadResult.Value.Details.EncryptionContext.Value());
     // Assert DataLakeDirectoryClient::ListPaths
-    auto paths = directoryClient.ListPaths(false).Paths;
+    std::vector<Files::DataLake::Models::PathItem> paths;
+    for (auto page = directoryClient.ListPaths(false); page.HasPage(); page.MoveToNextPage())
+    {
+      paths.insert(paths.end(), page.Paths.begin(), page.Paths.end());
+    }
     EXPECT_EQ(paths.size(), 1);
     EXPECT_TRUE(paths[0].EncryptionContext.HasValue());
     EXPECT_EQ(encryptionContext, paths[0].EncryptionContext.Value());
