@@ -44,9 +44,9 @@ namespace Azure { namespace Core {
     };
 
     /**
-     * 
+     *
      * @brief Unique handle wrapper for CURLSH handles.
-     * 
+     *
      * @note Internally, CURL and CURLSH are declared as the same void type,
      * so to avoid collisions we need this wrapper.
      */

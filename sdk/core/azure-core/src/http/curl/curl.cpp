@@ -2315,7 +2315,7 @@ CurlConnection::CurlConnection(
   CURLcode result;
 
   m_sslShareHandle = Azure::Core::_internal::UniqueHandle<Azure::Core::_detail::CURLSHWrapper>(
-    new Azure::Core::_detail::CURLSHWrapper());
+      new Azure::Core::_detail::CURLSHWrapper());
   if (!m_sslShareHandle)
   {
     throw Azure::Core::Http::TransportException(
