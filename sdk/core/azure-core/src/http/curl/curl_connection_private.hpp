@@ -43,10 +43,31 @@ namespace Azure { namespace Core {
       using type = _internal::BasicUniqueHandle<CURL, curl_easy_cleanup>;
     };
 
-    template <> struct UniqueHandleHelper<CURLSH>
+    /**
+    * 
+    * @brief Unique handle wrapper for CURLSH handles.
+    * 
+    * @note Internally, CURL and CURLSH are declared 
+    */
+    struct CURLSHWrapper
     {
-      using type = _internal::BasicUniqueHandle<CURLSH, curl_share_cleanup>;
-    }
+      CURLSH* share_handle;
+
+      CURLSHWrapper() : share_handle{curl_share_init()} {};
+    };
+
+    /**
+    * @brief   Unique handle for CURLSHWrapper handles
+    */
+    template <> struct UniqueHandleHelper<CURLSHWrapper>
+    {
+      static void FreeCurlShare(CURLSHWrapper* curl_share)
+      { 
+        curl_share_cleanup(curl_share->share_handle);
+        free(curl_share);
+      }
+      using type = _internal::BasicUniqueHandle<CURLSHWrapper, FreeCurlShare>;
+    };
   } // namespace _detail
 
   namespace Http {
@@ -147,7 +168,7 @@ namespace Azure { namespace Core {
     class CurlConnection final : public CurlNetworkConnection {
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
-      Azure::Core::_internal::UniqueHandle<CURLSH> m_sslShareHandle;
+      Azure::Core::_internal::UniqueHandle<Azure::Core::_detail::CURLSHWrapper> m_sslShareHandle;
       curl_socket_t m_curlSocket;
       std::chrono::steady_clock::time_point m_lastUseTime;
       std::string m_connectionKey;
