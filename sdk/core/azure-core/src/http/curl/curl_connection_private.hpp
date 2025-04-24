@@ -44,11 +44,12 @@ namespace Azure { namespace Core {
     };
 
     /**
-    * 
-    * @brief Unique handle wrapper for CURLSH handles.
-    * 
-    * @note Internally, CURL and CURLSH are declared 
-    */
+     * 
+     * @brief Unique handle wrapper for CURLSH handles.
+     * 
+     * @note Internally, CURL and CURLSH are declared as the same void type,
+     * so to avoid collisions we need this wrapper.
+     */
     struct CURLSHWrapper
     {
       CURLSH* share_handle;
@@ -57,12 +58,12 @@ namespace Azure { namespace Core {
     };
 
     /**
-    * @brief   Unique handle for CURLSHWrapper handles
-    */
+     * @brief   Unique handle for CURLSHWrapper handles
+     */
     template <> struct UniqueHandleHelper<CURLSHWrapper>
     {
       static void FreeCurlShare(CURLSHWrapper* curl_share)
-      { 
+      {
         curl_share_cleanup(curl_share->share_handle);
         free(curl_share);
       }
