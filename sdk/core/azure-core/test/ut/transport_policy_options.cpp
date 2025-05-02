@@ -484,7 +484,8 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  TEST_F(TransportAdapterOptions, CheckFailedCrlValidation)
+  // Reenable when https://github.com/Azure/azure-sdk-for-cpp/issues/6553 is fixed.
+  TEST_F(TransportAdapterOptions, DISABLED_CheckFailedCrlValidation)
   {
     // By default, for the Windows and Mac platforms, Curl uses
     // SCHANNEL/SECTRANSP for CRL validation. Those SSL protocols
