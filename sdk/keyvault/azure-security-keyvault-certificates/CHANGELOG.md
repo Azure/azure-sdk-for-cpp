@@ -1,14 +1,14 @@
 # Release History
 
-## 4.3.0-beta.4 (Unreleased)
+## 4.3.0-beta.4 (2025-05-06)
 
 ### Features Added
 
+- Added support for `PreserveCertificateOrder` option.
+
 ### Breaking Changes
 
-### Bugs Fixed
-
-### Other Changes
+- Updated API version to `7.6-preview.2`.
 
 ## 4.3.0-beta.3 (2025-04-08)
 
