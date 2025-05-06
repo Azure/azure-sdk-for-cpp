@@ -5,9 +5,6 @@
 ### Features Added
 
 - Added support for `PreserveCertificateOrder` option.
-
-### Breaking Changes
-
 - Updated API version to `7.6-preview.2`.
 
 ## 4.3.0-beta.3 (2025-04-08)
