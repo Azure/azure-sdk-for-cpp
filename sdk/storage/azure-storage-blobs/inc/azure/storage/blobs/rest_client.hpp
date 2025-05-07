@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-08-04";
+    constexpr static const char* ApiVersion = "2025-07-05";
   } // namespace _detail
   namespace Models {
     /**
@@ -1756,7 +1756,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The tier of page blob on a premium storage account or tier of block blob on blob storage
        * LRS accounts. For a list of allowed premium page blob tiers, see
-       * https://learn.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
+       * https://docs.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
        * For blob storage LRS accounts, valid values are Hot/Cool/Archive.
        */
       Nullable<Models::AccessTier> AccessTier;
@@ -2181,6 +2181,20 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Replace;
       /** Constant value of type BlobCopySourceTagsMode: Copy */
       AZ_STORAGE_BLOBS_DLLEXPORT const static BlobCopySourceTagsMode Copy;
+    };
+    /**
+     * @brief Valid value is backup.
+     */
+    class FileShareTokenIntent final
+        : public Core::_internal::ExtendableEnumeration<FileShareTokenIntent> {
+    public:
+      /** Constructs a new FileShareTokenIntent instance */
+      FileShareTokenIntent() = default;
+      /** Constructs a new FileShareTokenIntent from a string. */
+      explicit FileShareTokenIntent(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type FileShareTokenIntent: Backup */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static FileShareTokenIntent Backup;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::CopyFromUri.
@@ -3779,6 +3793,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<std::string> EncryptionScope;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
+        Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::CopyBlobFromUriResult> CopyFromUri(
@@ -3971,6 +3986,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
+        Nullable<Models::FileShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4143,6 +4159,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
+        Nullable<Models::FileShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4230,6 +4247,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<bool> CopySourceBlobProperties;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
+        Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
@@ -4271,6 +4289,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfMatch;
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
+        Nullable<Models::FileShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::StageBlockFromUriResult> StageBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,

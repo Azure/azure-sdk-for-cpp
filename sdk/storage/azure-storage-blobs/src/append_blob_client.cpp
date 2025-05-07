@@ -220,6 +220,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     }
+    protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
+
     return _detail::AppendBlobClient::AppendBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
