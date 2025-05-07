@@ -84,7 +84,7 @@ inline bool SetLibcurlOption(
 }
 
 inline bool SetLibcurlShareOption(
-    Azure::Core::_internal::UniqueHandle<Azure::Core::_detail::CURLSHWrapper> const& handle,
+    std::unique_ptr<Azure::Core::_detail::CURLSHWrapper> const& handle,
     CURLSHoption option,
     curl_lock_data value,
     CURLSHcode* outError)
@@ -2314,17 +2314,17 @@ CurlConnection::CurlConnection(
   }
   CURLcode result;
 
-  m_sslShareHandle = Azure::Core::_internal::UniqueHandle<Azure::Core::_detail::CURLSHWrapper>(
-      new Azure::Core::_detail::CURLSHWrapper());
-  if (!m_sslShareHandle)
+  m_sslShareHandle = std::make_unique<Azure::Core::_detail::CURLSHWrapper>();
+  if (!m_sslShareHandle->share_handle)
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
         + std::string("curl_share_init returned Null"));
   }
 
-  if (options.DisableCurlSslCaching)
+  if (!options.EnableCurlSslCaching)
   {
+    // Disable SSL session ID caching
     if (!SetLibcurlOption(m_handle, CURLOPT_SSL_SESSIONID_CACHE, 0L, &result))
     {
       throw Azure::Core::Http::TransportException(

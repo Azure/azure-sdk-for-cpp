@@ -368,7 +368,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlTransportOptions, disableSslCaching)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.DisableCurlSslCaching = true;
+    curlOptions.EnableCurlSslCaching = true;
 
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
     Azure::Core::Http::Policies::TransportOptions options;

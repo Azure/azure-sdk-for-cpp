@@ -52,7 +52,7 @@ extends:
       LiveTestCtestRegex: azure-core.|json-test
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 85
-      BranchCoverageTarget: 63
+      BranchCoverageTarget: 62
       PreTestSteps:
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1

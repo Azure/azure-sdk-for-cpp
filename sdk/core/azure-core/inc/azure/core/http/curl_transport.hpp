@@ -196,9 +196,9 @@ namespace Azure { namespace Core { namespace Http {
     bool EnableCurlTracing = false;
 
     /**
-     * @brief If set, disables libcurl's internal SSL session caching.
+     * @brief If set, enables libcurl's internal SSL session caching.
      */
-    bool DisableCurlSslCaching = false;
+    bool EnableCurlSslCaching = true;
   };
 
   /**

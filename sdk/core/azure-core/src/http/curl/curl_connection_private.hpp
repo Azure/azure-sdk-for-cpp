@@ -55,20 +55,20 @@ namespace Azure { namespace Core {
       CURLSH* share_handle;
 
       CURLSHWrapper() : share_handle{curl_share_init()} {};
+
+      ~CURLSHWrapper()
+      {
+        if (share_handle != nullptr)
+        {
+          curl_share_cleanup(share_handle);
+        }
+      }
     };
 
     /**
-     * @brief   Unique handle for CURLSHWrapper handles
+     * @brief Unique handle for CURLSHWrapper handles
      */
-    template <> struct UniqueHandleHelper<CURLSHWrapper>
-    {
-      static void FreeCurlShare(CURLSHWrapper* curl_share)
-      {
-        curl_share_cleanup(curl_share->share_handle);
-        free(curl_share);
-      }
-      using type = _internal::BasicUniqueHandle<CURLSHWrapper, FreeCurlShare>;
-    };
+    using UniqueCURLSHHandle = std::unique_ptr<CURLSHWrapper>;
   } // namespace _detail
 
   namespace Http {
@@ -169,7 +169,7 @@ namespace Azure { namespace Core {
     class CurlConnection final : public CurlNetworkConnection {
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
-      Azure::Core::_internal::UniqueHandle<Azure::Core::_detail::CURLSHWrapper> m_sslShareHandle;
+      Azure::Core::_detail::UniqueCURLSHHandle m_sslShareHandle;
       curl_socket_t m_curlSocket;
       std::chrono::steady_clock::time_point m_lastUseTime;
       std::string m_connectionKey;
