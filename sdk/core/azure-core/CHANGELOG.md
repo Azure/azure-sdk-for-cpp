@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-
+- Add SSL caching share for `Azure::Core::Http::CurlTransport` to fix HTTPS request failures on libcurl versions >= 8.12.0
 ### Other Changes
 
 ## 1.15.0 (2025-03-06)
