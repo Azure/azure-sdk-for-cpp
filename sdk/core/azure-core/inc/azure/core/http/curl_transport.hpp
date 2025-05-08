@@ -194,6 +194,11 @@ namespace Azure { namespace Core { namespace Http {
      * @brief If set, integrates libcurl's internal tracing with Azure logging.
      */
     bool EnableCurlTracing = false;
+
+    /**
+     * @brief If set, enables libcurl's internal SSL session caching.
+     */
+    bool EnableCurlSslCaching = true;
   };
 
   /**
