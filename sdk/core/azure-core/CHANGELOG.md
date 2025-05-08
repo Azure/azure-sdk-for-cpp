@@ -4,10 +4,10 @@
 
 ### Features Added
 
+- [[#6535]](https://github.com/Azure/azure-sdk-for-cpp/issues/6535) Enable SSL caching for libcurl transport by default, which is backwards compatible behavior with older libcurl versions, so using the default settings won't result in transport error when using libcurl >= 8.12. The option is controlled by `CurlTransportOptions::EnableCurlSslCaching`, and is on by default.
 ### Breaking Changes
 
 ### Bugs Fixed
-- Add SSL caching share for `Azure::Core::Http::CurlTransport` to fix HTTPS request failures on libcurl versions >= 8.12.0
 ### Other Changes
 
 ## 1.15.0 (2025-03-06)
