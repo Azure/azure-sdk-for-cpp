@@ -1,14 +1,10 @@
 # Release History
 
-## 12.14.0-beta.1 (Unreleased)
+## 12.14.0-beta.1 (2025-05-09)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new APIs `ShareFileClient::CreateSymbolicLink()` and `ShareFileClient::GetSymbolicLink()`.
 
 ## 12.13.0 (2025-03-11)
 
