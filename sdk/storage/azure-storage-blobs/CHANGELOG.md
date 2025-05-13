@@ -1,14 +1,11 @@
 # Release History
 
-## 12.14.0-beta.1 (Unreleased)
+## 12.14.0-beta.1 (2025-05-13)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2025-07-05`.
+- Added new field `FileRequestIntent` in `CopyBlobFromUriOptions`, `UploadBlockBlobFromOptions`, `StageBlockFromUriOptions`, `AppendBlockFromUriOptions`, `UploadPagesFromUriOptions`
 
 ## 12.13.0 (2024-09-17)
 
