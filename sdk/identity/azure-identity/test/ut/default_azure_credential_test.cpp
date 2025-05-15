@@ -198,40 +198,40 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(log[3].first, Logger::Level::Informational);
         EXPECT_EQ(log[3].second, "Identity: WorkloadIdentityCredential was created successfully.");
 
+        EXPECT_EQ(log[4].first, Logger::Level::Verbose);
+        EXPECT_EQ(
+            log[4].second,
+            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
+            "to be created with App Service 2019 source.");
+
         EXPECT_EQ(log[5].first, Logger::Level::Verbose);
         EXPECT_EQ(
             log[5].second,
             "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with App Service 2019 source.");
+            "to be created with App Service 2017 source.");
 
         EXPECT_EQ(log[6].first, Logger::Level::Verbose);
         EXPECT_EQ(
             log[6].second,
             "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with App Service 2017 source.");
+            "to be created with Cloud Shell source.");
 
         EXPECT_EQ(log[7].first, Logger::Level::Verbose);
         EXPECT_EQ(
             log[7].second,
             "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
-            "to be created with Cloud Shell source.");
-
-        EXPECT_EQ(log[8].first, Logger::Level::Verbose);
-        EXPECT_EQ(
-            log[8].second,
-            "Identity: ManagedIdentityCredential: Environment is not set up for the credential "
             "to be created with Azure Arc source.");
 
-        EXPECT_EQ(log[9].first, Logger::Level::Informational);
+        EXPECT_EQ(log[8].first, Logger::Level::Informational);
         EXPECT_EQ(
-            log[9].second,
+            log[8].second,
             "Identity: ManagedIdentityCredential will be created "
             "with Azure Instance Metadata Service source."
             "\nSuccessful creation does not guarantee further successful token retrieval.");
 
-        EXPECT_EQ(log[4].first, Logger::Level::Informational);
+        EXPECT_EQ(log[9].first, Logger::Level::Informational);
         EXPECT_EQ(
-            log[4].second,
+            log[9].second,
             "Identity: AzureCliCredential created."
             "\nSuccessful creation does not guarantee further successful token retrieval.");
 
@@ -239,8 +239,8 @@ TEST(DefaultAzureCredential, LogMessages)
         EXPECT_EQ(
             log[10].second,
             "Identity: DefaultAzureCredential: Created with the following credentials: "
-            "EnvironmentCredential, WorkloadIdentityCredential, AzureCliCredential, "
-            "ManagedIdentityCredential.");
+            "EnvironmentCredential, WorkloadIdentityCredential, ManagedIdentityCredential, "
+            "AzureCliCredential.");
 
         log.clear();
 
