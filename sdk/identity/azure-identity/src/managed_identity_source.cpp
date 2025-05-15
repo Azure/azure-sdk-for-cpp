@@ -542,6 +542,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
   Core::Credentials::TokenCredentialOptions firstRequestOptions = options;
   firstRequestOptions.Retry.MaxRetries = 0;
   m_firstRequestPipeline = std::make_unique<TokenCredentialImpl>(firstRequestOptions);
+  m_firstRequestSucceeded = false;
 }
 
 Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
