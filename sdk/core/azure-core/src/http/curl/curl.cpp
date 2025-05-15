@@ -349,9 +349,24 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
   // Create CurlSession to perform request
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Creating a new session.");
 
+  auto connectionTimeoutOverride = std::chrono::milliseconds{0};
+  {
+    const auto contextDeadline = context.GetDeadline();
+    if (contextDeadline != (DateTime::max)())
+    {
+      auto const now = DateTime::clock::now();
+      if (contextDeadline > now)
+      {
+        connectionTimeoutOverride
+            = std::chrono::duration_cast<std::chrono::milliseconds>(contextDeadline - now);
+      }
+    }
+  }
+
   auto session = std::make_unique<CurlSession>(
       request,
-      CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(request, m_options),
+      CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(
+          request, m_options, false, connectionTimeoutOverride),
       m_options);
 
   CURLcode performing;
@@ -380,7 +395,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
         CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(
             request,
             m_options,
-            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
+            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed,
+            connectionTimeoutOverride),
         m_options);
   }
 
@@ -1386,11 +1402,42 @@ size_t CurlSession::ResponseBufferParser::Parse(
 }
 
 namespace {
+// Calculates the effective timeout value, based on options.ConnectionTimeout and
+// connectionTimeoutOverride. Returns 0 if default.
+long GetConnectionTimeout(
+    CurlTransportOptions const& options,
+    std::chrono::milliseconds connectionTimeoutOverride)
+{
+  auto connectionTimeout
+      = (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
+      ? options.ConnectionTimeout
+      : std::chrono::milliseconds{0};
+
+  if (connectionTimeoutOverride.count() > 0)
+  {
+    connectionTimeout = connectionTimeout.count() > 0
+        ? (std::min)(connectionTimeout, connectionTimeoutOverride)
+        : connectionTimeoutOverride;
+  }
+
+  auto connectionTimeoutLong = 0;
+  if (connectionTimeout.count() > 0
+      && connectionTimeout.count() <= std::numeric_limits<long>::max())
+  {
+    connectionTimeoutLong = static_cast<long>(connectionTimeout.count());
+  }
+
+  return connectionTimeoutLong;
+}
+
 // Calculate the connection key.
 // The connection key is a tuple of host, proxy info, TLS info, etc. Basically any characteristics
 // of the connection that should indicate that the connection shouldn't be re-used should be listed
 // the connection key.
-inline std::string GetConnectionKey(std::string const& host, CurlTransportOptions const& options)
+inline std::string GetConnectionKey(
+    std::string const& host,
+    CurlTransportOptions const& options,
+    std::chrono::milliseconds connectionTimeoutOverride)
 {
   std::string key(host);
   key.append(",");
@@ -1420,19 +1467,15 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   key.append(
-      !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
-          std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
-                                                                     : "0");
+      !options.SslOptions.PemEncodedExpectedRootCertificates.empty()
+          ? std::to_string(
+                std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
+          : "0");
 #else
   key.append("0");
 #endif
   key.append(",");
-  // using DefaultConnectionTimeout or 0 result in the same setting
-  key.append(
-      (options.ConnectionTimeout == Azure::Core::Http::_detail::DefaultConnectionTimeout
-       || options.ConnectionTimeout == std::chrono::milliseconds(0))
-          ? "0"
-          : std::to_string(options.ConnectionTimeout.count()));
+  key.append(std::to_string(GetConnectionTimeout(options, connectionTimeoutOverride)));
 
   return key;
 }
@@ -2182,13 +2225,15 @@ int CurlConnection::SslCtxCallback(CURL*, void* sslctx)
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
-    bool resetPool)
+    bool resetPool,
+    std::chrono::milliseconds connectionTimeoutOverride)
 {
   uint16_t port = request.GetUrl().GetPort();
   // Generate a display name for the host being connected to
   std::string const& hostDisplayName = request.GetUrl().GetScheme() + "://"
       + request.GetUrl().GetHost() + (port != 0 ? ":" + std::to_string(port) : "");
-  std::string const connectionKey = GetConnectionKey(hostDisplayName, options);
+  std::string const connectionKey
+      = GetConnectionKey(hostDisplayName, options, connectionTimeoutOverride);
 
   {
     decltype(CurlConnectionPool::g_curlConnectionPool
@@ -2239,7 +2284,8 @@ std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlCo
   // No available connection for the pool for the required host. Create one
   Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Spawn new connection.");
 
-  return std::make_unique<CurlConnection>(request, options, hostDisplayName, connectionKey);
+  return std::make_unique<CurlConnection>(
+      request, options, hostDisplayName, connectionKey, connectionTimeoutOverride);
 }
 
 // Move the connection back to the connection pool. Push it to the front so it becomes the
@@ -2306,7 +2352,8 @@ CurlConnection::CurlConnection(
     Request& request,
     CurlTransportOptions const& options,
     std::string const& hostDisplayName,
-    std::string const& connectionPropertiesKey)
+    std::string const& connectionPropertiesKey,
+    std::chrono::milliseconds connectionTimeoutOverride)
     : m_connectionKey(connectionPropertiesKey)
 {
   m_handle = Azure::Core::_internal::UniqueHandle<CURL>(curl_easy_init());
@@ -2408,15 +2455,17 @@ CurlConnection::CurlConnection(
         + std::string(curl_easy_strerror(result)));
   }
 
-  if (options.ConnectionTimeout != Azure::Core::Http::_detail::DefaultConnectionTimeout)
   {
-    if (!SetLibcurlOption(m_handle, CURLOPT_CONNECTTIMEOUT_MS, options.ConnectionTimeout, &result))
+    const long connectionTimeout = GetConnectionTimeout(options, connectionTimeoutOverride);
+    if (connectionTimeout > 0)
     {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-          + ". Fail setting connect timeout to: "
-          + std::to_string(options.ConnectionTimeout.count()) + " ms. "
-          + std::string(curl_easy_strerror(result)));
+      if (!SetLibcurlOption(m_handle, CURLOPT_CONNECTTIMEOUT_MS, connectionTimeout, &result))
+      {
+        throw Azure::Core::Http::TransportException(
+            _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+            + ". Fail setting connect timeout to: " + std::to_string(connectionTimeout) + " ms. "
+            + std::string(curl_easy_strerror(result)));
+      }
     }
   }
 
