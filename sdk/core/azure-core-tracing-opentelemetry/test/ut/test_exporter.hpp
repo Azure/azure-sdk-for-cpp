@@ -294,9 +294,9 @@ public:
    */
   void AddLink(
       const opentelemetry::trace::SpanContext&,
-      const opentelemetry::common::KeyValueIterable&) noexcept override{
-      // TODO, when we use this, we need to test this.
-      // NO-OP since this exporter silences link data.
+      const opentelemetry::common::KeyValueIterable&) noexcept override {
+    // TODO, when we use this, we need to test this.
+    // NO-OP since this exporter silences link data.
   };
 
   /**
@@ -429,6 +429,8 @@ public:
    * @return return the status of the operation.
    */
   bool Shutdown(std::chrono::microseconds) noexcept override { return true; }
+
+  bool ForceFlush(std::chrono::microseconds) noexcept override { return true; }
 
 private:
   std::shared_ptr<TestData> m_testData;
