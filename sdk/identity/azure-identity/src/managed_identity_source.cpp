@@ -538,6 +538,10 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
   }
 
   m_request.SetHeader("Metadata", "true");
+
+  Core::Credentials::TokenCredentialOptions firstRequestOptions = options;
+  firstRequestOptions.Retry.MaxRetries = 0;
+  m_firstRequestPipeline = std::make_unique<TokenCredentialImpl>(firstRequestOptions);
 }
 
 Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
@@ -558,7 +562,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
-    return TokenCredentialImpl::GetToken(context, true, [&]() {
+    std::function<std::unique_ptr<TokenRequest>()> const& createRequest = [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
       if (!scopesStr.empty())
@@ -567,6 +571,27 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
       }
 
       return request;
-    });
+    };
+
+    if (!m_firstRequestSucceeded)
+    {
+      std::unique_lock<std::mutex> lock(m_firstRequestMutex);
+      if (!m_firstRequestSucceeded)
+      {
+        const auto token = m_firstRequestPipeline->GetToken(
+            context.WithDeadline(DateTime::clock::now() + std::chrono::seconds{1}),
+            true,
+            createRequest);
+
+        m_firstRequestSucceeded = true;
+
+        lock.unlock();
+        m_firstRequestPipeline.reset();
+
+        return token;
+      }
+    }
+
+    return TokenCredentialImpl::GetToken(context, true, createRequest);
   });
 }
