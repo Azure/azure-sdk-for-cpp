@@ -294,9 +294,9 @@ public:
    */
   void AddLink(
       const opentelemetry::trace::SpanContext&,
-      const opentelemetry::common::KeyValueIterable&) noexcept override{
-      // TODO, when we use this, we need to test this.
-      // NO-OP since this exporter silences link data.
+      const opentelemetry::common::KeyValueIterable&) noexcept override {
+    // TODO, when we use this, we need to test this.
+    // NO-OP since this exporter silences link data.
   };
 
   /**
