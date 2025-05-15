@@ -27,6 +27,7 @@
     "*.exe",
     "*.a",
     "*.lib",
+    "*.svg",
     "*.yaml",
     ".github/CODEOWNERS",
     ".github/CODEOWNERS_baseline_errors.txt",

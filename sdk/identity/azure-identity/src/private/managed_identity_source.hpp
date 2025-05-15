@@ -197,7 +197,7 @@ namespace Azure { namespace Identity { namespace _detail {
     Core::Http::Request m_request;
     mutable std::unique_ptr<TokenCredentialImpl> m_firstRequestPipeline;
     mutable std::mutex m_firstRequestMutex;
-    mutable std::atomic<bool> m_firstRequestSucceeded = false;
+    mutable std::atomic<bool> m_firstRequestSucceeded;
 
     explicit ImdsManagedIdentitySource(
         std::string const& clientId,
