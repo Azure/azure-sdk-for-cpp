@@ -116,19 +116,6 @@
       }
     },
     {
-      "StaticConfigs": {
-        "Ubuntu20": {
-          "OSVmImage": "MMSUbuntu20.04",
-          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-          "BuildArgs": "-j 10",
-          "CC": "/usr/bin/clang-11",
-          "CXX": "/usr/bin/clang++-11",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
-        }
-      },
       "BuildSettings": {
         "gpp-5": {
           "AptDependencies": "g++-5",
