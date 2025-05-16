@@ -476,7 +476,7 @@ Describe "Platform Matrix Replace" -Tag "replace" {
 {
   "matrix": {
     "Agent": {
-      "ubuntu-1804": { "OSVmImage": "MMSUbuntu18.04", "Pool": "azsdk-pool-mms-ubuntu-1804-general" }
+      "ubuntu-1804": { "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt", "Pool": "azsdk-pool-mms-ubuntu-2004-general" }
     },
     "JavaTestVersion": [ "1.8", "1.11" ]
   }
