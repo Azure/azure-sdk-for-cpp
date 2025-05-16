@@ -12,15 +12,14 @@ steps:
         )
     displayName: vcpkg --version
 
-  - ${{if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
-    - task: AzurePowerShell@5
-      displayName: Set Vcpkg Write-mode Cache
-      inputs:
-        azureSubscription: 'Azure SDK Artifacts'
-        ScriptType: FilePath
-        ScriptPath: eng/scripts/Set-VcpkgWriteModeCache.ps1
-        azurePowerShellVersion: LatestVersion
-        pwsh: true
-      # This step is idempotent and can be run multiple times in cases of
-      # failure and partial execution.
-      retryCountOnTaskFailure: 3
+  - task: AzurePowerShell@5
+    displayName: Set Vcpkg Write-mode Cache
+    inputs:
+      azureSubscription: 'Azure SDK Artifacts'
+      ScriptType: FilePath
+      ScriptPath: eng/scripts/Set-VcpkgWriteModeCache.ps1
+      azurePowerShellVersion: LatestVersion
+      pwsh: true
+    # This step is idempotent and can be run multiple times in cases of
+    # failure and partial execution.
+    retryCountOnTaskFailure: 3
