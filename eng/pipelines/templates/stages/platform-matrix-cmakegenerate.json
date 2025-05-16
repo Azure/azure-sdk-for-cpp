@@ -3,8 +3,8 @@
     "CmakeEnvArg": "",
     "OSConfig": {
       "Linux": {
-        "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-        "OSVmImage": "MMSUbuntu18.04",
+        "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+        "OSVmImage": "azsdk-pool-mms-ubuntu-2004-1espt",
         "AptDependencies": "libcurl4-openssl-dev",
         "VCPKG_DEFAULT_TRIPLET": "x64-linux"
       },
