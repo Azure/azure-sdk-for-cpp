@@ -133,15 +133,18 @@ jobs:
               TestPipeline: ${{ parameters.TestPipeline }}
 
         - pwsh: |
-            $setupFile="doxygen-1.8.18-setup.exe";
+            $setupFile="doxygen-1.9.7-setup.exe";
 
             Invoke-WebRequest `
               -MaximumRetryCount 10 `
-              -Uri "https://azuresdktooling.blob.core.windows.net/dependencies/$setupFile" `
+              -Uri "https://azuresdkartifacts.blob.core.windows.net/tools/doxygen/$setupFile" `
               -OutFile $setupFile `
             | Wait-Process;
 
+            Write-Host "Installing $setupFile..."
             Start-Process -Filepath .\$setupFile -ArgumentList @("/VERYSILENT") -Wait
+            Write-Host "Install complete"
+            .'C:\Program Files\doxygen\bin\doxygen.exe' --version
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
