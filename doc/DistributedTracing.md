@@ -71,8 +71,6 @@ CreateOpenTelemetryProvider()
 }
 ```
 
-Other exporters exist to export to [Jaeger](https://github.com/open-telemetry/opentelemetry-cpp/tree/main/exporters/jaeger),
-
 Once the `opentelemetry::trace::TracerProvider` has been created, The client needs to create a new `Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider` which
 functions as an abstract class integration between OpenTelemetry and Azure Core:
 
