@@ -82,17 +82,6 @@ inline bool SetLibcurlOption(
   *outError = curl_easy_setopt(handle.get(), option, value);
   return *outError == CURLE_OK;
 }
-
-inline bool SetLibcurlShareOption(
-    std::unique_ptr<Azure::Core::_detail::CURLSHWrapper> const& handle,
-    CURLSHoption option,
-    curl_lock_data value,
-    CURLSHcode* outError)
-{
-  *outError = curl_share_setopt(handle->share_handle, option, value);
-  return *outError == CURLSHE_OK;
-}
-
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
@@ -2314,42 +2303,12 @@ CurlConnection::CurlConnection(
   }
   CURLcode result;
 
-  if (!options.EnableCurlSslCaching)
+  // Disable SSL session ID caching
+  if (!SetLibcurlOption(m_handle, CURLOPT_SSL_SESSIONID_CACHE, 0L, &result))
   {
-    // Disable SSL session ID caching
-    if (!SetLibcurlOption(m_handle, CURLOPT_SSL_SESSIONID_CACHE, 0L, &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_easy_strerror(result)));
-    }
-  }
-  else
-  {
-    m_sslShareHandle = std::make_unique<Azure::Core::_detail::CURLSHWrapper>();
-
-    if (!m_sslShareHandle->share_handle)
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string("curl_share_init returned Null"));
-    }
-
-    CURLSHcode shResult;
-    if (!SetLibcurlShareOption(
-            m_sslShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION, &shResult))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_share_strerror(shResult)));
-    }
-
-    if (!SetLibcurlOption(m_handle, CURLOPT_SHARE, m_sslShareHandle->share_handle, &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_easy_strerror(result)));
-    }
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (options.EnableCurlTracing)
