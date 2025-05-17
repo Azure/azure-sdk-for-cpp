@@ -1670,6 +1670,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   std::unique_ptr<RawResponse> WinHttpRequest::SendRequestAndGetResponse(HttpMethod requestMethod)
   {
+    // Suppress unused parameter warning (C4100).
+    // Keeping 'requestMethod' in the signature preserves API compatibility.
+    (void)requestMethod;
+
     // First, use WinHttpQueryHeaders to obtain the size of the buffer.
     // The call is expected to fail since no destination buffer is provided.
     DWORD sizeOfHeaders = 0;

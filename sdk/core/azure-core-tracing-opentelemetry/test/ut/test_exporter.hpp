@@ -430,6 +430,8 @@ public:
    */
   bool Shutdown(std::chrono::microseconds) noexcept override { return true; }
 
+  bool ForceFlush(std::chrono::microseconds) noexcept override { return true; }
+
 private:
   std::shared_ptr<TestData> m_testData;
 };

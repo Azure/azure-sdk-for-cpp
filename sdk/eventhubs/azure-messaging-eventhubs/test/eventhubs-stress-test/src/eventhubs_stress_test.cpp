@@ -31,6 +31,7 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4244)
+#pragma warning(disable : 4996)
 #pragma warning(disable : 6323) // Disable "Use of arithmetic operator on Boolean type" warning.
 #endif
 

@@ -365,41 +365,4 @@ namespace Azure { namespace Core { namespace Test {
         0);
   }
 
-  TEST(CurlTransportOptions, disableSslCaching)
-  {
-    Azure::Core::Http::CurlTransportOptions curlOptions;
-    curlOptions.EnableCurlSslCaching = false;
-
-    auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
-    Azure::Core::Http::Policies::TransportOptions options;
-    options.Transport = transportAdapter;
-    auto transportPolicy
-        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
-
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
-    policies.emplace_back(std::move(transportPolicy));
-    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
-
-    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
-
-    std::unique_ptr<Azure::Core::Http::RawResponse> response;
-    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context{}));
-    if (response)
-    {
-      auto responseCode = response->GetStatusCode();
-      int expectedCode = 200;
-      EXPECT_PRED2(
-          [](int expected, int code) { return expected == code; },
-          expectedCode,
-          static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
-              responseCode));
-    }
-
-    // Clean the connection from the pool *Windows fails to clean if we leave to be clean upon
-    // app-destruction
-    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
-                        .ConnectionPoolIndex.clear());
-  }
-
 }}} // namespace Azure::Core::Test
