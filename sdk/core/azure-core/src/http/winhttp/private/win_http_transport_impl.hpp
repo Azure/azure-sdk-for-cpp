@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <memory>
 #include <wincrypt.h>
 
@@ -26,7 +27,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::unique_ptr<_detail::WinHttpRequest> CreateRequestHandle(
         Azure::Core::_internal::UniqueHandle<void*> const& connectionHandle,
         Azure::Core::Url const& url,
-        Azure::Core::Http::HttpMethod const& method);
+        Azure::Core::Http::HttpMethod const& method,
+        std::chrono::milliseconds connectionTimeout);
 
     // Callback to allow a derived transport to extract the request handle. Used for WebSocket
     // transports.

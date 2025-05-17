@@ -196,6 +196,8 @@ namespace Azure { namespace Core {
        * @param request Remote request
        * @param options Connection options.
        * @param hostDisplayName Display name for remote host, used for diagnostics.
+       * @param connectionTimeoutOverride If greater than 0, specifies the override value for the
+       * ConnectionTimeout value, specified in options.
        *
        * @param connectionPropertiesKey CURL connection properties key
        */
@@ -203,7 +205,8 @@ namespace Azure { namespace Core {
           Azure::Core::Http::Request& request,
           Azure::Core::Http::CurlTransportOptions const& options,
           std::string const& hostDisplayName,
-          std::string const& connectionPropertiesKey);
+          std::string const& connectionPropertiesKey,
+          std::chrono::milliseconds connectionTimeoutOverride);
 
       /**
        * @brief Destructor.

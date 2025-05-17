@@ -23,7 +23,7 @@ flowchart LR;
 
     subgraph CREDENTIALS;
         direction LR;
-        A(Environment):::deployed ==> B(Workload Identity):::deployed ==> C(Azure CLI):::developer ==> D(Managed Identity):::deployed;
+        A(Environment):::deployed ==> B(Workload Identity):::deployed ==> C(Managed Identity):::deployed ==> D(Azure CLI):::developer;
     end;
 
     %% Define styles for credential type boxes

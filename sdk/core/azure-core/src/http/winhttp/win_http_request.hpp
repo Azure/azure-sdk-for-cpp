@@ -22,6 +22,7 @@
 
 #include <windows.h>
 
+#include <chrono>
 #include <memory>
 #include <mutex>
 #pragma warning(push)
@@ -179,7 +180,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         Azure::Core::Url const& url,
         Azure::Core::Http::HttpMethod const& method,
         PCCERT_CONTEXT tlsClientCertificate,
-        WinHttpTransportOptions const& options);
+        WinHttpTransportOptions const& options,
+        std::chrono::milliseconds connectionTimeout);
 
     ~WinHttpRequest();
     void MarkRequestHandleClosed() { m_requestHandleClosed = true; };
