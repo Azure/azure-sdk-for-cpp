@@ -42,33 +42,6 @@ namespace Azure { namespace Core {
     {
       using type = _internal::BasicUniqueHandle<CURL, curl_easy_cleanup>;
     };
-
-    /**
-     *
-     * @brief Unique handle wrapper for CURLSH handles.
-     *
-     * @note Internally, CURL and CURLSH are declared as the same void type,
-     * so to avoid collisions we need this wrapper.
-     */
-    struct CURLSHWrapper
-    {
-      CURLSH* share_handle;
-
-      CURLSHWrapper() : share_handle{curl_share_init()} {};
-
-      ~CURLSHWrapper()
-      {
-        if (share_handle != nullptr)
-        {
-          curl_share_cleanup(share_handle);
-        }
-      }
-    };
-
-    /**
-     * @brief Unique handle for CURLSHWrapper handles
-     */
-    using UniqueCURLSHHandle = std::unique_ptr<CURLSHWrapper>;
   } // namespace _detail
 
   namespace Http {

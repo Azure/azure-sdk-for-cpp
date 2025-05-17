@@ -2314,41 +2314,12 @@ CurlConnection::CurlConnection(
   }
   CURLcode result;
 
-  m_sslShareHandle = std::make_unique<Azure::Core::_detail::CURLSHWrapper>();
-  if (!m_sslShareHandle->share_handle)
+  // Disable SSL session ID caching
+  if (!SetLibcurlOption(m_handle, CURLOPT_SSL_SESSIONID_CACHE, 0L, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-        + std::string("curl_share_init returned Null"));
-  }
-
-  if (!options.EnableCurlSslCaching)
-  {
-    // Disable SSL session ID caching
-    if (!SetLibcurlOption(m_handle, CURLOPT_SSL_SESSIONID_CACHE, 0L, &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_easy_strerror(result)));
-    }
-  }
-  else
-  {
-    CURLSHcode shResult;
-    if (!SetLibcurlShareOption(
-            m_sslShareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION, &shResult))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_share_strerror(shResult)));
-    }
-
-    if (!SetLibcurlOption(m_handle, CURLOPT_SHARE, m_sslShareHandle.get(), &result))
-    {
-      throw Azure::Core::Http::TransportException(
-          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_easy_strerror(result)));
-    }
+        + std::string(curl_easy_strerror(result)));
   }
 
   if (options.EnableCurlTracing)
