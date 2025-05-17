@@ -4,11 +4,11 @@
 
 ### Features Added
 
-- [[#6535]](https://github.com/Azure/azure-sdk-for-cpp/issues/6535) Disable SSL caching for libcurl transport, which fixes using SSL connections when using libcurl >= 8.12. (A community contribution, courtesy of _[sushshring](https://github.com/sushshring)_)
-
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- [[#6535]](https://github.com/Azure/azure-sdk-for-cpp/issues/6535) Disable SSL caching for libcurl transport, which fixes using SSL connections when using libcurl >= 8.12. (A community contribution, courtesy of _[sushshring](https://github.com/sushshring)_)
 
 ### Other Changes
 
