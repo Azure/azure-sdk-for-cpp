@@ -34,7 +34,7 @@ int main()
   try
   {
 
-    auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+    auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
 
     std::cout << "Creating consumer client with host " << eventhubsHost << " named " << eventhubName
               << std::endl;

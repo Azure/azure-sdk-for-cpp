@@ -32,7 +32,7 @@ int main()
   try
   {
     // create client
-    auto const credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+    auto const credential = std::make_shared<Azure::Identity::AzureCliCredential>();
     AttestationAdministrationClient const adminClient(AttestationAdministrationClient::Create(
         GetEnvHelper::GetEnv("ATTESTATION_AAD_URL"), credential));
 

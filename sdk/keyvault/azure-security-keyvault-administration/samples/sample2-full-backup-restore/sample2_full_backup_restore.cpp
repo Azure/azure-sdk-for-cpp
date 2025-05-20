@@ -26,7 +26,7 @@ using namespace std::chrono_literals;
 
 int main()
 {
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
 
   // create client
   BackupClient client(

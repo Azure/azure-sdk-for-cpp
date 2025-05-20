@@ -28,7 +28,7 @@ static void AssertKeysEqual(KeyProperties const& expected, KeyProperties const& 
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
 
   KeyClient keyClient(keyVaultUrl, credential);
 
