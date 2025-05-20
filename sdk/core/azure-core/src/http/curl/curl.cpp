@@ -2343,7 +2343,7 @@ CurlConnection::CurlConnection(
           + std::string(curl_share_strerror(shResult)));
     }
 
-    if (!SetLibcurlOption(m_handle, CURLOPT_SHARE, m_sslShareHandle.get(), &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_SHARE, m_sslShareHandle->share_handle, &result))
     {
       throw Azure::Core::Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
