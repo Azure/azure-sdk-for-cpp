@@ -12,7 +12,7 @@ steps:
         )
     displayName: vcpkg --version
 
-  - ${{if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
     - task: AzurePowerShell@5
       displayName: Set Vcpkg Write-mode Cache
       inputs:
