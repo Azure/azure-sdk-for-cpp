@@ -283,21 +283,23 @@ namespace Azure { namespace Storage { namespace Queues {
        */
       bool Deleted = true;
     };
-    /**
-     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
-     */
-    struct QueueProperties final
-    {
+    namespace _detail {
       /**
-       * A set of name-value pairs associated with this queue.
+       * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
        */
-      Core::CaseInsensitiveMap Metadata;
-      /**
-       * The approximate number of messages in the queue. This number is not lower than the actual
-       * number of messages in the queue, but could be higher.
-       */
-      std::int32_t ApproximateMessageCount = std::int32_t();
-    };
+      struct QueueProperties final
+      {
+        /**
+         * A set of name-value pairs associated with this queue.
+         */
+        Core::CaseInsensitiveMap Metadata;
+        /**
+         * The approximate number of messages in the queue. This number is not lower than the actual
+         * number of messages in the queue, but could be higher.
+         */
+        std::int64_t ApproximateMessageCount = std::int64_t();
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::SetMetadata.
      */
@@ -554,7 +556,7 @@ namespace Azure { namespace Storage { namespace Queues {
       struct GetQueuePropertiesOptions final
       {
       };
-      static Response<Models::QueueProperties> GetProperties(
+      static Response<Models::_detail::QueueProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetQueuePropertiesOptions& options,
