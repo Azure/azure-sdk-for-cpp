@@ -23,7 +23,7 @@ int main()
 {
   // @begin_snippet: SecretSample1CreateCredential
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   // create client
   SecretClient secretClient(keyVaultUrl, credential);

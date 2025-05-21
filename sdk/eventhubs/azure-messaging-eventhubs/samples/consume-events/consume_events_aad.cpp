@@ -31,7 +31,7 @@ int main()
     return 1;
   }
 
-  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
 
   Azure::Messaging::EventHubs::ConsumerClient consumerClient(
       eventhubsHost, eventhubName, credential);

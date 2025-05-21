@@ -21,7 +21,7 @@ std::string const GetServiceUrl()
 
 int main()
 {
-  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
   auto tableServiceClient = Azure::Data::Tables::TableServiceClient(GetServiceUrl(), credential);
 
   // create table

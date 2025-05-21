@@ -56,7 +56,7 @@ int main()
     clientOptions.TokenValidationOptions.TimeValidationSlack = 10s;
 
     // create client
-    auto const credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+    auto const credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
     AttestationAdministrationClient const adminClient(
         AttestationAdministrationClient::Create(endpoint, credential, clientOptions));
 

@@ -34,7 +34,7 @@ void PurgeCertificate(
 int main()
 {
   auto const keyVaultUrl = std::getenv("AZURE_KEYVAULT_URL");
-  auto credential = std::make_shared<Azure::Identity::AzureCliCredential>();
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
   std::chrono::milliseconds defaultWait(10s);
   // create client
   CertificateClient certificateClient(keyVaultUrl, credential);
