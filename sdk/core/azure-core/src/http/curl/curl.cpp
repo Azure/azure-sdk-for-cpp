@@ -1414,6 +1414,10 @@ inline std::string GetConnectionKey(std::string const& host, CurlTransportOption
   key.append(",");
   key.append(options.SslOptions.AllowFailedCrlRetrieval ? "FC" : "0");
   key.append(",");
+  key.append(options.EnableCurlTracing ? "1" : "0");
+  key.append(",");
+  key.append(options.EnableCurlSslCaching ? "1" : "0");
+  key.append(",");
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   key.append(
       !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
