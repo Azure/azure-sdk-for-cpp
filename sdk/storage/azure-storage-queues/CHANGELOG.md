@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- `QueueProperties.ApproximateMessageCount` is deprecated. The value is `-1` if the value exceeds `INT32_MAX`. Use `QueueProperties.ApproximateMessageCountLong` instead.
+
 ### Bugs Fixed
 
 ### Other Changes
