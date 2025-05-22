@@ -65,22 +65,7 @@ See [Credential Classes](#credential-classes) for a complete listing of availabl
 
 ### DefaultAzureCredential
 
-`DefaultAzureCredential` combines credentials commonly used to authenticate when deployed, with credentials used to authenticate in a development environment.
-
-> Note: `DefaultAzureCredential` is intended to simplify getting started with the SDK by handling common scenarios with reasonable default behaviors. It is not recommended to use it in production. Developers who want more control or whose scenario isn't served by the default settings should use other credential types.
-
-The `DefaultAzureCredential` attempts to authenticate via the following mechanisms, in this order, stopping when one succeeds:
-
-![DefaultAzureCredential authentication flow][default_azure_credential_auth_flow]
-
-1. **Environment** - The `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables) and use it to authenticate.
-1. **Workload Identity Credential** - If the developer authenticates using a Kubernetes service account token.
-1. **Azure CLI** - If the developer has authenticated an account via the Azure CLI `az login` command, the `DefaultAzureCredential` will authenticate with that account.
-1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, the `DefaultAzureCredential` will authenticate with that account.
-
-Even though the credentials being used and their order is documented, it may change from release to release.
-
-`DefaultAzureCredential` intends to provide a credential that "just works out of the box and without requiring any information", if only the environment is set up sufficiently for the credential to work. Therefore, it could be simple to use, but since it uses a chain of credentials, it could be a bit complicated to diagnose if the environment setup is not sufficient. To help with this, `DefaultAzureCredential` code paths are instrumented with [log messages](#troubleshooting).
+`DefaultAzureCredential` simplifies authentication while developing apps that deploy to Azure by combining credentials used in Azure hosting environments with credentials used in local development. For more information, see [DefaultAzureCredential overview](https://aka.ms/azsdk/cpp/identity/credential-chains#defaultazurecredential-overview).
 
 ## Examples
 
@@ -285,7 +270,6 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
-[default_azure_credential_auth_flow]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/identity/azure-identity/img/mermaidjs/DefaultAzureCredentialAuthFlow.svg
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity
 [samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity/samples
 [blobs_client_library]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-blobs
