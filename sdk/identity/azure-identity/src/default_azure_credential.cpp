@@ -71,7 +71,7 @@ DefaultAzureCredential::DefaultAzureCredential(
     else
     {
       throw AuthenticationException(
-          GetCredentialName() + ": Invalid value '" + envVarValue + "'for the '" + envVarName
+          GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
           + "' environment variable. Allowed values are 'dev' and 'prod' (case insensitive). "
             "It is also allowed to not have the environemnt variable defined.");
     }
