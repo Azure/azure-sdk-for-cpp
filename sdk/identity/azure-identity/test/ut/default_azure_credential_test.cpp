@@ -138,7 +138,8 @@ TEST(DefaultAzureCredential, CachingCredential)
   EXPECT_TRUE(c2->WasInvoked);
 }
 
-class LogMessages : public ::testing::TestWithParam<std::string> {};
+class LogMessages : public ::testing::TestWithParam<std::string> {
+};
 
 INSTANTIATE_TEST_SUITE_P(
     DefaultAzureCredential,
