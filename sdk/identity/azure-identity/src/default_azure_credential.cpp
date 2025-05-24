@@ -10,12 +10,33 @@
 #include "private/chained_token_credential_impl.hpp"
 #include "private/identity_log.hpp"
 
+#include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/strings.hpp>
+
 using namespace Azure::Identity;
 using namespace Azure::Core::Credentials;
 
 using Azure::Core::Context;
+using Azure::Core::_internal::Environment;
+using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
+
+namespace {
+std::string TrimString(std::string s)
+{
+  s.erase(
+      s.begin(),
+      std::find_if_not(s.begin(), s.end(), Azure::Core::_internal::StringExtensions::IsSpace));
+
+  s.erase(
+      std::find_if_not(s.rbegin(), s.rend(), Azure::Core::_internal::StringExtensions::IsSpace)
+          .base(),
+      s.end());
+
+  return s;
+}
+} // namespace
 
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
@@ -38,17 +59,49 @@ DefaultAzureCredential::DefaultAzureCredential(
             "is the better fit for the application.");
 
   // Creating credentials in order to ensure the order of log messages.
-  auto const envCred = std::make_shared<EnvironmentCredential>(options);
-  auto const wiCred = std::make_shared<WorkloadIdentityCredential>(options);
-  auto const azCliCred = std::make_shared<AzureCliCredential>(options);
-  auto const managedIdentityCred = std::make_shared<ManagedIdentityCredential>(options);
+  ChainedTokenCredential::Sources miSources;
+  {
+    miSources.emplace_back(std::make_shared<EnvironmentCredential>(options));
+    miSources.emplace_back(std::make_shared<WorkloadIdentityCredential>(options));
+
+    constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
+    const auto envVarValue = Environment::GetVariable(envVarName);
+    const auto trimmedEnvVarValue = TrimString(envVarValue);
+
+    const auto isProd
+        = StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "prod");
+
+    const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
+        + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
+        + ", therefore AzureCliCredential will " + (isProd ? "NOT " : "")
+        + "be included in the credential chain.";
+
+    if (isProd)
+    {
+      IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
+    }
+    else if (
+        trimmedEnvVarValue.empty()
+        || StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "dev"))
+    {
+      IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
+      miSources.emplace_back(std::make_shared<AzureCliCredential>(options));
+    }
+    else
+    {
+      throw AuthenticationException(
+          GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
+          + "' environment variable. Allowed values are 'dev' and 'prod' (case insensitive). "
+            "It is also allowed to not have the environment variable defined.");
+    }
+
+    miSources.emplace_back(std::make_shared<ManagedIdentityCredential>(options));
+  }
 
   // DefaultAzureCredential caches the selected credential, so that it can be reused on subsequent
   // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
-      GetCredentialName(),
-      ChainedTokenCredential::Sources{envCred, wiCred, azCliCred, managedIdentityCred},
-      true);
+      GetCredentialName(), std::move(miSources), true);
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for the `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential`, which allows for choosing between 'deployed service' and 'developer tool' credentials. Valid values are 'dev' for developer tools and 'prod' for deployed service.
+
 ### Breaking Changes
 
 ### Bugs Fixed
