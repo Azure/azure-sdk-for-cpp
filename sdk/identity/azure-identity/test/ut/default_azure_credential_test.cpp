@@ -144,12 +144,12 @@ class LogMessages : public ::testing::TestWithParam<std::string> {
 INSTANTIATE_TEST_SUITE_P(
     DefaultAzureCredential,
     LogMessages,
-    ::testing::Values("", "dev", "DeV", "prod", "pRoD", "unknown"));
+    ::testing::Values("", " ", "dev", "DeV", "dEv ", " DEV  ", "prod", "pRoD", " PrOd", "d ev"));
 
 TEST_P(LogMessages, )
 {
   const auto azTokenCredsEnvVarValue = GetParam();
-  if (azTokenCredsEnvVarValue == "unknown")
+  if (azTokenCredsEnvVarValue == "d ev")
   {
     CredentialTestHelper::EnvironmentOverride const env(
         {{"AZURE_TOKEN_CREDENTIALS", azTokenCredsEnvVarValue}});
@@ -160,7 +160,8 @@ TEST_P(LogMessages, )
   else
   {
     const auto isDev = azTokenCredsEnvVarValue == "dev" || azTokenCredsEnvVarValue == "DeV"
-        || azTokenCredsEnvVarValue == "";
+        || azTokenCredsEnvVarValue == "dEv " || azTokenCredsEnvVarValue == " DEV  "
+        || azTokenCredsEnvVarValue == "" || azTokenCredsEnvVarValue == " ";
 
     using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
     LogMsgVec log;

@@ -22,6 +22,22 @@ using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
+namespace {
+std::string TrimString(std::string s)
+{
+  s.erase(
+      s.begin(),
+      std::find_if_not(s.begin(), s.end(), Azure::Core::_internal::StringExtensions::IsSpace));
+
+  s.erase(
+      std::find_if_not(s.rbegin(), s.rend(), Azure::Core::_internal::StringExtensions::IsSpace)
+          .base(),
+      s.end());
+
+  return s;
+}
+} // namespace
+
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
@@ -50,8 +66,11 @@ DefaultAzureCredential::DefaultAzureCredential(
 
     constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
     const auto envVarValue = Environment::GetVariable(envVarName);
+    const auto trimmedEnvVarValue = TrimString(envVarValue);
 
-    const auto isProd = StringExtensions::LocaleInvariantCaseInsensitiveEqual(envVarValue, "prod");
+    const auto isProd
+        = StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "prod");
+
     const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
         + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
         + ", therefore AzureCliCredential will " + (isProd ? "NOT " : "")
@@ -62,8 +81,8 @@ DefaultAzureCredential::DefaultAzureCredential(
       IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
     }
     else if (
-        envVarValue.empty()
-        || StringExtensions::LocaleInvariantCaseInsensitiveEqual(envVarValue, "dev"))
+        trimmedEnvVarValue.empty()
+        || StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "dev"))
     {
       IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
       miSources.emplace_back(std::make_shared<AzureCliCredential>(options));
