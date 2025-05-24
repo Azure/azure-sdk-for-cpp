@@ -144,12 +144,23 @@ class LogMessages : public ::testing::TestWithParam<std::string> {
 INSTANTIATE_TEST_SUITE_P(
     DefaultAzureCredential,
     LogMessages,
-    ::testing::Values("", " ", "dev", "DeV", "dEv ", " DEV  ", "prod", "pRoD", " PrOd", "d ev"));
+    ::testing::Values(
+        "",
+        " ",
+        "dev",
+        "DeV",
+        "dEv ",
+        " DEV  ",
+        "prod",
+        "pRoD",
+        " PrOd",
+        "d ev",
+        "production"));
 
 TEST_P(LogMessages, )
 {
   const auto azTokenCredsEnvVarValue = GetParam();
-  if (azTokenCredsEnvVarValue == "d ev")
+  if (azTokenCredsEnvVarValue == "d ev" || azTokenCredsEnvVarValue == "production")
   {
     CredentialTestHelper::EnvironmentOverride const env(
         {{"AZURE_TOKEN_CREDENTIALS", azTokenCredsEnvVarValue}});
