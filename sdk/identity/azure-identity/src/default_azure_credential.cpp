@@ -76,7 +76,7 @@ DefaultAzureCredential::DefaultAzureCredential(
       throw AuthenticationException(
           GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
           + "' environment variable. Allowed values are 'dev' and 'prod' (case insensitive). "
-            "It is also allowed to not have the environment variable defined.");
+            "It is also valid to not have the environment variable defined.");
     }
 
     miSources.emplace_back(std::make_shared<ManagedIdentityCredential>(options));
