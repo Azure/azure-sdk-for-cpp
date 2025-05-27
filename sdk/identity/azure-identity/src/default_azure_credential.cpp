@@ -22,22 +22,6 @@ using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
-namespace {
-std::string TrimString(std::string s)
-{
-  s.erase(
-      s.begin(),
-      std::find_if_not(s.begin(), s.end(), Azure::Core::_internal::StringExtensions::IsSpace));
-
-  s.erase(
-      std::find_if_not(s.rbegin(), s.rend(), Azure::Core::_internal::StringExtensions::IsSpace)
-          .base(),
-      s.end());
-
-  return s;
-}
-} // namespace
-
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
@@ -66,7 +50,7 @@ DefaultAzureCredential::DefaultAzureCredential(
 
     constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
     const auto envVarValue = Environment::GetVariable(envVarName);
-    const auto trimmedEnvVarValue = TrimString(envVarValue);
+    const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
     const auto isProd
         = StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "prod");

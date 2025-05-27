@@ -128,20 +128,6 @@ std::string GetOSVersion()
 
   return osVersionInfo.str();
 }
-
-std::string TrimString(std::string s)
-{
-  s.erase(
-      s.begin(),
-      std::find_if_not(s.begin(), s.end(), Azure::Core::_internal::StringExtensions::IsSpace));
-
-  s.erase(
-      std::find_if_not(s.rbegin(), s.rend(), Azure::Core::_internal::StringExtensions::IsSpace)
-          .base(),
-      s.end());
-
-  return s;
-}
 } // namespace
 
 namespace Azure { namespace Core { namespace Http { namespace _internal {
@@ -152,12 +138,14 @@ namespace Azure { namespace Core { namespace Http { namespace _internal {
       std::string const& applicationId,
       long cplusplusValue)
   {
+    using Azure::Core::_internal::StringExtensions;
+
     // Spec: https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy
     std::ostringstream telemetryId;
 
     if (!applicationId.empty())
     {
-      telemetryId << TrimString(applicationId).substr(0, 24) << " ";
+      telemetryId << StringExtensions::Trim(applicationId).substr(0, 24) << " ";
     }
 
     static std::string const osVer = GetOSVersion();
