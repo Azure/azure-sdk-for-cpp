@@ -119,6 +119,13 @@ namespace Azure { namespace Core { namespace _internal {
 
       return result;
     }
+
+    static std::string Trim(std::string s)
+    {
+      s.erase(s.begin(), std::find_if_not(s.begin(), s.end(), IsSpace));
+      s.erase(std::find_if_not(s.rbegin(), s.rend(), IsSpace).base(), s.end());
+      return s;
+    }
   };
 
 }}} // namespace Azure::Core::_internal
