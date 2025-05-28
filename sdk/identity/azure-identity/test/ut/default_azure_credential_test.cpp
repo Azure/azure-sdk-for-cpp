@@ -241,7 +241,6 @@ TEST_P(LogMessages, )
             EXPECT_EQ(
                 log.at(i).second, "Identity: WorkloadIdentityCredential was created successfully.");
 
-
             ++i;
             EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
             EXPECT_EQ(
