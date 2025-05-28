@@ -95,6 +95,7 @@
           ],
           "defaultAction": "Allow"
         },
+        "allowSharedKeyAccess": false,
         "supportsHttpsTrafficOnly": true,
         "allowBlobPublicAccess": true,
         "encryption": {
