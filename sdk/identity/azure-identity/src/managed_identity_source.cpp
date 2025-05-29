@@ -21,20 +21,6 @@ using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
-std::string GetImdsEndpointHost()
-{
-  // https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
-  // IMDS is a REST API that's available at a well-known, non-routable IP address (169.254.169.254).
-  // You can only access it from within the VM. Communication between the VM and IMDS never leaves
-  // the host.
-
-  // 'AZURE_POD_IDENTITY_AUTHORITY_HOST' environment variable allows user to override the authority
-  // host for IMDS. This is consistent with other language SDKs.
-
-  const auto envVar = Environment::GetVariable("AZURE_POD_IDENTITY_AUTHORITY_HOST");
-  return envVar.empty() ? "http://169.254.169.254" : envVar;
-}
-
 std::string WithSourceAndClientIdMessage(std::string const& credSource, std::string const& clientId)
 {
   std::string result = " with " + credSource + " source";
@@ -503,30 +489,49 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  const std::string ImdsName = "Azure Instance Metadata Service";
+
   IdentityLog::Write(
       IdentityLog::Level::Informational,
-      credName + " will be created"
-          + WithSourceAndClientIdMessage("Azure Instance Metadata Service", clientId)
+      credName + " will be created" + WithSourceAndClientIdMessage(ImdsName, clientId)
           + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
+  // https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
+  // IMDS is a REST API that's available at a well-known, non-routable IP address
+  // (169.254.169.254). You can only access it from within the VM. Communication between the VM
+  // and IMDS never leaves the host.
+  // 'AZURE_POD_IDENTITY_AUTHORITY_HOST' environment variable allows user to override the
+  // authority host for IMDS. This is consistent with other language SDKs.
+  Core::Url imdsUrl{"http://169.254.169.254"};
+  constexpr auto ImdsEndpointEnvVarName = "AZURE_POD_IDENTITY_AUTHORITY_HOST";
+  const auto imdsEndpointEnvVarValue = Environment::GetVariable(ImdsEndpointEnvVarName);
+  if (!imdsEndpointEnvVarValue.empty())
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Verbose,
+        credName + WithSourceAndClientIdMessage(ImdsName, {}) + ": '" + ImdsEndpointEnvVarName
+            + "' environment variable is set, so customized authority host ('"
+            + imdsEndpointEnvVarValue + "') will be used.");
+
+    imdsUrl = Core::Url{imdsEndpointEnvVarValue};
+  }
+  imdsUrl.SetPath("/metadata/identity/oauth2/token");
+
   return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, objectId, resourceId, options));
+      new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url{})
+      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
-    static const auto host = GetImdsEndpointHost();
-
     auto& url = m_request.GetUrl();
-    url = Core::Url(host);
-    url.SetPath("/metadata/identity/oauth2/token");
 
     url.AppendQueryParameter("api-version", "2018-02-01");
 

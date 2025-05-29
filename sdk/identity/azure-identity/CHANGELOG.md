@@ -15,6 +15,8 @@
 
 ### Other Changes
 
+- Added support for overriding IMDS authority host in the `ManagedIdentityCredential` via `AZURE_POD_IDENTITY_AUTHORITY_HOST` environment variable.
+
 ## 1.11.0 (2025-04-08)
 
 ### Features Added
