@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- [[#4952]](https://github.com/Azure/azure-sdk-for-cpp/issues/4952) Improved HTTP Transport implementations' request timeouts to not exceed context deadlines.
+
 ### Other Changes
 
 ### Acknowledgments

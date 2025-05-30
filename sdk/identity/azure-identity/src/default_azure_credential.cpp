@@ -43,10 +43,11 @@ DefaultAzureCredential::DefaultAzureCredential(
             "is the better fit for the application.");
 
   // Creating credentials in order to ensure the order of log messages.
-  ChainedTokenCredential::Sources miSources;
+  ChainedTokenCredential::Sources credentialChain;
   {
-    miSources.emplace_back(std::make_shared<EnvironmentCredential>(options));
-    miSources.emplace_back(std::make_shared<WorkloadIdentityCredential>(options));
+    credentialChain.emplace_back(std::make_shared<EnvironmentCredential>(options));
+    credentialChain.emplace_back(std::make_shared<WorkloadIdentityCredential>(options));
+    credentialChain.emplace_back(std::make_shared<ManagedIdentityCredential>(options));
 
     constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
     const auto envVarValue = Environment::GetVariable(envVarName);
@@ -69,7 +70,7 @@ DefaultAzureCredential::DefaultAzureCredential(
         || StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "dev"))
     {
       IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
-      miSources.emplace_back(std::make_shared<AzureCliCredential>(options));
+      credentialChain.emplace_back(std::make_shared<AzureCliCredential>(options));
     }
     else
     {
@@ -78,14 +79,12 @@ DefaultAzureCredential::DefaultAzureCredential(
           + "' environment variable. Allowed values are 'dev' and 'prod' (case insensitive). "
             "It is also valid to not have the environment variable defined.");
     }
-
-    miSources.emplace_back(std::make_shared<ManagedIdentityCredential>(options));
   }
 
   // DefaultAzureCredential caches the selected credential, so that it can be reused on subsequent
   // calls.
   m_impl = std::make_unique<_detail::ChainedTokenCredentialImpl>(
-      GetCredentialName(), std::move(miSources), true);
+      GetCredentialName(), std::move(credentialChain), true);
 }
 
 DefaultAzureCredential::~DefaultAzureCredential() = default;

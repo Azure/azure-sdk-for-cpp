@@ -9,12 +9,22 @@
 #pragma once
 
 #include "azure/core/context.hpp"
+#include "azure/core/dll_import_export.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/raw_response.hpp"
 
 #include <memory>
 
 namespace Azure { namespace Core { namespace Http {
+
+  namespace _internal {
+    /**
+     * @brief A context key to use to pass connection timeout (`std::chrono::milliseconds`) to an
+     * HTTP transport.
+     *
+     */
+    AZ_CORE_DLLEXPORT extern const Context::Key HttpConnectionTimeout;
+  } // namespace _internal
 
   /**
    * @brief Base class for all HTTP transport implementations.

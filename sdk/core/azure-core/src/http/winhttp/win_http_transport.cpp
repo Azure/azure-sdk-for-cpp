@@ -1257,6 +1257,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @param method The HTTP method to use for the request.
    * @param tlsClientCertificate The client certificate to use for the request.
    * @param options The transport options to use for the request.
+   * @param connectionTimeout Connection timeout in milliseconds.
    *
    * @remark Note that we *cannot* use the TlsClientCertificate field in the options passed into
    * this function because the creator of the associated WinHttpTransport object may have freed the
@@ -1269,7 +1270,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Azure::Core::Url const& url,
       Azure::Core::Http::HttpMethod const& method,
       PCCERT_CONTEXT tlsClientCertificate,
-      WinHttpTransportOptions const& options)
+      WinHttpTransportOptions const& options,
+      std::chrono::milliseconds connectionTimeout)
       : m_expectedTlsRootCertificates(options.ExpectedTlsRootCertificates),
         m_tlsClientCertificate(CertDuplicateCertificateContext(tlsClientCertificate))
   {
@@ -1321,6 +1323,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         {
           GetErrorAndThrow("Error while setting client cert context to ignore.");
         }
+      }
+    }
+
+    if (connectionTimeout.count() > 0
+        && connectionTimeout.count() < std::numeric_limits<ULONG>::max())
+    {
+      auto timeoutMillisecondsULong = static_cast<ULONG>(connectionTimeout.count());
+      if (!WinHttpSetOption(
+              m_requestHandle.get(),
+              WINHTTP_OPTION_CONNECT_TIMEOUT,
+              &timeoutMillisecondsULong,
+              sizeof(timeoutMillisecondsULong)))
+      {
+        GetErrorAndThrow("Error while setting connection timeout.");
       }
     }
 
@@ -1436,10 +1452,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   std::unique_ptr<WinHttpRequest> WinHttpTransportImpl::CreateRequestHandle(
       Azure::Core::_internal::UniqueHandle<HINTERNET> const& connectionHandle,
       Azure::Core::Url const& url,
-      Azure::Core::Http::HttpMethod const& method)
+      Azure::Core::Http::HttpMethod const& method,
+      std::chrono::milliseconds connectionTimeout)
   {
     auto request{std::make_unique<WinHttpRequest>(
-        connectionHandle, url, method, m_tlsClientCertificate.get(), m_options)};
+        connectionHandle, url, method, m_tlsClientCertificate.get(), m_options, connectionTimeout)};
     // If we are supporting WebSockets, then let WinHTTP know that it should
     // prepare to upgrade the HttpRequest to a WebSocket.
     if (HasWebSocketSupport())
@@ -1797,10 +1814,20 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   std::unique_ptr<RawResponse> WinHttpTransportImpl::Send(Request& request, Context const& context)
   {
+    auto connectionTimeout = std::chrono::milliseconds{0};
+    {
+      std::chrono::milliseconds contextConnectionTimeout{0};
+      if (context.TryGetValue(Http::_internal::HttpConnectionTimeout, contextConnectionTimeout)
+          && contextConnectionTimeout.count() > 0)
+      {
+        connectionTimeout = contextConnectionTimeout;
+      }
+    }
+
     Azure::Core::_internal::UniqueHandle<HINTERNET> connectionHandle
         = CreateConnectionHandle(request.GetUrl(), context);
-    std::unique_ptr<_detail::WinHttpRequest> requestHandle(
-        CreateRequestHandle(connectionHandle, request.GetUrl(), request.GetMethod()));
+    std::unique_ptr<_detail::WinHttpRequest> requestHandle(CreateRequestHandle(
+        connectionHandle, request.GetUrl(), request.GetMethod(), connectionTimeout));
 
     requestHandle->SendRequest(request, context);
     requestHandle->ReceiveResponse(context);

@@ -10,7 +10,12 @@
 
 ### Bugs Fixed
 
+- [[#4952]](https://github.com/Azure/azure-sdk-for-cpp/issues/4952) Fixed `ManagedIdentityCredential` to fail fast if IMDS authentication is not available.
+- [[#4669]](https://github.com/Azure/azure-sdk-for-cpp/issues/4669) Fixed the order of credentials in `DefaultAzureCredential`: `ManagedIdentityCredential` before `AzureCliCredential`.
+
 ### Other Changes
+
+- Added support for overriding IMDS authority host in the `ManagedIdentityCredential` via `AZURE_POD_IDENTITY_AUTHORITY_HOST` environment variable.
 
 ## 1.11.0 (2025-04-08)
 

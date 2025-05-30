@@ -267,6 +267,9 @@ jobs:
         useGlobalConfig: true
       env:
         ${{ insert }}: ${{ parameters.EnvVars }}
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Azure CLI credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
 
   - ${{ else }}:
     - bash: |
@@ -292,7 +295,10 @@ jobs:
       displayName: "Run Samples for : ${{ parameters.ServiceDirectory }}"
       condition: and(succeeded(), eq(variables['RunSamples'], '1'))
       env:
-        ${{ insert }}: ${{ parameters.EnvVars }}      
+        ${{ insert }}: ${{ parameters.EnvVars }}
+        # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
+        # so "execute samples" step correctly picks up Azure CLI credential.
+        AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report

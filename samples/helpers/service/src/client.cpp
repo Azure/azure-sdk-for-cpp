@@ -11,7 +11,7 @@ void Azure::Service::Client::DoSomething(const Azure::Core::Context& context) co
 #if (0)
   // Every client has its own scope. We use management.azure.com here as an example.
   Core::Credentials::TokenRequestContext azureServiceClientContext;
-  azureServiceClientContext.Scopes = {"https://management.azure.com/"};
+  azureServiceClientContext.Scopes = {"https://management.azure.com/.default"};
 
   auto authenticationToken = m_credential->GetToken(azureServiceClientContext, context);
 

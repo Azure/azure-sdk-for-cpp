@@ -241,33 +241,6 @@ TEST_P(LogMessages, )
             EXPECT_EQ(
                 log.at(i).second, "Identity: WorkloadIdentityCredential was created successfully.");
 
-            {
-              const auto variableSetWording = azTokenCredsEnvVarValue.empty()
-                  ? "not set"
-                  : ("set to '" + azTokenCredsEnvVarValue + "'");
-
-              const auto beIncludedWording = isDev ? "" : "NOT ";
-
-              ++i;
-              EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
-              EXPECT_EQ(
-                  log.at(i).second,
-                  "Identity: DefaultAzureCredential: "
-                  "'AZURE_TOKEN_CREDENTIALS' environment variable is "
-                      + variableSetWording + ", therefore AzureCliCredential will "
-                      + beIncludedWording + "be included in the credential chain.");
-            }
-
-            if (isDev)
-            {
-              ++i;
-              EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
-              EXPECT_EQ(
-                  log.at(i).second,
-                  "Identity: AzureCliCredential created."
-                  "\nSuccessful creation does not guarantee further successful token retrieval.");
-            }
-
             ++i;
             EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
             EXPECT_EQ(
@@ -304,14 +277,41 @@ TEST_P(LogMessages, )
                 "with Azure Instance Metadata Service source."
                 "\nSuccessful creation does not guarantee further successful token retrieval.");
 
+            {
+              const auto variableSetWording = azTokenCredsEnvVarValue.empty()
+                  ? "not set"
+                  : ("set to '" + azTokenCredsEnvVarValue + "'");
+
+              const auto beIncludedWording = isDev ? "" : "NOT ";
+
+              ++i;
+              EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+              EXPECT_EQ(
+                  log.at(i).second,
+                  "Identity: DefaultAzureCredential: "
+                  "'AZURE_TOKEN_CREDENTIALS' environment variable is "
+                      + variableSetWording + ", therefore AzureCliCredential will "
+                      + beIncludedWording + "be included in the credential chain.");
+            }
+
+            if (isDev)
+            {
+              ++i;
+              EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+              EXPECT_EQ(
+                  log.at(i).second,
+                  "Identity: AzureCliCredential created."
+                  "\nSuccessful creation does not guarantee further successful token retrieval.");
+            }
+
             ++i;
             EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
             EXPECT_EQ(
                 log.at(i).second,
                 std::string(
                     "Identity: DefaultAzureCredential: Created with the following credentials: "
-                    "EnvironmentCredential, WorkloadIdentityCredential, ")
-                    + (isDev ? "AzureCliCredential, " : "") + "ManagedIdentityCredential.");
+                    "EnvironmentCredential, WorkloadIdentityCredential, ManagedIdentityCredential")
+                    + (isDev ? ", AzureCliCredential" : "") + ".");
 
             ++i;
             EXPECT_EQ(i, log.size());

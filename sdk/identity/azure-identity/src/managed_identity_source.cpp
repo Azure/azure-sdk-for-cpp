@@ -5,9 +5,11 @@
 
 #include "private/identity_log.hpp"
 
+#include <azure/core/http/transport.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
@@ -21,12 +23,15 @@ using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
-
-// https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
-// IMDS is a REST API that's available at a well-known, non-routable IP address (169.254.169.254).
-// You can only access it from within the VM. Communication between the VM and IMDS never leaves the
-// host.
-std::string const ImdsEndpoint = "http://169.254.169.254/metadata/identity/oauth2/token";
+// First request for IMDS should not be taking tens of seconds - if IMDS is unavailable, we should
+// fail fast. Among other reasons, this improves user experience when ManagedIdentityCredential is
+// part of DefaultAzureCredential. Especially given that all the service credentials are earlier in
+// the chain than the developer tool credentials, if ManagedIdentityCredential makes a request which
+// takes 30 seconds to time out (host is not available), plus we make 3 retries of that request, and
+// all that to figure out that IMDS is not available before moving on to AzureCliCredential, it will
+// significantly worsen user experience when using DAC. Therefore, we need the timeout below (plus
+// we have logic to not retry that request).
+constexpr std::chrono::milliseconds ImdsFirstRequestConnectionTimeout = std::chrono::seconds{1};
 
 std::string WithSourceAndClientIdMessage(std::string const& credSource, std::string const& clientId)
 {
@@ -496,26 +501,48 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& resourceId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  const std::string ImdsName = "Azure Instance Metadata Service";
+
   IdentityLog::Write(
       IdentityLog::Level::Informational,
-      credName + " will be created"
-          + WithSourceAndClientIdMessage("Azure Instance Metadata Service", clientId)
+      credName + " will be created" + WithSourceAndClientIdMessage(ImdsName, clientId)
           + ".\nSuccessful creation does not guarantee further successful token retrieval.");
 
+  // https://learn.microsoft.com/azure/virtual-machines/instance-metadata-service
+  // IMDS is a REST API that's available at a well-known, non-routable IP address
+  // (169.254.169.254). You can only access it from within the VM. Communication between the VM
+  // and IMDS never leaves the host.
+  // 'AZURE_POD_IDENTITY_AUTHORITY_HOST' environment variable allows user to override the
+  // authority host for IMDS. This is consistent with other language SDKs.
+  Core::Url imdsUrl{"http://169.254.169.254"};
+  constexpr auto ImdsEndpointEnvVarName = "AZURE_POD_IDENTITY_AUTHORITY_HOST";
+  const auto imdsEndpointEnvVarValue = Environment::GetVariable(ImdsEndpointEnvVarName);
+  if (!imdsEndpointEnvVarValue.empty())
+  {
+    IdentityLog::Write(
+        IdentityLog::Level::Verbose,
+        credName + WithSourceAndClientIdMessage(ImdsName, {}) + ": '" + ImdsEndpointEnvVarName
+            + "' environment variable is set, so customized authority host ('"
+            + imdsEndpointEnvVarValue + "') will be used.");
+
+    imdsUrl = Core::Url{imdsEndpointEnvVarValue};
+  }
+  imdsUrl.SetPath("/metadata/identity/oauth2/token");
+
   return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, objectId, resourceId, options));
+      new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
-      m_request(Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(ImdsEndpoint))
+      m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
-    using Azure::Core::Url;
     auto& url = m_request.GetUrl();
 
     url.AppendQueryParameter("api-version", "2018-02-01");
@@ -538,6 +565,11 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
   }
 
   m_request.SetHeader("Metadata", "true");
+
+  Core::Credentials::TokenCredentialOptions firstRequestOptions = options;
+  firstRequestOptions.Retry.MaxRetries = 0;
+  m_firstRequestPipeline = std::make_unique<TokenCredentialImpl>(firstRequestOptions);
+  m_firstRequestSucceeded = false;
 }
 
 Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
@@ -558,7 +590,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
   // call it later. Therefore, any capture made here will outlive the possible time frame when the
   // lambda might get called.
   return m_tokenCache.GetToken(scopesStr, {}, tokenRequestContext.MinimumExpiration, [&]() {
-    return TokenCredentialImpl::GetToken(context, true, [&]() {
+    std::function<std::unique_ptr<TokenRequest>()> const& createRequest = [&]() {
       auto request = std::make_unique<TokenRequest>(m_request);
 
       if (!scopesStr.empty())
@@ -567,6 +599,28 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
       }
 
       return request;
-    });
+    };
+
+    if (!m_firstRequestSucceeded)
+    {
+      std::unique_lock<std::mutex> lock(m_firstRequestMutex);
+      if (!m_firstRequestSucceeded)
+      {
+        const auto token = m_firstRequestPipeline->GetToken(
+            context.WithValue(
+                Core::Http::_internal::HttpConnectionTimeout, ImdsFirstRequestConnectionTimeout),
+            true,
+            createRequest);
+
+        m_firstRequestSucceeded = true;
+
+        lock.unlock();
+        m_firstRequestPipeline.reset();
+
+        return token;
+      }
+    }
+
+    return TokenCredentialImpl::GetToken(context, true, createRequest);
   });
 }
