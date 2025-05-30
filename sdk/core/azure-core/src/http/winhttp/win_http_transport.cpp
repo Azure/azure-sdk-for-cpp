@@ -1257,7 +1257,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @param method The HTTP method to use for the request.
    * @param tlsClientCertificate The client certificate to use for the request.
    * @param options The transport options to use for the request.
-   * @param connectionTimeout Connection timeout.
+   * @param connectionTimeout Connection timeout in milliseconds.
    *
    * @remark Note that we *cannot* use the TlsClientCertificate field in the options passed into
    * this function because the creator of the associated WinHttpTransport object may have freed the
