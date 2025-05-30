@@ -67,7 +67,7 @@ time = { version = "0.3.10", features = [
     "macros",
     "wasm-bindgen",
 ] }
-tokio = { version = "1.0", default-features = false, features = [
+tokio = { version = "1.45", default-features = false, features = [
     "macros",
     "time",
 ] }
