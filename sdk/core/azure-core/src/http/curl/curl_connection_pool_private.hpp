@@ -78,18 +78,18 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
      * @param request HTTP request to get #Azure::Core::Http::CurlNetworkConnection for.
      * @param options The connection settings which includes host name and libcurl handle specific
      * configuration.
-     * @param resetPool Request the pool to remove all current connections for the provided
-     * options to force the creation of a new connection.
      * @param connectionTimeoutOverride If greater than 0, specifies the override value for the
      * ConnectionTimeout value, specified in options.
+     * @param resetPool Request the pool to remove all current connections for the provided
+     * options to force the creation of a new connection.
      *
      * @return #Azure::Core::Http::CurlNetworkConnection to use.
      */
     std::unique_ptr<CurlNetworkConnection> ExtractOrCreateCurlConnection(
         Request& request,
         CurlTransportOptions const& options,
-        bool resetPool = false,
-        std::chrono::milliseconds connectionTimeoutOverride = std::chrono::milliseconds{0});
+        std::chrono::milliseconds connectionTimeoutOverride = std::chrono::milliseconds{0},
+        bool resetPool = false);
 
     /**
      * @brief Moves a connection back to the pool to be re-used.

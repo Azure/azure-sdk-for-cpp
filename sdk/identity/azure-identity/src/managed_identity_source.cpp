@@ -5,9 +5,11 @@
 
 #include "private/identity_log.hpp"
 
+#include <azure/core/http/transport.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <fstream>
 #include <iterator>
 #include <stdexcept>
@@ -595,7 +597,9 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
       if (!m_firstRequestSucceeded)
       {
         const auto token = m_firstRequestPipeline->GetToken(
-            context.WithDeadline(DateTime::clock::now() + std::chrono::seconds{1}),
+            context.WithValue(
+                Core::Http::_internal::HttpConnectionTimeout,
+                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds{1})),
             true,
             createRequest);
 

@@ -351,22 +351,18 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
 
   auto connectionTimeoutOverride = std::chrono::milliseconds{0};
   {
-    const auto contextDeadline = context.GetDeadline();
-    if (contextDeadline != (DateTime::max)())
+    std::chrono::milliseconds contextConnectionTimeout{0};
+    if (context.TryGetValue(Http::_internal::HttpConnectionTimeout, contextConnectionTimeout)
+        && contextConnectionTimeout.count() > 0)
     {
-      auto const now = DateTime::clock::now();
-      if (contextDeadline > now)
-      {
-        connectionTimeoutOverride
-            = std::chrono::duration_cast<std::chrono::milliseconds>(contextDeadline - now);
-      }
+      connectionTimeoutOverride = contextConnectionTimeout;
     }
   }
 
   auto session = std::make_unique<CurlSession>(
       request,
       CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(
-          request, m_options, false, connectionTimeoutOverride),
+          request, m_options, connectionTimeoutOverride, false),
       m_options);
 
   CURLcode performing;
@@ -395,8 +391,8 @@ std::unique_ptr<RawResponse> CurlTransport::Send(Request& request, Context const
         CurlConnectionPool::g_curlConnectionPool.ExtractOrCreateCurlConnection(
             request,
             m_options,
-            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed,
-            connectionTimeoutOverride),
+            connectionTimeoutOverride,
+            getConnectionOpenIntent + 1 >= _detail::RequestPoolResetAfterConnectionFailed),
         m_options);
   }
 
@@ -2224,8 +2220,8 @@ int CurlConnection::SslCtxCallback(CURL*, void* sslctx)
 std::unique_ptr<CurlNetworkConnection> CurlConnectionPool::ExtractOrCreateCurlConnection(
     Request& request,
     CurlTransportOptions const& options,
-    bool resetPool,
-    std::chrono::milliseconds connectionTimeoutOverride)
+    std::chrono::milliseconds connectionTimeoutOverride,
+    bool resetPool)
 {
   uint16_t port = request.GetUrl().GetPort();
   // Generate a display name for the host being connected to

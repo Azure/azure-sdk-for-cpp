@@ -3,6 +3,7 @@
 
 #include "azure/core/http/http.hpp"
 
+#include "azure/core/http/transport.hpp"
 #include "azure/core/internal/strings.hpp"
 #include "azure/core/url.hpp"
 
@@ -12,11 +13,13 @@
 using namespace Azure::Core;
 using namespace Azure::Core::Http;
 
-char const Azure::Core::Http::_internal::HttpShared::ContentType[] = "content-type";
-char const Azure::Core::Http::_internal::HttpShared::ApplicationJson[] = "application/json";
-char const Azure::Core::Http::_internal::HttpShared::Accept[] = "accept";
-char const Azure::Core::Http::_internal::HttpShared::MsRequestId[] = "x-ms-request-id";
-char const Azure::Core::Http::_internal::HttpShared::MsClientRequestId[] = "x-ms-client-request-id";
+const Context::Key Http::_internal::HttpConnectionTimeout{};
+
+char const Http::_internal::HttpShared::ContentType[] = "content-type";
+char const Http::_internal::HttpShared::ApplicationJson[] = "application/json";
+char const Http::_internal::HttpShared::Accept[] = "accept";
+char const Http::_internal::HttpShared::MsRequestId[] = "x-ms-request-id";
+char const Http::_internal::HttpShared::MsClientRequestId[] = "x-ms-client-request-id";
 
 const HttpMethod HttpMethod::Get("GET");
 const HttpMethod HttpMethod::Head("HEAD");

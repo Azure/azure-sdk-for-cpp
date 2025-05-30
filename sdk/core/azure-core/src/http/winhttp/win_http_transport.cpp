@@ -1816,15 +1816,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     auto connectionTimeout = std::chrono::milliseconds{0};
     {
-      const auto contextDeadline = context.GetDeadline();
-      if (contextDeadline != (DateTime::max)())
+      std::chrono::milliseconds contextConnectionTimeout{0};
+      if (context.TryGetValue(Http::_internal::HttpConnectionTimeout, contextConnectionTimeout)
+          && contextConnectionTimeout.count() > 0)
       {
-        auto const now = DateTime::clock::now();
-        if (contextDeadline > now)
-        {
-          connectionTimeout
-              = std::chrono::duration_cast<std::chrono::milliseconds>(contextDeadline - now);
-        }
+        connectionTimeout = contextConnectionTimeout;
       }
     }
 
