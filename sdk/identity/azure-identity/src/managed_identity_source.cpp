@@ -23,6 +23,16 @@ using Azure::Core::_internal::Environment;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
+// First request for IMDS should not be taking tens of seconds - if IMDS is unavailable, we should
+// fail fast. Among other reasons, this improves user experience when ManagedIdentityCredential is
+// part of DefaultAzureCredential. Especially given that all the service credentials are earlier in
+// the chain than the developer tool credentials, if ManagedIdentityCredential makes a request which
+// takes 30 seconds to time out (host is not available), plus we make 3 retries of that request, and
+// all that to figure out that IMDS is not available before moving on to AzureCliCredential, it will
+// significantly worsen user experience when using DAC. Therefore, we need the timeout below (plus
+// we have logic to not retry that request).
+constexpr std::chrono::milliseconds ImdsFirstRequestConnectionTimeout = std::chrono::seconds{1};
+
 std::string WithSourceAndClientIdMessage(std::string const& credSource, std::string const& clientId)
 {
   std::string result = " with " + credSource + " source";
@@ -598,8 +608,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
       {
         const auto token = m_firstRequestPipeline->GetToken(
             context.WithValue(
-                Core::Http::_internal::HttpConnectionTimeout,
-                std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds{1})),
+                Core::Http::_internal::HttpConnectionTimeout, ImdsFirstRequestConnectionTimeout),
             true,
             createRequest);
 
