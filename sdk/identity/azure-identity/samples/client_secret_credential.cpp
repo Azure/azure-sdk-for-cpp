@@ -18,6 +18,10 @@ int main()
 {
   try
   {
+    // To diagnose, see https://aka.ms/azsdk/cpp/identity/troubleshooting
+    // For example, try setting 'AZURE_LOG_LEVEL' environment variable to 'verbose' before running
+    // this sample to see more details.
+
     // Step 1: Initialize Client Secret Credential.
     auto clientSecretCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         GetTenantId(), GetClientId(), GetClientSecret());
