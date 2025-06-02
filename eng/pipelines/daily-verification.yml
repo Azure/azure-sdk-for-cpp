@@ -3,12 +3,17 @@ jobs:
   - job:
     displayName: Daily vcpkg PR
     pool:
-      name: azsdk-pool-mms-win-2022-general
+      name: $(WINDOWSPOOL)
+      demands: $(WindowsImageDemand)
 
     variables:
       # The branch in the azure-sdk/vcpkg repo that is updated daily with the
       # latest set of ports
-      TargetPrBranch: release/azure-sdk-for-cpp-daily-verification
+      - name: TargetPrBranch
+        value: release/azure-sdk-for-cpp-daily-verification
+
+      - template: /eng/pipelines/templates/variables/image.yml
+
 
     steps:
       - checkout: self
