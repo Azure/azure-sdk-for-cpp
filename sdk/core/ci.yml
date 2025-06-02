@@ -20,6 +20,7 @@ trigger:
       - .github/
       - '*.md'
       - /**/*.md
+      - Cargo.toml
 
 pr:
   branches:
@@ -40,6 +41,7 @@ pr:
       - .github/
       - '*.md'
       - /**/*.md
+      - Cargo.toml
 
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
