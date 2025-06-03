@@ -245,7 +245,7 @@ stages:
                     $notifyUsers = ./eng/scripts/Get-TriggeringUserGitHubAlias.ps1 `
                       -EmailAddress "$($env:BUILD_REQUESTEDFOREMAIL)" `
                       -OpenApiToken "$(opensource-api-token)" `
-                      -Fallback '@rickwinter @ahsonkhan @antkmsft @gearama @LarryOsterman'
+                      -Fallback '@rickwinter @antkmsft @LarryOsterman'
 
                     $prComment = "Adding ${{ artifact.Name }} to release"
                     if ($notifyUsers) {
