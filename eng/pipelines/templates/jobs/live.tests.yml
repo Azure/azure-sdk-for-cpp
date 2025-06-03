@@ -270,6 +270,7 @@ jobs:
         # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
         # so "execute samples" step correctly picks up Azure CLI credential.
         AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
+        AZURE_SDK_IDENTITY_SAMPLE_SERVICE_GETTOKEN: 'disable'
 
   - ${{ else }}:
     - bash: |
@@ -299,6 +300,7 @@ jobs:
         # Set fake authority host to ensure Managed Identity fail for Default Azure Credential
         # so "execute samples" step correctly picks up Azure CLI credential.
         AZURE_POD_IDENTITY_AUTHORITY_HOST: 'FakeAuthorityHost'
+        AZURE_SDK_IDENTITY_SAMPLE_SERVICE_GETTOKEN: 'disable'
 
   # Make coverage targets (specified in coverage_targets.txt) and assemble
   # coverage report
