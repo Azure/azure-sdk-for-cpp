@@ -48,7 +48,7 @@
 # PRLabel: %Event Hubs
 /sdk/eventhubs/           @LarryOsterman @antkmsft @RickWinter
 
-# AzureSdkOwners: @rivkwinter
+# AzureSdkOwners: @rickwinter
 # ServiceLabel:  %KeyVault
 # ServiceOwners:         @cheathamb36 @chen-karen @lgonsoulin
 
