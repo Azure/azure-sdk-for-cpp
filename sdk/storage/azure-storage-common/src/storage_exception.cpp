@@ -148,9 +148,9 @@ namespace Azure { namespace Storage {
     }
 
     // Optimize error messages
+    const auto headerName = additionalInformation.find("HeaderName");
     if (errorCode == _internal::InvalidHeaderValueErrorCode
-        && additionalInformation.count("HeaderName") != 0
-        && additionalInformation["HeaderName"] == "x-ms-version")
+        && headerName != additionalInformation.end() && headerName->second == "x-ms-version")
     {
       message = _internal::InvalidVersionHeaderMessage;
     }
