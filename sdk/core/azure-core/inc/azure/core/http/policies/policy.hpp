@@ -390,11 +390,7 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     /**
      * @brief HTTP retry policy.
      */
-    class RetryPolicy
-#if !defined(_azure_TESTING_BUILD)
-        final
-#endif
-        : public HttpPolicy {
+    class RetryPolicy : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
@@ -430,6 +426,17 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
       static int32_t GetRetryCount(Context const& context);
 
     protected:
+      bool GetResponseHeaderBasedDelay(
+          RawResponse const& response,
+          std::chrono::milliseconds& retryAfter) const;
+
+      std::chrono::milliseconds CalculateExponentialDelay(
+          RetryOptions const& retryOptions,
+          int32_t attempt,
+          double jitterFactor) const;
+
+      bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt) const;
+
       virtual bool ShouldRetryOnTransportFailure(
           RetryOptions const& retryOptions,
           int32_t attempt,
