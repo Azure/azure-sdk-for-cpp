@@ -147,6 +147,14 @@ namespace Azure { namespace Storage {
       errorCode = response->GetHeaders().at("x-ms-error-code");
     }
 
+    // Optimize error messages
+    const auto headerName = additionalInformation.find("HeaderName");
+    if (errorCode == _internal::InvalidHeaderValueErrorCode
+        && headerName != additionalInformation.end() && headerName->second == "x-ms-version")
+    {
+      message = _internal::InvalidVersionHeaderMessage;
+    }
+
     StorageException result = StorageException(
         std::to_string(static_cast<std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
             httpStatusCode))

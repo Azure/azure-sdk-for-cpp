@@ -21,6 +21,11 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* HttpHeaderContentType = "content-type";
   constexpr static const char* HttpHeaderContentLength = "content-length";
   constexpr static const char* HttpHeaderContentRange = "content-range";
+  constexpr static const char* InvalidHeaderValueErrorCode = "InvalidHeaderValue";
+  constexpr static const char* InvalidVersionHeaderMessage
+      = "The provided service version is not enabled on this storage account.  Please see "
+        "https://learn.microsoft.com/rest/api/storageservices/"
+        "versioning-for-the-azure-storage-services for additional information.";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal
