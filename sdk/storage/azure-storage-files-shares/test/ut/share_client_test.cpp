@@ -124,6 +124,15 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareClientTest, SnapshotNotFoundErrorCode)
+  {
+    auto shareSnapshot = m_shareClient->WithSnapshot("2025-02-04T10:17:47.0000000Z");
+
+    Files::Shares::Models::DeleteShareResult deleteResult;
+    EXPECT_NO_THROW(deleteResult = shareSnapshot.DeleteIfExists().Value);
+    EXPECT_FALSE(deleteResult.Deleted);
+  }
+
   TEST_F(FileShareClientTest, ShareMetadata)
   {
     auto metadata1 = RandomMetadata();
