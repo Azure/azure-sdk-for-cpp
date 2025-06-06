@@ -16,7 +16,12 @@ using namespace Azure::Core::Http::Policies;
 using namespace Azure::Core::Http::Policies::_internal;
 
 namespace {
-bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milliseconds& retryAfter)
+Context::Key const RetryKey;
+} // namespace
+
+bool RetryPolicy::GetResponseHeaderBasedDelay(
+    RawResponse const& response,
+    std::chrono::milliseconds& retryAfter) const
 {
   // Try to find retry-after headers. There are several of them possible.
   auto const& responseHeaders = response.GetHeaders();
@@ -65,10 +70,10 @@ bool GetResponseHeaderBasedDelay(RawResponse const& response, std::chrono::milli
  * @remarks This function calculates the exponential backoff needed for each retry, including a
  * jitter factor.
  */
-std::chrono::milliseconds CalculateExponentialDelay(
+std::chrono::milliseconds RetryPolicy::CalculateExponentialDelay(
     RetryOptions const& retryOptions,
     int32_t attempt,
-    double jitterFactor)
+    double jitterFactor) const
 {
   if (jitterFactor < 0.8 || jitterFactor > 1.3)
   {
@@ -95,13 +100,10 @@ std::chrono::milliseconds CalculateExponentialDelay(
   return (std::min)(exponentialRetryAfter, retryOptions.MaxRetryDelay);
 }
 
-bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)
+bool RetryPolicy::WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt) const
 {
   return attempt > retryOptions.MaxRetries;
 }
-
-Context::Key const RetryKey;
-} // namespace
 
 int32_t RetryPolicy::GetRetryCount(Context const& context)
 {

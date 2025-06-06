@@ -94,6 +94,8 @@ CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
        "User-Agent",
        "WWW-Authenticate",
        "x-ms-client-request-id",
+       "x-ms-copy-source-error-code",
+       "x-ms-copy-source-status-code",
        "x-ms-date",
        "x-ms-error-code",
        "x-ms-range",
