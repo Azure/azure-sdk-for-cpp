@@ -290,7 +290,7 @@ stages:
       dependsOn: ${{ parameters.IntegrationDependsOn }}
       condition: >-
         and(
-          succeededOrFailed(),
+          not(canceled()),
           or(
             eq(variables['PublishDailyVcpkg'], 'true'),
             eq(variables['Build.Reason'],'Schedule')

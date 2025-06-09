@@ -63,7 +63,7 @@ jobs:
   - job: ${{ parameters.DisplayName }}_${{ parameters.OSName }}
     displayName: ${{ parameters.DisplayName }}
     dependsOn: ${{ parameters.DependsOn }}
-    condition: and(succeededOrFailed(), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
+    condition: and(not(canceled()), ne(variables['Skip.Test'], 'true'), ne(${{ parameters.Matrix }}, '{}'))
     strategy:
       matrix: $[ ${{ parameters.Matrix }} ]
       maxParallel: 12
@@ -165,7 +165,7 @@ jobs:
           exit 0
 
         displayName: Validate Clang Format
-        condition: and(succeededOrFailed(), eq(variables['CHECK_CLANG_FORMAT'], 1))
+        condition: and(not(canceled()), eq(variables['CHECK_CLANG_FORMAT'], 1))
 
       # Validate all the files are saved as ASCII only without a UTF-8 BOM.
       - bash: |
@@ -190,7 +190,7 @@ jobs:
           exit $files_with_non_ascii
         
         displayName: Validate Characters are ASCII
-        condition: and(succeededOrFailed(), eq(variables['CHECK_ASCII_CHARACTERS'], 1))
+        condition: and(not(canceled()), eq(variables['CHECK_ASCII_CHARACTERS'], 1))
 
       - ${{ each artifact in parameters.Artifacts }}:
         - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -259,7 +259,7 @@ jobs:
           $ErrorActionPreference = 'SilentlyContinue'
           get-content test-proxy.log
         displayName: TestProxy Log
-        condition: and(succeededOrFailed(), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
+        condition: and(not(canceled()), contains(variables.CmakeArgs, 'BUILD_TESTING=ON'),ne('${{parameters.ServiceDirectory}}', 'template'))
         workingDirectory: $(Build.SourcesDirectory)/sdk/${{parameters.ServiceDirectory}}
         continueOnError: true
 
@@ -272,7 +272,7 @@ jobs:
           mergeTestResults: true
           publishRunAttachments: true
         displayName: Publish test results
-        condition: succeededOrFailed()
+        condition: not(canceled())
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
@@ -290,14 +290,14 @@ jobs:
             $(ToolsDirectory)/reportgenerator "-reports:${{ parameters.CoverageReportPath }}" "-targetdir:." "-reporttypes:Cobertura"
           workingDirectory: build
           displayName: Generate Code Coverage Data
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
+          condition: and(not(canceled()), eq(variables['CODE_COVERAGE'], 'enabled'))
 
         - task: PublishCodeCoverageResults@1
           inputs:
             codeCoverageTool: Cobertura
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
+          condition: and(not(canceled()), eq(variables['CODE_COVERAGE'], 'enabled'))
 
         - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check line coverage
@@ -307,7 +307,7 @@ jobs:
             coverageType: line
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
+          condition: and(not(canceled()), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
         - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
           displayName: Check branch coverage
@@ -317,7 +317,7 @@ jobs:
             coverageType: branches
             # Minimum baseline for branch coverage
             coverageThreshold: ${{ parameters.BranchCoverageTarget }}
-          condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
+          condition: and(not(canceled()), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.BranchCoverageEnforcement'], ''))
 
       - task: Powershell@2
         inputs:

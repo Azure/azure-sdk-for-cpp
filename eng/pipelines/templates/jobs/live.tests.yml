@@ -132,7 +132,7 @@ jobs:
   # Install apt dependencies (if appropriate)
   - bash: sudo apt install -y $(AptDependencies)
     retryCountOnTaskFailure: 10
-    condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
+    condition: and(not(canceled()), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
   - template: /eng/pipelines/templates/steps/vcpkg.yml
@@ -143,7 +143,7 @@ jobs:
     displayName: Install coverage tools
     # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
     # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled)
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+    condition: and(not(canceled()), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/pipelines/templates/steps/cmake-build.yml
     parameters:
@@ -235,7 +235,7 @@ jobs:
       publishRunAttachments: true
     displayName: Publish test results
     # this step only makes sense when ctest has run
-    condition: and(succeededOrFailed(), ne(variables['RunSamples'], '1'))
+    condition: and(not(canceled()), ne(variables['RunSamples'], '1'))
 
 
   - ${{ if parameters.UseFederatedAuth }}:
@@ -316,7 +316,7 @@ jobs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
     displayName: Publish Code Coverage to DevOps
-    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+    condition: and(not(canceled()), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
 
   - template: /eng/common/TestResources/remove-test-resources.yml
     parameters:

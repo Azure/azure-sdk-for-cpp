@@ -41,7 +41,7 @@ jobs:
   timeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
   condition: >-
     and(
-      succeededOrFailed(),
+      not(canceled()),
       ne(variables['Skip.CMakeGenerate'], 'true'),
       ne(${{ parameters.Matrix }}, '{}')
     )
