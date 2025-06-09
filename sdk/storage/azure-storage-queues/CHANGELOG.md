@@ -1,16 +1,14 @@
 # Release History
 
-## 12.5.0-beta.1 (Unreleased)
+## 12.5.0-beta.1 (2025-06-11)
 
 ### Features Added
+
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
 
 ### Breaking Changes
 
 - `QueueProperties.ApproximateMessageCount` is deprecated. The value is `-1` if the value exceeds `INT32_MAX`. Use `QueueProperties.ApproximateMessageCountLong` instead.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.4.0 (2024-09-17)
 
