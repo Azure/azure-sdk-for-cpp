@@ -96,6 +96,8 @@ void SendRequest(
     request.SetHeader("User-Agent", "User-Agent");
     request.SetHeader("WWW-Authenticate", "WWW-Authenticate");
     request.SetHeader("x-ms-client-request-id", "x-ms-client-request-id");
+    request.SetHeader("x-ms-copy-source-error-code", "x-ms-copy-source-error-code");
+    request.SetHeader("x-ms-copy-source-status-code", "x-ms-copy-source-status-code");
     request.SetHeader("x-ms-date", "x-ms-date");
     request.SetHeader("x-ms-error-code", "x-ms-error-code");
     request.SetHeader("x-ms-range", "x-ms-range");
@@ -314,6 +316,8 @@ TEST(LogPolicy, DefaultHeaders)
       "\nuser-agent : User-Agent"
       "\nwww-authenticate : WWW-Authenticate"
       "\nx-ms-client-request-id : x-ms-client-request-id"
+      "\nx-ms-copy-source-error-code : x-ms-copy-source-error-code"
+      "\nx-ms-copy-source-status-code : x-ms-copy-source-status-code"
       "\nx-ms-date : x-ms-date"
       "\nx-ms-error-code : x-ms-error-code"
       "\nx-ms-range : x-ms-range"
