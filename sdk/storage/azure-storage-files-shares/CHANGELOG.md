@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- `ShareClient::DeleteIfExists()` will return `false` when ErrorCode is `ShareSnapshotNotFound`.
+- `ShareClient::DeleteIfExists()` will return `false` when error code is `ShareSnapshotNotFound`.
 - Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
 
 ## 12.14.0-beta.1 (2025-05-13)
