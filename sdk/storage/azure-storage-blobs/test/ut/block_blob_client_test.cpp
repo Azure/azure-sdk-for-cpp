@@ -2265,7 +2265,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
 
-  TEST_F(BlockBlobClientTest, InvalidVersionMessage_LIVEONLY_)
+  TEST_F(BlockBlobClientTest, InvalidVersionMessage)
   {
     Blobs::BlobClientOptions options;
     options.ApiVersion = "3015-11-11";
