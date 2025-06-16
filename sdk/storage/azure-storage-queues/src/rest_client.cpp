@@ -698,7 +698,7 @@ namespace Azure { namespace Storage { namespace Queues {
       Models::DeleteQueueResult response;
       return Response<Models::DeleteQueueResult>(std::move(response), std::move(pRawResponse));
     }
-    Response<Models::QueueProperties> QueueClient::GetProperties(
+    Response<Models::_detail::QueueProperties> QueueClient::GetProperties(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
         const GetQueuePropertiesOptions& options,
@@ -714,7 +714,7 @@ namespace Azure { namespace Storage { namespace Queues {
       {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
-      Models::QueueProperties response;
+      Models::_detail::QueueProperties response;
       for (auto i = pRawResponse->GetHeaders().lower_bound("x-ms-meta-");
            i != pRawResponse->GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
            ++i)
@@ -722,8 +722,9 @@ namespace Azure { namespace Storage { namespace Queues {
         response.Metadata.emplace(i->first.substr(10), i->second);
       }
       response.ApproximateMessageCount
-          = std::stoi(pRawResponse->GetHeaders().at("x-ms-approximate-messages-count"));
-      return Response<Models::QueueProperties>(std::move(response), std::move(pRawResponse));
+          = std::stoll(pRawResponse->GetHeaders().at("x-ms-approximate-messages-count"));
+      return Response<Models::_detail::QueueProperties>(
+          std::move(response), std::move(pRawResponse));
     }
     Response<Models::SetQueueMetadataResult> QueueClient::SetMetadata(
         Core::Http::_internal::HttpPipeline& pipeline,
