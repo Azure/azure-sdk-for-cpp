@@ -126,9 +126,9 @@ DefaultAzureCredential::DefaultAzureCredential(
       std::string devCredNames;
       {
         std::remove_const<decltype(devCredCount)>::type devCredNum = 0;
-        for (std::size_t i = 0; i < credentials.size(); ++i)
+        for (const auto& cred : credentials)
         {
-          if (!credentials[i].IsProd)
+          if (!cred.IsProd)
           {
             if (!devCredNames.empty())
             {
@@ -143,7 +143,7 @@ DefaultAzureCredential::DefaultAzureCredential(
               }
             }
 
-            devCredNames += credentials[i].CredentialName;
+            devCredNames += cred.CredentialName;
           }
         }
       }
