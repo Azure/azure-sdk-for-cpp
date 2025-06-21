@@ -150,9 +150,10 @@ DefaultAzureCredential::DefaultAzureCredential(
 
       const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
           + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
-          + ((devCredCount > 0) ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
-                                   + "be included in the credential chain.")
-                                : ".");
+          + ((devCredCount > 0)
+                 ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
+                    + "be included in the credential chain.")
+                 : ".");
 
       if (isProd)
       {
