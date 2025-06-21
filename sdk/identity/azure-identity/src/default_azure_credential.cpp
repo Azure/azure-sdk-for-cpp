@@ -13,6 +13,10 @@
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/strings.hpp>
 
+#include <array>
+#include <functional>
+#include <type_traits>
+
 using namespace Azure::Identity;
 using namespace Azure::Core::Credentials;
 
@@ -45,39 +49,143 @@ DefaultAzureCredential::DefaultAzureCredential(
   // Creating credentials in order to ensure the order of log messages.
   ChainedTokenCredential::Sources credentialChain;
   {
-    credentialChain.emplace_back(std::make_shared<EnvironmentCredential>(options));
-    credentialChain.emplace_back(std::make_shared<WorkloadIdentityCredential>(options));
-    credentialChain.emplace_back(std::make_shared<ManagedIdentityCredential>(options));
+    struct CredentialInfo
+    {
+      bool IsProd;
+      std::string CredentialName;
+      std::string EnvVarValue;
+      std::function<std::shared_ptr<Core::Credentials::TokenCredential>(
+          const Core::Credentials::TokenCredentialOptions&)>
+          Create;
+    };
+
+    static const std::array<CredentialInfo, 4> credentials = {
+        CredentialInfo{
+            true,
+            "EnvironmentCredential",
+            "Environment",
+            [](auto options) { return std::make_shared<EnvironmentCredential>(options); }},
+        CredentialInfo{
+            true,
+            "WorkloadIdentityCredential",
+            "WorkloadIdentity",
+            [](auto options) { return std::make_shared<WorkloadIdentityCredential>(options); }},
+        CredentialInfo{
+            true,
+            "ManagedIdentityCredential",
+            "ManagedIdentity",
+            [](auto options) { return std::make_shared<ManagedIdentityCredential>(options); }},
+        CredentialInfo{
+            false,
+            "AzureCliCredential",
+            "AzureCli",
+            [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
+    };
 
     constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
     const auto envVarValue = Environment::GetVariable(envVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
-    const auto isProd
-        = StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "prod");
-
-    const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
-        + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
-        + ", therefore AzureCliCredential will " + (isProd ? "NOT " : "")
-        + "be included in the credential chain.";
-
-    if (isProd)
+    bool specificCred = false;
+    if (!trimmedEnvVarValue.empty())
     {
-      IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
+      for (const auto& cred : credentials)
+      {
+        if (StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                trimmedEnvVarValue, cred.EnvVarValue))
+        {
+          specificCred = true;
+          IdentityLog::Write(
+              IdentityLog::Level::Verbose,
+              GetCredentialName() + ": '" + envVarName + "' environment variable is set to '"
+                  + envVarValue
+                  + "', therefore credential chain will only contain single credential: "
+                  + cred.CredentialName + '.');
+          credentialChain.emplace_back(cred.Create(options));
+          break;
+        }
+      }
     }
-    else if (
-        trimmedEnvVarValue.empty()
-        || StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "dev"))
+
+    if (!specificCred)
     {
-      IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
-      credentialChain.emplace_back(std::make_shared<AzureCliCredential>(options));
-    }
-    else
-    {
-      throw AuthenticationException(
-          GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
-          + "' environment variable. Allowed values are 'dev' and 'prod' (case insensitive). "
-            "It is also valid to not have the environment variable defined.");
+      for (const auto& cred : credentials)
+      {
+        if (cred.IsProd)
+        {
+          credentialChain.emplace_back(cred.Create(options));
+        }
+      }
+
+      const auto isProd
+          = StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "prod");
+
+      static const auto devCredCount = std::count_if(
+          credentials.begin(), credentials.end(), [](auto& cred) { return !cred.IsProd; });
+
+      std::string devCredNames;
+      {
+        std::remove_const<decltype(devCredCount)>::type devCredNum = 0;
+        for (std::size_t i = 0; i < credentials.size(); ++i)
+        {
+          if (!credentials[i].IsProd)
+          {
+            if (!devCredNames.empty())
+            {
+              if (devCredCount == 2)
+              {
+                devCredNames += " and ";
+              }
+              else
+              {
+                ++devCredNum;
+                devCredNames += (devCredNum < devCredCount) ? ", " : ", and ";
+              }
+            }
+
+            devCredNames += credentials[i].CredentialName;
+          }
+        }
+      }
+
+      const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
+          + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
+          + ((devCredCount > 0) ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
+                                   + "be included in the credential chain.")
+                                : ".");
+
+      if (isProd)
+      {
+        IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
+      }
+      else if (
+          trimmedEnvVarValue.empty()
+          || StringExtensions::LocaleInvariantCaseInsensitiveEqual(trimmedEnvVarValue, "dev"))
+      {
+        IdentityLog::Write(IdentityLog::Level::Verbose, logMsg);
+        for (const auto& cred : credentials)
+        {
+          if (!cred.IsProd)
+          {
+            credentialChain.emplace_back(cred.Create(options));
+          }
+        }
+      }
+      else
+      {
+        std::string allowedCredNames;
+        for (std::size_t i = 0; i < credentials.size(); ++i)
+        {
+          allowedCredNames += ((i < credentials.size() - 1) ? ", '" : ", and '")
+              + credentials[i].EnvVarValue + '\'';
+        }
+
+        throw AuthenticationException(
+            GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
+            + "' environment variable. Allowed values are 'dev', 'prod'" + allowedCredNames
+            + " (case insensitive). "
+              "It is also valid to not have the environment variable defined.");
+      }
     }
   }
 

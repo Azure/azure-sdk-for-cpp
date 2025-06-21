@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for more `AZURE_TOKEN_CREDENTIALS` environment variable values to specify a single credential type to use in `DefaultAzureCredential`: in addition to 'dev' and 'prod', possible values now include 'Environment', 'WorkloadIdentity', 'ManagedIdentity', and 'AzureCli' - each for the corresponding `*Credential` class.
+
 ### Breaking Changes
 
 ### Bugs Fixed
