@@ -185,6 +185,39 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(properties.Metadata.empty());
   }
 
+  TEST_F(QueueClientTest, ApproximateMessageCount)
+  {
+    int messageCount = 0;
+    m_queueClient->EnqueueMessage("test");
+    ++messageCount;
+    auto res = m_queueClient->GetProperties();
+    EXPECT_EQ(res.Value.ApproximateMessageCount, messageCount);
+    EXPECT_EQ(res.Value.ApproximateMessageCountLong, messageCount);
+
+    for (; messageCount < 10; ++messageCount)
+    {
+      m_queueClient->EnqueueMessage("test");
+    }
+    res = m_queueClient->GetProperties();
+    EXPECT_EQ(res.Value.ApproximateMessageCount, messageCount);
+    EXPECT_EQ(res.Value.ApproximateMessageCountLong, messageCount);
+  }
+
+  TEST_F(QueueClientTest, ApproximateMessageCountLong_PLAYBACKONLY_)
+  {
+    // Hardcode the x-ms-approximate-messages-count header to INT32_MAX in recording file.
+    m_queueClient->EnqueueMessage("test");
+    // Mock the recording file to INT32_MAX
+    auto res = m_queueClient->GetProperties();
+    EXPECT_EQ(res.Value.ApproximateMessageCount, INT32_MAX);
+    EXPECT_EQ(res.Value.ApproximateMessageCountLong, INT32_MAX);
+
+    // Hardcode the x-ms-approximate-messages-count header to INT64_MAX in recording file.
+    res = m_queueClient->GetProperties();
+    EXPECT_EQ(res.Value.ApproximateMessageCount, -1);
+    EXPECT_EQ(res.Value.ApproximateMessageCountLong, INT64_MAX);
+  }
+
   TEST_F(QueueClientTest, AccessControlList_LIVEONLY_)
   {
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();

@@ -2264,4 +2264,20 @@ namespace Azure { namespace Storage { namespace Test {
     blobProperties = versionClient.GetProperties().Value;
     EXPECT_TRUE(blobProperties.HasLegalHold);
   }
+
+  TEST_F(BlockBlobClientTest, InvalidVersionMessage)
+  {
+    Blobs::BlobClientOptions options;
+    options.ApiVersion = "3015-11-11";
+    auto blobClient = GetBlockBlobClientForTest(LowercaseRandomString(), options);
+    try
+    {
+      blobClient.Download();
+    }
+    catch (const StorageException& e)
+    {
+      EXPECT_EQ(e.ErrorCode, _internal::InvalidHeaderValueErrorCode);
+      EXPECT_EQ(e.Message, _internal::InvalidVersionHeaderMessage);
+    }
+  }
 }}} // namespace Azure::Storage::Test

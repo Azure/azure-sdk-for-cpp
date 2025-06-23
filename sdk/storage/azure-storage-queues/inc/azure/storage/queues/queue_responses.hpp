@@ -20,6 +20,32 @@ namespace Azure { namespace Storage { namespace Queues {
 
   class QueueServiceClient;
 
+  namespace Models {
+    /**
+     * @brief Response type for #Azure::Storage::Queues::QueueClient::GetProperties.
+     */
+    struct QueueProperties final
+    {
+      /**
+       * A set of name-value pairs associated with this queue.
+       */
+      Core::CaseInsensitiveMap Metadata;
+      /**
+       * The approximate number of messages in the queue. This number is not lower than the actual
+       * number of messages in the queue, but could be higher.
+       *
+       * This field is deprecated. The value is -1 if the value exceeds
+       * INT32_MAX.Use ApproximateMessageCountLong instead.
+       */
+      std::int32_t ApproximateMessageCount = std::int32_t();
+      /**
+       * The approximate number of messages in the queue. This number is not lower than the actual
+       * number of messages in the queue, but could be higher.
+       */
+      std::int64_t ApproximateMessageCountLong = std::int64_t();
+    };
+  } // namespace Models
+
   /**
    * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
    */
