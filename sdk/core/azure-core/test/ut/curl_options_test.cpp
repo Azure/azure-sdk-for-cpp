@@ -60,7 +60,11 @@ namespace Azure { namespace Core { namespace Test {
   }
 
   /******************************* SSL options. ************************/
-  TEST(CurlTransportOptions, noRevoke)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST(CurlConnectionPool, DISABLED_noRevoke)
+#else
+  TEST(CurlConnectionPool, noRevoke)
+#endif
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
@@ -197,7 +201,11 @@ namespace Azure { namespace Core { namespace Test {
   }
   */
 
-  TEST(CurlTransportOptions, sslVerifyOff)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST(CurlConnectionPool, DISABLED_sslVerifyOff)
+#else
+  TEST(CurlConnectionPool, sslVerifyOff)
+#endif
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     // If ssl verify is not disabled, this test would fail because the caInfo is not OK
@@ -295,7 +303,11 @@ namespace Azure { namespace Core { namespace Test {
 #endif
   }
 
-  TEST(CurlTransportOptions, httpsDefault)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST(CurlConnectionPool, DISABLED_httpsDefault)
+#else
+  TEST(CurlConnectionPool, httpsDefault)
+#endif
   {
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
     Azure::Core::Http::Policies::TransportOptions options;
@@ -327,7 +339,11 @@ namespace Azure { namespace Core { namespace Test {
                         .ConnectionPoolIndex.clear());
   }
 
-  TEST(CurlTransportOptions, disableKeepAlive)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST(CurlConnectionPool, DISABLED_disableKeepAlive)
+#else
+  TEST(CurlConnectionPool, disableKeepAlive)
+#endif
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.HttpKeepAlive = false;
@@ -365,7 +381,11 @@ namespace Azure { namespace Core { namespace Test {
         0);
   }
 
-  TEST(CurlTransportOptions, disableSslCaching)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST(CurlConnectionPool, DISABLED_disableSslCaching)
+#else
+  TEST(CurlConnectionPool, disableSslCaching)
+#endif
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.EnableCurlSslCaching = false;
@@ -401,5 +421,4 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
   }
-
 }}} // namespace Azure::Core::Test

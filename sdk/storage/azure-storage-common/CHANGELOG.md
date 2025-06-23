@@ -1,12 +1,10 @@
 # Release History
 
-## 12.11.0-beta.1 (Unreleased)
+## 12.12.0-beta.1 (2025-06-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
 
 ### Other Changes
 

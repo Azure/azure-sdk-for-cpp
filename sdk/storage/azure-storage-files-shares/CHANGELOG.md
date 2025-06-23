@@ -1,14 +1,11 @@
 # Release History
 
-## 12.14.0-beta.2 (Unreleased)
+## 12.15.0-beta.1 (2025-06-11)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- `ShareClient::DeleteIfExists()` will return `false` when error code is `ShareSnapshotNotFound`.
+- Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
 
 ## 12.14.0-beta.1 (2025-05-13)
 
