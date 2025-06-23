@@ -670,6 +670,6 @@ namespace Azure { namespace Core { namespace Test {
             0);
       }
     }
-#endif defined(DISABLE_HTTP_BIN_TESTS)
+#endif // defined(DISABLE_HTTP_BIN_TESTS)
 #endif
 }}} // namespace Azure::Core::Test
