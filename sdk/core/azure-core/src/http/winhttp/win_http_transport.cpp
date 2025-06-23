@@ -535,9 +535,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // possible that the `initiateAction` call is a call to `WinHttpSendRequest` which establishes the
     // SendContext.
     //
-    //// Before doing any work, check to make sure that the context hasn't already been
-    //// cancelled.
-    //context.ThrowIfCancelled();
 
     // By definition, there cannot be any actions outstanding at this point because we have not
     // yet called initiateAction. So it's safe to reset our state here.
