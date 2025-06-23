@@ -374,7 +374,6 @@ namespace Azure { namespace Core { namespace Test {
 #else
   TEST_P(TransportAdapter, createResponseT)
 #endif
-  TEST_P(TransportAdapter, createResponseT)
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     std::string expectedType("This is the Response Type");
