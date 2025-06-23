@@ -13,7 +13,6 @@
 #include <string>
 #include <thread>
 
-
 namespace Azure { namespace Core { namespace Test {
 
   using namespace Azure::Core::Json::_internal;
