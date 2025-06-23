@@ -199,7 +199,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize, expectedChunkResponse);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_putErrorResponse)
+#else
   TEST_P(TransportAdapter, putErrorResponse)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 

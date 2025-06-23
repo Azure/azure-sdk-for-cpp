@@ -13,6 +13,7 @@
 #include "azure/core/internal/json/json.hpp"
 #include "azure/core/platform.hpp"
 #include "azure/core/response.hpp"
+#include "transport_adapter_base_test.hpp"
 
 #include <iostream>
 #include <string>
@@ -23,10 +24,6 @@
 using namespace std::chrono_literals;
 
 namespace Azure { namespace Core { namespace Test {
-  namespace {
-    constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
-    constexpr static const char AzureSdkHttpbinHost[] = "azuresdkforcpp.azurewebsites.net";
-  } // namespace
   class TransportAdapterOptions : public ::testing::Test {
 
   public:
@@ -34,36 +31,36 @@ namespace Azure { namespace Core { namespace Test {
     {
       inline static std::string Get()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + "/get";
       }
       inline static std::string Headers()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + "/headers";
       }
       inline static std::string WithPort()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + ":443/get";
       }
       inline static std::string Put()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + "/put";
       }
       inline static std::string Delete()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + "/delete";
       }
       inline static std::string Patch()
       {
-        return std::string(AzureSdkHttpbinServerSchema) + "://" + std::string(AzureSdkHttpbinHost)
+        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://" + std::string(_detail::AzureSdkHttpbinServer)
             + "/patch";
       }
-      inline static std::string Host() { return std::string(AzureSdkHttpbinHost); }
-      inline static std::string Schema() { return std::string(AzureSdkHttpbinServerSchema); }
+      inline static std::string Host() { return std::string(_detail::AzureSdkHttpbinServer); }
+      inline static std::string Schema() { return std::string(_detail::AzureSdkHttpbinServerSchema); }
     };
 
     static Azure::Core::Http::_internal::HttpPipeline CreateHttpPipeline(
