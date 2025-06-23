@@ -532,8 +532,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     //
     // Note that we cannot check for cancellation before calling `initiateAction` because it's
-    // possible that the `initiateAction` call is a call to `WinHttpSendRequest` which establishes the
-    // SendContext.
+    // possible that the `initiateAction` call is a call to `WinHttpSendRequest` which establishes
+    // the SendContext.
     //
 
     // By definition, there cannot be any actions outstanding at this point because we have not
