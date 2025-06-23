@@ -19,12 +19,6 @@
 
 #include <gtest/gtest.h>
 
-#if defined(AZ_PLATFORM_MAC)
-#define DISABLE_HTTP_BIN_TESTS 1
-#endif
-
-#if !defined(DISABLE_HTTP_BIN_TESTS)
-
 namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
@@ -103,4 +97,3 @@ namespace Azure { namespace Core { namespace Test {
   };
 
 }}} // namespace Azure::Core::Test
-#endif // DISABLE_HTTP_BIN_TESTS

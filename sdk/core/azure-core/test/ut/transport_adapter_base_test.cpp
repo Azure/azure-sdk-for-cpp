@@ -16,7 +16,6 @@
 namespace Azure { namespace Core { namespace Test {
 
   using namespace Azure::Core::Json::_internal;
-#if !defined(DISABLE_HTTP_BIN_TESTS)
   TEST_P(TransportAdapter, get)
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -683,5 +682,4 @@ namespace Azure { namespace Core { namespace Test {
       EXPECT_STREQ(expectedBody.data(), bodyString.data());
     }
   }
-#endif // disable(DISABLE_HTTP_BIN_TESTS)
 }}} // namespace Azure::Core::Test
