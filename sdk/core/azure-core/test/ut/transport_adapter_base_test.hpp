@@ -12,11 +12,18 @@
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
+#include <azure/core/platform.hpp>
 
 #include <memory>
 #include <vector>
 
 #include <gtest/gtest.h>
+
+#if defined(AZ_PLATFORM_MAC)
+#define DISABLE_HTTP_BIN_TESTS 1
+#endif
+
+#if !defined(DISABLE_HTTP_BIN_TESTS)
 
 namespace Azure { namespace Core { namespace Test {
 
@@ -96,3 +103,4 @@ namespace Azure { namespace Core { namespace Test {
   };
 
 }}} // namespace Azure::Core::Test
+#endif // DISABLE_HTTP_BIN_TESTS

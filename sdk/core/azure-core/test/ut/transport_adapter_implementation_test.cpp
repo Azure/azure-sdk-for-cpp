@@ -18,6 +18,7 @@
 
 using testing::ValuesIn;
 
+#if !defined(DISABLE_HTTP_BIN_TESTS)
 namespace Azure { namespace Core { namespace Test {
 
   /**********************   Define the parameters for the base test and a suffix  ***************/
@@ -79,3 +80,4 @@ namespace Azure { namespace Core { namespace Test {
 #endif
 
 }}} // namespace Azure::Core::Test
+#endif // !defined(DISABLE_HTTP_BIN_TESTS)

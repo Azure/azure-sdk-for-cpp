@@ -41,7 +41,7 @@ namespace Azure { namespace Core { namespace Test {
 
 /***********************  Unique Tests for Libcurl   ********************************/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-
+#if !defined(DISABLE_HTTP_BIN_TESTS)
     TEST(CurlConnectionPool, connectionPoolTest)
     {
       {
@@ -670,5 +670,6 @@ namespace Azure { namespace Core { namespace Test {
             0);
       }
     }
+#endif defined(DISABLE_HTTP_BIN_TESTS)
 #endif
 }}} // namespace Azure::Core::Test

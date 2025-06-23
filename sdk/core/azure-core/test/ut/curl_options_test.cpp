@@ -28,6 +28,7 @@ namespace Azure { namespace Core { namespace Test {
 
   // proxy server can take some minutes to handle the request. Only testing HTTP proxy
   // Test is disabled until there is a reliable proxy to be used for CI111
+#if !defined(DISABLE_HTTP_BIN_TESTS)
   TEST(CurlTransportOptions, DISABLED_proxy)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
@@ -401,5 +402,6 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
   }
+#endif // DISABLE_HTTP_BIN_TESTS
 
 }}} // namespace Azure::Core::Test
