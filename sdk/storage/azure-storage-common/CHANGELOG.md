@@ -1,10 +1,11 @@
 # Release History
 
-## 12.12.0-beta.1 (2025-06-11)
+## 12.11.0-beta.1 (2025-06-24)
 
 ### Features Added
 
 - Added more useful error message when the SDK encounters an x-ms-version mis-match issue.
+- Bumped up Account SAS version to `2025-07-05`.
 
 ### Other Changes
 
