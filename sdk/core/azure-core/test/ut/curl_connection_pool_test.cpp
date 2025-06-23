@@ -607,7 +607,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-    TEST(CurlConnectionPool, forceConnectionClosed_DISABLED)
+    TEST(CurlConnectionPool, DISABLED_forceConnectionClosed)
 #else
     TEST(CurlConnectionPool, forceConnectionClosed)
 #endif
@@ -634,7 +634,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-    TEST(CurlConnectionPool, connectionClose_DISABLED)
+    TEST(CurlConnectionPool, DISABLED_connectionClose)
 #else
     TEST(CurlConnectionPool, connectionClose)
 #endif

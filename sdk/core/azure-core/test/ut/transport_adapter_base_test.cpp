@@ -18,7 +18,7 @@ namespace Azure { namespace Core { namespace Test {
   using namespace Azure::Core::Json::_internal;
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST_P(TransportAdapter, get_DISABLED)
+  TEST_P(TransportAdapter, DISABLED_get)
 #else
   TEST_P(TransportAdapter, get)
 #endif

@@ -428,7 +428,7 @@ namespace Azure { namespace Core { namespace Test {
 #endif // defined(ENABLE_PROXY_TESTS)
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST_F(TransportAdapterOptions, DisableCrlValidation_DISABLED)
+  TEST_F(TransportAdapterOptions, DISABLED_DisableCrlValidation)
 #else
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
 #endif

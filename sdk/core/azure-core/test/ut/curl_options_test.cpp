@@ -202,7 +202,7 @@ namespace Azure { namespace Core { namespace Test {
   */
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST(CurlConnectionPool, sslVerifyOff_DISABLED)
+  TEST(CurlConnectionPool, DISABLED_sslVerifyOff)
 #else
   TEST(CurlConnectionPool, sslVerifyOff)
 #endif
@@ -304,7 +304,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST(CurlConnectionPool, httpsDefault_DISABLED)
+  TEST(CurlConnectionPool, DISABLED_httpsDefault)
 #else
   TEST(CurlConnectionPool, httpsDefault)
 #endif
@@ -340,7 +340,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST(CurlConnectionPool, disableKeepAlive_DISABLED)
+  TEST(CurlConnectionPool, DISABLED_disableKeepAlive)
 #else
   TEST(CurlConnectionPool, disableKeepAlive)
 #endif
@@ -382,7 +382,7 @@ namespace Azure { namespace Core { namespace Test {
   }
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
-  TEST(CurlConnectionPool, disableSslCaching_DISABLED)
+  TEST(CurlConnectionPool, DISABLED_disableSslCaching)
 #else
   TEST(CurlConnectionPool, disableSslCaching)
 #endif
