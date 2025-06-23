@@ -398,7 +398,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_STREQ(result.data(), std::string("").data());
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_customSizePut)
+#else
   TEST_P(TransportAdapter, customSizePut)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
@@ -416,7 +420,11 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_putWithStreamOnFail)
+#else
   TEST_P(TransportAdapter, putWithStreamOnFail)
+#endif
   {
     // point to bad address pah to generate server MethodNotAllowed error
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -459,7 +467,11 @@ namespace Azure { namespace Core { namespace Test {
     t1.join();
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_redirectsNotFollowed)
+#else
   TEST_P(TransportAdapter, redirectsNotFollowed)
+#endif
   {
     // We don't expect the transport adapter to follow redirects automatically to this url.
     std::string redirectToUrl = AzureSdkHttpbinServer::ResponseHeaders("foo=bar");
@@ -608,7 +620,11 @@ namespace Azure { namespace Core { namespace Test {
   }
 #endif
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_SizePutFromFile)
+#else
   TEST_P(TransportAdapter, SizePutFromFile)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -633,7 +649,11 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_SizePutFromFileDefault)
+#else
   TEST_P(TransportAdapter, SizePutFromFileDefault)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
@@ -659,7 +679,11 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_SizePutFromFileBiggerPage)
+#else
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
