@@ -46,7 +46,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(jsonBody["headers"]["123"].get<std::string>(), std::string("456"));
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_get204)
+#else
   TEST_P(TransportAdapter, get204)
+#endif
   {
     Azure::Core::Url host("http://mt3.google.com/generate_204");
 
@@ -67,7 +71,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_getLoop)
+#else
   TEST_P(TransportAdapter, getLoop)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
@@ -83,7 +91,11 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_head)
+#else
   TEST_P(TransportAdapter, head)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
@@ -98,7 +110,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_GT(contentLengthHeader, 0);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_put)
+#else
   TEST_P(TransportAdapter, put)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
@@ -121,7 +137,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(responseJson["data"].get<std::string>(), bodyAsString);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_deleteRequest)
+#else
   TEST_P(TransportAdapter, deleteRequest)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
@@ -137,7 +157,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_patch)
+#else
   TEST_P(TransportAdapter, patch)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
@@ -153,7 +177,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_getChunk)
+#else
   TEST_P(TransportAdapter, getChunk)
+#endif
   {
     Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
@@ -192,7 +220,11 @@ namespace Azure { namespace Core { namespace Test {
   // ***Same tests but getting stream to pull from socket, simulating the Download Op
   // **********************
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_getWithStream)
+#else
   TEST_P(TransportAdapter, getWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
@@ -217,7 +249,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_EQ(jsonBody["headers"]["123"].get<std::string>(), std::string("456"));
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_getLoopWithStream)
+#else
   TEST_P(TransportAdapter, getLoopWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
@@ -233,7 +269,11 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_headWitHStream)
+#else
   TEST_P(TransportAdapter, headWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
@@ -248,7 +288,11 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_GT(contentLengthHeader, 0);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_putWithStream)
+#else
   TEST_P(TransportAdapter, putWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
@@ -264,7 +308,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromStream(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_deleteRequestWithStream)
+#else
   TEST_P(TransportAdapter, deleteRequestWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
@@ -280,7 +328,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromStream(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_patchWithStream)
+#else
   TEST_P(TransportAdapter, patchWithStream)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
@@ -317,6 +369,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromStream(*response, expectedResponseBodySize, expectedChunkResponse);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_createResponseT)
+#else
+  TEST_P(TransportAdapter, createResponseT)
+#endif
   TEST_P(TransportAdapter, createResponseT)
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
