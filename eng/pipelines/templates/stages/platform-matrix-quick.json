@@ -5,7 +5,7 @@
     "include": [
           {
             "StaticConfigs": {
-              "Ubuntu22": {
+              "Ubuntu": {
                 "OSVmImage": "env:LINUXVMIMAGE",
                 "Pool": "env:LINUXPOOL",
                 "VCPKG_DEFAULT_TRIPLET": "x64-linux",
