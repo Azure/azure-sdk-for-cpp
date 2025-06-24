@@ -53,7 +53,6 @@ DefaultAzureCredential::DefaultAzureCredential(
     {
       bool IsProd;
       std::string CredentialName;
-      std::string EnvVarValue;
       std::function<std::shared_ptr<Core::Credentials::TokenCredential>(
           const Core::Credentials::TokenCredentialOptions&)>
           Create;
@@ -63,22 +62,18 @@ DefaultAzureCredential::DefaultAzureCredential(
         CredentialInfo{
             true,
             "EnvironmentCredential",
-            "Environment",
             [](auto options) { return std::make_shared<EnvironmentCredential>(options); }},
         CredentialInfo{
             true,
             "WorkloadIdentityCredential",
-            "WorkloadIdentity",
             [](auto options) { return std::make_shared<WorkloadIdentityCredential>(options); }},
         CredentialInfo{
             true,
             "ManagedIdentityCredential",
-            "ManagedIdentity",
             [](auto options) { return std::make_shared<ManagedIdentityCredential>(options); }},
         CredentialInfo{
             false,
             "AzureCliCredential",
-            "AzureCli",
             [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
     };
 
@@ -92,7 +87,7 @@ DefaultAzureCredential::DefaultAzureCredential(
       for (const auto& cred : credentials)
       {
         if (StringExtensions::LocaleInvariantCaseInsensitiveEqual(
-                trimmedEnvVarValue, cred.EnvVarValue))
+                trimmedEnvVarValue, cred.CredentialName))
         {
           specificCred = true;
           IdentityLog::Write(
@@ -178,7 +173,7 @@ DefaultAzureCredential::DefaultAzureCredential(
         for (std::size_t i = 0; i < credentials.size(); ++i)
         {
           allowedCredNames += ((i < credentials.size() - 1) ? ", '" : ", and '")
-              + credentials[i].EnvVarValue + '\'';
+              + credentials[i].CredentialName + '\'';
         }
 
         throw AuthenticationException(

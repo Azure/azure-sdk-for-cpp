@@ -369,10 +369,10 @@ INSTANTIATE_TEST_SUITE_P(
     DefaultAzureCredential,
     LogMessagesForSpecificCredential,
     ::testing::Values(
-        SpecificCredentialInfo{"EnvironmentCredential", "eNvIrOnMeNt", 5},
-        SpecificCredentialInfo{"WorkloadIdentityCredential", "workloadidentity", 4},
-        SpecificCredentialInfo{"ManagedIdentityCredential", "MANAGEDIDENTITY", 8},
-        SpecificCredentialInfo{"AzureCliCredential", "  AzureCLI ", 4}));
+        SpecificCredentialInfo{"EnvironmentCredential", "eNvIrOnMeNtCrEdEnTiAl", 5},
+        SpecificCredentialInfo{"WorkloadIdentityCredential", "workloadidentitycredential", 4},
+        SpecificCredentialInfo{"ManagedIdentityCredential", "MANAGEDIDENTITYCREDENTIAL", 8},
+        SpecificCredentialInfo{"AzureCliCredential", "  AzureCLICredential ", 4}));
 
 TEST_P(LogMessagesForSpecificCredential, )
 {
