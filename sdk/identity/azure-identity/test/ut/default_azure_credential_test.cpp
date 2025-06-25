@@ -354,3 +354,171 @@ TEST_P(LogMessages, )
     Logger::SetListener(nullptr);
   }
 }
+
+struct SpecificCredentialInfo
+{
+  std::string CredentialName;
+  std::string EnvVarValue;
+  size_t ExpectedLogMsgCount;
+};
+
+class LogMessagesForSpecificCredential : public ::testing::TestWithParam<SpecificCredentialInfo> {
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    DefaultAzureCredential,
+    LogMessagesForSpecificCredential,
+    ::testing::Values(
+        SpecificCredentialInfo{"EnvironmentCredential", "eNvIrOnMeNtCrEdEnTiAl", 5},
+        SpecificCredentialInfo{"WorkloadIdentityCredential", "workloadidentitycredential", 4},
+        SpecificCredentialInfo{"ManagedIdentityCredential", "MANAGEDIDENTITYCREDENTIAL", 8},
+        SpecificCredentialInfo{"AzureCliCredential", "  AzureCLICredential ", 4}));
+
+TEST_P(LogMessagesForSpecificCredential, )
+{
+  const auto specificCredentialInfo = GetParam();
+
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+  try
+  {
+    CredentialTestHelper::EnvironmentOverride const env({
+        {"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+        {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+        {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+        {"AZURE_AUTHORITY_HOST", "https://microsoft.com/"},
+        {"AZURE_FEDERATED_TOKEN_FILE", "azure-identity-test.pem"},
+        {"AZURE_USERNAME", ""},
+        {"AZURE_PASSWORD", ""},
+        {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+        {"MSI_ENDPOINT", ""},
+        {"MSI_SECRET", ""},
+        {"IDENTITY_ENDPOINT", ""},
+        {"IMDS_ENDPOINT", ""},
+        {"IDENTITY_HEADER", ""},
+        {"IDENTITY_SERVER_THUMBPRINT", ""},
+        {"AZURE_TOKEN_CREDENTIALS", specificCredentialInfo.EnvVarValue},
+    });
+
+    static_cast<void>(std::make_unique<DefaultAzureCredential>());
+
+    EXPECT_EQ(log.size(), specificCredentialInfo.ExpectedLogMsgCount);
+    LogMsgVec::size_type i = 0;
+
+    EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: Creating DefaultAzureCredential which combines "
+        "multiple parameterless credentials into a single one."
+        "\nDefaultAzureCredential is only recommended for the early stages of development, "
+        "and not for usage in production environment."
+        "\nOnce the developer focuses on the Credentials "
+        "and Authentication aspects of their application, "
+        "DefaultAzureCredential needs to be replaced with the credential that "
+        "is the better fit for the application.");
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: DefaultAzureCredential: "
+        "'AZURE_TOKEN_CREDENTIALS' environment variable is set to '"
+            + specificCredentialInfo.EnvVarValue
+            + "', therefore credential chain will only contain single credential: "
+            + specificCredentialInfo.CredentialName + '.');
+
+    if (specificCredentialInfo.CredentialName == "EnvironmentCredential")
+    {
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: EnvironmentCredential gets created with ClientSecretCredential.");
+
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: EnvironmentCredential: 'AZURE_TENANT_ID', 'AZURE_CLIENT_ID', "
+          "'AZURE_CLIENT_SECRET', and 'AZURE_AUTHORITY_HOST' environment variables "
+          "are set, so ClientSecretCredential with corresponding "
+          "tenantId, clientId, clientSecret, and authorityHost gets created.");
+    }
+    else if (specificCredentialInfo.CredentialName == "WorkloadIdentityCredential")
+    {
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+      EXPECT_EQ(log.at(i).second, "Identity: WorkloadIdentityCredential was created successfully.");
+    }
+    else if (specificCredentialInfo.CredentialName == "ManagedIdentityCredential")
+    {
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: ManagedIdentityCredential: Environment is not set up "
+          "for the credential to be created with App Service 2019 source.");
+
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: ManagedIdentityCredential: Environment is not set up "
+          "for the credential to be created with App Service 2017 source.");
+
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: ManagedIdentityCredential: Environment is not set up "
+          "for the credential to be created with Cloud Shell source.");
+
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: ManagedIdentityCredential: Environment is not set up "
+          "for the credential to be created with Azure Arc source.");
+
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: ManagedIdentityCredential will be created "
+          "with Azure Instance Metadata Service source."
+          "\nSuccessful creation does not guarantee further successful token retrieval.");
+    }
+    else if (specificCredentialInfo.CredentialName == "AzureCliCredential")
+    {
+      ++i;
+      EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+      EXPECT_EQ(
+          log.at(i).second,
+          "Identity: AzureCliCredential created."
+          "\nSuccessful creation does not guarantee further successful token retrieval.");
+    }
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+    EXPECT_EQ(
+        log.at(i).second,
+        std::string(
+            "Identity: DefaultAzureCredential: Created with the following credentials: "
+            + specificCredentialInfo.CredentialName + '.'));
+
+    ++i;
+    EXPECT_EQ(i, log.size());
+
+    log.clear();
+  }
+  catch (...)
+  {
+    Logger::SetListener(nullptr);
+    throw;
+  }
+
+  Logger::SetListener(nullptr);
+}
