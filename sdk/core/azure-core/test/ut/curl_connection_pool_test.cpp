@@ -41,7 +41,11 @@ namespace Azure { namespace Core { namespace Test {
 
 /***********************  Unique Tests for Libcurl   ********************************/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
+#if _azure_DISABLE_HTTP_BIN_TESTS
+    TEST(CurlConnectionPool, DISABLED_connectionPoolTest)
+#else
     TEST(CurlConnectionPool, connectionPoolTest)
+#endif
     {
       {
         std::lock_guard<std::mutex> lock(

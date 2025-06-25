@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+Fixed WinHTTP FailFast exception raised when a request is cancelled before the request is actually sent on the wire.
+
 ### Other Changes
 
 ## 1.16.0-beta.1 (2025-06-05)
