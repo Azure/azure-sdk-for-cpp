@@ -1,6 +1,6 @@
 # Release History
 
-## 12.15.0-beta.1 (2025-06-11)
+## 12.15.0-beta.1 (2025-06-24)
 
 ### Features Added
 
