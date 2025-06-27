@@ -28,6 +28,7 @@
 // Define the class name that reads from ConnectionPool private members
 namespace Azure { namespace Core { namespace Test {
   class CurlConnectionPool_connectionPoolTest_Test;
+  class CurlConnectionPool_DISABLED_connectionPoolTest_Test;
   class CurlConnectionPool_uniquePort_Test;
   class CurlConnectionPool_connectionClose_Test;
   class SdkWithLibcurl_globalCleanUp_Test;
@@ -47,6 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 #if defined(_azure_TESTING_BUILD)
     // Give access to private to this tests class
     friend class Azure::Core::Test::CurlConnectionPool_connectionPoolTest_Test;
+    friend class Azure::Core::Test::CurlConnectionPool_DISABLED_connectionPoolTest_Test;
     friend class Azure::Core::Test::CurlConnectionPool_uniquePort_Test;
     friend class Azure::Core::Test::CurlConnectionPool_connectionClose_Test;
     friend class Azure::Core::Test::SdkWithLibcurl_globalCleanUp_Test;
