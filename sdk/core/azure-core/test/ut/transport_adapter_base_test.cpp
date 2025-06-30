@@ -446,7 +446,11 @@ namespace Azure { namespace Core { namespace Test {
     CheckBodyFromBuffer(*response, expectedResponseBodySize);
   }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+  TEST_P(TransportAdapter, DISABLED_cancelTransferUpload)
+#else
   TEST_P(TransportAdapter, cancelTransferUpload)
+#endif
   {
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     Azure::Core::Context cancelThis;
