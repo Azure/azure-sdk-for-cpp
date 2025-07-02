@@ -1,14 +1,19 @@
 # Release History
 
-## 1.12.0-beta.2 (Unreleased)
+## 1.12.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Added support for the `AZURE_TOKEN_CREDENTIALS` environment variable to `DefaultAzureCredential`, which allows for choosing between 'deployed service' and 'developer tool' credentials. Valid values are 'dev' for developer tools and 'prod' for deployed service.
 
 ### Bugs Fixed
 
+- [[#4952]](https://github.com/Azure/azure-sdk-for-cpp/issues/4952) Fixed `ManagedIdentityCredential` to fail fast if IMDS authentication is not available.
+- [[#4669]](https://github.com/Azure/azure-sdk-for-cpp/issues/4669) Fixed the order of credentials in `DefaultAzureCredential`: `ManagedIdentityCredential` before `AzureCliCredential`.
+
 ### Other Changes
+
+- Added support for overriding IMDS authority host in the `ManagedIdentityCredential` via `AZURE_POD_IDENTITY_AUTHORITY_HOST` environment variable.
 
 ## 1.12.0-beta.1 (2025-06-05)
 
