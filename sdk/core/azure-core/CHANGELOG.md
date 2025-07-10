@@ -1,14 +1,24 @@
 # Release History
 
-## 1.16.0-beta.2 (Unreleased)
+## 1.16.0 (2025-07-10)
 
 ### Features Added
 
-### Breaking Changes
+- [[#6535]](https://github.com/Azure/azure-sdk-for-cpp/issues/6535) Enable SSL caching for libcurl transport by default, which is backwards compatible behavior with older libcurl versions, so using the default settings won't result in transport error when using libcurl >= 8.12. The option is controlled by `CurlTransportOptions::EnableCurlSslCaching`, and is on by default. (A community contribution, courtesy of _[sushshring](https://github.com/sushshring)_)
 
 ### Bugs Fixed
 
+- Fixed WinHTTP FailFast exception raised when a request is cancelled before the request is actually sent on the wire.
+
 ### Other Changes
+
+- [[#4952]](https://github.com/Azure/azure-sdk-for-cpp/issues/4952) Added internal support to pass connection timeout via context.
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Sushrut Shringarputale _([GitHub](https://github.com/sushshring))_
 
 ## 1.16.0-beta.1 (2025-06-05)
 

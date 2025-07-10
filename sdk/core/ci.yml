@@ -58,6 +58,7 @@ extends:
       PreTestSteps:
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
+          displayName: Test-Setup for azure-core-amqp
           env:
             TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
