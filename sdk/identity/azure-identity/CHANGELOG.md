@@ -1,16 +1,10 @@
 # Release History
 
-## 1.13.0-beta.1 (Unreleased)
+## 1.13.0-beta.1 (2025-07-15)
 
 ### Features Added
 
 - Added support for more `AZURE_TOKEN_CREDENTIALS` environment variable values to specify a single credential type to use in `DefaultAzureCredential`. In addition to `dev` and `prod`, possible values now include `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, and `AzureCliCredential` - each for the corresponding credential type.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.12.0 (2025-07-10)
 
