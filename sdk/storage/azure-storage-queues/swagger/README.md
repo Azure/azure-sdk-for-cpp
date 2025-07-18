@@ -278,6 +278,7 @@ directive:
         "type": "object",
         "x-ms-client-name": "QueueProperties",
         "x-ms-sealed": false,
+        "x-namespace": "_detail",
         "properties": {"__placeHolder": {"type": "integer"}}
       };
 ```

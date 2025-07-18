@@ -41,8 +41,11 @@ namespace Azure { namespace Core { namespace Test {
 
 /***********************  Unique Tests for Libcurl   ********************************/
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
-
+#if _azure_DISABLE_HTTP_BIN_TESTS
+    TEST(CurlConnectionPool, DISABLED_connectionPoolTest)
+#else
     TEST(CurlConnectionPool, connectionPoolTest)
+#endif
     {
       {
         std::lock_guard<std::mutex> lock(
@@ -607,7 +610,11 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+    TEST(CurlConnectionPool, DISABLED_forceConnectionClosed)
+#else
     TEST(CurlConnectionPool, forceConnectionClosed)
+#endif
     {
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Status(101)));
@@ -630,7 +637,11 @@ namespace Azure { namespace Core { namespace Test {
       }
     }
 
+#if _azure_DISABLE_HTTP_BIN_TESTS
+    TEST(CurlConnectionPool, DISABLED_connectionClose)
+#else
     TEST(CurlConnectionPool, connectionClose)
+#endif
     {
       /// When getting the header connection: close from an HTTP response, the connection should not
       /// be moved back to the pool.

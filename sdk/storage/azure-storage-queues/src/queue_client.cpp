@@ -165,8 +165,22 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     (void)options;
     _detail::QueueClient::GetQueuePropertiesOptions protocolLayerOptions;
-    return _detail::QueueClient::GetProperties(
+    auto ret = _detail::QueueClient::GetProperties(
         *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+    Models::QueueProperties queueProperties;
+    queueProperties.Metadata = std::move(ret.Value.Metadata);
+    if (ret.Value.ApproximateMessageCount > static_cast<int64_t>(INT32_MAX))
+    {
+      queueProperties.ApproximateMessageCount = -1;
+    }
+    else
+    {
+      queueProperties.ApproximateMessageCount
+          = static_cast<std::int32_t>(ret.Value.ApproximateMessageCount);
+    }
+    queueProperties.ApproximateMessageCountLong = ret.Value.ApproximateMessageCount;
+    return Azure::Response<Models::QueueProperties>(
+        std::move(queueProperties), std::move(ret.RawResponse));
   }
 
   Azure::Response<Models::SetQueueMetadataResult> QueueClient::SetMetadata(
