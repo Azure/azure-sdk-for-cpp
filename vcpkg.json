@@ -1,7 +1,7 @@
 {
   "name": "azure-sdk-for-cpp",
   "version": "1.5.0",
-  "builtin-baseline": "2c7705e70dcfb70e5f726459c3e399bd780bc1fc",
+  "builtin-baseline": "ef7dbf94b9198bc58f45951adcf1f041fcbc5ea0",
   "dependencies": [
     {
       "name": "curl"
@@ -16,7 +16,9 @@
     },
     {
       "name": "opentelemetry-cpp",
-      "features": ["otlp-http"],
+      "features": [
+        "otlp-http"
+      ],
       "platform": "!(windows & !static)",
       "version>=": "1.3.0"
     },
@@ -37,6 +39,5 @@
       "platform": "!uwp"
     }
   ],
-  "overrides": [
-  ]
+  "overrides": []
 }
