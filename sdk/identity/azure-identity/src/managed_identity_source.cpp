@@ -5,6 +5,7 @@
 
 #include "private/identity_log.hpp"
 
+#include <azure/core/http/http_status_code.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/core/internal/environment.hpp>
 #include <azure/core/platform.hpp>
@@ -117,6 +118,26 @@ void ValidateArcKeyFile(std::string const& fileName)
   {
     throw AuthenticationException("Failed to get file size for '" + fileName + "'.");
   }
+}
+
+// Create IMDS-specific retry options that handle HTTP 410 responses with sufficient retry duration
+Azure::Core::Credentials::TokenCredentialOptions CreateImdsRetryOptions(
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+{
+  using Azure::Core::Http::HttpStatusCode;
+  
+  auto imdsOptions = options;
+  
+  // Add HTTP 410 (Gone) to the retryable status codes for IMDS
+  // According to Azure docs, IMDS returns 410 for the first 70 seconds when not ready
+  imdsOptions.Retry.StatusCodes.insert(HttpStatusCode::Gone);
+  
+  // Increase MaxRetries to ensure we can retry for at least 70 seconds when encountering 410
+  // With exponential backoff: 800ms + 1.6s + 3.2s + 6.4s + 12.8s + 25.6s + 51.2s = ~101s total
+  // This ensures we retry for longer than the required 70 seconds
+  imdsOptions.Retry.MaxRetries = 6;
+  
+  return imdsOptions;
 }
 } // namespace
 
@@ -494,6 +515,8 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
   });
 }
 
+} // namespace
+
 std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
@@ -539,7 +562,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& resourceId,
     Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentitySource(clientId, std::string(), options),
+    : ManagedIdentitySource(clientId, std::string(), CreateImdsRetryOptions(options)),
       m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
@@ -566,8 +589,10 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
 
   m_request.SetHeader("Metadata", "true");
 
-  Core::Credentials::TokenCredentialOptions firstRequestOptions = options;
-  firstRequestOptions.Retry.MaxRetries = 0;
+  // Configure first request to handle HTTP 410 (Gone) responses
+  // According to Azure docs, IMDS returns 410 for the first 70 seconds when not ready
+  // We need to allow retries for 410 responses to meet the 70-second requirement
+  Core::Credentials::TokenCredentialOptions firstRequestOptions = CreateImdsRetryOptions(options);
   m_firstRequestPipeline = std::make_unique<TokenCredentialImpl>(firstRequestOptions);
   m_firstRequestSucceeded = false;
 }
@@ -608,7 +633,7 @@ Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(
       {
         const auto token = m_firstRequestPipeline->GetToken(
             context.WithValue(
-                Core::Http::_internal::HttpConnectionTimeout, ImdsFirstRequestConnectionTimeout),
+                Azure::Core::Http::_internal::HttpConnectionTimeout, ImdsFirstRequestConnectionTimeout),
             true,
             createRequest);
 
