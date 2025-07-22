@@ -10,6 +10,12 @@
 
 ### Other Changes
 
+## 12.14.0 (2025-07-21)
+
+### Features Added
+
+- Features in `12.14.0-beta.1` are now generally available.
+
 ## 12.15.0-beta.1 (2025-06-24)
 
 ### Features Added
