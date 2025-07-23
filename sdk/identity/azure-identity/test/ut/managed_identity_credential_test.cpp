@@ -3193,4 +3193,213 @@ namespace Azure { namespace Identity { namespace Test {
     Logger::SetListener(nullptr);
   }
 
+  TEST(ManagedIdentityCredential, ImdsHttp410Retry)
+  {
+    // Test that IMDS properly retries HTTP 410 responses and eventually succeeds
+    using Azure::Core::Diagnostics::Logger;
+    using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+    LogMsgVec log;
+    Logger::SetLevel(Logger::Level::Verbose);
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      auto const actual = CredentialTestHelper::SimulateTokenRequest(
+          [&](auto transport) {
+            TokenCredentialOptions options;
+            options.Transport.Transport = transport;
+
+            CredentialTestHelper::EnvironmentOverride const env({
+                {"MSI_ENDPOINT", ""},
+                {"MSI_SECRET", ""},
+                {"IDENTITY_ENDPOINT", ""},
+                {"IMDS_ENDPOINT", ""},
+                {"IDENTITY_HEADER", ""},
+                {"IDENTITY_SERVER_THUMBPRINT", ""},
+            });
+
+            return std::make_unique<ManagedIdentityCredential>(options);
+          },
+          {{"https://azure.com/.default"}},
+          std::vector<CredentialTestHelper::TokenRequestSimulationServerResponse>{
+              {HttpStatusCode::Gone, "{\"error\":\"not_ready\"}", {}},
+              {HttpStatusCode::Gone, "{\"error\":\"not_ready\"}", {}},
+              {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}});
+
+      // Should make 3 requests: 2 HTTP 410 retries + 1 successful
+      EXPECT_EQ(actual.Requests.size(), 3U);
+      EXPECT_EQ(actual.Responses.size(), 1U);
+
+      // All requests should be to the IMDS endpoint
+      for (const auto& request : actual.Requests)
+      {
+        EXPECT_EQ(request.HttpMethod, HttpMethod::Get);
+        EXPECT_TRUE(request.AbsoluteUrl.find("169.254.169.254") != std::string::npos);
+        EXPECT_NE(request.Headers.find("Metadata"), request.Headers.end());
+        EXPECT_EQ(request.Headers.at("Metadata"), "true");
+      }
+
+      // Should get successful token response
+      EXPECT_EQ(actual.Responses.at(0).AccessToken.Token, "ACCESSTOKEN1");
+    }
+    catch (...)
+    {
+      Logger::SetListener(nullptr);
+      throw;
+    }
+
+    Logger::SetListener(nullptr);
+  }
+
+  TEST(ManagedIdentityCredential, ImdsRetryDuration)
+  {
+    // Test that IMDS retry policy provides sufficient duration for 70+ second requirement
+    using Azure::Core::Diagnostics::Logger;
+    using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+    LogMsgVec log;
+    Logger::SetLevel(Logger::Level::Verbose);
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      // Create 7 HTTP 410 responses (6 retries + initial attempt) followed by success
+      std::vector<CredentialTestHelper::TokenRequestSimulationServerResponse> responses;
+      for (int i = 0; i < 7; ++i)
+      {
+        responses.push_back({HttpStatusCode::Gone, "{\"error\":\"not_ready\"}", {}});
+      }
+      responses.push_back({HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}});
+
+      auto const actual = CredentialTestHelper::SimulateTokenRequest(
+          [&](auto transport) {
+            TokenCredentialOptions options;
+            options.Transport.Transport = transport;
+
+            CredentialTestHelper::EnvironmentOverride const env({
+                {"MSI_ENDPOINT", ""},
+                {"MSI_SECRET", ""},
+                {"IDENTITY_ENDPOINT", ""},
+                {"IMDS_ENDPOINT", ""},
+                {"IDENTITY_HEADER", ""},
+                {"IDENTITY_SERVER_THUMBPRINT", ""},
+            });
+
+            return std::make_unique<ManagedIdentityCredential>(options);
+          },
+          {{"https://azure.com/.default"}},
+          responses);
+
+      // Should make 7 requests (6 retries + initial) and then succeed on the 8th
+      EXPECT_EQ(actual.Requests.size(), 7U);
+      EXPECT_EQ(actual.Responses.size(), 1U);
+
+      // Verify we get a successful token response after all the retries
+      EXPECT_EQ(actual.Responses.at(0).AccessToken.Token, "ACCESSTOKEN1");
+    }
+    catch (...)
+    {
+      Logger::SetListener(nullptr);
+      throw;
+    }
+
+    Logger::SetListener(nullptr);
+  }
+
+  TEST(ManagedIdentityCredential, ImdsHttp410RetryExhaustion)
+  {
+    // Test that IMDS eventually fails when all retries return HTTP 410
+    using Azure::Core::Diagnostics::Logger;
+    using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+    LogMsgVec log;
+    Logger::SetLevel(Logger::Level::Verbose);
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      // Create 8 HTTP 410 responses (more than the 6 max retries + initial attempt)
+      std::vector<CredentialTestHelper::TokenRequestSimulationServerResponse> responses;
+      for (int i = 0; i < 8; ++i)
+      {
+        responses.push_back({HttpStatusCode::Gone, "{\"error\":\"not_ready\"}", {}});
+      }
+
+      EXPECT_THROW(
+          CredentialTestHelper::SimulateTokenRequest(
+              [&](auto transport) {
+                TokenCredentialOptions options;
+                options.Transport.Transport = transport;
+
+                CredentialTestHelper::EnvironmentOverride const env({
+                    {"MSI_ENDPOINT", ""},
+                    {"MSI_SECRET", ""},
+                    {"IDENTITY_ENDPOINT", ""},
+                    {"IMDS_ENDPOINT", ""},
+                    {"IDENTITY_HEADER", ""},
+                    {"IDENTITY_SERVER_THUMBPRINT", ""},
+                });
+
+                return std::make_unique<ManagedIdentityCredential>(options);
+              },
+              {{"https://azure.com/.default"}},
+              responses),
+          Azure::Identity::AuthenticationException);
+    }
+    catch (...)
+    {
+      Logger::SetListener(nullptr);
+      throw;
+    }
+
+    Logger::SetListener(nullptr);
+  }
+
+  TEST(ManagedIdentityCredential, ImdsRetryOtherStatusCodes)
+  {
+    // Test that other retryable status codes still work correctly with IMDS
+    using Azure::Core::Diagnostics::Logger;
+    using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+    LogMsgVec log;
+    Logger::SetLevel(Logger::Level::Verbose);
+    Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+
+    try
+    {
+      auto const actual = CredentialTestHelper::SimulateTokenRequest(
+          [&](auto transport) {
+            TokenCredentialOptions options;
+            options.Transport.Transport = transport;
+
+            CredentialTestHelper::EnvironmentOverride const env({
+                {"MSI_ENDPOINT", ""},
+                {"MSI_SECRET", ""},
+                {"IDENTITY_ENDPOINT", ""},
+                {"IMDS_ENDPOINT", ""},
+                {"IDENTITY_HEADER", ""},
+                {"IDENTITY_SERVER_THUMBPRINT", ""},
+            });
+
+            return std::make_unique<ManagedIdentityCredential>(options);
+          },
+          {{"https://azure.com/.default"}},
+          std::vector<CredentialTestHelper::TokenRequestSimulationServerResponse>{
+              {HttpStatusCode::TooManyRequests, "", {}},
+              {HttpStatusCode::InternalServerError, "", {}},
+              {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}}});
+
+      // Should make 3 requests: 2 retries + 1 successful
+      EXPECT_EQ(actual.Requests.size(), 3U);
+      EXPECT_EQ(actual.Responses.size(), 1U);
+
+      // Should get successful token response
+      EXPECT_EQ(actual.Responses.at(0).AccessToken.Token, "ACCESSTOKEN1");
+    }
+    catch (...)
+    {
+      Logger::SetListener(nullptr);
+      throw;
+    }
+
+    Logger::SetListener(nullptr);
+  }
+
 }}} // namespace Azure::Identity::Test

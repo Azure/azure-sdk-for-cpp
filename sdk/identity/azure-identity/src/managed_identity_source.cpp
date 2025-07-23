@@ -515,8 +515,6 @@ Azure::Core::Credentials::AccessToken AzureArcManagedIdentitySource::GetToken(
   });
 }
 
-} // namespace
-
 std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& credName,
     std::string const& clientId,
