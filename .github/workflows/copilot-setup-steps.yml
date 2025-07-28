@@ -17,4 +17,5 @@ jobs:
         shell: pwsh
         run: |
           ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $HOME/bin
-
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
