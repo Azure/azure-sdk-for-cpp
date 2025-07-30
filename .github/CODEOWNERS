@@ -48,12 +48,12 @@
 # PRLabel: %Event Hubs
 /sdk/eventhubs/           @LarryOsterman @antkmsft @RickWinter
 
-# AzureSdkOwners: @rickwinter
+# AzureSdkOwners: @rickwinter @Azure/azure-sdk-write-keyvault
 # ServiceLabel:  %KeyVault
-# ServiceOwners:         @cheathamb36 @chen-karen @lgonsoulin
+# ServiceOwners:         @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %KeyVault
-/sdk/keyvault/           @antkmsft @rickwinter @LarryOsterman
+/sdk/keyvault/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-keyvault
 
 # ServiceOwners:@vinjiang @Jinming-Hu @microzchang
 # ServiceLabel: %Storage
