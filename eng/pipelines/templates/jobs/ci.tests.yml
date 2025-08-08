@@ -308,7 +308,7 @@ jobs:
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@8
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@10
           displayName: Check branch coverage
           inputs:
             checkCoverage: true
