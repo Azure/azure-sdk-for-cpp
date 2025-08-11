@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg97base/specification/storage/data-plane/Microsoft.FileStorage/stable/2025-05-05/file.json
+input-file: https://raw.githubusercontent.com/microzchang/azure-rest-api-specs/refs/heads/stg100/features/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-02-06/file.json
 ```
 
 ## ModelFour Options
@@ -80,12 +80,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2025-05-05"]
+        "enum": ["2026-02-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2025-05-05";
+      $.ApiVersionParameter.enum[0] = "2026-02-06";
 ```
 
 ### Rename Operations
@@ -207,6 +207,10 @@ directive:
           });
         }
       }
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.KeyInfo["x-namespace"] = "_detail";
 ```
 
 ### Global Changes for Definitions, Types etc.
@@ -234,6 +238,7 @@ directive:
       $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
       $.FilePermissionFormat["enum"] = ["sddl", "binary"];
       $.FileAttributes["required"] = true;
+      $.EnableSmbDirectoryLease["x-ms-client-name"] = "EnableDirectoryLease";
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -319,6 +324,26 @@ directive:
       delete $.StringEncoded.properties["content"]["xml"];
       $.StringEncoded["xml"] = {"name": "Name"};
       $.StringEncoded.properties["content"]["x-ms-xml"] = {"name": "."};
+      $.SmbEncryptionInTransit = {
+          "description": "Enable or disable encryption in transit.",
+          "type": "object",
+          "properties": {
+            "Required": {
+              "description": "If encryption in transit is required",
+              "type": "boolean"
+          }
+        }
+      };
+      $.NfsEncryptionInTransit = {
+          "description": "Enable or disable encryption in transit.",
+          "type": "object",
+          "properties": {
+            "Required": {
+              "description": "If encryption in transit is required",
+              "type": "boolean"
+          }
+        }
+      };
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
@@ -351,10 +376,25 @@ directive:
       $.Metrics.properties["IncludeAPIs"]["x-nullable"] = true;
       $.SmbSettings = $.ShareSmbSettings;
       delete $.ShareSmbSettings;
+      delete $.SmbSettings.properties["EncryptionInTransit"];
+      $.SmbSettings.properties["EncryptionInTransit"] = { "$ref": "#/definitions/SmbEncryptionInTransit" };
+      $.SmbSettings.properties["EncryptionInTransit"]["x-ms-client-name"] = "EncryptionInTransit";
+      $.SmbSettings.properties["EncryptionInTransit"]["x-nullable"] = true;
       $.ShareProtocolSettings.properties["Smb"]["$ref"] = "#/definitions/SmbSettings";
       $.ShareProtocolSettings.properties["Settings"] = $.ShareProtocolSettings.properties["Smb"];
       $.ShareProtocolSettings.properties["Settings"]["x-ms-xml"] = { "name": "SMB" };
       delete $.ShareProtocolSettings.properties["Smb"];
+      $.NfsSettings = $.ShareNfsSettings;
+      delete $.ShareNfsSettings;
+      delete $.NfsSettings.properties["EncryptionInTransit"];
+      $.NfsSettings.properties["EncryptionInTransit"] = { "$ref": "#/definitions/NfsEncryptionInTransit" };
+      $.NfsSettings.properties["EncryptionInTransit"]["x-ms-client-name"] = "EncryptionInTransit";
+      $.NfsSettings.properties["EncryptionInTransit"]["x-nullable"] = true;
+      $.ShareProtocolSettings.properties["Nfs"]["$ref"] = "#/definitions/NfsSettings";
+      $.ShareProtocolSettings.properties["NfsSettings"] = $.ShareProtocolSettings.properties["Nfs"];
+      $.ShareProtocolSettings.properties["NfsSettings"]["x-ms-xml"] = { "name": "NFS" };
+      $.ShareProtocolSettings.properties["NfsSettings"]["x-nullable"] = true;
+      delete $.ShareProtocolSettings.properties["Nfs"];
       $.ProtocolSettings = $.ShareProtocolSettings;
       delete $.ShareProtocolSettings;
       $.StorageServiceProperties.properties["Protocol"]["$ref"] = "#/definitions/ProtocolSettings";
@@ -407,6 +447,19 @@ directive:
       };
 ```
 
+### GetUserDelegationKey
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.UserDelegationKey.properties["SignedOid"]["x-ms-client-name"] = "SignedObjectId";
+      $.UserDelegationKey.properties["SignedTid"]["x-ms-client-name"] = "SignedTenantId";
+      $.UserDelegationKey.properties["SignedStart"]["x-ms-client-name"] = "SignedStartsOn";
+      $.UserDelegationKey.properties["SignedExpiry"]["x-ms-client-name"] = "SignedExpiresOn";
+```
+
 ### ListShares
 
 ```yaml
@@ -425,6 +478,7 @@ directive:
       $.ShareItemInternal.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
       $.ShareItemInternal["x-ms-client-name"] = "ShareItem";
       $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
+      $.ShareItemDetails.properties["EnableSmbDirectoryLease"]["x-ms-client-name"] = "EnableDirectoryLease";
       delete $.ShareItemInternal.properties["Properties"];
       delete $.ShareItemInternal.required;
 ```
@@ -508,6 +562,8 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
+      $.headers["x-ms-enable-smb-directory-lease"]["x-ms-client-name"] = "EnableDirectoryLease";
+      $.headers["x-ms-enable-smb-directory-lease"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "ShareProperties",
@@ -784,6 +840,8 @@ directive:
       $.headers["x-ms-owner"]["x-nullable"] = true;
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
+      $.headers["Content-MD5"]["x-nullable"] = true;
+      $.headers["Content-Length"]["x-nullable"] = true;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "CreateFileResult",

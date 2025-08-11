@@ -9,7 +9,7 @@ package-name: azure-storage-queues
 namespace: Azure::Storage::Queues
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.QueueStorage/stable/2018-03-28/queue.json
+input-file: https://raw.githubusercontent.com/microzchang/azure-rest-api-specs/refs/heads/stg100/features/specification/storage/data-plane/Microsoft.QueueStorage/stable/2026-02-06/queue.json
 ```
 
 ## ModelFour Options
@@ -77,13 +77,13 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"],
+        "enum": ["2026-02-06"],
         "description": "The version used for the operations to Azure storage services."
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum[0] = "2026-02-06";
 ```
 
 ### Rename Operations
@@ -136,6 +136,10 @@ directive:
           });
         }
       }
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.KeyInfo["x-namespace"] = "_detail";
 ```
 
 ### Global Changes for Definitions, Types etc.
@@ -200,6 +204,19 @@ directive:
     where: $["x-ms-paths"]["/?restype=service&comp=stats"]
     transform: >
       $.get.responses["200"].schema["$ref"] = "#/definitions/ServiceStatistics";
+```
+
+### GetUserDelegationKey
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.UserDelegationKey.properties["SignedOid"]["x-ms-client-name"] = "SignedObjectId";
+      $.UserDelegationKey.properties["SignedTid"]["x-ms-client-name"] = "SignedTenantId";
+      $.UserDelegationKey.properties["SignedStart"]["x-ms-client-name"] = "SignedStartsOn";
+      $.UserDelegationKey.properties["SignedExpiry"]["x-ms-client-name"] = "SignedExpiresOn";
 ```
 
 ### ListQueues

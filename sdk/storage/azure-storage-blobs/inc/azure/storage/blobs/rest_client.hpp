@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2025-07-05";
+    constexpr static const char* ApiVersion = "2026-02-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -1756,8 +1756,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The tier of page blob on a premium storage account or tier of block blob on blob storage
        * LRS accounts. For a list of allowed premium page blob tiers, see
-       * https://docs.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
-       * For blob storage LRS accounts, valid values are Hot/Cool/Archive.
+       * https://learn.microsoft.com/azure/virtual-machines/disks-types#premium-ssd. For blob
+       * storage LRS accounts, valid values are Hot/Cool/Archive.
        */
       Nullable<Models::AccessTier> AccessTier;
       /**
@@ -3474,6 +3474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Marker;
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
+        Nullable<std::string> StartFrom;
       };
       static Response<Models::_detail::ListBlobsResult> ListBlobs(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3487,6 +3488,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Marker;
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
+        Nullable<std::string> StartFrom;
         Nullable<std::string> ShowOnly;
       };
       static Response<Models::_detail::ListBlobsByHierarchyResult> ListBlobsByHierarchy(
@@ -3859,6 +3861,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> VersionId;
         Nullable<std::string> IfTags;
         Nullable<std::string> LeaseId;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        Nullable<std::string> IfMatch;
+        Nullable<std::string> IfNoneMatch;
       };
       static Response<std::map<std::string, std::string>> GetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3873,6 +3879,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> IfTags;
         Nullable<std::string> LeaseId;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        Nullable<std::string> IfMatch;
+        Nullable<std::string> IfNoneMatch;
       };
       static Response<Models::SetBlobTagsResult> SetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
