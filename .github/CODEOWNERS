@@ -28,9 +28,9 @@
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity
 
-###########
-# Client SDKs
-###########
+####################
+# Client Libraries
+####################
 
 # PRLabel: %App Configuration
 /sdk/appconfiguration/                                             @LarryOsterman @antkmsft @RickWinter
@@ -81,6 +81,10 @@
 # ServiceLabel: %Tables
 # AzureSdkOwners: @rickwinter
 # ServiceOwners: @LarryOsterman @antkmsft
+
+####################
+# Management Libraries
+####################
 
 ###########
 # Eng Sys
