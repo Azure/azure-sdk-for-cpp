@@ -436,6 +436,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * storage GiB.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
+      /**
+       * Specifies whether granting of new directory leases for directories present in a share is
+       * enabled(allowed) or disabled(blocked). Header is only returned for a SMB Share.
+       */
       Nullable<bool> EnableDirectoryLease;
     };
     /**

@@ -1276,6 +1276,7 @@ directive:
       $.ShareItemDetails.properties["MaxBurstCreditsForIops"].description = "Return the calculated maximum burst credits. This is not the current burst credit level, but the maximum burst credits the share can have.";
       $.ShareItemDetails.properties["NextAllowedProvisionedIopsDowngradeTime"].description = "Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.";
       $.ShareItemDetails.properties["NextAllowedProvisionedBandwidthDowngradeTime"].description = "Return timestamp for provisioned throughput following existing rules for provisioned storage GiB.";
+      $.ShareItemDetails.properties["EnableSmbDirectoryLease"].description = "Specifies whether granting of new directory leases for directories present in a share is enabled(allowed) or disabled(blocked). Header is only returned for a SMB Share.";
       $.ShareItemInternal.properties["Name"].description = "The name of the share.";
       $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
       $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";
