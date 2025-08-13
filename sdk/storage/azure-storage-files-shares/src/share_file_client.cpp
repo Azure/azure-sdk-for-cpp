@@ -210,8 +210,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
-    auto result
-        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    // TODO: write this line to avoid build failure. Should design the body stream for file
+    // creation.
+    auto bodyStream = Core::IO::MemoryBodyStream(nullptr, 0);
+    auto result = _detail::FileClient::Create(
+        *m_pipeline, m_shareFileUrl, bodyStream, protocolLayerOptions, context);
     Models::CreateFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result.Value.ETag);
@@ -1231,8 +1234,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
-    auto createResult
-        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    // TODO: write this line to avoid build failure. Should design the body stream for file
+    // creation.
+    auto bodyStream = Core::IO::MemoryBodyStream(nullptr, 0);
+    auto createResult = _detail::FileClient::Create(
+        *m_pipeline, m_shareFileUrl, bodyStream, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
@@ -1343,8 +1349,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
-    auto createResult
-        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    // TODO: write this line to avoid build failure. Should design the body stream for file
+    // creation.
+    auto bodyStream = Core::IO::MemoryBodyStream(nullptr, 0);
+    auto createResult = _detail::FileClient::Create(
+        *m_pipeline, m_shareFileUrl, bodyStream, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;

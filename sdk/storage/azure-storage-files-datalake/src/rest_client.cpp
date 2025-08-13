@@ -61,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       if (options.ContinuationToken.HasValue() && !options.ContinuationToken.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -81,6 +81,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       if (options.Upn.HasValue())
       {
         request.GetUrl().AppendQueryParameter("upn", options.Upn.Value() ? "true" : "false");
+      }
+      if (options.BeginFrom.HasValue() && !options.BeginFrom.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "beginFrom", _internal::UrlEncodeQueryParameter(options.BeginFrom.Value()));
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -157,7 +162,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       if (options.Resource.HasValue() && !options.Resource.Value().ToString().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -345,7 +350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("timeout", std::to_string(options.Timeout.Value()));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       if (options.Recursive.HasValue())
       {
         request.GetUrl().AppendQueryParameter(
@@ -443,7 +448,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -490,7 +495,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-acl", options.Acl.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -543,7 +548,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-undelete-source", options.UndeleteSource.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -594,7 +599,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -693,7 +698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
       {
         request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
@@ -777,7 +782,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2024-08-04");
+      request.SetHeader("x-ms-version", "2026-02-06");
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
       {
         request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
