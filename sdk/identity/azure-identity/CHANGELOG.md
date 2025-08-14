@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1.
+
 ### Other Changes
 
 ## 1.13.0 (2025-08-05)
