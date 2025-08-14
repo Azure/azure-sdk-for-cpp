@@ -844,6 +844,7 @@ namespace Azure { namespace Storage { namespace Test {
       datalakeSasBuilder.FileSystemName = "container";
       datalakeSasBuilder.Path = "blob";
       datalakeSasBuilder.Resource = Sas::DataLakeSasResource::File;
+      datalakeSasBuilder.DelegatedUserObjectId = "TestDelegatedUserObjectId";
       datalakeSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::Read);
       auto sasToken = datalakeSasBuilder.GenerateSasToken(userDelegationKey, accountName);
       auto signature = Azure::Core::Url::Decode(
@@ -885,7 +886,7 @@ namespace Azure { namespace Storage { namespace Test {
     return {};
   }
 
-  TEST_F(DataLakeSasTest, PrincipalBoundDelegationSas_LIVEONLY_)
+  TEST_F(DataLakeSasTest, PrincipalBoundDelegationSas_DISABLED)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

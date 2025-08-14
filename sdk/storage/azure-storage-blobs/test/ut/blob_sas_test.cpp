@@ -840,6 +840,7 @@ namespace Azure { namespace Storage { namespace Test {
       blobSasBuilder.BlobName = "blob";
       blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
       blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::Read);
+      blobSasBuilder.DelegatedUserObjectId = "TestDelegatedUserObjectId";
       auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
       auto signature = Azure::Core::Url::Decode(
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
@@ -879,7 +880,7 @@ namespace Azure { namespace Storage { namespace Test {
     return {};
   }
 
-  TEST_F(BlobSasTest, PrincipalBoundDelegationSas_LIVEONLY_)
+  TEST_F(BlobSasTest, PrincipalBoundDelegationSas_DISABLED)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

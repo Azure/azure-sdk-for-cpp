@@ -365,7 +365,7 @@ namespace Azure { namespace Storage { namespace Sas {
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
         + "\n" + userDelegationKey.SignedVersion + "\n" + PreauthorizedAgentObjectId + "\n"
-        + AgentObjectId + "\n" + CorrelationId + "\n" + DelegatedUserObjectId + "\n" + "\n"
+        + AgentObjectId + "\n" + CorrelationId + "\n\n" + DelegatedUserObjectId + "\n"
         + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
         + resource + "\n" + "\n" + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition
         + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
