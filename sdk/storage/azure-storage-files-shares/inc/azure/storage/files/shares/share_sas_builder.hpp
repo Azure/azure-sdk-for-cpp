@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "azure/storage/files/shares/share_responses.hpp"
+
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/account_sas_builder.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -176,6 +178,14 @@ namespace Azure { namespace Storage { namespace Sas {
     ShareSasResource Resource;
 
     /**
+     * @brief Beginning in version 2025-07-05, this value  specifies the Entra ID of the user would
+     * is authorized to use the resulting SAS URL.  The resulting SAS URL must be used in
+     * conjunction with an Entra ID token that has been issued to the user specified in this value.
+     * Only supported by User Delegation SAS.
+     */
+    std::string DelegatedUserObjectId;
+
+    /**
      * @brief Override the value returned for Cache-Control response header..
      */
     std::string CacheControl;
@@ -231,6 +241,19 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string GenerateSasToken(const StorageSharedKeyCredential& credential);
 
     /**
+     * @brief Uses an account's user delegation key to sign this shared access signature, to
+     * produce the proper SAS query parameters for authentication requests.
+     *
+     * @param userDelegationKey UserDelegationKey returned from
+     * ShareServiceClient.GetUserDelegationKey.
+     * @param accountName The name of the storage account.
+     * @return The SAS query parameters used for authenticating requests.
+     */
+    std::string GenerateSasToken(
+        const Files::Shares::Models::UserDelegationKey& userDelegationKey,
+        const std::string& accountName);
+
+    /**
      * @brief For debugging purposes only.
      *
      * @param credential
@@ -239,6 +262,19 @@ namespace Azure { namespace Storage { namespace Sas {
      * URL.
      */
     std::string GenerateSasStringToSign(const StorageSharedKeyCredential& credential);
+
+    /**
+     * @brief For debugging purposes only.
+     *
+     * @param userDelegationKey UserDelegationKey returned from
+     * ShareServiceClient.GetUserDelegationKey.
+     * @param accountName The name of the storage account.
+     * @return Returns the string to sign that will be used to generate the signature for the SAS
+     * URL.
+     */
+    std::string GenerateSasStringToSign(
+        const Files::Shares::Models::UserDelegationKey& userDelegationKey,
+        const std::string& accountName);
 
   private:
     std::string Permissions;

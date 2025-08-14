@@ -157,6 +157,103 @@ namespace Azure { namespace Storage { namespace Sas {
     return builder.GetAbsoluteUrl();
   }
 
+  std::string ShareSasBuilder::GenerateSasToken(
+      const Files::Shares::Models::UserDelegationKey& userDelegationKey,
+      const std::string& accountName)
+  {
+    std::string canonicalName = "/file/" + accountName + "/" + ShareName;
+    if (Resource == ShareSasResource::File)
+    {
+      canonicalName += "/" + FilePath;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = ShareSasResourceToString(Resource);
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+
+    std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
+        + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
+        + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
+        + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n\n"
+        + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
+        + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+
+    std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+        Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));
+
+    Azure::Core::Url builder;
+    builder.AppendQueryParameter("sv", _internal::UrlEncodeQueryParameter(SasVersion));
+    builder.AppendQueryParameter("spr", _internal::UrlEncodeQueryParameter(protocol));
+    if (!startsOnStr.empty())
+    {
+      builder.AppendQueryParameter("st", _internal::UrlEncodeQueryParameter(startsOnStr));
+    }
+    if (!expiresOnStr.empty())
+    {
+      builder.AppendQueryParameter("se", _internal::UrlEncodeQueryParameter(expiresOnStr));
+    }
+    if (IPRange.HasValue())
+    {
+      builder.AppendQueryParameter("sip", _internal::UrlEncodeQueryParameter(IPRange.Value()));
+    }
+    builder.AppendQueryParameter("sr", _internal::UrlEncodeQueryParameter(resource));
+    if (!Permissions.empty())
+    {
+      builder.AppendQueryParameter("sp", _internal::UrlEncodeQueryParameter(Permissions));
+    }
+    builder.AppendQueryParameter(
+        "skoid", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedObjectId));
+    builder.AppendQueryParameter(
+        "sktid", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedTenantId));
+    builder.AppendQueryParameter("skt", _internal::UrlEncodeQueryParameter(signedStartsOnStr));
+    builder.AppendQueryParameter("ske", _internal::UrlEncodeQueryParameter(signedExpiresOnStr));
+    builder.AppendQueryParameter(
+        "sks", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedService));
+    builder.AppendQueryParameter(
+        "skv", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
+    if (!DelegatedUserObjectId.empty())
+    {
+      builder.AppendQueryParameter(
+          "sduoid", _internal::UrlEncodeQueryParameter(DelegatedUserObjectId));
+    }
+    builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
+    if (!CacheControl.empty())
+    {
+      builder.AppendQueryParameter("rscc", _internal::UrlEncodeQueryParameter(CacheControl));
+    }
+    if (!ContentDisposition.empty())
+    {
+      builder.AppendQueryParameter("rscd", _internal::UrlEncodeQueryParameter(ContentDisposition));
+    }
+    if (!ContentEncoding.empty())
+    {
+      builder.AppendQueryParameter("rsce", _internal::UrlEncodeQueryParameter(ContentEncoding));
+    }
+    if (!ContentLanguage.empty())
+    {
+      builder.AppendQueryParameter("rscl", _internal::UrlEncodeQueryParameter(ContentLanguage));
+    }
+    if (!ContentType.empty())
+    {
+      builder.AppendQueryParameter("rsct", _internal::UrlEncodeQueryParameter(ContentType));
+    }
+
+    return builder.GetAbsoluteUrl();
+  }
+
   std::string ShareSasBuilder::GenerateSasStringToSign(const StorageSharedKeyCredential& credential)
   {
     std::string canonicalName = "/file/" + credential.AccountName + "/" + ShareName;
@@ -180,6 +277,40 @@ namespace Azure { namespace Storage { namespace Sas {
         + Identifier + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
         + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
         + "\n" + ContentLanguage + "\n" + ContentType;
+  }
+
+  std::string ShareSasBuilder::GenerateSasStringToSign(
+      const Files::Shares::Models::UserDelegationKey& userDelegationKey,
+      const std::string& accountName)
+  {
+    std::string canonicalName = "/file/" + accountName + "/" + ShareName;
+    if (Resource == ShareSasResource::File)
+    {
+      canonicalName += "/" + FilePath;
+    }
+    std::string protocol = _detail::SasProtocolToString(Protocol);
+    std::string resource = ShareSasResourceToString(Resource);
+
+    std::string startsOnStr = StartsOn.HasValue()
+        ? StartsOn.Value().ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string expiresOnStr = Identifier.empty()
+        ? ExpiresOn.ToString(
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+        : "";
+    std::string signedStartsOnStr = userDelegationKey.SignedStartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    std::string signedExpiresOnStr = userDelegationKey.SignedExpiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+
+    return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
+        + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
+        + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
+        + "\n" + userDelegationKey.SignedVersion + "\n\n" + DelegatedUserObjectId + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
   }
 
 }}} // namespace Azure::Storage::Sas

@@ -242,6 +242,14 @@ namespace Azure { namespace Storage { namespace Sas {
     DataLakeSasResource Resource;
 
     /**
+     * @brief Beginning in version 2025-07-05, this value  specifies the Entra ID of the user would
+     * is authorized to use the resulting SAS URL.  The resulting SAS URL must be used in
+     * conjunction with an Entra ID token that has been issued to the user specified in this value.
+     * Only supported by User Delegation SAS.
+     */
+    std::string DelegatedUserObjectId;
+
+    /**
      * @brief Override the value returned for Cache-Control response header.
      */
     std::string CacheControl;
