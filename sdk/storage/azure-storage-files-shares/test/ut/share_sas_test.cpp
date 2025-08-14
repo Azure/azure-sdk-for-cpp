@@ -3,6 +3,7 @@
 
 #include "share_client_test.hpp"
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/files/shares/share_sas_builder.hpp>
 
@@ -15,9 +16,10 @@ namespace Azure { namespace Storage { namespace Test {
     template <class T>
     T GetSasAuthenticatedClient(const T& shareClient, const std::string& sasToken)
     {
+      auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+      options.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
       T fileClient1(
-          AppendQueryParameters(Azure::Core::Url(shareClient.GetUrl()), sasToken),
-          InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+          AppendQueryParameters(Azure::Core::Url(shareClient.GetUrl()), sasToken), options);
       return fileClient1;
     }
     void VerifyShareSasRead(
@@ -558,5 +560,249 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
+  }
+
+  TEST(SasStringToSignTest, UserDelegationSasGenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string fileUrl = "https://testAccountName.file.core.windows.net/share/file";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // File User Delegation Sas
+    {
+      Files::Shares::Models::UserDelegationKey userDelegationKey;
+      userDelegationKey.SignedObjectId = "testSignedObjectId";
+      userDelegationKey.SignedTenantId = "testSignedTenantId";
+      userDelegationKey.SignedStartsOn = sasStartsOn;
+      userDelegationKey.SignedExpiresOn = sasExpiresOn;
+      userDelegationKey.SignedService = "f";
+      userDelegationKey.SignedVersion = "2020-08-04";
+      userDelegationKey.Value = accountKey;
+
+      Sas::ShareSasBuilder shareSasBuilder;
+      shareSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      shareSasBuilder.StartsOn = sasStartsOn;
+      shareSasBuilder.ExpiresOn = sasExpiresOn;
+      shareSasBuilder.ShareName = "share";
+      shareSasBuilder.FilePath = "file";
+      shareSasBuilder.Resource = Sas::ShareSasResource::File;
+      shareSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::Read);
+      auto sasToken = shareSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(fileUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = shareSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
+
+  TEST_F(ShareSasTest, ShareUserDelegationSasPermissions_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    std::string fileName = RandomString();
+    std::string directoryName = RandomString();
+
+    Sas::ShareSasBuilder shareSasBuilder;
+    shareSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    shareSasBuilder.StartsOn = sasStartsOn;
+    shareSasBuilder.ExpiresOn = sasExpiresOn;
+    shareSasBuilder.ShareName = m_shareName;
+    shareSasBuilder.Resource = Sas::ShareSasResource::Share;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::Shares::Models::UserDelegationKey userDelegationKey;
+    {
+      auto shareServiceClient = Files::Shares::ShareServiceClient(
+          m_shareServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+      userDelegationKey = shareServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    auto shareClient = *m_shareClient;
+    auto directoryClient
+        = shareClient.GetRootDirectoryClient().GetSubdirectoryClient(directoryName);
+    directoryClient.Create();
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    fileClient.Create(1);
+
+    for (auto permissions :
+         {Sas::ShareSasPermissions::All,
+          Sas::ShareSasPermissions::Read,
+          Sas::ShareSasPermissions::Write,
+          Sas::ShareSasPermissions::Delete,
+          Sas::ShareSasPermissions::List})
+    {
+      shareSasBuilder.SetPermissions(permissions);
+      auto sasToken = shareSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+      if ((permissions & Sas::ShareSasPermissions::Read) == Sas::ShareSasPermissions::Read)
+      {
+        VerifyShareSasRead(fileClient, sasToken);
+      }
+      if ((permissions & Sas::ShareSasPermissions::Write) == Sas::ShareSasPermissions::Write)
+      {
+        VerifyShareSasWrite(fileClient, sasToken);
+        VerifyShareSasCreate(fileClient, sasToken);
+      }
+      if ((permissions & Sas::ShareSasPermissions::Delete) == Sas::ShareSasPermissions::Delete)
+      {
+        VerifyShareSasDelete(fileClient, sasToken);
+      }
+      if ((permissions & Sas::ShareSasPermissions::List) == Sas::ShareSasPermissions::List)
+      {
+        VerifyShareSasList(directoryClient, sasToken);
+      }
+    }
+  }
+
+  TEST_F(ShareSasTest, FileUserDelegationSasPermissions_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    std::string fileName = RandomString();
+
+    Sas::ShareSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.ShareName = m_shareName;
+    fileSasBuilder.FilePath = fileName;
+    fileSasBuilder.Resource = Sas::ShareSasResource::File;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::Shares::Models::UserDelegationKey userDelegationKey;
+    {
+      auto shareServiceClient = Files::Shares::ShareServiceClient(
+          m_shareServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+      userDelegationKey = shareServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    auto shareClient = *m_shareClient;
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    fileClient.Create(1);
+
+    for (auto permissions :
+         {Sas::ShareFileSasPermissions::All,
+          Sas::ShareFileSasPermissions::Read,
+          Sas::ShareFileSasPermissions::Write,
+          Sas::ShareFileSasPermissions::Delete})
+    {
+      fileSasBuilder.SetPermissions(permissions);
+      auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+      if ((permissions & Sas::ShareFileSasPermissions::Read) == Sas::ShareFileSasPermissions::Read)
+      {
+        VerifyShareSasRead(fileClient, sasToken);
+      }
+      if ((permissions & Sas::ShareFileSasPermissions::Write)
+          == Sas::ShareFileSasPermissions::Write)
+      {
+        VerifyShareSasWrite(fileClient, sasToken);
+        VerifyShareSasCreate(fileClient, sasToken);
+      }
+      if ((permissions & Sas::ShareFileSasPermissions::Delete)
+          == Sas::ShareFileSasPermissions::Delete)
+      {
+        VerifyShareSasDelete(fileClient, sasToken);
+      }
+    }
+  }
+
+  std::string getObjectIdFromTokenCredential(
+      const std::shared_ptr<const Azure::Core::Credentials::TokenCredential>& tokenCredential)
+  {
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto accessToken = tokenCredential->GetToken(requestContext, Azure::Core::Context());
+
+    std::istringstream iss(accessToken.Token);
+    std::string header, payload, signature;
+    getline(iss, header, '.');
+    getline(iss, payload, '.');
+    getline(iss, signature, '.');
+
+    size_t padding = payload.length() % 4;
+    if (padding > 0)
+    {
+      payload.append(4 - padding, '=');
+    }
+
+    auto decodedPayload = Azure::Core::Convert::Base64Decode(payload);
+    auto json = Core::Json::_internal::json::parse(decodedPayload.begin(), decodedPayload.end());
+    if (json.contains("oid"))
+    {
+      return json["oid"].get<std::string>();
+    }
+    return {};
+  }
+
+  TEST_F(ShareSasTest, PrincipalBoundDelegationSas_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    std::string fileName = RandomString();
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    auto tokenCredential = GetTestCredential();
+    auto delegatedUserObjectId = getObjectIdFromTokenCredential(tokenCredential);
+
+    Files::Shares::Models::UserDelegationKey userDelegationKey;
+    {
+      auto shareServiceClient = Files::Shares::ShareServiceClient(
+          m_shareServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+      userDelegationKey = shareServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    Sas::ShareSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.ShareName = m_shareName;
+    fileSasBuilder.FilePath = fileName;
+    fileSasBuilder.Resource = Sas::ShareSasResource::File;
+    fileSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
+
+    auto shareClient = *m_shareClient;
+    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
+    fileClient.Create(1);
+
+    fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::All);
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Files::Shares::ShareFileClient fileClient1(
+        AppendQueryParameters(Azure::Core::Url(fileClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    EXPECT_NO_THROW(fileClient1.GetProperties());
+
+    fileSasBuilder.DelegatedUserObjectId = "invalidObjectId";
+    sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Files::Shares::ShareFileClient fileClient2(
+        AppendQueryParameters(Azure::Core::Url(fileClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+    EXPECT_THROW(fileClient2.GetProperties(), StorageException);
   }
 }}} // namespace Azure::Storage::Test

@@ -346,6 +346,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobServiceClient::GetUserDelegationKey.
+   */
+  struct GetUserDelegationKeyOptions final
+  {
+    /**
+     * @brief Start time for the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     */
+    Azure::DateTime StartsOn = std::chrono::system_clock::now();
+  };
+
+  /**
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareClient::Create.
    */
   struct CreateShareOptions final

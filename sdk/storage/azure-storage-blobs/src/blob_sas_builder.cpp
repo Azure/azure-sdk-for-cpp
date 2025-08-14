@@ -261,10 +261,10 @@ namespace Azure { namespace Storage { namespace Sas {
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion
-        + "\n\n\n\n\n\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n"
-        + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + "\n\n\n\n\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
+        + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
+        + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding
+        + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -294,6 +294,11 @@ namespace Azure { namespace Storage { namespace Sas {
         "sks", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedService));
     builder.AppendQueryParameter(
         "skv", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
+    if (!DelegatedUserObjectId.empty())
+    {
+      builder.AppendQueryParameter(
+          "sduoid", _internal::UrlEncodeQueryParameter(DelegatedUserObjectId));
+    }
     if (!CacheControl.empty())
     {
       builder.AppendQueryParameter("rscc", _internal::UrlEncodeQueryParameter(CacheControl));
@@ -397,7 +402,7 @@ namespace Azure { namespace Storage { namespace Sas {
     return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
-        + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n\n\n"
+        + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n\n" + DelegatedUserObjectId + "\n"
         + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
         + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
