@@ -67,7 +67,7 @@
 # ServiceOwners:                                                   @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # ServiceLabel: %Operator Nexus - Network Cloud
-# ServiceOwners: @Azure/azure-sdk-write-networkcloud
+# ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
 
 # PRLabel: %Storage
 /sdk/storage/                                                      @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @LarryOsterman @microzchang
