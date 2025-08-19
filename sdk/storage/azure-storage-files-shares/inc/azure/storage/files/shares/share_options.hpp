@@ -346,7 +346,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareServiceClient::GetUserDelegationKey.
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareServiceClient::GetUserDelegationKey.
    */
   struct GetUserDelegationKeyOptions final
   {

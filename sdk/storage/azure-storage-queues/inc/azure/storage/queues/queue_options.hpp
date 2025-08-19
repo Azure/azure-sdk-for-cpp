@@ -198,7 +198,8 @@ namespace Azure { namespace Storage { namespace Queues {
   };
 
   /**
-   * @brief Optional parameters for #Azure::Storage::Queues::QueueServiceClient::GetUserDelegationKey.
+   * @brief Optional parameters for
+   * #Azure::Storage::Queues::QueueServiceClient::GetUserDelegationKey.
    */
   struct GetUserDelegationKeyOptions final
   {
