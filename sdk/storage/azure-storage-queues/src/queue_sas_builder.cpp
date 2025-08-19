@@ -8,6 +8,8 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
+/* cSpell:ignore skoid, sktid, sduoid */
+
 namespace Azure { namespace Storage { namespace Sas {
 
   namespace {
