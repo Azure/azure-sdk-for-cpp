@@ -666,7 +666,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, FileUserDelegationSasPermissions_DISABLED)
+  TEST_F(ShareSasTest, DISABLED_FileUserDelegationSasPermissions)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -753,7 +753,7 @@ namespace Azure { namespace Storage { namespace Test {
     return {};
   }
 
-  TEST_F(ShareSasTest, PrincipalBoundDelegationSas_DISABLED)
+  TEST_F(ShareSasTest, DISABLED_PrincipalBoundDelegationSas)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
