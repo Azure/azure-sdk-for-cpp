@@ -5723,13 +5723,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-blob-if-unmodified-since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      if (options.IfMatch.HasValue() && !options.IfMatch.Value().empty())
+      if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
       {
-        request.SetHeader("x-ms-blob-if-match", options.IfMatch.Value());
+        request.SetHeader("x-ms-blob-if-match", options.IfMatch.ToString());
       }
-      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.Value().empty())
+      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
       {
-        request.SetHeader("x-ms-blob-if-none-match", options.IfNoneMatch.Value());
+        request.SetHeader("x-ms-blob-if-none-match", options.IfNoneMatch.ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -5878,13 +5878,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-blob-if-unmodified-since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      if (options.IfMatch.HasValue() && !options.IfMatch.Value().empty())
+      if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
       {
-        request.SetHeader("x-ms-blob-if-match", options.IfMatch.Value());
+        request.SetHeader("x-ms-blob-if-match", options.IfMatch.ToString());
       }
-      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.Value().empty())
+      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
       {
-        request.SetHeader("x-ms-blob-if-none-match", options.IfNoneMatch.Value());
+        request.SetHeader("x-ms-blob-if-none-match", options.IfNoneMatch.ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();

@@ -828,7 +828,10 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobTagsOptions final
   {
-    struct : public LeaseAccessConditions, public TagAccessConditions
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public LeaseAccessConditions,
+             public TagAccessConditions
     {
     } /**
        * @brief Optional conditions that must be met to perform this operation.
@@ -841,7 +844,10 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetBlobTagsOptions final
   {
-    struct : public LeaseAccessConditions, public TagAccessConditions
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public LeaseAccessConditions,
+             public TagAccessConditions
     {
     } /**
        * @brief Optional conditions that must be met to perform this operation.
