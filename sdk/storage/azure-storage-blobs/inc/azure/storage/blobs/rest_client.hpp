@@ -3863,8 +3863,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
-        Nullable<std::string> IfMatch;
-        Nullable<std::string> IfNoneMatch;
+        ETag IfMatch;
+        ETag IfNoneMatch;
       };
       static Response<std::map<std::string, std::string>> GetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3881,8 +3881,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<DateTime> IfModifiedSince;
         Nullable<DateTime> IfUnmodifiedSince;
-        Nullable<std::string> IfMatch;
-        Nullable<std::string> IfNoneMatch;
+        ETag IfMatch;
+        ETag IfNoneMatch;
       };
       static Response<Models::SetBlobTagsResult> SetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
