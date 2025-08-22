@@ -188,6 +188,7 @@ namespace Azure { namespace Storage { namespace Test {
     std::set<std::string> paths;
     const std::string dir1 = RandomString();
     const std::string dir2 = RandomString();
+    std::string startFrom = dir1;
 
     std::set<std::string> rootPaths;
     rootPaths.emplace(dir1);
@@ -218,6 +219,23 @@ namespace Azure { namespace Storage { namespace Test {
       fileClient.CreateIfNotExists();
       paths.emplace(filename);
       rootPaths.emplace(filename);
+    }
+
+    {
+      // startFrom
+      std::set<std::string> results;
+      Files::DataLake::ListPathsOptions options;
+      options.BeginFrom = startFrom;
+      for (auto page = m_fileSystemClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      // EXPECT_EQ(results, paths); // TODO: set correctly expected results
     }
 
     {

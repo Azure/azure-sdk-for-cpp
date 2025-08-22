@@ -421,6 +421,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies one or more datasets to include in the response.
      */
     Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
+
+    /**
+    * 
+    */
+    Azure::Nullable<std::string> StartFrom;
   };
 
   /**

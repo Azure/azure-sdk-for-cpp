@@ -343,6 +343,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * than 5,000, the response will include up to 5,000 items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+    /**
+    * 
+    */
+    Azure::Nullable<std::string> BeginFrom;
   };
 
   /**
@@ -369,6 +373,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * than 5,000, the response will include up to 5,000 items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+    /**
+    * 
+    */
+    Azure::Nullable<std::string> StartFrom;
   };
 
   /**
