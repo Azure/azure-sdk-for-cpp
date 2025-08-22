@@ -428,6 +428,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput is 60 MiB/sec and maximum is 5,125 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional, default value is true.  Ony applicable to SMB shares.
+     * Specifies whether granting of new directory leases for directories present in a share are to
+     * be enabled or disabled. An input of true specifies that granting of new directory leases is
+     * to be allowed. An input of false specifies that granting of new directory leases is to be
+     * blocked.
+     */
+    Nullable<bool> EnableDirectoryLease;
   };
 
   /**
@@ -518,6 +527,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * bandwidth is 60 MiB/sec and max is 5,120 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional, default value is true.  Ony applicable to SMB shares.
+     * Specifies whether granting of new directory leases for directories present in a share are to
+     * be enabled or disabled. An input of true specifies that granting of new directory leases is
+     * to be allowed. An input of false specifies that granting of new directory leases is to be
+     * blocked.
+     */
+    Nullable<bool> EnableDirectoryLease;
   };
 
   /**
