@@ -627,6 +627,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
   };
 
   /**
@@ -943,6 +954,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
   };
 
   /**
@@ -1351,6 +1373,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
 
     /**
      * @brief Options for parallel transfer.
