@@ -537,6 +537,7 @@ namespace Azure { namespace Storage { namespace Test {
       auto properties = shareServiceClient.GetProperties().Value;
       properties.Protocol = Files::Shares::Models::ProtocolSettings();
       properties.Protocol.Value().Settings = Files::Shares::Models::SmbSettings();
+      properties.Protocol.Value().SmbSettings = Files::Shares::Models::NewSmbSettings();
       properties.Protocol.Value().SmbSettings.Value().EncryptionInTransit
           = Files::Shares::Models::SmbEncryptionInTransit();
       properties.Protocol.Value().SmbSettings.Value().EncryptionInTransit.Value().Required = true;
