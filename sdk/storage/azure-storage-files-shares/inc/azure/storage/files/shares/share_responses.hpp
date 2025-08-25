@@ -21,6 +21,61 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     using LeaseDuration [[deprecated]] = LeaseDurationType;
 
     /**
+     * @brief Deprecated. Use NewSmbSettings instead. Settings for SMB protocol.
+     */
+    struct SmbSettings final
+    {
+      /**
+       * Settings for SMB Multichannel.
+       */
+      SmbMultichannel Multichannel;
+    };
+
+    /**
+     * @brief Protocol settings.
+     */
+    struct ProtocolSettings final
+    {
+
+      /**
+       * Deprecated. Use SmbSettings instead. Settings for SMB protocol.
+       */
+      Models::SmbSettings Settings;
+
+      /**
+       * Settings for SMB protocol.
+       */
+      Nullable<Models::NewSmbSettings> SmbSettings;
+      /**
+       * Settings for NFS protocol.
+       */
+      Nullable<Models::NfsSettings> NfsSettings;
+    };
+
+    /**
+     * @brief Storage service properties.
+     */
+    struct ShareServiceProperties final
+    {
+      /**
+       * A summary of request statistics grouped by API in hourly aggregates for files.
+       */
+      Metrics HourMetrics;
+      /**
+       * A summary of request statistics grouped by API in minute aggregates for files.
+       */
+      Metrics MinuteMetrics;
+      /**
+       * The set of CORS rules.
+       */
+      std::vector<CorsRule> Cors;
+      /**
+       * Protocol settings.
+       */
+      Nullable<ProtocolSettings> Protocol;
+    };
+
+    /**
      * @brief The information returned when forcing the directory handles to close.
      */
     struct ForceCloseDirectoryHandleResult final

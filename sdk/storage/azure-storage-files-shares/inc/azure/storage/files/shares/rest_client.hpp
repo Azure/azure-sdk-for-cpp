@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * @brief Settings for SMB protocol.
      */
-    struct SmbSettings final
+    struct NewSmbSettings final
     {
       /**
        * Settings for SMB Multichannel.
@@ -163,20 +163,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       Nullable<NfsEncryptionInTransit> EncryptionInTransit;
     };
-    /**
-     * @brief Protocol settings.
-     */
-    struct ProtocolSettings final
-    {
+    namespace _detail {
       /**
-       * Settings for SMB protocol.
+       * @brief Protocol settings.
        */
-      Nullable<SmbSettings> Settings;
-      /**
-       * Settings for NFS protocol.
-       */
-      Nullable<Models::NfsSettings> NfsSettings;
-    };
+      struct ProtocolSettings final
+      {
+        /**
+         * Settings for SMB protocol.
+         */
+        Nullable<NewSmbSettings> SmbSettings;
+        /**
+         * Settings for NFS protocol.
+         */
+        Nullable<Models::NfsSettings> NfsSettings;
+      };
+    } // namespace _detail
     /**
      * @brief Valid value is backup.
      */
@@ -196,28 +198,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     struct SetServicePropertiesResult final
     {
     };
-    /**
-     * @brief Storage service properties.
-     */
-    struct ShareServiceProperties final
-    {
+    namespace _detail {
       /**
-       * A summary of request statistics grouped by API in hourly aggregates for files.
+       * @brief Storage service properties.
        */
-      Metrics HourMetrics;
-      /**
-       * A summary of request statistics grouped by API in minute aggregates for files.
-       */
-      Metrics MinuteMetrics;
-      /**
-       * The set of CORS rules.
-       */
-      std::vector<CorsRule> Cors;
-      /**
-       * Protocol settings.
-       */
-      Nullable<ProtocolSettings> Protocol;
-    };
+      struct ShareServiceProperties final
+      {
+        /**
+         * A summary of request statistics grouped by API in hourly aggregates for files.
+         */
+        Metrics HourMetrics;
+        /**
+         * A summary of request statistics grouped by API in minute aggregates for files.
+         */
+        Metrics MinuteMetrics;
+        /**
+         * The set of CORS rules.
+         */
+        std::vector<CorsRule> Cors;
+        /**
+         * Protocol settings.
+         */
+        Nullable<ProtocolSettings> Protocol;
+      };
+    } // namespace _detail
     /**
      * @brief Specifies the access tier of the share.
      */
@@ -2513,7 +2517,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     public:
       struct SetServicePropertiesOptions final
       {
-        Models::ShareServiceProperties ShareServiceProperties;
+        Models::_detail::ShareServiceProperties ShareServiceProperties;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
       static Response<Models::SetServicePropertiesResult> SetProperties(
@@ -2525,7 +2529,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
-      static Response<Models::ShareServiceProperties> GetProperties(
+      static Response<Models::_detail::ShareServiceProperties> GetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetServicePropertiesOptions& options,

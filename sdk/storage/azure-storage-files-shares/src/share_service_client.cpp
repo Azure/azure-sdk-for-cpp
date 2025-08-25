@@ -160,7 +160,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ServiceClient::SetServicePropertiesOptions();
-    protocolLayerOptions.ShareServiceProperties = std::move(properties);
+    protocolLayerOptions.ShareServiceProperties.Cors = std::move(properties.Cors);
+    protocolLayerOptions.ShareServiceProperties.HourMetrics = std::move(properties.HourMetrics);
+    protocolLayerOptions.ShareServiceProperties.MinuteMetrics = std::move(properties.MinuteMetrics);
+    if (properties.Protocol.HasValue())
+    {
+      protocolLayerOptions.ShareServiceProperties.Protocol
+          = Files::Shares::Models::_detail::ProtocolSettings();
+      if (properties.Protocol.Value().SmbSettings.HasValue()
+          || properties.Protocol.Value().NfsSettings.HasValue())
+      {
+        protocolLayerOptions.ShareServiceProperties.Protocol.Value().SmbSettings
+            = std::move(properties.Protocol.Value().SmbSettings);
+        protocolLayerOptions.ShareServiceProperties.Protocol.Value().NfsSettings
+            = std::move(properties.Protocol.Value().NfsSettings);
+      }
+      else
+      {
+        protocolLayerOptions.ShareServiceProperties.Protocol.Value().SmbSettings
+            = Models::NewSmbSettings();
+        protocolLayerOptions.ShareServiceProperties.Protocol.Value()
+            .SmbSettings.Value()
+            .Multichannel
+            = properties.Protocol.Value().Settings.Multichannel;
+      }
+    }
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     return _detail::ServiceClient::SetProperties(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
@@ -179,7 +203,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.Cors = std::move(result.Value.Cors);
     ret.HourMetrics = std::move(result.Value.HourMetrics);
     ret.MinuteMetrics = std::move(result.Value.MinuteMetrics);
-    ret.Protocol = std::move(result.Value.Protocol);
+    if (result.Value.Protocol.HasValue())
+    {
+      ret.Protocol = Models::ProtocolSettings();
+      ret.Protocol.Value().SmbSettings = std::move(result.Value.Protocol.Value().SmbSettings);
+      ret.Protocol.Value().NfsSettings = std::move(result.Value.Protocol.Value().NfsSettings);
+      if (result.Value.Protocol.Value().SmbSettings.HasValue()
+          && result.Value.Protocol.Value().SmbSettings.Value().Multichannel.HasValue())
+      {
+        ret.Protocol.Value().Settings.Multichannel
+            = result.Value.Protocol.Value().SmbSettings.Value().Multichannel.Value();
+      }
+    }
     return Azure::Response<Models::ShareServiceProperties>(
         std::move(ret), std::move(result.RawResponse));
   }

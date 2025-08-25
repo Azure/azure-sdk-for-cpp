@@ -306,11 +306,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (options.ShareServiceProperties.Protocol.HasValue())
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ProtocolSettings"});
-          if (options.ShareServiceProperties.Protocol.Value().Settings.HasValue())
+          if (options.ShareServiceProperties.Protocol.Value().SmbSettings.HasValue())
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SMB"});
             if (options.ShareServiceProperties.Protocol.Value()
-                    .Settings.Value()
+                    .SmbSettings.Value()
                     .Multichannel.HasValue())
             {
               writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Multichannel"});
@@ -318,7 +318,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   _internal::XmlNodeType::StartTag,
                   "Enabled",
                   options.ShareServiceProperties.Protocol.Value()
-                          .Settings.Value()
+                          .SmbSettings.Value()
                           .Multichannel.Value()
                           .Enabled
                       ? "true"
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
             }
             if (options.ShareServiceProperties.Protocol.Value()
-                    .Settings.Value()
+                    .SmbSettings.Value()
                     .EncryptionInTransit.HasValue())
             {
               writer.Write(
@@ -335,7 +335,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   _internal::XmlNodeType::StartTag,
                   "Required",
                   options.ShareServiceProperties.Protocol.Value()
-                          .Settings.Value()
+                          .SmbSettings.Value()
                           .EncryptionInTransit.Value()
                           .Required
                       ? "true"
@@ -395,7 +395,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       return Response<Models::SetServicePropertiesResult>(
           std::move(response), std::move(pRawResponse));
     }
-    Response<Models::ShareServiceProperties> ServiceClient::GetProperties(
+    Response<Models::_detail::ShareServiceProperties> ServiceClient::GetProperties(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
         const GetServicePropertiesOptions& options,
@@ -416,7 +416,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
-      Models::ShareServiceProperties response;
+      Models::_detail::ShareServiceProperties response;
       {
         const auto& responseBody = pRawResponse->GetBody();
         _internal::XmlReader reader(
@@ -485,27 +485,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings)
             {
-              response.Protocol = Models::ProtocolSettings();
+              response.Protocol = Models::_detail::ProtocolSettings();
             }
             else if (
                 xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB)
             {
-              response.Protocol.Value().Settings = Models::SmbSettings();
+              response.Protocol.Value().SmbSettings = Models::NewSmbSettings();
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kMultichannel)
             {
-              response.Protocol.Value().Settings.Value().Multichannel = Models::SmbMultichannel();
+              response.Protocol.Value().SmbSettings.Value().Multichannel
+                  = Models::SmbMultichannel();
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kEncryptionInTransit)
             {
-              response.Protocol.Value().Settings.Value().EncryptionInTransit
+              response.Protocol.Value().SmbSettings.Value().EncryptionInTransit
                   = Models::SmbEncryptionInTransit();
             }
             else if (
@@ -629,7 +630,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kMultichannel && xmlPath[4] == XmlTagEnum::kEnabled)
             {
-              response.Protocol.Value().Settings.Value().Multichannel.Value().Enabled
+              response.Protocol.Value().SmbSettings.Value().Multichannel.Value().Enabled
                   = node.Value == std::string("true");
             }
             else if (
@@ -638,7 +639,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kEncryptionInTransit
                 && xmlPath[4] == XmlTagEnum::kRequired)
             {
-              response.Protocol.Value().Settings.Value().EncryptionInTransit.Value().Required
+              response.Protocol.Value().SmbSettings.Value().EncryptionInTransit.Value().Required
                   = node.Value == std::string("true");
             }
             else if (
@@ -666,7 +667,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           }
         }
       }
-      return Response<Models::ShareServiceProperties>(std::move(response), std::move(pRawResponse));
+      return Response<Models::_detail::ShareServiceProperties>(
+          std::move(response), std::move(pRawResponse));
     }
     Response<Models::_detail::ListSharesResponse> ServiceClient::ListSharesSegment(
         Core::Http::_internal::HttpPipeline& pipeline,

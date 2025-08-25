@@ -374,17 +374,17 @@ directive:
       delete $.Metrics.required;
       $.Metrics.properties["IncludeAPIs"]["x-ms-client-name"] = "IncludeApis";
       $.Metrics.properties["IncludeAPIs"]["x-nullable"] = true;
-      $.SmbSettings = $.ShareSmbSettings;
+      $.NewSmbSettings = $.ShareSmbSettings;
       delete $.ShareSmbSettings;
-      $.SmbSettings.properties["Multichannel"]["x-nullable"] = true;
-      delete $.SmbSettings.properties["EncryptionInTransit"];
-      $.SmbSettings.properties["EncryptionInTransit"] = { "$ref": "#/definitions/SmbEncryptionInTransit" };
-      $.SmbSettings.properties["EncryptionInTransit"]["x-ms-client-name"] = "EncryptionInTransit";
-      $.SmbSettings.properties["EncryptionInTransit"]["x-nullable"] = true;
-      $.ShareProtocolSettings.properties["Smb"]["$ref"] = "#/definitions/SmbSettings";
-      $.ShareProtocolSettings.properties["Settings"] = $.ShareProtocolSettings.properties["Smb"];
-      $.ShareProtocolSettings.properties["Settings"]["x-ms-xml"] = { "name": "SMB" };
-      $.ShareProtocolSettings.properties["Settings"]["x-nullable"] = true;
+      $.NewSmbSettings.properties["Multichannel"]["x-nullable"] = true;
+      delete $.NewSmbSettings.properties["EncryptionInTransit"];
+      $.NewSmbSettings.properties["EncryptionInTransit"] = { "$ref": "#/definitions/SmbEncryptionInTransit" };
+      $.NewSmbSettings.properties["EncryptionInTransit"]["x-ms-client-name"] = "EncryptionInTransit";
+      $.NewSmbSettings.properties["EncryptionInTransit"]["x-nullable"] = true;
+      $.ShareProtocolSettings.properties["Smb"]["$ref"] = "#/definitions/NewSmbSettings";
+      $.ShareProtocolSettings.properties["SmbSettings"] = $.ShareProtocolSettings.properties["Smb"];
+      $.ShareProtocolSettings.properties["SmbSettings"]["x-ms-xml"] = { "name": "SMB" };
+      $.ShareProtocolSettings.properties["SmbSettings"]["x-nullable"] = true;
       delete $.ShareProtocolSettings.properties["Smb"];
       $.NfsSettings = $.ShareNfsSettings;
       delete $.ShareNfsSettings;
@@ -396,6 +396,7 @@ directive:
       $.ShareProtocolSettings.properties["NfsSettings"] = $.ShareProtocolSettings.properties["Nfs"];
       $.ShareProtocolSettings.properties["NfsSettings"]["x-ms-xml"] = { "name": "NFS" };
       $.ShareProtocolSettings.properties["NfsSettings"]["x-nullable"] = true;
+      $.ShareProtocolSettings["x-namespace"] = "_detail";
       delete $.ShareProtocolSettings.properties["Nfs"];
       $.ProtocolSettings = $.ShareProtocolSettings;
       delete $.ShareProtocolSettings;
@@ -405,6 +406,7 @@ directive:
       delete $.StorageServiceProperties;
       $.ShareServiceProperties.xml = { "name": "StorageServiceProperties" };
       $.ShareServiceProperties.properties["Protocol"]["x-nullable"] = true;
+      $.ShareServiceProperties["x-namespace"] = "_detail";
   - from: swagger-document
     where: $.parameters
     transform: >
