@@ -306,31 +306,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         if (options.ShareServiceProperties.Protocol.HasValue())
         {
           writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "ProtocolSettings"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SMB"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Multichannel"});
-          writer.Write(_internal::XmlNode{
-              _internal::XmlNodeType::StartTag,
-              "Enabled",
-              options.ShareServiceProperties.Protocol.Value().Settings.Multichannel.Enabled
-                  ? "true"
-                  : "false"});
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
-          if (options.ShareServiceProperties.Protocol.Value()
-                  .Settings.EncryptionInTransit.HasValue())
+          if (options.ShareServiceProperties.Protocol.Value().Settings.HasValue())
           {
-            writer.Write(
-                _internal::XmlNode{_internal::XmlNodeType::StartTag, "EncryptionInTransit"});
-            writer.Write(_internal::XmlNode{
-                _internal::XmlNodeType::StartTag,
-                "Required",
-                options.ShareServiceProperties.Protocol.Value()
-                        .Settings.EncryptionInTransit.Value()
-                        .Required
-                    ? "true"
-                    : "false"});
+            writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "SMB"});
+            if (options.ShareServiceProperties.Protocol.Value()
+                    .Settings.Value()
+                    .Multichannel.HasValue())
+            {
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "Multichannel"});
+              writer.Write(_internal::XmlNode{
+                  _internal::XmlNodeType::StartTag,
+                  "Enabled",
+                  options.ShareServiceProperties.Protocol.Value()
+                          .Settings.Value()
+                          .Multichannel.Value()
+                          .Enabled
+                      ? "true"
+                      : "false"});
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            }
+            if (options.ShareServiceProperties.Protocol.Value()
+                    .Settings.Value()
+                    .EncryptionInTransit.HasValue())
+            {
+              writer.Write(
+                  _internal::XmlNode{_internal::XmlNodeType::StartTag, "EncryptionInTransit"});
+              writer.Write(_internal::XmlNode{
+                  _internal::XmlNodeType::StartTag,
+                  "Required",
+                  options.ShareServiceProperties.Protocol.Value()
+                          .Settings.Value()
+                          .EncryptionInTransit.Value()
+                          .Required
+                      ? "true"
+                      : "false"});
+              writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
+            }
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           }
-          writer.Write(_internal::XmlNode{_internal::XmlNodeType::EndTag});
           if (options.ShareServiceProperties.Protocol.Value().NfsSettings.HasValue())
           {
             writer.Write(_internal::XmlNode{_internal::XmlNodeType::StartTag, "NFS"});
@@ -475,11 +488,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               response.Protocol = Models::ProtocolSettings();
             }
             else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+                && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB)
+            {
+              response.Protocol.Value().Settings = Models::SmbSettings();
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
+                && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
+                && xmlPath[3] == XmlTagEnum::kMultichannel)
+            {
+              response.Protocol.Value().Settings.Value().Multichannel = Models::SmbMultichannel();
+            }
+            else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kStorageServiceProperties
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kEncryptionInTransit)
             {
-              response.Protocol.Value().Settings.EncryptionInTransit
+              response.Protocol.Value().Settings.Value().EncryptionInTransit
                   = Models::SmbEncryptionInTransit();
             }
             else if (
@@ -603,7 +629,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[1] == XmlTagEnum::kProtocolSettings && xmlPath[2] == XmlTagEnum::kSMB
                 && xmlPath[3] == XmlTagEnum::kMultichannel && xmlPath[4] == XmlTagEnum::kEnabled)
             {
-              response.Protocol.Value().Settings.Multichannel.Enabled
+              response.Protocol.Value().Settings.Value().Multichannel.Value().Enabled
                   = node.Value == std::string("true");
             }
             else if (
@@ -612,7 +638,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kEncryptionInTransit
                 && xmlPath[4] == XmlTagEnum::kRequired)
             {
-              response.Protocol.Value().Settings.EncryptionInTransit.Value().Required
+              response.Protocol.Value().Settings.Value().EncryptionInTransit.Value().Required
                   = node.Value == std::string("true");
             }
             else if (
