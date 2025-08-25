@@ -46,6 +46,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Settings for SMB protocol.
        */
       Nullable<Models::NewSmbSettings> SmbSettings;
+
       /**
        * Settings for NFS protocol.
        */
@@ -61,14 +62,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * A summary of request statistics grouped by API in hourly aggregates for files.
        */
       Metrics HourMetrics;
+
       /**
        * A summary of request statistics grouped by API in minute aggregates for files.
        */
       Metrics MinuteMetrics;
+
       /**
        * The set of CORS rules.
        */
       std::vector<CorsRule> Cors;
+
       /**
        * Protocol settings.
        */
