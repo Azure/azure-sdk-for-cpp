@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+- Changed the type of `MultiChannel` from `SmbMultichannel` to `Nullable<SmbMultichannel>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not support Multi-Channel.`
+- Changed the type of `Settings` from `SmbSettings` to `Nullable<SmbSettings>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not need to set SmbSettings.`
 ### Bugs Fixed
 
 ### Other Changes

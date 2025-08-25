@@ -137,7 +137,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Settings for SMB Multichannel.
        */
-      SmbMultichannel Multichannel;
+      Nullable<SmbMultichannel> Multichannel;
       /**
        * Enable or disable encryption in transit.
        */
@@ -171,7 +171,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Settings for SMB protocol.
        */
-      SmbSettings Settings;
+      Nullable<SmbSettings> Settings;
       /**
        * Settings for NFS protocol.
        */

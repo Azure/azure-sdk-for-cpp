@@ -353,7 +353,9 @@ namespace Azure { namespace Storage { namespace Test {
     properties.Cors.emplace_back(corsRule);
 
     auto protocolSettings = Files::Shares::Models::ProtocolSettings();
-    protocolSettings.Settings.Multichannel.Enabled = true;
+    protocolSettings.Settings = Files::Shares::Models::SmbSettings();
+    protocolSettings.Settings.Value().Multichannel = Files::Shares::Models::SmbMultichannel();
+    protocolSettings.Settings.Value().Multichannel.Value().Enabled = true;
     properties.Protocol = protocolSettings;
 
     EXPECT_NO_THROW(premiumFileShareServiceClient.SetProperties(properties));
@@ -412,7 +414,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NE(properties.Cors.end(), iter);
     }
 
-    EXPECT_EQ(true, properties.Protocol.Value().Settings.Multichannel.Enabled);
+    EXPECT_EQ(true, properties.Protocol.Value().Settings.Value().Multichannel.Value().Enabled);
 
     premiumFileShareServiceClient.SetProperties(originalProperties);
   }
@@ -526,5 +528,48 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(shareItem.Value().Details.NextAllowedProvisionedBandwidthDowngradeTime.HasValue());
 
     EXPECT_NO_THROW(shareClient.Delete());
+  }
+
+  TEST_F(FileShareServiceClientTest, EncryptionInTransit)
+  {
+    {
+      auto shareServiceClient = *m_shareServiceClient;
+
+      auto properties = shareServiceClient.GetProperties().Value;
+      properties.Protocol = Files::Shares::Models::ProtocolSettings();
+      properties.Protocol.Value().Settings = Files::Shares::Models::SmbSettings();
+      properties.Protocol.Value().Settings.Value().EncryptionInTransit
+          = Files::Shares::Models::SmbEncryptionInTransit();
+      properties.Protocol.Value().Settings.Value().EncryptionInTransit.Value().Required = true;
+
+      EXPECT_NO_THROW(shareServiceClient.SetProperties(properties));
+
+      // Get Properties
+      properties = shareServiceClient.GetProperties().Value;
+      EXPECT_TRUE(properties.Protocol.HasValue());
+      EXPECT_TRUE(properties.Protocol.Value().Settings.HasValue());
+      EXPECT_TRUE(properties.Protocol.Value().Settings.Value().EncryptionInTransit.HasValue());
+      EXPECT_TRUE(
+          properties.Protocol.Value().Settings.Value().EncryptionInTransit.Value().Required);
+    }
+    {
+      auto premiumShareServiceClient = *m_premiumShareServiceClient;
+
+      auto properties = premiumShareServiceClient.GetProperties().Value;
+      properties.Protocol = Files::Shares::Models::ProtocolSettings();
+      properties.Protocol.Value().NfsSettings = Files::Shares::Models::NfsSettings();
+      properties.Protocol.Value().NfsSettings.Value().EncryptionInTransit
+          = Files::Shares::Models::NfsEncryptionInTransit();
+      properties.Protocol.Value().NfsSettings.Value().EncryptionInTransit.Value().Required = true;
+      EXPECT_NO_THROW(premiumShareServiceClient.SetProperties(properties));
+
+      // Get Properties
+      properties = premiumShareServiceClient.GetProperties().Value;
+      EXPECT_TRUE(properties.Protocol.HasValue());
+      EXPECT_TRUE(properties.Protocol.Value().NfsSettings.HasValue());
+      EXPECT_TRUE(properties.Protocol.Value().NfsSettings.Value().EncryptionInTransit.HasValue());
+      EXPECT_TRUE(
+          properties.Protocol.Value().NfsSettings.Value().EncryptionInTransit.Value().Required);
+    }
   }
 }}} // namespace Azure::Storage::Test
