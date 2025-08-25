@@ -349,6 +349,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
+    protocolLayerOptions.StartFrom = options.StartFrom;
     auto response = _detail::BlobContainerClient::ListBlobs(
         *m_pipeline,
         m_blobContainerUrl,
@@ -383,6 +384,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
+    protocolLayerOptions.StartFrom = options.StartFrom;
     auto response = _detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline,
         m_blobContainerUrl,
