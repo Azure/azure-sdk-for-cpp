@@ -11,7 +11,7 @@
 ### Other Changes
 
 - Deprecated type `SmbSettings`, use `NewSmbSettings` instead.
-- Deprecated field `Settings` in `ShareServiceProperties`.`Protocol`, use `SmbSettings` instead.
+- Deprecated field `Settings` in `ShareServiceProperties`.`Protocol`, use `ShareServiceProperties`.`Protocol`.`SmbSettings` instead.
 
 ## 12.14.0 (2025-07-21)
 
