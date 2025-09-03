@@ -527,7 +527,7 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
 
     imdsUrl = Core::Url{imdsEndpointEnvVarValue};
   }
-  imdsUrl.SetPath("/metadata/identity/oauth2/token");
+  imdsUrl.SetPath("metadata/identity/oauth2/token");
 
   return std::unique_ptr<ManagedIdentitySource>(
       new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));

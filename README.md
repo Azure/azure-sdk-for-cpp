@@ -393,6 +393,58 @@ Many people all over the world have helped make this project better.  You'll wan
 
 Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) <secure@microsoft.com>. You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Further information, including the MSRC PGP key, can be found in the [Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
 
+### Data Collection
+
+The software may collect information about you and your use of the software and send it to Microsoft. Microsoft may use this information to provide services and improve our products and services. You may turn off the telemetry as described below. You can learn more about data collection and use in the help documentation and Microsoft's [privacy statement](https://go.microsoft.com/fwlink/?LinkID=824704). For more information on the data collected by the Azure SDK, please visit the [Telemetry Guidelines](https://azure.github.io/azure-sdk/general_azurecore.html#telemetry-policy) page.
+
+### Telemetry Configuration
+
+Telemetry collection is on by default.
+
+To opt out, you can disable telemetry at client construction. Creating a custom HTTP policy in your application gives you access to the headers sent with each request, allowing you to remove the `User-Agent` header containing client telemetry. To use the policy, you will add it to the options for your specific client as part of client creation. This will disable Azure SDK telemetry for all methods in the client. You will need to register the policy with each client created.
+
+An example policy implementation looks like:
+
+```cpp
+class RemoveUserAgentPolicy : public HttpPolicy {
+private:
+  std::unique_ptr<RawResponse> Send(
+      Request& request,
+      NextHttpPolicy nextPolicy,
+      Context const& context) const override
+  {
+    // Set your own User-Agent header or set an empty one to suppress telemetry
+    request.SetHeader("User-Agent", "");
+    
+    return nextPolicy.Send(request, context);
+  }
+
+  std::unique_ptr<HttpPolicy> Clone() const override { return std::make_unique<RemoveUserAgentPolicy>(*this); }
+};
+```
+
+To use it with a client, you would register it to run for every operation as part of your client options:
+
+```cpp
+Uri serviceEndpoint = "<https://example.storage.windows.net>";
+std::shared_ptr<Core::Credentials::TokenCredential> credential = 
+    std::make_shared<Identity::DefaultAzureCredential>();
+           
+BlobClientOptions clientOptions;
+clientOptions.PerOperationPolicies.emplace_back(std::make_unique<RemoveUserAgentPolicy>());
+
+BlobServiceClient client(serviceEndpoint, credential, clientOptions);
+```
+
+You can also customize the telemetry information by setting an application identifier, which will be prepended to the User-Agent header:
+
+```cpp
+// Add application ID to client options for telemetry
+BlobClientOptions clientOptions;
+clientOptions.Telemetry.ApplicationId = "MyApplication/1.0.0";
+auto blobServiceClient = BlobServiceClient::CreateFromConnectionString(connectionString, clientOptions);
+```
+
 ### License
 
 Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt) license.

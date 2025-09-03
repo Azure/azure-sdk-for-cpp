@@ -28,55 +28,63 @@
 # PRLabel: %Azure.Identity
 /sdk/identity/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity
 
-###########
-# Client SDKs
-###########
+####################
+# Client Libraries
+####################
 
-# AzureSdkOwners: @rickwinter
-# ServiceLabel: %App Configuration
 # PRLabel: %App Configuration
-/sdk/appconfiguration/   @LarryOsterman @antkmsft @RickWinter
+/sdk/appconfiguration/                                             @LarryOsterman @antkmsft @RickWinter
 
-# ServiceOwners: @gkostal @anilba06 @ahmadmsft
-# ServiceLabel: %Attestation
+# ServiceLabel: %App Configuration
+# AzureSdkOwners:                                                  @rickwinter
+# ServiceOwners:                                                   @LarryOsterman @antkmsft @RickWinter
 
 # PRLabel: %Attestation
-/sdk/attestation/        @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
+/sdk/attestation/                                                  @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
 
-# AzureSdkOwners: @LarryOsterman
-# ServiceLabel: %Event Hubs
+# ServiceLabel: %Attestation
+# ServiceOwners:                                                   @gkostal @anilba06 @ahmadmsft
+
+# PRLabel: %EngSys
+/sdk/template/                                                     @danieljurek @weshaggard @LarryOsterman @RickWinter
+
+# ServiceLabel: %EngSys
+# AzureSdkOwners:                                                  @danieljurek
+# ServiceOwners:                                                   @danieljurek @weshaggard @LarryOsterman @RickWinter
+
 # PRLabel: %Event Hubs
-/sdk/eventhubs/           @LarryOsterman @antkmsft @RickWinter
+/sdk/eventhubs/                                                    @axisc @sjkwak @hmlam
 
-# AzureSdkOwners: @rickwinter
-# ServiceLabel:  %KeyVault
-# ServiceOwners:         @cheathamb36 @chen-karen @lgonsoulin
+# ServiceLabel: %Event Hubs
+# ServiceOwners:                                                   @axisc @sjkwak @hmlam
 
 # PRLabel: %KeyVault
-/sdk/keyvault/           @antkmsft @rickwinter @LarryOsterman
+/sdk/keyvault/                                                     @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-keyvault
 
-# ServiceOwners:@vinjiang @Jinming-Hu @microzchang
-# ServiceLabel: %Storage
-
-# PRLabel: %Storage
-/sdk/storage/            @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @LarryOsterman @microzchang
-
-# AzureSdkOwners: @rickwinter
-# ServiceLabel: %Tables
-# PRLabel: %Tables
-/sdk/tables/            @LarryOsterman @antkmsft
-
-# AzureSdkOwners: @danieljurek
-# ServiceLabel: %EngSys
-# PRLabel: %EngSys
-/sdk/template/           @danieljurek @weshaggard @LarryOsterman @RickWinter
+# ServiceLabel: %KeyVault
+# AzureSdkOwners:                                                  @rickwinter @Azure/azure-sdk-write-keyvault
+# ServiceOwners:                                                   @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
 
 # ServiceLabel: %Operator Nexus - Network Cloud
-#/<NotInRepo>/           @Azure/azure-sdk-write-networkcloud
+# ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
+
+# PRLabel: %Storage
+/sdk/storage/                                                      @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @LarryOsterman @microzchang
+
+# ServiceLabel: %Storage
+# ServiceOwners:                                                   @vinjiang @Jinming-Hu @microzchang
+
+# PRLabel: %Tables
+/sdk/tables/                                                       @LarryOsterman @antkmsft
+
+# ServiceLabel: %Tables
+# AzureSdkOwners:                                                  @rickwinter
+# ServiceOwners:                                                   @LarryOsterman @antkmsft
 
 ###########
 # Eng Sys
 ###########
+
 /eng/                    @danieljurek @weshaggard @benbp
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng

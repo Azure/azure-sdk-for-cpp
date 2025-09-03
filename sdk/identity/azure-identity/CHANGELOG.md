@@ -1,6 +1,6 @@
 # Release History
 
-## 1.13.0-beta.2 (Unreleased)
+## 1.14.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1.
+
 ### Other Changes
+
+## 1.13.0 (2025-08-05)
+
+### Features Added
+
+- Added support for more `AZURE_TOKEN_CREDENTIALS` environment variable values to specify a single credential type to use in `DefaultAzureCredential`. In addition to `dev` and `prod`, possible values now include `EnvironmentCredential`, `WorkloadIdentityCredential`, `ManagedIdentityCredential`, and `AzureCliCredential` - each for the corresponding credential type.
 
 ## 1.13.0-beta.1 (2025-07-15)
 
