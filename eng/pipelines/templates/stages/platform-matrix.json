@@ -7,7 +7,7 @@
       "OSConfiguration": {
         "macos-latest": {
           "OSVmImage": "env:MACVMIMAGE",
-          "XCODE_VERSION": "15.4"
+          "XCODE_VERSION": "16.2"
         }
       },
       "StaticConfigs": {
