@@ -43,6 +43,11 @@ DateTime GetSystemClockEpoch()
 
 DateTime GetMaxDateTime()
 {
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C6326: Potential comparison of a constant with another constant.
+#pragma warning(disable : 6326)
+#endif
   auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
                                   (std::chrono::system_clock::time_point::max)().time_since_epoch())
                                   .count();
@@ -55,6 +60,9 @@ DateTime GetMaxDateTime()
       (systemClockMax < repMax && (repMax - systemClockEpoch) < (repMax - systemClockMax))
           ? (systemClockMax + systemClockEpoch)
           : systemClockMax)));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 }
 
 template <typename T>
@@ -403,10 +411,11 @@ DateTime::DateTime(
     int8_t localDiffMinutes,
     bool roundFracSecUp)
     : time_point(duration(
-        (OneDayIn100ns * (static_cast<int64_t>(DaySinceEpoch(year, month, day)) - 1))
-        + (OneHourIn100ns * (static_cast<int64_t>(hour) - localDiffHours))
-        + (OneMinuteIn100ns * (static_cast<int64_t>(minute) - localDiffMinutes))
-        + (OneSecondIn100ns * second) + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
+          (OneDayIn100ns * (static_cast<int64_t>(DaySinceEpoch(year, month, day)) - 1))
+          + (OneHourIn100ns * (static_cast<int64_t>(hour) - localDiffHours))
+          + (OneMinuteIn100ns * (static_cast<int64_t>(minute) - localDiffMinutes))
+          + (OneSecondIn100ns * second)
+          + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
 {
   ValidateDate(
       year,
