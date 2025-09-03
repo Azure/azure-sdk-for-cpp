@@ -57,7 +57,7 @@ DateTime GetMaxDateTime()
   constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
 
   return DateTime(DateTime::time_point(DateTime::duration(
-      (systemClockMax < repMax && (repMax - systemClockEpoch) < (repMax - systemClockMax))
+      (systemClockMax < repMax && systemClockEpoch < (repMax - systemClockMax))
           ? (systemClockMax + systemClockEpoch)
           : systemClockMax)));
 #ifdef _MSC_VER
