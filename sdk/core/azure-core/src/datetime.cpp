@@ -441,8 +441,14 @@ DateTime::DateTime(
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
-  static DateTime SystemClockMin((std::chrono::system_clock::time_point::min)());
-  static DateTime SystemClockMax(GetMaxDateTime());
+  std::cerr << "\n---------\n\n";
+  std::cout << "\n---------\n\n";
+  DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());
+  DateTime const SystemClockMax(GetMaxDateTime());
+  std::cerr << "*this: " << this->time_since_epoch().count() << "\n";
+  std::cout << "*this: " << this->time_since_epoch().count() << "\n";
+  std::cerr << "\n\n---------\n";
+  std::cout << "\n\n---------\n";
 
   auto outOfRange = 0;
   if (*this < SystemClockMin)

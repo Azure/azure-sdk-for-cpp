@@ -7,6 +7,8 @@
 #include <ctime>
 #include <limits>
 
+#include <iostream>
+
 #include <gtest/gtest.h>
 
 using namespace Azure;
@@ -861,8 +863,12 @@ TEST(DateTime, ToSystemClock)
   }
 
   {
+    std::cerr << "\n\n========\n";
+    std::cout << "\n\n========\n";
     auto const tt = std::chrono::system_clock::to_time_t(
         static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 15, 34, 56)));
+    std::cerr << "\n========\n\n";
+    std::cout << "\n========\n\n";
 
 #ifdef _MSC_VER
 #pragma warning(push)
