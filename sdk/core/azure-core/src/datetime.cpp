@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <ratio>
 #include <sstream>
 #include <stdexcept>
 #include <type_traits>
@@ -54,38 +55,56 @@ DateTime GetMaxDateTime()
       "DateTime::clock::duration::rep must be the same as "
       "std::chrono::system_clock::duration::rep");
 
-  static_assert(
-      std::is_same<DateTime::clock::duration::period, std::chrono::system_clock::duration::period>::
-          value,
-      "DateTime::clock::duration::period must be the same as "
-      "std::chrono::system_clock::duration::period");
+  using Rep = DateTime::clock::duration::rep;
 
-  using LargestIntRep = std::conditional<
-      std::is_signed<DateTime::clock::duration::rep>::value,
-      long long,
-      unsigned long long>::type;
+  using CommonDuration = std::chrono::duration<
+      Rep,
+      std::conditional<
+          std::ratio_greater<
+              DateTime::clock::duration::period,
+              std::chrono::system_clock::duration::period>::value,
+          DateTime::clock::duration::period,
+          std::chrono::system_clock::duration::period>::type>;
 
-  LargestIntRep const systemClockMax
-      = std::chrono::duration_cast<
-            std::chrono::duration<LargestIntRep, DateTime::duration::period>>(
-            (std::chrono::system_clock::time_point::max)().time_since_epoch())
-            .count();
+  std::chrono::system_clock::duration const scSystemClockMaxDuration
+      = (std::chrono::system_clock::time_point::max)().time_since_epoch();
 
-  LargestIntRep const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
+  Rep const commonSystemClockMax
+      = std::chrono::duration_cast<CommonDuration>(scSystemClockMaxDuration).count();
 
-  constexpr LargestIntRep repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
+  Rep const dtSystemClockMax
+      = std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count();
 
-  std::cerr << "systemClockMax: " << systemClockMax << "\n";
-  std::cerr << "systemClockEpoch: " << systemClockEpoch << "\n";
-  std::cerr << "repMax: " << repMax << "\n";
-  std::cout << "systemClockMax: " << systemClockMax << "\n";
-  std::cout << "systemClockEpoch: " << systemClockEpoch << "\n";
-  std::cout << "repMax: " << repMax << "\n";
+  Azure::DateTime::duration const dtSystemClockEpochDuration
+      = GetSystemClockEpoch().time_since_epoch();
+
+  Rep const commonSystemClockEpoch
+      = std::chrono::duration_cast<CommonDuration>(dtSystemClockEpochDuration).count();
+
+  Rep const dtSystemClockEpoch
+      = std::chrono::duration_cast<DateTime::clock::duration>(dtSystemClockEpochDuration).count();
+
+  constexpr Rep commonRepMax = std::chrono::duration_cast<CommonDuration>(
+                                   DateTime::duration((std::numeric_limits<Rep>::max)()))
+                                   .count();
+
+  std::cerr << "commonSystemClockMax: " << commonSystemClockMax << "\n";
+  std::cerr << "dtSystemClockMax: " << dtSystemClockMax << "\n";
+  std::cerr << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
+  std::cerr << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
+  std::cerr << "commonRepMax: " << commonRepMax << "\n";
+
+  std::cout << "commonSystemClockMax: " << commonSystemClockMax << "\n";
+  std::cout << "dtSystemClockMax: " << dtSystemClockMax << "\n";
+  std::cout << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
+  std::cout << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
+  std::cout << "commonRepMax: " << commonRepMax << "\n";
 
   return DateTime(DateTime::time_point(DateTime::duration(
-      (systemClockMax < repMax && systemClockEpoch < (repMax - systemClockMax))
-          ? static_cast<DateTime::clock::duration::rep>(systemClockMax + systemClockEpoch)
-          : static_cast<DateTime::clock::duration::rep>(systemClockMax))));
+      (commonSystemClockMax < commonRepMax
+       && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
+          ? (dtSystemClockEpoch + dtSystemClockMax)
+          : dtSystemClockMax)));
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
