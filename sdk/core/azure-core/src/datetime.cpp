@@ -8,12 +8,11 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <type_traits>
-
-#include <iostream>
 
 using namespace Azure;
 
@@ -50,13 +49,31 @@ DateTime GetMaxDateTime()
 // warning C6326: Potential comparison of a constant with another constant.
 #pragma warning(disable : 6326)
 #endif
-  auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
-                                  (std::chrono::system_clock::time_point::max)().time_since_epoch())
-                                  .count();
+  static_assert(
+      std::is_same<DateTime::clock::duration::rep, std::chrono::system_clock::duration::rep>::value,
+      "DateTime::clock::duration::rep must be the same as "
+      "std::chrono::system_clock::duration::rep");
 
-  auto const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
+  static_assert(
+      std::is_same<DateTime::clock::duration::period, std::chrono::system_clock::duration::period>::
+          value,
+      "DateTime::clock::duration::period must be the same as "
+      "std::chrono::system_clock::duration::period");
 
-  constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
+  using LargestIntRep = std::conditional<
+      std::is_signed<DateTime::clock::duration::rep>::value,
+      long long,
+      unsigned long long>::type;
+
+  LargestIntRep const systemClockMax
+      = std::chrono::duration_cast<
+            std::chrono::duration<LargestIntRep, DateTime::duration::period>>(
+            (std::chrono::system_clock::time_point::max)().time_since_epoch())
+            .count();
+
+  LargestIntRep const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
+
+  constexpr LargestIntRep repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
 
   std::cerr << "systemClockMax: " << systemClockMax << "\n";
   std::cerr << "systemClockEpoch: " << systemClockEpoch << "\n";
@@ -67,8 +84,8 @@ DateTime GetMaxDateTime()
 
   return DateTime(DateTime::time_point(DateTime::duration(
       (systemClockMax < repMax && systemClockEpoch < (repMax - systemClockMax))
-          ? (systemClockMax + systemClockEpoch)
-          : systemClockMax)));
+          ? static_cast<DateTime::clock::duration::rep>(systemClockMax + systemClockEpoch)
+          : static_cast<DateTime::clock::duration::rep>(systemClockMax))));
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
@@ -420,10 +437,11 @@ DateTime::DateTime(
     int8_t localDiffMinutes,
     bool roundFracSecUp)
     : time_point(duration(
-        (OneDayIn100ns * (static_cast<int64_t>(DaySinceEpoch(year, month, day)) - 1))
-        + (OneHourIn100ns * (static_cast<int64_t>(hour) - localDiffHours))
-        + (OneMinuteIn100ns * (static_cast<int64_t>(minute) - localDiffMinutes))
-        + (OneSecondIn100ns * second) + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
+          (OneDayIn100ns * (static_cast<int64_t>(DaySinceEpoch(year, month, day)) - 1))
+          + (OneHourIn100ns * (static_cast<int64_t>(hour) - localDiffHours))
+          + (OneMinuteIn100ns * (static_cast<int64_t>(minute) - localDiffMinutes))
+          + (OneSecondIn100ns * second)
+          + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
 {
   ValidateDate(
       year,
