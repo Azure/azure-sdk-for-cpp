@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include <iostream>
+
 using namespace Azure;
 
 namespace {
@@ -55,6 +57,13 @@ DateTime GetMaxDateTime()
   auto const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
 
   constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
+
+  std::cerr << "systemClockMax: " << systemClockMax << "\n";
+  std::cerr << "systemClockEpoch: " << systemClockEpoch << "\n";
+  std::cerr << "repMax: " << repMax << "\n";
+  std::cout << "systemClockMax: " << systemClockMax << "\n";
+  std::cout << "systemClockEpoch: " << systemClockEpoch << "\n";
+  std::cout << "repMax: " << repMax << "\n";
 
   return DateTime(DateTime::time_point(DateTime::duration(
       (systemClockMax < repMax && systemClockEpoch < (repMax - systemClockMax))
