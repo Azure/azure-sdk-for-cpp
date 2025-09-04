@@ -76,6 +76,9 @@ DateTime GetMaxDateTime()
   Rep const commonSystemClockMax
       = std::chrono::duration_cast<CommonDuration>(scSystemClockMaxDuration).count();
 
+  Rep const commonDtClockMax
+      = std::chrono::duration_cast<CommonDuration>((DateTime::clock::duration::max)()).count();
+
   Rep const dtSystemClockMax
       = std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count();
 
@@ -94,12 +97,14 @@ DateTime GetMaxDateTime()
   std::cerr << "commonSystemClockMax: " << commonSystemClockMax << "\n";
   std::cerr << "dtSystemClockMax: " << dtSystemClockMax << "\n";
   std::cerr << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
+  std::cerr << "commonDtClockMax: " << commonDtClockMax << "\n";
   std::cerr << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
   std::cerr << "commonRepMax: " << commonRepMax << "\n";
 
   std::cout << "commonSystemClockMax: " << commonSystemClockMax << "\n";
   std::cout << "dtSystemClockMax: " << dtSystemClockMax << "\n";
   std::cout << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
+  std::cerr << "commonDtClockMax: " << commonDtClockMax << "\n";
   std::cout << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
   std::cout << "commonRepMax: " << commonRepMax << "\n";
 
