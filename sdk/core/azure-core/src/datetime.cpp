@@ -79,8 +79,9 @@ DateTime GetMaxDateTime()
   Rep const commonDtClockMax
       = std::chrono::duration_cast<CommonDuration>((DateTime::clock::duration::max)()).count();
 
-  Rep const dtSystemClockMax
-      = std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count();
+  Rep const dtSystemClockMax = (commonSystemClockMax <= commonDtClockMax)
+      ? std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count()
+      : ((DateTime::clock::duration::max)()).count();
 
   Azure::DateTime::duration const dtSystemClockEpochDuration
       = GetSystemClockEpoch().time_since_epoch();
@@ -100,13 +101,23 @@ DateTime GetMaxDateTime()
   std::cerr << "commonDtClockMax: " << commonDtClockMax << "\n";
   std::cerr << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
   std::cerr << "commonRepMax: " << commonRepMax << "\n";
+  std::cerr << "result = "
+            << ((commonSystemClockMax < commonRepMax
+                 && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
+                    ? (dtSystemClockEpoch + dtSystemClockMax)
+                    : dtSystemClockMax);
 
   std::cout << "commonSystemClockMax: " << commonSystemClockMax << "\n";
   std::cout << "dtSystemClockMax: " << dtSystemClockMax << "\n";
   std::cout << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
-  std::cerr << "commonDtClockMax: " << commonDtClockMax << "\n";
+  std::cout << "commonDtClockMax: " << commonDtClockMax << "\n";
   std::cout << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
   std::cout << "commonRepMax: " << commonRepMax << "\n";
+  std::cout << "result = "
+            << ((commonSystemClockMax < commonRepMax
+                 && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
+                    ? (dtSystemClockEpoch + dtSystemClockMax)
+                    : dtSystemClockMax);
 
   return DateTime(DateTime::time_point(DateTime::duration(
       (commonSystemClockMax < commonRepMax
