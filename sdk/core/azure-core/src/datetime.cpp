@@ -78,7 +78,7 @@ DateTime GetMaxDateTime()
   Rep const commonDtClockMax
       = std::chrono::duration_cast<CommonDuration>((DateTime::clock::duration::max)()).count();
 
-  Rep const dtSystemClockMax = (commonSystemClockMax < commonDtClockMax)
+  Rep const dtSystemClockMax = (commonSystemClockMax< commonDtClockMax)
       ? std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count()
       : ((DateTime::clock::duration::max)()).count();
 
