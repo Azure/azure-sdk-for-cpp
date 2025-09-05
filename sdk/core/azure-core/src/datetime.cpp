@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
-#include <iostream>
 #include <limits>
 #include <ratio>
 #include <sstream>
@@ -95,29 +94,6 @@ DateTime GetMaxDateTime()
   constexpr Rep commonRepMax = std::chrono::duration_cast<CommonDuration>(
                                    DateTime::duration((std::numeric_limits<Rep>::max)()))
                                    .count();
-  std::cerr << "commonSystemClockMax: " << commonSystemClockMax << "\n";
-  std::cerr << "dtSystemClockMax: " << dtSystemClockMax << "\n";
-  std::cerr << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
-  std::cerr << "commonDtClockMax: " << commonDtClockMax << "\n";
-  std::cerr << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
-  std::cerr << "commonRepMax: " << commonRepMax << "\n";
-  std::cerr << "result = "
-            << ((commonSystemClockMax < commonRepMax
-                 && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
-                    ? (dtSystemClockEpoch + dtSystemClockMax)
-                    : dtSystemClockMax);
-
-  std::cout << "commonSystemClockMax: " << commonSystemClockMax << "\n";
-  std::cout << "dtSystemClockMax: " << dtSystemClockMax << "\n";
-  std::cout << "commonSystemClockEpoch: " << commonSystemClockEpoch << "\n";
-  std::cout << "commonDtClockMax: " << commonDtClockMax << "\n";
-  std::cout << "dtSystemClockEpoch: " << dtSystemClockEpoch << "\n";
-  std::cout << "commonRepMax: " << commonRepMax << "\n";
-  std::cout << "result = "
-            << ((commonSystemClockMax < commonRepMax
-                 && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
-                    ? (dtSystemClockEpoch + dtSystemClockMax)
-                    : dtSystemClockMax);
 
   return DateTime(DateTime::time_point(DateTime::duration(
       (commonSystemClockMax < commonRepMax
@@ -497,14 +473,8 @@ DateTime::DateTime(
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
-  std::cerr << "\n---------\n\n";
-  std::cout << "\n---------\n\n";
-  DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());
-  DateTime const SystemClockMax(GetMaxDateTime());
-  std::cerr << "*this: " << this->time_since_epoch().count() << "\n";
-  std::cout << "*this: " << this->time_since_epoch().count() << "\n";
-  std::cerr << "\n\n---------\n";
-  std::cout << "\n\n---------\n";
+  static DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());
+  static DateTime const SystemClockMax(GetMaxDateTime());
 
   auto outOfRange = 0;
   if (*this < SystemClockMin)
