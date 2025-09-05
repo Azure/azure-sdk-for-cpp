@@ -9,6 +9,7 @@
 #include <ctime>
 #include <iomanip>
 #include <limits>
+#include <ratio>
 #include <sstream>
 #include <stdexcept>
 #include <type_traits>
@@ -43,16 +44,65 @@ DateTime GetSystemClockEpoch()
 
 DateTime GetMaxDateTime()
 {
-  auto const systemClockMax = std::chrono::duration_cast<DateTime::clock::duration>(
-                                  (std::chrono::system_clock::time_point::max)().time_since_epoch())
-                                  .count();
+#ifdef _MSC_VER
+#pragma warning(push)
+// warning C6326: Potential comparison of a constant with another constant.
+#pragma warning(disable : 6326)
+#endif
+  static_assert(
+      std::is_same<DateTime::clock::duration::rep, std::chrono::system_clock::duration::rep>::value,
+      "DateTime::clock::duration::rep must be the same as "
+      "std::chrono::system_clock::duration::rep");
 
-  auto const systemClockEpoch = GetSystemClockEpoch().time_since_epoch().count();
+  using Rep = DateTime::clock::duration::rep;
 
-  constexpr auto repMax = (std::numeric_limits<DateTime::clock::duration::rep>::max)();
+  using CommonDuration = std::chrono::duration<
+      Rep,
+      std::conditional<
+          std::ratio_greater<
+              DateTime::clock::duration::period,
+              std::chrono::system_clock::duration::period>::value,
+          DateTime::clock::duration::period,
+          std::chrono::system_clock::duration::period>::type>;
+
+  std::chrono::system_clock::time_point const scEpochTimePoint
+      = std::chrono::system_clock::time_point();
+
+  std::chrono::system_clock::duration const scSystemClockMaxDuration
+      = (scEpochTimePoint + ((std::chrono::system_clock::time_point::max)() - scEpochTimePoint))
+            .time_since_epoch();
+
+  Rep const commonSystemClockMax
+      = std::chrono::duration_cast<CommonDuration>(scSystemClockMaxDuration).count();
+
+  Rep const commonDtClockMax
+      = std::chrono::duration_cast<CommonDuration>((DateTime::clock::duration::max)()).count();
+
+  Rep const dtSystemClockMax = (commonSystemClockMax < commonDtClockMax)
+      ? std::chrono::duration_cast<DateTime::clock::duration>(scSystemClockMaxDuration).count()
+      : ((DateTime::clock::duration::max)()).count();
+
+  Azure::DateTime::duration const dtSystemClockEpochDuration
+      = GetSystemClockEpoch().time_since_epoch();
+
+  Rep const commonSystemClockEpoch
+      = std::chrono::duration_cast<CommonDuration>(dtSystemClockEpochDuration).count();
+
+  Rep const dtSystemClockEpoch
+      = std::chrono::duration_cast<DateTime::clock::duration>(dtSystemClockEpochDuration).count();
+
+  constexpr Rep commonRepMax = std::chrono::duration_cast<CommonDuration>(
+                                   DateTime::duration((std::numeric_limits<Rep>::max)()))
+                                   .count();
 
   return DateTime(DateTime::time_point(DateTime::duration(
-      systemClockMax + (std::min)(systemClockEpoch, (repMax - systemClockMax)))));
+      (commonSystemClockMax < commonRepMax
+       && commonSystemClockEpoch < (commonRepMax - commonSystemClockMax))
+          ? (dtSystemClockEpoch + dtSystemClockMax)
+          : dtSystemClockMax)));
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 }
 
 template <typename T>
@@ -422,8 +472,8 @@ DateTime::DateTime(
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
-  static DateTime SystemClockMin((std::chrono::system_clock::time_point::min)());
-  static DateTime SystemClockMax(GetMaxDateTime());
+  static DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());
+  static DateTime const SystemClockMax(GetMaxDateTime());
 
   auto outOfRange = 0;
   if (*this < SystemClockMin)
