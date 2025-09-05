@@ -522,3 +522,82 @@ TEST_P(LogMessagesForSpecificCredential, )
 
   Logger::SetListener(nullptr);
 }
+
+TEST(DefaultAzureCredential, EnvVarNameOverride)
+{
+  CredentialTestHelper::EnvironmentOverride const env({
+      {"_Azure_Token_Credentials1", "AzureCliCredential"},
+  });
+
+  using LogMsgVec = std::vector<std::pair<Logger::Level, std::string>>;
+  LogMsgVec log;
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto lvl, auto msg) { log.push_back(std::make_pair(lvl, msg)); });
+  try
+  {
+    static_cast<void>(std::make_unique<DefaultAzureCredential>("_Azure_Token_Credentials1"));
+
+    EXPECT_EQ(log.size(), 5);
+    LogMsgVec::size_type i = 0;
+
+    EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: Creating DefaultAzureCredential which combines "
+        "multiple parameterless credentials into a single one."
+        "\nDefaultAzureCredential is only recommended for the early stages of development, "
+        "and not for usage in production environment."
+        "\nOnce the developer focuses on the Credentials "
+        "and Authentication aspects of their application, "
+        "DefaultAzureCredential needs to be replaced with the credential that "
+        "is the better fit for the application.");
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: DefaultAzureCredential: "
+        "Using '_Azure_Token_Credentials1' environment variable name instead of the default "
+        "'AZURE_TOKEN_CREDENTIALS'.");
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Verbose);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: DefaultAzureCredential: "
+        "'_Azure_Token_Credentials1' environment variable is set to 'AzureCliCredential', "
+        "therefore credential chain will only contain single credential: AzureCliCredential.");
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+    EXPECT_EQ(
+        log.at(i).second,
+        "Identity: AzureCliCredential created."
+        "\nSuccessful creation does not guarantee further successful token retrieval.");
+
+    ++i;
+    EXPECT_EQ(log.at(i).first, Logger::Level::Informational);
+    EXPECT_EQ(
+        log.at(i).second,
+        std::string("Identity: DefaultAzureCredential: Created with the following credentials: "
+                    "AzureCliCredential."));
+
+    ++i;
+    EXPECT_EQ(i, log.size());
+
+    log.clear();
+  }
+  catch (...)
+  {
+    Logger::SetListener(nullptr);
+    throw;
+  }
+  Logger::SetListener(nullptr);
+}
+
+TEST(DefaultAzureCredential, EnvVarNameOverrideNotSet)
+{
+  EXPECT_THROW(
+      static_cast<void>(std::make_unique<DefaultAzureCredential>("_Azure_Token_Credentials1")),
+      AuthenticationException);
+}
