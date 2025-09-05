@@ -454,8 +454,7 @@ DateTime::DateTime(
         (OneDayIn100ns * (static_cast<int64_t>(DaySinceEpoch(year, month, day)) - 1))
         + (OneHourIn100ns * (static_cast<int64_t>(hour) - localDiffHours))
         + (OneMinuteIn100ns * (static_cast<int64_t>(minute) - localDiffMinutes))
-        + (OneSecondIn100ns * second)
-        + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
+        + (OneSecondIn100ns * second) + (static_cast<int64_t>(fracSec) + (roundFracSecUp ? 1 : 0))))
 {
   ValidateDate(
       year,
