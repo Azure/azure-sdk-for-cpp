@@ -38,9 +38,14 @@ namespace Azure { namespace Core { namespace _internal {
       return IsDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
     }
 
+    static constexpr bool IsAlpha(char c) noexcept
+    {
+      return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+    }
+
     static constexpr bool IsAlphaNumeric(char c) noexcept
     {
-      return IsDigit(c) || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+      return IsDigit(c) || IsAlpha(c);
     }
 
     static constexpr bool IsSpace(char c) noexcept { return c == ' ' || (c >= '\t' && c <= '\r'); }
