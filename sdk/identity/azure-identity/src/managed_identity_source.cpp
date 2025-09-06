@@ -118,6 +118,24 @@ void ValidateArcKeyFile(std::string const& fileName)
     throw AuthenticationException("Failed to get file size for '" + fileName + "'.");
   }
 }
+
+// Create IMDS-specific retry options that handle HTTP 410 responses
+// Note: This is a compromise solution. The ideal implementation would apply
+// extended retry duration only for HTTP 410 responses, which requires
+// Azure Core support for conditional retry behavior.
+Azure::Core::Credentials::TokenCredentialOptions CreateImdsRetryOptions(
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+{
+  using Azure::Core::Http::HttpStatusCode;
+  
+  auto imdsOptions = options;
+  
+  // Add HTTP 410 (Gone) to the retryable status codes for IMDS
+  // According to Azure docs, IMDS returns 410 for the first 70 seconds when not ready
+  imdsOptions.Retry.StatusCodes.insert(HttpStatusCode::Gone);
+  
+  return imdsOptions;
+}
 } // namespace
 
 Azure::Core::Url ManagedIdentitySource::ParseEndpointUrl(
@@ -539,7 +557,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& resourceId,
     Azure::Core::Url const& imdsUrl,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentitySource(clientId, std::string(), options),
+    : ManagedIdentitySource(clientId, std::string(), CreateImdsRetryOptions(options)),
       m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
 {
   {
