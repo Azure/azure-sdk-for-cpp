@@ -525,7 +525,7 @@ TEST_P(LogMessagesForSpecificCredential, )
 
 TEST(DefaultAzureCredential, EnvVarNameOverride)
 {
-  CredentialTestHelper::EnvironmentOverride const env({
+  CredentialTestHelper::EnvironmentOverride const env(std::map<std::string, std::string>{
       {"_Azure_Token_Credentials1", "AzureCliCredential"},
   });
 
