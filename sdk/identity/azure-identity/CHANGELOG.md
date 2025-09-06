@@ -8,7 +8,7 @@
 
 ### Acknowledgments
 
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
 
 - James Le Cuirot _([GitHub](https://github.com/chewi))_
 
