@@ -26,7 +26,18 @@ using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
+namespace {
+std::string const DefaultEnvVarName = "AZURE_TOKEN_CREDENTIALS";
+} // namespace
+
 DefaultAzureCredential::DefaultAzureCredential(
+    Core::Credentials::TokenCredentialOptions const& options)
+    : DefaultAzureCredential(DefaultEnvVarName, options)
+{
+}
+
+DefaultAzureCredential::DefaultAzureCredential(
+    std::string const& envVarName,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
@@ -77,9 +88,24 @@ DefaultAzureCredential::DefaultAzureCredential(
             [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
     };
 
-    constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
+    bool envVarNameOverride = false;
+    if (envVarName != DefaultEnvVarName)
+    {
+      envVarNameOverride = true;
+      IdentityLog::Write(
+          IdentityLog::Level::Verbose,
+          GetCredentialName() + ": Using '" + envVarName
+              + "' environment variable name instead of the default '" + DefaultEnvVarName + "'.");
+    }
+
     const auto envVarValue = Environment::GetVariable(envVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
+
+    if (envVarNameOverride && trimmedEnvVarValue.empty())
+    {
+      throw AuthenticationException(
+          GetCredentialName() + ": '" + envVarName + "' environment variable is empty.");
+    }
 
     bool specificCred = false;
     if (!trimmedEnvVarValue.empty())
@@ -179,8 +205,10 @@ DefaultAzureCredential::DefaultAzureCredential(
         throw AuthenticationException(
             GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
             + "' environment variable. Allowed values are 'dev', 'prod'" + allowedCredNames
-            + " (case insensitive). "
-              "It is also valid to not have the environment variable defined.");
+            + " (case insensitive)."
+            + (envVarNameOverride
+                   ? ""
+                   : " It is also valid to not have the environment variable defined."));
       }
     }
   }
