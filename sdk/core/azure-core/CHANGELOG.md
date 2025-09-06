@@ -1,14 +1,10 @@
 # Release History
 
-## 1.17.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.16.1 (2025-09-11)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed `DateTime::operator std::chrono::system_clock::time_point()` when compiled with Xcode 16.
 
 ## 1.16.0 (2025-07-10)
 
