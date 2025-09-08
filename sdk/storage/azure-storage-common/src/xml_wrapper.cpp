@@ -615,7 +615,7 @@ namespace Azure { namespace Storage { namespace _internal {
   std::string XmlWriter::GetDocument()
   {
     return std::string(
-        reinterpret_cast<const char*>(m_context->buffer->content), m_context->buffer->use);
+        reinterpret_cast<const char*>(xmlBufferContent(m_context->buffer.get())), xmlBufferLength(m_context->buffer.get()));
   }
 
 #endif
