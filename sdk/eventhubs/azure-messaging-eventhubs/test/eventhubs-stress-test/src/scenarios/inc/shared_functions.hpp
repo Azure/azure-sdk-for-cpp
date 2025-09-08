@@ -28,7 +28,7 @@
 #include <opentelemetry/sdk/logs/logger.h>
 #include <opentelemetry/sdk/trace/tracer.h>
 #include <opentelemetry/trace/provider.h>
-#include <opentelemetry/trace/semantic_conventions.h>
+#include <opentelemetry/semconv/url_attributes.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
