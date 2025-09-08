@@ -144,7 +144,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   using namespace Azure::Core::Amqp::Models;
 
-#if !defined(AZ_PLATFORM_MAC) || defined(ENABLE_RUST_AMQP)
+#if !defined(AZ_PLATFORM_MAC)
+
+#if ENABLE_RUST_AMQP
   TEST_F(TestManagement, BasicTests)
   {
     {
@@ -156,8 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       CloseAmqpConnection(connection);
     }
   }
-
-#if !defined(ENABLE_RUST_AMQP)
+#else
   // With Rust AMQP, this failure is triggered when the connection is opened, so we can't test it
   // in the context of the management APIs.
   TEST_F(TestManagement, ManagementOpenCloseNoListener)
@@ -421,7 +422,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
   }
 #endif // !defined(AZ_PLATFORM_MAC)
-#if !defined(AZ_PLATFORM_MAC) || defined(ENABLE_RUST_AMQP)
+#if !defined(AZ_PLATFORM_MAC)
 #if ENABLE_UAMQP
   namespace {
 
