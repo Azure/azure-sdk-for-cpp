@@ -225,7 +225,7 @@ BatchStressTest::SendMessages()
   catch (std::exception const& ex)
   {
     GetTracer()->GetCurrentSpan()->AddEvent(
-        "Exception received", {{trace::SemanticConventions::kExceptionMessage, ex.what()}});
+        "Exception received", {{opentelemetry::semconv::exception::kExceptionMessage, ex.what()}});
     std::cerr << "Exception " << ex.what();
     throw;
   }
@@ -266,7 +266,7 @@ void BatchStressTest::ReceiveMessages(
   catch (std::exception const& ex)
   {
     GetTracer()->GetCurrentSpan()->AddEvent(
-        "Exception received", {{trace::SemanticConventions::kExceptionMessage, ex.what()}});
+        "Exception received", {{opentelemetry::semconv::exception::kExceptionMessage, ex.what()}});
     std::cerr << "Exception " << ex.what();
     throw;
   }
