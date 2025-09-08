@@ -9,6 +9,8 @@
 #include <azure/identity/default_azure_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 
+#include <opentelemetry/semconv/exception_attributes.h>
+
 using namespace Azure::Messaging::EventHubs;
 
 namespace trace_sdk = opentelemetry::sdk::trace;
