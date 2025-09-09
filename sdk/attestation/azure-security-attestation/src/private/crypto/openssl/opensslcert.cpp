@@ -103,10 +103,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
     {
       throw OpenSSLException("i2d_X509_bio");
     }
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
     if (BIO_flush(base64bio.get()) != 1)
     {
       throw OpenSSLException("BIO_flush");
     }
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 
     // Now that we've written to the underlying bio, pop it back
     // to the bio local so we can retrieve the base64 data which was written.
