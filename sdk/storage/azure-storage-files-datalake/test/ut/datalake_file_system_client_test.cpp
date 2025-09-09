@@ -261,6 +261,98 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileSystemClientTest, ListPaths_WithStartFrom_LIVEONLY_)
+  {
+    std::set<std::string> paths;
+    const std::string baseName = RandomString();
+    const std::string dir1 = baseName + "0";
+    const std::string dir2 = baseName + "1";
+
+    std::set<std::string> rootPaths;
+    rootPaths.emplace(dir1);
+    rootPaths.emplace(dir2);
+    paths.emplace(dir2);
+    std::string startFrom = "";
+
+    {
+      auto dirClient = m_fileSystemClient->GetDirectoryClient(dir1);
+      for (int i = 0; i < 3; ++i)
+      {
+        std::string filename = baseName + std::to_string(i);
+        auto fileClient = dirClient.GetFileClient(filename);
+        fileClient.CreateIfNotExists();
+        auto path = dir1 + "/" + filename;
+        if (i == 1)
+        {
+          startFrom = path;
+        }
+        if (i >= 1)
+        {
+          paths.emplace(path);
+        }
+      }
+
+      dirClient = m_fileSystemClient->GetDirectoryClient(dir2);
+      for (int i = 0; i < 4; ++i)
+      {
+        std::string filename = baseName + std::to_string(i);
+        auto fileClient = dirClient.GetFileClient(filename);
+        fileClient.CreateIfNotExists();
+        paths.emplace(dir2 + "/" + filename);
+      }
+      std::string filename = baseName + "2";
+      auto fileClient = m_fileSystemClient->GetFileClient(filename);
+      fileClient.CreateIfNotExists();
+      paths.emplace(filename);
+      rootPaths.emplace(filename);
+    }
+
+    Azure::Storage::Files::DataLake::ListPathsOptions options;
+    options.StartFrom = startFrom;
+    {
+      // Normal list recursively.
+      std::set<std::string> results;
+      for (auto page = m_fileSystemClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, paths);
+    }
+    {
+      // non-recursive
+      std::set<std::string> results;
+      Azure::Storage::Files::DataLake::ListPathsOptions nonRecursiveOptions;
+      nonRecursiveOptions.StartFrom = dir1;
+      for (auto page = m_fileSystemClient->ListPaths(false, nonRecursiveOptions); page.HasPage();
+           page.MoveToNextPage())
+      {
+        for (auto& path : page.Paths)
+        {
+          results.insert(path.Name);
+        }
+      }
+
+      EXPECT_EQ(results, rootPaths);
+    }
+    {
+      // List max result
+      options.PageSizeHint = 2;
+      int numPages = 0;
+      for (auto page = m_fileSystemClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Paths.size(), 2U);
+        ++numPages;
+      }
+      EXPECT_GT(numPages, 2);
+    }
+  }
+
   TEST_F(DataLakeFileSystemClientTest, ListPathsExpiresOn)
   {
     const std::string fileName = RandomString();

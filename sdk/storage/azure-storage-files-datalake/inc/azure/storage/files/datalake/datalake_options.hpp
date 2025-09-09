@@ -347,12 +347,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * Optional. A relative path within the specified directory where the listing will start from.
      * For example, a recursive listing under directory folder1/folder2
-     * with beginFrom as folder3/readmefile.txt will start listing from
+     * with startFrom as folder3/readmefile.txt will start listing from
      * folder1/folder2/folder3/readmefile.txt. Please note that, multiple entity levels are
      * supported for recursive listing. Non-recursive listing supports only one entity level. An
      * error will appear if multiple entity levels are specified for non-recursive listing.
      */
-    Azure::Nullable<std::string> BeginFrom;
+    Azure::Nullable<std::string> StartFrom;
   };
 
   /**
