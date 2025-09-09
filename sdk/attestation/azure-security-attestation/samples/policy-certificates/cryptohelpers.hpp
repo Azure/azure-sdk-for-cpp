@@ -91,7 +91,7 @@ std::string GetOpenSSLError(std::string const& what)
   }
 
   uint8_t* bioData;
-  
+
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wold-style-cast"
