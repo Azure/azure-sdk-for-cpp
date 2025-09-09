@@ -1647,7 +1647,7 @@ namespace Azure { namespace Core {
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif // __clang__
-        
+
         std::string returnValue;
         returnValue.resize(bufferSize);
         memcpy(&returnValue[0], bioData, bufferSize);
