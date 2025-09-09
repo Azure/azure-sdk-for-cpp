@@ -1638,7 +1638,16 @@ namespace Azure { namespace Core {
         }
 
         uint8_t* bioData;
+
+        #if defined(__clang__)
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wold-style-cast"
+        #endif // __clang__
         long bufferSize = BIO_get_mem_data(bio.get(), &bioData);
+        #if defined(__clang__)
+        #pragma clang diagnostic pop
+        #endif // __clang__
+        
         std::string returnValue;
         returnValue.resize(bufferSize);
         memcpy(&returnValue[0], bioData, bufferSize);
