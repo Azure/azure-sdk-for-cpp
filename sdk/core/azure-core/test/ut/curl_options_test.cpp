@@ -243,6 +243,7 @@ namespace Azure { namespace Core { namespace Test {
                         .ConnectionPoolIndex.clear());
   }
 
+#if !defined(AZ_PLATFORM_MAC)
   TEST(CurlTransportOptions, setCADirectory)
   {
     Azure::Core::Http::CurlTransportOptions curlOptions;
@@ -302,6 +303,7 @@ namespace Azure { namespace Core { namespace Test {
     }
 #endif
   }
+#endif // !defined(AZ_PLATFORM_MAC)
 
 #if _azure_DISABLE_HTTP_BIN_TESTS
   TEST(CurlConnectionPool, DISABLED_httpsDefault)
