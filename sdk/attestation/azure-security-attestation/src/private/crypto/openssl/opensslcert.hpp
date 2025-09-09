@@ -21,11 +21,18 @@
 #include <utility>
 #include <vector>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 
 // cspell::words OpenSSL X509 OpenSSLX509
 
@@ -88,7 +95,16 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
       // Now extract the data from the BIO and return it as a string.
       uint8_t* base64data;
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
       long bufferSize = BIO_get_mem_data(bio.get(), &base64data);
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
+
       std::string returnValue;
       returnValue.resize(bufferSize);
       memcpy(&returnValue[0], base64data, bufferSize);

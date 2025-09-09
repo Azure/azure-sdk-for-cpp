@@ -617,7 +617,8 @@ namespace Azure { namespace Data { namespace Tables { namespace _detail { namesp
   {
     auto context = static_cast<XmlWriterContext*>(m_context);
     xmlBufferPtr buffer = context->buffer;
-    return std::string(reinterpret_cast<const char*>(buffer->content), buffer->use);
+    return std::string(
+        reinterpret_cast<const char*>(xmlBufferContent(buffer)), xmlBufferLength(buffer));
   }
 
 #endif

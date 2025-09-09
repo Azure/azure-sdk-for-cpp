@@ -9,6 +9,8 @@
 #include <azure/identity/default_azure_credential.hpp>
 #include <azure/identity/environment_credential.hpp>
 
+#include <opentelemetry/semconv/exception_attributes.h>
+
 using namespace Azure::Messaging::EventHubs;
 
 namespace trace_sdk = opentelemetry::sdk::trace;
@@ -225,7 +227,7 @@ BatchStressTest::SendMessages()
   catch (std::exception const& ex)
   {
     GetTracer()->GetCurrentSpan()->AddEvent(
-        "Exception received", {{trace::SemanticConventions::kExceptionMessage, ex.what()}});
+        "Exception received", {{opentelemetry::semconv::exception::kExceptionMessage, ex.what()}});
     std::cerr << "Exception " << ex.what();
     throw;
   }
@@ -266,7 +268,7 @@ void BatchStressTest::ReceiveMessages(
   catch (std::exception const& ex)
   {
     GetTracer()->GetCurrentSpan()->AddEvent(
-        "Exception received", {{trace::SemanticConventions::kExceptionMessage, ex.what()}});
+        "Exception received", {{opentelemetry::semconv::exception::kExceptionMessage, ex.what()}});
     std::cerr << "Exception " << ex.what();
     throw;
   }

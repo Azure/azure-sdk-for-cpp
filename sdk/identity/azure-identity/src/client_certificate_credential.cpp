@@ -40,12 +40,19 @@
 
 #if !defined(AZ_PLATFORM_WINDOWS) \
     || (defined(WINAPI_PARTITION_DESKTOP) && !WINAPI_PARTITION_DESKTOP)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/ossl_typ.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 #endif
 
 using Azure::Identity::ClientCertificateCredential;

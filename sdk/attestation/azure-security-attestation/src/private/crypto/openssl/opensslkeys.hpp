@@ -19,10 +19,17 @@
 #include <utility>
 #include <vector>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
 

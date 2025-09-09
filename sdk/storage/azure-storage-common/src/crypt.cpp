@@ -14,11 +14,18 @@
 
 #include <bcrypt.h>
 #elif defined(AZ_PLATFORM_POSIX)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 #endif
 
 #include "azure/storage/common/storage_common.hpp"
