@@ -24,6 +24,10 @@
 #include <utility>
 #include <vector>
 
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/asn1.h>
 #include <openssl/bio.h>
 #include <openssl/ecdsa.h>
@@ -32,6 +36,9 @@
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
 #include <openssl/x509v3.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 
 // cspell: words OpenSSL X509 OpenSSLX509 keyid
 

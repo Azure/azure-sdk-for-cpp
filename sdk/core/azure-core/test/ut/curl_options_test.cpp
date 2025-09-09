@@ -12,7 +12,14 @@
 #if defined(BUILD_CURL_HTTP_TRANSPORT_ADAPTER)
 #include "azure/core/http/curl_transport.hpp"
 #if defined(AZ_PLATFORM_POSIX)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
 #include <openssl/x509.h>
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
 #endif
 #endif
 
