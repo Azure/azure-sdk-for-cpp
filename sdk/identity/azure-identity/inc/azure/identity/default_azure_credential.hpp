@@ -72,7 +72,7 @@ namespace Azure { namespace Identity {
      *
      */
     explicit DefaultAzureCredential(
-        bool requireEnvVarValue,
+        bool requireCredentialSpecifierEnvVarValue,
         Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**

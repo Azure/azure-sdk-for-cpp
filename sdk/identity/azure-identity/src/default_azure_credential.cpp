@@ -37,7 +37,7 @@ DefaultAzureCredential::DefaultAzureCredential(
 }
 
 DefaultAzureCredential::DefaultAzureCredential(
-    bool requireEnvVarValue,
+    bool requireCredentialSpecifierEnvVarValue,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
@@ -91,7 +91,7 @@ DefaultAzureCredential::DefaultAzureCredential(
     const auto envVarValue = Environment::GetVariable(CredentialSpecifierEnvVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
-    if (requireEnvVarValue && trimmedEnvVarValue.empty())
+    if (requireCredentialSpecifierEnvVarValue && trimmedEnvVarValue.empty())
     {
       throw AuthenticationException(
           GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
@@ -197,7 +197,7 @@ DefaultAzureCredential::DefaultAzureCredential(
             GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + EnvVarName
             + "' environment variable. Allowed values are 'dev', 'prod'" + allowedCredNames
             + " (case insensitive)."
-            + (requireEnvVarValue
+            + (requireCredentialSpecifierEnvVarValue
                    ? ""
                    : " It is also valid to not have the environment variable defined."));
       }
