@@ -2,8 +2,11 @@
 
 ## 1.13.1 (2025-09-11)
 
-### Bugs Fixed
+### Features Added
 
+- Added a constructor overload for `DefaultAzureCredential` with a boolean parameter to indicate whether to throw an exception if `AZURE_TOKEN_CREDENTIALS` environment variable doesn't have a value.
+
+### Bugs Fixed
 - Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
 
 ### Acknowledgments

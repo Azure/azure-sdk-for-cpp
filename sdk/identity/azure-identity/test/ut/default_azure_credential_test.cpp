@@ -522,3 +522,9 @@ TEST_P(LogMessagesForSpecificCredential, )
 
   Logger::SetListener(nullptr);
 }
+
+TEST(DefaultAzureCredential, RequireCredentialSpecifierEnvVarValue)
+{
+  EXPECT_THROW(
+      static_cast<void>(std::make_unique<DefaultAzureCredential>(true)), AuthenticationException);
+}

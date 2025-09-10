@@ -63,6 +63,19 @@ namespace Azure { namespace Identity {
     explicit DefaultAzureCredential(Core::Credentials::TokenCredentialOptions const& options);
 
     /**
+     * @brief Constructs `%DefaultAzureCredential`.
+     *
+     * @param requireCredentialSpecifierEnvVarValue Throw an exception if `AZURE_TOKEN_CREDENTIALS`
+     * environment variable is not set.
+     *
+     * @param options Generic Token Credential Options.
+     *
+     */
+    explicit DefaultAzureCredential(
+        bool requireCredentialSpecifierEnvVarValue,
+        Core::Credentials::TokenCredentialOptions const& options = {});
+
+    /**
      * @brief Destructs `%DefaultAzureCredential`.
      *
      */

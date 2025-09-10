@@ -26,7 +26,18 @@ using Azure::Core::_internal::StringExtensions;
 using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
+namespace {
+constexpr auto CredentialSpecifierEnvVarName = "AZURE_TOKEN_CREDENTIALS";
+} // namespace
+
 DefaultAzureCredential::DefaultAzureCredential(
+    Core::Credentials::TokenCredentialOptions const& options)
+    : DefaultAzureCredential(false, options)
+{
+}
+
+DefaultAzureCredential::DefaultAzureCredential(
+    bool requireCredentialSpecifierEnvVarValue,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
@@ -77,9 +88,15 @@ DefaultAzureCredential::DefaultAzureCredential(
             [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
     };
 
-    constexpr auto envVarName = "AZURE_TOKEN_CREDENTIALS";
-    const auto envVarValue = Environment::GetVariable(envVarName);
+    const auto envVarValue = Environment::GetVariable(CredentialSpecifierEnvVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
+
+    if (requireCredentialSpecifierEnvVarValue && trimmedEnvVarValue.empty())
+    {
+      throw AuthenticationException(
+          GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+          + "' environment variable is empty.");
+    }
 
     bool specificCred = false;
     if (!trimmedEnvVarValue.empty())
@@ -92,8 +109,8 @@ DefaultAzureCredential::DefaultAzureCredential(
           specificCred = true;
           IdentityLog::Write(
               IdentityLog::Level::Verbose,
-              GetCredentialName() + ": '" + envVarName + "' environment variable is set to '"
-                  + envVarValue
+              GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+                  + "' environment variable is set to '" + envVarValue
                   + "', therefore credential chain will only contain single credential: "
                   + cred.CredentialName + '.');
           credentialChain.emplace_back(cred.Create(options));
@@ -143,7 +160,8 @@ DefaultAzureCredential::DefaultAzureCredential(
         }
       }
 
-      const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
+      const auto logMsg = GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+          + "' environment variable is "
           + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
           + ((devCredCount > 0)
                  ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
@@ -177,10 +195,13 @@ DefaultAzureCredential::DefaultAzureCredential(
         }
 
         throw AuthenticationException(
-            GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
+            GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '"
+            + CredentialSpecifierEnvVarName
             + "' environment variable. Allowed values are 'dev', 'prod'" + allowedCredNames
-            + " (case insensitive). "
-              "It is also valid to not have the environment variable defined.");
+            + " (case insensitive)."
+            + (requireCredentialSpecifierEnvVarValue
+                   ? ""
+                   : " It is also valid to not have the environment variable defined."));
       }
     }
   }
