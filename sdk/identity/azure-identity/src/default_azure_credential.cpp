@@ -27,7 +27,7 @@ using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
-std::string const EnvVarName = "AZURE_TOKEN_CREDENTIALS";
+constexpr auto CredentialSpecifierEnvVarName = "AZURE_TOKEN_CREDENTIALS";
 } // namespace
 
 DefaultAzureCredential::DefaultAzureCredential(
@@ -88,13 +88,14 @@ DefaultAzureCredential::DefaultAzureCredential(
             [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
     };
 
-    const auto envVarValue = Environment::GetVariable(EnvVarName);
+    const auto envVarValue = Environment::GetVariable(CredentialSpecifierEnvVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
     if (requireEnvVarValue && trimmedEnvVarValue.empty())
     {
       throw AuthenticationException(
-          GetCredentialName() + ": '" + EnvVarName + "' environment variable is empty.");
+          GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+          + "' environment variable is empty.");
     }
 
     bool specificCred = false;
@@ -108,8 +109,8 @@ DefaultAzureCredential::DefaultAzureCredential(
           specificCred = true;
           IdentityLog::Write(
               IdentityLog::Level::Verbose,
-              GetCredentialName() + ": '" + EnvVarName + "' environment variable is set to '"
-                  + envVarValue
+              GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+                  + "' environment variable is set to '" + envVarValue
                   + "', therefore credential chain will only contain single credential: "
                   + cred.CredentialName + '.');
           credentialChain.emplace_back(cred.Create(options));
@@ -159,8 +160,8 @@ DefaultAzureCredential::DefaultAzureCredential(
         }
       }
 
-      const auto logMsg = GetCredentialName() + ": '" + EnvVarName + "' environment variable is "
-          + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
+      const auto logMsg = GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
+          + "' environment variable is " + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
           + ((devCredCount > 0)
                  ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
                     + "be included in the credential chain.")
