@@ -65,8 +65,8 @@ namespace Azure { namespace Identity {
     /**
      * @brief Constructs `%DefaultAzureCredential`.
      *
-     * @param requireEnvVarValue Throw an exception if `AZURE_TOKEN_CREDENTIALS` environment
-     * variable is not set.
+     * @param requireCredentialSpecifierEnvVarValue Throw an exception if `AZURE_TOKEN_CREDENTIALS`
+     * environment variable is not set.
      *
      * @param options Generic Token Credential Options.
      *
