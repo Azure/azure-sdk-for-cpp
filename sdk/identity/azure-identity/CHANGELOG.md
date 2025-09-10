@@ -1,16 +1,16 @@
 # Release History
 
-## 1.14.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.13.1 (2025-09-11)
 
 ### Bugs Fixed
 
-- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1.
+- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
 
-### Other Changes
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
+
+- James Le Cuirot _([GitHub](https://github.com/chewi))_
 
 ## 1.13.0 (2025-08-05)
 
