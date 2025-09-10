@@ -1,18 +1,19 @@
 # Release History
 
-## 1.14.0-beta.1 (Unreleased)
+## 1.13.1 (2025-09-11)
 
 ### Features Added
 
 - Added a constructor overload for `DefaultAzureCredential` with a boolean parameter to indicate whether to throw an exception if `AZURE_TOKEN_CREDENTIALS` environment variable doesn't have a value.
 
 ### Breaking Changes
+- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
 
-### Bugs Fixed
+### Acknowledgments
 
-- Fixed IMDS token requests for managed identities, which were broken by an invalid URL path in 1.12.0-beta.1.
+Thank you to our developer community members who helped to make Azure Identity better with their contributions to this release:
 
-### Other Changes
+- James Le Cuirot _([GitHub](https://github.com/chewi))_
 
 ## 1.13.0 (2025-08-05)
 

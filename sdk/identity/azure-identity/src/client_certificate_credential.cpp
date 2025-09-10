@@ -460,14 +460,21 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(
   UniqueHandle<X509> x509{PEM_read_bio_X509(bioCert.get(), nullptr, nullptr, nullptr)};
   if (!x509)
   {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
     std::ignore = BIO_seek(bioCert.get(), 0);
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
+
     x509.reset(PEM_read_bio_X509(bioCert.get(), nullptr, nullptr, nullptr));
     if (!x509)
     {
       throw AuthenticationException("Failed to read X509 section.");
     }
   }
-
   return GetThumbprintAndKey(std::move(x509), std::move(pkey));
 }
 
@@ -489,7 +496,15 @@ std::tuple<CertificateThumbprint, UniquePrivateKey> ReadPemCertificate(const std
   UniqueHandle<X509> x509{PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr)};
   if (!x509)
   {
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#endif // __clang__
     std::ignore = BIO_seek(bio.get(), 0);
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
+
     x509.reset(PEM_read_bio_X509(bio.get(), nullptr, nullptr, nullptr));
     if (!x509)
     {
