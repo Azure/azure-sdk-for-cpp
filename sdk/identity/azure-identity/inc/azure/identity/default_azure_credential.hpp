@@ -12,7 +12,6 @@
 #include <azure/core/credentials/token_credential_options.hpp>
 
 #include <memory>
-#include <string>
 
 #if defined(_azure_TESTING_BUILD)
 class DefaultAzureCredential_CachingCredential_Test;
@@ -66,14 +65,14 @@ namespace Azure { namespace Identity {
     /**
      * @brief Constructs `%DefaultAzureCredential`.
      *
-     * @param envVarName The name of the environment variable overriding the default
-     * 'AZURE_TOKEN_CREDENTIALS' name for specifying the underlying credential class to use.
+     * @param requireEnvVarValue Throw an exception if `AZURE_TOKEN_CREDENTIALS` environment
+     * variable is not set.
      *
      * @param options Generic Token Credential Options.
      *
      */
     explicit DefaultAzureCredential(
-        std::string const& envVarName,
+        bool requireEnvVarValue,
         Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**

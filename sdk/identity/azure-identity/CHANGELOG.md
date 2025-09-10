@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added a constructor overload for `DefaultAzureCredential` to allow `AZURE_TOKEN_CREDENTIALS` environment variable name override.
+- Added a constructor overload for `DefaultAzureCredential` with a boolean parameter to indicate whether to throw an exception if `AZURE_TOKEN_CREDENTIALS` environment variable doesn't have a value.
 
 ### Breaking Changes
 

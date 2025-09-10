@@ -27,17 +27,17 @@ using Azure::Core::Diagnostics::Logger;
 using Azure::Identity::_detail::IdentityLog;
 
 namespace {
-std::string const DefaultEnvVarName = "AZURE_TOKEN_CREDENTIALS";
+std::string const EnvVarName = "AZURE_TOKEN_CREDENTIALS";
 } // namespace
 
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
-    : DefaultAzureCredential(DefaultEnvVarName, options)
+    : DefaultAzureCredential(false, options)
 {
 }
 
 DefaultAzureCredential::DefaultAzureCredential(
-    std::string const& envVarName,
+    bool requireEnvVarValue,
     Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("DefaultAzureCredential")
 {
@@ -88,23 +88,13 @@ DefaultAzureCredential::DefaultAzureCredential(
             [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
     };
 
-    bool envVarNameOverride = false;
-    if (envVarName != DefaultEnvVarName)
-    {
-      envVarNameOverride = true;
-      IdentityLog::Write(
-          IdentityLog::Level::Verbose,
-          GetCredentialName() + ": Using '" + envVarName
-              + "' environment variable name instead of the default '" + DefaultEnvVarName + "'.");
-    }
-
-    const auto envVarValue = Environment::GetVariable(envVarName);
+    const auto envVarValue = Environment::GetVariable(EnvVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
-    if (envVarNameOverride && trimmedEnvVarValue.empty())
+    if (requireEnvVarValue && trimmedEnvVarValue.empty())
     {
       throw AuthenticationException(
-          GetCredentialName() + ": '" + envVarName + "' environment variable is empty.");
+          GetCredentialName() + ": '" + EnvVarName + "' environment variable is empty.");
     }
 
     bool specificCred = false;
@@ -118,7 +108,7 @@ DefaultAzureCredential::DefaultAzureCredential(
           specificCred = true;
           IdentityLog::Write(
               IdentityLog::Level::Verbose,
-              GetCredentialName() + ": '" + envVarName + "' environment variable is set to '"
+              GetCredentialName() + ": '" + EnvVarName + "' environment variable is set to '"
                   + envVarValue
                   + "', therefore credential chain will only contain single credential: "
                   + cred.CredentialName + '.');
@@ -169,7 +159,7 @@ DefaultAzureCredential::DefaultAzureCredential(
         }
       }
 
-      const auto logMsg = GetCredentialName() + ": '" + envVarName + "' environment variable is "
+      const auto logMsg = GetCredentialName() + ": '" + EnvVarName + "' environment variable is "
           + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
           + ((devCredCount > 0)
                  ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
@@ -203,10 +193,10 @@ DefaultAzureCredential::DefaultAzureCredential(
         }
 
         throw AuthenticationException(
-            GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + envVarName
+            GetCredentialName() + ": Invalid value '" + envVarValue + "' for the '" + EnvVarName
             + "' environment variable. Allowed values are 'dev', 'prod'" + allowedCredNames
             + " (case insensitive)."
-            + (envVarNameOverride
+            + (requireEnvVarValue
                    ? ""
                    : " It is also valid to not have the environment variable defined."));
       }
