@@ -895,7 +895,7 @@ namespace Azure { namespace Storage { namespace Test {
     rootPaths.emplace(dir1);
     rootPaths.emplace(dir2);
     paths.emplace(dir2);
-    
+
     std::string startFrom = "";
 
     {
@@ -953,7 +953,8 @@ namespace Azure { namespace Storage { namespace Test {
       Azure::Storage::Files::DataLake::ListPathsOptions options;
       options.StartFrom = startFrom;
       std::set<std::string> results;
-      for (auto page = m_directoryClient->ListPaths(true, options); page.HasPage(); page.MoveToNextPage())
+      for (auto page = m_directoryClient->ListPaths(true, options); page.HasPage();
+           page.MoveToNextPage())
       {
         for (auto& path : page.Paths)
         {
