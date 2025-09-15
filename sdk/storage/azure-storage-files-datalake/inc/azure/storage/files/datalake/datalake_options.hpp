@@ -343,9 +343,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * than 5,000, the response will include up to 5,000 items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+
     /**
-    * 
-    */
+     * Optional. A relative path within the specified directory where the listing will start from.
+     * For example, a recursive listing under directory folder1/folder2
+     * with beginFrom as folder3/readmefile.txt will start listing from
+     * folder1/folder2/folder3/readmefile.txt. Please note that, multiple entity levels are
+     * supported for recursive listing. Non-recursive listing supports only one entity level. An
+     * error will appear if multiple entity levels are specified for non-recursive listing.
+     */
     Azure::Nullable<std::string> BeginFrom;
   };
 
@@ -373,9 +379,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * than 5,000, the response will include up to 5,000 items.
      */
     Azure::Nullable<int32_t> PageSizeHint;
+    
     /**
-    * 
-    */
+     * Specifies the relative path to list paths from.
+     */
     Azure::Nullable<std::string> StartFrom;
   };
 

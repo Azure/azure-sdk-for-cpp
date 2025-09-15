@@ -423,8 +423,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
 
     /**
-    * 
-    */
+     * @brief Specifies the relative path to list paths from.
+     */
     Azure::Nullable<std::string> StartFrom;
   };
 

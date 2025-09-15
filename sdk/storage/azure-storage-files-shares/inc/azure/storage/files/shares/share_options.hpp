@@ -428,6 +428,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput is 60 MiB/sec and maximum is 5,125 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional, default value is true.  Ony applicable to SMB shares.
+     * Specifies whether granting of new directory leases for directories present in a share are to
+     * be enabled or disabled. An input of true specifies that granting of new directory leases is
+     * to be allowed. An input of false specifies that granting of new directory leases is to be
+     * blocked.
+     */
+    Nullable<bool> EnableDirectoryLease;
   };
 
   /**
@@ -518,6 +527,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * bandwidth is 60 MiB/sec and max is 5,120 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional, default value is true.  Ony applicable to SMB shares.
+     * Specifies whether granting of new directory leases for directories present in a share are to
+     * be enabled or disabled. An input of true specifies that granting of new directory leases is
+     * to be allowed. An input of false specifies that granting of new directory leases is to be
+     * blocked.
+     */
+    Nullable<bool> EnableDirectoryLease;
   };
 
   /**
@@ -609,6 +627,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
   };
 
   /**
@@ -925,6 +954,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
   };
 
   /**
@@ -1333,6 +1373,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * Optional, only applicable to SMB files.
+     * How attributes and permissions should be set on the file.
+     * New: automatically adds the ARCHIVE file attribute flag to the file and uses
+     * Windows create file permissions semantics (ex: inherit from parent).
+     * Restore: does not modify file attribute flag and uses Windows update file permissions
+     * semantics. If Restore is specified, the file permission must also be provided or
+     * PropertySemantics will default to New.
+     */
+    Nullable<Models::FilePropertySemantics> FilePropertySemantics;
 
     /**
      * @brief Options for parallel transfer.

@@ -376,6 +376,7 @@ directive:
       $.Metrics.properties["IncludeAPIs"]["x-nullable"] = true;
       $.SmbSettings = $.ShareSmbSettings;
       delete $.ShareSmbSettings;
+      $.SmbSettings.properties["Multichannel"]["x-nullable"] = true;
       delete $.SmbSettings.properties["EncryptionInTransit"];
       $.SmbSettings.properties["EncryptionInTransit"] = { "$ref": "#/definitions/SmbEncryptionInTransit" };
       $.SmbSettings.properties["EncryptionInTransit"]["x-ms-client-name"] = "EncryptionInTransit";
@@ -383,6 +384,7 @@ directive:
       $.ShareProtocolSettings.properties["Smb"]["$ref"] = "#/definitions/SmbSettings";
       $.ShareProtocolSettings.properties["Settings"] = $.ShareProtocolSettings.properties["Smb"];
       $.ShareProtocolSettings.properties["Settings"]["x-ms-xml"] = { "name": "SMB" };
+      $.ShareProtocolSettings.properties["Settings"]["x-nullable"] = true;
       delete $.ShareProtocolSettings.properties["Smb"];
       $.NfsSettings = $.ShareNfsSettings;
       delete $.ShareNfsSettings;
