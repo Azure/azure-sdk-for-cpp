@@ -281,7 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = recursive;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
-    protocolLayerOptions.BeginFrom = options.BeginFrom;
+    protocolLayerOptions.BeginFrom = options.StartFrom;
 
     auto response = _detail::FileSystemClient::ListPaths(
         *m_pipeline, m_fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
