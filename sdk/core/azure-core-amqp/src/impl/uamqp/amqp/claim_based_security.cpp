@@ -9,6 +9,8 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <type_traits>
+
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Core::Amqp::_internal;
@@ -67,9 +69,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     message.SetBody(static_cast<Models::AmqpValue>(token));
 
     message.ApplicationProperties["name"] = static_cast<Models::AmqpValue>(audience);
-    message.ApplicationProperties["expiration"]
-        = std::chrono::duration_cast<std::chrono::seconds>(tokenExpirationTime.time_since_epoch())
-              .count();
+
+    // It appears that on Android, if you get a "long long" (from std::chrono::seconds::count()) and
+    // try to pass it to the set of overloads of AmqpValue() which do exist for all the range of
+    // fixed bit integers, including int64_t and uint64_t, it is still ambiguous for the compiler
+    // which overload to choose, as if "std::u?int*_t" were not typedefs, but some custom types.
+    static_assert(
+        std::is_signed<std::chrono::seconds::rep>::value
+            && std::is_integral<std::chrono::seconds::rep>::value
+            && sizeof(std::chrono::seconds::rep) <= sizeof(std::int64_t),
+        "std::chrono::seconds::rep is expected to fit into std::int64_t");
+    message.ApplicationProperties["expiration"] = static_cast<std::int64_t>(
+        std::chrono::duration_cast<std::chrono::seconds>(tokenExpirationTime.time_since_epoch())
+            .count());
 
     auto result = m_management->ExecuteOperation(
         "put-token",
