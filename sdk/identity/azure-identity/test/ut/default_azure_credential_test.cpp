@@ -540,7 +540,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
   // using isProbeEnabled = true.
   EXPECT_THROW(
       static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-          [](auto transport) {
+          [&ImATeapot](auto transport) {
             TokenCredentialOptions options;
             options.Transport.Transport = transport;
 
@@ -582,7 +582,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
   // set to "ManagedIdentityCredential", which should result in ManagedIdentityCredential using
   // isProbeEnabled = false.
   auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
-      [](auto transport) {
+      [&ImATeapot](auto transport) {
         TokenCredentialOptions options;
         options.Transport.Transport = transport;
 

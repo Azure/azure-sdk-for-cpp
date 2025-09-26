@@ -3199,7 +3199,7 @@ namespace Azure { namespace Identity { namespace Test {
 
     EXPECT_THROW(
         static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-            [](auto transport) {
+            [&ImATeapot](auto transport) {
               TokenCredentialOptions options;
               options.Transport.Transport = transport;
 
@@ -3232,7 +3232,7 @@ namespace Azure { namespace Identity { namespace Test {
 
     // Everything is the same, including the retry policy, but this time isProbeEnabled = false.
     auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
-        [](auto transport) {
+        [&ImATeapot](auto transport) {
           TokenCredentialOptions options;
           options.Transport.Transport = transport;
 
