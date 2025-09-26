@@ -3224,7 +3224,7 @@ namespace Azure { namespace Identity { namespace Test {
             {{"https://azure.com/.default"}},
             {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
              // Given there aren't going to be any retries due to probe request, the credential
-             // should never get to make a seond request to receive the successful response below.
+             // should never get to make a second request to receive the successful response below.
              {HttpStatusCode::Ok,
               "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN2\"}",
               {}}})),
