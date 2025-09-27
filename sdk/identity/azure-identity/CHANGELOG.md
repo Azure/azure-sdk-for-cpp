@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `IsProbeEnabled` option for `ManagedIdentityCredential`.
+- When `AZURE_TOKEN_CREDENTIALS` environment variable is configured to `ManagedIdentityCredential`, the `DefaultAzureCredential` does not issue a probe request and performs retries with exponential backoff.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -113,7 +113,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
   };
 
   class AppServiceV2019ManagedIdentitySource final : public AppServiceManagedIdentitySource {
@@ -146,7 +147,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
   };
 
   class CloudShellManagedIdentitySource final : public ManagedIdentitySource {
@@ -164,7 +166,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
 
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
@@ -185,7 +188,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
 
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
@@ -204,7 +208,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& objectId,
         std::string const& resourceId,
         Core::Url const& imdsUrl,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
 
   public:
     static std::unique_ptr<ManagedIdentitySource> Create(
@@ -212,7 +217,8 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
-        Core::Credentials::TokenCredentialOptions const& options);
+        Core::Credentials::TokenCredentialOptions const& options,
+        bool isProbeEnabled);
 
     Core::Credentials::AccessToken GetToken(
         Core::Credentials::TokenRequestContext const& tokenRequestContext,
