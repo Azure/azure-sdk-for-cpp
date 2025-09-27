@@ -244,8 +244,7 @@ namespace Azure { namespace Identity {
      *
      * @param options Options for token retrieval.
      */
-    explicit ManagedIdentityCredential(
-        Core::Credentials::TokenCredentialOptions const& options);
+    explicit ManagedIdentityCredential(Core::Credentials::TokenCredentialOptions const& options);
 
     /**
      * @brief Constructs a Managed Identity Credential.
