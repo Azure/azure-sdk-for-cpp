@@ -58,6 +58,13 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
+    char const* clientId,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(std::string(clientId), options)
+{
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
     bool isProbeEnabled,
     Azure::Core::Credentials::TokenCredentialOptions const& options)

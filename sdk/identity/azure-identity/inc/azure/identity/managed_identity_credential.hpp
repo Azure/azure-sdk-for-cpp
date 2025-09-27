@@ -214,6 +214,16 @@ namespace Azure { namespace Identity {
      * @brief Constructs a Managed Identity Credential.
      *
      * @param clientId Client ID.
+     * @param options Options for token retrieval.
+     */
+    explicit ManagedIdentityCredential(
+        char const* clientId,
+        Core::Credentials::TokenCredentialOptions const& options);
+
+    /**
+     * @brief Constructs a Managed Identity Credential.
+     *
+     * @param clientId Client ID.
      * @param isProbeEnabled if Azure Instance Metadata Service (IMDS) gets selected as managed
      * identity source, specifies whether the first request should be a short probe request
      * (`true`), instead of a normal request with retries and exponential backoff (`false`). Default
