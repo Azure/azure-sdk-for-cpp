@@ -94,8 +94,8 @@ DefaultAzureCredential::DefaultAzureCredential(
             "ManagedIdentityCredential",
             [&](auto options) {
               // If specifically 'ManagedIdentityCredential' is used, do not perform a probe
-              // request, going for the full retry with exponential beckoffs instead.
-              return std::make_shared<ManagedIdentityCredential>(options, !specificCred);
+              // request, going for the full retry with exponential backoffs instead.
+              return std::make_shared<ManagedIdentityCredential>(!specificCred, options);
             }},
         CredentialInfo{
             false,

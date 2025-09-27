@@ -52,8 +52,15 @@ ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options,
-    bool isProbeEnabled)
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(clientId, true, options)
+{
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
+    std::string const& clientId,
+    bool isProbeEnabled,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
   m_managedIdentitySource
@@ -91,9 +98,15 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
-    Azure::Core::Credentials::TokenCredentialOptions const& options,
-    bool isProbeEnabled)
-    : ManagedIdentityCredential(std::string(), options, isProbeEnabled)
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(std::string(), true, options)
+{
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
+    bool isProbeEnabled,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(std::string(), isProbeEnabled, options)
 {
 }
 
