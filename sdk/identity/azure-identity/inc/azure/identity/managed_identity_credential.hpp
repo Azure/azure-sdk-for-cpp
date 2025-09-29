@@ -179,7 +179,7 @@ namespace Azure { namespace Identity {
      * is not available, credential creation may take tens of seconds until multiple attempts to get
      * a response from IMDS would fail.
      */
-    bool IsProbeEnabled = false;
+    bool UseProbeRequest = false;
   };
 
   /**
@@ -224,20 +224,20 @@ namespace Azure { namespace Identity {
      * @brief Constructs a Managed Identity Credential.
      *
      * @param clientId Client ID.
-     * @param isProbeEnabled if Azure Instance Metadata Service (IMDS) gets selected as managed
+     * @param useProbeRequest if Azure Instance Metadata Service (IMDS) gets selected as managed
      * identity source, specifies whether the first request should be a short probe request
      * (`true`), instead of a normal request with retries and exponential backoff (`false`). Default
      * is `false`.
      * @param options Options for token retrieval.
      *
-     * @note When @a isProbeEnabled is `true`, there's a potential that the credential would not
+     * @note When @a useProbeRequest is `true`, there's a potential that the credential would not
      * detect IMDS being available on a machine, if the response was not received fast enough. When
      * `false` and IMDS is not available, credential creation may take tens of seconds until
      * multiple attempts to get a response from IMDS would fail.
      */
     explicit ManagedIdentityCredential(
         std::string const& clientId = std::string(),
-        bool isProbeEnabled = false,
+        bool useProbeRequest = false,
         Core::Credentials::TokenCredentialOptions const& options
         = Core::Credentials::TokenCredentialOptions());
 
@@ -260,17 +260,17 @@ namespace Azure { namespace Identity {
      * @brief Constructs a Managed Identity Credential.
      *
      * @param options Options for token retrieval.
-     * @param isProbeEnabled if Azure Instance Metadata Service (IMDS) gets selected as managed
+     * @param useProbeRequest if Azure Instance Metadata Service (IMDS) gets selected as managed
      * identity source, specifies whether the first request should be a short probe request
      * (`true`), instead of a normal request with retries and exponential backoff (`false`).
      *
-     * @note When @a isProbeEnabled is `true`, there's a potential that the credential would not
+     * @note When @a useProbeRequest is `true`, there's a potential that the credential would not
      * detect IMDS being available on a machine, if the response was not received fast enough. When
      * `false` and IMDS is not available, credential creation may take tens of seconds until
      * multiple attempts to get a response from IMDS would fail.
      */
     explicit ManagedIdentityCredential(
-        bool isProbeEnabled,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
 
     /**

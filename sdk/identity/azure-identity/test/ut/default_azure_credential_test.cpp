@@ -537,7 +537,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
   constexpr auto ImATeapot = static_cast<HttpStatusCode>(418);
 
   // AZURE_TOKEN_CREDENTIALS is set to "prod", which should result in ManagedIdentityCredential
-  // using isProbeEnabled = true.
+  // using useProbeRequest = true.
   EXPECT_THROW(
       static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
           [&ImATeapot](auto transport) {
@@ -566,7 +566,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
                 {"AZURE_FEDERATED_TOKEN_FILE", ""},
                 {"SYSTEM_OIDCREQUESTURI", ""},
                 {"AZURE_TOKEN_CREDENTIALS",
-                 "prod"}, // <- should result in MIC with isProbeEnabled = true
+                 "prod"}, // <- should result in MIC with useProbeRequest = true
             });
 
             return std::make_unique<DefaultAzureCredential>(options);
@@ -580,7 +580,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
 
   // Everything is the same, including the retry policy, but this time AZURE_TOKEN_CREDENTIALS is
   // set to "ManagedIdentityCredential", which should result in ManagedIdentityCredential using
-  // isProbeEnabled = false.
+  // useProbeRequest = false.
   auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
       [&ImATeapot](auto transport) {
         TokenCredentialOptions options;
@@ -608,7 +608,7 @@ TEST(DefaultAzureCredential, ImdsProbe)
             {"AZURE_FEDERATED_TOKEN_FILE", ""},
             {"SYSTEM_OIDCREQUESTURI", ""},
             {"AZURE_TOKEN_CREDENTIALS",
-             "ManagedIdentityCredential"}, // <- should result in MIC with isProbeEnabled = false
+             "ManagedIdentityCredential"}, // <- should result in MIC with useProbeRequest = false
         });
 
         return std::make_unique<DefaultAzureCredential>(options);

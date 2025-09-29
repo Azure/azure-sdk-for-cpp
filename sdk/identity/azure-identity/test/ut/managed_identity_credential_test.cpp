@@ -3218,7 +3218,7 @@ namespace Azure { namespace Identity { namespace Test {
               });
 
               return std::make_unique<ManagedIdentityCredential>(
-                  true, options); // <-- isProbeEnabled = true
+                  true, options); // <-- useProbeRequest = true
             },
             {{"https://azure.com/.default"}},
             {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
@@ -3229,7 +3229,7 @@ namespace Azure { namespace Identity { namespace Test {
               {}}})),
         Azure::Core::Credentials::AuthenticationException);
 
-    // Everything is the same, including the retry policy, but this time isProbeEnabled = false.
+    // Everything is the same, including the retry policy, but this time useProbeRequest = false.
     auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
         [&ImATeapot](auto transport) {
           TokenCredentialOptions options;
@@ -3250,7 +3250,7 @@ namespace Azure { namespace Identity { namespace Test {
           });
 
           return std::make_unique<ManagedIdentityCredential>(
-              options); // <-- isProbeEnabled = false (default)
+              options); // <-- useProbeRequest = false (default)
         },
         {{"https://azure.com/.default"}},
         {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
