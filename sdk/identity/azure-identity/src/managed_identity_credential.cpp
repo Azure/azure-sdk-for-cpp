@@ -37,7 +37,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   for (auto create : managedIdentitySourceCreate)
   {
     if (auto source
-        = create(credentialName, clientId, objectId, resourceId, options, useProbeRequest))
+        = create(credentialName, clientId, objectId, resourceId, useProbeRequest, options))
     {
       return source;
     }

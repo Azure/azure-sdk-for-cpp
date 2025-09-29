@@ -539,7 +539,7 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
   imdsUrl.SetPath("metadata/identity/oauth2/token");
 
   return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(
-      clientId, objectId, resourceId, imdsUrl, options, useProbeRequest));
+      clientId, objectId, resourceId, imdsUrl, useProbeRequest, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
