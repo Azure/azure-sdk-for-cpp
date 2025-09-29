@@ -172,14 +172,14 @@ namespace Azure { namespace Identity {
     /**
      * @brief If Azure Instance Metadata Service (IMDS) gets selected as managed identity source,
      * specifies whether the first request should be a short probe request (`true`), instead of a
-     * normal request with retries and exponential backoff (`false`). Default is `true`.
+     * normal request with retries and exponential backoff (`false`). Default is `false`.
      *
      * @note When `true`, there's a potential that the credential would not detect IMDS being
      * available on a machine, if the response was not received fast enough. When `false` and IMDS
      * is not available, credential creation may take tens of seconds until multiple attempts to get
      * a response from IMDS would fail.
      */
-    bool IsProbeEnabled = true;
+    bool IsProbeEnabled = false;
   };
 
   /**
@@ -227,7 +227,7 @@ namespace Azure { namespace Identity {
      * @param isProbeEnabled if Azure Instance Metadata Service (IMDS) gets selected as managed
      * identity source, specifies whether the first request should be a short probe request
      * (`true`), instead of a normal request with retries and exponential backoff (`false`). Default
-     * is `true`.
+     * is `false`.
      * @param options Options for token retrieval.
      *
      * @note When @a isProbeEnabled is `true`, there's a potential that the credential would not
@@ -237,7 +237,7 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         std::string const& clientId = std::string(),
-        bool isProbeEnabled = true,
+        bool isProbeEnabled = false,
         Core::Credentials::TokenCredentialOptions const& options
         = Core::Credentials::TokenCredentialOptions());
 

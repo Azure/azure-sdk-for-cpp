@@ -53,7 +53,7 @@ ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(clientId, true, options)
+    : ManagedIdentityCredential(clientId, false, options)
 {
 }
 
@@ -106,7 +106,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(std::string(), true, options)
+    : ManagedIdentityCredential(std::string(), false, options)
 {
 }
 

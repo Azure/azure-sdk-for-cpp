@@ -3218,7 +3218,7 @@ namespace Azure { namespace Identity { namespace Test {
               });
 
               return std::make_unique<ManagedIdentityCredential>(
-                  options); // <-- isProbeEnabled = true (default)
+                  true, options); // <-- isProbeEnabled = true
             },
             {{"https://azure.com/.default"}},
             {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
@@ -3250,7 +3250,7 @@ namespace Azure { namespace Identity { namespace Test {
           });
 
           return std::make_unique<ManagedIdentityCredential>(
-              false, options); // <-- isProbeEnabled = false
+              options); // <-- isProbeEnabled = false (default)
         },
         {{"https://azure.com/.default"}},
         {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
