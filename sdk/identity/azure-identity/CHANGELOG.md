@@ -1,18 +1,12 @@
 # Release History
 
-## 1.14.0-beta.1 (Unreleased)
+## 1.13.2 (2025-10-02)
 
 ### Features Added
 
 - Added `UseProbeRequest` option for `ManagedIdentityCredential`.
 - By default, `ManagedIdentityCredential` does not send a probe request, unless it is a part of credential chain in `DefaultAzureCredential`.
 - When `AZURE_TOKEN_CREDENTIALS` environment variable is configured to `ManagedIdentityCredential`, the `DefaultAzureCredential` does not issue a probe request and performs retries with exponential backoff.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.13.1 (2025-09-11)
 
