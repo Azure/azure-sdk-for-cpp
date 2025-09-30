@@ -52,26 +52,19 @@ ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(clientId, false, options)
-{
-}
-
-ManagedIdentityCredential::ManagedIdentityCredential(
-    char const* clientId,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(std::string(clientId), options)
-{
-}
-
-ManagedIdentityCredential::ManagedIdentityCredential(
-    std::string const& clientId,
     bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
   m_managedIdentitySource = CreateManagedIdentitySource(
       GetCredentialName(), clientId, {}, {}, useProbeRequest, options);
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
+    std::string const& clientId,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(clientId, false, options)
+{
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
@@ -121,14 +114,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(std::string(), false, options)
-{
-}
-
-ManagedIdentityCredential::ManagedIdentityCredential(
-    bool useProbeRequest,
-    Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(std::string(), useProbeRequest, options)
+    : ManagedIdentityCredential({}, false, options)
 {
 }
 

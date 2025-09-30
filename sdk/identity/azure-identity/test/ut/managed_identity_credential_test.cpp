@@ -3200,7 +3200,7 @@ namespace Azure { namespace Identity { namespace Test {
     EXPECT_THROW(
         static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
             [&ImATeapot](auto transport) {
-              TokenCredentialOptions options;
+              ManagedIdentityCredentialOptions options;
               options.Transport.Transport = transport;
 
               options.Retry.MaxRetries = 3;
@@ -3217,8 +3217,8 @@ namespace Azure { namespace Identity { namespace Test {
                   {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
               });
 
-              return std::make_unique<ManagedIdentityCredential>(
-                  true, options); // <-- useProbeRequest = true
+              options.UseProbeRequest = true;
+              return std::make_unique<ManagedIdentityCredential>(options);
             },
             {{"https://azure.com/.default"}},
             {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
