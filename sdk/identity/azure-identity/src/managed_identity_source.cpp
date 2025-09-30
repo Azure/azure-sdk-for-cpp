@@ -263,8 +263,10 @@ std::unique_ptr<ManagedIdentitySource> AppServiceV2017ManagedIdentitySource::Cre
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Core::Credentials::TokenCredentialOptions const& options)
 {
+  static_cast<void>(useProbeRequest);
   return AppServiceManagedIdentitySource::Create<AppServiceV2017ManagedIdentitySource>(
       credName, clientId, objectId, resourceId, options, "MSI_ENDPOINT", "MSI_SECRET", "2017");
 }
@@ -274,8 +276,10 @@ std::unique_ptr<ManagedIdentitySource> AppServiceV2019ManagedIdentitySource::Cre
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Core::Credentials::TokenCredentialOptions const& options)
 {
+  static_cast<void>(useProbeRequest);
   return AppServiceManagedIdentitySource::Create<AppServiceV2019ManagedIdentitySource>(
       credName,
       clientId,
@@ -292,8 +296,10 @@ std::unique_ptr<ManagedIdentitySource> CloudShellManagedIdentitySource::Create(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  static_cast<void>(useProbeRequest);
   using Azure::Core::Credentials::AuthenticationException;
 
   constexpr auto EndpointVarName = "MSI_ENDPOINT";
@@ -370,8 +376,10 @@ std::unique_ptr<ManagedIdentitySource> AzureArcManagedIdentitySource::Create(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
+  static_cast<void>(useProbeRequest);
   using Azure::Core::Credentials::AuthenticationException;
 
   constexpr auto EndpointVarName = "IDENTITY_ENDPOINT";
@@ -499,6 +507,7 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
   const std::string ImdsName = "Azure Instance Metadata Service";
@@ -529,8 +538,8 @@ std::unique_ptr<ManagedIdentitySource> ImdsManagedIdentitySource::Create(
   }
   imdsUrl.SetPath("metadata/identity/oauth2/token");
 
-  return std::unique_ptr<ManagedIdentitySource>(
-      new ImdsManagedIdentitySource(clientId, objectId, resourceId, imdsUrl, options));
+  return std::unique_ptr<ManagedIdentitySource>(new ImdsManagedIdentitySource(
+      clientId, objectId, resourceId, imdsUrl, useProbeRequest, options));
 }
 
 ImdsManagedIdentitySource::ImdsManagedIdentitySource(
@@ -538,6 +547,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
     std::string const& objectId,
     std::string const& resourceId,
     Azure::Core::Url const& imdsUrl,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : ManagedIdentitySource(clientId, std::string(), options),
       m_request(Azure::Core::Http::HttpMethod::Get, imdsUrl)
@@ -569,7 +579,7 @@ ImdsManagedIdentitySource::ImdsManagedIdentitySource(
   Core::Credentials::TokenCredentialOptions firstRequestOptions = options;
   firstRequestOptions.Retry.MaxRetries = 0;
   m_firstRequestPipeline = std::make_unique<TokenCredentialImpl>(firstRequestOptions);
-  m_firstRequestSucceeded = false;
+  m_firstRequestSucceeded = !useProbeRequest;
 }
 
 Azure::Core::Credentials::AccessToken ImdsManagedIdentitySource::GetToken(

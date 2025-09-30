@@ -69,25 +69,6 @@ DefaultAzureCredential::DefaultAzureCredential(
           Create;
     };
 
-    static const std::array<CredentialInfo, 4> credentials = {
-        CredentialInfo{
-            true,
-            "EnvironmentCredential",
-            [](auto options) { return std::make_shared<EnvironmentCredential>(options); }},
-        CredentialInfo{
-            true,
-            "WorkloadIdentityCredential",
-            [](auto options) { return std::make_shared<WorkloadIdentityCredential>(options); }},
-        CredentialInfo{
-            true,
-            "ManagedIdentityCredential",
-            [](auto options) { return std::make_shared<ManagedIdentityCredential>(options); }},
-        CredentialInfo{
-            false,
-            "AzureCliCredential",
-            [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
-    };
-
     const auto envVarValue = Environment::GetVariable(CredentialSpecifierEnvVarName);
     const auto trimmedEnvVarValue = StringExtensions::Trim(envVarValue);
 
@@ -99,6 +80,35 @@ DefaultAzureCredential::DefaultAzureCredential(
     }
 
     bool specificCred = false;
+    const std::array<CredentialInfo, 4> credentials = {
+        CredentialInfo{
+            true,
+            "EnvironmentCredential",
+            [](auto options) { return std::make_shared<EnvironmentCredential>(options); }},
+        CredentialInfo{
+            true,
+            "WorkloadIdentityCredential",
+            [](auto options) { return std::make_shared<WorkloadIdentityCredential>(options); }},
+        CredentialInfo{
+            true,
+            "ManagedIdentityCredential",
+            [&](auto options) {
+              // If specifically 'ManagedIdentityCredential' is used, do not perform a probe
+              // request, going for the full retry with exponential backoffs instead.
+              ManagedIdentityCredentialOptions managedIdentityCredentialOptions;
+              static_cast<Core::Credentials::TokenCredentialOptions&>(
+                  managedIdentityCredentialOptions)
+                  = options;
+
+              managedIdentityCredentialOptions.UseProbeRequest = !specificCred;
+              return std::make_shared<ManagedIdentityCredential>(managedIdentityCredentialOptions);
+            }},
+        CredentialInfo{
+            false,
+            "AzureCliCredential",
+            [](auto options) { return std::make_shared<AzureCliCredential>(options); }},
+    };
+
     if (!trimmedEnvVarValue.empty())
     {
       for (const auto& cred : credentials)

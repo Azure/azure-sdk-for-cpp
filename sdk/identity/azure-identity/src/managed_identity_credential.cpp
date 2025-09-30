@@ -14,6 +14,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
     std::string const& clientId,
     std::string const& objectId,
     std::string const& resourceId,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
 {
   using namespace Azure::Core::Credentials;
@@ -23,6 +24,7 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
       std::string const& clientId,
       std::string const& objectId,
       std::string const& resourceId,
+      bool useProbeRequest,
       TokenCredentialOptions const& options)
       = {AppServiceV2019ManagedIdentitySource::Create,
          AppServiceV2017ManagedIdentitySource::Create,
@@ -34,7 +36,8 @@ std::unique_ptr<_detail::ManagedIdentitySource> CreateManagedIdentitySource(
   // For that reason, it is not possible to cover that execution branch in tests.
   for (auto create : managedIdentitySourceCreate)
   {
-    if (auto source = create(credentialName, clientId, objectId, resourceId, options))
+    if (auto source
+        = create(credentialName, clientId, objectId, resourceId, useProbeRequest, options))
     {
       return source;
     }
@@ -49,11 +52,19 @@ ManagedIdentityCredential::~ManagedIdentityCredential() = default;
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     std::string const& clientId,
+    bool useProbeRequest,
     Azure::Core::Credentials::TokenCredentialOptions const& options)
     : TokenCredential("ManagedIdentityCredential")
 {
-  m_managedIdentitySource
-      = CreateManagedIdentitySource(GetCredentialName(), clientId, {}, {}, options);
+  m_managedIdentitySource = CreateManagedIdentitySource(
+      GetCredentialName(), clientId, {}, {}, useProbeRequest, options);
+}
+
+ManagedIdentityCredential::ManagedIdentityCredential(
+    std::string const& clientId,
+    Azure::Core::Credentials::TokenCredentialOptions const& options)
+    : ManagedIdentityCredential(clientId, false, options)
+{
 }
 
 ManagedIdentityCredential::ManagedIdentityCredential(
@@ -64,20 +75,35 @@ ManagedIdentityCredential::ManagedIdentityCredential(
   switch (idType)
   {
     case ManagedIdentityIdKind::SystemAssigned:
-      m_managedIdentitySource
-          = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, options);
+      m_managedIdentitySource = CreateManagedIdentitySource(
+          GetCredentialName(), {}, {}, {}, options.UseProbeRequest, options);
       break;
     case ManagedIdentityIdKind::ClientId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), options.IdentityId.GetId(), {}, {}, options);
+          GetCredentialName(),
+          options.IdentityId.GetId(),
+          {},
+          {},
+          options.UseProbeRequest,
+          options);
       break;
     case ManagedIdentityIdKind::ObjectId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), {}, options.IdentityId.GetId(), {}, options);
+          GetCredentialName(),
+          {},
+          options.IdentityId.GetId(),
+          {},
+          options.UseProbeRequest,
+          options);
       break;
     case ManagedIdentityIdKind::ResourceId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), {}, {}, options.IdentityId.GetId(), options);
+          GetCredentialName(),
+          {},
+          {},
+          options.IdentityId.GetId(),
+          options.UseProbeRequest,
+          options);
       break;
     default:
       throw std::invalid_argument(
@@ -88,7 +114,7 @@ ManagedIdentityCredential::ManagedIdentityCredential(
 
 ManagedIdentityCredential::ManagedIdentityCredential(
     Azure::Core::Credentials::TokenCredentialOptions const& options)
-    : ManagedIdentityCredential(std::string(), options)
+    : ManagedIdentityCredential({}, false, options)
 {
 }
 

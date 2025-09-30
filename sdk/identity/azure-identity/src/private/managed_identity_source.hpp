@@ -113,6 +113,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
   };
 
@@ -146,6 +147,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
   };
 
@@ -164,6 +166,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(
@@ -185,6 +188,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(
@@ -204,6 +208,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& objectId,
         std::string const& resourceId,
         Core::Url const& imdsUrl,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
 
   public:
@@ -212,6 +217,7 @@ namespace Azure { namespace Identity { namespace _detail {
         std::string const& clientId,
         std::string const& objectId,
         std::string const& resourceId,
+        bool useProbeRequest,
         Core::Credentials::TokenCredentialOptions const& options);
 
     Core::Credentials::AccessToken GetToken(

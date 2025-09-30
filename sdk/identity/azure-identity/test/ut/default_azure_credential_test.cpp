@@ -528,3 +528,96 @@ TEST(DefaultAzureCredential, RequireCredentialSpecifierEnvVarValue)
   EXPECT_THROW(
       static_cast<void>(std::make_unique<DefaultAzureCredential>(true)), AuthenticationException);
 }
+
+TEST(DefaultAzureCredential, ImdsProbe)
+{
+  using Azure::Core::Http::HttpStatusCode;
+  using Azure::Identity::Test::_detail::CredentialTestHelper;
+
+  constexpr auto ImATeapot = static_cast<HttpStatusCode>(418);
+
+  // AZURE_TOKEN_CREDENTIALS is set to "prod", which should result in ManagedIdentityCredential
+  // using useProbeRequest = true.
+  EXPECT_THROW(
+      static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
+          [&ImATeapot](auto transport) {
+            TokenCredentialOptions options;
+            options.Transport.Transport = transport;
+
+            options.Retry.MaxRetries = 3;
+            options.Retry.RetryDelay = std::chrono::milliseconds(1);
+            options.Retry.StatusCodes.insert(ImATeapot);
+
+            CredentialTestHelper::EnvironmentOverride const env({
+                // Env vars are set to ensure that all the credential chain is inactive all the way
+                // up to ManagedIdentityCredential with IMDS source.
+                {"MSI_ENDPOINT", ""},
+                {"MSI_SECRET", ""},
+                {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+                {"IMDS_ENDPOINT", ""},
+                {"IDENTITY_HEADER", ""},
+                {"IDENTITY_SERVER_THUMBPRINT", ""},
+                {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
+                {"AZURE_AUTHORITY_HOST", ""},
+                {"AZURE_TENANT_ID", ""},
+                {"AZURE_CLIENT_ID", ""},
+                {"AZURE_CLIENT_SECRET", ""},
+                {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+                {"AZURE_FEDERATED_TOKEN_FILE", ""},
+                {"SYSTEM_OIDCREQUESTURI", ""},
+                {"AZURE_TOKEN_CREDENTIALS",
+                 "prod"}, // <- should result in MIC with useProbeRequest = true
+            });
+
+            return std::make_unique<DefaultAzureCredential>(options);
+          },
+          {{"https://azure.com/.default"}},
+          {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
+           // Given there aren't going to be any retries due to probe request, the credential
+           // should never get to make a second request to receive the successful response below.
+           {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN2\"}", {}}})),
+      Azure::Core::Credentials::AuthenticationException);
+
+  // Everything is the same, including the retry policy, but this time AZURE_TOKEN_CREDENTIALS is
+  // set to "ManagedIdentityCredential", which should result in ManagedIdentityCredential using
+  // useProbeRequest = false.
+  auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
+      [&ImATeapot](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+
+        options.Retry.MaxRetries = 3;
+        options.Retry.RetryDelay = std::chrono::milliseconds(1);
+        options.Retry.StatusCodes.insert(ImATeapot);
+
+        CredentialTestHelper::EnvironmentOverride const env({
+            // Env vars are set to ensure that all the credential chain is inactive all the way
+            // up to ManagedIdentityCredential with IMDS source.
+            {"MSI_ENDPOINT", ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
+            {"IMDS_ENDPOINT", ""},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", ""},
+            {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
+            {"AZURE_AUTHORITY_HOST", ""},
+            {"AZURE_TENANT_ID", ""},
+            {"AZURE_CLIENT_ID", ""},
+            {"AZURE_CLIENT_SECRET", ""},
+            {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+            {"AZURE_FEDERATED_TOKEN_FILE", ""},
+            {"SYSTEM_OIDCREQUESTURI", ""},
+            {"AZURE_TOKEN_CREDENTIALS",
+             "ManagedIdentityCredential"}, // <- should result in MIC with useProbeRequest = false
+        });
+
+        return std::make_unique<DefaultAzureCredential>(options);
+      },
+      {{"https://azure.com/.default"}},
+      {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
+       {HttpStatusCode::Ok, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN2\"}", {}}});
+
+  EXPECT_EQ(whenProbeDisabled.Requests.size(), 2U);
+  EXPECT_EQ(whenProbeDisabled.Responses.size(), 1U);
+  EXPECT_EQ(whenProbeDisabled.Responses.at(0).AccessToken.Token, "ACCESSTOKEN2");
+}

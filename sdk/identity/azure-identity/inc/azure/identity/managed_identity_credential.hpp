@@ -168,6 +168,18 @@ namespace Azure { namespace Identity {
      * it was configured.
      */
     ManagedIdentityId IdentityId;
+
+    /**
+     * @brief If Azure Instance Metadata Service (IMDS) gets selected as managed identity source,
+     * specifies whether the first request should be a short probe request (`true`), instead of a
+     * normal request with retries and exponential backoff (`false`). Default is `false`.
+     *
+     * @note When `true`, there's a potential that the credential would not detect IMDS being
+     * available on a machine, if the response was not received fast enough. When `false` and IMDS
+     * is not available, credential creation may take tens of seconds until multiple attempts to get
+     * a response from IMDS would fail.
+     */
+    bool UseProbeRequest = false;
   };
 
   /**
@@ -180,6 +192,11 @@ namespace Azure { namespace Identity {
   class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
   private:
     std::unique_ptr<_detail::ManagedIdentitySource> m_managedIdentitySource;
+
+    explicit ManagedIdentityCredential(
+        std::string const& clientId,
+        bool useProbeRequest,
+        Core::Credentials::TokenCredentialOptions const& options);
 
   public:
     /**
@@ -196,8 +213,8 @@ namespace Azure { namespace Identity {
      */
     explicit ManagedIdentityCredential(
         std::string const& clientId = std::string(),
-        Azure::Core::Credentials::TokenCredentialOptions const& options
-        = Azure::Core::Credentials::TokenCredentialOptions());
+        Core::Credentials::TokenCredentialOptions const& options
+        = Core::Credentials::TokenCredentialOptions());
 
     /**
      * @brief Constructs a Managed Identity Credential.
@@ -212,8 +229,7 @@ namespace Azure { namespace Identity {
      *
      * @param options Options for token retrieval.
      */
-    explicit ManagedIdentityCredential(
-        Azure::Core::Credentials::TokenCredentialOptions const& options);
+    explicit ManagedIdentityCredential(Core::Credentials::TokenCredentialOptions const& options);
 
     /**
      * @brief Gets an authentication token.
