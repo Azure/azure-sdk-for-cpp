@@ -3196,40 +3196,6 @@ namespace Azure { namespace Identity { namespace Test {
   TEST(ManagedIdentityCredential, ImdsProbe)
   {
     constexpr auto ImATeapot = static_cast<HttpStatusCode>(418);
-
-    EXPECT_THROW(
-        static_cast<void>(CredentialTestHelper::SimulateTokenRequest(
-            [&ImATeapot](auto transport) {
-              ManagedIdentityCredentialOptions options;
-              options.Transport.Transport = transport;
-
-              options.Retry.MaxRetries = 3;
-              options.Retry.RetryDelay = std::chrono::milliseconds(1);
-              options.Retry.StatusCodes.insert(ImATeapot);
-
-              CredentialTestHelper::EnvironmentOverride const env({
-                  {"MSI_ENDPOINT", ""},
-                  {"MSI_SECRET", ""},
-                  {"IDENTITY_ENDPOINT", "https://visualstudio.com/"},
-                  {"IMDS_ENDPOINT", ""},
-                  {"IDENTITY_HEADER", ""},
-                  {"IDENTITY_SERVER_THUMBPRINT", ""},
-                  {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
-              });
-
-              options.UseProbeRequest = true;
-              return std::make_unique<ManagedIdentityCredential>(options);
-            },
-            {{"https://azure.com/.default"}},
-            {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
-             // Given there aren't going to be any retries due to probe request, the credential
-             // should never get to make a second request to receive the successful response below.
-             {HttpStatusCode::Ok,
-              "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN2\"}",
-              {}}})),
-        Azure::Core::Credentials::AuthenticationException);
-
-    // Everything is the same, including the retry policy, but this time useProbeRequest = false.
     auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
         [&ImATeapot](auto transport) {
           TokenCredentialOptions options;
@@ -3249,8 +3215,7 @@ namespace Azure { namespace Identity { namespace Test {
               {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
           });
 
-          return std::make_unique<ManagedIdentityCredential>(
-              options); // <-- useProbeRequest = false (default)
+          return std::make_unique<ManagedIdentityCredential>(options);
         },
         {{"https://azure.com/.default"}},
         {{ImATeapot, "{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN1\"}", {}},
