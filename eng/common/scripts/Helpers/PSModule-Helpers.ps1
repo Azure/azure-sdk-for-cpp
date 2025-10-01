@@ -8,7 +8,7 @@ function Update-PSModulePathForCI() {
   # https://github.com/microsoft/azure-pipelines-tasks/blob/c9771bc064cd60f47587c68e5c871b7cd13f0f28/Tasks/AzurePowerShellV5/Utility.ps1
 
   if ($IsWindows) {
-    $hostedAgentModulePath = $env:SystemDrive + "\Modules"
+    $hostedAgentModulePath = $env:SystemDrive + "\\Modules"
     $moduleSeperator = ";"
   }
   else {
