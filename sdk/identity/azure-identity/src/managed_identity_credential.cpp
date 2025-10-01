@@ -75,35 +75,20 @@ ManagedIdentityCredential::ManagedIdentityCredential(
   switch (idType)
   {
     case ManagedIdentityIdKind::SystemAssigned:
-      m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(), {}, {}, {}, options.UseProbeRequest, options);
+      m_managedIdentitySource
+          = CreateManagedIdentitySource(GetCredentialName(), {}, {}, {}, false, options);
       break;
     case ManagedIdentityIdKind::ClientId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(),
-          options.IdentityId.GetId(),
-          {},
-          {},
-          options.UseProbeRequest,
-          options);
+          GetCredentialName(), options.IdentityId.GetId(), {}, {}, false, options);
       break;
     case ManagedIdentityIdKind::ObjectId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(),
-          {},
-          options.IdentityId.GetId(),
-          {},
-          options.UseProbeRequest,
-          options);
+          GetCredentialName(), {}, options.IdentityId.GetId(), {}, false, options);
       break;
     case ManagedIdentityIdKind::ResourceId:
       m_managedIdentitySource = CreateManagedIdentitySource(
-          GetCredentialName(),
-          {},
-          {},
-          options.IdentityId.GetId(),
-          options.UseProbeRequest,
-          options);
+          GetCredentialName(), {}, {}, options.IdentityId.GetId(), false, options);
       break;
     default:
       throw std::invalid_argument(
