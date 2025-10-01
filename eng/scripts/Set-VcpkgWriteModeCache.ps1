@@ -3,8 +3,10 @@ param(
     [string] $StorageContainerName = 'public-vcpkg-container'
 )
 
+Write-Host "Import PSModules-Helpers.ps1"
 ."$PSScriptRoot/../common/scripts/Helpers/PSModule-Helpers.ps1"
 
+Write-Host "Install/import Az.Storage@4.3.0"
 Install-ModuleIfNotInstalled "Az.Storage" "4.3.0" | Import-Module
 
 $ctx = New-AzStorageContext `
