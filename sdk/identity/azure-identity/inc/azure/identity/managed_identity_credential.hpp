@@ -168,18 +168,6 @@ namespace Azure { namespace Identity {
      * it was configured.
      */
     ManagedIdentityId IdentityId;
-
-    /**
-     * @brief If Azure Instance Metadata Service (IMDS) gets selected as managed identity source,
-     * specifies whether the first request should be a short probe request (`true`), instead of a
-     * normal request with retries and exponential backoff (`false`). Default is `false`.
-     *
-     * @note When `true`, there's a potential that the credential would not detect IMDS being
-     * available on a machine, if the response was not received fast enough. When `false` and IMDS
-     * is not available, credential creation may take tens of seconds until multiple attempts to get
-     * a response from IMDS would fail.
-     */
-    bool UseProbeRequest = false;
   };
 
   /**
@@ -190,6 +178,8 @@ namespace Azure { namespace Identity {
    * https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview
    */
   class ManagedIdentityCredential final : public Core::Credentials::TokenCredential {
+    friend class DefaultAzureCredential;
+
   private:
     std::unique_ptr<_detail::ManagedIdentitySource> m_managedIdentitySource;
 
@@ -212,9 +202,8 @@ namespace Azure { namespace Identity {
      * @param options Options for token retrieval.
      */
     explicit ManagedIdentityCredential(
-        std::string const& clientId = std::string(),
-        Core::Credentials::TokenCredentialOptions const& options
-        = Core::Credentials::TokenCredentialOptions());
+        std::string const& clientId = {},
+        Core::Credentials::TokenCredentialOptions const& options = {});
 
     /**
      * @brief Constructs a Managed Identity Credential.
