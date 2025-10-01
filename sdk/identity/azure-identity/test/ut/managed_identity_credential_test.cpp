@@ -3193,13 +3193,17 @@ namespace Azure { namespace Identity { namespace Test {
     Logger::SetListener(nullptr);
   }
 
-  TEST(ManagedIdentityCredential, NoImdsProbe)
+  TEST(ManagedIdentityCredential, ImdsProbe)
   {
     constexpr auto ImATeapot = static_cast<HttpStatusCode>(418);
     auto const whenProbeDisabled = CredentialTestHelper::SimulateTokenRequest(
         [&ImATeapot](auto transport) {
           TokenCredentialOptions options;
           options.Transport.Transport = transport;
+
+          options.Retry.MaxRetries = 3;
+          options.Retry.RetryDelay = std::chrono::milliseconds(1);
+          options.Retry.StatusCodes.insert(ImATeapot);
 
           CredentialTestHelper::EnvironmentOverride const env({
               {"MSI_ENDPOINT", ""},
