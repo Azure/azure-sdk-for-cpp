@@ -135,7 +135,7 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - template: eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+  - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
 
   - script: vcpkg --version
     condition: >-

@@ -142,7 +142,7 @@ jobs:
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
-        - template: eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+        - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
 
         - script: vcpkg --version
           condition: >-

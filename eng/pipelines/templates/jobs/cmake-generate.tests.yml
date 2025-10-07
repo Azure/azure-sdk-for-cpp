@@ -87,7 +87,7 @@ jobs:
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
 
-  - template: eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+  - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
 
   - script: vcpkg --version
     condition: >-
