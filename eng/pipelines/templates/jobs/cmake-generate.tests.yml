@@ -87,7 +87,15 @@ jobs:
     condition: and(succeeded(), ne(variables['BrewDependencies'], ''))
     displayName: Install dependencies from brew
 
-  - template: /eng/pipelines/templates/steps/vcpkg.yml
+  - template: eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+
+  - script: vcpkg --version
+    condition: >-
+        and(
+        succeeded(),
+        not(eq(variables['Agent.OS'], 'Darwin'))
+        )
+    displayName: vcpkg --version
 
   - script: cmake --version
     displayName: cmake --version

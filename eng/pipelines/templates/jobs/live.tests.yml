@@ -135,7 +135,15 @@ jobs:
     condition: and(succeededOrFailed(), ne(variables['AptDependencies'], ''))
     displayName: Install dependencies from apt
 
-  - template: /eng/pipelines/templates/steps/vcpkg.yml
+  - template: eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+
+  - script: vcpkg --version
+    condition: >-
+        and(
+        succeeded(),
+        not(eq(variables['Agent.OS'], 'Darwin'))
+        )
+    displayName: vcpkg --version
 
   - script: |
       dotnet tool install -g dotnet-reportgenerator-globaltool
