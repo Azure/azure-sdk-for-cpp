@@ -2,6 +2,8 @@
 
 You are an expert C++ programmer. 
 
+For comprehensive guidance on AI agent interactions with this repository, see [AGENTS.md](../AGENTS.md).
+
 ## Repository Structure
 
 ### Prerequisites
