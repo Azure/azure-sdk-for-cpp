@@ -300,12 +300,12 @@ See [doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/
 
 ## Cross-References
 
-- **Copilot-Specific Instructions**: [.github/copilot-instructions.md](.github/copilot-instructions.md)
-- **Contribution Guide**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Copilot-Specific Instructions**: [.github/copilot-instructions.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/.github/copilot-instructions.md)
+- **Contribution Guide**: [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md)
 - **API Design Guidelines**: <https://azure.github.io/azure-sdk/cpp_introduction.html>
-- **Test Proxy Documentation**: [doc/TestProxy.md](doc/TestProxy.md)
-- **Performance Testing**: [doc/PerformanceTesting.md](doc/PerformanceTesting.md)
-- **Distributed Tracing**: [doc/DistributedTracing.md](doc/DistributedTracing.md)
+- **Test Proxy Documentation**: [doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/TestProxy.md)
+- **Performance Testing**: [doc/PerformanceTesting.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/PerformanceTesting.md)
+- **Distributed Tracing**: [doc/DistributedTracing.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/DistributedTracing.md)
 
 ## Additional Resources
 
@@ -337,4 +337,4 @@ See [doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/
 
 This file follows the [AGENTS.md specification](https://agents.md) for standardizing AI agent interactions with repositories.
 
-For Copilot-specific instructions, see [.github/copilot-instructions.md](.github/copilot-instructions.md).
+For Copilot-specific instructions, see [.github/copilot-instructions.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/.github/copilot-instructions.md).
