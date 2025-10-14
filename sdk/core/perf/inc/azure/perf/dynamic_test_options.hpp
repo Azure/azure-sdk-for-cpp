@@ -66,10 +66,10 @@ namespace Azure { namespace Perf {
      */
     bool HasOption(std::string const& optionName) const
     {
-      if (m_results[optionName])
+      if (m_results.has_option(optionName))
       {
         // If there are results for this option , but the first result has a nullptr arg, it's a
-        // boolean parameter with no arguments so return the default value.
+        // boolean parameter with no arguments so return true.
         if (m_results[optionName].count() != 0)
         {
           // No args were passed for this option, it is present.
