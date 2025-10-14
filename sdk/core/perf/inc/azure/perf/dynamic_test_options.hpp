@@ -44,10 +44,7 @@ namespace Azure { namespace Perf {
     {
       try
       {
-        if (m_results[optionName])
-        {
-          return m_results[optionName].as<T>();
-        }
+        return m_results[optionName].as<T>();
       }
       catch (argagg::unknown_option const&)
       {
@@ -58,6 +55,28 @@ namespace Azure { namespace Perf {
         throw;
       }
       return defaultValue;
+    }
+
+    /**
+     * @brief Check if the option was parsed from command line.
+     *
+     * @param optionName The name of the option.
+     * @return true if the option was parsed from command line.
+     * @return false if the option was not parsed from command line.
+     */
+    bool HasOption(std::string const& optionName) const
+    {
+      if (m_results[optionName])
+      {
+        // If there are results for this option , but the first result has a nullptr arg, it's a
+        // boolean parameter with no arguments so return the default value.
+        if (m_results[optionName].count() != 0)
+        {
+          // No args were passed for this option, it is present.
+          return true;
+        }
+      }
+      return false;
     }
 
     /**
