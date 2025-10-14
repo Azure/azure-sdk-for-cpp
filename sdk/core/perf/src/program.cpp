@@ -110,7 +110,16 @@ inline void PrintOptions(
           }
           else
           {
-            optionsAsJson[option.Name] = option.ExpectedArgs == 0 ? false : "default value";
+            if (option.ExpectedArgs == 0)
+            {
+              // arg was not parsed
+              optionsAsJson[option.Name] = false;
+            }
+            else
+            {
+              // arg was not parsed
+              optionsAsJson[option.Name] = "default value";
+            }
           }
         }
       }
