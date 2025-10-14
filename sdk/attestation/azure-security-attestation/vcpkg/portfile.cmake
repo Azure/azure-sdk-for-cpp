@@ -12,6 +12,9 @@ vcpkg_from_github(
     HEAD_REF main
 )
 
+file(GLOB_RECURSE unused "${SOURCE_PATH}/cgmanifest.json")
+file(REMOVE_RECURSE ${unused})
+
 if(EXISTS "${SOURCE_PATH}/sdk/attestation/azure-security-attestation")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/attestation/_")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/_")
