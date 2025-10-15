@@ -118,7 +118,7 @@ inline void PrintOptions(
             else
             {
               // arg was not parsed
-              optionsAsJson[option.Name] = "default value";
+              optionsAsJson[option.Name] = nullptr;
             }
           }
         }
@@ -128,7 +128,7 @@ inline void PrintOptions(
         if (!option.Required)
         {
           // arg was not parsed
-          optionsAsJson[option.Name] = "default value";
+          optionsAsJson[option.Name] = nullptr;
         }
         else
         {

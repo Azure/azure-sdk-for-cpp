@@ -44,7 +44,10 @@ namespace Azure { namespace Perf {
     {
       try
       {
-        return m_results[optionName].as<T>();
+        if (m_results[optionName])
+        {
+          return m_results[optionName].as<T>();
+        }
       }
       catch (argagg::unknown_option const&)
       {
