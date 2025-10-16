@@ -6,7 +6,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/openssl/openssl",
-          "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
+          "CommitHash": "05f360d9e849a1b277db628f1f13083a7f8dd04f"
         }
       },
       "DevelopmentDependency": false
