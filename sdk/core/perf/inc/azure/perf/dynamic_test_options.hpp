@@ -61,6 +61,28 @@ namespace Azure { namespace Perf {
     }
 
     /**
+     * @brief Check if the option was parsed from command line.
+     *
+     * @param optionName The name of the option.
+     * @return true if the option was parsed from command line.
+     * @return false if the option was not parsed from command line.
+     */
+    bool HasOption(std::string const& optionName) const
+    {
+      if (m_results.has_option(optionName))
+      {
+        // If there are results for this option , but the first result has a nullptr arg, it's a
+        // boolean parameter with no arguments so return true.
+        if (m_results[optionName].count() != 0)
+        {
+          // No args were passed for this option, it is present.
+          return true;
+        }
+      }
+      return false;
+    }
+
+    /**
      * @brief Get the option value from the option name.
      *
      * @remark The option is mandatory.

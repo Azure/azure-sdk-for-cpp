@@ -82,7 +82,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     std::vector<Azure::Perf::TestOption> GetTestOptions() override
     {
       // TODO: Merge with base options
-      return {{"Count", {"--count"}, "Number of blobs to list", 1, true}};
+      return {
+          {"TokenCredential",
+           {"--token-credential"},
+           "Use a token credential to run the test. By default, a connection string is used.",
+           0},
+          {"Count", {"--count"}, "Number of blobs to list", 1, true}};
     }
 
     /**
