@@ -142,7 +142,15 @@ jobs:
           workingDirectory: $(Agent.TempDirectory)
           displayName: Download and Install Doxygen
 
-        - template: /eng/pipelines/templates/steps/vcpkg.yml
+        - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+
+        - script: vcpkg --version
+          condition: >-
+              and(
+              succeeded(),
+              not(eq(variables['Agent.OS'], 'Darwin'))
+              )
+          displayName: vcpkg --version
 
         - template: /eng/pipelines/templates/steps/cmake-build.yml
           parameters:

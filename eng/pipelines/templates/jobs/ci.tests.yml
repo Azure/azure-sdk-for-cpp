@@ -135,7 +135,15 @@ jobs:
           )
         displayName: Xcode version
 
-      - template: /eng/pipelines/templates/steps/vcpkg.yml
+      - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
+
+      - script: vcpkg --version
+        condition: >-
+            and(
+            succeeded(),
+            not(eq(variables['Agent.OS'], 'Darwin'))
+            )
+        displayName: vcpkg --version
 
       # Validate all the files are formatted correctly according to the
       # .clang-format file. This step runs on linux only and assumes that
