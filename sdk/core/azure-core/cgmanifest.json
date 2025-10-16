@@ -6,7 +6,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/openssl/openssl",
-          "CommitHash": "d82e959e621a3d597f1e0d50ff8c2d8b96915fd7"
+          "CommitHash": "05f360d9e849a1b277db628f1f13083a7f8dd04f"
         }
       },
       "DevelopmentDependency": false
@@ -16,7 +16,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/curl/curl",
-          "CommitHash": "2cfac302fbeec68f1727cba3d1705e16f02220ad"
+          "CommitHash": "5040f7e94cd01decbe7ba8fdacbf489182d503dc"
         }
       },
       "DevelopmentDependency": false
@@ -36,7 +36,7 @@
         "Type": "git",
         "git": {
           "RepositoryUrl": "https://github.com/nlohmann/json",
-          "CommitHash": "db78ac1d7716f56fc9f1b030b715f872f93964e4"
+          "CommitHash": "9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
         }
       },
       "DevelopmentDependency": false
