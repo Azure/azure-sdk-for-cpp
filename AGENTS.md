@@ -22,7 +22,7 @@ The **Azure SDK for C++** provides modern C++ libraries for Azure services, foll
 
 ## Agent Capabilities and Boundaries
 
-### ✅ Supported Agent Actions
+### Supported Agent Actions
 
 AI agents working in this repository are encouraged to:
 
@@ -49,7 +49,7 @@ AI agents working in this repository are encouraged to:
    - Suggest improvements to code structure and style
    - Identify potential issues before CI runs
 
-### ⚠️ Actions Requiring Caution
+### Actions Requiring Caution
 
 1. **Dependency Management**
    - Changing vcpkg.json should be done sparingly
@@ -67,7 +67,7 @@ AI agents working in this repository are encouraged to:
    - Azure Pipeline configurations need validation
    - Test proxy configuration changes need verification
 
-### 🚫 Actions Outside Agent Scope
+### Actions Outside Agent Scope
 
 Agents should **NOT**:
 
@@ -159,26 +159,26 @@ find sdk/ -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
 
 ```
 azure-sdk-for-cpp/
-├── .github/              # GitHub configuration and workflows
-│   ├── copilot-instructions.md  # Copilot-specific guidance
-│   └── workflows/        # CI/CD workflows
-├── cmake-modules/        # CMake helper modules
-├── doc/                  # Documentation
-├── eng/                  # Engineering system scripts
-│   ├── common/           # Shared scripts across Azure SDKs
-│   └── docs/             # Documentation generation
-├── samples/              # Sample applications
-├── sdk/                  # SDK service libraries
-│   ├── core/             # Core libraries (azure-core, azure-core-amqp, etc.)
-│   ├── storage/          # Storage services (blobs, files, queues)
-│   ├── identity/         # Authentication and identity
-│   ├── keyvault/         # Key Vault (keys, secrets, certificates)
-│   └── template/         # Template for new services
-├── tools/                # Development tools
-├── vcpkg.json            # Package dependencies manifest
-├── CMakeLists.txt        # Root CMake configuration
-├── CONTRIBUTING.md       # Contribution guidelines
-└── AGENTS.md             # This file
++-- .github/              # GitHub configuration and workflows
+    +-- copilot-instructions.md  # Copilot-specific guidance
+    +-- workflows/        # CI/CD workflows
++-- cmake-modules/        # CMake helper modules
++-- doc/                  # Documentation
++-- eng/                  # Engineering system scripts
+    +-- common/           # Shared scripts across Azure SDKs
+    +-- docs/             # Documentation generation
++-- samples/              # Sample applications
++-- sdk/                  # SDK service libraries
+    +-- core/             # Core libraries (azure-core, azure-core-amqp, etc.)
+    +-- storage/          # Storage services (blobs, files, queues)
+    +-- identity/         # Authentication and identity
+    +-- keyvault/         # Key Vault (keys, secrets, certificates)
+    +-- template/         # Template for new services
++-- tools/                # Development tools
++-- vcpkg.json            # Package dependencies manifest
++-- CMakeLists.txt        # Root CMake configuration
++-- CONTRIBUTING.md       # Contribution guidelines
++-- AGENTS.md             # This file
 ```
 
 ## SDK-Specific Automation Workflows
