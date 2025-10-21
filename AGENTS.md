@@ -185,13 +185,14 @@ azure-sdk-for-cpp/
 
 ### 1. Code Generation
 
-Some SDK components use AutoRest or other code generators:
+The C++ repository generates SDKs using TypeSpec with the [typespec-cpp emitter](https://github.com/azure/typespec-cpp):
 
-- **Swagger/OpenAPI**: Located in `sdk/{service}/swagger/README.md`
-- **Protocol Layer**: Auto-generated code in `src/private/` directories
-- **Customizations**: Defined via directives in swagger README files
+- **TypeSpec Projects**: Located in package directories with `tspconfig.yaml` and `tsp-location.yaml` files
+- **Configuration**: Service-specific settings in `tspconfig.yaml` define emitter options
+- **Generated Code**: Auto-generated code in `src/private/` and header directories
+- **TypeSpec Emitter**: Uses `@azure-tools/typespec-cpp` with Azure flavor for code generation
 
-**Agent Guidance**: Do not manually edit generated files. Modify swagger configurations and regenerate.
+**Agent Guidance**: Do not manually edit generated files. Modify TypeSpec specifications and regenerate using the typespec-cpp emitter. Some older services may still have swagger directories for legacy purposes, but new SDK development uses TypeSpec exclusively.
 
 ### 2. API Review Process
 
