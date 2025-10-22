@@ -211,11 +211,10 @@ TEST(Base64Url, BasicEncode)
   EXPECT_EQ(result, "AQID"); // cspell:disable-line
 
   // Test data with + and / in Base64 encoding (should be replaced with - and _)
-  // 0xFB = 11111011, 0xEF = 11101111 -> Base64 would have + and /
+  // Base64 for these bytes would contain '+' and '/', which should be replaced in Base64Url
   std::vector<uint8_t> specialChars = {0xFB, 0xEF};
   result = _internal::Base64Url::Base64UrlEncode(specialChars);
-  // Base64 would be "--++", but we need to check actual encoding
-  // Let's verify it doesn't contain + or /
+  // Verify it doesn't contain + or /
   EXPECT_EQ(result.find('+'), std::string::npos);
   EXPECT_EQ(result.find('/'), std::string::npos);
 
@@ -396,9 +395,9 @@ TEST(Base64Url, KnownVectors)
   EXPECT_EQ(decoded, hello);
 
   // Test case with special character replacement needs
-  // Using bytes that create + and / in standard Base64
-  // Standard Base64 for {0x3E, 0xFF, 0x3E} would include + and /
-  std::vector<uint8_t> specialData = {0x3E, 0xFF, 0x3E};
+  // Using bytes that create both + and / in standard Base64
+  // Standard Base64 for {0xFB, 0xFF, 0xFE} is "+//+", which includes both + and /
+  std::vector<uint8_t> specialData = {0xFB, 0xFF, 0xFE};
   std::string specialEncoded = _internal::Base64Url::Base64UrlEncode(specialData);
 
   // Verify URL-safe
