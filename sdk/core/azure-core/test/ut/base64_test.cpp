@@ -391,7 +391,8 @@ TEST(Base64Url, KnownVectors)
   EXPECT_EQ(encoded, "aGVsbG8"); // cspell:disable-line
 
   // Decode and verify
-  std::vector<uint8_t> decoded = _internal::Base64Url::Base64UrlDecode("aGVsbG8"); // cspell:disable-line
+  std::vector<uint8_t> decoded
+      = _internal::Base64Url::Base64UrlDecode("aGVsbG8"); // cspell:disable-line
   EXPECT_EQ(decoded, hello);
 
   // Test case with special character replacement needs
