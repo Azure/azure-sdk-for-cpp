@@ -30,7 +30,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
     name: 'Premium_LRS'
   }
   properties: {
-    allowSharedKeyAccess: false
     publicNetworkAccess: null
     supportsHttpsTrafficOnly: true
      
