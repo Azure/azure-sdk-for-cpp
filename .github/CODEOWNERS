@@ -59,11 +59,11 @@
 # ServiceOwners:                                                   @axisc @sjkwak @hmlam
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                     @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-keyvault
+/sdk/keyvault/                                                     @Azure/azure-sdk-write-keyvault
 
 # ServiceLabel: %KeyVault
-# AzureSdkOwners:                                                  @rickwinter @Azure/azure-sdk-write-keyvault
-# ServiceOwners:                                                   @cheathamb36 @chen-karen @Azure/azure-sdk-write-keyvault
+# AzureSdkOwners:                                                  @Azure/azure-sdk-write-keyvault
+# ServiceOwners:                                                   @chen-karen @Azure/azure-sdk-write-keyvault
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
