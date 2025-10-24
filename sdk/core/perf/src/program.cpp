@@ -212,24 +212,10 @@ inline std::vector<double> ZipAvg(
 {
   auto size = operations.size();
   std::vector<double> s(size);
-  std::cout << "=== Zip Avg Results ===" << std::endl;
   for (size_t index = 0; index != operations.size(); index++)
   {
-    std::cout
-        << "ops: " << operations[index] << " time: "
-        << static_cast<double>(
-               std::chrono::duration_cast<std::chrono::milliseconds>(timeResults[index]).count())
-            / 1000.0f
-        << std::endl;
-
     s[index] = operations[index] / std::chrono::duration<double>(timeResults[index]).count();
   }
-  for (size_t index = 0; index != s.size(); index++)
-  {
-    std::cout << "Avg[" << index << "]: " << s[index] << " ops/s" << std::endl;
-  }
-  std::cout << "=======================" << std::endl;
-  std::cout << "=== End Zip Avg Results ===" << std::endl;
   return s;
 }
 
@@ -307,6 +293,13 @@ inline void RunTests(
   std::cout << std::endl << "=== Results ===";
 
   auto totalOperations = Sum(completedOperations);
+  for (auto completionTime : lastCompletionTimes) {
+      if (completionTime > deadLineSeconds + std::chrono::milliseconds(500)) {
+          std::cout << "Warning: One of the tests ran for " << static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(completionTime).count()) / 1000 << "s, longer than the specified duration of " 
+			  << durationInSeconds << " seconds." << std::endl;
+      }
+  
+  }
   auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
