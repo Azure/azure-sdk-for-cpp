@@ -808,6 +808,7 @@
       "inherits": [
         "linux-basic-g++",
         "debug-build"
+
       ]
     },
     {
@@ -815,7 +816,8 @@
       "inherits": [
         "linux-basic-g++",
         "debug-build",
-        "enable-tests"
+        "enable-tests",
+        "enable-perf"
       ],
       "displayName": "Linux g++, Debug+Tests"
     },

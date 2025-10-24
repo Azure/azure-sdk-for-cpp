@@ -212,10 +212,24 @@ inline std::vector<double> ZipAvg(
 {
   auto size = operations.size();
   std::vector<double> s(size);
+  std::cout << "=== Zip Avg Results ===" << std::endl;
   for (size_t index = 0; index != operations.size(); index++)
   {
+    std::cout
+        << "ops: " << operations[index] << " time: "
+        << static_cast<double>(
+               std::chrono::duration_cast<std::chrono::milliseconds>(timeResults[index]).count())
+            / 1000.0f
+        << std::endl;
+
     s[index] = operations[index] / std::chrono::duration<double>(timeResults[index]).count();
   }
+  for (size_t index = 0; index != s.size(); index++)
+  {
+    std::cout << "Avg[" << index << "]: " << s[index] << " ops/s" << std::endl;
+  }
+  std::cout << "=======================" << std::endl;
+  std::cout << "=== End Zip Avg Results ===" << std::endl;
   return s;
 }
 
