@@ -293,6 +293,13 @@ inline void RunTests(
   std::cout << std::endl << "=== Results ===";
 
   auto totalOperations = Sum(completedOperations);
+  for (auto completionTime : lastCompletionTimes) {
+      if (completionTime > deadLineSeconds + std::chrono::milliseconds(500)) {
+          std::cout << "Warning: One of the tests ran for " << static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(completionTime).count()) / 1000 << "s, longer than the specified duration of " 
+			  << durationInSeconds << " seconds." << std::endl;
+      }
+  
+  }
   auto operationsPerSecond = Sum(ZipAvg(completedOperations, lastCompletionTimes));
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
