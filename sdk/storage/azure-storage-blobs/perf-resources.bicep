@@ -22,7 +22,7 @@ resource blobDataOwner 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-resource storage 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   name: '${baseName}blob'
   location: location
   kind: 'BlockBlobStorage'
