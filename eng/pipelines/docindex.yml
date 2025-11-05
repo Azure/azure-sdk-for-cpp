@@ -77,7 +77,9 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
-          BaseRepoBranch: $(DefaultBranch)
+          # TODO: Revert before merge
+          # BaseRepoBranch: $(DefaultBranch)
+          BaseRepoBranch: djurek/onboard-cpp-docs-2
           BaseRepoOwner: $(DocRepoOwner)
           CommitMsg: "Update docs CI configuration Build: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
           TargetRepoName: $(DocRepoName)
