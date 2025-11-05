@@ -48,6 +48,9 @@ steps:
           - Name: ${{ parameters.TargetDocRepoOwner }}/${{ parameters.TargetDocRepoName }}
             WorkingDirectory: $(DocRepoLocation)
         Paths: ${{ parameters.SparseCheckoutPaths }}
+        # TODO: Revert before merging. The repo must be public when this merges
+        # to main.
+        TokenToUseForAuth: $(azuresdk-github-pat)
 
     # If performing a daily docs build set the $(TargetBranchName) to a daily branch
     # name and attempt to checkout the daily docs branch. If the branch doesn't
