@@ -24,7 +24,7 @@ function Get-cpp-DocsMsMetadataForPackage($PackageInfo) {
   # Note how the end of the URL doesn't look like:
   # ".../azure/azure.storage.blobs-readme"
 
-  # This logic eliminates a preceeding "azure-" in the readme filename.
+  # This logic eliminates a preceding "azure-" in the readme filename.
   # "azure-storage-blobs" -> "storage-blobs"
   if ($readmeName.StartsWith('azure-')) {
     $readmeName = $readmeName.Substring(6)
