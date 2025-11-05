@@ -8,6 +8,9 @@ parameters:
   IntegrationDependsOn:
     - PrePublishBuild
 
+  TargetDocRepoOwner: MicrosoftDocs
+  TargetDocRepoName: azure-docs-sdk-cpp
+
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
@@ -115,6 +118,40 @@ stages:
                     FolderForUpload: '$(Pipeline.Workspace)/docs/${{ artifact.Name }}'
                     TargetLanguage: 'cpp'
                     ArtifactLocation: '$(Pipeline.Workspace)/packages/${{artifact.Name}}'
+            
+            - job: PublishDocsMs
+              displayName: Docs.MS Release
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+
+              # C++ learn docs are generated from hosted doxygen docs so this
+              # can only run after the static docs have been published.
+              dependsOn: PublishDocs
+
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
+              steps:
+                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+                  parameters:
+                    Paths:
+                      - sdk/**/*.md
+                      - .github/CODEOWNERS
+                - download: current
+                - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+                  parameters:
+                    PackageInfoLocations:
+                      - $(Pipeline.Workspace)/packages/PackageInfo/${{artifact.name}}.json
+                    RepoId: Azure/azure-sdk-for-cpp
+                    WorkingDirectory: $(System.DefaultWorkingDirectory)
+                    TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                    TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                    Language: cpp
+                    SparseCheckoutPaths:
+                      - docs-ref-services/
+                      - metadata/
+                      - ci-configs/packages-latest.json
+                      - ci-configs/packages-preview.json
 
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
             - job: PublishVcpkg
@@ -348,3 +385,39 @@ stages:
                 TargetRepoName: vcpkg
                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                 ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
+
+        - job: PublishDocsToNightlyBranch
+          # Wait for publishing job to complete before running
+          dependsOn: 'PublishDailyVcpkg'
+          condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+          pool:
+            name: $(LINUXPOOL)
+            image: $(LINUXVMIMAGE)
+            os: linux
+          steps:
+            - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+              parameters:
+                Paths:
+                  - sdk/**/*.md
+                  - .github/CODEOWNERS
+            - download: current
+            - pwsh: |
+                Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/
+              displayName: Show visible artifacts
+            - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+              parameters:
+                PackageInfoLocations:
+                  - ${{ each artifact in parameters.Artifacts }}:
+                      - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+                          - $(Pipeline.Workspace)/packages/PackageInfo/${{artifact.name}}.json
+                RepoId: Azure/azure-sdk-for-cpp
+                WorkingDirectory: $(System.DefaultWorkingDirectory)
+                TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+                TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+                Language: cpp
+                DailyDocsBuild: true
+                SparseCheckoutPaths:
+                  - docs-ref-services/
+                  - metadata/
+                  - ci-configs/packages-latest.json
+                  - ci-configs/packages-preview.json
