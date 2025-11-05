@@ -47,6 +47,8 @@ steps:
         Repositories:
           - Name: ${{ parameters.TargetDocRepoOwner }}/${{ parameters.TargetDocRepoName }}
             WorkingDirectory: $(DocRepoLocation)
+            # TODO: Revert before merging.
+            Commitish: djurek/onboard-cpp-docs
         Paths: ${{ parameters.SparseCheckoutPaths }}
         # TODO: Revert before merging. The repo must be public when this merges
         # to main.
