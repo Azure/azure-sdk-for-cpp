@@ -385,39 +385,3 @@ stages:
                 TargetRepoName: vcpkg
                 WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                 ScriptDirectory: $(System.DefaultWorkingDirectory)/eng/common/scripts
-
-        - job: PublishDocsToNightlyBranch
-          # Wait for publishing job to complete before running
-          dependsOn: 'PublishDailyVcpkg'
-          condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
-          pool:
-            name: $(LINUXPOOL)
-            image: $(LINUXVMIMAGE)
-            os: linux
-          steps:
-            - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-              parameters:
-                Paths:
-                  - sdk/**/*.md
-                  - .github/CODEOWNERS
-            - download: current
-            - pwsh: |
-                Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/
-              displayName: Show visible artifacts
-            - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
-              parameters:
-                PackageInfoLocations:
-                  - ${{ each artifact in parameters.Artifacts }}:
-                      - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                          - $(Pipeline.Workspace)/packages/PackageInfo/${{artifact.name}}.json
-                RepoId: Azure/azure-sdk-for-cpp
-                WorkingDirectory: $(System.DefaultWorkingDirectory)
-                TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-                TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-                Language: cpp
-                DailyDocsBuild: true
-                SparseCheckoutPaths:
-                  - docs-ref-services/
-                  - metadata/
-                  - ci-configs/packages-latest.json
-                  - ci-configs/packages-preview.json
