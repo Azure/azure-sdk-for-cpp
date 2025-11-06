@@ -79,7 +79,7 @@ jobs:
         parameters:
           # TODO: Revert before merge
           # BaseRepoBranch: $(DefaultBranch)
-          BaseRepoBranch: djurek/onboard-cpp-docs-2
+          BaseRepoBranch: djurek/onboard-cpp-docs
           BaseRepoOwner: $(DocRepoOwner)
           CommitMsg: "Update docs CI configuration Build: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
           TargetRepoName: $(DocRepoName)
