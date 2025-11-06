@@ -98,5 +98,5 @@ jobs:
             eng/common/scripts/Queue-Pipeline.ps1 `
               -Organization "apidrop" `
               -Project "Content%20CI" `
-              -DefinitionId 541626 `
+              -DefinitionId 8056 `
               -BearerToken $accessToken
