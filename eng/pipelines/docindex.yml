@@ -45,7 +45,6 @@ jobs:
           filePath: eng/common/scripts/Update-DocsMsPackages.ps1
           arguments: -DocRepoLocation $(DocRepoLocation) -SkipLegacyOnboarding
         displayName: Update Docs Onboarding for main branch
-        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
       - task: Powershell@2
         inputs:
@@ -53,7 +52,6 @@ jobs:
           filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
           arguments: -DocRepoLocation $(DocRepoLocation)
         displayName: Generate Service Level Readme for main branch
-        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
       - task: Powershell@2
         inputs:
@@ -63,7 +61,6 @@ jobs:
             -DocRepoLocation $(DocRepoLocation)
             -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
         displayName: Generate ToC for main branch
-        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
       - task: Powershell@2
         inputs:
