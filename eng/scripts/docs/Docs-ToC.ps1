@@ -77,7 +77,6 @@ function Get-cpp-DocsMsTocData($packageMetadata, $docRepoLocation) {
   return $output
 }
 
-# TODO
 # $GetRepositoryLinkFn = "Get-${Language}-RepositoryLink"
 function Get-cpp-RepositoryLink($packageInfo) {
   return "$PackageRepositoryUri/$($packageInfo.Package)-cpp"

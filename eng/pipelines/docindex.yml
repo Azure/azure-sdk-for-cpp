@@ -26,9 +26,6 @@ jobs:
       # Sync docs repo (this can be sparse)
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
-          # TODO: Revert before merging. The repo must be public when this merges
-          # to main.
-          TokenToUseForAuth: $(azuresdk-github-pat)
           SkipCheckoutNone: true
           Paths:
             - ci-configs/
@@ -38,8 +35,6 @@ jobs:
           Repositories:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
-              # TODO: Revert before merging.
-              Commitish: djurek/onboard-cpp-docs
 
       - task: Powershell@2
         inputs:
@@ -81,9 +76,7 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
-          # TODO: Revert before merge
-          # BaseRepoBranch: $(DefaultBranch)
-          BaseRepoBranch: djurek/onboard-cpp-docs
+          BaseRepoBranch: $(DefaultBranch)
           BaseRepoOwner: $(DocRepoOwner)
           CommitMsg: "Update docs CI configuration Build: $(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
           TargetRepoName: $(DocRepoName)

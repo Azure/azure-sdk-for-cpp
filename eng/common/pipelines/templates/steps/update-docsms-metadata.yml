@@ -47,12 +47,7 @@ steps:
         Repositories:
           - Name: ${{ parameters.TargetDocRepoOwner }}/${{ parameters.TargetDocRepoName }}
             WorkingDirectory: $(DocRepoLocation)
-            # TODO: Revert before merging.
-            Commitish: djurek/onboard-cpp-docs
         Paths: ${{ parameters.SparseCheckoutPaths }}
-        # TODO: Revert before merging. The repo must be public when this merges
-        # to main.
-        TokenToUseForAuth: $(azuresdk-github-pat)
 
     # If performing a daily docs build set the $(TargetBranchName) to a daily branch
     # name and attempt to checkout the daily docs branch. If the branch doesn't
@@ -99,9 +94,7 @@ steps:
 
     - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
       parameters:
-        # BaseRepoBranch: $(TargetBranchName)
-        # TODO: Revert before merging.
-        BaseRepoBranch: 'djurek/onboard-cpp-docs'
+        BaseRepoBranch: $(TargetBranchName)
         BaseRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         CommitMsg: "Update docs metadata"
         TargetRepoName: ${{ parameters.TargetDocRepoName }}
