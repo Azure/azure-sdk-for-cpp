@@ -26,6 +26,9 @@ jobs:
       # Sync docs repo (this can be sparse)
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
+          # TODO: Revert before merging. The repo must be public when this merges
+          # to main.
+          TokenToUseForAuth: $(azuresdk-github-pat)
           SkipCheckoutNone: true
           Paths:
             - ci-configs/
