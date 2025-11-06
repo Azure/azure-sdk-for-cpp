@@ -99,7 +99,9 @@ steps:
 
     - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
       parameters:
-        BaseRepoBranch: $(TargetBranchName)
+        # BaseRepoBranch: $(TargetBranchName)
+        # TODO: Revert before merging.
+        BaseRepoBranch: 'djurek/onboard-cpp-docs'
         BaseRepoOwner: ${{ parameters.TargetDocRepoOwner }}
         CommitMsg: "Update docs metadata"
         TargetRepoName: ${{ parameters.TargetDocRepoName }}
