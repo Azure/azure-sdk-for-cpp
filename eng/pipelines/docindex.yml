@@ -38,6 +38,8 @@ jobs:
           Repositories:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
+              # TODO: Revert before merging.
+              Commitish: djurek/onboard-cpp-docs
 
       - task: Powershell@2
         inputs:
