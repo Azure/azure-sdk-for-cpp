@@ -52,7 +52,9 @@ jobs:
         inputs:
           pwsh: true
           filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
-          arguments: -DocRepoLocation $(DocRepoLocation)
+          arguments: >- 
+            -DocRepoLocation $(DocRepoLocation)
+            -Monikers @('latest','preview')
         displayName: Generate Service Level Readme for main branch
 
       - task: Powershell@2
