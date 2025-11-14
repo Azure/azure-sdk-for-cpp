@@ -2,6 +2,8 @@
 
 ## 1.0.0 (Unreleased)
 
+### Other Changes
+
 * Validate template project ahead of release
 
 ## 1.0.0-beta.25 (2021-01-12)
