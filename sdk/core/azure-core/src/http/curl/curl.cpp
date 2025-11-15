@@ -2437,21 +2437,7 @@ CurlConnection::CurlConnection(
   // This allows the callback to set options like CURLOPT_INTERFACE before CURL processes the URL
   if (options.CurlOptionsCallback)
   {
-    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Invoking CurlOptionsCallback (before URL setup)...");
-    try
-    {
-      options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));      
-    }
-    catch (const std::exception& ex)
-    {
-      Log::Write(Logger::Level::Error, LogMsgPrefix + "Exception in CurlOptionsCallback: " + std::string(ex.what()));
-      throw;
-    }
-    catch (...)
-    {
-      Log::Write(Logger::Level::Error, LogMsgPrefix + "Unknown exception in CurlOptionsCallback");
-      throw;
-    }
+    options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
   }
 
   // Libcurl setup before open connection (url, connect_only, timeout)
