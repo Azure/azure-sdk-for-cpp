@@ -2440,16 +2440,7 @@ CurlConnection::CurlConnection(
     Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Invoking CurlOptionsCallback (before URL setup)...");
     try
     {
-      options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
-      
-      // Query CURL to verify interface was set
-      char* interfaceName = nullptr;
-      if (curl_easy_getinfo(m_handle.get(), CURLINFO_LOCAL_IP, &interfaceName) == CURLE_OK && interfaceName)
-      {
-        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "CURL will bind to interface/IP: " + std::string(interfaceName));
-      }
-      
-      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "CurlOptionsCallback completed successfully");
+      options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));      
     }
     catch (const std::exception& ex)
     {
@@ -2667,16 +2658,11 @@ CurlConnection::CurlConnection(
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
-  }
-
-  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Performing curl_easy_perform for: " + hostDisplayName);
+  } 
   auto performResult = curl_easy_perform(m_handle.get());
-  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "curl_easy_perform result: " + std::to_string(performResult));
+  
   if (performResult != CURLE_OK)
-  {
-    Log::Write(Logger::Level::Error, 
-        LogMsgPrefix + "curl_easy_perform failed with code " + std::to_string(performResult) 
-        + ": " + std::string(curl_easy_strerror(performResult)));
+  {    
 #if defined(AZ_PLATFORM_LINUX)
     if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {
