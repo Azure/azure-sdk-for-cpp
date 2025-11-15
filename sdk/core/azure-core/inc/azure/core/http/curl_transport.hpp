@@ -11,7 +11,7 @@
 #include "azure/core/http/policies/policy.hpp"
 #include "azure/core/http/transport.hpp"
 #include "azure/core/nullable.hpp"
-
+#include <functional>
 #include <chrono>
 #include <memory>
 #include <string>
@@ -199,6 +199,15 @@ namespace Azure { namespace Core { namespace Http {
      * @brief If set, enables libcurl's internal SSL session caching.
      */
     bool EnableCurlSslCaching = true;
+
+    /**
+     * @brief Optional callback to customize CURL handle before request execution.
+     * @details Allows setting additional CURL options per request, such as CURLOPT_INTERFACE
+     * for network interface binding. The callback receives the CURL* handle (as void*) and can
+     * call curl_easy_setopt() directly to configure request-specific options.
+     * @remark This callback is invoked just before curl_easy_perform() is called.
+     */
+    std::function<void(void*)> CurlOptionsCallback;
   };
 
   /**
@@ -253,3 +262,4 @@ namespace Azure { namespace Core { namespace Http {
   };
 
 }}} // namespace Azure::Core::Http
+

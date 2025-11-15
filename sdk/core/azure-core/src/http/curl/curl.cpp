@@ -2639,6 +2639,12 @@ CurlConnection::CurlConnection(
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
+  // Apply custom CURL options callback if provided
+  if (options.CurlOptionsCallback)
+  {
+    options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
+  }
+
   auto performResult = curl_easy_perform(m_handle.get());
   if (performResult != CURLE_OK)
   {
