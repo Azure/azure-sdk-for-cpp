@@ -2433,6 +2433,36 @@ CurlConnection::CurlConnection(
     }
   }
 
+  // Apply custom CURL options callback BEFORE setting URL
+  // This allows the callback to set options like CURLOPT_INTERFACE before CURL processes the URL
+  if (options.CurlOptionsCallback)
+  {
+    Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Invoking CurlOptionsCallback (before URL setup)...");
+    try
+    {
+      options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
+      
+      // Query CURL to verify interface was set
+      char* interfaceName = nullptr;
+      if (curl_easy_getinfo(m_handle.get(), CURLINFO_LOCAL_IP, &interfaceName) == CURLE_OK && interfaceName)
+      {
+        Log::Write(Logger::Level::Verbose, LogMsgPrefix + "CURL will bind to interface/IP: " + std::string(interfaceName));
+      }
+      
+      Log::Write(Logger::Level::Verbose, LogMsgPrefix + "CurlOptionsCallback completed successfully");
+    }
+    catch (const std::exception& ex)
+    {
+      Log::Write(Logger::Level::Error, LogMsgPrefix + "Exception in CurlOptionsCallback: " + std::string(ex.what()));
+      throw;
+    }
+    catch (...)
+    {
+      Log::Write(Logger::Level::Error, LogMsgPrefix + "Unknown exception in CurlOptionsCallback");
+      throw;
+    }
+  }
+
   // Libcurl setup before open connection (url, connect_only, timeout)
   if (!SetLibcurlOption(m_handle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
@@ -2639,15 +2669,14 @@ CurlConnection::CurlConnection(
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
   }
 
-  // Apply custom CURL options callback if provided
-  if (options.CurlOptionsCallback)
-  {
-    options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
-  }
-
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "Performing curl_easy_perform for: " + hostDisplayName);
   auto performResult = curl_easy_perform(m_handle.get());
+  Log::Write(Logger::Level::Verbose, LogMsgPrefix + "curl_easy_perform result: " + std::to_string(performResult));
   if (performResult != CURLE_OK)
   {
+    Log::Write(Logger::Level::Error, 
+        LogMsgPrefix + "curl_easy_perform failed with code " + std::to_string(performResult) 
+        + ": " + std::string(curl_easy_strerror(performResult)));
 #if defined(AZ_PLATFORM_LINUX)
     if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {

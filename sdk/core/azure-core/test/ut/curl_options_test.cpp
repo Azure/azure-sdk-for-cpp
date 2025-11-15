@@ -430,4 +430,62 @@ namespace Azure { namespace Core { namespace Test {
     EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
                         .ConnectionPoolIndex.clear());
   }
+
+  // Test CurlOptionsCallback functionality
+  TEST(CurlTransportOptions, CurlOptionsCallback)
+  {
+    Azure::Core::Http::CurlTransportOptions curlOptions;
+    
+    // Track if callback was invoked
+    bool callbackInvoked = false;
+    
+    // Set up callback to customize CURL handle
+    curlOptions.CurlOptionsCallback = [&callbackInvoked](void* curlHandle) {
+      callbackInvoked = true;
+      
+      // Example: Set a custom timeout using the callback
+      // Cast void* back to CURL* to use curl_easy_setopt
+      CURL* handle = static_cast<CURL*>(curlHandle);
+      
+      // Set a custom option - for example, verbose mode for debugging
+      curl_easy_setopt(handle, CURLOPT_VERBOSE, 0L);
+      
+      // You could set CURLOPT_INTERFACE here for network interface binding:
+      // curl_easy_setopt(handle, CURLOPT_INTERFACE, "eth0");
+    };
+
+    auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>(curlOptions);
+    Azure::Core::Http::Policies::TransportOptions options;
+    options.Transport = transportAdapter;
+    auto transportPolicy
+        = std::make_unique<Azure::Core::Http::Policies::_internal::TransportPolicy>(options);
+
+    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> policies;
+    policies.emplace_back(std::move(transportPolicy));
+    Azure::Core::Http::_internal::HttpPipeline pipeline(policies);
+
+    Azure::Core::Url url(AzureSdkHttpbinServer::Get());
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Get, url);
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> response;
+    EXPECT_NO_THROW(response = pipeline.Send(request, Azure::Core::Context{}));
+    
+    // Verify callback was invoked
+    EXPECT_TRUE(callbackInvoked);
+    
+    if (response)
+    {
+      auto responseCode = response->GetStatusCode();
+      int expectedCode = 200;
+      EXPECT_PRED2(
+          [](int expected, int code) { return expected == code; },
+          expectedCode,
+          static_cast<typename std::underlying_type<Azure::Core::Http::HttpStatusCode>::type>(
+              responseCode));
+    }
+
+    // Clean the connection from the pool
+    EXPECT_NO_THROW(Azure::Core::Http::_detail::CurlConnectionPool::g_curlConnectionPool
+                        .ConnectionPoolIndex.clear());
+  }
 }}} // namespace Azure::Core::Test
