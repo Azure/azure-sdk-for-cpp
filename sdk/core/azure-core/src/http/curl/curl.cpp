@@ -2433,6 +2433,13 @@ CurlConnection::CurlConnection(
     }
   }
 
+  // Apply custom CURL options callback BEFORE setting URL
+  // This allows the callback to set options like CURLOPT_INTERFACE before CURL processes the URL
+  if (options.CurlOptionsCallback)
+  {
+    options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
+  }
+
   // Libcurl setup before open connection (url, connect_only, timeout)
   if (!SetLibcurlOption(m_handle, CURLOPT_URL, request.GetUrl().GetAbsoluteUrl().data(), &result))
   {
@@ -2637,11 +2644,11 @@ CurlConnection::CurlConnection(
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
         + ". Failed enforcing TLS v1.2 or greater. " + std::string(curl_easy_strerror(result)));
-  }
-
+  } 
   auto performResult = curl_easy_perform(m_handle.get());
+  
   if (performResult != CURLE_OK)
-  {
+  {    
 #if defined(AZ_PLATFORM_LINUX)
     if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {
