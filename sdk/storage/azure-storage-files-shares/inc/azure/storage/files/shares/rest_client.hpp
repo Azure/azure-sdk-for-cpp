@@ -436,11 +436,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * storage GiB.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
-      /**
-       * Specifies whether granting of new directory leases for directories present in a share is
-       * enabled(allowed) or disabled(blocked). Header is only returned for a SMB Share.
-       */
-      Nullable<bool> EnableDirectoryLease;
     };
     /**
      * @brief A listed Azure Storage share item.
@@ -723,11 +718,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
-      /**
-       * Specifies whether granting of new directory leases for directories present in a share is
-       * enabled(allowed) or disabled(blocked).  Header is only returned for a SMB Share.
-       */
-      Nullable<bool> EnableDirectoryLease;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -2569,7 +2559,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
-        Nullable<bool> EnableDirectoryLease;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2701,7 +2690,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
-        Nullable<bool> EnableDirectoryLease;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,

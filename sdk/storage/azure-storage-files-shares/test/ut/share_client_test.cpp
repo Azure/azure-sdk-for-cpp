@@ -894,31 +894,4 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(deleteResult.ShareUsageBytes.HasValue());
     EXPECT_TRUE(deleteResult.ShareSnapshotUsageBytes.HasValue());
   }
-
-  TEST_F(FileShareClientTest, EnableDirectoryLease_PLAYBACKONLY_)
-  {
-    auto shareServiceClient = *m_shareServiceClient;
-    auto shareName = LowercaseRandomString();
-    auto shareClient = shareServiceClient.GetShareClient(shareName);
-
-    // Create
-    Files::Shares::CreateShareOptions createOptions;
-    createOptions.EnableDirectoryLease = true;
-    EXPECT_NO_THROW(shareClient.Create(createOptions));
-    Files::Shares::Models::ShareProperties properties;
-    EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
-    EXPECT_TRUE(properties.EnableDirectoryLease.HasValue());
-    EXPECT_TRUE(properties.EnableDirectoryLease.Value());
-
-    // SetProperties
-    Files::Shares::SetSharePropertiesOptions setPropertiesOptions;
-    setPropertiesOptions.EnableDirectoryLease = false;
-    EXPECT_NO_THROW(shareClient.SetProperties(setPropertiesOptions));
-    EXPECT_NO_THROW(properties = shareClient.GetProperties().Value);
-    EXPECT_TRUE(properties.EnableDirectoryLease.HasValue());
-    EXPECT_FALSE(properties.EnableDirectoryLease.Value());
-
-    // Delete
-    shareClient.Delete();
-  }
 }}} // namespace Azure::Storage::Test
