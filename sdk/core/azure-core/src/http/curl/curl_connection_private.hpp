@@ -126,6 +126,13 @@ namespace Azure { namespace Core {
       virtual void UpdateLastUsageTime() = 0;
 
       /**
+       * @brief Check and log connection reuse by comparing socket descriptors.
+       * @details Tracks the socket descriptor to determine if libcurl is reusing
+       * the same TCP connection or creating a new one.
+       */
+      virtual void UpdateSocketReuse() = 0;
+
+      /**
        * @brief Checks whether this CURL connection is expired.
        *
        */
@@ -177,6 +184,12 @@ namespace Azure { namespace Core {
       bool m_enableCrlValidation{false};
       // Allow the connection to proceed if retrieving the CRL failed.
       bool m_allowFailedCrlRetrieval{true};
+      // Track if this handle came from the global pool and should be returned
+      bool m_handleFromGlobalPool{false};
+      // Poll interval in milliseconds for socket readiness checks (default 10ms for low latency)
+      long m_pollIntervalMs{10};
+      // Track previous socket for connection reuse detection
+      curl_socket_t m_previousSocket{CURL_SOCKET_BAD};
 
       static int CurlLoggingCallback(
           CURL* handle,
@@ -210,11 +223,24 @@ namespace Azure { namespace Core {
 
       /**
        * @brief Destructor.
-       * @details Cleans up CURL (invokes `curl_easy_cleanup()`).
+       * @details Returns CURL handle to global pool for reuse, or cleans up if not pooled.
        */
-      ~CurlConnection() override {}
+      ~CurlConnection() override;
 
       std::string const& GetConnectionKey() const override { return this->m_connectionKey; }
+
+      /**
+       * @brief Get the underlying CURL handle for this connection.
+       * @return CURL* handle pointer.
+       */
+      CURL* GetHandle() const { return m_handle.get(); }
+
+      /**
+       * @brief Check and log connection reuse by comparing socket descriptors.
+       * @details Tracks the socket descriptor to determine if libcurl is reusing
+       * the same TCP connection or creating a new one.
+       */
+      void UpdateSocketReuse();
 
       /**
        * @brief Update last usage time for the connection.

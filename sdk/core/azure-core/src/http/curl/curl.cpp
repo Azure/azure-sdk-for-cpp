@@ -25,6 +25,8 @@
 #include "curl_connection_private.hpp"
 #include "curl_session_private.hpp"
 
+// GlobalCurlHandlePool uses static singleton - no static members to initialize
+
 #if defined(AZ_PLATFORM_POSIX)
 #if defined(__clang__)
 #pragma clang diagnostic push
@@ -117,6 +119,7 @@ enum class PollSocketDirection
  * @param direction poll events for read or write socket.
  * @param timeout  return if polling for more than \p timeout
  * @param context The context while polling that can be use to cancel waiting for socket.
+ * @param pollIntervalMs  interval in milliseconds between poll() calls for cancellation checking
  *
  * @return int with negative 1 upon any error, 0 on timeout or greater than zero if events were
  * detected (socket ready to be written/read)
@@ -125,7 +128,8 @@ int pollSocketUntilEventOrTimeout(
     Azure::Core::Context const& context,
     curl_socket_t socketFileDescriptor,
     PollSocketDirection direction,
-    long timeout)
+    long timeout,
+    long pollIntervalMs = 10)
 {
 #if !defined(AZ_PLATFORM_WINDOWS) && !defined(AZ_PLATFORM_POSIX)
   // platform does not support Poll().
@@ -150,8 +154,8 @@ int pollSocketUntilEventOrTimeout(
   // we use 1 as arg.
 
   // Cancelation is possible by calling poll() with small time intervals instead of using the
-  // requested timeout. The polling interval is 1 second.
-  static constexpr std::chrono::milliseconds pollInterval(1000); // 1 second
+  // requested timeout. The polling interval is configurable (default 10ms for low latency).
+  const std::chrono::milliseconds pollInterval(pollIntervalMs);
   int result = 0;
   auto now = std::chrono::steady_clock::now();
   auto deadline = now + std::chrono::milliseconds(timeout);
@@ -643,7 +647,7 @@ CURLcode CurlConnection::SendBuffer(
         case CURLE_AGAIN: {
           // start polling operation with 1 min timeout
           auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
-              context, m_curlSocket, PollSocketDirection::Write, 60000L);
+              context, m_curlSocket, PollSocketDirection::Write, 60000L, m_pollIntervalMs);
 
           if (pollUntilSocketIsReady == 0)
           {
@@ -699,6 +703,9 @@ CURLcode CurlSession::UploadBody(Context const& context)
 // custom sending to wire an HTTP request
 CURLcode CurlSession::SendRawHttp(Context const& context)
 {
+  // Check connection reuse before sending request
+  m_connection->UpdateSocketReuse();
+  
   // something like GET /path HTTP1.0 \r\nheaders\r\n
   auto rawRequest = GetHTTPMessagePreBody(this->m_request);
   auto rawRequestLen = rawRequest.size();
@@ -1230,6 +1237,17 @@ size_t CurlSession::OnRead(uint8_t* buffer, size_t count, Context const& context
   return totalRead;
 }
 
+CurlConnection::~CurlConnection()
+{
+  // Return the CURL handle to the global pool for reuse
+  if (m_handleFromGlobalPool && m_handle)
+  {
+    CURL* rawHandle = m_handle.release();
+    Azure::Core::Http::_detail::GlobalCurlHandlePool::GetInstance().ReleaseHandle(rawHandle);
+  }
+  // If m_handleFromGlobalPool is false or handle is null, UniqueHandle will clean up normally
+}
+
 // Read from socket and return the number of bytes taken from socket
 size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Context const& context)
 {
@@ -1252,7 +1270,7 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
       case CURLE_AGAIN: {
         // start polling operation
         auto pollUntilSocketIsReady = pollSocketUntilEventOrTimeout(
-            context, m_curlSocket, PollSocketDirection::Read, 60000L);
+            context, m_curlSocket, PollSocketDirection::Read, 60000L, m_pollIntervalMs);
 
         if (pollUntilSocketIsReady == 0)
         {
@@ -1284,6 +1302,36 @@ size_t CurlConnection::ReadFromSocket(uint8_t* buffer, size_t bufferSize, Contex
 }
 
 std::unique_ptr<RawResponse> CurlSession::ExtractResponse() { return std::move(this->m_response); }
+
+void CurlConnection::UpdateSocketReuse()
+{
+  curl_socket_t currentSocket = CURL_SOCKET_BAD;
+  CURLcode result = curl_easy_getinfo(m_handle.get(), CURLINFO_ACTIVESOCKET, &currentSocket);
+  
+  if (result == CURLE_OK && currentSocket != CURL_SOCKET_BAD)
+  {
+    if (m_previousSocket == CURL_SOCKET_BAD)
+    {
+      // First request on this handle
+      Log::Write(Logger::Level::Informational, 
+          "[CURL] First request - socket=" + std::to_string(currentSocket));
+    }
+    else if (m_previousSocket == currentSocket)
+    {
+      // Same socket = connection reused!
+      Log::Write(Logger::Level::Informational, 
+          "[CURL] *** CONNECTION REUSED *** - socket=" + std::to_string(currentSocket));
+    }
+    else
+    {
+      // Different socket = new connection
+      Log::Write(Logger::Level::Informational, 
+          "[CURL] NEW connection created - old_socket=" + std::to_string(m_previousSocket) 
+          + ", new_socket=" + std::to_string(currentSocket));
+    }
+    m_previousSocket = currentSocket;
+  }
+}
 
 size_t CurlSession::ResponseBufferParser::Parse(
     uint8_t const* const buffer,
@@ -2367,12 +2415,16 @@ CurlConnection::CurlConnection(
     std::chrono::milliseconds connectionTimeoutOverride)
     : m_connectionKey(connectionPropertiesKey)
 {
-  m_handle = Azure::Core::_internal::UniqueHandle<CURL>(curl_easy_init());
+  // Acquire a CURL handle from the global pool (or create new if pool empty)
+  CURL* rawHandle = Azure::Core::Http::_detail::GlobalCurlHandlePool::GetInstance().AcquireHandle();
+  m_handle = Azure::Core::_internal::UniqueHandle<CURL>(rawHandle);
+  m_handleFromGlobalPool = true;
+  
   if (!m_handle)
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-        + std::string("curl_easy_init returned Null"));
+        + std::string("Failed to acquire CURL handle from pool"));
   }
   CURLcode result;
 
@@ -2438,6 +2490,42 @@ CurlConnection::CurlConnection(
   if (options.CurlOptionsCallback)
   {
     options.CurlOptionsCallback(static_cast<void*>(m_handle.get()));
+  }
+
+  // Performance optimizations per https://everything.curl.dev/libcurl/performance.html
+  // Set download buffer size for high-speed transfers
+  if (options.BufferSize > 0)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_BUFFERSIZE, options.BufferSize, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set BUFFERSIZE to: " + std::to_string(options.BufferSize)
+          + ". " + std::string(curl_easy_strerror(result)));
+    }
+  }
+
+  // Set upload buffer size for high-speed transfers
+  if (options.UploadBufferSize > 0)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_UPLOAD_BUFFERSIZE, options.UploadBufferSize, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to set UPLOAD_BUFFERSIZE to: " + std::to_string(options.UploadBufferSize)
+          + ". " + std::string(curl_easy_strerror(result)));
+    }
+  }
+
+  // Enable TCP_NODELAY to disable Nagle's algorithm for lower latency
+  if (options.TcpNoDelay)
+  {
+    if (!SetLibcurlOption(m_handle, CURLOPT_TCP_NODELAY, 1L, &result))
+    {
+      throw Azure::Core::Http::TransportException(
+          _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+          + ". Failed to enable TCP_NODELAY. " + std::string(curl_easy_strerror(result)));
+    }
   }
 
   // Libcurl setup before open connection (url, connect_only, timeout)
@@ -2606,6 +2694,7 @@ CurlConnection::CurlConnection(
   m_allowFailedCrlRetrieval = options.SslOptions.AllowFailedCrlRetrieval;
 #endif
   m_enableCrlValidation = options.SslOptions.EnableCertificateRevocationListCheck;
+  m_pollIntervalMs = options.PollIntervalMs;
 
   if (!options.SslVerifyPeer)
   {
@@ -2628,14 +2717,35 @@ CurlConnection::CurlConnection(
     }
   }
 
-  // curl-transport adapter supports only HTTP/1.1
+  // Set HTTP version based on options.
+  // HTTP/2 enables connection multiplexing (multiple requests on one TCP connection),
+  // dramatically reducing connection count for high concurrency.
   // https://github.com/Azure/azure-sdk-for-cpp/issues/2848
-  // The libcurl uses HTTP/2 by default, if it can be negotiated with a server on handshake.
-  if (!SetLibcurlOption(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1, &result))
+  long httpVersion = options.EnableHttp2 ? CURL_HTTP_VERSION_2_0 : CURL_HTTP_VERSION_1_1;
+  if (!SetLibcurlOption(m_handle, CURLOPT_HTTP_VERSION, httpVersion, &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
-        + ". Failed to set libcurl HTTP/1.1" + ". " + std::string(curl_easy_strerror(result)));
+        + ". Failed to set libcurl HTTP version to: "
+        + (options.EnableHttp2 ? "HTTP/2" : "HTTP/1.1") + ". " + std::string(curl_easy_strerror(result)));
+  }
+
+  // Set connection cache size (always set it now that we have a reasonable default)
+  if (!SetLibcurlOption(m_handle, CURLOPT_MAXCONNECTS, options.MaxConnectionsCache, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set MAXCONNECTS to: " + std::to_string(options.MaxConnectionsCache)
+        + ". " + std::string(curl_easy_strerror(result)));
+  }
+
+  // Set DNS cache timeout
+  if (!SetLibcurlOption(m_handle, CURLOPT_DNS_CACHE_TIMEOUT, options.DnsCacheTimeout, &result))
+  {
+    throw Azure::Core::Http::TransportException(
+        _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName
+        + ". Failed to set DNS_CACHE_TIMEOUT to: " + std::to_string(options.DnsCacheTimeout)
+        + ". " + std::string(curl_easy_strerror(result)));
   }
 
   //   Make libcurl to support only TLS v1.2 or later
@@ -2685,4 +2795,7 @@ CurlConnection::CurlConnection(
         "Broken connection. Couldn't get the active socket for it."
         + std::string(curl_easy_strerror(result)));
   }
+
+  // Initialize previous socket tracking
+  m_previousSocket = CURL_SOCKET_BAD;
 }

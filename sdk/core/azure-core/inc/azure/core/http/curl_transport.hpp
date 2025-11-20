@@ -208,6 +208,121 @@ namespace Azure { namespace Core { namespace Http {
      * @remark This callback is invoked just before curl_easy_perform() is called.
      */
     std::function<void(void*)> CurlOptionsCallback;
+
+    /**
+     * @brief Maximum number of simultaneously open persistent connections that libcurl may cache.
+     *
+     * @details This option sets the size of libcurl's internal connection cache. When the cache
+     * is full, the least recently used connection is closed to make room for new ones. Increasing
+     * this value can improve performance for workloads with high connection concurrency.
+     *
+     * @remark Set to 0 to disable connection caching entirely (not recommended for performance).
+     * Set to -1 to use libcurl's default (typically 5 connections).
+     * For high-throughput scenarios, values of 50-100+ are recommended.
+     *
+     * @remark The default value is 100 (optimized for high concurrency). More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_MAXCONNECTS.html
+     */
+    long MaxConnectionsCache = 100;
+
+    /**
+     * @brief DNS cache timeout in seconds.
+     *
+     * @details Sets the life-time for DNS cache entries. DNS lookups are cached by libcurl to
+     * reduce latency on subsequent requests to the same host. This setting controls how long
+     * these cached entries remain valid.
+     *
+     * @remark Set to 0 to disable DNS caching completely.
+     * Set to -1 to cache DNS entries forever (or until the application terminates).
+     *
+     * @remark The default value is 60 seconds. More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_DNS_CACHE_TIMEOUT.html
+     */
+    long DnsCacheTimeout = 60;
+
+    /**
+     * @brief Enable HTTP/2 protocol for multiplexed connections.
+     *
+     * @details HTTP/2 allows multiple requests to share a single TCP connection via multiplexing,
+     * dramatically reducing connection count for high-concurrency workloads. When enabled,
+     * libcurl will negotiate HTTP/2 with servers that support it, falling back to HTTP/1.1.
+     *
+     * @remark HTTP/2 is disabled by default for compatibility with older servers and to match
+     * historical SDK behavior. Enable for significant performance gains with Azure services
+     * (which fully support HTTP/2).
+     *
+     * @remark Default: false (HTTP/1.1 only). Setting to true enables CURL_HTTP_VERSION_2_0.
+     */
+    bool EnableHttp2 = false;
+
+    /**
+     * @brief Download buffer size in bytes for libcurl to use.
+     *
+     * @details Sets the preferred size (in bytes) for the receive buffer used by libcurl.
+     * Larger buffers can improve throughput on high-speed connections by reducing the number
+     * of read callbacks and system calls required. The default libcurl buffer size is ~16KB,
+     * which can be a bottleneck for high-bandwidth transfers.
+     *
+     * @remark Set to 0 to use libcurl's default buffer size (~16KB).
+     * For high-speed transfers (>100 Mbps), consider values like 512KB or 1MB.
+     * libcurl will clamp values to implementation-defined limits.
+     *
+     * @remark Default: 524288 (512KB) for high-throughput optimization. More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_BUFFERSIZE.html
+     */
+    long BufferSize = 524288; // 512KB for high-speed downloads
+
+    /**
+     * @brief Upload buffer size in bytes for libcurl to use.
+     *
+     * @details Sets the preferred size (in bytes) for the upload buffer used by libcurl.
+     * Larger buffers can improve upload throughput on high-speed connections by reducing
+     * the number of write callbacks and system calls. The default libcurl buffer size is ~64KB,
+     * which can be a bottleneck for high-bandwidth uploads.
+     *
+     * @remark Set to 0 to use libcurl's default buffer size (~64KB).
+     * For high-speed uploads (>100 Mbps), consider values like 512KB or 1MB.
+     * libcurl will clamp values to implementation-defined limits.
+     *
+     * @remark Default: 524288 (512KB) for high-throughput optimization. More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_UPLOAD_BUFFERSIZE.html
+     */
+    long UploadBufferSize = 524288; // 512KB for high-speed uploads
+
+    /**
+     * @brief Enable TCP_NODELAY to disable Nagle's algorithm.
+     *
+     * @details When enabled, sets the TCP_NODELAY socket option which disables Nagle's algorithm.
+     * Nagle's algorithm batches small TCP packets to improve network efficiency, but can add
+     * 40-200ms latency for request-response patterns. Disabling it sends data immediately,
+     * which is typically better for HTTP request/response workloads.
+     *
+     * @remark Most HTTP workloads benefit from TCP_NODELAY=1 (Nagle disabled) to reduce latency.
+     * Set to false only if you're on a high-latency, low-bandwidth network where Nagle's
+     * batching would help.
+     *
+     * @remark Default: true (Nagle's algorithm disabled for lower latency). More about this option:
+     * https://curl.se/libcurl/c/CURLOPT_TCP_NODELAY.html
+     */
+    bool TcpNoDelay = true;
+
+    /**
+     * @brief Poll interval in milliseconds for socket readiness checks.
+     *
+     * @details When using CURLOPT_CONNECT_ONLY mode, libcurl requires manual polling to check
+     * socket readiness. This setting controls how frequently poll() is called to check for
+     * cancellation. Lower values reduce latency but increase CPU usage slightly.
+     *
+     * @remark The original default was 1000ms (1 second), which caused up to 1 second latency
+     * on small operations like HEAD/PUT. The new default of 10ms dramatically reduces this
+     * overhead while still checking for cancellation frequently.
+     *
+     * @remark For extremely latency-sensitive workloads, consider 1-5ms.
+     * For throughput-focused workloads where latency matters less, use 50-100ms.
+     *
+     * @remark Default: 10 milliseconds (low-latency optimization).
+     */
+    long PollIntervalMs = 10;
   };
 
   /**
