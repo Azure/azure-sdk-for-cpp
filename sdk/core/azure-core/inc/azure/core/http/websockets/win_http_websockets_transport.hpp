@@ -13,6 +13,7 @@
 #include "azure/core/http/transport.hpp"
 #include "azure/core/http/websockets/websockets_transport.hpp"
 #include "azure/core/http/win_http_transport.hpp"
+#include "azure/core/internal/unique_handle.hpp"
 #include <memory>
 #include <mutex>
 
@@ -23,13 +24,13 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
    */
   class WinHttpWebSocketTransport : public WebSocketTransport, public WinHttpTransport {
 
-    Azure::Core::Http::_detail::unique_HINTERNET m_socketHandle;
+    Azure::Core::_internal::UniqueHandle<void*> m_socketHandle;  // HINTERNET is void*
     std::mutex m_sendMutex;
     std::mutex m_receiveMutex;
 
-    // Called by the
+    // Fixed method signature to match current base class  
     void OnUpgradedConnection(
-        Azure::Core::Http::_detail::unique_HINTERNET const& requestHandle) override;
+        std::unique_ptr<_detail::WinHttpRequest> const& request) const override;
 
   public:
     /**
