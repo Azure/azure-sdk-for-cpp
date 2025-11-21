@@ -351,6 +351,7 @@ build/
 
 #Doxygen
 [Dd]ocs/
+!eng/scripts/docs
 
 # vscode
 **/.vscode/*
