@@ -757,7 +757,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kMaxBurstCreditsForIops,
           kNextAllowedProvisionedIopsDowngradeTime,
           kNextAllowedProvisionedBandwidthDowngradeTime,
-          kEnableSmbDirectoryLease,
           kNextMarker,
         };
         const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
@@ -802,7 +801,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
              XmlTagEnum::kNextAllowedProvisionedIopsDowngradeTime},
             {"NextAllowedProvisionedBandwidthDowngradeTime",
              XmlTagEnum::kNextAllowedProvisionedBandwidthDowngradeTime},
-            {"EnableSmbDirectoryLease", XmlTagEnum::kEnableSmbDirectoryLease},
             {"NextMarker", XmlTagEnum::kNextMarker},
         };
         std::vector<XmlTagEnum> xmlPath;
@@ -1089,14 +1087,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                   = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
             }
             else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kEnableSmbDirectoryLease)
-            {
-              vectorElement1.Details.EnableDirectoryLease = node.Value == std::string("true");
-            }
-            else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kNextMarker)
             {
@@ -1337,12 +1327,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "x-ms-share-provisioned-bandwidth-mibps",
             std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
       }
-      if (options.EnableDirectoryLease.HasValue())
-      {
-        request.SetHeader(
-            "x-ms-enable-smb-directory-lease",
-            options.EnableDirectoryLease.Value() ? "true" : "false");
-      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1533,12 +1517,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             pRawResponse->GetHeaders().at(
                 "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"),
             Azure::DateTime::DateFormat::Rfc1123);
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-enable-smb-directory-lease") != 0)
-      {
-        response.EnableDirectoryLease
-            = pRawResponse->GetHeaders().at("x-ms-enable-smb-directory-lease")
-            == std::string("true");
       }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
@@ -1977,12 +1955,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-share-provisioned-bandwidth-mibps",
             std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
-      }
-      if (options.EnableDirectoryLease.HasValue())
-      {
-        request.SetHeader(
-            "x-ms-enable-smb-directory-lease",
-            options.EnableDirectoryLease.Value() ? "true" : "false");
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();

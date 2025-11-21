@@ -157,7 +157,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
-    protocolLayerOptions.EnableDirectoryLease = options.EnableDirectoryLease;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -272,7 +271,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
-    protocolLayerOptions.EnableDirectoryLease = options.EnableDirectoryLease;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }

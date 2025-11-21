@@ -238,7 +238,7 @@ directive:
       $.FileRequestIntent["x-ms-enum"]["values"] = [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "backup", "name": "Backup"}];
       $.FilePermissionFormat["enum"] = ["sddl", "binary"];
       $.FileAttributes["required"] = true;
-      $.EnableSmbDirectoryLease["x-ms-client-name"] = "EnableDirectoryLease";
+      delete $.EnableSmbDirectoryLease;
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -480,7 +480,7 @@ directive:
       $.ShareItemInternal.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
       $.ShareItemInternal["x-ms-client-name"] = "ShareItem";
       $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
-      $.ShareItemDetails.properties["EnableSmbDirectoryLease"]["x-ms-client-name"] = "EnableDirectoryLease";
+      delete $.ShareItemDetails.properties["EnableSmbDirectoryLease"];
       delete $.ShareItemInternal.properties["Properties"];
       delete $.ShareItemInternal.required;
 ```
@@ -509,6 +509,10 @@ directive:
           "Created": {"type": "boolean", "x-ms-client-default": true, "x-ms-xml": {"name": ""}}
         }
       };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].put.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/EnableSmbDirectoryLease"));
 ```
 
 ### SetShareProperties
@@ -526,6 +530,10 @@ directive:
       $.headers["x-ms-share-next-allowed-quota-downgrade-time"]["x-nullable"] = true;
       $.headers["x-ms-share-next-allowed-provisioned-iops-downgrade-time"]["x-nullable"] = true;
       $.headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"]["x-nullable"] = true;
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share&comp=properties"].put.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/EnableSmbDirectoryLease"));
 ```
 
 ### GetShareProperties
@@ -564,8 +572,7 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
-      $.headers["x-ms-enable-smb-directory-lease"]["x-ms-client-name"] = "EnableDirectoryLease";
-      $.headers["x-ms-enable-smb-directory-lease"]["x-nullable"] = true;
+      delete $.headers["x-ms-enable-smb-directory-lease"];
       $.schema = {
         "type": "object",
         "x-ms-client-name": "ShareProperties",
@@ -1278,7 +1285,6 @@ directive:
       $.ShareItemDetails.properties["MaxBurstCreditsForIops"].description = "Return the calculated maximum burst credits. This is not the current burst credit level, but the maximum burst credits the share can have.";
       $.ShareItemDetails.properties["NextAllowedProvisionedIopsDowngradeTime"].description = "Return timestamp for provisioned IOPS following existing rules for provisioned storage GiB.";
       $.ShareItemDetails.properties["NextAllowedProvisionedBandwidthDowngradeTime"].description = "Return timestamp for provisioned throughput following existing rules for provisioned storage GiB.";
-      $.ShareItemDetails.properties["EnableSmbDirectoryLease"].description = "Specifies whether granting of new directory leases for directories present in a share is enabled(allowed) or disabled(blocked). Header is only returned for a SMB Share.";
       $.ShareItemInternal.properties["Name"].description = "The name of the share.";
       $.ShareItemInternal.properties["Snapshot"].description = "The snapshot of the share.";
       $.ShareItemInternal.properties["Deleted"].description = "True if the share is deleted.";
