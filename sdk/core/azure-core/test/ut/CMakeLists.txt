@@ -97,6 +97,7 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
+    websocket_test.cpp
 )
 
 target_compile_definitions(azure-core-test PRIVATE _azure_BUILDING_TESTS)
@@ -134,7 +135,9 @@ endif()
 
 # Additional test files to be copied to the output directory.
 set(TEST_ADDITIONAL_FILES 
-    ${CMAKE_CURRENT_LIST_DIR}/requirements.txt 
+    ${CMAKE_CURRENT_LIST_DIR}/requirements.txt
+    ${CMAKE_CURRENT_LIST_DIR}/websocket_server.py
+    ${CMAKE_CURRENT_LIST_DIR}/Start-WebSocketServer.ps1
 )
 
 add_custom_command(TARGET azure-core-test POST_BUILD

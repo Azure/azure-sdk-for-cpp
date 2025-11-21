@@ -60,7 +60,7 @@ TEST_F(WebSocketTests, OpenSimpleSocket)
 
     // When running this test locally, the call times out, so drop in a 5 second timeout on
     // the request.
-    Azure::Core::Context requestContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+    Azure::Core::Context requestContext = Azure::Core::Context{}.WithDeadline(
         std::chrono::system_clock::now() + 5s);
     EXPECT_THROW(defaultSocket.Open(requestContext), std::runtime_error);
   }
@@ -327,7 +327,7 @@ TEST_F(WebSocketTests, PingReceiveTest)
   {
 
     GTEST_LOG_(INFO) << "Sleeping for 15 seconds to collect pings.";
-    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+    Azure::Core::Context receiveContext = Azure::Core::Context{}.WithDeadline(
         Azure::DateTime{std::chrono::system_clock::now() + 15s});
     EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
     auto statistics = testSocket.GetStatistics();
@@ -361,7 +361,7 @@ TEST_F(WebSocketTests, PingSendTest)
     GTEST_LOG_(INFO) << "Sleeping for 10 seconds to collect pings.";
     // Note that we cannot collect incoming pings or outgoing pongs unless we are receiving
     // data from the server.
-    Azure::Core::Context receiveContext = Azure::Core::Context::ApplicationContext.WithDeadline(
+    Azure::Core::Context receiveContext = Azure::Core::Context{}.WithDeadline(
         Azure::DateTime{std::chrono::system_clock::now() + 10s});
     EXPECT_THROW(testSocket.ReceiveFrame(receiveContext), Azure::Core::OperationCancelledException);
     auto statistics = testSocket.GetStatistics();
@@ -409,7 +409,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnSingleSocket)
       std::chrono::time_point<std::chrono::system_clock> startTime
           = std::chrono::system_clock::now();
       // Set the context to expire *after* the test is supposed to finish.
-      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
+      Azure::Core::Context context = Azure::Core::Context{}.WithDeadline(
           Azure::DateTime{startTime} + testDuration + 10s);
       size_t iteration = 0;
       try
@@ -571,7 +571,7 @@ TEST_F(WebSocketTests, MultiThreadedTestOnMultipleSockets)
       std::chrono::time_point<std::chrono::system_clock> startTime
           = std::chrono::system_clock::now();
       // Set the context to expire *after* the test is supposed to finish.
-      Azure::Core::Context context = Azure::Core::Context::ApplicationContext.WithDeadline(
+      Azure::Core::Context context = Azure::Core::Context{}.WithDeadline(
           Azure::DateTime{startTime} + testDuration + 10s);
       size_t iteration = 0;
       try

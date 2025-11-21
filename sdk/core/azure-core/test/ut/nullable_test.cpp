@@ -264,8 +264,8 @@ TEST(Nullable, ConstexprAndRvalue)
 #pragma clang diagnostic ignored "-Wpessimizing-move" // cspell:disable-line
 #endif // __clang__
 
-  Nullable<int> nullableInt0(std::move(Nullable<int>()));
-  Nullable<int> nullableInt11(std::move(Nullable<int>(11)));
+  Nullable<int> nullableInt0{Nullable<int>{}};
+  Nullable<int> nullableInt11{Nullable<int>{11}};
 
 #if defined(__clang__)
 #pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
