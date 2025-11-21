@@ -9,7 +9,7 @@ package-name: azure-storage-queues
 namespace: Azure::Storage::Queues
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/microzchang/azure-rest-api-specs/refs/heads/stg100/features/specification/storage/data-plane/Microsoft.QueueStorage/stable/2026-02-06/queue.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.QueueStorage/stable/2026-02-06/queue.json
 ```
 
 ## ModelFour Options
