@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-08-04";
+    constexpr static const char* ApiVersion = "2026-02-06";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -368,6 +368,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         bool Recursive = bool();
         Nullable<std::int32_t> MaxResults;
         Nullable<bool> Upn;
+        Nullable<std::string> BeginFrom;
       };
       static Response<Models::_detail::PathList> ListPaths(
           Core::Http::_internal::HttpPipeline& pipeline,

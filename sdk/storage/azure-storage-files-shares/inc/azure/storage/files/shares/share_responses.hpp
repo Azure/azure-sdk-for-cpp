@@ -559,6 +559,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The NFS related properties for the file.
        */
       FilePosixProperties PosixProperties;
+      /**
+       * If the file has an MD5 hash and the request is to read the full file, this response
+       * header is returned so that the client can check for message content integrity. If the
+       * request is to read a specified range and the 'x-ms-range-get-content-md5' is set to true,
+       * then the request returns an MD5 hash for the range, as long as the range size is less
+       * than or equal to 4 MB. If neither of these sets of conditions is true, then no value is
+       * returned for the 'Content-MD5' header.
+       */
+      Nullable<ContentHash> ContentMD5;
+      /**
+       * The number of bytes present in the response body.
+       */
+      Nullable<std::int64_t> ContentLength;
     };
 
     /**

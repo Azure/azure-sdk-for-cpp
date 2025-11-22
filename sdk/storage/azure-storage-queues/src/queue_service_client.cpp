@@ -193,4 +193,18 @@ namespace Azure { namespace Storage { namespace Queues {
     return queueClient.Delete(options, context);
   }
 
+  Azure::Response<Models::UserDelegationKey> QueueServiceClient::GetUserDelegationKey(
+      const Azure::DateTime& expiresOn,
+      const GetUserDelegationKeyOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::ServiceClient::GetServiceUserDelegationKeyOptions protocolLayerOptions;
+    protocolLayerOptions.KeyInfo.Start = options.StartsOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
+        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    return _detail::ServiceClient::GetUserDelegationKey(
+        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
+  }
+
 }}} // namespace Azure::Storage::Queues

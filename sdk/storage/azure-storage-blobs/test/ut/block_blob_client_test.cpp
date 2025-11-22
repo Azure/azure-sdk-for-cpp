@@ -2280,4 +2280,73 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(e.Message, _internal::InvalidVersionHeaderMessage);
     }
   }
+
+  TEST_F(BlockBlobClientTest, BlobTagsAccessConditions_PLAYBACKONLY_)
+  {
+    auto containerClient = *m_blobContainerClient;
+
+    std::vector<uint8_t> buffer;
+    buffer.resize(1024);
+
+    auto blobClient = containerClient.GetBlockBlobClient("dest" + RandomString());
+    auto createResponse = blobClient.UploadFrom(buffer.data(), buffer.size());
+    Azure::ETag eTag = createResponse.Value.ETag;
+    auto lastModifiedTime = createResponse.Value.LastModified;
+    auto timeBeforeStr = lastModifiedTime - std::chrono::seconds(2);
+    auto timeAfterStr = lastModifiedTime + std::chrono::seconds(2);
+    const std::map<std::string, std::string> tags{{"k", "v"}};
+
+    {
+      Blobs::SetBlobTagsOptions setOptions;
+      setOptions.AccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(blobClient.SetTags(tags, setOptions));
+      setOptions.AccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(blobClient.SetTags(tags, setOptions), StorageException);
+
+      Blobs::GetBlobTagsOptions getOptions;
+      getOptions.AccessConditions.IfMatch = eTag;
+      EXPECT_NO_THROW(blobClient.GetTags(getOptions));
+      getOptions.AccessConditions.IfMatch = DummyETag;
+      EXPECT_THROW(blobClient.GetTags(getOptions), StorageException);
+    }
+    {
+      Blobs::SetBlobTagsOptions setOptions;
+      setOptions.AccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(blobClient.SetTags(tags, setOptions));
+      setOptions.AccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(blobClient.SetTags(tags, setOptions), StorageException);
+
+      Blobs::GetBlobTagsOptions getOptions;
+      getOptions.AccessConditions.IfNoneMatch = DummyETag;
+      EXPECT_NO_THROW(blobClient.GetTags(getOptions));
+      getOptions.AccessConditions.IfNoneMatch = eTag;
+      EXPECT_THROW(blobClient.GetTags(getOptions), StorageException);
+    }
+    {
+      Blobs::SetBlobTagsOptions setOptions;
+      setOptions.AccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(blobClient.SetTags(tags, setOptions));
+      setOptions.AccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(blobClient.SetTags(tags, setOptions), StorageException);
+
+      Blobs::GetBlobTagsOptions getOptions;
+      getOptions.AccessConditions.IfModifiedSince = timeBeforeStr;
+      EXPECT_NO_THROW(blobClient.GetTags(getOptions));
+      getOptions.AccessConditions.IfModifiedSince = timeAfterStr;
+      EXPECT_THROW(blobClient.GetTags(getOptions), StorageException);
+    }
+    {
+      Blobs::SetBlobTagsOptions setOptions;
+      setOptions.AccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(blobClient.SetTags(tags, setOptions));
+      setOptions.AccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(blobClient.SetTags(tags, setOptions), StorageException);
+
+      Blobs::GetBlobTagsOptions getOptions;
+      getOptions.AccessConditions.IfUnmodifiedSince = timeAfterStr;
+      EXPECT_NO_THROW(blobClient.GetTags(getOptions));
+      getOptions.AccessConditions.IfUnmodifiedSince = timeBeforeStr;
+      EXPECT_THROW(blobClient.GetTags(getOptions), StorageException);
+    }
+  }
 }}} // namespace Azure::Storage::Test

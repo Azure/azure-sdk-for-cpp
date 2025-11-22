@@ -219,6 +219,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = recursive;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.BeginFrom = options.StartFrom;
 
     Azure::Core::Url fileSystemUrl;
     if (m_clientConfiguration.FileSystemUrl.HasValue())

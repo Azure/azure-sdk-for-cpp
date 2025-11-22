@@ -421,6 +421,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies one or more datasets to include in the response.
      */
     Models::ListBlobsIncludeFlags Include = Models::ListBlobsIncludeFlags::None;
+
+    /**
+     * @brief Specifies the relative path to list paths from.
+     */
+    Azure::Nullable<std::string> StartFrom;
   };
 
   /**
@@ -828,7 +833,10 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SetBlobTagsOptions final
   {
-    struct : public LeaseAccessConditions, public TagAccessConditions
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public LeaseAccessConditions,
+             public TagAccessConditions
     {
     } /**
        * @brief Optional conditions that must be met to perform this operation.
@@ -841,7 +849,10 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct GetBlobTagsOptions final
   {
-    struct : public LeaseAccessConditions, public TagAccessConditions
+    struct : public Azure::ModifiedConditions,
+             public Azure::MatchConditions,
+             public LeaseAccessConditions,
+             public TagAccessConditions
     {
     } /**
        * @brief Optional conditions that must be met to perform this operation.
