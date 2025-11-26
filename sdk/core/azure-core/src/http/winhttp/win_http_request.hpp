@@ -193,6 +193,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     size_t ReadData(uint8_t* buffer, size_t bufferSize, Azure::Core::Context const& context);
     void EnableWebSocketsSupport();
     void HandleExpectedTlsRootCertificates(HINTERNET hInternet);
+    
+    // WebSocket support: Provide access to the underlying HINTERNET handle
+    HINTERNET GetRequestHandle() const { return m_requestHandle.get(); }
   };
 
   class WinHttpStream final : public Azure::Core::IO::BodyStream {
