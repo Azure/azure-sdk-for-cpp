@@ -1233,9 +1233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    Azure::Core::IO::_internal::NullBodyStream nullContent;
     auto createResult = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, nullContent, protocolLayerOptions, context);
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
