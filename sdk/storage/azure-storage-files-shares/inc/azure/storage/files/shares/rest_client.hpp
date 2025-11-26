@@ -1174,24 +1174,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       std::string ParentFileId;
     };
     /**
-     * @brief SMB only, default value is New.  New will forcefully add the ARCHIVE attribute flag
-     * and alter the permissions specified in x-ms-file-permission to inherit missing permissions
-     * from the parent.  Restore will apply changes without further modification.
-     */
-    class FilePropertySemantics final
-        : public Core::_internal::ExtendableEnumeration<FilePropertySemantics> {
-    public:
-      /** Constructs a new FilePropertySemantics instance */
-      FilePropertySemantics() = default;
-      /** Constructs a new FilePropertySemantics from a string. */
-      explicit FilePropertySemantics(std::string value) : ExtendableEnumeration(std::move(value)) {}
-
-      /** Constant value of type FilePropertySemantics: New */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics New;
-      /** Constant value of type FilePropertySemantics: Restore */
-      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics Restore;
-    };
-    /**
      * @brief NFS only. Type of the file or directory.
      */
     class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
@@ -1692,19 +1674,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
-        /**
-         * If the file has an MD5 hash and the request is to read the full file, this response
-         * header is returned so that the client can check for message content integrity. If the
-         * request is to read a specified range and the 'x-ms-range-get-content-md5' is set to true,
-         * then the request returns an MD5 hash for the range, as long as the range size is less
-         * than or equal to 4 MB. If neither of these sets of conditions is true, then no value is
-         * returned for the 'Content-MD5' header.
-         */
-        Nullable<ContentHash> ContentMD5;
-        /**
-         * The number of bytes present in the response body.
-         */
-        Nullable<std::int64_t> ContentLength;
       };
     } // namespace _detail
     /**
@@ -2756,7 +2725,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Owner;
         Nullable<std::string> Group;
         Nullable<std::string> FileMode;
-        Nullable<Models::FilePropertySemantics> FilePropertySemantics;
       };
       static Response<Models::_detail::CreateDirectoryResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2911,13 +2879,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<std::string> Group;
         Nullable<std::string> FileMode;
         Nullable<Models::NfsFileType> NfsFileType;
-        Nullable<std::vector<std::uint8_t>> ContentMD5;
-        Nullable<Models::FilePropertySemantics> FilePropertySemantics;
       };
       static Response<Models::_detail::CreateFileResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
-          Core::IO::BodyStream& requestBody,
           const CreateFileOptions& options,
           const Core::Context& context);
       struct DownloadFileOptions final

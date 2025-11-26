@@ -239,6 +239,7 @@ directive:
       $.FilePermissionFormat["enum"] = ["sddl", "binary"];
       $.FileAttributes["required"] = true;
       delete $.EnableSmbDirectoryLease;
+      delete $.FilePropertySemantics;
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -749,6 +750,10 @@ directive:
         },
         "x-namespace" : "_detail"
       };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory"].put.parameters
+    transform: >
+      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/FilePropertySemantics"));
 ```
 
 ### DeleteDirectory
@@ -849,8 +854,8 @@ directive:
       $.headers["x-ms-owner"]["x-nullable"] = true;
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
-      $.headers["Content-MD5"]["x-nullable"] = true;
-      $.headers["Content-Length"]["x-nullable"] = true;
+      delete $.headers["Content-MD5"];
+      delete $.headers["Content-Length"];
       $.schema = {
         "type": "object",
         "x-ms-client-name": "CreateFileResult",
@@ -861,6 +866,10 @@ directive:
         },
         "x-namespace" : "_detail"
       };
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].put.parameters
+    transform: >
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/ContentMD5") || p["$ref"].endsWith("#/parameters/FilePropertySemantics") || p["$ref"].endsWith("#/parameters/ContentLengthOptional") || p["$ref"].endsWith("#/parameters/OptionalBody"))));
 ```
 
 ### GetFileProperties
