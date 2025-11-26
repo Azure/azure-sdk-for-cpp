@@ -38,6 +38,158 @@ namespace Azure { namespace Core { namespace Test {
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   /**
+   * @brief Global CURLSH share object for DNS and SSL session cache sharing across threads.
+   * 
+   * @details Per libcurl documentation, CURL_LOCK_DATA_DNS and CURL_LOCK_DATA_SSL_SESSION
+   * are thread-safe when proper locking callbacks are provided. CURL_LOCK_DATA_CONNECT is
+   * NOT thread-safe for concurrent access, so we only share DNS and SSL sessions.
+   * 
+   * Benefits:
+   * - DNS cache shared across all handles (eliminates redundant lookups)
+   * - SSL session IDs shared for faster TLS resume
+   * - Significantly reduces latency from repeated DNS/TLS overhead
+   */
+  class GlobalCurlShareObject final {
+  private:
+    CURLSH* m_shareHandle;
+    std::mutex m_shareLocks[CURL_LOCK_DATA_LAST];
+
+    static void LockCallback(CURL* /*handle*/, curl_lock_data data, curl_lock_access /*access*/, void* userptr) {
+      auto* shareObj = static_cast<GlobalCurlShareObject*>(userptr);
+      shareObj->m_shareLocks[data].lock();
+    }
+
+    static void UnlockCallback(CURL* /*handle*/, curl_lock_data data, void* userptr) {
+      auto* shareObj = static_cast<GlobalCurlShareObject*>(userptr);
+      shareObj->m_shareLocks[data].unlock();
+    }
+
+  public:
+    GlobalCurlShareObject() {
+      m_shareHandle = curl_share_init();
+      if (m_shareHandle) {
+        // Share DNS cache across all handles
+        curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_DNS);
+        // Share SSL session IDs for faster TLS resume
+        curl_share_setopt(m_shareHandle, CURLSHOPT_SHARE, CURL_LOCK_DATA_SSL_SESSION);
+        // Set locking callbacks for thread safety
+        curl_share_setopt(m_shareHandle, CURLSHOPT_LOCKFUNC, LockCallback);
+        curl_share_setopt(m_shareHandle, CURLSHOPT_UNLOCKFUNC, UnlockCallback);
+        curl_share_setopt(m_shareHandle, CURLSHOPT_USERDATA, this);
+      }
+    }
+
+    ~GlobalCurlShareObject() {
+      if (m_shareHandle) {
+        curl_share_cleanup(m_shareHandle);
+      }
+    }
+
+    CURLSH* GetShareHandle() const { return m_shareHandle; }
+
+    static GlobalCurlShareObject& GetInstance() {
+      static GlobalCurlShareObject instance;
+      return instance;
+    }
+
+    // Prevent copying
+    GlobalCurlShareObject(const GlobalCurlShareObject&) = delete;
+    GlobalCurlShareObject& operator=(const GlobalCurlShareObject&) = delete;
+  };
+
+  /**
+   * @brief Global pool of reusable CURL* handles matching WinHTTP's session handle approach.
+   * 
+   * @details WinHTTP uses ONE session handle for all requests, allowing Windows to manage
+   * a process-wide connection pool. We mimic this by maintaining a large pool of CURL* handles
+   * where each can cache connections. Pool size scaled to expected concurrency.
+   * 
+   * Strategy: Many handles (100) × moderate connections per handle (100) = extensive reuse
+   */
+  class GlobalCurlHandlePool final {
+  private:
+    std::mutex m_mutex;
+    std::vector<CURL*> m_availableHandles;
+    size_t m_maxPoolSize;
+    std::atomic<size_t> m_totalHandlesCreated{0};
+
+  public:
+    GlobalCurlHandlePool() : m_maxPoolSize(100) {} // Match typical concurrency levels
+
+    static GlobalCurlHandlePool& GetInstance() {
+      static GlobalCurlHandlePool instance;
+      return instance;
+    }
+
+    ~GlobalCurlHandlePool() {
+      std::lock_guard<std::mutex> lock(m_mutex);
+      for (auto* handle : m_availableHandles) {
+        curl_easy_cleanup(handle);
+      }
+      m_availableHandles.clear();
+    }
+
+    /**
+     * @brief Acquire a CURL* handle from the pool or create a new one.
+     * @return A CURL* handle ready for configuration with shared DNS/SSL caches.
+     */
+    CURL* AcquireHandle() {
+      CURL* handle = nullptr;
+      {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (!m_availableHandles.empty()) {
+          handle = m_availableHandles.back();
+          m_availableHandles.pop_back();
+          curl_easy_reset(handle);
+        }
+      }
+      
+      if (!handle) {
+        // Create new handle outside lock
+        handle = curl_easy_init();
+        m_totalHandlesCreated++;
+      }
+
+      // Apply shared DNS and SSL session cache to all handles
+      if (handle) {
+        auto* shareHandle = GlobalCurlShareObject::GetInstance().GetShareHandle();
+        if (shareHandle) {
+          curl_easy_setopt(handle, CURLOPT_SHARE, shareHandle);
+        }
+      }
+      
+      return handle;
+    }
+
+    /**
+     * @brief Return a CURL* handle to the pool for reuse.
+     * @param handle The CURL* handle to return.
+     */
+    void ReleaseHandle(CURL* handle) {
+      if (!handle) return;
+      
+      std::lock_guard<std::mutex> lock(m_mutex);
+      if (m_availableHandles.size() < m_maxPoolSize) {
+        m_availableHandles.push_back(handle);
+      } else {
+        curl_easy_cleanup(handle);
+      }
+    }
+
+    /**
+     * @brief Get current pool statistics.
+     */
+    size_t GetPoolSize() const {
+      std::lock_guard<std::mutex> lock(const_cast<std::mutex&>(m_mutex));
+      return m_availableHandles.size();
+    }
+    
+    size_t GetTotalHandlesCreated() const {
+      return m_totalHandlesCreated.load();
+    }
+  };
+
+  /**
    * @brief CURL HTTP connection pool makes it possible to re-use one curl connection to perform
    * more than one request. Use this component when connections are not re-used by default.
    *
