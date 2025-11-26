@@ -1,14 +1,14 @@
 # Release History
 
-## 12.16.0-beta.1 (Unreleased)
+## 12.16.0-beta.1 (2025-11-27)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-02-06`.
+- Added new field `StartFrom` parameter in `ListBlobsOptions`.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `BlobSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+- Added support for conditional headers in `SetBlobTagsOptions` and `GetBlobTagsOptions`.
 
 ## 12.15.0 (2025-10-15)
 
