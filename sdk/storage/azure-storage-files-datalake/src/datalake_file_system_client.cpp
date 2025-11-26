@@ -281,6 +281,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = recursive;
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
+    protocolLayerOptions.BeginFrom = options.StartFrom;
 
     auto response = _detail::FileSystemClient::ListPaths(
         *m_pipeline, m_fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
@@ -471,6 +472,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.ShowOnly = "deleted";
+    protocolLayerOptions.StartFrom = options.StartFrom;
     auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
 

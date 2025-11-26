@@ -3,6 +3,7 @@
 
 #include "queue_client_test.hpp"
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/queues/queue_sas_builder.hpp>
 
@@ -376,6 +377,173 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
+  }
+
+  TEST(SasStringToSignTest, UserDelegationSasGenerateStringToSign)
+  {
+    std::string accountName = "testAccountName";
+    std::string accountKey = "dGVzdEFjY291bnRLZXk=";
+    std::string queueUrl = "https://testAccountName.queue.core.windows.net/queue";
+    auto keyCredential = std::make_shared<StorageSharedKeyCredential>(accountName, accountKey);
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    // Queue User Delegation Sas
+    {
+      Queues::Models::UserDelegationKey userDelegationKey;
+      userDelegationKey.SignedObjectId = "testSignedObjectId";
+      userDelegationKey.SignedTenantId = "testSignedTenantId";
+      userDelegationKey.SignedStartsOn = sasStartsOn;
+      userDelegationKey.SignedExpiresOn = sasExpiresOn;
+      userDelegationKey.SignedService = "q";
+      userDelegationKey.SignedVersion = "2020-08-04";
+      userDelegationKey.Value = accountKey;
+
+      Sas::QueueSasBuilder queueSasBuilder;
+      queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+      queueSasBuilder.StartsOn = sasStartsOn;
+      queueSasBuilder.ExpiresOn = sasExpiresOn;
+      queueSasBuilder.QueueName = "queue";
+      queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::Read);
+      auto sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto signature = Azure::Core::Url::Decode(
+          Azure::Core::Url(queueUrl + sasToken).GetQueryParameters().find("sig")->second);
+      auto stringToSign = queueSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
+      auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
+      EXPECT_EQ(signature, signatureFromStringToSign);
+    }
+  }
+
+  TEST_F(QueueSasTest, DISABLED_UserDelegationSasPermissions)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.StartsOn = sasStartsOn;
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    queueSasBuilder.QueueName = m_queueName;
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    Queues::Models::UserDelegationKey userDelegationKey;
+    {
+      auto shareServiceClient = Queues::QueueServiceClient(
+          m_queueServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Queues::QueueClientOptions>());
+      userDelegationKey = shareServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    auto queueClient = *m_queueClient;
+    auto accountName = keyCredential->AccountName;
+
+    for (auto permissions :
+         {Sas::QueueSasPermissions::Read,
+          Sas::QueueSasPermissions::Add,
+          Sas::QueueSasPermissions::Update,
+          Sas::QueueSasPermissions::Process,
+          Sas::QueueSasPermissions::All})
+    {
+      queueSasBuilder.SetPermissions(permissions);
+      auto sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+      if ((permissions & Sas::QueueSasPermissions::Read) == Sas::QueueSasPermissions::Read)
+      {
+        VerifyQueueSasRead(queueClient, sasToken);
+      }
+      if ((permissions & Sas::QueueSasPermissions::Add) == Sas::QueueSasPermissions::Add)
+      {
+        VerifyQueueSasAdd(queueClient, sasToken);
+      }
+      if ((permissions & Sas::QueueSasPermissions::Update) == Sas::QueueSasPermissions::Update)
+      {
+        VerifyQueueSasUpdate(queueClient, sasToken);
+      }
+      if ((permissions & Sas::QueueSasPermissions::Process) == Sas::QueueSasPermissions::Process)
+      {
+        VerifyQueueSasProcess(queueClient, sasToken);
+      }
+    }
+  }
+
+  std::string getObjectIdFromTokenCredential(
+      const std::shared_ptr<const Azure::Core::Credentials::TokenCredential>& tokenCredential)
+  {
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto accessToken = tokenCredential->GetToken(requestContext, Azure::Core::Context());
+
+    std::istringstream iss(accessToken.Token);
+    std::string header, payload, signature;
+    getline(iss, header, '.');
+    getline(iss, payload, '.');
+    getline(iss, signature, '.');
+
+    size_t padding = payload.length() % 4;
+    if (padding > 0)
+    {
+      payload.append(4 - padding, '=');
+    }
+
+    auto decodedPayload = Azure::Core::Convert::Base64Decode(payload);
+    auto json = Core::Json::_internal::json::parse(decodedPayload.begin(), decodedPayload.end());
+    if (json.contains("oid"))
+    {
+      return json["oid"].get<std::string>();
+    }
+    return {};
+  }
+
+  TEST_F(QueueSasTest, DISABLED_PrincipalBoundDelegationSas)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto tokenCredential = GetTestCredential();
+    auto delegatedUserObjectId = getObjectIdFromTokenCredential(tokenCredential);
+
+    Queues::Models::UserDelegationKey userDelegationKey;
+    {
+      auto queueServiceClient = Queues::QueueServiceClient(
+          m_queueServiceClient->GetUrl(),
+          tokenCredential,
+          InitStorageClientOptions<Queues::QueueClientOptions>());
+      userDelegationKey = queueServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    Sas::QueueSasBuilder queueSasBuilder;
+    queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    queueSasBuilder.StartsOn = sasStartsOn;
+    queueSasBuilder.ExpiresOn = sasExpiresOn;
+    queueSasBuilder.QueueName = m_queueName;
+    queueSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
+
+    auto queueClient = *m_queueClient;
+    auto accountName = keyCredential->AccountName;
+
+    queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
+    auto sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Queues::QueueClient queueClient1(
+        AppendQueryParameters(Azure::Core::Url(queueClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Queues::QueueClientOptions>());
+    EXPECT_NO_THROW(queueClient1.GetProperties());
+
+    queueSasBuilder.DelegatedUserObjectId = "invalidObjectId";
+    sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Queues::QueueClient queueClient2(
+        AppendQueryParameters(Azure::Core::Url(queueClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Queues::QueueClientOptions>());
+    EXPECT_THROW(queueClient2.GetProperties(), StorageException);
   }
 
 }}} // namespace Azure::Storage::Test

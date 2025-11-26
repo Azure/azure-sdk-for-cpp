@@ -6,7 +6,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
-/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid, saoid, suoid, scid */
+/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid, saoid, suoid, scid, sduoid */
 
 namespace Azure { namespace Storage { namespace Sas {
   namespace {
@@ -226,10 +226,11 @@ namespace Azure { namespace Storage { namespace Sas {
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n"
-        + PreauthorizedAgentObjectId + "\n" + AgentObjectId + "\n" + CorrelationId + "\n"
-        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
-        + resource + "\n" + "\n" + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition
-        + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + PreauthorizedAgentObjectId + "\n" + AgentObjectId + "\n" + CorrelationId + "\n" + "\n"
+        + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
+        + protocol + "\n" + SasVersion + "\n" + resource + "\n" + "\n" + EncryptionScope + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -271,6 +272,11 @@ namespace Azure { namespace Storage { namespace Sas {
     if (!CorrelationId.empty())
     {
       builder.AppendQueryParameter("scid", _internal::UrlEncodeQueryParameter(CorrelationId));
+    }
+    if (!DelegatedUserObjectId.empty())
+    {
+      builder.AppendQueryParameter(
+          "sduoid", _internal::UrlEncodeQueryParameter(DelegatedUserObjectId));
     }
     if (DirectoryDepth.HasValue())
     {
@@ -359,10 +365,10 @@ namespace Azure { namespace Storage { namespace Sas {
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
         + "\n" + userDelegationKey.SignedVersion + "\n" + PreauthorizedAgentObjectId + "\n"
-        + AgentObjectId + "\n" + CorrelationId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "")
-        + "\n" + protocol + "\n" + SasVersion + "\n" + resource + "\n" + "\n" + EncryptionScope
-        + "\n" + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n"
-        + ContentLanguage + "\n" + ContentType;
+        + AgentObjectId + "\n" + CorrelationId + "\n\n" + DelegatedUserObjectId + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + resource + "\n" + "\n" + EncryptionScope + "\n" + CacheControl + "\n" + ContentDisposition
+        + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
   }
 
 }}} // namespace Azure::Storage::Sas

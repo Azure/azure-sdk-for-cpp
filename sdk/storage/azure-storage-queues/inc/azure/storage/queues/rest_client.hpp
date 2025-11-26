@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-08-04";
+    constexpr static const char* ApiVersion = "2026-02-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -200,6 +200,56 @@ namespace Azure { namespace Storage { namespace Queues {
        * Geo-Replication information for the Secondary Storage Service.
        */
       Models::GeoReplication GeoReplication;
+    };
+    namespace _detail {
+      /**
+       * @brief Key information.
+       */
+      struct KeyInfo final
+      {
+        /**
+         * The date-time the key is active in ISO 8601 UTC time.
+         */
+        Nullable<std::string> Start;
+        /**
+         * The date-time the key expires in ISO 8601 UTC time.
+         */
+        std::string Expiry;
+      };
+    } // namespace _detail
+    /**
+     * @brief A user delegation key.
+     */
+    struct UserDelegationKey final
+    {
+      /**
+       * The Azure Active Directory object ID in GUID format.
+       */
+      std::string SignedObjectId;
+      /**
+       * The Azure Active Directory tenant ID in GUID format.
+       */
+      std::string SignedTenantId;
+      /**
+       * The date-time the key is active.
+       */
+      DateTime SignedStartsOn;
+      /**
+       * The date-time the key expires.
+       */
+      DateTime SignedExpiresOn;
+      /**
+       * Abbreviation of the Azure Storage service that accepts the key.
+       */
+      std::string SignedService;
+      /**
+       * The service version that created the key.
+       */
+      std::string SignedVersion;
+      /**
+       * The key as a base64 string.
+       */
+      std::string Value;
     };
     /**
      * @brief An Azure Storage Queue.
@@ -520,6 +570,15 @@ namespace Azure { namespace Storage { namespace Queues {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetServiceStatisticsOptions& options,
+          const Core::Context& context);
+      struct GetServiceUserDelegationKeyOptions final
+      {
+        Models::_detail::KeyInfo KeyInfo;
+      };
+      static Response<Models::UserDelegationKey> GetUserDelegationKey(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetServiceUserDelegationKeyOptions& options,
           const Core::Context& context);
       struct ListServiceQueuesSegmentOptions final
       {

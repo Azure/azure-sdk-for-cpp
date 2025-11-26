@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/stable/2023-05-03/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/stable/2026-02-06/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -43,12 +43,13 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
+      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
           delete $[h];
         }
       }
@@ -88,12 +89,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"]
+        "enum": ["2026-02-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum[0] = "2026-02-06";
 ```
 
 ### Rename Operations
@@ -411,6 +412,12 @@ directive:
       delete $.responses["200"].headers["x-ms-lease-duration"];
       delete $.responses["200"].headers["x-ms-lease-state"];
       delete $.responses["200"].headers["x-ms-lease-status"];
+      delete $.responses["200"].headers["x-ms-server-encrypted"];
+      delete $.responses["200"].headers["x-ms-creation-time"];
+      delete $.responses["200"].headers["x-ms-encryption-key-sha256"];
+      delete $.responses["200"].headers["x-ms-encryption-context"];
+      delete $.responses["200"].headers["x-ms-expiry-time"];
+      delete $.responses["200"].headers["x-ms-encryption-scope"];
       $.responses["200"].headers["x-ms-acl"]["x-ms-client-name"] = "Acl";
       $.responses["200"].schema = {
         "type": "object",
