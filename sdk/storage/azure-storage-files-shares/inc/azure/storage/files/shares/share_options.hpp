@@ -609,7 +609,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
-
   };
 
   /**
@@ -926,7 +925,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
-
   };
 
   /**
@@ -1335,7 +1333,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
-
 
     /**
      * @brief Options for parallel transfer.

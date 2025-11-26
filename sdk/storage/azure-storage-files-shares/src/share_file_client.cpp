@@ -211,8 +211,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    auto result = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    auto result
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result.Value.ETag);
@@ -1233,8 +1233,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    auto createResult = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    auto createResult
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
@@ -1346,8 +1346,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    auto createResult = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    auto createResult
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
