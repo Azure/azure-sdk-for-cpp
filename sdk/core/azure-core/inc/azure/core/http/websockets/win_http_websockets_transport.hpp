@@ -16,7 +16,24 @@
 #include "azure/core/internal/unique_handle.hpp"
 #include <memory>
 #include <mutex>
+
+#if defined(AZ_PLATFORM_WINDOWS)
+// Need to include the WinHttpRequest for the method signature
+namespace Azure { namespace Core { namespace Http { namespace _detail {
+  class WinHttpRequest;
+}}}}
+#endif
+
+#if defined(AZ_PLATFORM_WINDOWS)
+#if !defined(WIN32_LEAN_AND_MEAN)
+#define WIN32_LEAN_AND_MEAN
+#endif
+#if !defined(NOMINMAX)
+#define NOMINMAX
+#endif
+#include <windows.h>
 #include <winhttp.h>
+#endif
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
@@ -31,7 +48,7 @@ namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
     // Fixed method signature to match current base class  
     void OnUpgradedConnection(
-        std::unique_ptr<_detail::WinHttpRequest> const& request) override;
+        std::unique_ptr<Azure::Core::Http::_detail::WinHttpRequest> const& request) const override;
 
   public:
     /**

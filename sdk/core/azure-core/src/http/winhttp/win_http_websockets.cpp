@@ -7,7 +7,7 @@
 #include "azure/core/http/websockets/win_http_websockets_transport.hpp"
 #include "azure/core/internal/diagnostics/log.hpp"
 #include "azure/core/platform.hpp"
-#include "azure/core/request_failed_exception.hpp"
+#include "azure/core/exception.hpp"
 #include "win_http_request.hpp"
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -20,6 +20,7 @@
 #if !defined(NOMINMAX)
 #define NOMINMAX
 #endif
+#include <windows.h>
 #include <winapifamily.h>
 #include <winsock2.h> // for WSAPoll();
 #include <winhttp.h>
@@ -28,14 +29,59 @@
 
 namespace Azure { namespace Core { namespace Http { namespace WebSockets {
 
+  namespace {
+    std::string GetErrorMessage(DWORD error)
+    {
+      std::string errorMessage = " Error Code: " + std::to_string(error);
+
+      char* errorMsg = nullptr;
+      if (FormatMessageA(
+              FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+              GetModuleHandleA("winhttp.dll"),
+              error,
+              MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+              reinterpret_cast<LPSTR>(&errorMsg),
+              0,
+              nullptr)
+          != 0)
+      {
+        // Use a unique_ptr to manage the lifetime of errorMsg.
+        std::unique_ptr<char, decltype(&LocalFree)> errorString(errorMsg, &LocalFree);
+        errorMsg = nullptr;
+
+        errorMessage += ": ";
+        errorMessage += errorString.get();
+        // If the end of the error message is a CRLF, remove it.
+        if (errorMessage.back() == '\n')
+        {
+          errorMessage.erase(errorMessage.size() - 1);
+          if (errorMessage.back() == '\r')
+          {
+            errorMessage.erase(errorMessage.size() - 1);
+          }
+        }
+      }
+      errorMessage += '.';
+      return errorMessage;
+    }
+
+    void GetErrorAndThrow(const std::string& exceptionMessage, DWORD error = GetLastError())
+    {
+      throw Azure::Core::Http::TransportException(exceptionMessage + GetErrorMessage(error));
+    }
+  } // namespace
+
   void WinHttpWebSocketTransport::OnUpgradedConnection(
-      std::unique_ptr<_detail::WinHttpRequest> const& request)
+      std::unique_ptr<Azure::Core::Http::_detail::WinHttpRequest> const& request) const
   {
     // Convert the request handle into a WebSocket handle for us to use later.
-    m_socketHandle = Azure::Core::_internal::UniqueHandle<HINTERNET>(
+    // Note: Need to cast away const because WinHttpWebSocketCompleteUpgrade modifies the handle state
+    auto* transport = const_cast<WinHttpWebSocketTransport*>(this);
+    
+    transport->m_socketHandle = Azure::Core::_internal::UniqueHandle<HINTERNET>(
         WinHttpWebSocketCompleteUpgrade(request->GetRequestHandle(), 0));
         
-    if (!m_socketHandle)
+    if (!transport->m_socketHandle)
     {
       GetErrorAndThrow("Error Upgrading HttpRequest handle to WebSocket handle.");
     }
