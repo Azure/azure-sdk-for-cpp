@@ -102,21 +102,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
-     * @brief Creates the file with content. The content length must be smaller than fileSize.
-     * @param fileSize Size of the file in bytes.
-     * @param content A BodyStream containing the content to upload.
-     * @param options Optional parameters to create this file.
-     * @param context Context for cancelling long running operations.
-     * @return Azure::Response<CreateFileResult> containing the information returned when
-     * creating the file.
-     */
-    Azure::Response<Models::CreateFileResult> Create(
-        int64_t fileSize,
-        Azure::Core::IO::BodyStream& content,
-        const CreateFileOptions& options = CreateFileOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
-    /**
      * @brief Deletes the file.
      * @param options Optional parameters to delete this file.
      * @param context Context for cancelling long running operations.

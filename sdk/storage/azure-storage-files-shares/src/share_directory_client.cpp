@@ -201,7 +201,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
-    protocolLayerOptions.FilePropertySemantics = options.FilePropertySemantics;
 
     auto result = _detail::DirectoryClient::Create(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);

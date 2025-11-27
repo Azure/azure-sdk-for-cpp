@@ -17,7 +17,6 @@
 #include <azure/core/url.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/xml_wrapper.hpp>
-#include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 #include <azure/storage/files/shares/rest_client.hpp>
 
@@ -186,8 +185,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const FileAttributes FileAttributes::Offline("Offline");
     const FileAttributes FileAttributes::NotContentIndexed("NotContentIndexed");
     const FileAttributes FileAttributes::NoScrubData("NoScrubData");
-    const FilePropertySemantics FilePropertySemantics::New("New");
-    const FilePropertySemantics FilePropertySemantics::Restore("Restore");
     const NfsFileType NfsFileType::Regular("Regular");
     const NfsFileType NfsFileType::Directory("Directory");
     const NfsFileType NfsFileType::SymLink("SymLink");
@@ -2384,12 +2381,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-mode", options.FileMode.Value());
       }
-      if (options.FilePropertySemantics.HasValue()
-          && !options.FilePropertySemantics.Value().ToString().empty())
-      {
-        request.SetHeader(
-            "x-ms-file-property-semantics", options.FilePropertySemantics.Value().ToString());
-      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -3507,11 +3498,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Response<Models::_detail::CreateFileResult> FileClient::Create(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
-        Core::IO::BodyStream& requestBody,
         const CreateFileOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url, &requestBody);
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -3606,18 +3596,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-file-type", options.NfsFileType.Value().ToString());
       }
-      if (options.ContentMD5.HasValue()
-          && !Core::Convert::Base64Encode(options.ContentMD5.Value()).empty())
-      {
-        request.SetHeader("Content-MD5", Core::Convert::Base64Encode(options.ContentMD5.Value()));
-      }
-      if (options.FilePropertySemantics.HasValue()
-          && !options.FilePropertySemantics.Value().ToString().empty())
-      {
-        request.SetHeader(
-            "x-ms-file-property-semantics", options.FilePropertySemantics.Value().ToString());
-      }
-      request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -3676,17 +3654,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         response.NfsFileType
             = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
-      }
-      if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
-      {
-        response.ContentMD5 = ContentHash();
-        response.ContentMD5.Value().Value
-            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("Content-MD5"));
-        response.ContentMD5.Value().Algorithm = HashAlgorithm::Md5;
-      }
-      if (pRawResponse->GetHeaders().count("Content-Length") != 0)
-      {
-        response.ContentLength = std::stoll(pRawResponse->GetHeaders().at("Content-Length"));
       }
       return Response<Models::_detail::CreateFileResult>(
           std::move(response), std::move(pRawResponse));
