@@ -1,14 +1,13 @@
 # Release History
 
-## 12.6.0-beta.1 (Unreleased)
+## 12.6.0-beta.1 (2025-11-27)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-02-06`.
+- Added support for User Delegation SAS.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `QueueSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
 
 ## 12.5.0 (2025-10-15)
 

@@ -1,16 +1,21 @@
 # Release History
 
-## 12.16.0-beta.1 (Unreleased)
+## 12.16.0-beta.1 (2025-11-27)
 
 ### Features Added
+
+- Bumped up API version to `2026-02-06`.
+- Added support for User Delegation SAS.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `ShareSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+- Added support for `EncryptionInTransit` on `ShareServiceClient::SetProperties()`.
+    - Added new field `NfsSettings` in `ShareServiceProperties.Protocol`.
+    - Added new field `EncryptionInTransit` in `ShareServiceProperties.Protocol.Settings` and `ShareServiceProperties.Protocol.NfsSettings`.
 
 ### Breaking Changes
 
 - Changed the type of `MultiChannel` from `SmbMultichannel` to `Nullable<SmbMultichannel>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not support Multi-Channel.
 - Changed the type of `Settings` from `SmbSettings` to `Nullable<SmbSettings>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not need to set SmbSettings.
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.15.0 (2025-10-15)
 
