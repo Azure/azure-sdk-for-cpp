@@ -3,12 +3,40 @@ $LanguageDisplayName = "C++"
 $PackageRepository = "CPP"
 $packagePattern = "package-info.json"
 $MetadataUri = "https://raw.githubusercontent.com/Azure/azure-sdk/main/_data/releases/latest/cpp-packages.csv"
+$GithubUri = "https://github.com/Azure/azure-sdk-for-cpp"
+$PackageRepositoryUri = "https://github.com/microsoft/vcpkg/tree/master/ports"
+
+. "$PSScriptRoot/docs/Docs-ToC.ps1"
 
 $VersionRegex = '(#define AZURE_\w+_VERSION_MAJOR )(?<major>[0-9]+)(\s+#define AZURE_\w+_VERSION_MINOR )(?<minor>[0-9]+)(\s+#define AZURE_\w+_VERSION_PATCH )(?<patch>[0-9]+)(\s+#define AZURE_\w+_VERSION_PRERELEASE )"(?<prerelease>[a-zA-Z0-9.]*)"';
 function Get-VersionHppLocation ($ServiceDirectory, $PackageName) {
     $versionHppLocation = Get-ChildItem package_version.hpp -Path "$RepoRoot/sdk/$ServiceDirectory/$PackageName" -Recurse
     Write-Verbose "package_version.hpp location: $versionHppLocation"
     return $versionHppLocation
+}
+
+function Get-cpp-DocsMsMetadataForPackage($PackageInfo) {
+  $readmeName = $PackageInfo.Name.ToLower()
+
+  # Readme names (which are used in the URL) should not include redundant terms
+  # when viewed in URL form. For example:
+  # https://docs.microsoft.com/en-us/dotnet/api/overview/azure/storage.blobs-readme
+  # Note how the end of the URL doesn't look like:
+  # ".../azure/azure.storage.blobs-readme"
+
+  # This logic eliminates a preceding "azure-" in the readme filename.
+  # "azure-storage-blobs" -> "storage-blobs"
+  if ($readmeName.StartsWith('azure-')) {
+    $readmeName = $readmeName.Substring(6)
+  }
+
+  Write-Host "Docs.ms Readme name: $($readmeName)"
+  New-Object PSObject -Property @{
+    DocsMsReadMeName      = $readmeName
+    LatestReadMeLocation  = 'docs-ref-services/latest'
+    PreviewReadMeLocation = 'docs-ref-services/preview'
+    Suffix                = ''
+  }
 }
 
 function Get-cpp-PackageInfoFromRepo($pkgPath, $serviceDirectory)
