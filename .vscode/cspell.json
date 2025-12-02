@@ -310,6 +310,19 @@
     "zulu"
   ],
   "overrides": [
+    { 
+      "filename": "**/eng/pipelines/docindex.yml",
+      "words": [
+        "msdocs",
+        "SDKCI"
+      ]
+    },
+    { 
+      "filename": "**/eng/pipelines/templates/stages/archetype-cpp-release.yml",
+      "words": [
+        "docsms"
+      ]
+    },
     {
       "filename": "CMakePresets.json",
       "words": [
