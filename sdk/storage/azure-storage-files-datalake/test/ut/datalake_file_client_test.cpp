@@ -1074,7 +1074,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileClientTest, DISABLED_StructuredMessageTest)
+  TEST_F(DataLakeFileClientTest, StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);
