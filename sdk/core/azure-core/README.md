@@ -79,12 +79,12 @@ Three main ways of troubleshooting failures are:
 ### SDK Log Messages
 
 The simplest way to enable logs is to set `AZURE_LOG_LEVEL` environment variable to one of the values:
-|`AZURE_LOG_LEVEL`|`Azure::Core::Diagnostics::Logger::Level`|Log message level
-|-|-|-
-|`4`, or `error`, or `err`|`Error`|Logging level for failures that the application is unlikely to recover from.
-|`3`, or `warning`, or `warn`|`Warning`|Logging level when a function fails to perform its intended task.
-|`2`, or `informational`, or `information`, or `info`|`Informational`|Logging level when a function operates normally.
-|`1`, or `verbose`, or `debug`|`Verbose`|Logging level for detailed troubleshooting scenarios.
+|`AZURE_LOG_LEVEL`|`Azure::Core::Diagnostics::Logger::Level`|Log message level|
+|-|-|-|
+|`4`, or `error`, or `err`|`Error`|Logging level for failures that the application is unlikely to recover from.|
+|`3`, or `warning`, or `warn`|`Warning`|Logging level when a function fails to perform its intended task.|
+|`2`, or `informational`, or `information`, or `info`|`Informational`|Logging level when a function operates normally.|
+|`1`, or `verbose`, or `debug`|`Verbose`|Logging level for detailed troubleshooting scenarios.|
 
 Then, log messages will be printed to console (`stderr`).
 Note that `stderr` messages can be redirected into a log file like this:
