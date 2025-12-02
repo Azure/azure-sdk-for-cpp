@@ -802,6 +802,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         request.GetUrl().AppendQueryParameter("flush", options.Flush.Value() ? "true" : "false");
       }
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -834,6 +844,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         response.IsLeaseRenewed
             = pRawResponse->GetHeaders().at("x-ms-lease-renewed") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::AppendFileResult>(std::move(response), std::move(pRawResponse));
     }

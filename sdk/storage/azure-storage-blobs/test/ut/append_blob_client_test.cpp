@@ -503,7 +503,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(shareClient.DeleteIfExists());
   }
 
-  TEST_F(AppendBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  TEST_F(AppendBlobClientTest, StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);

@@ -2365,7 +2365,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  TEST_F(BlockBlobClientTest, StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);

@@ -818,7 +818,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 
-  TEST_F(PageBlobClientTest, StructuredMessageTest_PLAYBACKONLY_)
+  TEST_F(PageBlobClientTest, StructuredMessageTest)
   {
     const size_t contentSize = 2 * 1024 + 512;
     auto content = RandomBuffer(contentSize);
