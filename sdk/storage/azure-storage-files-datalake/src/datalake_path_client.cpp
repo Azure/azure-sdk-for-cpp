@@ -381,7 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = std::move(response.Value.IncrementalCopyDestinationSnapshot);
     ret.VersionId = std::move(response.Value.VersionId);
     ret.IsCurrentVersion = std::move(response.Value.IsCurrentVersion);
-    ret.IsDirectory = _detail::MetadataIncidatesIsDirectory(ret.Metadata);
+    ret.IsDirectory = _detail::MetadataIndicatesIsDirectory(ret.Metadata);
     auto& headers = response.RawResponse->GetHeaders();
     auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
     if (encryptionContext != headers.end())

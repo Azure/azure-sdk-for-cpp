@@ -1612,6 +1612,16 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The blob's type.
        */
       Models::BlobType BlobType;
+      /**
+       * Indicates the response body contains a structured message and specifies the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
+      /**
+       * The length of the blob/file content inside the message body when the response body is
+       * returned as a structured message. Will always be smaller than Content-Length.
+       */
+      Nullable<std::int64_t> StructuredContentLength;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::GetProperties.
@@ -2590,6 +2600,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
@@ -2886,6 +2901,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
@@ -2999,6 +3019,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::UploadFromUri.
@@ -3071,6 +3096,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.
@@ -3515,6 +3545,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<bool> RangeGetContentMD5;
         Nullable<bool> RangeGetContentCRC64;
+        Nullable<std::string> StructuredBodyType;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
@@ -3942,6 +3973,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadPagesResult> UploadPages(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4138,6 +4171,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::AppendBlockResult> AppendBlock(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4219,6 +4254,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
         Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadBlockBlobResult> Upload(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4275,6 +4312,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::StageBlockResult> StageBlock(
           Core::Http::_internal::HttpPipeline& pipeline,

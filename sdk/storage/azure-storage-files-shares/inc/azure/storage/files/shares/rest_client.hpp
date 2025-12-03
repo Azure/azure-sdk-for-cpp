@@ -1844,6 +1844,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Detailed information of the downloaded file.
          */
         DownloadFileDetails Details;
+        /**
+         * Indicates the response body contains a structured message and specifies the message
+         * schema version and properties.
+         */
+        Nullable<std::string> StructuredBodyType;
+        /**
+         * The length of the blob/file content inside the message body when the response body is
+         * returned as a structured message. Will always be smaller than Content-Length.
+         */
+        Nullable<std::int64_t> StructuredContentLength;
       };
       /**
        * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
@@ -2141,6 +2151,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * encrypted using the specified algorithm, and false otherwise.
        */
       bool IsServerEncrypted = false;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRangeFromUri.
@@ -2890,6 +2905,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         Nullable<std::string> Range;
         Nullable<bool> RangeGetContentMD5;
+        Nullable<std::string> StructuredBodyType;
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
@@ -3016,6 +3032,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadFileRangeResult> UploadRange(
           Core::Http::_internal::HttpPipeline& pipeline,

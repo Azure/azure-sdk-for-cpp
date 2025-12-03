@@ -57,6 +57,9 @@ set(
     inc/azure/storage/common/internal/storage_per_retry_policy.hpp
     inc/azure/storage/common/internal/storage_service_version_policy.hpp
     inc/azure/storage/common/internal/storage_switch_to_secondary_policy.hpp
+    inc/azure/storage/common/internal/structured_message_decoding_stream.hpp
+    inc/azure/storage/common/internal/structured_message_encoding_stream.hpp
+    inc/azure/storage/common/internal/structured_message_helper.hpp
     inc/azure/storage/common/internal/xml_wrapper.hpp
     inc/azure/storage/common/rtti.hpp
     inc/azure/storage/common/storage_common.hpp
@@ -77,6 +80,9 @@ set(
     src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
     src/storage_switch_to_secondary_policy.cpp
+    src/structured_message_decoding_stream.cpp
+    src/structured_message_encoding_stream.cpp
+    src/structured_message_helper.cpp
     src/xml_wrapper.cpp
 )
 
