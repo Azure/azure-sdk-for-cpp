@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return std::string(begin, end);
   }
 
-  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata)
+  bool MetadataIndicatesIsDirectory(const Storage::Metadata& metadata)
   {
     auto ite = metadata.find(DataLakeIsDirectoryKey);
     return ite != metadata.end() && ite->second == "true";

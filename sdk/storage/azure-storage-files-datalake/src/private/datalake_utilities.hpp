@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       const std::string& string,
       std::string::const_iterator& cur);
 
-  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata);
+  bool MetadataIndicatesIsDirectory(const Storage::Metadata& metadata);
 
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
 
