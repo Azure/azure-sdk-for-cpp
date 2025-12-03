@@ -83,7 +83,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     return std::string(begin, end);
   }
 
-  bool MetadataIncidatesIsDirectory(const Storage::Metadata& metadata)
+  bool MetadataIndicatesIsDirectory(const Storage::Metadata& metadata)
   {
     auto ite = metadata.find(DataLakeIsDirectoryKey);
     return ite != metadata.end() && ite->second == "true";
@@ -101,6 +101,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     if (options.Audience.HasValue())
     {
       blobOptions.Audience = Blobs::BlobAudience(options.Audience.Value().ToString());
+    }
+    if (options.DownloadValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.DownloadValidationOptions.Value().Algorithm;
+      blobOptions.DownloadValidationOptions = std::move(validationOptions);
+    }
+    if (options.UploadValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.UploadValidationOptions.Value().Algorithm;
+      blobOptions.DownloadValidationOptions = std::move(validationOptions);
     }
     return blobOptions;
   }

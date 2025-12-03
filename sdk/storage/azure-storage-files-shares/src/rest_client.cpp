@@ -3680,6 +3680,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-range-get-content-md5", options.RangeGetContentMD5.Value() ? "true" : "false");
       }
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -3828,6 +3832,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         response.Details.LeaseStatus
             = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
+      {
+        response.StructuredContentLength
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-structured-content-length"));
       }
       if (pRawResponse->GetHeaders().count("x-ms-mode") != 0)
       {
@@ -4459,6 +4472,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
       }
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -4479,6 +4502,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         response.IsServerEncrypted
             = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::UploadFileRangeResult>(std::move(response), std::move(pRawResponse));
     }

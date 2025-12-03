@@ -3669,6 +3669,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-range-get-content-crc64",
             options.RangeGetContentCRC64.Value() ? "true" : "false");
       }
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
       if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
       {
         request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
@@ -3880,6 +3884,15 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.Details.HasLegalHold
             = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
+      {
+        response.StructuredContentLength
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-structured-content-length"));
       }
       if (httpStatusCode == Core::Http::HttpStatusCode::Ok)
       {
@@ -6137,6 +6150,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-version", "2026-02-06");
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -6182,6 +6205,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::UploadPagesResult>(std::move(response), std::move(pRawResponse));
     }
@@ -7233,6 +7260,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-version", "2026-02-06");
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -7270,6 +7307,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::AppendBlockResult>(std::move(response), std::move(pRawResponse));
     }
@@ -7615,6 +7656,16 @@ namespace Azure { namespace Storage { namespace Blobs {
             "x-ms-content-crc64",
             Core::Convert::Base64Encode(options.TransactionalContentCrc64.Value()));
       }
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -7646,6 +7697,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
@@ -7907,6 +7962,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
       }
       request.SetHeader("x-ms-version", "2026-02-06");
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -7938,6 +8003,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::StageBlockResult>(std::move(response), std::move(pRawResponse));
     }
