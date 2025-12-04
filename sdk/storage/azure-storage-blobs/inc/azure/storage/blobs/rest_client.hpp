@@ -32,12 +32,12 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-02-06";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     /**
-     * @brief The algorithm used to produce the encryption key hash. Currently, the only accepted
-     * value is "AES256". Must be provided if the x-ms-encryption-key header is provided.
+     * @brief The algorithm used to produce the source encryption key hash. Currently, the only
+     * accepted value is "AES256". Must be provided if the x-ms-source-encryption-key is provided.
      */
     class EncryptionAlgorithmType final
         : public Core::_internal::ExtendableEnumeration<EncryptionAlgorithmType> {
@@ -502,6 +502,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          * The date-time the key expires in ISO 8601 UTC time.
          */
         std::string Expiry;
+        /**
+         * The delegated user tenant id in Azure AD.
+         */
+        Nullable<std::string> DelegatedUserTid;
       };
     } // namespace _detail
     /**
@@ -533,6 +537,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The service version that created the key.
        */
       std::string SignedVersion;
+      /**
+       * The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified.
+       */
+      Nullable<std::string> SignedDelegatedUserTid;
       /**
        * The key as a base64 string.
        */
@@ -3592,6 +3600,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<DateTime> AccessTierIfModifiedSince;
+        Nullable<DateTime> AccessTierIfUnmodifiedSince;
       };
       static Response<Models::DeleteBlobResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4030,6 +4040,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::string> SourceEncryptionKeySha256;
+        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
       };
       static Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4205,6 +4218,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::string> SourceEncryptionKeySha256;
+        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
       };
       static Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4295,6 +4311,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::string> SourceEncryptionKeySha256;
+        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
         Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
@@ -4339,6 +4358,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::string> SourceEncryptionKeySha256;
+        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
       };
       static Response<Models::StageBlockFromUriResult> StageBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
