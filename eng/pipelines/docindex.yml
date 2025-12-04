@@ -26,6 +26,8 @@ jobs:
       # Sync docs repo (this can be sparse)
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
+          # TODO: Remove when C++ docs repo goes public
+          TokenToUseForAuth: $(azuresdk-github-pat)
           SkipCheckoutNone: true
           Paths:
             - ci-configs/
