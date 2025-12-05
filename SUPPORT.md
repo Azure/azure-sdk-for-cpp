@@ -5,7 +5,7 @@
 Customers with an [Azure support plan](https://azure.microsoft.com/support/options/) can open an [Azure support ticket](https://azure.microsoft.com/support/create-ticket/).
 **We recommend this option if your problem requires immediate attention.**
 
-### Github issues
+### GitHub issues
 
 We use [GitHub Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose) to track bugs, questions, and feature requests. 
 GitHub issues are free, but **response time is not guaranteed.** See [GitHub issues support process](https://devblogs.microsoft.com/azure-sdk/github-issue-support-process/) for more details.
