@@ -408,6 +408,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     }
     protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
+    if (options.SourceCustomerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.SourceEncryptionKey = options.SourceCustomerProvidedKey.Value().Key;
+      protocolLayerOptions.SourceEncryptionKeySha256
+          = options.SourceCustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.SourceEncryptionAlgorithm
+          = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
+    }
 
     return _detail::BlockBlobClient::UploadFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
@@ -512,6 +520,14 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
     }
     protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
+    if (options.SourceCustomerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.SourceEncryptionKey = options.SourceCustomerProvidedKey.Value().Key;
+      protocolLayerOptions.SourceEncryptionKeySha256
+          = options.SourceCustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.SourceEncryptionAlgorithm
+          = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
+    }
 
     return _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);

@@ -854,6 +854,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.AccessTierIfModifiedSince
+        = options.AccessConditions.AccessTierIfModifiedSince;
+    protocolLayerOptions.AccessTierIfUnmodifiedSince
+        = options.AccessConditions.AccessTierIfUnmodifiedSince;
     return _detail::BlobClient::Delete(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }
 

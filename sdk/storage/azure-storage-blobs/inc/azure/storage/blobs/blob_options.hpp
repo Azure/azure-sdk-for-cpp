@@ -86,12 +86,41 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Specifies HTTP options for conditional requests based on AccessTier.
+   */
+  struct AccessTierConditions
+  {
+    /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~AccessTierConditions() = default;
+
+    /**
+     * @brief Specify this header value to operate only on a blob if the access-tier has been
+     * modified since the specified date/time. Note: If this is specified,
+     * AccessTierIfUnmodifiedSince cannot be specified.
+     * Only valid for Delete Blob API.
+     */
+    Azure::Nullable<Azure::DateTime> AccessTierIfModifiedSince;
+
+    /**
+     * @brief Specify this header value to operate only on a blob if the access-tier has not been
+     * modified since the specified date/time. Note: If this is specified, AccessTierIfModifiedSince
+     * cannot be specified.
+     * Only valid for Delete Blob API.
+     */
+    Azure::Nullable<Azure::DateTime> AccessTierIfUnmodifiedSince;
+  };
+
+  /**
    * @brief Specifies access conditions for a blob.
    */
   struct BlobAccessConditions : public Azure::ModifiedConditions,
                                 public Azure::MatchConditions,
                                 public LeaseAccessConditions,
-                                public TagAccessConditions
+                                public TagAccessConditions,
+                                public AccessTierConditions
   {
   };
 
@@ -1086,6 +1115,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1153,6 +1188,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1457,6 +1498,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1579,6 +1626,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
