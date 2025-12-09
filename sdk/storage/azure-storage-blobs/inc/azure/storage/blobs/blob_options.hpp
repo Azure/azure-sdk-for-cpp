@@ -275,6 +275,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * will be truncated to second.
      */
     Azure::DateTime StartsOn = std::chrono::system_clock::now();
+
+    /**
+     * The delegated user tenant id in Azure AD.
+     */
+    Nullable<std::string> DelegatedUserTid;
   };
 
   /**
