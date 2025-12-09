@@ -263,6 +263,18 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string DelegatedUserObjectId;
 
     /**
+     * @brief Optional. Custom Request Headers to include in the SAS. Any usage of the SAS must
+     * include these headers and values in the request.
+     */
+    std::map<std::string, std::string> RequestHeaders;
+
+    /**
+     * @brief Optional. Custom Request Query Parameters to include in the SAS. Any usage of the SAS
+     * must include these query parameters and values in the request.
+     */
+    std::map<std::string, std::string> RequestQueryParameters;
+
+    /**
      * @brief Override the value returned for Cache-Control response header..
      */
     std::string CacheControl;
