@@ -6478,17 +6478,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-source-encryption-key", options.SourceEncryptionKey.Value());
       }
       if (options.SourceEncryptionKeySha256.HasValue()
-          && !options.SourceEncryptionKeySha256.Value().empty())
+          && !Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()).empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-key-sha256", options.SourceEncryptionKeySha256.Value());
+            "x-ms-source-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()));
       }
       if (options.SourceEncryptionAlgorithm.HasValue()
-          && !options.SourceEncryptionAlgorithm.Value().ToString().empty())
+          && !options.SourceEncryptionAlgorithm.Value().empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-algorithm",
-            options.SourceEncryptionAlgorithm.Value().ToString());
+            "x-ms-source-encryption-algorithm", options.SourceEncryptionAlgorithm.Value());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -7490,17 +7490,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-source-encryption-key", options.SourceEncryptionKey.Value());
       }
       if (options.SourceEncryptionKeySha256.HasValue()
-          && !options.SourceEncryptionKeySha256.Value().empty())
+          && !Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()).empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-key-sha256", options.SourceEncryptionKeySha256.Value());
+            "x-ms-source-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()));
       }
       if (options.SourceEncryptionAlgorithm.HasValue()
-          && !options.SourceEncryptionAlgorithm.Value().ToString().empty())
+          && !options.SourceEncryptionAlgorithm.Value().empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-algorithm",
-            options.SourceEncryptionAlgorithm.Value().ToString());
+            "x-ms-source-encryption-algorithm", options.SourceEncryptionAlgorithm.Value());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -7929,17 +7929,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-source-encryption-key", options.SourceEncryptionKey.Value());
       }
       if (options.SourceEncryptionKeySha256.HasValue()
-          && !options.SourceEncryptionKeySha256.Value().empty())
+          && !Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()).empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-key-sha256", options.SourceEncryptionKeySha256.Value());
+            "x-ms-source-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()));
       }
       if (options.SourceEncryptionAlgorithm.HasValue()
-          && !options.SourceEncryptionAlgorithm.Value().ToString().empty())
+          && !options.SourceEncryptionAlgorithm.Value().empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-algorithm",
-            options.SourceEncryptionAlgorithm.Value().ToString());
+            "x-ms-source-encryption-algorithm", options.SourceEncryptionAlgorithm.Value());
       }
       if (options.SourceContentcrc64.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentcrc64.Value()).empty())
@@ -8186,17 +8186,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-source-encryption-key", options.SourceEncryptionKey.Value());
       }
       if (options.SourceEncryptionKeySha256.HasValue()
-          && !options.SourceEncryptionKeySha256.Value().empty())
+          && !Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()).empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-key-sha256", options.SourceEncryptionKeySha256.Value());
+            "x-ms-source-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.SourceEncryptionKeySha256.Value()));
       }
       if (options.SourceEncryptionAlgorithm.HasValue()
-          && !options.SourceEncryptionAlgorithm.Value().ToString().empty())
+          && !options.SourceEncryptionAlgorithm.Value().empty())
       {
         request.SetHeader(
-            "x-ms-source-encryption-algorithm",
-            options.SourceEncryptionAlgorithm.Value().ToString());
+            "x-ms-source-encryption-algorithm", options.SourceEncryptionAlgorithm.Value());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();

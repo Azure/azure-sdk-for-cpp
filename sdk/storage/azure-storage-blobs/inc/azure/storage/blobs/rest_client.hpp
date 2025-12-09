@@ -36,8 +36,8 @@ namespace Azure { namespace Storage { namespace Blobs {
   } // namespace _detail
   namespace Models {
     /**
-     * @brief The algorithm used to produce the source encryption key hash. Currently, the only
-     * accepted value is "AES256". Must be provided if the x-ms-source-encryption-key is provided.
+     * @brief The algorithm used to produce the encryption key hash. Currently, the only accepted
+     * value is "AES256". Must be provided if the x-ms-encryption-key header is provided.
      */
     class EncryptionAlgorithmType final
         : public Core::_internal::ExtendableEnumeration<EncryptionAlgorithmType> {
@@ -4041,8 +4041,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::string> SourceEncryptionKey;
-        Nullable<std::string> SourceEncryptionKeySha256;
-        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4219,8 +4219,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::string> SourceEncryptionKey;
-        Nullable<std::string> SourceEncryptionKeySha256;
-        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4312,8 +4312,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::string> SourceEncryptionKey;
-        Nullable<std::string> SourceEncryptionKeySha256;
-        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
         Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
@@ -4359,8 +4359,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
         Nullable<std::string> SourceEncryptionKey;
-        Nullable<std::string> SourceEncryptionKeySha256;
-        Nullable<Models::EncryptionAlgorithmType> SourceEncryptionAlgorithm;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::StageBlockFromUriResult> StageBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
