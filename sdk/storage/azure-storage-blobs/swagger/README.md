@@ -290,6 +290,8 @@ directive:
       $.SequenceNumberAction["x-ms-enum"]["name"] = "SequenceNumberAction";
       delete $.EncryptionAlgorithm["enum"];
       delete $.EncryptionAlgorithm["x-ms-enum"];
+      delete $.SourceEncryptionAlgorithm["enum"];
+      delete $.SourceEncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
       $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
       delete $.FilterBlobsInclude;
@@ -324,6 +326,16 @@ directive:
           {"value": "Cold", "name": "Cold"}
       ];
       $.EncryptionAlgorithm = {
+        "type": "string",
+        "enum": ["AES256"],
+        "x-ms-enum": {
+          "name": "EncryptionAlgorithmType",
+          "modelAsString": false,
+          "values": [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "AES256", "name": "Aes256"}]
+        },
+        "x-ms-export": true
+      };
+      $.SourceEncryptionAlgorithm = {
         "type": "string",
         "enum": ["AES256"],
         "x-ms-enum": {
@@ -391,6 +403,7 @@ directive:
     where: $.parameters
     transform: >
       $.EncryptionKeySha256["format"] = "byte";
+      $.SourceEncryptionKeySha256["format"] = "byte";
       $.BlobContentType["required"] = true;
       $.BlobContentEncoding["required"] = true;
       $.BlobContentLanguage["required"] = true;

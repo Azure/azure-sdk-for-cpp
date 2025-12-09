@@ -1022,6 +1022,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
 
+    // cSpell:disable
     std::map<std::string, std::string> requestHeaders;
     requestHeaders["x-ms-range"] = "bytes=0-1023";
     requestHeaders["x-ms-upn"] = "true";
@@ -1053,6 +1054,7 @@ namespace Azure { namespace Storage { namespace Test {
     requestQueryParameters["hello$"] = "world!";
     requestQueryParameters["abra"] = "cadabra";
     requestQueryParameters["firstName"] = "john,Tim";
+    // cSpell:enable
 
     fileSasBuilder.RequestHeaders = requestHeaders;
     fileSasBuilder.RequestQueryParameters = requestQueryParameters;

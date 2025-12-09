@@ -1026,6 +1026,7 @@ namespace Azure { namespace Storage { namespace Test {
 
     blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
 
+    // cSpell:disable
     std::map<std::string, std::string> requestHeaders;
     requestHeaders["x-ms-range"] = "bytes=0-1023";
     requestHeaders["x-ms-range-get-content-md5"] = "true";
@@ -1057,6 +1058,7 @@ namespace Azure { namespace Storage { namespace Test {
     requestQueryParameters["hello$"] = "world!";
     requestQueryParameters["abra"] = "cadabra";
     requestQueryParameters["firstName"] = "john,Tim";
+    // cSpell:enable
 
     blobSasBuilder.RequestHeaders = requestHeaders;
     blobSasBuilder.RequestQueryParameters = requestQueryParameters;
