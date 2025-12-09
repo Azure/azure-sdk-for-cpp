@@ -184,6 +184,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
     protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    protocolLayerOptions.KeyInfo.DelegatedUserTid = options.DelegatedUserTid;
     return _detail::ServiceClient::GetUserDelegationKey(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }

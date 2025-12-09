@@ -8,7 +8,7 @@
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
 
-/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid, sduoid */
+/* cSpell:ignore rscc, rscd, rsce, rscl, rsct, skoid, sktid, skdutid, sduoid */
 
 namespace Azure { namespace Storage { namespace Sas {
 
@@ -185,8 +185,11 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
-        + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n\n"
-        + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
+        + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n"
+        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
+               ? userDelegationKey.SignedDelegatedUserTid.Value()
+               : "")
+        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
         + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
         + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
@@ -224,6 +227,12 @@ namespace Azure { namespace Storage { namespace Sas {
         "sks", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedService));
     builder.AppendQueryParameter(
         "skv", _internal::UrlEncodeQueryParameter(userDelegationKey.SignedVersion));
+    if (userDelegationKey.SignedDelegatedUserTid.HasValue())
+    {
+      builder.AppendQueryParameter(
+          "skdutid",
+          _internal::UrlEncodeQueryParameter(userDelegationKey.SignedDelegatedUserTid.Value()));
+    }
     if (!DelegatedUserObjectId.empty())
     {
       builder.AppendQueryParameter(
@@ -307,10 +316,13 @@ namespace Azure { namespace Storage { namespace Sas {
     return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
-        + "\n" + userDelegationKey.SignedVersion + "\n\n" + DelegatedUserObjectId + "\n"
-        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
-        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
-        + "\n" + ContentType;
+        + "\n" + userDelegationKey.SignedVersion + "\n"
+        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
+               ? userDelegationKey.SignedDelegatedUserTid.Value()
+               : "")
+        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
+        + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
+        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
   }
 
 }}} // namespace Azure::Storage::Sas

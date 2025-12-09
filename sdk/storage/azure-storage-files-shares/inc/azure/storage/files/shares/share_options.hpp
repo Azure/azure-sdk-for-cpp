@@ -377,6 +377,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * will be truncated to second.
      */
     Azure::DateTime StartsOn = std::chrono::system_clock::now();
+
+    /**
+     * The delegated user tenant id in Azure AD.
+     */
+    Nullable<std::string> DelegatedUserTid;
   };
 
   /**
