@@ -920,7 +920,7 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
         GetTestCredential(),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
-    EXPECT_NO_THROW(blobClient1.GetProperties());
+    EXPECT_NO_THROW(blobClient1.Download());
 
     blobSasBuilder.DelegatedUserObjectId = "invalidObjectId";
     sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
@@ -928,7 +928,7 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
         GetTestCredential(),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
-    EXPECT_THROW(blobClient2.GetProperties(), StorageException);
+    EXPECT_THROW(blobClient2.Download(), StorageException);
   }
 
   TEST_F(BlobSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
@@ -993,4 +993,79 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Blobs::BlobClientOptions>());
     EXPECT_THROW(blobClient2.Download(), StorageException);
   }
+
+  TEST_F(BlobSasTest, DISABLED_DynamicSas)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Blobs::Models::UserDelegationKey userDelegationKey;
+    {
+      auto blobServiceClient = Blobs::BlobServiceClient(
+          m_blobServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Blobs::BlobClientOptions>());
+      userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    auto blobContainerClient = *m_blobContainerClient;
+    auto blobClient = *m_blockBlobClient;
+    const std::string blobName = m_blobName;
+
+    Sas::BlobSasBuilder blobSasBuilder;
+    blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    blobSasBuilder.StartsOn = sasStartsOn;
+    blobSasBuilder.ExpiresOn = sasExpiresOn;
+    blobSasBuilder.BlobContainerName = m_containerName;
+    blobSasBuilder.BlobName = blobName;
+    blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+
+    blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
+
+    std::map<std::string, std::string> requestHeaders;
+    requestHeaders["x-ms-range"] = "bytes=0-1023";
+    requestHeaders["x-ms-range-get-content-md5"] = "true";
+
+    std::map<std::string, std::string> requestQueryParameters;
+    requestQueryParameters["spr"] = "https,http";
+    requestQueryParameters["sks"] = "b";
+
+    blobSasBuilder.RequestHeaders = requestHeaders;
+    blobSasBuilder.RequestQueryParameters = requestQueryParameters;
+    auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Blobs::DownloadBlobOptions downloadOptions;
+    Core::Http::HttpRange range;
+    range.Offset = 0;
+    range.Length = 1024;
+    downloadOptions.Range = range;
+    downloadOptions.RangeHashAlgorithm = HashAlgorithm::Md5;
+
+    Blobs::BlockBlobClient blobClient1(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_NO_THROW(blobClient1.Download(downloadOptions));
+
+    requestHeaders["foo$"] = "bar!";
+    requestHeaders["company"] = "msft";
+    requestHeaders["city"] = "redmond,atlanta,reston";
+
+    requestQueryParameters["hello$"] = "world!";
+    requestQueryParameters["abra"] = "cadabra";
+    requestQueryParameters["firstName"] = "john,Tim";
+
+    blobSasBuilder.RequestHeaders = requestHeaders;
+    blobSasBuilder.RequestQueryParameters = requestQueryParameters;
+
+    sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Blobs::BlockBlobClient blobClient2(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_THROW(blobClient2.Download(downloadOptions), StorageException);
+  }
+
 }}} // namespace Azure::Storage::Test

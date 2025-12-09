@@ -989,4 +989,78 @@ namespace Azure { namespace Storage { namespace Test {
         InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
     EXPECT_THROW(fileClient2.GetProperties(), StorageException);
   }
+
+  TEST_F(DataLakeSasTest, DISABLED_DynamicSas)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+    auto buffer = RandomBuffer(1024);
+    auto stream = Azure::Core::IO::MemoryBodyStream(buffer);
+    Files::DataLake::AppendFileOptions appendOptions;
+    appendOptions.Flush = true;
+    dataLakeFileClient.Append(stream, 0, appendOptions);
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+
+    std::map<std::string, std::string> requestHeaders;
+    requestHeaders["x-ms-range"] = "bytes=0-1023";
+    requestHeaders["x-ms-upn"] = "true";
+
+    std::map<std::string, std::string> requestQueryParameters;
+    requestQueryParameters["spr"] = "https,http";
+    requestQueryParameters["sks"] = "b";
+
+    fileSasBuilder.RequestHeaders = requestHeaders;
+    fileSasBuilder.RequestQueryParameters = requestQueryParameters;
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Files::DataLake::DownloadFileOptions downloadOptions;
+    Core::Http::HttpRange range;
+    range.Offset = 0;
+    range.Length = 1024;
+    downloadOptions.Range = range;
+    downloadOptions.IncludeUserPrincipalName = true;
+
+    Files::DataLake::DataLakeFileClient fileClient1(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_NO_THROW(fileClient1.Download(downloadOptions));
+
+    requestHeaders["foo$"] = "bar!";
+    requestHeaders["company"] = "msft";
+    requestHeaders["city"] = "redmond,atlanta,reston";
+
+    requestQueryParameters["hello$"] = "world!";
+    requestQueryParameters["abra"] = "cadabra";
+    requestQueryParameters["firstName"] = "john,Tim";
+
+    fileSasBuilder.RequestHeaders = requestHeaders;
+    fileSasBuilder.RequestQueryParameters = requestQueryParameters;
+
+    sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Files::DataLake::DataLakeFileClient fileClient2(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_THROW(fileClient2.Download(downloadOptions), StorageException);
+  }
 }}} // namespace Azure::Storage::Test
