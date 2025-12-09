@@ -88,13 +88,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   /**
    * @brief Specifies HTTP options for conditional requests based on AccessTier.
    */
-  struct AccessTierConditions
+  struct AccessTierAccessConditions
   {
     /**
      * @brief Destructor.
      *
      */
-    virtual ~AccessTierConditions() = default;
+    virtual ~AccessTierAccessConditions() = default;
 
     /**
      * @brief Specify this header value to operate only on a blob if the access-tier has been
@@ -120,7 +120,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                                 public Azure::MatchConditions,
                                 public LeaseAccessConditions,
                                 public TagAccessConditions,
-                                public AccessTierConditions
+                                public AccessTierAccessConditions
   {
   };
 
