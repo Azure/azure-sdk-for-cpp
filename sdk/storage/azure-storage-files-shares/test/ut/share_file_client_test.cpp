@@ -2608,4 +2608,87 @@ namespace Azure { namespace Storage { namespace Test {
     destFileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     EXPECT_THROW(destFileClient.StartCopy(sourceClient.GetUrl(), copyOptions), StorageException);
   }
+
+  TEST_F(FileShareFileClientTest, StructuredMessageTest)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    const std::string tempFileName = RandomString();
+    WriteFile(tempFileName, content);
+    Files::Shares::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    // UploadRange
+    auto fileClient = m_fileShareDirectoryClient->GetFileClient("uploadrange_" + RandomString());
+    fileClient.Create(contentSize);
+    Files::Shares::UploadFileRangeOptions uploadRangeOptions;
+    uploadRangeOptions.ValidationOptions = validationOptions;
+    Files::Shares::Models::UploadFileRangeResult uploadRangeResult;
+    EXPECT_NO_THROW(
+        uploadRangeResult = fileClient.UploadRange(0, bodyStream, uploadRangeOptions).Value);
+    EXPECT_TRUE(uploadRangeResult.StructuredBodyType.HasValue());
+
+    // Download
+    Files::Shares::DownloadFileOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Files::Shares::Models::DownloadFileResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = fileClient.Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(content, downloadedData);
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.FileSize, contentSize);
+    // partial download
+    downloadOptions.Range = Core::Http::HttpRange();
+    downloadOptions.Range.Value().Length = contentSize / 2;
+    EXPECT_NO_THROW(downloadResult = fileClient.Download(downloadOptions).Value);
+    downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        downloadedData, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize / 2);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.FileSize, contentSize);
+    downloadOptions.Range.Reset();
+
+    // UploadFrom DownloadTo
+    Files::Shares::UploadFileFromOptions uploadFromOptions;
+    uploadFromOptions.ValidationOptions = validationOptions;
+    Files::Shares::Models::UploadFileFromResult uploadFromResult;
+    Files::Shares::DownloadFileToOptions downloadToOptions;
+    downloadToOptions.ValidationOptions = validationOptions;
+    Files::Shares::Models::DownloadFileToResult downloadToResult;
+
+    // From stream
+    fileClient = m_fileShareDirectoryClient->GetFileClient("uploadfromstream_" + RandomString());
+    EXPECT_NO_THROW(
+        uploadFromResult
+        = fileClient.UploadFrom(content.data(), contentSize, uploadFromOptions).Value);
+    auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = fileClient.DownloadTo(downloadBuffer.data(), contentSize, downloadToOptions).Value);
+    EXPECT_EQ(downloadBuffer, content);
+    // partial downloadTo
+    downloadToOptions.Range = Core::Http::HttpRange();
+    downloadToOptions.Range.Value().Length = contentSize / 2;
+    downloadBuffer.resize(static_cast<size_t>(contentSize / 2), '\x00');
+    EXPECT_NO_THROW(
+        downloadToResult
+        = fileClient.DownloadTo(downloadBuffer.data(), contentSize / 2, downloadToOptions).Value);
+    EXPECT_EQ(
+        downloadBuffer, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
+    downloadToOptions.Range.Reset();
+
+    // From file
+    fileClient = m_fileShareDirectoryClient->GetFileClient("uploadfromfile_" + RandomString());
+    EXPECT_NO_THROW(
+        uploadFromResult = fileClient.UploadFrom(tempFileName, uploadFromOptions).Value);
+    auto downloadFileName = RandomString();
+    EXPECT_NO_THROW(
+        downloadToResult = fileClient.DownloadTo(downloadFileName, downloadToOptions).Value);
+  }
+
 }}} // namespace Azure::Storage::Test

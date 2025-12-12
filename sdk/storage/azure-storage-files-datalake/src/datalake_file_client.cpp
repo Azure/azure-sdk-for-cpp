@@ -10,6 +10,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
@@ -55,7 +56,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileClient::DataLakeFileClient(
       const std::string& fileUrl,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUrl, options)
+      : DataLakePathClient(fileUrl, options),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
   }
 
@@ -67,19 +70,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   {
     _detail::FileClient::AppendFileOptions protocolLayerOptions;
     protocolLayerOptions.Position = offset;
-    if (options.TransactionalContentHash.HasValue())
-    {
-      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
-      {
-        protocolLayerOptions.TransactionalContentCrc64
-            = options.TransactionalContentHash.Value().Value;
-      }
-      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
-      {
-        protocolLayerOptions.TransactionalContentHash
-            = options.TransactionalContentHash.Value().Value;
-      }
-    }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.Flush = options.Flush;
     if (m_clientConfiguration.CustomerProvidedKey.HasValue())
@@ -95,6 +85,38 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     if (options.LeaseDuration.HasValue())
     {
       protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
+    }
+
+    if (options.TransactionalContentHash.HasValue())
+    {
+      if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Crc64)
+      {
+        protocolLayerOptions.TransactionalContentCrc64
+            = options.TransactionalContentHash.Value().Value;
+      }
+      else if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
+      {
+        protocolLayerOptions.TransactionalContentHash
+            = options.TransactionalContentHash.Value().Value;
+      }
+    }
+    else
+    {
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_uploadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
+        protocolLayerOptions.StructuredContentLength = content.Length();
+        _internal::StructuredMessageEncodingStreamOptions encodingStreamOptions;
+        encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
+        auto structuredContent
+            = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
+        return _detail::FileClient::Append(
+            *m_pipeline, m_pathUrl, structuredContent, protocolLayerOptions, context);
+      }
     }
     return _detail::FileClient::Append(
         *m_pipeline, m_pathUrl, content, protocolLayerOptions, context);
@@ -182,6 +204,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    if (options.ValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.ValidationOptions.Value().Algorithm;
+      blobOptions.ValidationOptions = std::move(validationOptions);
+    }
     auto response = m_blobClient.Download(
         blobOptions,
         options.IncludeUserPrincipalName.HasValue() ? context.WithValue(
@@ -220,6 +248,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
+    ret.StructuredBodyType = response.Value.StructuredBodyType;
+    ret.StructuredContentLength = response.Value.StructuredContentLength;
     auto& headers = response.RawResponse->GetHeaders();
     auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
     if (encryptionContext != headers.end())
@@ -262,6 +292,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = options.HttpHeaders;
     blobOptions.Metadata = options.Metadata;
+    if (options.ValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.ValidationOptions.Value().Algorithm;
+      blobOptions.ValidationOptions = std::move(validationOptions);
+    }
     return m_blobClient.AsBlockBlobClient().UploadFrom(fileName, blobOptions, context);
   }
 
@@ -278,6 +314,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.TransferOptions.Concurrency = options.TransferOptions.Concurrency;
     blobOptions.HttpHeaders = options.HttpHeaders;
     blobOptions.Metadata = options.Metadata;
+    if (options.ValidationOptions.HasValue())
+    {
+      Blobs::TransferValidationOptions validationOptions;
+      validationOptions.Algorithm = options.ValidationOptions.Value().Algorithm;
+      blobOptions.ValidationOptions = std::move(validationOptions);
+    }
     return m_blobClient.AsBlockBlobClient().UploadFrom(buffer, bufferSize, blobOptions, context);
   }
 
