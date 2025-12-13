@@ -5,20 +5,20 @@
 Customers with an [Azure support plan](https://azure.microsoft.com/support/options/) can open an [Azure support ticket](https://azure.microsoft.com/support/create-ticket/).
 **We recommend this option if your problem requires immediate attention.**
 
-### Github issues
+### GitHub issues
 
-We use [GitHub Issues](https://github.com/Azure/azure-sdk-for-python/issues/new/choose) to track bugs, questions, and feature requests. 
+We use [GitHub Issues](https://github.com/Azure/azure-sdk-for-cpp/issues/new/choose) to track bugs, questions, and feature requests. 
 GitHub issues are free, but **response time is not guaranteed.** See [GitHub issues support process](https://devblogs.microsoft.com/azure-sdk/github-issue-support-process/) for more details.
 
 To ensure the relevance and manageability of our issue queue, we have an automated process that will close issues that are over two years old and have not been updated in the last 30 days. This measure is designed to help us respond to and resolve current issues more efficiently. We appreciate your understanding and cooperation in maintaining a focused and up-to-date issue tracking system.
 
 ### Community resources
 
-- Search for similar issues in [our GitHub repository](https://github.com/Azure/azure-sdk-for-python/issues)
-- Ask a question on [StackOverflow](https://stackoverflow.com/questions/tagged/azure-sdk-python) and tag it with azure-sdk-python
+- Search for similar issues in [our GitHub repository](https://github.com/Azure/azure-sdk-for-cpp/issues)
+- Ask a question on [StackOverflow](https://stackoverflow.com/questions/tagged/azure-sdk-cpp) and tag it with azure-sdk-cpp
 - Share or upvote feature requests on [Feedback Page](https://feedback.azure.com/forums/34192--general-feedback).
 - Take a look at the [Azure SDK blog](https://devblogs.microsoft.com/azure-sdk/).
-- Chat with other community members on [gitter](https://gitter.im/Azure/azure-sdk-for-python?source=orgpage)
+- Chat with other community members on [gitter](https://gitter.im/Azure/azure-sdk-for-cpp?source=orgpage)
 - Ask a question on [Twitter](https://twitter.com/AzureSDK)
 - Ask a question at [Microsoft Q&A](https://learn.microsoft.com/answers/products/azure?WT.mc_id=Portal-Microsoft_Azure_Support&product=all)
 - Ask a question at [Microsoft Tech Community](https://techcommunity.microsoft.com/t5/azure/ct-p/Azure)
