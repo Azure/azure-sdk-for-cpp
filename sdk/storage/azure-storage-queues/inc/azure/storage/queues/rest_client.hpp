@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Queues {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-02-06";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -215,6 +215,10 @@ namespace Azure { namespace Storage { namespace Queues {
          * The date-time the key expires in ISO 8601 UTC time.
          */
         std::string Expiry;
+        /**
+         * The delegated user tenant id in Azure AD.
+         */
+        Nullable<std::string> DelegatedUserTid;
       };
     } // namespace _detail
     /**
@@ -246,6 +250,10 @@ namespace Azure { namespace Storage { namespace Queues {
        * The service version that created the key.
        */
       std::string SignedVersion;
+      /**
+       * The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified.
+       */
+      Nullable<std::string> SignedDelegatedUserTid;
       /**
        * The key as a base64 string.
        */

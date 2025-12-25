@@ -434,6 +434,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     /** @brief Encryption scope. */
     Azure::Nullable<std::string> m_encryptionScope;
+    /** @brief Upload TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
+    /** @brief Download TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
 
   private:
     explicit BlobClient(
