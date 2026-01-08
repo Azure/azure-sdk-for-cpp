@@ -482,10 +482,9 @@ DateTime::DateTime(
 
 DateTime::DateTime(std::chrono::system_clock::time_point const& systemTime)
     : DateTime(
-          SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+        SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
 {
 }
-
 
 DateTime::operator std::chrono::system_clock::time_point() const
 {
