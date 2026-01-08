@@ -94,3 +94,6 @@
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhubs/* @j7nw4r
+
+# Add Johnathan Walker as code owner for Service Bus SDK
+/sdk/servicebus/* @j7nw4r
