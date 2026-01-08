@@ -1,6 +1,7 @@
 # Release History
 
 ## 1.2.0-beta.1 (Unreleased)
+- Fix for GCC 15.2 undeclared uint8_t error in opensslcrypto.cpp.
 
 ### Features Added
 

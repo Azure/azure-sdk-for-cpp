@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace Azure { namespace Security { namespace Attestation { namespace _detail {
   /**
