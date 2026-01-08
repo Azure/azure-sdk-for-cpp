@@ -7,6 +7,9 @@ project (azure-storage-common-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_test(azure-storage-common STORAGE_COMMON)
+
 include(GoogleTest)
 
 # Export the test folder for recordings access.
@@ -38,6 +41,9 @@ target_include_directories(azure-storage-common-test PRIVATE test)
 # blobs is required as a client to test the credentials in common
 # only the test binary requires the common and blobs libs
 target_link_libraries(azure-storage-common-test PRIVATE azure-storage-common azure-storage-blobs azure-identity azure-core-test-fw gtest gtest_main gmock)
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-common-test azure-storage-common azure-storage-blobs azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_discover_tests will scan the test from azure-storage-common-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

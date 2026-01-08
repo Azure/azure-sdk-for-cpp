@@ -97,6 +97,9 @@ az_vcpkg_export(
     "azure/storage/files/shares/dll_import_export.hpp"
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-storage-files-shares STORAGE_FILES_SHARES)
+
 az_rtti_setup(
   azure-storage-files-shares
   STORAGE_FILES_SHARES

@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure-core CORE)
+
 set(azure-core-test)
 
 # Create test data for FileUpload test (100K) by writing 100 * 1000 times
@@ -163,6 +165,17 @@ if (MSVC)
 endif()
 target_link_libraries(azure-core-global-context-test PRIVATE azure-core gtest_main)
 
+if(MSVC)
+  if(BUILD_SHARED_LIBS)
+    target_compile_definitions(azure-core-test PRIVATE GTEST_LINKED_AS_SHARED_LIBRARY)
+  endif()
+endif()
+
+     
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-core-test azure-core)
+copy_shared_lib_binaries(azure-core-global-context-test azure-core GTest::gmock GTest::gtest)
+
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-test
@@ -180,6 +193,9 @@ if(BUILD_TRANSPORT_CURL)
     azure-core-libcurl-test
     azure_libcurl_core_main_test.cpp
   )
+if(MSVC AND BUILD_TRANSPORT_CURL)
+  copy_shared_lib_binaries(azure-core-libcurl-test azure-core)
+endif()
 
   create_map_file(azure-core-libcurl-test azure-core-libcurl-test.map)
 
@@ -198,10 +214,11 @@ if(BUILD_TRANSPORT_CURL)
   gtest_discover_tests(azure-core-libcurl-test
         TEST_PREFIX azure-core.
         DISCOVERY_TIMEOUT 600)
-
 endif()
+
 gtest_discover_tests(azure-core-global-context-test
      TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+

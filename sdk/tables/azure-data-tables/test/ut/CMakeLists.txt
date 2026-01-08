@@ -3,6 +3,9 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure-data-tables DATA_TABLES)
+
+
 project (azure-data-tables-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -37,6 +40,9 @@ create_map_file(azure-data-tables-test azure-data-tables-test.map)
 target_include_directories(azure-data-tables-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../storage/azure-storage-common)
 
 target_link_libraries(azure-data-tables-test PRIVATE azure-data-tables azure-identity azure-core-test-fw gtest gtest_main gmock)
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-data-tables-test azure-data-tables azure-storage-common azure-identity azure-core azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_discover_tests will scan the test from azure-data-tables-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

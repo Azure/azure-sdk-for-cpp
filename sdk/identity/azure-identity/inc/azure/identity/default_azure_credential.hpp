@@ -52,8 +52,7 @@ namespace Azure { namespace Identity {
      * @brief Constructs `%DefaultAzureCredential`.
      *
      */
-    explicit DefaultAzureCredential()
-        : DefaultAzureCredential(Core::Credentials::TokenCredentialOptions{}){};
+    explicit DefaultAzureCredential();
 
     /**
      * @brief Constructs `%DefaultAzureCredential`.

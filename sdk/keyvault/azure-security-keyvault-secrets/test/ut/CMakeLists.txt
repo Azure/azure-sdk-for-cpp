@@ -7,6 +7,9 @@ project (azure-security-keyvault-secrets-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_test(azure-security-keyvault-secrets SECURITY_KEYVAULT_SECRETS)
+
 include(GoogleTest)
 
 # Export the test folder for recordings access.
@@ -40,6 +43,9 @@ target_include_directories(
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-security-keyvault-shared/inc>
 )
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-security-keyvault-secrets-test azure-security-keyvault-secrets azure-identity azure-core azure-core-test-fw GTest::gtest)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

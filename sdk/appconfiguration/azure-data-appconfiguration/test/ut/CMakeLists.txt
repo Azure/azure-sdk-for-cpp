@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure-data-appconfiguration DATA_APPCONFIGURATION)
+
 project (azure-data-appconfiguration-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -29,6 +31,9 @@ target_link_libraries(azure-data-appconfiguration-test PRIVATE Azure::azure-data
 if (MSVC)
     target_compile_options(azure-data-appconfiguration-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-data-appconfiguration-test Azure::azure-data-appconfiguration azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
 
 gtest_discover_tests(azure-data-appconfiguration-test 
      TEST_PREFIX azure-data-appconfiguration.

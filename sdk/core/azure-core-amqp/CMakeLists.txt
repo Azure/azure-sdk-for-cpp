@@ -330,7 +330,7 @@ elseif(USE_RUST_AMQP)
 
   if (MSVC)
     message(STATUS "Assuming Windows crypto libraries")
-    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt RuntimeObject)
+    target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt crypt32 RuntimeObject)
   elseif (APPLE)
     message(STATUS "Assuming Security framework on macOS")
     target_link_libraries(azure-core-amqp PRIVATE "-framework Security")

@@ -121,7 +121,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // application finishes.
     std::condition_variable ConditionalVariableForCleanThread;
 
-    AZ_CORE_DLLEXPORT static Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
+    AZ_CORE_DLLEXPORT 
+    #if !defined(azure_BUILDING_TESTS)
+        static 
+    #endif
+        Azure::Core::Http::_detail::CurlConnectionPool g_curlConnectionPool;
 
     bool IsCleanThreadRunning = false;
 

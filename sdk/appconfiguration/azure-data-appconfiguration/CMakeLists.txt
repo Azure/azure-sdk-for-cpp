@@ -85,6 +85,9 @@ az_vcpkg_export(
     "azure/data/appconfiguration/dll_import_export.hpp"
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-data-appconfiguration DATA_APPCONFIGURATION)
+
 az_rtti_setup(
   azure-data-appconfiguration
   DATA_APPCONFIGURATION

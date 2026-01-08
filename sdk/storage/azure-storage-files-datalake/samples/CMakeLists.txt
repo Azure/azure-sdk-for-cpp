@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure_storage-files-datalake STORAGE_FILES_DATALAKE)
+
 if(MSVC)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()

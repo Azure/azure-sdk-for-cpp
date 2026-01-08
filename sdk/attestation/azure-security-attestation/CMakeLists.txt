@@ -94,6 +94,8 @@ az_vcpkg_export(
     ATTESTATION
     "azure/attestation/dll_import_export.hpp"
   )
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-security-attestation ATTESTATION)
 
 az_rtti_setup(
   azure-security-attestation

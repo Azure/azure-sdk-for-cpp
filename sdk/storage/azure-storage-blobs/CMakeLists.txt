@@ -105,6 +105,9 @@ az_vcpkg_export(
     "azure/storage/blobs/dll_import_export.hpp"
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-storage-blobs STORAGE_BLOBS)
+
 az_rtti_setup(
   azure-storage-blobs
   STORAGE_BLOBS

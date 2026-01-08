@@ -32,8 +32,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetKeysResponseContentType const ApplicationVndMicrosoftAppconfigKeysetJson;
-    static GetKeysResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetKeysResponseContentType const
+        ApplicationVndMicrosoftAppconfigKeysetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetKeysResponseContentType const
+        ApplicationProblemJson;
   };
 
   class GetKeyValuesResponseContentType final
@@ -46,8 +48,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetKeyValuesResponseContentType const ApplicationVndMicrosoftAppconfigKvsetJson;
-    static GetKeyValuesResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetKeyValuesResponseContentType const
+        ApplicationVndMicrosoftAppconfigKvsetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetKeyValuesResponseContentType const
+        ApplicationProblemJson;
   };
 
   class KeyValueFields final : public Core::_internal::ExtendableEnumeration<KeyValueFields> {
@@ -59,14 +63,14 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static KeyValueFields const Key;
-    static KeyValueFields const Label;
-    static KeyValueFields const ContentType;
-    static KeyValueFields const Value;
-    static KeyValueFields const LastModified;
-    static KeyValueFields const Tags;
-    static KeyValueFields const Locked;
-    static KeyValueFields const Etag;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Key;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Label;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const ContentType;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Value;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const LastModified;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Tags;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Locked;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static KeyValueFields const Etag;
   };
 
   class PutKeyValueRequestContentType final
@@ -79,12 +83,16 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static PutKeyValueRequestContentType const ApplicationVndMicrosoftAppconfigKvJson;
-    static PutKeyValueRequestContentType const ApplicationVndMicrosoftAppconfigKvsetJson;
-    static PutKeyValueRequestContentType const ApplicationJson;
-    static PutKeyValueRequestContentType const TextJson;
-    static PutKeyValueRequestContentType const ApplicationZeroZeroJson;
-    static PutKeyValueRequestContentType const ApplicationJsonPatchJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const
+        ApplicationVndMicrosoftAppconfigKvJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const
+        ApplicationVndMicrosoftAppconfigKvsetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const ApplicationJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const TextJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const
+        ApplicationZeroZeroJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static PutKeyValueRequestContentType const
+        ApplicationJsonPatchJson;
   };
 
   class SnapshotStatus final : public Core::_internal::ExtendableEnumeration<SnapshotStatus> {
@@ -96,10 +104,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static SnapshotStatus const Provisioning;
-    static SnapshotStatus const Ready;
-    static SnapshotStatus const Archived;
-    static SnapshotStatus const Failed;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotStatus const Provisioning;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotStatus const Ready;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotStatus const Archived;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotStatus const Failed;
   };
 
   class CompositionType final : public Core::_internal::ExtendableEnumeration<CompositionType> {
@@ -111,8 +119,8 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static CompositionType const Key;
-    static CompositionType const KeyLabel;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CompositionType const Key;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CompositionType const KeyLabel;
   };
 
   class GetSnapshotsResponseContentType final
@@ -125,8 +133,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetSnapshotsResponseContentType const ApplicationVndMicrosoftAppconfigSnapshotsetJson;
-    static GetSnapshotsResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetSnapshotsResponseContentType const
+        ApplicationVndMicrosoftAppconfigSnapshotsetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetSnapshotsResponseContentType const
+        ApplicationProblemJson;
   };
 
   class SnapshotFields final : public Core::_internal::ExtendableEnumeration<SnapshotFields> {
@@ -138,17 +148,17 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static SnapshotFields const Name;
-    static SnapshotFields const Status;
-    static SnapshotFields const Filters;
-    static SnapshotFields const CompositionType;
-    static SnapshotFields const Created;
-    static SnapshotFields const Expires;
-    static SnapshotFields const RetentionPeriod;
-    static SnapshotFields const Size;
-    static SnapshotFields const ItemsCount;
-    static SnapshotFields const Tags;
-    static SnapshotFields const Etag;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Name;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Status;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Filters;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const CompositionType;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Created;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Expires;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const RetentionPeriod;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Size;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const ItemsCount;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Tags;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static SnapshotFields const Etag;
   };
 
   class GetSnapshotResponseContentType final
@@ -161,8 +171,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetSnapshotResponseContentType const ApplicationVndMicrosoftAppconfigSnapshotJson;
-    static GetSnapshotResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetSnapshotResponseContentType const
+        ApplicationVndMicrosoftAppconfigSnapshotJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetSnapshotResponseContentType const
+        ApplicationProblemJson;
   };
 
   class OperationState final : public Core::_internal::ExtendableEnumeration<OperationState> {
@@ -174,11 +186,11 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static OperationState const NotStarted;
-    static OperationState const Running;
-    static OperationState const Succeeded;
-    static OperationState const Failed;
-    static OperationState const Canceled;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static OperationState const NotStarted;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static OperationState const Running;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static OperationState const Succeeded;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static OperationState const Failed;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static OperationState const Canceled;
   };
 
   class CreateSnapshotResponseContentType final
@@ -191,8 +203,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static CreateSnapshotResponseContentType const ApplicationVndMicrosoftAppconfigSnapshotJson;
-    static CreateSnapshotResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CreateSnapshotResponseContentType const
+        ApplicationVndMicrosoftAppconfigSnapshotJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CreateSnapshotResponseContentType const
+        ApplicationProblemJson;
   };
 
   class CreateSnapshotRequestContentType final
@@ -205,8 +219,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static CreateSnapshotRequestContentType const ApplicationVndMicrosoftAppconfigSnapshotJson;
-    static CreateSnapshotRequestContentType const ApplicationJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CreateSnapshotRequestContentType const
+        ApplicationVndMicrosoftAppconfigSnapshotJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static CreateSnapshotRequestContentType const
+        ApplicationJson;
   };
 
   class UpdateSnapshotResponseContentType final
@@ -219,8 +235,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static UpdateSnapshotResponseContentType const ApplicationVndMicrosoftAppconfigSnapshotJson;
-    static UpdateSnapshotResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static UpdateSnapshotResponseContentType const
+        ApplicationVndMicrosoftAppconfigSnapshotJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static UpdateSnapshotResponseContentType const
+        ApplicationProblemJson;
   };
 
   class UpdateSnapshotRequestContentType final
@@ -233,8 +251,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static UpdateSnapshotRequestContentType const ApplicationMergePatchJson;
-    static UpdateSnapshotRequestContentType const ApplicationJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static UpdateSnapshotRequestContentType const
+        ApplicationMergePatchJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static UpdateSnapshotRequestContentType const
+        ApplicationJson;
   };
 
   class GetLabelsResponseContentType final
@@ -247,8 +267,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetLabelsResponseContentType const ApplicationVndMicrosoftAppconfigLabelsetJson;
-    static GetLabelsResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetLabelsResponseContentType const
+        ApplicationVndMicrosoftAppconfigLabelsetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetLabelsResponseContentType const
+        ApplicationProblemJson;
   };
 
   class LabelFields final : public Core::_internal::ExtendableEnumeration<LabelFields> {
@@ -257,7 +279,7 @@ namespace Azure { namespace Data { namespace AppConfiguration {
 
     explicit LabelFields(std::string labelFields) : ExtendableEnumeration(std::move(labelFields)) {}
 
-    static LabelFields const Name;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static LabelFields const Name;
   };
 
   class GetRevisionsResponseContentType final
@@ -270,8 +292,10 @@ namespace Azure { namespace Data { namespace AppConfiguration {
     {
     }
 
-    static GetRevisionsResponseContentType const ApplicationVndMicrosoftAppconfigKvsetJson;
-    static GetRevisionsResponseContentType const ApplicationProblemJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetRevisionsResponseContentType const
+        ApplicationVndMicrosoftAppconfigKvsetJson;
+    AZ_DATA_APPCONFIGURATION_DLLEXPORT static GetRevisionsResponseContentType const
+        ApplicationProblemJson;
   };
 
   struct Key final

@@ -7,6 +7,10 @@ project (azure-security-keyvault-certificates-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_test(azure-security-keyvault-certificates SECURITY_KEYVAULT_CERTIFICATES)
+
+
 include(GoogleTest)
 
 # Export the test folder for recordings access.
@@ -36,6 +40,9 @@ target_link_libraries(azure-security-keyvault-certificates-test PRIVATE azure-se
 
 # Adding private headers so we can test the private APIs with no relative paths include.
 target_include_directories (azure-security-keyvault-certificates-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-security-keyvault-certificates-test azure-security-keyvault-certificates azure-security-keyvault-secrets azure-identity azure-core azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

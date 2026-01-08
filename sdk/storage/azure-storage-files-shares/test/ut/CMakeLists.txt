@@ -7,6 +7,9 @@ project (azure-storage-files-shares-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_test(azure-storage-files-shares STORAGE_FILES_SHARES)
+
 include(GoogleTest)
 
 # Export the test folder for recordings access.
@@ -43,6 +46,9 @@ create_map_file(azure-storage-files-shares-test azure-storage-files-shares-test.
 target_include_directories(azure-storage-files-shares-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 
 target_link_libraries(azure-storage-files-shares-test PRIVATE azure-storage-files-shares azure-storage-blobs azure-identity azure-core-test-fw gtest gtest_main gmock)
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-files-shares-test azure-storage-files-shares azure-storage-blobs azure-storage-common azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_discover_tests will scan the test from azure-storage-files-shares-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

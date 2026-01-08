@@ -9,6 +9,9 @@ project (azure-identity-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_test(azure-identity IDENTITY)
+
 include(GoogleTest)
 
 # Export the test folder for recordings access.
@@ -62,6 +65,9 @@ target_include_directories (azure-identity-test PRIVATE $<BUILD_INTERFACE:${CMAK
 
 target_link_libraries(azure-identity-test PRIVATE azure-identity azure-core-test-fw gtest gtest_main gmock)
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-identity-test azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
+
 # gtest_discover_tests will scan the test from azure-identity-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-identity-test
@@ -69,3 +75,4 @@ gtest_discover_tests(azure-identity-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+

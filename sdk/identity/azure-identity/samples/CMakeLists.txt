@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure-identity IDENTITY)
+
 project (azure-identity-samples LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -58,3 +60,8 @@ target_link_libraries(managed_identity_credential_sample PRIVATE azure-identity 
 target_include_directories(managed_identity_credential_sample PRIVATE .)
 target_compile_definitions(managed_identity_credential_sample PRIVATE _azure_BUILDING_SAMPLES)
 create_per_service_target_build_for_sample(identity managed_identity_credential_sample)
+
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(default_azure_credential_sample azure-core azure-identity)
+

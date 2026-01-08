@@ -54,7 +54,7 @@ namespace _detail {
 class DateTime final : public _detail::Clock::time_point {
 
 private:
-  AZ_CORE_DLLEXPORT static DateTime const SystemClockEpoch;
+   static DateTime const SystemClockEpoch;
 
   DateTime(
       int16_t year,
@@ -124,11 +124,7 @@ public:
    * @param systemTime A value of `std::chrono::system_clock::time_point`.
    *
    */
-  DateTime(std::chrono::system_clock::time_point const& systemTime)
-      : DateTime(
-          SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
-  {
-  }
+  DateTime(std::chrono::system_clock::time_point const& systemTime);
 
   /**
    * @brief Convert an instance of #Azure::DateTime to

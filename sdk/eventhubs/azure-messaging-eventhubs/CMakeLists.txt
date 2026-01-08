@@ -140,6 +140,9 @@ az_vcpkg_export(
     azure/messaging/eventhubs/dll_import_export.hpp
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-messaging-eventhubs MESSAGING_EVENTHUBS)
+
 az_rtti_setup(
   azure-messaging-eventhubs
   MESSAGING_EVENTHUBS

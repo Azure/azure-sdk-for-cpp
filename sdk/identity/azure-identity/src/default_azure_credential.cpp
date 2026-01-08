@@ -30,6 +30,11 @@ namespace {
 constexpr auto CredentialSpecifierEnvVarName = "AZURE_TOKEN_CREDENTIALS";
 } // namespace
 
+DefaultAzureCredential::DefaultAzureCredential()
+    : DefaultAzureCredential(Core::Credentials::TokenCredentialOptions{})
+{
+}
+
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
     : DefaultAzureCredential(false, options)
@@ -166,10 +171,9 @@ DefaultAzureCredential::DefaultAzureCredential(
       const auto logMsg = GetCredentialName() + ": '" + CredentialSpecifierEnvVarName
           + "' environment variable is "
           + (envVarValue.empty() ? "not set" : ("set to '" + envVarValue + "'"))
-          + ((devCredCount > 0)
-                 ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
-                    + "be included in the credential chain.")
-                 : ".");
+          + ((devCredCount > 0) ? (", therefore " + devCredNames + " will " + (isProd ? "NOT " : "")
+                                   + "be included in the credential chain.")
+                                : ".");
 
       if (isProd)
       {

@@ -3,6 +3,8 @@
 
 cmake_minimum_required (VERSION 3.13)
 
+az_build_shared_lib_test(azure-storage-blobs STORAGE_BLOBS)
+
 project (azure-storage-blobs-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -50,6 +52,9 @@ create_map_file(azure-storage-blobs-test azure-storage-blobs-test.map)
 target_include_directories(azure-storage-blobs-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 
 target_link_libraries(azure-storage-blobs-test PRIVATE azure-identity azure-storage-blobs azure-storage-files-shares azure-core-test-fw gtest gtest_main gmock)
+
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-blobs-test azure-core azure-identity azure-storage-blobs azure-storage-common azure-storage-files-shares azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_discover_tests will scan the test from azure-storage-blobs-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

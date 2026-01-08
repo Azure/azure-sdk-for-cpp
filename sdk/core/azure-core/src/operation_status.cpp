@@ -5,10 +5,10 @@
 
 namespace Azure { namespace Core {
 
-  const OperationStatus OperationStatus::NotStarted("NotStarted");
-  const OperationStatus OperationStatus::Running{"Running"};
-  const OperationStatus OperationStatus::Succeeded{"Succeeded"};
-  const OperationStatus OperationStatus::Failed{"Failed"};
-  const OperationStatus OperationStatus::Cancelled{"Cancelled"};
+  AZ_CORE_DLLEXPORT const OperationStatus OperationStatus::NotStarted("NotStarted");
+  AZ_CORE_DLLEXPORT const OperationStatus OperationStatus::Running{"Running"};
+  AZ_CORE_DLLEXPORT const OperationStatus OperationStatus::Succeeded{"Succeeded"};
+  AZ_CORE_DLLEXPORT const OperationStatus OperationStatus::Failed{"Failed"};
+  AZ_CORE_DLLEXPORT const OperationStatus OperationStatus::Cancelled{"Cancelled"};
 
 }} // namespace Azure::Core

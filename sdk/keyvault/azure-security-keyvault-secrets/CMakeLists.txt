@@ -158,6 +158,10 @@ az_vcpkg_export(
     azure/keyvault/secrets/dll_import_export.hpp
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-security-keyvault-secrets SECURITY_KEYVAULT_SECRETS)
+
+
 az_rtti_setup(
   azure-security-keyvault-secrets
   SECURITY_KEYVAULT_SECRETS

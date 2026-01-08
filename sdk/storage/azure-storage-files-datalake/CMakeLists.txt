@@ -101,6 +101,9 @@ az_vcpkg_export(
     "azure/storage/files/datalake/dll_import_export.hpp"
   )
 
+# If building a shared library, decorate the source symbols properly.
+az_build_shared_lib_src(azure-storage-files-datalake STORAGE_FILES_DATALAKE)
+
 az_rtti_setup(
   azure-storage-files-datalake
   STORAGE_FILES_DATALAKE
