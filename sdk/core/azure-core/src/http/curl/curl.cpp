@@ -624,6 +624,9 @@ CURLcode CurlConnection::SendBuffer(
     // expected to return CURLE_AGAIN (since socket is ready), so, a chuck of data will be uploaded
     // and result will be CURLE_OK which breaks the loop. Also, getting other than CURLE_OK or
     // CURLE_AGAIN throws.
+    // NOTE: curl_easy_send() may return CURLE_OK with sentBytesPerRequest == 0 on SSL sockets
+    // when the socket is not ready for writing. In this case, we add a small delay to prevent
+    // busy-wait loops and allow the scheduler to release the current quantum.
     context.ThrowIfCancelled();
     for (CURLcode sendResult = CURLE_AGAIN; sendResult == CURLE_AGAIN;)
     {
@@ -637,6 +640,13 @@ CURLcode CurlConnection::SendBuffer(
       switch (sendResult)
       {
         case CURLE_OK: {
+          if (sentBytesPerRequest == 0)
+          {
+            // When curl_easy_send returns CURLE_OK but sends 0 bytes (which can happen on SSL
+            // sockets), add a small delay to prevent rapid retries that keep the CPU busy
+            // without making progress. This allows the scheduler to run other threads.
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+          }
           sentBytesTotal += sentBytesPerRequest;
           break;
         }
