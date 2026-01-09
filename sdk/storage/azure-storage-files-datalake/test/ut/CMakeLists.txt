@@ -44,6 +44,9 @@ create_map_file(azure-storage-files-datalake-test azure-storage-files-datalake-t
 target_include_directories(azure-storage-files-datalake-test PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common)
 
 target_link_libraries(azure-storage-files-datalake-test PRIVATE azure-storage-files-datalake azure-identity azure-core-test-fw gtest gtest_main gmock)
+     
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-files-datalake-test azure-storage-files-datalake azure-storage-common azure-storage-blobs azure-identity azure-core azure-core-test-fw GTest::gtest GTest::gmock)
 
 # gtest_discover_tests will scan the test from azure-storage-files-datalake-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.

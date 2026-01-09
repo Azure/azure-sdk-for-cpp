@@ -39,6 +39,9 @@ target_include_directories(azure-storage-queues-test PRIVATE ${CMAKE_CURRENT_SOU
 
 target_link_libraries(azure-storage-queues-test PRIVATE azure-storage-queues azure-storage-blobs azure-identity azure-core-test-fw gtest gtest_main gmock)
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-queues-test azure-storage-queues azure-storage-blobs azure-storage-common azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
+
 # gtest_discover_tests will scan the test from azure-storage-queues-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-storage-queues-test

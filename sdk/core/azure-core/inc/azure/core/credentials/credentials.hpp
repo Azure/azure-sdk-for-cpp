@@ -80,7 +80,8 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      * @throw Azure::Core::Credentials::AuthenticationException Authentication error occurred.
      */
-    virtual AccessToken GetToken(
+
+    AZ_CORE_DLLEXPORT virtual AccessToken GetToken(
         TokenRequestContext const& tokenRequestContext,
         Context const& context) const = 0;
 
@@ -94,7 +95,8 @@ namespace Azure { namespace Core { namespace Credentials {
      * @brief Destructs `%TokenCredential`.
      *
      */
-    virtual ~TokenCredential() = default;
+
+    AZ_CORE_DLLEXPORT virtual ~TokenCredential() = default;
 
   protected:
     /**

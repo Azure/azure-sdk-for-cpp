@@ -44,6 +44,9 @@ target_include_directories(azure-storage-files-shares-test PRIVATE ${CMAKE_CURRE
 
 target_link_libraries(azure-storage-files-shares-test PRIVATE azure-storage-files-shares azure-storage-blobs azure-identity azure-core-test-fw gtest gtest_main gmock)
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-storage-files-shares-test azure-storage-files-shares azure-storage-blobs azure-storage-common azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
+
 # gtest_discover_tests will scan the test from azure-storage-files-shares-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-storage-files-shares-test

@@ -38,6 +38,9 @@ target_link_libraries(azure-security-keyvault-administration-test PRIVATE azure-
 # Adding private headers so we can test the private APIs with no relative paths include.
 target_include_directories (azure-security-keyvault-administration-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-security-keyvault-administration-test azure-security-keyvault-administration azure-identity azure-core azure-core-test-fw GTest::gtest)
+
 # gtest_add_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-security-keyvault-administration-test

@@ -160,6 +160,23 @@
       }
     },
     {
+      "name": "x64-windows-dynamic",
+      "displayName": "Windows x64 Dynamic",
+      "description": "Windows Default, x64 architecture.",
+      "inherits": "windows-default",
+      "hidden": true,
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "DISABLE_AZURE_CORE_OPENTELEMETRY": true,
+        "DISABLE_AMQP": true,
+        "BUILD_SHARED_LIBS": true
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
       "name": "x86-clang-static",
       "displayName": "Windows x86 clang Static",
       "description": "Windows Default, clang, x86 architecture.",
@@ -558,6 +575,31 @@
       "inherits": [
         "x64-msvc-static",
         "release-build",
+        "enable-tests",
+        "enable-perf",
+        "enable-samples",
+        "curl-transport",
+        "winhttp-transport"
+      ]
+    },
+    {
+      "name": "x64-dll-debug",
+      "displayName": "x64 Debug dynamic",
+      "inherits": [
+        "x64-windows-dynamic",
+        "debug-build",
+        "enable-samples",
+        "enable-tests",
+        "curl-transport",
+        "winhttp-transport"
+      ]
+    },
+    {
+      "name": "x64-dll-debug-perftests",
+      "displayName": "x64 Debug dynamic With Perf Tests and samples",
+      "inherits": [
+        "x64-windows-dynamic",
+        "debug-build",
         "enable-tests",
         "enable-perf",
         "enable-samples",
