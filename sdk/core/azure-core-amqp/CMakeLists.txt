@@ -331,6 +331,12 @@ elseif(USE_RUST_AMQP)
   if (MSVC)
     message(STATUS "Assuming Windows crypto libraries")
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt crypt32 RuntimeObject)
+
+    if (BUILD_SHARED_LIBS)
+      # When building as a DLL, we need to link against these additional libraries.
+      target_link_options(azure-core-amqp PRIVATE /verbose /NODEFAULTLIB:library)
+      target_link_libraries(azure-core-amqp PRIVATE MSVCRTD)
+    endif()
   elseif (APPLE)
     message(STATUS "Assuming Security framework on macOS")
     target_link_libraries(azure-core-amqp PRIVATE "-framework Security")
@@ -352,6 +358,8 @@ az_vcpkg_export(
   CORE_AMQP
   azure/core/amqp/dll_import_export.hpp
 )
+
+az_build_shared_lib_src(azure-core-amqp CORE_AMQP)
 
 az_rtti_setup(
   azure-core-amqp

@@ -186,7 +186,6 @@ function(copy_shared_lib_binaries targetName)
       add_custom_command(TARGET ${targetName} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Copying dependency: ${depTarget}"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${depTarget}> $<TARGET_FILE_DIR:${targetName}>
-        COMMAND ${CMAKE_COMMAND} -E echo "Copying DLL and PDB files from ${depTarget} directory"
         COMMAND ${CMAKE_COMMAND} 
           -DSOURCE_DIR=$<TARGET_FILE_DIR:${depTarget}>
           -DDEST_DIR=$<TARGET_FILE_DIR:${targetName}>
