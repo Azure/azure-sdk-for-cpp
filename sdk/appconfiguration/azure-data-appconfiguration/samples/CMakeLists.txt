@@ -3,8 +3,6 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-az_build_shared_lib_test(azure-data-appconfiguration DATA_APPCONFIGURATION)
-
 project (app_config_sample LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

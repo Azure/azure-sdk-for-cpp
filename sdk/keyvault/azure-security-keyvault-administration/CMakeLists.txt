@@ -120,8 +120,6 @@ az_vcpkg_export(
     SECURITY_KEYVAULT_ADMINISTRATION
     azure/keyvault/administration/dll_import_export.hpp
   )
-# If building a shared library, decorate the source symbols properly.
-az_build_shared_lib_src(azure-security-keyvault-administration SECURITY_KEYVAULT_ADMINISTRATION)
 
 az_rtti_setup(
   azure-security-keyvault-administration

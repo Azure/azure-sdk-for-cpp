@@ -3,8 +3,6 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-az_build_shared_lib_test(azure-core CORE)
-
 set(azure-core-test)
 
 # Create test data for FileUpload test (100K) by writing 100 * 1000 times

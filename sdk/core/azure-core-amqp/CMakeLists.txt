@@ -359,8 +359,6 @@ az_vcpkg_export(
   azure/core/amqp/dll_import_export.hpp
 )
 
-az_build_shared_lib_src(azure-core-amqp CORE_AMQP)
-
 az_rtti_setup(
   azure-core-amqp
   CORE_AMQP

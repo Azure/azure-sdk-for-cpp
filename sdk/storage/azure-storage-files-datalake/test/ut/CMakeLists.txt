@@ -7,8 +7,6 @@ project (azure-storage-files-datalake-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-az_build_shared_lib_test(azure-storage-files-datalake STORAGE_FILES_DATALAKE)
-
 include(GoogleTest)
 
 # Export the test folder for recordings access.

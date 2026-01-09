@@ -87,9 +87,6 @@ az_vcpkg_export(
     "azure/template/dll_import_export.hpp"
   )
 
-# If building a shared library, decorate the source symbols properly.
-az_build_shared_lib_src(azure-template TEMPLATE)
-
 az_rtti_setup(
   azure-template
   TEMPLATE
