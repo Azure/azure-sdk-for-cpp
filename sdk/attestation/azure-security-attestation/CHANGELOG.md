@@ -14,7 +14,7 @@
 
 ### Acknowledgments
 
-Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+Thank you to our developer community members who helped to make Azure Security Attestation better with their contributions to this release:
 
 - hoyhoy _([GitHub](https://github.com/hoyhoy))_
 
