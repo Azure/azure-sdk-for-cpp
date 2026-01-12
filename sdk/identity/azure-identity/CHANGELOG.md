@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed issue #[6897](https://github.com/Azure/azure-sdk-for-cpp/issues/6897): `DefaultAzureCredential` access violates if cast to a `TokenCredential` reference.
+
 ### Other Changes
 
 ## 1.13.2 (2025-10-02)

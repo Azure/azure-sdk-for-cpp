@@ -480,6 +480,12 @@ DateTime::DateTime(
       roundFracSecUp);
 }
 
+DateTime::DateTime(std::chrono::system_clock::time_point const& systemTime)
+    : DateTime(
+        SystemClockEpoch + std::chrono::duration_cast<duration>(systemTime.time_since_epoch()))
+{
+}
+
 DateTime::operator std::chrono::system_clock::time_point() const
 {
   static DateTime const SystemClockMin((std::chrono::system_clock::time_point::min)());

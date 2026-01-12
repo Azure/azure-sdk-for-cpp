@@ -28,6 +28,9 @@ if (MSVC)
     target_compile_options(azure-template-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-template-test Azure::azure-template azure-core azure-core-test-fw GTest::gtest)
+
 gtest_discover_tests(azure-template-test 
      TEST_PREFIX azure-template.
      DISCOVERY_TIMEOUT 600)

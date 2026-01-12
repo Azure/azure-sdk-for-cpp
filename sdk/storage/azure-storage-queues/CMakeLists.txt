@@ -89,7 +89,7 @@ az_vcpkg_export(
     STORAGE_QUEUES
     "azure/storage/queues/dll_import_export.hpp"
   )
-  
+ 
 az_rtti_setup(
   azure-storage-queues
   STORAGE_QUEUES

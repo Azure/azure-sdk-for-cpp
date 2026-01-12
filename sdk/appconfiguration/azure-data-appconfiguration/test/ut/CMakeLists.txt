@@ -30,6 +30,9 @@ if (MSVC)
     target_compile_options(azure-data-appconfiguration-test PUBLIC /wd6326 /wd26495 /wd26812)
 endif()
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-data-appconfiguration-test Azure::azure-data-appconfiguration azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
+
 gtest_discover_tests(azure-data-appconfiguration-test 
      TEST_PREFIX azure-data-appconfiguration.
      DISCOVERY_TIMEOUT 600)
