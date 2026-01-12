@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# cspell: words rustup ncrypt secur
+# cspell: words rustup ncrypt secur msvcrtd
 
 # setting CMAKE_TOOLCHAIN_FILE must happen before creating the project
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
@@ -331,6 +331,12 @@ elseif(USE_RUST_AMQP)
   if (MSVC)
     message(STATUS "Assuming Windows crypto libraries")
     target_link_libraries(azure-core-amqp PRIVATE Secur32 ncrypt crypt32 RuntimeObject)
+
+    if (BUILD_SHARED_LIBS)
+      # When building as a DLL, we need to link against these additional libraries.
+      target_link_options(azure-core-amqp PRIVATE /verbose /NODEFAULTLIB:library)
+      target_link_libraries(azure-core-amqp PRIVATE MSVCRTD)
+    endif()
   elseif (APPLE)
     message(STATUS "Assuming Security framework on macOS")
     target_link_libraries(azure-core-amqp PRIVATE "-framework Security")

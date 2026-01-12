@@ -3,8 +3,6 @@
 
 cmake_minimum_required (VERSION 3.13)
 
-az_build_shared_lib_test(azure-core CORE)
-
 set(azure-core-test)
 
 # Create test data for FileUpload test (100K) by writing 100 * 1000 times
@@ -209,6 +207,7 @@ endif()
   target_include_directories (azure-core-libcurl-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
   target_link_libraries(azure-core-libcurl-test PRIVATE azure-core gtest gmock)
+  copy_shared_lib_binaries(azure-core-libcurl-test azure-core GTest::gmock GTest::gtest)
 
   # Use the same prefix to run this test
   gtest_discover_tests(azure-core-libcurl-test

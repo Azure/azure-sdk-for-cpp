@@ -54,7 +54,7 @@ namespace _detail {
 class DateTime final : public _detail::Clock::time_point {
 
 private:
-   static DateTime const SystemClockEpoch;
+  static DateTime const SystemClockEpoch;
 
   DateTime(
       int16_t year,

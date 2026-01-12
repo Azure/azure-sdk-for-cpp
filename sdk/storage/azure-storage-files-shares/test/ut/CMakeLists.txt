@@ -7,9 +7,6 @@ project (azure-storage-files-shares-test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# If building a shared library, decorate the source symbols properly.
-az_build_shared_lib_test(azure-storage-files-shares STORAGE_FILES_SHARES)
-
 include(GoogleTest)
 
 # Export the test folder for recordings access.

@@ -113,6 +113,7 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   # If building a Windows DLL, patch the dll_import_export.hpp
   if(WIN32 AND BUILD_SHARED_LIBS)
     target_compile_definitions(${targetName} PUBLIC AZ_${macroNamePart}_DLL)
+    target_compile_definitions(${targetName} PRIVATE AZ_${macroNamePart}_BEING_BUILT)
 
     set(AZ_${macroNamePart}_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
     configure_file(
@@ -169,15 +170,6 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   export(PACKAGE "${targetName}-cpp")
 endmacro()
 
-# Macro to help set up the proper compile definitions when building the source for shared libraries.
-macro(az_build_shared_lib_src targetName macroNamePart)
-    add_compile_definitions(AZ_${macroNamePart}_BEING_BUILT)
-endmacro()
-
-macro(az_build_shared_lib_test targetName macroNamePart)
-    remove_definitions(-DAZ_${macroNamePart}_BEING_BUILT)
-endmacro()
-
 function(copy_shared_lib_binaries targetName)
   set(targets ${ARGN})
   if(WIN32 AND BUILD_SHARED_LIBS)
@@ -186,7 +178,6 @@ function(copy_shared_lib_binaries targetName)
       add_custom_command(TARGET ${targetName} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "Copying dependency: ${depTarget}"
         COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${depTarget}> $<TARGET_FILE_DIR:${targetName}>
-        COMMAND ${CMAKE_COMMAND} -E echo "Copying DLL and PDB files from ${depTarget} directory"
         COMMAND ${CMAKE_COMMAND} 
           -DSOURCE_DIR=$<TARGET_FILE_DIR:${depTarget}>
           -DDEST_DIR=$<TARGET_FILE_DIR:${targetName}>

@@ -7,8 +7,6 @@ if(MSVC)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
 
-az_build_shared_lib_test(azure-storage-blobs STORAGE_BLOBS)
-
 add_executable(blob-getting-started blob_getting_started.cpp)
 target_link_libraries(blob-getting-started PRIVATE azure-storage-blobs get-env-helper)
 target_compile_definitions(blob-getting-started PRIVATE _azure_BUILDING_SAMPLES)

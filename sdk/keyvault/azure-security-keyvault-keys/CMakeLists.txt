@@ -184,9 +184,6 @@ az_vcpkg_export(
     "azure/keyvault/keys/dll_import_export.hpp"
   )
 
-# If building a shared library, decorate the source symbols properly.
-az_build_shared_lib_src(azure-security-keyvault-keys SECURITY_KEYVAULT_KEYS)
-
 az_rtti_setup(
   azure-security-keyvault-keys
   SECURITY_KEYVAULT_KEYS

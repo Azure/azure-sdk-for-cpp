@@ -1,8 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-az_build_shared_lib_test(azure-core CORE)
-
 # build information for test projects
 if(BUILD_TESTING)
 
