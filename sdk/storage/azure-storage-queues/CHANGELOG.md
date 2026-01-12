@@ -1,5 +1,15 @@
 # Release History
 
+## 12.7.0-beta.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.6.0 (2026-01-07)
 
 ### Features Added
