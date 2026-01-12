@@ -1,7 +1,8 @@
 # Release History
 
 ## 1.2.0-beta.1 (Unreleased)
-- Fix for GCC 15.2 undeclared uint8_t error in opensslcrypto.cpp.
+
+- Fix for GCC 15.2 undeclared `uint8_t` error in `opensslcrypto.cpp`. (A community contribution, courtesy of _[hoyhoy](https://github.com/hoyhoy)_)
 
 ### Features Added
 
@@ -10,6 +11,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- hoyhoy _([GitHub](https://github.com/hoyhoy))_
 
 ## 1.1.0 (2023-02-07)
 
