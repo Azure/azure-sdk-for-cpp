@@ -2,8 +2,6 @@
 
 ## 1.2.0-beta.1 (Unreleased)
 
-- Fix for GCC 15.2 undeclared `uint8_t` error in `opensslcrypto.cpp`. (A community contribution, courtesy of _[hoyhoy](https://github.com/hoyhoy)_)
-
 ### Features Added
 
 ### Breaking Changes
@@ -11,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+- Fix for GCC 15.2 undeclared `uint8_t` error in `opensslcrypto.cpp`. (A community contribution, courtesy of _[hoyhoy](https://github.com/hoyhoy)_)
 
 ### Acknowledgments
 
