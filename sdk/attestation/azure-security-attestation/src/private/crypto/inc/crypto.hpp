@@ -48,10 +48,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
        * keys.
        *
        * @param bufferToSign The buffer to be signed.
-       * @return std::vector<std::uint8_t> Returns the signature of that buffer, signed with the private
-       * key.
+       * @return std::vector<std::uint8_t> Returns the signature of that buffer, signed with the
+       * private key.
        */
-      virtual std::vector<std::uint8_t> SignBuffer(std::vector<std::uint8_t> const& bufferToSign) const = 0;
+      virtual std::vector<std::uint8_t> SignBuffer(
+          std::vector<std::uint8_t> const& bufferToSign) const = 0;
       /**
        * @brief Exports the current asymmetric key as a private key (only valid for private
        * asymmetric keys)
