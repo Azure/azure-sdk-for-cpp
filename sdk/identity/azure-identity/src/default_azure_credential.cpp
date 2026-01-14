@@ -30,6 +30,11 @@ namespace {
 constexpr auto CredentialSpecifierEnvVarName = "AZURE_TOKEN_CREDENTIALS";
 } // namespace
 
+DefaultAzureCredential::DefaultAzureCredential()
+    : DefaultAzureCredential(Core::Credentials::TokenCredentialOptions{})
+{
+}
+
 DefaultAzureCredential::DefaultAzureCredential(
     Core::Credentials::TokenCredentialOptions const& options)
     : DefaultAzureCredential(false, options)

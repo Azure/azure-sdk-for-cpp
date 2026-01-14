@@ -21,13 +21,13 @@ char const Http::_internal::HttpShared::Accept[] = "accept";
 char const Http::_internal::HttpShared::MsRequestId[] = "x-ms-request-id";
 char const Http::_internal::HttpShared::MsClientRequestId[] = "x-ms-client-request-id";
 
-const HttpMethod HttpMethod::Get("GET");
-const HttpMethod HttpMethod::Head("HEAD");
-const HttpMethod HttpMethod::Post("POST");
-const HttpMethod HttpMethod::Put("PUT");
-const HttpMethod HttpMethod::Delete("DELETE");
-const HttpMethod HttpMethod::Patch("PATCH");
-const HttpMethod HttpMethod::Options("OPTIONS");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Get("GET");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Head("HEAD");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Post("POST");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Put("PUT");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Delete("DELETE");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Patch("PATCH");
+AZ_CORE_DLLEXPORT const HttpMethod HttpMethod::Options("OPTIONS");
 
 namespace {
 bool IsInvalidHeaderNameChar(char c)

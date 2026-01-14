@@ -62,6 +62,9 @@ target_include_directories (azure-identity-test PRIVATE $<BUILD_INTERFACE:${CMAK
 
 target_link_libraries(azure-identity-test PRIVATE azure-identity azure-core-test-fw gtest gtest_main gmock)
 
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-identity-test azure-core azure-identity azure-core-test-fw GTest::gtest GTest::gmock)
+
 # gtest_discover_tests will scan the test from azure-identity-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-identity-test
@@ -69,3 +72,4 @@ gtest_discover_tests(azure-identity-test
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+
