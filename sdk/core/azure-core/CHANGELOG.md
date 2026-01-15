@@ -1,16 +1,10 @@
 # Release History
 
-## 1.17.0-beta.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.16.2 (2026-01-15)
 
 ### Bugs Fixed
 
 - [[#6817]](https://github.com/Azure/azure-sdk-for-cpp/issues/6817) Fix CPU spinning when curl_easy_send returns 0 bytes on SSL socket writes. (A community contribution, courtesy of _[harshitkr12](https://github.com/harshitkr12)_)
-
-### Other Changes
 
 ### Acknowledgments
 
