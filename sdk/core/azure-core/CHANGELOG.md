@@ -8,8 +8,6 @@
 
 ### Bugs Fixed
 
-### Bugs Fixed
-
 - [[#6817]] Fix CPU spinning when curl_easy_send returns 0 bytes on SSL socket writes. (A community contribution, courtesy of _[sushshring](https://github.com/harshitkr12)_)
 
 ### Other Changes
