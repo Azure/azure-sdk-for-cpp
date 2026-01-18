@@ -14,7 +14,7 @@
 
 ### Bugs Fixed
 
-- [[#6817]](https://github.com/Azure/azure-sdk-for-cpp/issues/6817) Fix CPU spinning when curl_easy_send returns 0 bytes on SSL socket writes. (A community contribution, courtesy of _[harshitkr12](https://github.com/harshitkr12)_)
+- [[#6817]](https://github.com/Azure/azure-sdk-for-cpp/issues/6817) Fix CPU spinning when `curl_easy_send` returns 0 bytes on SSL socket writes. (A community contribution, courtesy of _[harshitkr12](https://github.com/harshitkr12)_)
 
 ### Acknowledgments
 
