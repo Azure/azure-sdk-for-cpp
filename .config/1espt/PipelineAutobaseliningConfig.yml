@@ -43,7 +43,7 @@ pipelines:
         credscan:
           lastModifiedDate: 2025-01-28
         binskim:
-          lastModifiedDate: 2025-02-25
+          lastModifiedDate: 2026-01-23
   3858:
     retail:
       binary:
