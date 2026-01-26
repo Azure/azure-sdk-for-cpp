@@ -207,10 +207,6 @@ jobs:
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             TestPipeline: ${{ parameters.TestPipeline }}
 
-      - pwsh: |
-          Write-Host "##vso[task.setvariable variable=DOTNET_ROLL_FORWARD]Major"
-        displayName: Set DOTNET_ROLL_FORWARD to Major globally
-
       - template: /eng/pipelines/templates/steps/cmake-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
