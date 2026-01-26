@@ -87,8 +87,6 @@ steps:
       displayName: "Run the testproxy - linux/mac"
       condition: and(succeeded(), ne(variables['Agent.OS'],'Windows_NT'), ${{ parameters.condition }})
       workingDirectory: "${{ parameters.rootFolder }}"
-      env:
-        DOTNET_ROLL_FORWARD: 'Major'
 
     - pwsh: |
         for ($i = 0; $i -lt 10; $i++) {
