@@ -923,6 +923,108 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlobContainerClientTest, SourceCustomerProvidedKey_LIVEONLY_)
+  {
+
+    auto getRandomCustomerProvidedKey = [&]() {
+      Blobs::EncryptionKey key;
+      std::vector<uint8_t> aes256Key = RandomBuffer(32);
+      key.Key = Azure::Core::Convert::Base64Encode(aes256Key);
+      key.KeyHash = Azure::Core::Cryptography::_internal::Sha256Hash().Final(
+          aes256Key.data(), aes256Key.size());
+      key.Algorithm = Blobs::Models::EncryptionAlgorithmType::Aes256;
+      return key;
+    };
+    auto redactedKeyHash = Core::Convert::Base64Decode("REDACTED");
+    auto customerProvidedKey = getRandomCustomerProvidedKey();
+
+    Blobs::BlobClientOptions options;
+    options.CustomerProvidedKey = customerProvidedKey;
+    auto containerClientWithkey = GetBlobContainerClientForTest(m_containerName, options);
+
+    std::vector<uint8_t> blobContent(512);
+    Azure::Core::IO::MemoryBodyStream bodyStream(blobContent.data(), blobContent.size());
+    auto copySourceBlob = containerClientWithkey.GetBlockBlobClient(RandomString());
+    copySourceBlob.UploadFrom(blobContent.data(), blobContent.size());
+
+    {
+      std::string blockBlobName = RandomString();
+      auto blockBlob = containerClientWithkey.GetBlockBlobClient(blockBlobName);
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
+      std::string blockId1 = Base64EncodeText("1");
+      std::string blockId2 = Base64EncodeText("2");
+      bodyStream.Rewind();
+      Blobs::UploadBlockBlobFromUriOptions uploadBlockFromUriOptions;
+      uploadBlockFromUriOptions.SourceCustomerProvidedKey = customerProvidedKey;
+      EXPECT_NO_THROW(
+          blockBlob.UploadFromUri(copySourceBlob.GetUrl() + GetSas(), uploadBlockFromUriOptions));
+    }
+
+    {
+      std::string blockBlobName = RandomString();
+      auto blockBlob = containerClientWithkey.GetBlockBlobClient(blockBlobName);
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(blockBlob.Upload(bodyStream));
+      std::string blockId1 = Base64EncodeText("1");
+      std::string blockId2 = Base64EncodeText("2");
+      bodyStream.Rewind();
+      Blobs::StageBlockFromUriOptions stageBlockFromUriOptions;
+      stageBlockFromUriOptions.SourceCustomerProvidedKey = customerProvidedKey;
+      EXPECT_NO_THROW(blockBlob.StageBlockFromUri(
+          blockId1, copySourceBlob.GetUrl() + GetSas(), stageBlockFromUriOptions));
+      EXPECT_NO_THROW(blockBlob.StageBlockFromUri(
+          blockId2, copySourceBlob.GetUrl() + GetSas(), stageBlockFromUriOptions));
+      EXPECT_NO_THROW(blockBlob.CommitBlockList({blockId1, blockId2}));
+    }
+
+    {
+      std::string appendBlobName = RandomString();
+      auto appendBlob = containerClientWithkey.GetAppendBlobClient(appendBlobName);
+      auto blobContentInfo = appendBlob.Create().Value;
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
+      EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
+      EXPECT_TRUE(
+          blobContentInfo.EncryptionKeySha256.Value() == options.CustomerProvidedKey.Value().KeyHash
+          || blobContentInfo.EncryptionKeySha256.Value() == redactedKeyHash);
+
+      bodyStream.Rewind();
+      Blobs::AppendBlockFromUriOptions appendBlockFromUriOptions;
+      appendBlockFromUriOptions.SourceCustomerProvidedKey = customerProvidedKey;
+      EXPECT_NO_THROW(appendBlob.AppendBlockFromUri(
+          copySourceBlob.GetUrl() + GetSas(), appendBlockFromUriOptions));
+      EXPECT_NO_THROW(appendBlob.Download());
+      EXPECT_NO_THROW(appendBlob.GetProperties());
+      auto setMetadataRes = appendBlob.SetMetadata({});
+      EXPECT_TRUE(setMetadataRes.Value.IsServerEncrypted);
+      ASSERT_TRUE(setMetadataRes.Value.EncryptionKeySha256.HasValue());
+      EXPECT_TRUE(
+          setMetadataRes.Value.EncryptionKeySha256.Value()
+              == options.CustomerProvidedKey.Value().KeyHash
+          || setMetadataRes.Value.EncryptionKeySha256.Value() == redactedKeyHash);
+    }
+
+    {
+      std::string pageBlobName = RandomString();
+      auto pageBlob = containerClientWithkey.GetPageBlobClient(pageBlobName);
+      auto blobContentInfo = pageBlob.Create(0).Value;
+      EXPECT_TRUE(blobContentInfo.IsServerEncrypted);
+      EXPECT_TRUE(blobContentInfo.EncryptionKeySha256.HasValue());
+      EXPECT_TRUE(
+          blobContentInfo.EncryptionKeySha256.Value() == options.CustomerProvidedKey.Value().KeyHash
+          || blobContentInfo.EncryptionKeySha256.Value() == redactedKeyHash);
+      bodyStream.Rewind();
+      EXPECT_NO_THROW(pageBlob.Resize(blobContent.size()));
+      Blobs::UploadPagesFromUriOptions uploadPagesFromUriOptions;
+      uploadPagesFromUriOptions.SourceCustomerProvidedKey = customerProvidedKey;
+      EXPECT_NO_THROW(pageBlob.UploadPagesFromUri(
+          0,
+          copySourceBlob.GetUrl() + GetSas(),
+          {0, static_cast<int64_t>(blobContent.size())},
+          uploadPagesFromUriOptions));
+    }
+  }
+
   TEST_F(BlobContainerClientTest, AccessConditionLastModifiedTime)
   {
     auto containerClient = *m_blobContainerClient;
