@@ -5,3 +5,10 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: weekly
+    exclude-paths:
+      - "eng/common/tsp-client/*"
+      - "eng/common/spelling/*"

@@ -57,10 +57,19 @@ echo "Step 4: Checking for NPM ecosystem configuration..."
 NPM_COUNT=$(docker run --rm -v "$CONFIG_FILE:/config.yml:ro" mikefarah/yq:latest eval '.updates[] | select(.package-ecosystem == "npm") | .package-ecosystem' /config.yml 2>/dev/null | wc -l)
 
 if [ "$NPM_COUNT" -eq 0 ]; then
-    echo "✓ NPM ecosystem is NOT configured (expected - no NPM packages outside eng/common/)"
+    echo "ℹ NPM ecosystem is NOT configured"
+    NPM_CONFIGURED=false
 else
-    echo "✗ NPM ecosystem is still configured (will process eng/common/ packages)"
-    echo "  Found $NPM_COUNT NPM ecosystem configuration(s)"
+    echo "✓ NPM ecosystem is configured"
+    echo "  Checking exclude-paths..."
+    EXCLUDE_PATHS=$(docker run --rm -v "$CONFIG_FILE:/config.yml:ro" mikefarah/yq:latest eval '.updates[] | select(.package-ecosystem == "npm") | .exclude-paths[]' /config.yml 2>/dev/null)
+    if [ -n "$EXCLUDE_PATHS" ]; then
+        echo "  Exclude paths configured:"
+        echo "$EXCLUDE_PATHS" | sed 's/^/    - /'
+    else
+        echo "  ⚠ Warning: No exclude-paths configured"
+    fi
+    NPM_CONFIGURED=true
 fi
 echo ""
 
@@ -89,40 +98,60 @@ echo "Step 7: NPM packages outside eng/common/ (should be tracked by Dependabot)
 TRACKED_NPM=$(find "$REPO_DIR" -name "package.json" -type f ! -path "*/node_modules/*" ! -path "*/eng/common/*" 2>/dev/null | sort)
 if [ -z "$TRACKED_NPM" ]; then
     echo "  No NPM packages found outside eng/common/"
-    echo "  ✓ This validates removing NPM ecosystem from dependabot.yml"
+    if [ "$NPM_CONFIGURED" = true ]; then
+        echo "  ℹ NPM ecosystem is configured for future packages or security updates"
+    fi
 else
     echo "$TRACKED_NPM" | sed 's|'"$REPO_DIR"'|  .|g'
-    echo "  ⚠ Warning: These packages will NOT be tracked without NPM ecosystem"
+    if [ "$NPM_CONFIGURED" = false ]; then
+        echo "  ⚠ Warning: These packages will NOT be tracked without NPM ecosystem"
+    fi
 fi
 echo ""
 
 # Step 8: Final validation
 echo "Step 8: Final Validation:"
 echo "---"
+
+# Check if exclude-paths properly covers eng/common
+EXCLUDE_PATHS_COUNT=$(docker run --rm -v "$CONFIG_FILE:/config.yml:ro" mikefarah/yq:latest eval '.updates[] | select(.package-ecosystem == "npm") | .exclude-paths[]' /config.yml 2>/dev/null | wc -l)
+
 if [ "$NPM_COUNT" -eq 0 ] && [ -z "$TRACKED_NPM" ]; then
-    echo "✓ Configuration is correct:"
+    echo "✓ Configuration is correct (NPM ecosystem removed):"
     echo "  - NPM ecosystem removed from dependabot.yml"
     echo "  - No NPM packages outside eng/common/ need tracking"
     echo "  - NPM packages under eng/common/ will not receive Dependabot PRs"
     echo "---"
     exit 0
-elif [ "$NPM_COUNT" -gt 0 ] && [ -n "$TRACKED_NPM" ]; then
-    echo "✓ Configuration tracks NPM packages"
-    echo "  - NPM ecosystem is configured"
-    echo "  - $(echo "$TRACKED_NPM" | wc -l) NPM package(s) will be tracked"
+elif [ "$NPM_COUNT" -gt 0 ] && [ "$EXCLUDE_PATHS_COUNT" -gt 0 ] && [ -z "$TRACKED_NPM" ]; then
+    echo "✓ Configuration is correct (NPM ecosystem with exclusions):"
+    echo "  - NPM ecosystem is configured for future packages/security updates"
+    echo "  - exclude-paths configured to skip eng/common/"
+    echo "  - No NPM packages outside eng/common/ currently exist"
+    echo "  - NPM packages under eng/common/ should not receive Dependabot PRs"
     echo "---"
     exit 0
-elif [ "$NPM_COUNT" -gt 0 ] && [ -z "$TRACKED_NPM" ]; then
+elif [ "$NPM_COUNT" -gt 0 ] && [ -n "$TRACKED_NPM" ]; then
+    echo "✓ Configuration tracks NPM packages:"
+    echo "  - NPM ecosystem is configured"
+    echo "  - $(echo "$TRACKED_NPM" | wc -l) NPM package(s) will be tracked"
+    if [ "$EXCLUDE_PATHS_COUNT" -gt 0 ]; then
+        echo "  - exclude-paths configured to skip eng/common/"
+    fi
+    echo "---"
+    exit 0
+elif [ "$NPM_COUNT" -gt 0 ] && [ "$EXCLUDE_PATHS_COUNT" -eq 0 ] && [ -z "$TRACKED_NPM" ]; then
     echo "⚠ Configuration may have issues:"
     echo "  - NPM ecosystem is configured"
-    echo "  - But no NPM packages outside eng/common/ exist"
-    echo "  - Dependabot may still create PRs for eng/common/ packages"
+    echo "  - No exclude-paths configured"
+    echo "  - Dependabot may create PRs for eng/common/ packages"
     echo "---"
     exit 1
 else
     echo "⚠ Configuration needs attention:"
-    echo "  - NPM ecosystem is NOT configured"
-    echo "  - But $(echo "$TRACKED_NPM" | wc -l) NPM package(s) exist that should be tracked"
+    echo "  - NPM ecosystem: $([ "$NPM_COUNT" -gt 0 ] && echo "configured" || echo "NOT configured")"
+    echo "  - Exclude paths: $([ "$EXCLUDE_PATHS_COUNT" -gt 0 ] && echo "$EXCLUDE_PATHS_COUNT configured" || echo "none")"
+    echo "  - Tracked packages: $([ -n "$TRACKED_NPM" ] && echo "$(echo "$TRACKED_NPM" | wc -l) found" || echo "none")"
     echo "---"
     exit 1
 fi
