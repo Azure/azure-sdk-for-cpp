@@ -21,7 +21,7 @@ This directory contains utility scripts for repository maintenance and validatio
 ./eng/scripts/validate-dependabot-config.sh
 ```
 
-**Expected Output** (when configuration is correct):
+**Expected Output** (when configuration is correct with NPM ecosystem and exclusions):
 ```
 =========================================
 Dependabot Configuration Validation
@@ -37,7 +37,10 @@ Step 3: Configured package ecosystems:
 [lists ecosystems]
 
 Step 4: Checking for NPM ecosystem configuration...
-✓ NPM ecosystem is NOT configured
+✓ NPM ecosystem is configured
+  Checking exclude-paths...
+  Exclude paths configured:
+    - eng/common
 
 Step 5: NPM packages in the repository:
 [lists all NPM packages]
@@ -47,14 +50,15 @@ Step 6: NPM packages under eng/common/:
 
 Step 7: NPM packages outside eng/common/:
 No NPM packages found outside eng/common/
-✓ This validates removing NPM ecosystem from dependabot.yml
+ℹ NPM ecosystem is configured for future packages or security updates
 
 Step 8: Final Validation:
 ---
-✓ Configuration is correct:
-  - NPM ecosystem removed from dependabot.yml
-  - No NPM packages outside eng/common/ need tracking
-  - NPM packages under eng/common/ will not receive Dependabot PRs
+✓ Configuration is correct (NPM ecosystem with exclusions):
+  - NPM ecosystem is configured for future packages/security updates
+  - exclude-paths configured to skip eng/common/
+  - No NPM packages outside eng/common/ currently exist
+  - NPM packages under eng/common/ should not receive Dependabot PRs
 ---
 ```
 
@@ -66,3 +70,14 @@ Step 8: Final Validation:
 - After modifying `.github/dependabot.yml`
 - Before merging PRs that affect dependency management
 - As part of CI validation (optional)
+
+## DEPENDABOT_PATTERNS.md
+
+**Purpose**: Documentation for Dependabot exclude-paths pattern options
+
+**Description**: Explains different pattern options for excluding paths in Dependabot configuration, including:
+- Current recommended pattern
+- Alternative patterns and their trade-offs
+- Testing and troubleshooting guidance
+
+**See**: [DEPENDABOT_PATTERNS.md](./DEPENDABOT_PATTERNS.md) for detailed information.

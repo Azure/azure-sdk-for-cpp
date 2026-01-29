@@ -10,5 +10,4 @@ updates:
     schedule:
       interval: weekly
     exclude-paths:
-      - "eng/common/tsp-client/*"
-      - "eng/common/spelling/*"
+      - "eng/common"
