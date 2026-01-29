@@ -11,10 +11,12 @@ This directory contains utility scripts for repository maintenance and validatio
 - Package ecosystems are correctly configured
 - NPM packages under `eng/common/` are excluded from Dependabot updates
 - Any NPM packages outside `eng/common/` are properly tracked
+- (Optional) Validates with Dependabot CLI if installed
 
 **Requirements**:
 - Docker (for running validation tools)
 - Bash shell
+- Optional: Dependabot CLI for advanced validation
 
 **Usage**:
 ```bash
@@ -29,6 +31,12 @@ Dependabot Configuration Validation
 
 Step 1: Validating YAML syntax...
 ✓ YAML syntax is valid
+
+Step 1.5: Validating configuration with Dependabot CLI...
+  Testing NPM ecosystem with exclude-paths...
+  Exclude paths: eng/common
+  Note: Full CLI test requires GitHub credentials and network access
+  ℹ Skipping live test, configuration structure validated
 
 Step 2: Current dependabot.yml configuration:
 [displays current config]
@@ -70,6 +78,49 @@ Step 8: Final Validation:
 - After modifying `.github/dependabot.yml`
 - Before merging PRs that affect dependency management
 - As part of CI validation (optional)
+
+## test-dependabot-cli.sh
+
+**Purpose**: Advanced validation using the official Dependabot CLI
+
+**Description**: This script uses the official Dependabot CLI to run smoke tests against the configuration. This provides deeper validation than YQ-based checks.
+
+**Requirements**:
+- Go installed (`go version`)
+- Docker running
+- Dependabot CLI: `go install github.com/dependabot/cli/cmd/dependabot@latest`
+
+**Installation**:
+```bash
+# Install Dependabot CLI
+go install github.com/dependabot/cli/cmd/dependabot@latest
+
+# Add to PATH (add to your shell profile)
+export PATH="$PATH:$(go env GOPATH)/bin"
+
+# Verify installation
+dependabot --version
+```
+
+**Usage**:
+```bash
+./eng/scripts/test-dependabot-cli.sh
+```
+
+**What It Does**:
+- Checks if Dependabot CLI is installed
+- Extracts configuration from dependabot.yml
+- Creates a test scenario matching the configuration
+- Runs `dependabot test` to validate the setup
+- Reports any configuration errors
+
+**When to Use**:
+- To validate changes before pushing to GitHub
+- When troubleshooting Dependabot issues
+- As a comprehensive pre-merge check
+- To ensure exclude-paths work correctly
+
+**Note**: This test requires network access and Docker images. It may take 1-2 minutes to complete.
 
 ## DEPENDABOT_PATTERNS.md
 
