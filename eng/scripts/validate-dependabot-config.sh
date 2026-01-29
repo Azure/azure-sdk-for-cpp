@@ -5,8 +5,25 @@
 
 set -e
 
-REPO_DIR="/home/runner/work/azure-sdk-for-cpp/azure-sdk-for-cpp"
+# Determine repository root dynamically
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 CONFIG_FILE="$REPO_DIR/.github/dependabot.yml"
+
+# Check if Docker is available
+if ! command -v docker &> /dev/null; then
+    echo "Error: Docker is required but not installed or not in PATH"
+    echo "Please install Docker to run this validation script"
+    echo "See: https://docs.docker.com/get-docker/"
+    exit 1
+fi
+
+# Check if Docker daemon is running
+if ! docker info &> /dev/null; then
+    echo "Error: Docker daemon is not running"
+    echo "Please start Docker to run this validation script"
+    exit 1
+fi
 
 echo "========================================="
 echo "Dependabot Configuration Validation"
@@ -109,4 +126,3 @@ else
     echo "---"
     exit 1
 fi
-
