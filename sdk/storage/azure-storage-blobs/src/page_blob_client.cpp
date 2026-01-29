@@ -260,8 +260,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.FileRequestIntent = options.FileRequestIntent;
     if (options.SourceCustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.SourceEncryptionKey
-          = options.SourceCustomerProvidedKey.Value().Key;
+      protocolLayerOptions.SourceEncryptionKey = options.SourceCustomerProvidedKey.Value().Key;
       protocolLayerOptions.SourceEncryptionKeySha256
           = options.SourceCustomerProvidedKey.Value().KeyHash;
       protocolLayerOptions.SourceEncryptionAlgorithm

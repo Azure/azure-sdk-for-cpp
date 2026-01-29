@@ -2476,4 +2476,24 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(downloadResult.StructuredContentLength.HasValue());
     EXPECT_FALSE(downloadResult.StructuredBodyType.HasValue());
   }
+
+  TEST_F(BlockBlobClientTest, DeleteWithConditions)
+  {
+    auto blobClient = GetBlockBlobClientForTest(RandomString());
+
+    std::vector<uint8_t> emptyContent;
+    auto response = blobClient.UploadFrom(emptyContent.data(), emptyContent.size()).Value;
+    auto lastModifiedTime = response.LastModified;
+
+    Blobs::DeleteBlobOptions deleteOptions;
+
+    // Should failed
+    deleteOptions.AccessConditions.IfUnmodifiedSince = lastModifiedTime - std::chrono::hours(1);
+    EXPECT_THROW(blobClient.Delete(deleteOptions), StorageException);
+
+    // Should succeed
+    deleteOptions = Blobs::DeleteBlobOptions{};
+    deleteOptions.AccessConditions.IfModifiedSince = lastModifiedTime - std::chrono::hours(1);
+    EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
+  }
 }}} // namespace Azure::Storage::Test
