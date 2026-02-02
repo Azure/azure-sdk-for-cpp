@@ -1170,25 +1170,26 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.UploadValidationOptions = validationOptions;
     clientOptions.DownloadValidationOptions = validationOptions;
 
-    auto validateTypicalApis = [&](Files::DataLake::DataLakeFileClient& client) {
-      client.Create();
-      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
-      Files::DataLake::Models::AppendFileResult appendResult;
-      EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-      client.Flush(contentSize);
+    auto validateTypicalApis
+        = [&content, contentSize](Files::DataLake::DataLakeFileClient& client) {
+            client.Create();
+            auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+            Files::DataLake::Models::AppendFileResult appendResult;
+            EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
+            EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+            client.Flush(contentSize);
 
-      Files::DataLake::Models::DownloadFileResult downloadResult;
-      EXPECT_NO_THROW(downloadResult = client.Download().Value);
-      auto downloadedData = downloadResult.Body->ReadToEnd();
-      EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
-    };
+            Files::DataLake::Models::DownloadFileResult downloadResult;
+            EXPECT_NO_THROW(downloadResult = client.Download().Value);
+            auto downloadedData = downloadResult.Body->ReadToEnd();
+            EXPECT_EQ(content, downloadedData);
+            EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+            EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+            EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+            EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+          };
 
-    auto validateAllApis = [&](Files::DataLake::DataLakeFileClient& client) {
+    auto validateAllApis = [&content, contentSize](Files::DataLake::DataLakeFileClient& client) {
       client.Create();
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
@@ -1213,11 +1214,6 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(
           downloadToResult = client.DownloadTo(downloadBuffer.data(), contentSize).Value);
       EXPECT_EQ(downloadBuffer, content);
-    };
-
-    auto validateDirectoryClient = [&](Files::DataLake::DataLakeDirectoryClient& directoryClient) {
-      auto fileClient = directoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
-      validateTypicalApis(fileClient);
     };
 
     // Scenario 1: Direct file constructor with options
@@ -1310,8 +1306,9 @@ namespace Azure { namespace Storage { namespace Test {
       const std::string destinationDirectoryName = "clientoptions_fs_dir_dest_" + RandomString();
       auto renamedDirectoryClient
           = fileSystemClient.RenameDirectory(sourceDirectoryName, destinationDirectoryName).Value;
-
-      validateDirectoryClient(renamedDirectoryClient);
+      auto fileClient
+          = renamedDirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
+      validateTypicalApis(fileClient);
     }
 
     // Scenario 6: Directory client RenameSubdirectory returns a client with validation options
@@ -1334,8 +1331,9 @@ namespace Azure { namespace Storage { namespace Test {
                 .RenameSubdirectory(
                     subdirectoryName, parentDirectoryName + "/" + destinationSubdirectoryName)
                 .Value;
-
-      validateDirectoryClient(renamedSubdirectoryClient);
+      auto fileClient
+          = renamedSubdirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
+      validateTypicalApis(fileClient);
     }
   }
 

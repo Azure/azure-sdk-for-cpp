@@ -2555,6 +2555,78 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlockBlobClientTest, StructuredMessageTest_Concurrent_LIVEONLY_)
+  {
+    const std::vector<size_t> contentSizes = {
+        static_cast<size_t>(256_KB),
+        static_cast<size_t>(1_MB),
+        static_cast<size_t>(2_MB),
+        static_cast<size_t>(4_MB),
+    };
+
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    auto content = RandomBuffer(4_MB);
+
+    for (size_t contentSize : contentSizes)
+    {
+      std::vector<uint8_t> expectedData = content;
+      expectedData.assign(content.begin(), content.begin() + static_cast<ptrdiff_t>(contentSize));
+
+      std::vector<std::future<void>> futures;
+      for (int c : {2, 4})
+      {
+        for (int i = 0; i < 4; ++i)
+        {
+          futures.emplace_back(std::async(std::launch::async, [&, c, contentSize]() {
+            auto blobClient
+                = m_blobContainerClient->GetBlockBlobClient("structured_multi_" + RandomString());
+
+            Blobs::UploadBlockBlobFromOptions uploadOptions;
+            uploadOptions.ValidationOptions = validationOptions;
+            uploadOptions.TransferOptions.SingleUploadThreshold = 0;
+            uploadOptions.TransferOptions.ChunkSize = 1 * 1024 * 1024;
+            uploadOptions.TransferOptions.Concurrency = c;
+
+            EXPECT_NO_THROW(blobClient.UploadFrom(content.data(), contentSize, uploadOptions));
+
+            Blobs::DownloadBlobOptions downloadOptions;
+            downloadOptions.ValidationOptions = validationOptions;
+            Blobs::Models::DownloadBlobResult downloadResult;
+            EXPECT_NO_THROW(downloadResult = blobClient.Download(downloadOptions).Value);
+            auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+            EXPECT_EQ(expectedData, downloadedData);
+            EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+            EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+            EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+            EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+
+            Blobs::DownloadBlobToOptions downloadToOptions;
+            downloadToOptions.ValidationOptions = validationOptions;
+            downloadToOptions.TransferOptions.InitialChunkSize = 1 * 1024 * 1024;
+            downloadToOptions.TransferOptions.ChunkSize = 1 * 1024 * 1024;
+            downloadToOptions.TransferOptions.Concurrency = c;
+
+            std::vector<uint8_t> downloadBuffer(contentSize, '\x00');
+            Blobs::Models::DownloadBlobToResult downloadToResult;
+            EXPECT_NO_THROW(
+                downloadToResult
+                = blobClient
+                      .DownloadTo(downloadBuffer.data(), downloadBuffer.size(), downloadToOptions)
+                      .Value);
+            EXPECT_EQ(downloadBuffer, expectedData);
+          }));
+        }
+      }
+
+      for (auto& f : futures)
+      {
+        f.get();
+      }
+    }
+  }
+
   TEST_F(BlockBlobClientTest, DeleteWithConditions)
   {
     auto blobClient = GetBlockBlobClientForTest(RandomString());
