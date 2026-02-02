@@ -1092,7 +1092,7 @@ namespace Azure { namespace Storage { namespace Test {
     Files::DataLake::Models::AppendFileResult appendResult;
     EXPECT_NO_THROW(appendResult = m_fileClient->Append(bodyStream, 0, appendOptions).Value);
     EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-    // Serice Bug: Upper Case returned.
+    // Service Bug: Upper Case returned.
     // EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     // Flush
     m_fileClient->Flush(contentSize);
@@ -1157,6 +1157,186 @@ namespace Azure { namespace Storage { namespace Test {
     auto downloadFileName = RandomString();
     EXPECT_NO_THROW(
         downloadToResult = fileClient.DownloadTo(downloadFileName, downloadToOptions).Value);
+  }
+
+  TEST_F(DataLakeFileClientTest, StructuredMessageTest_ClientOptions)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    Files::DataLake::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    clientOptions.UploadValidationOptions = validationOptions;
+    clientOptions.DownloadValidationOptions = validationOptions;
+
+    auto validateTypicalApis = [&](Files::DataLake::DataLakeFileClient& client) {
+      client.Create();
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Files::DataLake::Models::AppendFileResult appendResult;
+      EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
+      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+      client.Flush(contentSize);
+
+      Files::DataLake::Models::DownloadFileResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.Body->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    };
+
+    auto validateAllApis = [&](Files::DataLake::DataLakeFileClient& client) {
+      client.Create();
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Files::DataLake::Models::AppendFileResult appendResult;
+      EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
+      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+      client.Flush(contentSize);
+
+      Files::DataLake::Models::DownloadFileResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.Body->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+
+      client.Delete();
+
+      Files::DataLake::UploadFileFromOptions uploadOptions;
+      uploadOptions.TransferOptions.SingleUploadThreshold = 0;
+      uploadOptions.TransferOptions.ChunkSize = contentSize / 2;
+      EXPECT_NO_THROW(client.UploadFrom(content.data(), contentSize, uploadOptions));
+
+      Files::DataLake::Models::DownloadFileToResult downloadToResult;
+      auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+      EXPECT_NO_THROW(
+          downloadToResult = client.DownloadTo(downloadBuffer.data(), contentSize).Value);
+      EXPECT_EQ(downloadBuffer, content);
+    };
+
+    auto validateDirectoryClient = [&](Files::DataLake::DataLakeDirectoryClient& directoryClient) {
+      auto fileClient = directoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
+      validateTypicalApis(fileClient);
+    };
+
+    // Scenario 1: Direct file constructor with options
+    {
+      const std::string fileName = "clientoptions_ctor_" + RandomString();
+      auto fileClient = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), m_fileSystemName, fileName, clientOptions);
+      validateTypicalApis(fileClient);
+    }
+
+    // Scenario 2: Service -> FileSystem -> File (GetFileSystemClient)
+    {
+      const std::string fileName = "clientoptions_service_" + RandomString();
+      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), clientOptions);
+      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+      auto fileClient = fileSystemClient.GetFileClient(fileName);
+      validateAllApis(fileClient);
+    }
+
+    // Scenario 3: Directory client RenameFile returns a client with validation options
+    {
+      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), clientOptions);
+      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+
+      const std::string directoryName = "clientoptions_rename_dir_" + RandomString();
+      auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
+      directoryClient.Create();
+
+      const std::string sourceFileName = "clientoptions_rename_src_" + RandomString();
+      auto sourceFileClient = directoryClient.GetFileClient(sourceFileName);
+      sourceFileClient.Create();
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Files::DataLake::Models::AppendFileResult appendResult;
+      EXPECT_NO_THROW(appendResult = sourceFileClient.Append(bodyStream, 0).Value);
+      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+      sourceFileClient.Flush(contentSize);
+
+      const std::string destinationFileName = "clientoptions_rename_dest_" + RandomString();
+      auto renamedClient
+          = directoryClient.RenameFile(sourceFileName, directoryName + "/" + destinationFileName)
+                .Value;
+
+      Files::DataLake::Models::DownloadFileResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);
+      auto downloadedData = downloadResult.Body->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    }
+
+    // Scenario 4: File system RenameFile returns a client with validation options
+    {
+      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), clientOptions);
+      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+
+      const std::string sourceFileName = "clientoptions_fs_rename_src_" + RandomString();
+      auto sourceFileClient = fileSystemClient.GetFileClient(sourceFileName);
+      sourceFileClient.Create();
+
+      const std::string destinationFileName = "clientoptions_fs_rename_dest_" + RandomString();
+      auto renamedClient = fileSystemClient.RenameFile(sourceFileName, destinationFileName).Value;
+
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Files::DataLake::Models::AppendFileResult appendResult;
+      EXPECT_NO_THROW(appendResult = renamedClient.Append(bodyStream, 0).Value);
+      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+      renamedClient.Flush(contentSize);
+
+      Files::DataLake::Models::DownloadFileResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);
+      auto downloadedData = downloadResult.Body->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    }
+
+    // Scenario 5: File system RenameDirectory returns a client with validation options
+    {
+      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), clientOptions);
+      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+
+      const std::string sourceDirectoryName = "clientoptions_fs_dir_src_" + RandomString();
+      auto directoryClient = fileSystemClient.GetDirectoryClient(sourceDirectoryName);
+      directoryClient.Create();
+
+      const std::string destinationDirectoryName = "clientoptions_fs_dir_dest_" + RandomString();
+      auto renamedDirectoryClient
+          = fileSystemClient.RenameDirectory(sourceDirectoryName, destinationDirectoryName).Value;
+
+      validateDirectoryClient(renamedDirectoryClient);
+    }
+
+    // Scenario 6: Directory client RenameSubdirectory returns a client with validation options
+    {
+      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+          AdlsGen2ConnectionString(), clientOptions);
+      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+
+      const std::string parentDirectoryName = "clientoptions_parent_dir_" + RandomString();
+      auto parentDirectoryClient = fileSystemClient.GetDirectoryClient(parentDirectoryName);
+      parentDirectoryClient.Create();
+
+      const std::string subdirectoryName = "clientoptions_subdir_src_" + RandomString();
+      auto subdirectoryClient = parentDirectoryClient.GetSubdirectoryClient(subdirectoryName);
+      subdirectoryClient.Create();
+
+      const std::string destinationSubdirectoryName = "clientoptions_subdir_dest_" + RandomString();
+      auto renamedSubdirectoryClient
+          = parentDirectoryClient
+                .RenameSubdirectory(
+                    subdirectoryName, parentDirectoryName + "/" + destinationSubdirectoryName)
+                .Value;
+
+      validateDirectoryClient(renamedSubdirectoryClient);
+    }
   }
 
 }}} // namespace Azure::Storage::Test

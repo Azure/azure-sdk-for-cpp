@@ -112,7 +112,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     {
       Blobs::TransferValidationOptions validationOptions;
       validationOptions.Algorithm = options.UploadValidationOptions.Value().Algorithm;
-      blobOptions.DownloadValidationOptions = std::move(validationOptions);
+      blobOptions.UploadValidationOptions = std::move(validationOptions);
     }
     return blobOptions;
   }
