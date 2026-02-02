@@ -27,8 +27,7 @@ namespace Azure { namespace Storage { namespace _internal {
   };
 
   /**
-   * @brief TODO
-   *
+   * @brief The encoding stream for structured message. For upload scenarios.
    */
   class StructuredMessageEncodingStream final : public Azure::Core::IO::BodyStream {
   private:

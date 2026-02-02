@@ -27,8 +27,7 @@ namespace Azure { namespace Storage { namespace _internal {
   };
 
   /**
-   * @brief TODO
-   *
+   * @brief The decoding stream for structured message. For download scenarios.
    */
   class StructuredMessageDecodingStream final : public Azure::Core::IO::BodyStream {
   private:
