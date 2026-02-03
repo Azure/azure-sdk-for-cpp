@@ -1159,6 +1159,28 @@ namespace Azure { namespace Storage { namespace Test {
         downloadToResult = fileClient.DownloadTo(downloadFileName, downloadToOptions).Value);
   }
 
+  void validateUploadDownload(
+      Files::DataLake::DataLakeFileClient& client,
+      const std::vector<uint8_t>& content,
+      const size_t contentSize)
+  {
+    client.Create();
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Files::DataLake::Models::AppendFileResult appendResult;
+    EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
+    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
+    client.Flush(contentSize);
+
+    Files::DataLake::Models::DownloadFileResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = client.Download().Value);
+    auto downloadedData = downloadResult.Body->ReadToEnd();
+    EXPECT_EQ(content, downloadedData);
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+  }
+
   TEST_F(DataLakeFileClientTest, StructuredMessageTest_ClientOptions)
   {
     const size_t contentSize = 2 * 1024 + 512;
@@ -1170,58 +1192,12 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.UploadValidationOptions = validationOptions;
     clientOptions.DownloadValidationOptions = validationOptions;
 
-    auto validateTypicalApis
-        = [&content, contentSize](Files::DataLake::DataLakeFileClient& client) {
-            client.Create();
-            auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
-            Files::DataLake::Models::AppendFileResult appendResult;
-            EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
-            EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-            client.Flush(contentSize);
-
-            Files::DataLake::Models::DownloadFileResult downloadResult;
-            EXPECT_NO_THROW(downloadResult = client.Download().Value);
-            auto downloadedData = downloadResult.Body->ReadToEnd();
-            EXPECT_EQ(content, downloadedData);
-            EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-            EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-            EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-            EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
-          };
-
-    auto validateAllApis = [&content](Files::DataLake::DataLakeFileClient& client) {
-      client.Create();
-      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
-      Files::DataLake::Models::AppendFileResult appendResult;
-      EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-      client.Flush(contentSize);
-
-      Files::DataLake::Models::DownloadFileResult downloadResult;
-      EXPECT_NO_THROW(downloadResult = client.Download().Value);
-      auto downloadedData = downloadResult.Body->ReadToEnd();
-      EXPECT_EQ(content, downloadedData);
-
-      client.Delete();
-
-      Files::DataLake::UploadFileFromOptions uploadOptions;
-      uploadOptions.TransferOptions.SingleUploadThreshold = 0;
-      uploadOptions.TransferOptions.ChunkSize = contentSize / 2;
-      EXPECT_NO_THROW(client.UploadFrom(content.data(), contentSize, uploadOptions));
-
-      Files::DataLake::Models::DownloadFileToResult downloadToResult;
-      auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
-      EXPECT_NO_THROW(
-          downloadToResult = client.DownloadTo(downloadBuffer.data(), contentSize).Value);
-      EXPECT_EQ(downloadBuffer, content);
-    };
-
     // Scenario 1: Direct file constructor with options
     {
       const std::string fileName = "clientoptions_ctor_" + RandomString();
       auto fileClient = Files::DataLake::DataLakeFileClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), m_fileSystemName, fileName, clientOptions);
-      validateTypicalApis(fileClient);
+      validateUploadDownload(fileClient, content, contentSize);
     }
 
     // Scenario 2: Service -> FileSystem -> File (GetFileSystemClient)
@@ -1231,10 +1207,34 @@ namespace Azure { namespace Storage { namespace Test {
           AdlsGen2ConnectionString(), clientOptions);
       auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
       auto fileClient = fileSystemClient.GetFileClient(fileName);
-      validateAllApis(fileClient);
-    }
+      validateUploadDownload(fileClient, content, contentSize);
 
-    // Scenario 3: Directory client RenameFile returns a client with validation options
+      fileClient.Delete();
+
+      Files::DataLake::UploadFileFromOptions uploadOptions;
+      uploadOptions.TransferOptions.SingleUploadThreshold = 0;
+      uploadOptions.TransferOptions.ChunkSize = contentSize / 2;
+      EXPECT_NO_THROW(fileClient.UploadFrom(content.data(), contentSize, uploadOptions));
+
+      Files::DataLake::Models::DownloadFileToResult downloadToResult;
+      auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+      EXPECT_NO_THROW(
+          downloadToResult = fileClient.DownloadTo(downloadBuffer.data(), contentSize).Value);
+      EXPECT_EQ(downloadBuffer, content);
+    }
+  }
+
+  TEST_F(DataLakeFileClientTest, StructuredMessageTest_Rename)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    Files::DataLake::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    clientOptions.UploadValidationOptions = validationOptions;
+    clientOptions.DownloadValidationOptions = validationOptions;
+    // Scenario 1: Directory client RenameFile returns a client with validation options
     {
       auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), clientOptions);
@@ -1266,7 +1266,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     }
 
-    // Scenario 4: File system RenameFile returns a client with validation options
+    // Scenario 2: File system RenameFile returns a client with validation options
     {
       auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), clientOptions);
@@ -1293,7 +1293,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     }
 
-    // Scenario 5: File system RenameDirectory returns a client with validation options
+    // Scenario 3: File system RenameDirectory returns a client with validation options
     {
       auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), clientOptions);
@@ -1308,10 +1308,10 @@ namespace Azure { namespace Storage { namespace Test {
           = fileSystemClient.RenameDirectory(sourceDirectoryName, destinationDirectoryName).Value;
       auto fileClient
           = renamedDirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
-      validateTypicalApis(fileClient);
+      validateUploadDownload(fileClient, content, contentSize);
     }
 
-    // Scenario 6: Directory client RenameSubdirectory returns a client with validation options
+    // Scenario 4: Directory client RenameSubdirectory returns a client with validation options
     {
       auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
           AdlsGen2ConnectionString(), clientOptions);
@@ -1333,7 +1333,7 @@ namespace Azure { namespace Storage { namespace Test {
                 .Value;
       auto fileClient
           = renamedSubdirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
-      validateTypicalApis(fileClient);
+      validateUploadDownload(fileClient, content, contentSize);
     }
   }
 
