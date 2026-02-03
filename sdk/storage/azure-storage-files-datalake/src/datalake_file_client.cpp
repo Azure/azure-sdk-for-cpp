@@ -56,9 +56,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   DataLakeFileClient::DataLakeFileClient(
       const std::string& fileUrl,
       const DataLakeClientOptions& options)
-      : DataLakePathClient(fileUrl, options),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : DataLakePathClient(fileUrl, options)
   {
   }
 
@@ -104,7 +102,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       Azure::Nullable<TransferValidationOptions> validationOptions
           = options.ValidationOptions.HasValue() ? options.ValidationOptions
-                                                 : m_uploadValidationOptions;
+                                                 : m_clientConfiguration.UploadValidationOptions;
       if (validationOptions.HasValue()
           && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
       {

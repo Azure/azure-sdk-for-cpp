@@ -86,6 +86,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
 
+  /**
+   * Configures whether to do content validation for file uploads and downloads.
+   */
+  struct TransferValidationOptions
+  {
+    /**
+     * @brief The algorithm used for storage checksum.
+     */
+    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
+  };
+
   namespace _detail {
     struct DatalakeClientConfiguration
     {
@@ -110,6 +121,16 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * filesystem client, so that this directory client knows where to send ListPaths requests.
        */
       Azure::Nullable<Azure::Core::Url> FileSystemUrl;
+
+      /**
+       * @brief Upload TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+      /**
+       * @brief Download TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
     };
   } // namespace _detail
 
@@ -151,17 +172,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * Storage account.
      */
     AZ_STORAGE_FILES_DATALAKE_DLLEXPORT const static DataLakeAudience DefaultAudience;
-  };
-
-  /**
-   * Configures whether to do content validation for file uploads and downloads.
-   */
-  struct TransferValidationOptions
-  {
-    /**
-     * @brief The algorithm used for storage checksum.
-     */
-    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
   };
 
   /**
