@@ -1189,7 +1189,7 @@ namespace Azure { namespace Storage { namespace Test {
             EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
           };
 
-    auto validateAllApis = [&content, contentSize](Files::DataLake::DataLakeFileClient& client) {
+    auto validateAllApis = [&content](Files::DataLake::DataLakeFileClient& client) {
       client.Create();
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
