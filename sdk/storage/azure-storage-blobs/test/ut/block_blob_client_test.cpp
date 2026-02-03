@@ -2567,7 +2567,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::TransferValidationOptions validationOptions;
     validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
 
-    auto content = RandomBuffer(4_MB);
+    auto content = RandomBuffer(static_cast<size_t>(4_MB));
 
     for (size_t contentSize : contentSizes)
     {
