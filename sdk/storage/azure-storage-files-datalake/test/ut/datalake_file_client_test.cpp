@@ -1236,30 +1236,34 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.DownloadValidationOptions = validationOptions;
     // Scenario 1: Directory client RenameFile returns a client with validation options
     {
-      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), clientOptions);
-      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+      auto serviceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+          Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), clientOptions));
+      auto fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+          serviceClient->GetFileSystemClient(m_fileSystemName));
 
       const std::string directoryName = "clientoptions_rename_dir_" + RandomString();
-      auto directoryClient = fileSystemClient.GetDirectoryClient(directoryName);
-      directoryClient.Create();
+      auto directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClient->GetDirectoryClient(directoryName));
+      directoryClient->Create();
 
       const std::string sourceFileName = "clientoptions_rename_src_" + RandomString();
-      auto sourceFileClient = directoryClient.GetFileClient(sourceFileName);
-      sourceFileClient.Create();
+      auto sourceFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          directoryClient->GetFileClient(sourceFileName));
+      sourceFileClient->Create();
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
-      EXPECT_NO_THROW(appendResult = sourceFileClient.Append(bodyStream, 0).Value);
+      EXPECT_NO_THROW(appendResult = sourceFileClient->Append(bodyStream, 0).Value);
       EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-      sourceFileClient.Flush(contentSize);
+      sourceFileClient->Flush(contentSize);
 
       const std::string destinationFileName = "clientoptions_rename_dest_" + RandomString();
-      auto renamedClient
-          = directoryClient.RenameFile(sourceFileName, directoryName + "/" + destinationFileName)
-                .Value;
+      auto renamedClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          directoryClient->RenameFile(sourceFileName, directoryName + "/" + destinationFileName)
+              .Value);
 
       Files::DataLake::Models::DownloadFileResult downloadResult;
-      EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);
+      EXPECT_NO_THROW(downloadResult = renamedClient->Download().Value);
       auto downloadedData = downloadResult.Body->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
       EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
@@ -1268,25 +1272,29 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Scenario 2: File system RenameFile returns a client with validation options
     {
-      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), clientOptions);
-      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+      auto serviceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+          Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), clientOptions));
+      auto fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+          serviceClient->GetFileSystemClient(m_fileSystemName));
 
       const std::string sourceFileName = "clientoptions_fs_rename_src_" + RandomString();
-      auto sourceFileClient = fileSystemClient.GetFileClient(sourceFileName);
-      sourceFileClient.Create();
+      auto sourceFileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClient->GetFileClient(sourceFileName));
+      sourceFileClient->Create();
 
       const std::string destinationFileName = "clientoptions_fs_rename_dest_" + RandomString();
-      auto renamedClient = fileSystemClient.RenameFile(sourceFileName, destinationFileName).Value;
+      auto renamedClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          fileSystemClient->RenameFile(sourceFileName, destinationFileName).Value);
 
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
-      EXPECT_NO_THROW(appendResult = renamedClient.Append(bodyStream, 0).Value);
+      EXPECT_NO_THROW(appendResult = renamedClient->Append(bodyStream, 0).Value);
       EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-      renamedClient.Flush(contentSize);
+      renamedClient->Flush(contentSize);
 
       Files::DataLake::Models::DownloadFileResult downloadResult;
-      EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);
+      EXPECT_NO_THROW(downloadResult = renamedClient->Download().Value);
       auto downloadedData = downloadResult.Body->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
       EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
@@ -1295,45 +1303,52 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Scenario 3: File system RenameDirectory returns a client with validation options
     {
-      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), clientOptions);
-      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+      auto serviceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+          Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), clientOptions));
+      auto fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+          serviceClient->GetFileSystemClient(m_fileSystemName));
 
       const std::string sourceDirectoryName = "clientoptions_fs_dir_src_" + RandomString();
-      auto directoryClient = fileSystemClient.GetDirectoryClient(sourceDirectoryName);
-      directoryClient.Create();
+      auto directoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClient->GetDirectoryClient(sourceDirectoryName));
+      directoryClient->Create();
 
       const std::string destinationDirectoryName = "clientoptions_fs_dir_dest_" + RandomString();
-      auto renamedDirectoryClient
-          = fileSystemClient.RenameDirectory(sourceDirectoryName, destinationDirectoryName).Value;
-      auto fileClient
-          = renamedDirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
-      validateUploadDownload(fileClient, content, contentSize);
+      auto renamedDirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClient->RenameDirectory(sourceDirectoryName, destinationDirectoryName).Value);
+      auto fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          renamedDirectoryClient->GetFileClient("clientoptions_dir_file_" + RandomString()));
+      validateUploadDownload(*fileClient, content, contentSize);
     }
 
     // Scenario 4: Directory client RenameSubdirectory returns a client with validation options
     {
-      auto serviceClient = Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
-          AdlsGen2ConnectionString(), clientOptions);
-      auto fileSystemClient = serviceClient.GetFileSystemClient(m_fileSystemName);
+      auto serviceClient = std::make_shared<Files::DataLake::DataLakeServiceClient>(
+          Files::DataLake::DataLakeServiceClient::CreateFromConnectionString(
+              AdlsGen2ConnectionString(), clientOptions));
+      auto fileSystemClient = std::make_shared<Files::DataLake::DataLakeFileSystemClient>(
+          serviceClient->GetFileSystemClient(m_fileSystemName));
 
       const std::string parentDirectoryName = "clientoptions_parent_dir_" + RandomString();
-      auto parentDirectoryClient = fileSystemClient.GetDirectoryClient(parentDirectoryName);
-      parentDirectoryClient.Create();
+      auto parentDirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          fileSystemClient->GetDirectoryClient(parentDirectoryName));
+      parentDirectoryClient->Create();
 
       const std::string subdirectoryName = "clientoptions_subdir_src_" + RandomString();
-      auto subdirectoryClient = parentDirectoryClient.GetSubdirectoryClient(subdirectoryName);
-      subdirectoryClient.Create();
+      auto subdirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          parentDirectoryClient->GetSubdirectoryClient(subdirectoryName));
+      subdirectoryClient->Create();
 
       const std::string destinationSubdirectoryName = "clientoptions_subdir_dest_" + RandomString();
-      auto renamedSubdirectoryClient
-          = parentDirectoryClient
-                .RenameSubdirectory(
-                    subdirectoryName, parentDirectoryName + "/" + destinationSubdirectoryName)
-                .Value;
-      auto fileClient
-          = renamedSubdirectoryClient.GetFileClient("clientoptions_dir_file_" + RandomString());
-      validateUploadDownload(fileClient, content, contentSize);
+      auto renamedSubdirectoryClient = std::make_shared<Files::DataLake::DataLakeDirectoryClient>(
+          parentDirectoryClient
+              ->RenameSubdirectory(
+                  subdirectoryName, parentDirectoryName + "/" + destinationSubdirectoryName)
+              .Value);
+      auto fileClient = std::make_shared<Files::DataLake::DataLakeFileClient>(
+          renamedSubdirectoryClient->GetFileClient("clientoptions_dir_file_" + RandomString()));
+      validateUploadDownload(*fileClient, content, contentSize);
     }
   }
 
