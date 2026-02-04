@@ -2,6 +2,8 @@
 
 You are an expert C++ programmer. 
 
+For comprehensive guidance on AI agent interactions with this repository, see [AGENTS.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/AGENTS.md).
+
 ## Repository Structure
 
 ### Prerequisites
