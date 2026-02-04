@@ -33,53 +33,53 @@
 ####################
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                             @LarryOsterman @antkmsft @RickWinter
+/sdk/appconfiguration/                                             @antkmsft @LarryOsterman @RickWinter
 
-# ServiceLabel: %App Configuration
 # AzureSdkOwners:                                                  @rickwinter
-# ServiceOwners:                                                   @LarryOsterman @antkmsft @RickWinter
+# ServiceLabel: %App Configuration
+# ServiceOwners:                                                   @antkmsft @LarryOsterman @RickWinter
 
 # PRLabel: %Attestation
-/sdk/attestation/                                                  @gkostal @anilba06 @ahmadmsft @LarryOsterman @rickwinter
+/sdk/attestation/                                                  @ahmadmsft @anilba06 @gkostal @LarryOsterman @rickwinter
 
 # ServiceLabel: %Attestation
-# ServiceOwners:                                                   @gkostal @anilba06 @ahmadmsft
+# ServiceOwners:                                                   @ahmadmsft @anilba06 @gkostal
 
 # PRLabel: %EngSys
-/sdk/template/                                                     @danieljurek @weshaggard @LarryOsterman @RickWinter
+/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @weshaggard
 
-# ServiceLabel: %EngSys
 # AzureSdkOwners:                                                  @danieljurek
-# ServiceOwners:                                                   @danieljurek @weshaggard @LarryOsterman @RickWinter
+# ServiceLabel: %EngSys
+# ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
 
 # PRLabel: %Event Hubs
-/sdk/eventhubs/                                                    @axisc @sjkwak @hmlam
+/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners:                                                   @axisc @sjkwak @hmlam
+# ServiceOwners:                                                   @axisc @hmlam @sjkwak
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                     @Azure/azure-sdk-write-keyvault
 
-# ServiceLabel: %KeyVault
 # AzureSdkOwners:                                                  @Azure/azure-sdk-write-keyvault
-# ServiceOwners:                                                   @chen-karen @Azure/azure-sdk-write-keyvault
+# ServiceLabel: %KeyVault
+# ServiceOwners:                                                   @Azure/azure-sdk-write-keyvault @chen-karen
+
+# PRLabel: %Storage
+/sdk/storage/                                                      @antkmsft @EmmaZhu @Jinming-Hu @LarryOsterman @microzchang @vinjiang
+
+# ServiceLabel: %Storage
+# ServiceOwners:                                                   @Jinming-Hu @microzchang @vinjiang
+
+# PRLabel: %Tables
+/sdk/tables/                                                       @antkmsft @LarryOsterman
+
+# AzureSdkOwners:                                                  @rickwinter
+# ServiceLabel: %Tables
+# ServiceOwners:                                                   @antkmsft @LarryOsterman
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
-
-# PRLabel: %Storage
-/sdk/storage/                                                      @vinjiang @Jinming-Hu @EmmaZhu @antkmsft @LarryOsterman @microzchang
-
-# ServiceLabel: %Storage
-# ServiceOwners:                                                   @vinjiang @Jinming-Hu @microzchang
-
-# PRLabel: %Tables
-/sdk/tables/                                                       @LarryOsterman @antkmsft
-
-# ServiceLabel: %Tables
-# AzureSdkOwners:                                                  @rickwinter
-# ServiceOwners:                                                   @LarryOsterman @antkmsft
 
 ###########
 # Eng Sys
