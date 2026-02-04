@@ -45,6 +45,13 @@
 # ServiceLabel: %Attestation
 # ServiceOwners:                                                   @ahmadmsft @anilba06 @gkostal
 
+# PRLabel: %EngSys
+/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @weshaggard
+
+# AzureSdkOwners:                                                  @danieljurek
+# ServiceLabel: %EngSys
+# ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
+
 # PRLabel: %Event Hubs
 /sdk/eventhubs/                                                    @axisc @hmlam @sjkwak
 
@@ -70,13 +77,6 @@
 # AzureSdkOwners:                                                  @rickwinter
 # ServiceLabel: %Tables
 # ServiceOwners:                                                   @antkmsft @LarryOsterman
-
-# PRLabel: %EngSys
-/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @weshaggard
-
-# AzureSdkOwners:                                                  @danieljurek
-# ServiceLabel: %EngSys
-# ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # ServiceOwners:                                                   @Azure/azure-sdk-write-networkcloud
