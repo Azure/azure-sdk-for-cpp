@@ -17,9 +17,9 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void StructuredMessageHelper::WriteStreamHeader(
       uint8_t* buffer,
-      const uint64_t& messageLength,
-      const uint16_t& flags,
-      const uint16_t& segmentCount)
+      uint64_t messageLength,
+      uint16_t flags,
+      uint16_t segmentCount)
   {
     buffer[StructuredMessageHelper::StreamHeaderVersionOffset]
         = StructuredMessageHelper::StructuredMessageVersion;
@@ -39,8 +39,8 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void StructuredMessageHelper::WriteSegmentHeader(
       uint8_t* buffer,
-      const uint16_t& segmentNum,
-      const uint64_t& segmentLength)
+      uint16_t segmentNum,
+      uint64_t segmentLength)
   {
     std::copy(
         reinterpret_cast<const uint8_t*>(&segmentNum),
@@ -52,16 +52,7 @@ namespace Azure { namespace Storage { namespace _internal {
         buffer + StructuredMessageHelper::SegmentHeaderContentLengthOffset);
   }
 
-  void StructuredMessageHelper::WriteSegmentFooter(uint8_t* buffer, const uint8_t* crc64)
-  {
-    if (crc64 == nullptr)
-    {
-      return;
-    }
-    std::copy(crc64, crc64 + Crc64Length, buffer);
-  }
-
-  void StructuredMessageHelper::WriteStreamFooter(uint8_t* buffer, const uint8_t* crc64)
+  void StructuredMessageHelper::WriteCrc64(uint8_t* buffer, uint8_t const* crc64)
   {
     if (crc64 == nullptr)
     {
@@ -71,7 +62,7 @@ namespace Azure { namespace Storage { namespace _internal {
   }
 
   void StructuredMessageHelper::ReadStreamHeader(
-      const uint8_t* buffer,
+      uint8_t const* buffer,
       uint64_t& messageLength,
       StructuredMessageFlags& flags,
       uint16_t& segmentCount)
@@ -85,7 +76,7 @@ namespace Azure { namespace Storage { namespace _internal {
   }
 
   void StructuredMessageHelper::ReadSegmentHeader(
-      const uint8_t* buffer,
+      uint8_t const* buffer,
       uint16_t& segmentNumber,
       uint64_t& segmentLength)
   {
@@ -95,21 +86,4 @@ namespace Azure { namespace Storage { namespace _internal {
         buffer + StructuredMessageHelper::SegmentHeaderContentLengthOffset);
   }
 
-  void StructuredMessageHelper::ReadSegmentFooter(const uint8_t* buffer, uint8_t* crc64)
-  {
-    if (buffer == nullptr)
-    {
-      return;
-    }
-    std::copy(buffer, buffer + Crc64Length, crc64);
-  }
-
-  void StructuredMessageHelper::ReadStreamFooter(const uint8_t* buffer, uint8_t* crc64)
-  {
-    if (buffer == nullptr)
-    {
-      return;
-    }
-    std::copy(buffer, buffer + Crc64Length, crc64);
-  }
 }}} // namespace Azure::Storage::_internal

@@ -30,7 +30,10 @@ namespace Azure { namespace Storage { namespace _internal {
           {
             m_streamHeaderCache.resize(m_streamHeaderLength);
             StructuredMessageHelper::WriteStreamHeader(
-                m_streamHeaderCache.data(), this->Length(), m_options.Flags, m_segmentCount);
+                m_streamHeaderCache.data(),
+                this->Length(),
+                static_cast<uint16_t>(m_options.Flags),
+                m_segmentCount);
           }
           std::memcpy(
               buffer + subreadOffset,
@@ -104,7 +107,7 @@ namespace Azure { namespace Storage { namespace _internal {
             if (m_segmentFooterCache.empty())
             {
               m_segmentFooterCache.resize(m_segmentFooterLength);
-              StructuredMessageHelper::WriteSegmentFooter(
+              StructuredMessageHelper::WriteCrc64(
                   m_segmentFooterCache.data(), m_segmentCrc64Hash->Final().data());
             }
             std::memcpy(
@@ -142,7 +145,7 @@ namespace Azure { namespace Storage { namespace _internal {
             if (m_streamFooterCache.empty())
             {
               m_streamFooterCache.resize(m_streamFooterLength);
-              StructuredMessageHelper::WriteStreamFooter(
+              StructuredMessageHelper::WriteCrc64(
                   m_streamFooterCache.data(), m_streamCrc64Hash->Final().data());
             }
             std::memcpy(
