@@ -3,17 +3,43 @@
 
 #include "azure/storage/common/internal/structured_message_helper.hpp"
 
+#include <azure/core/azure_assert.hpp>
+
 namespace Azure { namespace Storage { namespace _internal {
-  const size_t StructuredMessageHelper::Crc64Length = 8;
-  const uint8_t StructuredMessageHelper::StructuredMessageVersion = 1;
-  const size_t StructuredMessageHelper::StreamHeaderLength = 13;
-  const int64_t StructuredMessageHelper::StreamHeaderVersionOffset = 0;
-  const int64_t StructuredMessageHelper::StreamHeaderMessageLengthOffset = 1;
-  const int64_t StructuredMessageHelper::StreamHeaderFlagsOffset = 9;
-  const int64_t StructuredMessageHelper::StreamHeaderSegmentCountOffset = 11;
-  const size_t StructuredMessageHelper::SegmentHeaderLength = 10;
-  const int64_t StructuredMessageHelper::SegmentHeaderNumOffset = 0;
-  const int64_t StructuredMessageHelper::SegmentHeaderContentLengthOffset = 2;
+
+  namespace {
+    // Helper functions for little-endian encoding/decoding
+    inline void WriteUInt16LE(uint8_t* buffer, uint16_t value)
+    {
+      buffer[0] = static_cast<uint8_t>(value & 0xFF);
+      buffer[1] = static_cast<uint8_t>((value >> 8) & 0xFF);
+    }
+
+    inline void WriteUInt64LE(uint8_t* buffer, uint64_t value)
+    {
+      buffer[0] = static_cast<uint8_t>(value & 0xFF);
+      buffer[1] = static_cast<uint8_t>((value >> 8) & 0xFF);
+      buffer[2] = static_cast<uint8_t>((value >> 16) & 0xFF);
+      buffer[3] = static_cast<uint8_t>((value >> 24) & 0xFF);
+      buffer[4] = static_cast<uint8_t>((value >> 32) & 0xFF);
+      buffer[5] = static_cast<uint8_t>((value >> 40) & 0xFF);
+      buffer[6] = static_cast<uint8_t>((value >> 48) & 0xFF);
+      buffer[7] = static_cast<uint8_t>((value >> 56) & 0xFF);
+    }
+
+    inline uint16_t ReadUInt16LE(uint8_t const* buffer)
+    {
+      return static_cast<uint16_t>(buffer[0]) | (static_cast<uint16_t>(buffer[1]) << 8);
+    }
+
+    inline uint64_t ReadUInt64LE(uint8_t const* buffer)
+    {
+      return static_cast<uint64_t>(buffer[0]) | (static_cast<uint64_t>(buffer[1]) << 8)
+          | (static_cast<uint64_t>(buffer[2]) << 16) | (static_cast<uint64_t>(buffer[3]) << 24)
+          | (static_cast<uint64_t>(buffer[4]) << 32) | (static_cast<uint64_t>(buffer[5]) << 40)
+          | (static_cast<uint64_t>(buffer[6]) << 48) | (static_cast<uint64_t>(buffer[7]) << 56);
+    }
+  } // namespace
 
   void StructuredMessageHelper::WriteStreamHeader(
       uint8_t* buffer,
@@ -21,20 +47,10 @@ namespace Azure { namespace Storage { namespace _internal {
       uint16_t flags,
       uint16_t segmentCount)
   {
-    buffer[StructuredMessageHelper::StreamHeaderVersionOffset]
-        = StructuredMessageHelper::StructuredMessageVersion;
-    std::copy(
-        reinterpret_cast<const uint8_t*>(&messageLength),
-        reinterpret_cast<const uint8_t*>(&messageLength) + sizeof(uint64_t),
-        buffer + StructuredMessageHelper::StreamHeaderMessageLengthOffset);
-    std::copy(
-        reinterpret_cast<const uint8_t*>(&flags),
-        reinterpret_cast<const uint8_t*>(&flags) + sizeof(uint16_t),
-        buffer + StructuredMessageHelper::StreamHeaderFlagsOffset);
-    std::copy(
-        reinterpret_cast<const uint8_t*>(&segmentCount),
-        reinterpret_cast<const uint8_t*>(&segmentCount) + sizeof(uint16_t),
-        buffer + StructuredMessageHelper::StreamHeaderSegmentCountOffset);
+    buffer[StreamHeaderVersionOffset] = StructuredMessageVersion;
+    WriteUInt64LE(buffer + StreamHeaderMessageLengthOffset, messageLength);
+    WriteUInt16LE(buffer + StreamHeaderFlagsOffset, flags);
+    WriteUInt16LE(buffer + StreamHeaderSegmentCountOffset, segmentCount);
   }
 
   void StructuredMessageHelper::WriteSegmentHeader(
@@ -42,48 +58,54 @@ namespace Azure { namespace Storage { namespace _internal {
       uint16_t segmentNum,
       uint64_t segmentLength)
   {
-    std::copy(
-        reinterpret_cast<const uint8_t*>(&segmentNum),
-        reinterpret_cast<const uint8_t*>(&segmentNum) + sizeof(uint16_t),
-        buffer + StructuredMessageHelper::SegmentHeaderNumOffset);
-    std::copy(
-        reinterpret_cast<const uint8_t*>(&segmentLength),
-        reinterpret_cast<const uint8_t*>(&segmentLength) + sizeof(uint64_t),
-        buffer + StructuredMessageHelper::SegmentHeaderContentLengthOffset);
+    WriteUInt16LE(buffer + SegmentHeaderNumOffset, segmentNum);
+    WriteUInt64LE(buffer + SegmentHeaderContentLengthOffset, segmentLength);
   }
 
-  void StructuredMessageHelper::WriteCrc64(uint8_t* buffer, uint8_t const* crc64)
+  void StructuredMessageHelper::WriteCrc64(
+      uint8_t* buffer,
+      size_t bufferSize,
+      std::vector<uint8_t> const& crc64)
   {
-    if (crc64 == nullptr)
+    AZURE_ASSERT(bufferSize >= Crc64Length);
+    if (crc64.empty())
     {
       return;
     }
-    std::copy(crc64, crc64 + Crc64Length, buffer);
+    AZURE_ASSERT(crc64.size() == Crc64Length);
+    std::copy(crc64.begin(), crc64.end(), buffer);
+  }
+
+  std::vector<uint8_t> StructuredMessageHelper::ReadCrc64(uint8_t const* buffer, size_t bufferSize)
+  {
+    AZURE_ASSERT(bufferSize >= Crc64Length);
+    return std::vector<uint8_t>(buffer, buffer + Crc64Length);
   }
 
   void StructuredMessageHelper::ReadStreamHeader(
       uint8_t const* buffer,
+      size_t bufferSize,
       uint64_t& messageLength,
       StructuredMessageFlags& flags,
       uint16_t& segmentCount)
   {
-    messageLength = *reinterpret_cast<const uint64_t*>(
-        buffer + StructuredMessageHelper::StreamHeaderMessageLengthOffset);
-    flags = static_cast<StructuredMessageFlags>(*reinterpret_cast<const uint16_t*>(
-        buffer + StructuredMessageHelper::StreamHeaderFlagsOffset));
-    segmentCount = *reinterpret_cast<const uint16_t*>(
-        buffer + StructuredMessageHelper::StreamHeaderSegmentCountOffset);
+    AZURE_ASSERT(bufferSize >= StreamHeaderLength);
+
+    messageLength = ReadUInt64LE(buffer + StreamHeaderMessageLengthOffset);
+    flags = static_cast<StructuredMessageFlags>(ReadUInt16LE(buffer + StreamHeaderFlagsOffset));
+    segmentCount = ReadUInt16LE(buffer + StreamHeaderSegmentCountOffset);
   }
 
   void StructuredMessageHelper::ReadSegmentHeader(
       uint8_t const* buffer,
+      size_t bufferSize,
       uint16_t& segmentNumber,
       uint64_t& segmentLength)
   {
-    segmentNumber = *reinterpret_cast<const uint16_t*>(
-        buffer + StructuredMessageHelper::SegmentHeaderNumOffset);
-    segmentLength = *reinterpret_cast<const uint64_t*>(
-        buffer + StructuredMessageHelper::SegmentHeaderContentLengthOffset);
+    AZURE_ASSERT(bufferSize >= SegmentHeaderLength);
+
+    segmentNumber = ReadUInt16LE(buffer + SegmentHeaderNumOffset);
+    segmentLength = ReadUInt64LE(buffer + SegmentHeaderContentLengthOffset);
   }
 
 }}} // namespace Azure::Storage::_internal

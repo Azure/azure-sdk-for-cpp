@@ -3,15 +3,14 @@
 
 #pragma once
 
-#include "azure/storage/common/dll_import_export.hpp"
-
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  enum class StructuredMessageFlags : uint16_t
+  enum class StructuredMessageFlags
   {
     None = 0x0,
     Crc64 = 0x1,
@@ -20,10 +19,11 @@ namespace Azure { namespace Storage { namespace _internal {
   enum class StructuredMessageCurrentRegion
   {
     StreamHeader,
-    StreamFooter,
     SegmentHeader,
-    SegmentFooter,
     SegmentContent,
+    SegmentFooter,
+    StreamFooter,
+    Completed
   };
 
   /**
@@ -32,28 +32,28 @@ namespace Azure { namespace Storage { namespace _internal {
   class StructuredMessageHelper final {
   public:
     /** @brief Length of CRC64 checksum in bytes. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const size_t Crc64Length;
+    static constexpr size_t Crc64Length = 8;
 
     /** @brief Current structured message format version. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const uint8_t StructuredMessageVersion;
+    static constexpr uint8_t StructuredMessageVersion = 1;
 
     /** @brief Total length of the stream header in bytes. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const size_t StreamHeaderLength;
+    static constexpr size_t StreamHeaderLength = 13;
     /** @brief Offset of the version field within the stream header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderVersionOffset;
+    static constexpr int64_t StreamHeaderVersionOffset = 0;
     /** @brief Offset of the message length field within the stream header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderMessageLengthOffset;
+    static constexpr int64_t StreamHeaderMessageLengthOffset = 1;
     /** @brief Offset of the flags field within the stream header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderFlagsOffset;
+    static constexpr int64_t StreamHeaderFlagsOffset = 9;
     /** @brief Offset of the segment count field within the stream header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t StreamHeaderSegmentCountOffset;
+    static constexpr int64_t StreamHeaderSegmentCountOffset = 11;
 
     /** @brief Total length of the segment header in bytes. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const size_t SegmentHeaderLength;
+    static constexpr size_t SegmentHeaderLength = 10;
     /** @brief Offset of the segment number field within the segment header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t SegmentHeaderNumOffset;
+    static constexpr int64_t SegmentHeaderNumOffset = 0;
     /** @brief Offset of the segment content length field within the segment header. */
-    AZ_STORAGE_COMMON_DLLEXPORT static const int64_t SegmentHeaderContentLengthOffset;
+    static constexpr int64_t SegmentHeaderContentLengthOffset = 2;
 
     /**
      * @brief Writes the stream header to the buffer.
@@ -81,25 +81,37 @@ namespace Azure { namespace Storage { namespace _internal {
     static void WriteSegmentHeader(uint8_t* buffer, uint16_t segmentNum, uint64_t segmentLength);
 
     /**
-     * @brief Writes a CRC64 checksum to the buffer.
+     * @brief Writes a CRC64 checksum to the buffer in little-endian format.
      *
      * @param buffer Pointer to a buffer of at least Crc64Length bytes where the CRC64 will be
      * written.
-     * @param crc64 Pointer to the CRC64 checksum bytes to write. If nullptr, no data is written.
+     * @param bufferSize Size of the buffer in bytes.
+     * @param crc64 The CRC64 checksum bytes to write. If empty, no data is written.
      */
-    static void WriteCrc64(uint8_t* buffer, uint8_t const* crc64);
+    static void WriteCrc64(uint8_t* buffer, size_t bufferSize, std::vector<uint8_t> const& crc64);
+
+    /**
+     * @brief Reads a CRC64 checksum from the buffer.
+     *
+     * @param buffer Pointer to a buffer of at least Crc64Length bytes containing the CRC64.
+     * @param bufferSize Size of the buffer in bytes.
+     * @return The CRC64 checksum as a vector of bytes.
+     */
+    static std::vector<uint8_t> ReadCrc64(uint8_t const* buffer, size_t bufferSize);
 
     /**
      * @brief Reads the stream header from the buffer.
      *
      * @param buffer Pointer to a buffer of at least StreamHeaderLength bytes containing the
      * header.
+     * @param bufferSize Size of the buffer in bytes.
      * @param messageLength Output parameter for the total message length.
      * @param flags Output parameter for the message flags.
      * @param segmentCount Output parameter for the total segment count.
      */
     static void ReadStreamHeader(
         uint8_t const* buffer,
+        size_t bufferSize,
         uint64_t& messageLength,
         StructuredMessageFlags& flags,
         uint16_t& segmentCount);
@@ -109,11 +121,13 @@ namespace Azure { namespace Storage { namespace _internal {
      *
      * @param buffer Pointer to a buffer of at least SegmentHeaderLength bytes containing the
      * header.
+     * @param bufferSize Size of the buffer in bytes.
      * @param segmentNumber Output parameter for the segment number.
      * @param segmentLength Output parameter for the segment content length.
      */
     static void ReadSegmentHeader(
         uint8_t const* buffer,
+        size_t bufferSize,
         uint16_t& segmentNumber,
         uint64_t& segmentLength);
   };

@@ -39,7 +39,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -47,7 +48,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -63,7 +65,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 33;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = ReadToEnd(encodingStream, 4096);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 4096));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -71,7 +74,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 513);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 513));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -87,39 +91,41 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    std::vector<uint8_t> encodedData = ReadToEnd(encodingStream, 7);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 7));
 
     _internal::StructuredMessageDecodingStreamOptions decodingOptions;
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 7);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 7));
 
     EXPECT_EQ(content, decodedData);
 
     // Large encode range
-    encodingStream.Rewind();
-    encodedData = ReadToEnd(encodingStream, 4096);
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 4096));
     _internal::StructuredMessageDecodingStream decodingStream1(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    decodedData = ReadToEnd(decodingStream1, 5);
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream1, 5));
 
     EXPECT_EQ(content, decodedData);
 
-    decodingStream1.Rewind();
-    decodedData = ReadToEnd(decodingStream1, 6);
+    EXPECT_NO_THROW(decodingStream1.Rewind());
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream1, 6));
 
     EXPECT_EQ(content, decodedData);
 
     // Large decode range
-    encodingStream.Rewind();
-    encodedData = ReadToEnd(encodingStream, 8);
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 8));
     _internal::StructuredMessageDecodingStream decodingStream2(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    decodedData = ReadToEnd(decodingStream2, 4096);
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream2, 4096));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -134,7 +140,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::StructuredMessageEncodingStreamOptions encodingOptions;
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    std::vector<uint8_t> encodedData = ReadToEnd(encodingStream, 4 * 1024 * 1024);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 4 * 1024 * 1024));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -142,7 +149,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 4 * 1024 * 1024);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 4 * 1024 * 1024));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -158,7 +166,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::None;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    std::vector<uint8_t> encodedData = ReadToEnd(encodingStream, 4096);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 4096));
 
     _internal::StructuredMessageDecodingStreamOptions decodingOptions;
     decodingOptions.ContentLength = contentSize;
@@ -166,7 +175,8 @@ namespace Azure { namespace Storage { namespace Test {
         encodedData.data(), encodedData.size());
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 4096);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 4096));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -182,39 +192,41 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::None;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    std::vector<uint8_t> encodedData = ReadToEnd(encodingStream, 7);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 7));
 
     _internal::StructuredMessageDecodingStreamOptions decodingOptions;
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 7);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 7));
 
     EXPECT_EQ(content, decodedData);
 
     // Large encode range
-    encodingStream.Rewind();
-    encodedData = ReadToEnd(encodingStream, 4096);
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 4096));
     _internal::StructuredMessageDecodingStream decodingStream1(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    decodedData = ReadToEnd(decodingStream1, 5);
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream1, 5));
 
     EXPECT_EQ(content, decodedData);
 
-    decodingStream1.Rewind();
-    decodedData = ReadToEnd(decodingStream1, 6);
+    EXPECT_NO_THROW(decodingStream1.Rewind());
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream1, 6));
 
     EXPECT_EQ(content, decodedData);
 
     // Large decode range
-    encodingStream.Rewind();
-    encodedData = ReadToEnd(encodingStream, 8);
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 8));
     _internal::StructuredMessageDecodingStream decodingStream2(
         std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
         decodingOptions);
-    decodedData = ReadToEnd(decodingStream2, 4096);
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream2, 4096));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -231,7 +243,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     // Verify encoded data has headers/footers but no content segments
     EXPECT_GT(encodedData.size(), 0);
@@ -242,7 +255,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
     EXPECT_EQ(decodedData.size(), 0);
@@ -260,7 +274,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -268,7 +283,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -285,7 +301,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -293,7 +310,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -310,7 +328,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -318,7 +337,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -335,7 +355,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     // Use default MaxSegmentLength
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -343,7 +364,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -360,7 +382,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 10 * 1024 * 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -368,7 +391,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -387,15 +411,18 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
 
     // First read
-    auto encodedData1 = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData1;
+    EXPECT_NO_THROW(encodedData1 = encodingStream.ReadToEnd());
 
     // Rewind and read again
-    encodingStream.Rewind();
-    auto encodedData2 = encodingStream.ReadToEnd();
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    std::vector<uint8_t> encodedData2;
+    EXPECT_NO_THROW(encodedData2 = encodingStream.ReadToEnd());
 
     // Rewind and read third time
-    encodingStream.Rewind();
-    auto encodedData3 = encodingStream.ReadToEnd();
+    EXPECT_NO_THROW(encodingStream.Rewind());
+    std::vector<uint8_t> encodedData3;
+    EXPECT_NO_THROW(encodedData3 = encodingStream.ReadToEnd());
 
     EXPECT_EQ(encodedData1, encodedData2);
     EXPECT_EQ(encodedData2, encodedData3);
@@ -407,7 +434,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -424,7 +452,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = ReadToEnd(encodingStream, 137);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 137));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -432,7 +461,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 193);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 193));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -453,7 +483,8 @@ namespace Azure { namespace Storage { namespace Test {
     // Encoded length should be greater than content length (due to headers/footers)
     EXPECT_GT(encodingStream.Length(), static_cast<int64_t>(contentSize));
 
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
     EXPECT_EQ(encodedData.size(), static_cast<size_t>(encodingStream.Length()));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
@@ -479,7 +510,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 2 * 1024 * 1024;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = ReadToEnd(encodingStream, 1024 * 1024);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 1024 * 1024));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -487,7 +519,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 1024 * 1024);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 1024 * 1024));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -506,7 +539,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
 
     // Read with large chunks
-    auto encodedData = ReadToEnd(encodingStream, 8192);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 8192));
 
     // Decode with small chunks
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
@@ -515,7 +549,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 11);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 11));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -535,7 +570,8 @@ namespace Azure { namespace Storage { namespace Test {
       encodingOptions.Flags = _internal::StructuredMessageFlags::None;
       encodingOptions.MaxSegmentLength = 1024;
       _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-      auto encodedData = encodingStream.ReadToEnd();
+      std::vector<uint8_t> encodedData;
+      EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
       innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
           encodedData.data(), encodedData.size());
@@ -543,7 +579,8 @@ namespace Azure { namespace Storage { namespace Test {
       decodingOptions.ContentLength = contentSize;
       _internal::StructuredMessageDecodingStream decodingStream(
           std::move(innerStream), decodingOptions);
-      auto decodedData = decodingStream.ReadToEnd();
+      std::vector<uint8_t> decodedData;
+      EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
       EXPECT_EQ(content, decodedData);
     }
@@ -562,7 +599,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = segmentSize;
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -572,7 +610,8 @@ namespace Azure { namespace Storage { namespace Test {
         std::move(innerStream), decodingOptions);
 
     // Read exactly segment-sized chunks
-    auto decodedData = ReadToEnd(decodingStream, segmentSize);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, segmentSize));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -592,13 +631,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Partial read
     std::vector<uint8_t> partialBuffer(512);
-    encodingStream.Read(partialBuffer.data(), partialBuffer.size());
+    EXPECT_NO_THROW(encodingStream.Read(partialBuffer.data(), partialBuffer.size()));
 
     // Rewind
-    encodingStream.Rewind();
+    EXPECT_NO_THROW(encodingStream.Rewind());
 
     // Full read
-    auto encodedData = encodingStream.ReadToEnd();
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -609,13 +649,14 @@ namespace Azure { namespace Storage { namespace Test {
 
     // Partial decode read
     std::vector<uint8_t> partialDecodeBuffer(256);
-    decodingStream.Read(partialDecodeBuffer.data(), partialDecodeBuffer.size());
+    EXPECT_NO_THROW(decodingStream.Read(partialDecodeBuffer.data(), partialDecodeBuffer.size()));
 
     // Rewind decode stream
-    decodingStream.Rewind();
+    EXPECT_NO_THROW(decodingStream.Rewind());
 
     // Full decode read
-    auto decodedData = decodingStream.ReadToEnd();
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
     EXPECT_EQ(content, decodedData);
   }
@@ -632,7 +673,8 @@ namespace Azure { namespace Storage { namespace Test {
     encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
     encodingOptions.MaxSegmentLength = 10; // Very small segments
     _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-    auto encodedData = ReadToEnd(encodingStream, 128);
+    std::vector<uint8_t> encodedData;
+    EXPECT_NO_THROW(encodedData = ReadToEnd(encodingStream, 128));
 
     innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
         encodedData.data(), encodedData.size());
@@ -640,7 +682,8 @@ namespace Azure { namespace Storage { namespace Test {
     decodingOptions.ContentLength = contentSize;
     _internal::StructuredMessageDecodingStream decodingStream(
         std::move(innerStream), decodingOptions);
-    auto decodedData = ReadToEnd(decodingStream, 97);
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 97));
 
     EXPECT_EQ(content, decodedData);
   }
@@ -659,7 +702,8 @@ namespace Azure { namespace Storage { namespace Test {
       encodingOptions.Flags = _internal::StructuredMessageFlags::Crc64;
       encodingOptions.MaxSegmentLength = 1024;
       _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-      auto encodedData = encodingStream.ReadToEnd();
+      std::vector<uint8_t> encodedData;
+      EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
       innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
           encodedData.data(), encodedData.size());
@@ -667,7 +711,8 @@ namespace Azure { namespace Storage { namespace Test {
       decodingOptions.ContentLength = contentSize;
       _internal::StructuredMessageDecodingStream decodingStream(
           std::move(innerStream), decodingOptions);
-      auto decodedData = decodingStream.ReadToEnd();
+      std::vector<uint8_t> decodedData;
+      EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
       EXPECT_EQ(content, decodedData);
     }
@@ -680,7 +725,8 @@ namespace Azure { namespace Storage { namespace Test {
       encodingOptions.Flags = _internal::StructuredMessageFlags::None;
       encodingOptions.MaxSegmentLength = 1024;
       _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
-      auto encodedData = encodingStream.ReadToEnd();
+      std::vector<uint8_t> encodedData;
+      EXPECT_NO_THROW(encodedData = encodingStream.ReadToEnd());
 
       innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
           encodedData.data(), encodedData.size());
@@ -688,7 +734,8 @@ namespace Azure { namespace Storage { namespace Test {
       decodingOptions.ContentLength = contentSize;
       _internal::StructuredMessageDecodingStream decodingStream(
           std::move(innerStream), decodingOptions);
-      auto decodedData = decodingStream.ReadToEnd();
+      std::vector<uint8_t> decodedData;
+      EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
 
       EXPECT_EQ(content, decodedData);
     }

@@ -13,45 +13,84 @@ using Azure::Core::IO::BodyStream;
 
 namespace Azure { namespace Storage { namespace _internal {
 
+  namespace {
+    inline bool NeedsStructuralBytes(StructuredMessageCurrentRegion region) noexcept
+    {
+      switch (region)
+      {
+        case StructuredMessageCurrentRegion::StreamHeader:
+        case StructuredMessageCurrentRegion::SegmentHeader:
+        case StructuredMessageCurrentRegion::SegmentFooter:
+        case StructuredMessageCurrentRegion::StreamFooter:
+          return true;
+        default:
+          return false;
+      }
+    }
+  } // namespace
+
   size_t StructuredMessageDecodingStream::OnRead(
       uint8_t* buffer,
       size_t count,
       Context const& context)
   {
     size_t totalReadContent = 0;
-    while (totalReadContent < count && m_offset < m_inner->Length())
+    while (
+        (totalReadContent < count && m_currentRegion != StructuredMessageCurrentRegion::Completed)
+        || NeedsStructuralBytes(m_currentRegion))
     {
       switch (m_currentRegion)
       {
         case StructuredMessageCurrentRegion::StreamHeader: {
           std::vector<uint8_t> streamHeaderBuffer(m_streamHeaderLength);
-          auto bytesRead = m_inner->Read(streamHeaderBuffer.data(), m_streamHeaderLength, context);
+          auto bytesRead
+              = m_inner->ReadToCount(streamHeaderBuffer.data(), m_streamHeaderLength, context);
+          if (bytesRead != m_streamHeaderLength)
+          {
+            throw StorageException(
+                "Unexpected end of stream while reading structured message stream header.");
+          }
           StructuredMessageHelper::ReadStreamHeader(
-              streamHeaderBuffer.data(), m_length, m_flags, m_segmentCount);
+              streamHeaderBuffer.data(), m_streamHeaderLength, m_length, m_flags, m_segmentCount);
           m_streamFooterLength
               = m_flags == StructuredMessageFlags::Crc64 ? StructuredMessageHelper::Crc64Length : 0;
           m_segmentFooterLength
               = m_flags == StructuredMessageFlags::Crc64 ? StructuredMessageHelper::Crc64Length : 0;
           m_segmentFooterBuffer.resize(m_segmentFooterLength);
           m_offset += bytesRead;
-          m_currentRegion = StructuredMessageCurrentRegion::SegmentHeader;
+          m_currentRegion = m_segmentCount == 0 ? StructuredMessageCurrentRegion::StreamFooter
+                                                : StructuredMessageCurrentRegion::SegmentHeader;
           break;
         }
         case StructuredMessageCurrentRegion::SegmentHeader: {
           auto bytesRead
-              = m_inner->Read(m_segmentHeaderBuffer.data(), m_segmentHeaderLength, context);
+              = m_inner->ReadToCount(m_segmentHeaderBuffer.data(), m_segmentHeaderLength, context);
+          if (bytesRead != m_segmentHeaderLength)
+          {
+            throw StorageException(
+                "Unexpected end of stream while reading structured message segment header.");
+          }
           StructuredMessageHelper::ReadSegmentHeader(
-              m_segmentHeaderBuffer.data(), m_currentSegmentNumber, m_currentSegmentLength);
+              m_segmentHeaderBuffer.data(),
+              m_segmentHeaderLength,
+              m_currentSegmentNumber,
+              m_currentSegmentLength);
           m_offset += bytesRead;
           m_currentRegion = StructuredMessageCurrentRegion::SegmentContent;
           break;
         }
         case StructuredMessageCurrentRegion::SegmentContent: {
-          size_t readBytes = std::min<size_t>(
+          size_t bytesToRead = std::min<size_t>(
               count - totalReadContent,
               static_cast<size_t>(m_currentSegmentLength - m_currentSegmentOffset));
-          auto bytesRead
-              = m_inner->Read(buffer + totalReadContent, static_cast<size_t>(readBytes), context);
+          auto bytesRead = m_inner->ReadToCount(
+              buffer + totalReadContent, static_cast<size_t>(bytesToRead), context);
+          if (bytesRead != bytesToRead)
+          {
+            throw StorageException(
+                "Unexpected end of stream while reading structured message segment content.");
+          }
+
           if (m_flags == StructuredMessageFlags::Crc64)
           {
             m_segmentCrc64Hash->Append(buffer + totalReadContent, bytesRead);
@@ -68,19 +107,25 @@ namespace Azure { namespace Storage { namespace _internal {
         case StructuredMessageCurrentRegion::SegmentFooter: {
           if (m_flags == StructuredMessageFlags::Crc64)
           {
-            auto bytesRead
-                = m_inner->Read(m_segmentFooterBuffer.data(), m_segmentFooterLength, context);
+            auto bytesRead = m_inner->ReadToCount(
+                m_segmentFooterBuffer.data(), m_segmentFooterLength, context);
+            if (bytesRead != m_segmentFooterLength)
+            {
+              throw StorageException(
+                  "Unexpected end of stream while reading structured message segment footer.");
+            }
             // in current version, segment footer contains crc64 hash of the segment content.
             auto calculatedCrc64 = m_segmentCrc64Hash->Final();
-            if (calculatedCrc64 != m_segmentFooterBuffer)
+            auto reportedCrc64 = StructuredMessageHelper::ReadCrc64(
+                m_segmentFooterBuffer.data(), m_segmentFooterLength);
+            if (calculatedCrc64 != reportedCrc64)
             {
               throw StorageException(
                   "Segment Compared checksums did not match. Invalid data may have been written to "
                   "the "
                   "destination. calculatedChecksum:"
                   + std::string(calculatedCrc64.begin(), calculatedCrc64.end())
-                  + "reportedChecksum: "
-                  + std::string(m_segmentFooterBuffer.begin(), m_segmentFooterBuffer.end()));
+                  + "reportedChecksum: " + std::string(reportedCrc64.begin(), reportedCrc64.end()));
             }
             m_offset += bytesRead;
             m_streamCrc64Hash->Concatenate(*m_segmentCrc64Hash);
@@ -98,23 +143,28 @@ namespace Azure { namespace Storage { namespace _internal {
           {
             std::vector<uint8_t> streamFooterBuffer(m_streamFooterLength);
             auto bytesRead
-                = m_inner->Read(streamFooterBuffer.data(), m_streamFooterLength, context);
-            // in current version, segment footer contains crc64 hash of the segment content.
+                = m_inner->ReadToCount(streamFooterBuffer.data(), m_streamFooterLength, context);
+            if (bytesRead != m_streamFooterLength)
+            {
+              throw StorageException(
+                  "Unexpected end of stream while reading structured message stream footer.");
+            }
+            // in current version, stream footer contains crc64 hash of all segment content.
             auto calculatedCrc64 = m_streamCrc64Hash->Final();
-            if (calculatedCrc64 != streamFooterBuffer)
+            auto reportedCrc64 = StructuredMessageHelper::ReadCrc64(
+                streamFooterBuffer.data(), m_streamFooterLength);
+            if (calculatedCrc64 != reportedCrc64)
             {
               throw StorageException(
                   "Stream Compared checksums did not match. Invalid data may have been written to "
                   "the "
                   "destination. calculatedChecksum:"
                   + std::string(calculatedCrc64.begin(), calculatedCrc64.end())
-                  + "reportedChecksum: "
-                  + std::string(streamFooterBuffer.begin(), streamFooterBuffer.end()));
+                  + "reportedChecksum: " + std::string(reportedCrc64.begin(), reportedCrc64.end()));
             }
             m_offset += bytesRead;
-            m_streamCrc64Hash->Concatenate(*m_segmentCrc64Hash);
-            m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
           }
+          m_currentRegion = StructuredMessageCurrentRegion::Completed;
           break;
         }
       }
