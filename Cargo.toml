@@ -62,7 +62,7 @@ sha2 = { version = "0.10" }
 syn = { version = "2.0.74", features = ["full"] }
 quote = "1.0.36"
 thiserror = "1.0"
-time = { version = "0.3.10", features = [
+time = { version = "0.3.47", features = [
     "serde-well-known",
     "macros",
     "wasm-bindgen",
