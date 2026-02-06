@@ -50,6 +50,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_clientConfiguration.ApiVersion
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
 
     DataLakeClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -83,6 +85,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.TokenCredential = credential;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -119,6 +123,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     m_clientConfiguration.ApiVersion
         = options.ApiVersion.empty() ? _detail::ApiVersion : options.ApiVersion;
     m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
 
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;

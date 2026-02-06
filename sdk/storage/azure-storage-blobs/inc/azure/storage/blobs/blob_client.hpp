@@ -434,16 +434,26 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<EncryptionKey> m_customerProvidedKey;
     /** @brief Encryption scope. */
     Azure::Nullable<std::string> m_encryptionScope;
+    /** @brief Upload TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
+    /** @brief Download TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
 
   private:
     explicit BlobClient(
         Azure::Core::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
         Azure::Nullable<EncryptionKey> customerProvidedKey = Azure::Nullable<EncryptionKey>(),
-        Azure::Nullable<std::string> encryptionScope = Azure::Nullable<std::string>())
+        Azure::Nullable<std::string> encryptionScope = Azure::Nullable<std::string>(),
+        Azure::Nullable<TransferValidationOptions> uploadValidationOptions
+        = Azure::Nullable<TransferValidationOptions>(),
+        Azure::Nullable<TransferValidationOptions> downloadValidationOptions
+        = Azure::Nullable<TransferValidationOptions>())
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),
           m_customerProvidedKey(std::move(customerProvidedKey)),
-          m_encryptionScope(std::move(encryptionScope))
+          m_encryptionScope(std::move(encryptionScope)),
+          m_uploadValidationOptions(std::move(uploadValidationOptions)),
+          m_downloadValidationOptions(std::move(downloadValidationOptions))
     {
     }
 

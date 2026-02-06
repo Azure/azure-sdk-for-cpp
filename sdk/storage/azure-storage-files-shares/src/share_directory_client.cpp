@@ -46,7 +46,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -71,7 +73,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
 
@@ -103,7 +107,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -127,6 +133,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     subdirectoryClient.m_allowTrailingDot = m_allowTrailingDot;
     subdirectoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     subdirectoryClient.m_shareTokenIntent = m_shareTokenIntent;
+    subdirectoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    subdirectoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return subdirectoryClient;
   }
 
@@ -138,6 +146,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     fileClient.m_allowTrailingDot = m_allowTrailingDot;
     fileClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     fileClient.m_shareTokenIntent = m_shareTokenIntent;
+    fileClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    fileClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return fileClient;
   }
 
@@ -303,6 +313,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     renamedFileClient.m_allowTrailingDot = m_allowTrailingDot;
     renamedFileClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     renamedFileClient.m_shareTokenIntent = m_shareTokenIntent;
+    renamedFileClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    renamedFileClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return Azure::Response<ShareFileClient>(
         std::move(renamedFileClient), std::move(response.RawResponse));
   }
@@ -366,6 +378,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     renamedSubdirectoryClient.m_allowTrailingDot = m_allowTrailingDot;
     renamedSubdirectoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     renamedSubdirectoryClient.m_shareTokenIntent = m_shareTokenIntent;
+    renamedSubdirectoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    renamedSubdirectoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return Azure::Response<ShareDirectoryClient>(
         std::move(renamedSubdirectoryClient), std::move(response.RawResponse));
   }

@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-02-06/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg101base/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-04-06/blob.json
 ```
 
 ## ModelFour Options
@@ -52,13 +52,12 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
-      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
           delete $[h];
         }
       }
@@ -101,12 +100,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-02-06"]
+        "enum": ["2026-04-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-02-06";
+      $.ApiVersionParameter.enum[0] = "2026-04-06";
 ```
 
 ### Rename Operations
@@ -291,6 +290,8 @@ directive:
       $.SequenceNumberAction["x-ms-enum"]["name"] = "SequenceNumberAction";
       delete $.EncryptionAlgorithm["enum"];
       delete $.EncryptionAlgorithm["x-ms-enum"];
+      delete $.SourceEncryptionAlgorithm["enum"];
+      delete $.SourceEncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
       $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
       delete $.FilterBlobsInclude;
@@ -325,6 +326,16 @@ directive:
           {"value": "Cold", "name": "Cold"}
       ];
       $.EncryptionAlgorithm = {
+        "type": "string",
+        "enum": ["AES256"],
+        "x-ms-enum": {
+          "name": "EncryptionAlgorithmType",
+          "modelAsString": false,
+          "values": [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "AES256", "name": "Aes256"}]
+        },
+        "x-ms-export": true
+      };
+      $.SourceEncryptionAlgorithm = {
         "type": "string",
         "enum": ["AES256"],
         "x-ms-enum": {
@@ -384,11 +395,15 @@ directive:
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
         }
+        if (h === "x-ms-structured-body" || h === "x-ms-structured-content-length") {
+          $[h]["x-nullable"] = true;
+        }
       }
   - from: swagger-document
     where: $.parameters
     transform: >
       $.EncryptionKeySha256["format"] = "byte";
+      $.SourceEncryptionKeySha256["format"] = "byte";
       $.BlobContentType["required"] = true;
       $.BlobContentEncoding["required"] = true;
       $.BlobContentLanguage["required"] = true;

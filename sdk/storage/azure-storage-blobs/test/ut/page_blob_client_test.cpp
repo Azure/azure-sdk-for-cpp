@@ -818,4 +818,105 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blockBlobClient.GetProperties());
   }
 
+  TEST_F(PageBlobClientTest, StructuredMessageTest)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    auto pageBlob = GetPageBlobClientTestForTest(LowercaseRandomString());
+    pageBlob.Create(contentSize);
+
+    // Append
+    Blobs::UploadPagesOptions uploadOptions;
+    uploadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::UploadPagesResult uploadResult;
+    EXPECT_NO_THROW(uploadResult = pageBlob.UploadPages(0, bodyStream, uploadOptions).Value);
+    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+
+    // Download
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = pageBlob.Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        content,
+        std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+  }
+
+  TEST_F(PageBlobClientTest, StructuredMessageTest_ClientOptions)
+  {
+    const size_t contentSize = 512;
+    auto content = RandomBuffer(contentSize);
+
+    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    clientOptions.UploadValidationOptions = validationOptions;
+    clientOptions.DownloadValidationOptions = validationOptions;
+
+    auto validateTypicalApis = [&](Blobs::PageBlobClient& client) {
+      client.Create(contentSize);
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Blobs::Models::UploadPagesResult uploadResult;
+      EXPECT_NO_THROW(uploadResult = client.UploadPages(0, bodyStream).Value);
+      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
+
+      Blobs::Models::DownloadBlobResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    };
+
+    auto validateAllApis = [&](Blobs::PageBlobClient& client) {
+      client.Create(contentSize);
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Blobs::Models::UploadPagesResult uploadResult;
+      EXPECT_NO_THROW(uploadResult = client.UploadPages(0, bodyStream).Value);
+      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
+
+      Blobs::Models::DownloadBlobResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+
+      Blobs::Models::DownloadBlobToResult downloadToResult;
+      auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+      EXPECT_NO_THROW(
+          downloadToResult = client.DownloadTo(downloadBuffer.data(), contentSize).Value);
+      EXPECT_EQ(downloadBuffer, content);
+    };
+
+    // Scenario 1: Direct constructor with options
+    {
+      const std::string blobName = "clientoptions_ctor_" + LowercaseRandomString();
+      auto blobUrl = m_blobContainerClient->GetPageBlobClient(blobName).GetUrl();
+      auto credential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+      Blobs::PageBlobClient pageBlobClient(blobUrl, credential, clientOptions);
+      validateTypicalApis(pageBlobClient);
+    }
+
+    // Scenario 2: Service -> Container -> Blob (GetBlobContainerClient)
+    {
+      const std::string blobName = "clientoptions_service_" + LowercaseRandomString();
+      auto serviceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), clientOptions);
+      auto containerClient = serviceClient.GetBlobContainerClient(m_containerName);
+      auto pageBlobClient = containerClient.GetPageBlobClient(blobName);
+      validateAllApis(pageBlobClient);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

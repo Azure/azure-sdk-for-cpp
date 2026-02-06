@@ -41,7 +41,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_serviceUrl(serviceUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -66,7 +68,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_serviceUrl(serviceUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
 
@@ -98,7 +102,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_serviceUrl(serviceUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -121,6 +127,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     shareClient.m_allowTrailingDot = m_allowTrailingDot;
     shareClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     shareClient.m_shareTokenIntent = m_shareTokenIntent;
+    shareClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    shareClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return shareClient;
   }
 
@@ -194,6 +202,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
     protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    protocolLayerOptions.KeyInfo.DelegatedUserTid = options.DelegatedUserTid;
     return _detail::ServiceClient::GetUserDelegationKey(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
   }
