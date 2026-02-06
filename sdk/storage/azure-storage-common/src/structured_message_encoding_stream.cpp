@@ -164,6 +164,9 @@ namespace Azure { namespace Storage { namespace _internal {
           }
           break;
         }
+        case StructuredMessageCurrentRegion::Completed: {
+          break;
+        }
       }
     }
     return totalRead;

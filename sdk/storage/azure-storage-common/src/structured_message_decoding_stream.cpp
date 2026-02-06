@@ -14,12 +14,10 @@ using Azure::Core::IO::BodyStream;
 namespace Azure { namespace Storage { namespace _internal {
 
   namespace {
-    inline bool NeedsStructuralBytes(StructuredMessageCurrentRegion region) noexcept
+    inline bool NeedsFooter(StructuredMessageCurrentRegion region) noexcept
     {
       switch (region)
       {
-        case StructuredMessageCurrentRegion::StreamHeader:
-        case StructuredMessageCurrentRegion::SegmentHeader:
         case StructuredMessageCurrentRegion::SegmentFooter:
         case StructuredMessageCurrentRegion::StreamFooter:
           return true;
@@ -37,7 +35,7 @@ namespace Azure { namespace Storage { namespace _internal {
     size_t totalReadContent = 0;
     while (
         (totalReadContent < count && m_currentRegion != StructuredMessageCurrentRegion::Completed)
-        || NeedsStructuralBytes(m_currentRegion))
+        || NeedsFooter(m_currentRegion))
     {
       switch (m_currentRegion)
       {
@@ -83,13 +81,8 @@ namespace Azure { namespace Storage { namespace _internal {
           size_t bytesToRead = std::min<size_t>(
               count - totalReadContent,
               static_cast<size_t>(m_currentSegmentLength - m_currentSegmentOffset));
-          auto bytesRead = m_inner->ReadToCount(
-              buffer + totalReadContent, static_cast<size_t>(bytesToRead), context);
-          if (bytesRead != bytesToRead)
-          {
-            throw StorageException(
-                "Unexpected end of stream while reading structured message segment content.");
-          }
+          auto bytesRead
+              = m_inner->Read(buffer + totalReadContent, static_cast<size_t>(bytesToRead), context);
 
           if (m_flags == StructuredMessageFlags::Crc64)
           {
@@ -101,6 +94,10 @@ namespace Azure { namespace Storage { namespace _internal {
           if (m_currentSegmentOffset == m_currentSegmentLength)
           {
             m_currentRegion = StructuredMessageCurrentRegion::SegmentFooter;
+          }
+          if (bytesRead != bytesToRead)
+          {
+            return totalReadContent;
           }
           break;
         }
@@ -168,7 +165,7 @@ namespace Azure { namespace Storage { namespace _internal {
           break;
         }
         case StructuredMessageCurrentRegion::Completed: {
-          return totalReadContent;
+          break;
         }
       }
     }
