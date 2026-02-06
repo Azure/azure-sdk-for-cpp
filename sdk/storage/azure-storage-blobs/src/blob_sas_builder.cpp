@@ -39,13 +39,9 @@ namespace Azure { namespace Storage { namespace Sas {
       }
     }
 
-    std::string ParseRequestQueryParameters(
+    std::string BuildRequestQueryParameters(
         const std::map<std::string, std::string>& queryParameters)
     {
-      if (queryParameters.empty())
-      {
-        return "";
-      }
       std::string result;
       for (const auto& pair : queryParameters)
       {
@@ -54,12 +50,8 @@ namespace Azure { namespace Storage { namespace Sas {
       return result;
     }
 
-    std::string ParseRequestHeaders(const std::map<std::string, std::string>& headers)
+    std::string BuildRequestHeaders(const std::map<std::string, std::string>& headers)
     {
-      if (headers.empty())
-      {
-        return "";
-      }
       std::string result;
       for (const auto& pair : headers)
       {
@@ -68,12 +60,8 @@ namespace Azure { namespace Storage { namespace Sas {
       return result;
     }
 
-    std::string ParseRequestKeys(const std::map<std::string, std::string>& map)
+    std::string BuildRequestKeys(const std::map<std::string, std::string>& map)
     {
-      if (map.empty())
-      {
-        return "";
-      }
       std::string result;
       for (auto it = map.begin(); it != map.end(); ++it)
       {
@@ -310,14 +298,11 @@ namespace Azure { namespace Storage { namespace Sas {
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion
-        + "\n\n\n\n"
-        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
-               ? userDelegationKey.SignedDelegatedUserTid.Value()
-               : "")
-        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
+        + "\n\n\n\n" + userDelegationKey.SignedDelegatedUserTid.ValueOr("") + "\n"
+        + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
         + protocol + "\n" + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
-        + EncryptionScope + "\n" + ParseRequestHeaders(RequestHeaders) + "\n"
-        + ParseRequestQueryParameters(RequestQueryParameters) + "\n" + CacheControl + "\n"
+        + EncryptionScope + "\n" + BuildRequestHeaders(RequestHeaders) + "\n"
+        + BuildRequestQueryParameters(RequestQueryParameters) + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
@@ -362,12 +347,12 @@ namespace Azure { namespace Storage { namespace Sas {
     if (!RequestHeaders.empty())
     {
       builder.AppendQueryParameter(
-          "srh", _internal::UrlEncodeQueryParameter(ParseRequestKeys(RequestHeaders)));
+          "srh", _internal::UrlEncodeQueryParameter(BuildRequestKeys(RequestHeaders)));
     }
     if (!RequestQueryParameters.empty())
     {
       builder.AppendQueryParameter(
-          "srq", _internal::UrlEncodeQueryParameter(ParseRequestKeys(RequestQueryParameters)));
+          "srq", _internal::UrlEncodeQueryParameter(BuildRequestKeys(RequestQueryParameters)));
     }
     if (!CacheControl.empty())
     {
@@ -473,13 +458,11 @@ namespace Azure { namespace Storage { namespace Sas {
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
         + "\n" + userDelegationKey.SignedVersion + "\n\n\n\n"
-        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
-               ? userDelegationKey.SignedDelegatedUserTid.Value()
-               : "")
-        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
-        + protocol + "\n" + SasVersion + "\n" + resource + "\n" + snapshotVersion + "\n"
-        + EncryptionScope + "\n" + ParseRequestHeaders(RequestHeaders) + "\n"
-        + ParseRequestQueryParameters(RequestQueryParameters) + "\n" + CacheControl + "\n"
+        + userDelegationKey.SignedDelegatedUserTid.ValueOr("") + "\n" + DelegatedUserObjectId + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + resource + "\n" + snapshotVersion + "\n" + EncryptionScope + "\n"
+        + BuildRequestHeaders(RequestHeaders) + "\n"
+        + BuildRequestQueryParameters(RequestQueryParameters) + "\n" + CacheControl + "\n"
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
   }
 

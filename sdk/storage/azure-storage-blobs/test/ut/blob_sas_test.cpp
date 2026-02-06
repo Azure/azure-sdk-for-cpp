@@ -931,7 +931,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClient2.Download(), StorageException);
   }
 
-  TEST_F(BlobSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  TEST_F(BlobSasTest, PrincipalBoundDelegationSas_CrossTenant_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -994,7 +994,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClient2.Download(), StorageException);
   }
 
-  TEST_F(BlobSasTest, DISABLED_DynamicSas)
+  TEST_F(BlobSasTest, DynamicSas_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);

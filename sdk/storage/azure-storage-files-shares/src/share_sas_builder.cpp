@@ -186,12 +186,10 @@ namespace Azure { namespace Storage { namespace Sas {
         + canonicalName + "\n" + userDelegationKey.SignedObjectId + "\n"
         + userDelegationKey.SignedTenantId + "\n" + signedStartsOnStr + "\n" + signedExpiresOnStr
         + "\n" + userDelegationKey.SignedService + "\n" + userDelegationKey.SignedVersion + "\n"
-        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
-               ? userDelegationKey.SignedDelegatedUserTid.Value()
-               : "")
-        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
-        + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
-        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + userDelegationKey.SignedDelegatedUserTid.ValueOr("") + "\n" + DelegatedUserObjectId + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
@@ -317,12 +315,10 @@ namespace Azure { namespace Storage { namespace Sas {
         + userDelegationKey.SignedObjectId + "\n" + userDelegationKey.SignedTenantId + "\n"
         + signedStartsOnStr + "\n" + signedExpiresOnStr + "\n" + userDelegationKey.SignedService
         + "\n" + userDelegationKey.SignedVersion + "\n"
-        + (userDelegationKey.SignedDelegatedUserTid.HasValue()
-               ? userDelegationKey.SignedDelegatedUserTid.Value()
-               : "")
-        + "\n" + DelegatedUserObjectId + "\n" + (IPRange.HasValue() ? IPRange.Value() : "") + "\n"
-        + protocol + "\n" + SasVersion + "\n" + CacheControl + "\n" + ContentDisposition + "\n"
-        + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
+        + userDelegationKey.SignedDelegatedUserTid.ValueOr("") + "\n" + DelegatedUserObjectId + "\n"
+        + (IPRange.HasValue() ? IPRange.Value() : "") + "\n" + protocol + "\n" + SasVersion + "\n"
+        + CacheControl + "\n" + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage
+        + "\n" + ContentType;
   }
 
 }}} // namespace Azure::Storage::Sas
