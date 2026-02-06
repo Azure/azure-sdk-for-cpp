@@ -33,6 +33,8 @@ namespace Azure { namespace Storage { namespace _internal {
       Context const& context)
   {
     size_t totalReadContent = 0;
+    // Loop condition: 1. Read content until count reached or completed. 2. If Read content done,
+    // but footer needed, continue to read footer.
     while (
         (totalReadContent < count && m_currentRegion != StructuredMessageCurrentRegion::Completed)
         || NeedsFooter(m_currentRegion))
@@ -56,6 +58,8 @@ namespace Azure { namespace Storage { namespace _internal {
               = m_flags == StructuredMessageFlags::Crc64 ? StructuredMessageHelper::Crc64Length : 0;
           m_segmentFooterBuffer.resize(m_segmentFooterLength);
           m_offset += bytesRead;
+
+          // If no segments, move to stream footer directly.
           m_currentRegion = m_segmentCount == 0 ? StructuredMessageCurrentRegion::StreamFooter
                                                 : StructuredMessageCurrentRegion::SegmentHeader;
           break;
@@ -95,6 +99,7 @@ namespace Azure { namespace Storage { namespace _internal {
           {
             m_currentRegion = StructuredMessageCurrentRegion::SegmentFooter;
           }
+          // If we couldn't read all requested bytes, return early.
           if (bytesRead != bytesToRead)
           {
             return totalReadContent;
@@ -111,7 +116,7 @@ namespace Azure { namespace Storage { namespace _internal {
               throw StorageException(
                   "Unexpected end of stream while reading structured message segment footer.");
             }
-            // in current version, segment footer contains crc64 hash of the segment content.
+            // In current version, segment footer contains crc64 hash of the segment content.
             auto calculatedCrc64 = m_segmentCrc64Hash->Final();
             auto reportedCrc64 = StructuredMessageHelper::ReadCrc64(
                 m_segmentFooterBuffer.data(), m_segmentFooterLength);
@@ -130,6 +135,7 @@ namespace Azure { namespace Storage { namespace _internal {
           }
 
           m_currentSegmentOffset = 0;
+          // Decide if more segments to read or move to stream footer.
           m_currentRegion = m_currentSegmentNumber == m_segmentCount
               ? StructuredMessageCurrentRegion::StreamFooter
               : StructuredMessageCurrentRegion::SegmentHeader;
