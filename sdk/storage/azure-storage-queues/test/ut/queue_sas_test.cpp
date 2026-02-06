@@ -546,7 +546,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueClient2.GetProperties(), StorageException);
   }
 
-  TEST_F(QueueSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  TEST_F(QueueSasTest, PrincipalBoundDelegationSas_CrossTenant_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
