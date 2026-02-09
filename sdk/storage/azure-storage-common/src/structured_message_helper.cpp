@@ -72,10 +72,6 @@ namespace Azure { namespace Storage { namespace _internal {
       std::vector<uint8_t> const& crc64)
   {
     AZURE_ASSERT(bufferSize >= Crc64Length);
-    if (crc64.empty())
-    {
-      return;
-    }
     AZURE_ASSERT(crc64.size() == Crc64Length);
     std::copy(crc64.begin(), crc64.end(), buffer);
   }

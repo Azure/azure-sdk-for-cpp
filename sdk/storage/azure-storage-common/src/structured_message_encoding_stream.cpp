@@ -18,7 +18,7 @@ namespace Azure { namespace Storage { namespace _internal {
       Context const& context)
   {
     size_t totalRead = 0;
-    while (totalRead < count && m_currentRegion != StructuredMessageCurrentRegion::Completed)
+    while (totalRead < count && m_currentRegion != StructuredMessageCurrentRegion::StreamEnd)
     {
       size_t subreadOffset = totalRead;
       switch (m_currentRegion)
@@ -143,7 +143,7 @@ namespace Azure { namespace Storage { namespace _internal {
                 static_cast<size_t>(m_streamFooterLength - m_currentRegionOffset));
             if (bytesToRead <= 0)
             {
-              m_currentRegion = StructuredMessageCurrentRegion::Completed;
+              m_currentRegion = StructuredMessageCurrentRegion::StreamEnd;
               return totalRead;
             }
             if (m_streamFooterCache.empty())
@@ -162,11 +162,11 @@ namespace Azure { namespace Storage { namespace _internal {
           }
           else
           {
-            m_currentRegion = StructuredMessageCurrentRegion::Completed;
+            m_currentRegion = StructuredMessageCurrentRegion::StreamEnd;
           }
           break;
         }
-        case StructuredMessageCurrentRegion::Completed: {
+        case StructuredMessageCurrentRegion::StreamEnd: {
           break;
         }
       }

@@ -5,11 +5,11 @@
 
 #include <azure/storage/common/internal/structured_message_decoding_stream.hpp>
 #include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class StructuredMessageTest : public StorageTest {
-  };
+  class StructuredMessageTest : public StorageTest {};
 
   std::vector<uint8_t> ReadToEnd(Azure::Core::IO::BodyStream& stream, const size_t chunkSize)
   {
@@ -26,6 +26,33 @@ namespace Azure { namespace Storage { namespace Test {
         return buffer;
       }
     }
+  }
+
+  // Helper to encode content into a structured message
+  std::vector<uint8_t> EncodeContent(
+      std::vector<uint8_t> const& content,
+      _internal::StructuredMessageFlags flags,
+      int64_t maxSegmentLength)
+  {
+    auto innerStream
+        = std::make_unique<Azure::Core::IO::MemoryBodyStream>(content.data(), content.size());
+    _internal::StructuredMessageEncodingStreamOptions encodingOptions;
+    encodingOptions.Flags = flags;
+    encodingOptions.MaxSegmentLength = maxSegmentLength;
+    _internal::StructuredMessageEncodingStream encodingStream(innerStream.get(), encodingOptions);
+    return encodingStream.ReadToEnd();
+  }
+
+  // Helper to create a decoding stream from encoded data
+  _internal::StructuredMessageDecodingStream CreateDecodingStream(
+      std::vector<uint8_t> const& encodedData,
+      size_t contentLength)
+  {
+    auto innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        encodedData.data(), encodedData.size());
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentLength);
+    return _internal::StructuredMessageDecodingStream(std::move(innerStream), decodingOptions);
   }
 
   TEST_F(StructuredMessageTest, BasicFunction)
@@ -741,4 +768,164 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(StructuredMessageTest, SingleReadReturnsAtMostOneSegment)
+  {
+    // With the totalContentRead == 0 loop condition, a single Read() call should return
+    // at most one segment's worth of content, even if the buffer is much larger.
+    const size_t segmentSize = 256;
+    const size_t contentSize = segmentSize * 4; // 4 full segments
+    auto content = RandomBuffer(contentSize);
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, segmentSize);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    // Read with buffer much larger than segment size
+    std::vector<uint8_t> readBuffer(contentSize);
+    auto bytesRead = decodingStream.Read(readBuffer.data(), readBuffer.size());
+
+    // Should return at most one segment, not the full buffer
+    EXPECT_LE(bytesRead, segmentSize);
+    EXPECT_GT(bytesRead, static_cast<size_t>(0));
+
+    // But ReadToCount/ReadToEnd should still assemble the full content via multiple Read calls
+    decodingStream.Rewind();
+    auto decodedData = decodingStream.ReadToEnd();
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, SingleReadReturnsAtMostOneSegment_NoCrc64)
+  {
+    // Same test without CRC64 to verify the loop condition applies regardless of flags
+    const size_t segmentSize = 256;
+    const size_t contentSize = segmentSize * 4;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::None, segmentSize);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    std::vector<uint8_t> readBuffer(contentSize);
+    auto bytesRead = decodingStream.Read(readBuffer.data(), readBuffer.size());
+
+    EXPECT_LE(bytesRead, segmentSize);
+    EXPECT_GT(bytesRead, static_cast<size_t>(0));
+
+    decodingStream.Rewind();
+    auto decodedData = decodingStream.ReadToEnd();
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, SequentialSingleReadsAccumulateCorrectly)
+  {
+    // Verify that calling Read() repeatedly with a large buffer correctly accumulates
+    // all content one segment at a time.
+    const size_t segmentSize = 128;
+    const size_t contentSize = segmentSize * 5 + 37; // 5 full segments + partial
+    auto content = RandomBuffer(contentSize);
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, segmentSize);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    std::vector<uint8_t> accumulated;
+    std::vector<uint8_t> readBuffer(contentSize);
+    size_t readCount = 0;
+
+    while (true)
+    {
+      auto bytesRead = decodingStream.Read(readBuffer.data(), readBuffer.size());
+      if (bytesRead == 0)
+        break;
+      // Each Read should return at most one segment's worth
+      EXPECT_LE(bytesRead, segmentSize);
+      accumulated.insert(accumulated.end(), readBuffer.begin(), readBuffer.begin() + bytesRead);
+      readCount++;
+    }
+
+    EXPECT_EQ(accumulated, content);
+    // Should have taken at least (contentSize / segmentSize) reads (one per segment)
+    EXPECT_GE(readCount, (contentSize + segmentSize - 1) / segmentSize);
+  }
+
+  TEST_F(StructuredMessageTest, ReadAfterStreamEnd)
+  {
+    // After all data is consumed, subsequent Read() calls should return 0.
+    const size_t contentSize = 512;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, 1024);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    auto decodedData = decodingStream.ReadToEnd();
+    EXPECT_EQ(content, decodedData);
+
+    // Reading after completion should return 0
+    std::vector<uint8_t> extraBuffer(256);
+    EXPECT_EQ(decodingStream.Read(extraBuffer.data(), extraBuffer.size()), static_cast<size_t>(0));
+    EXPECT_EQ(decodingStream.Read(extraBuffer.data(), extraBuffer.size()), static_cast<size_t>(0));
+  }
+
+  TEST_F(StructuredMessageTest, ReadWithZeroCount)
+  {
+    // Read() with count=0 should return 0 without advancing state.
+    const size_t contentSize = 512;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, 1024);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    std::vector<uint8_t> buffer(1);
+    EXPECT_EQ(decodingStream.Read(buffer.data(), 0), static_cast<size_t>(0));
+
+    // Stream should still work normally after zero-count read
+    auto decodedData = decodingStream.ReadToEnd();
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, Crc64CorruptionDetected)
+  {
+    // Verify that CRC64 corruption in segment content is detected during decoding.
+    const size_t contentSize = 2048;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, 1024);
+
+    // Corrupt a byte in the first segment's content area (after stream header + segment header)
+    // Stream header = 13 bytes, segment header = 10 bytes, so content starts at offset 23
+    size_t corruptOffset = 23 + 100; // somewhere within first segment content
+    ASSERT_LT(corruptOffset, encodedData.size());
+    encodedData[corruptOffset] ^= 0xFF;
+
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+    EXPECT_THROW(decodingStream.ReadToEnd(), StorageException);
+  }
+
+  TEST_F(StructuredMessageTest, SingleByteReads)
+  {
+    // Reading one byte at a time should still produce correct output.
+    const size_t contentSize = 300;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, 128);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    std::vector<uint8_t> decodedData;
+    EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 1));
+
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, BufferExactlyDoubleSegmentSize)
+  {
+    // When buffer is exactly 2x segment size, each Read still returns at most one segment.
+    const size_t segmentSize = 512;
+    const size_t contentSize = segmentSize * 3;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, segmentSize);
+    auto decodingStream = CreateDecodingStream(encodedData, contentSize);
+
+    std::vector<uint8_t> readBuffer(segmentSize * 2);
+    auto bytesRead = decodingStream.Read(readBuffer.data(), readBuffer.size());
+
+    // First Read should return exactly one segment (512), not two (1024)
+    EXPECT_EQ(bytesRead, segmentSize);
+
+    // Verify content correctness via second read and comparison
+    std::vector<uint8_t> firstSegment(readBuffer.begin(), readBuffer.begin() + bytesRead);
+    EXPECT_EQ(firstSegment, std::vector<uint8_t>(content.begin(), content.begin() + segmentSize));
+  }
 }}} // namespace Azure::Storage::Test

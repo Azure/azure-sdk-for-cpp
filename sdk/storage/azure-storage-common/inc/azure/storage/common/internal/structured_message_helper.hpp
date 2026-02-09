@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace _internal {
     SegmentContent,
     SegmentFooter,
     StreamFooter,
-    Completed
+    StreamEnd
   };
 
   /**
