@@ -40,20 +40,20 @@ namespace Azure { namespace Storage { namespace _internal {
     /** @brief Total length of the stream header in bytes. */
     static constexpr size_t StreamHeaderLength = 13;
     /** @brief Offset of the version field within the stream header. */
-    static constexpr int64_t StreamHeaderVersionOffset = 0;
+    static constexpr size_t StreamHeaderVersionOffset = 0;
     /** @brief Offset of the message length field within the stream header. */
-    static constexpr int64_t StreamHeaderMessageLengthOffset = 1;
+    static constexpr size_t StreamHeaderMessageLengthOffset = 1;
     /** @brief Offset of the flags field within the stream header. */
-    static constexpr int64_t StreamHeaderFlagsOffset = 9;
+    static constexpr size_t StreamHeaderFlagsOffset = 9;
     /** @brief Offset of the segment count field within the stream header. */
-    static constexpr int64_t StreamHeaderSegmentCountOffset = 11;
+    static constexpr size_t StreamHeaderSegmentCountOffset = 11;
 
     /** @brief Total length of the segment header in bytes. */
     static constexpr size_t SegmentHeaderLength = 10;
     /** @brief Offset of the segment number field within the segment header. */
-    static constexpr int64_t SegmentHeaderNumOffset = 0;
+    static constexpr size_t SegmentHeaderNumOffset = 0;
     /** @brief Offset of the segment content length field within the segment header. */
-    static constexpr int64_t SegmentHeaderContentLengthOffset = 2;
+    static constexpr size_t SegmentHeaderContentLengthOffset = 2;
 
     /**
      * @brief Writes the stream header to the buffer.
@@ -69,7 +69,7 @@ namespace Azure { namespace Storage { namespace _internal {
         uint8_t* buffer,
         size_t bufferSize,
         uint64_t messageLength,
-        uint16_t flags,
+        StructuredMessageFlags flags,
         uint16_t segmentCount);
 
     /**
@@ -112,6 +112,7 @@ namespace Azure { namespace Storage { namespace _internal {
      * @param buffer Pointer to a buffer of at least StreamHeaderLength bytes containing the
      * header.
      * @param bufferSize Size of the buffer in bytes.
+     * @param version Output parameter for the structured message version.
      * @param messageLength Output parameter for the total message length.
      * @param flags Output parameter for the message flags.
      * @param segmentCount Output parameter for the total segment count.
@@ -119,6 +120,7 @@ namespace Azure { namespace Storage { namespace _internal {
     static void ReadStreamHeader(
         uint8_t const* buffer,
         size_t bufferSize,
+        uint8_t& version,
         uint64_t& messageLength,
         StructuredMessageFlags& flags,
         uint16_t& segmentCount);

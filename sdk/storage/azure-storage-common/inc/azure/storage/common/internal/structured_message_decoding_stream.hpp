@@ -42,6 +42,7 @@ namespace Azure { namespace Storage { namespace _internal {
     size_t m_streamFooterLength;
 
     // Length of the stream
+    uint8_t m_version;
     uint64_t m_length;
     StructuredMessageFlags m_flags;
     uint16_t m_segmentCount;
@@ -68,7 +69,8 @@ namespace Azure { namespace Storage { namespace _internal {
         : m_inner(std::move(inner)), m_options(options),
           m_streamHeaderLength(StructuredMessageHelper::StreamHeaderLength),
           m_segmentHeaderLength(StructuredMessageHelper::SegmentHeaderLength),
-          m_segmentFooterLength(0), m_streamFooterLength(0), m_length(0),
+          m_segmentFooterLength(0), m_streamFooterLength(0),
+          m_version(StructuredMessageHelper::StructuredMessageVersion), m_length(0),
           m_flags(StructuredMessageFlags::None), m_segmentCount(0), m_offset(0),
           m_currentRegion(StructuredMessageCurrentRegion::StreamHeader), m_currentSegmentNumber(0),
           m_currentSegmentOffset(0), m_currentSegmentLength(0),
@@ -95,6 +97,7 @@ namespace Azure { namespace Storage { namespace _internal {
       this->m_currentSegmentOffset = 0;
       this->m_currentSegmentLength = 0;
       this->m_segmentHeaderBuffer.clear();
+      this->m_segmentHeaderBuffer.resize(StructuredMessageHelper::SegmentHeaderLength);
       this->m_segmentFooterBuffer.clear();
       this->m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
       this->m_streamCrc64Hash = std::make_unique<Crc64Hash>();

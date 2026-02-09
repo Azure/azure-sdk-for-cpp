@@ -30,16 +30,13 @@ namespace Azure { namespace Storage { namespace _internal {
                 m_streamHeaderCache.data(),
                 m_streamHeaderLength,
                 this->Length(),
-                static_cast<uint16_t>(m_options.Flags),
+                m_options.Flags,
                 m_segmentCount);
           }
           size_t bytesToWrite = std::min<size_t>(
-              count - totalRead,
-              static_cast<size_t>(m_streamHeaderLength - m_currentRegionOffset));
+              count - totalRead, static_cast<size_t>(m_streamHeaderLength - m_currentRegionOffset));
           std::memcpy(
-              buffer + totalRead,
-              m_streamHeaderCache.data() + m_currentRegionOffset,
-              bytesToWrite);
+              buffer + totalRead, m_streamHeaderCache.data() + m_currentRegionOffset, bytesToWrite);
           m_offset += bytesToWrite;
           m_currentRegionOffset += bytesToWrite;
           totalRead += bytesToWrite;
@@ -83,8 +80,7 @@ namespace Azure { namespace Storage { namespace _internal {
           size_t bytesToRead = std::min<size_t>(
               count - totalRead,
               static_cast<size_t>(m_options.MaxSegmentLength - m_currentRegionOffset));
-          auto bytesRead
-              = m_inner->ReadToCount(buffer + totalRead, bytesToRead, context);
+          auto bytesRead = m_inner->ReadToCount(buffer + totalRead, bytesToRead, context);
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
             m_segmentCrc64Hash->Append(buffer + totalRead, bytesRead);
@@ -108,8 +104,7 @@ namespace Azure { namespace Storage { namespace _internal {
             {
               m_segmentFooterCache.resize(m_segmentFooterLength);
               StructuredMessageHelper::WriteCrc64(
-                  m_segmentFooterCache.data(), m_segmentFooterLength,
-                  m_segmentCrc64Hash->Final());
+                  m_segmentFooterCache.data(), m_segmentFooterLength, m_segmentCrc64Hash->Final());
               // Accumulate segment hash into stream hash once, when finalized.
               m_streamCrc64Hash->Concatenate(*m_segmentCrc64Hash);
               m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
@@ -143,8 +138,7 @@ namespace Azure { namespace Storage { namespace _internal {
             {
               m_streamFooterCache.resize(m_streamFooterLength);
               StructuredMessageHelper::WriteCrc64(
-                  m_streamFooterCache.data(), m_streamFooterLength,
-                  m_streamCrc64Hash->Final());
+                  m_streamFooterCache.data(), m_streamFooterLength, m_streamCrc64Hash->Final());
             }
             size_t bytesToWrite = std::min<size_t>(
                 count - totalRead,
