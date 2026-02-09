@@ -20,7 +20,7 @@ namespace Azure { namespace Storage { namespace _internal {
   // Options used by structured message encode stream
   struct StructuredMessageEncodingStreamOptions final
   {
-    // configures the maximun segment length
+    // Configures the maximum segment length.
     int64_t MaxSegmentLength = 4 * 1024 * 1024;
 
     StructuredMessageFlags Flags = StructuredMessageFlags::None;

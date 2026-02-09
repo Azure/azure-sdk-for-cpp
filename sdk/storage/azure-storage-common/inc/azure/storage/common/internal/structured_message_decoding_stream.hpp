@@ -17,7 +17,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  // Options used by structured message encode stream
+  // Options used by structured message decode stream
   struct StructuredMessageDecodingStreamOptions final
   {
     /**
@@ -33,7 +33,7 @@ namespace Azure { namespace Storage { namespace _internal {
   private:
     // initial bodyStream.
     std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;
-    // Configuration for the encode stream
+    // Configuration for the decode stream
     StructuredMessageDecodingStreamOptions const m_options;
 
     size_t m_streamHeaderLength;
