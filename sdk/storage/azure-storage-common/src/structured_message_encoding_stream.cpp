@@ -31,6 +31,7 @@ namespace Azure { namespace Storage { namespace _internal {
             m_streamHeaderCache.resize(m_streamHeaderLength);
             StructuredMessageHelper::WriteStreamHeader(
                 m_streamHeaderCache.data(),
+                m_streamHeaderLength,
                 this->Length(),
                 static_cast<uint16_t>(m_options.Flags),
                 m_segmentCount);
@@ -60,6 +61,7 @@ namespace Azure { namespace Storage { namespace _internal {
             m_segmentNumber += 1;
             StructuredMessageHelper::WriteSegmentHeader(
                 m_segmentHeaderCache.data(),
+                m_segmentHeaderLength,
                 m_segmentNumber,
                 std::min<uint64_t>(m_options.MaxSegmentLength, m_inner->Length() - m_innerOffset));
           }

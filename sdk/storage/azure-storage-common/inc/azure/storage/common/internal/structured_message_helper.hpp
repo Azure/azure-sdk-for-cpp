@@ -60,12 +60,14 @@ namespace Azure { namespace Storage { namespace _internal {
      *
      * @param buffer Pointer to a buffer of at least StreamHeaderLength bytes where the header will
      * be written.
+     * @param bufferSize Size of the buffer in bytes.
      * @param messageLength Total length of the message content in bytes.
      * @param flags Flags indicating message options such as CRC64 checksum.
      * @param segmentCount Total number of segments in the message.
      */
     static void WriteStreamHeader(
         uint8_t* buffer,
+        size_t bufferSize,
         uint64_t messageLength,
         uint16_t flags,
         uint16_t segmentCount);
@@ -75,10 +77,15 @@ namespace Azure { namespace Storage { namespace _internal {
      *
      * @param buffer Pointer to a buffer of at least SegmentHeaderLength bytes where the header
      * will be written.
+     * @param bufferSize Size of the buffer in bytes.
      * @param segmentNum The 1-based segment number.
      * @param segmentLength Length of the segment content in bytes.
      */
-    static void WriteSegmentHeader(uint8_t* buffer, uint16_t segmentNum, uint64_t segmentLength);
+    static void WriteSegmentHeader(
+        uint8_t* buffer,
+        size_t bufferSize,
+        uint16_t segmentNum,
+        uint64_t segmentLength);
 
     /**
      * @brief Writes a CRC64 checksum to the buffer in little-endian format.

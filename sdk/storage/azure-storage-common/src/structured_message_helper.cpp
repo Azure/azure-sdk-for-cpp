@@ -43,10 +43,12 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void StructuredMessageHelper::WriteStreamHeader(
       uint8_t* buffer,
+      size_t bufferSize,
       uint64_t messageLength,
       uint16_t flags,
       uint16_t segmentCount)
   {
+    AZURE_ASSERT(bufferSize >= StreamHeaderLength);
     buffer[StreamHeaderVersionOffset] = StructuredMessageVersion;
     WriteUInt64LE(buffer + StreamHeaderMessageLengthOffset, messageLength);
     WriteUInt16LE(buffer + StreamHeaderFlagsOffset, flags);
@@ -55,9 +57,11 @@ namespace Azure { namespace Storage { namespace _internal {
 
   void StructuredMessageHelper::WriteSegmentHeader(
       uint8_t* buffer,
+      size_t bufferSize,
       uint16_t segmentNum,
       uint64_t segmentLength)
   {
+    AZURE_ASSERT(bufferSize >= SegmentHeaderLength);
     WriteUInt16LE(buffer + SegmentHeaderNumOffset, segmentNum);
     WriteUInt64LE(buffer + SegmentHeaderContentLengthOffset, segmentLength);
   }
@@ -90,7 +94,6 @@ namespace Azure { namespace Storage { namespace _internal {
       uint16_t& segmentCount)
   {
     AZURE_ASSERT(bufferSize >= StreamHeaderLength);
-
     messageLength = ReadUInt64LE(buffer + StreamHeaderMessageLengthOffset);
     flags = static_cast<StructuredMessageFlags>(ReadUInt16LE(buffer + StreamHeaderFlagsOffset));
     segmentCount = ReadUInt16LE(buffer + StreamHeaderSegmentCountOffset);
@@ -103,7 +106,6 @@ namespace Azure { namespace Storage { namespace _internal {
       uint64_t& segmentLength)
   {
     AZURE_ASSERT(bufferSize >= SegmentHeaderLength);
-
     segmentNumber = ReadUInt16LE(buffer + SegmentHeaderNumOffset);
     segmentLength = ReadUInt64LE(buffer + SegmentHeaderContentLengthOffset);
   }
