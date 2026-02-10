@@ -74,6 +74,7 @@ namespace Azure { namespace Storage { namespace _internal {
           = m_flags == StructuredMessageFlags::Crc64 ? StructuredMessageHelper::Crc64Length : 0;
       m_segmentFooterLength
           = m_flags == StructuredMessageFlags::Crc64 ? StructuredMessageHelper::Crc64Length : 0;
+      m_segmentHeaderBuffer.resize(m_segmentHeaderLength);
       m_segmentFooterBuffer.resize(m_segmentFooterLength);
       m_offset += m_streamHeaderLength;
 

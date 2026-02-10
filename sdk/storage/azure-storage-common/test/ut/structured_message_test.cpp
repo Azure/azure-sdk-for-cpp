@@ -9,7 +9,8 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
-  class StructuredMessageTest : public StorageTest {};
+  class StructuredMessageTest : public StorageTest {
+  };
 
   std::vector<uint8_t> ReadToEnd(Azure::Core::IO::BodyStream& stream, const size_t chunkSize)
   {

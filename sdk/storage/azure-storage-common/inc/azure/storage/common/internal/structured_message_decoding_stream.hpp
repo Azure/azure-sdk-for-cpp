@@ -97,7 +97,6 @@ namespace Azure { namespace Storage { namespace _internal {
       this->m_currentSegmentOffset = 0;
       this->m_currentSegmentLength = 0;
       this->m_segmentHeaderBuffer.clear();
-      this->m_segmentHeaderBuffer.resize(StructuredMessageHelper::SegmentHeaderLength);
       this->m_segmentFooterBuffer.clear();
       this->m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
       this->m_streamCrc64Hash = std::make_unique<Crc64Hash>();
