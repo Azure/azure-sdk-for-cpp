@@ -992,7 +992,8 @@ namespace Azure { namespace Storage { namespace Test {
       _internal::StructuredMessageFlags flags,
       int64_t maxSegmentLength)
   {
-    std::vector<uint8_t> remainingContent(content.begin() + retryOffset, content.end());
+    std::vector<uint8_t> remainingContent(
+        content.begin() + static_cast<ptrdiff_t>(retryOffset), content.end());
     size_t remainingSize = remainingContent.size();
     auto remainingEncoded = EncodeContent(remainingContent, flags, maxSegmentLength);
     auto owningStream = std::make_unique<OwningMemoryBodyStream>(std::move(remainingEncoded));
