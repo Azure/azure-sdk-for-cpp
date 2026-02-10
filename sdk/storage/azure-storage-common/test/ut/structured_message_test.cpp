@@ -1135,10 +1135,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
     int retryCount = 0;
-    auto retryFunction
-        = [&content, &retryCount, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content, &retryCount](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       retryCount++;
       return CreateRetryDecodingStream(
           content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
@@ -1176,10 +1174,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
-    auto retryFunction
-        = [&content, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       return CreateRetryDecodingStream(
           content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
     };
@@ -1195,7 +1191,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(std::vector<uint8_t>(buffer.begin(), buffer.begin() + bytesRead), content);
   }
 
-  /// @brief Failure before any raw bytes are delivered — retryOffset should be 0.
+  /// @brief Failure before any raw bytes are delivered retryOffset should be 0.
   TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_FailureAtStart)
   {
     const size_t contentSize = 2 * 1024;
@@ -1217,10 +1213,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
     int retryCount = 0;
-    auto retryFunction
-        = [&content, &retryCount, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content, &retryCount](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       retryCount++;
       EXPECT_EQ(retryOffset, 0);
       return CreateRetryDecodingStream(
@@ -1256,10 +1250,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
-    auto retryFunction
-        = [&content, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       return CreateRetryDecodingStream(
           content, retryOffset, _internal::StructuredMessageFlags::None, maxSegmentLength);
     };
@@ -1292,10 +1284,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
-    auto retryFunction
-        = [&content, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       return CreateRetryDecodingStream(
           content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
     };
@@ -1342,10 +1332,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 5;
     int retryCount = 0;
-    auto retryFunction
-        = [&content, &retryCount, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content, &retryCount](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       retryCount++;
       if (retryCount <= 2)
       {
@@ -1393,10 +1381,8 @@ namespace Azure { namespace Storage { namespace Test {
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 3;
     int retryCount = 0;
-    auto retryFunction
-        = [&content, &retryCount, maxSegmentLength](
-              int64_t retryOffset,
-              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+    auto retryFunction = [&content, &retryCount](int64_t retryOffset, Azure::Core::Context const&)
+        -> std::unique_ptr<Azure::Core::IO::BodyStream> {
       retryCount++;
       return CreateRetryDecodingStream(
           content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
