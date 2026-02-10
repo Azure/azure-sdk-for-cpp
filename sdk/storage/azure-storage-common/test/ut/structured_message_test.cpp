@@ -1111,7 +1111,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   /**
    * @brief ReliableStream retries when the inner transport fails mid-read.
-   * @details The reconnector produces a fresh DecodingStream for the remaining content.
+   * @details The connector produces a fresh DecodingStream for the remaining content.
    */
   TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_RetryOnFailure)
   {
@@ -1300,14 +1300,14 @@ namespace Azure { namespace Storage { namespace Test {
 
   /**
    * @brief Exercises multiple retries within a single OnRead() call.
-   * @details Initial stream fails mid-read, first 2 reconnector calls return
-   * immediately-failing streams, and the 3rd reconnector returns a working stream.
+   * @details Initial stream fails mid-read, first 2 connector calls return
+   * immediately-failing streams, and the 3rd connector returns a working stream.
    *
    * OnRead intent trace (MaxRetryRequests=5):
    *   - intent=1: initial DecodingStream(FailingBodyStream) fails  -> catch
-   *   - intent=2: reconnector @#1 (fails immediately)              -> catch
-   *   - intent=3: reconnector @#2 (fails immediately)              -> catch
-   *   - intent=4: reconnector @#3 (working stream)                 -> succeeds
+   *   - intent=2: connector @#1 (fails immediately)              -> catch
+   *   - intent=3: connector @#2 (fails immediately)              -> catch
+   *   - intent=4: connector @#3 (working stream)                 -> succeeds
    */
   TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_ThreeRetries)
   {
@@ -1328,7 +1328,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
         std::move(failingStream), decodingOptions);
 
-    // MaxRetryRequests must be > 3 so the 3rd reconnector call (intent=4) is allowed
+    // MaxRetryRequests must be > 3 so the 3rd connector call (intent=4) is allowed
     _internal::ReliableStreamOptions reliableOptions;
     reliableOptions.MaxRetryRequests = 5;
     int retryCount = 0;
@@ -1356,7 +1356,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   /**
    * @brief Large 4MB content with multiple 1MB segments.
-   * @details The transport fails mid-download and the reconnector provides a fresh
+   * @details The transport fails mid-download and the connector provides a fresh
    * DecodingStream for the remaining content.
    */
   TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_4MBContent)
