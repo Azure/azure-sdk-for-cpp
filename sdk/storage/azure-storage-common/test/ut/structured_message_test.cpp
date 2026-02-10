@@ -147,7 +147,7 @@ namespace Azure { namespace Storage { namespace Test {
   /**
    * @brief Creates a DecodingStream wrapping an OwningMemoryBodyStream for retry scenarios.
    * @details Encodes the remaining content (from @p retryOffset) as a fresh structured message,
-   * then wraps it in a DecodingStream — mirroring what blob_client/share_file_client Download()
+   * then wraps it in a DecodingStream mirroring what blob_client/share_file_client Download()
    * does on retry.
    * @param content The original full content.
    * @param retryOffset The byte offset into @p content where the retry should resume.
