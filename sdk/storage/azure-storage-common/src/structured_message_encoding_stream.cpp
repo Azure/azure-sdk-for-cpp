@@ -17,8 +17,8 @@ namespace Azure { namespace Storage { namespace _internal {
       size_t count,
       Context const& context)
   {
-    size_t totalRead = 0;
-    while (totalRead < count && m_currentRegion != StructuredMessageCurrentRegion::StreamEnd)
+    size_t totalBytesRead = 0;
+    while (totalBytesRead < count && m_currentRegion != StructuredMessageCurrentRegion::StreamEnd)
     {
       switch (m_currentRegion)
       {
@@ -33,13 +33,16 @@ namespace Azure { namespace Storage { namespace _internal {
                 m_options.Flags,
                 m_segmentCount);
           }
-          size_t bytesToWrite = std::min<size_t>(
-              count - totalRead, static_cast<size_t>(m_streamHeaderLength - m_currentRegionOffset));
+          size_t bytesToRead = std::min<size_t>(
+              count - totalBytesRead,
+              static_cast<size_t>(m_streamHeaderLength - m_currentRegionOffset));
           std::memcpy(
-              buffer + totalRead, m_streamHeaderCache.data() + m_currentRegionOffset, bytesToWrite);
-          m_offset += bytesToWrite;
-          m_currentRegionOffset += bytesToWrite;
-          totalRead += bytesToWrite;
+              buffer + totalBytesRead,
+              m_streamHeaderCache.data() + m_currentRegionOffset,
+              bytesToRead);
+          m_offset += bytesToRead;
+          m_currentRegionOffset += bytesToRead;
+          totalBytesRead += bytesToRead;
           if (m_currentRegionOffset == m_streamHeaderLength)
           {
             m_currentRegion = m_segmentCount == 0 ? StructuredMessageCurrentRegion::StreamFooter
@@ -59,16 +62,16 @@ namespace Azure { namespace Storage { namespace _internal {
                 m_segmentNumber,
                 std::min<uint64_t>(m_options.MaxSegmentLength, m_inner->Length() - m_innerOffset));
           }
-          size_t bytesToWrite = std::min<size_t>(
-              count - totalRead,
+          size_t bytesToRead = std::min<size_t>(
+              count - totalBytesRead,
               static_cast<size_t>(m_segmentHeaderLength - m_currentRegionOffset));
           std::memcpy(
-              buffer + totalRead,
+              buffer + totalBytesRead,
               m_segmentHeaderCache.data() + m_currentRegionOffset,
-              bytesToWrite);
-          m_offset += bytesToWrite;
-          m_currentRegionOffset += bytesToWrite;
-          totalRead += bytesToWrite;
+              bytesToRead);
+          m_offset += bytesToRead;
+          m_currentRegionOffset += bytesToRead;
+          totalBytesRead += bytesToRead;
           if (m_currentRegionOffset == m_segmentHeaderLength)
           {
             m_currentRegion = StructuredMessageCurrentRegion::SegmentContent;
@@ -78,17 +81,17 @@ namespace Azure { namespace Storage { namespace _internal {
         }
         case StructuredMessageCurrentRegion::SegmentContent: {
           size_t bytesToRead = std::min<size_t>(
-              count - totalRead,
+              count - totalBytesRead,
               static_cast<size_t>(m_options.MaxSegmentLength - m_currentRegionOffset));
-          auto bytesRead = m_inner->ReadToCount(buffer + totalRead, bytesToRead, context);
+          auto bytesRead = m_inner->ReadToCount(buffer + totalBytesRead, bytesToRead, context);
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
-            m_segmentCrc64Hash->Append(buffer + totalRead, bytesRead);
+            m_segmentCrc64Hash->Append(buffer + totalBytesRead, bytesRead);
           }
           m_offset += bytesRead;
           m_innerOffset += bytesRead;
           m_currentRegionOffset += bytesRead;
-          totalRead += bytesRead;
+          totalBytesRead += bytesRead;
           if (m_currentRegionOffset == static_cast<uint64_t>(m_options.MaxSegmentLength)
               || m_innerOffset >= m_inner->Length())
           {
@@ -109,16 +112,16 @@ namespace Azure { namespace Storage { namespace _internal {
               m_streamCrc64Hash->Concatenate(*m_segmentCrc64Hash);
               m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
             }
-            size_t bytesToWrite = std::min<size_t>(
-                count - totalRead,
+            size_t bytesToRead = std::min<size_t>(
+                count - totalBytesRead,
                 static_cast<size_t>(m_segmentFooterLength - m_currentRegionOffset));
             std::memcpy(
-                buffer + totalRead,
+                buffer + totalBytesRead,
                 m_segmentFooterCache.data() + m_currentRegionOffset,
-                bytesToWrite);
-            m_offset += bytesToWrite;
-            m_currentRegionOffset += bytesToWrite;
-            totalRead += bytesToWrite;
+                bytesToRead);
+            m_offset += bytesToRead;
+            m_currentRegionOffset += bytesToRead;
+            totalBytesRead += bytesToRead;
           }
           if (m_currentRegionOffset == m_segmentFooterLength)
           {
@@ -140,16 +143,16 @@ namespace Azure { namespace Storage { namespace _internal {
               StructuredMessageHelper::WriteCrc64(
                   m_streamFooterCache.data(), m_streamFooterLength, m_streamCrc64Hash->Final());
             }
-            size_t bytesToWrite = std::min<size_t>(
-                count - totalRead,
+            size_t bytesToRead = std::min<size_t>(
+                count - totalBytesRead,
                 static_cast<size_t>(m_streamFooterLength - m_currentRegionOffset));
             std::memcpy(
-                buffer + totalRead,
+                buffer + totalBytesRead,
                 m_streamFooterCache.data() + m_currentRegionOffset,
-                bytesToWrite);
-            m_offset += bytesToWrite;
-            m_currentRegionOffset += bytesToWrite;
-            totalRead += bytesToWrite;
+                bytesToRead);
+            m_offset += bytesToRead;
+            m_currentRegionOffset += bytesToRead;
+            totalBytesRead += bytesToRead;
           }
           if (m_currentRegionOffset == m_streamFooterLength)
           {
@@ -162,6 +165,6 @@ namespace Azure { namespace Storage { namespace _internal {
         }
       }
     }
-    return totalRead;
+    return totalBytesRead;
   }
 }}} // namespace Azure::Storage::_internal

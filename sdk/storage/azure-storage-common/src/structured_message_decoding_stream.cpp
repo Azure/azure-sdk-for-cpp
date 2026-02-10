@@ -50,7 +50,10 @@ namespace Azure { namespace Storage { namespace _internal {
             {
               throw StorageException(
                   std::string(regionName)
-                  + " checksum mismatch. Invalid data may have been written to the destination.");
+                  + " checksum mismatch. Invalid data may have been written to the "
+                    "destination. calculatedChecksum: "
+                  + std::string(calculated.begin(), calculated.end())
+                  + "reportedChecksum: " + std::string(reported.begin(), reported.end()));
             }
           };
 
@@ -99,20 +102,19 @@ namespace Azure { namespace Storage { namespace _internal {
     }
 
     // Read segment content. This is the only region that produces output for the caller.
-    size_t totalContentRead = 0;
+    size_t contentRead = 0;
     if (m_currentRegion == StructuredMessageCurrentRegion::SegmentContent)
     {
       size_t bytesToRead = std::min<size_t>(
           count, static_cast<size_t>(m_currentSegmentLength - m_currentSegmentOffset));
-      auto bytesRead = m_inner->Read(buffer, bytesToRead, context);
+      contentRead = m_inner->Read(buffer, bytesToRead, context);
 
       if (m_flags == StructuredMessageFlags::Crc64)
       {
-        m_segmentCrc64Hash->Append(buffer, bytesRead);
+        m_segmentCrc64Hash->Append(buffer, contentRead);
       }
-      m_offset += bytesRead;
-      m_currentSegmentOffset += bytesRead;
-      totalContentRead = bytesRead;
+      m_offset += contentRead;
+      m_currentSegmentOffset += contentRead;
 
       // Advance to footer once all segment content has been consumed.
       if (m_currentSegmentOffset == m_currentSegmentLength)
@@ -170,6 +172,6 @@ namespace Azure { namespace Storage { namespace _internal {
       m_currentRegion = StructuredMessageCurrentRegion::StreamEnd;
     }
 
-    return totalContentRead;
+    return contentRead;
   }
 }}} // namespace Azure::Storage::_internal
