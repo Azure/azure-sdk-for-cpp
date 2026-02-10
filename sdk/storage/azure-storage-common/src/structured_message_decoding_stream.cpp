@@ -25,7 +25,7 @@ namespace Azure { namespace Storage { namespace _internal {
       size_t count,
       Context const& context)
   {
-    if (count == 0 || m_currentRegion == StructuredMessageCurrentRegion::StreamEnd)
+    if (count == 0)
     {
       return 0;
     }
@@ -170,6 +170,11 @@ namespace Azure { namespace Storage { namespace _internal {
       }
 
       m_currentRegion = StructuredMessageCurrentRegion::StreamEnd;
+    }
+
+    if (m_currentRegion == StructuredMessageCurrentRegion::StreamEnd)
+    {
+      void(); // No-op to indicate stream end has been reached.
     }
 
     return contentRead;

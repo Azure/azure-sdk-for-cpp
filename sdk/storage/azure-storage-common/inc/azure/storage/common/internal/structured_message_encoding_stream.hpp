@@ -50,10 +50,10 @@ namespace Azure { namespace Storage { namespace _internal {
     StructuredMessageCurrentRegion m_currentRegion;
     uint64_t m_currentRegionOffset;
 
-    std::vector<uint8_t> m_streamHeaderCache;
-    std::vector<uint8_t> m_segmentHeaderCache;
-    std::vector<uint8_t> m_segmentFooterCache;
-    std::vector<uint8_t> m_streamFooterCache;
+    std::vector<uint8_t> m_streamHeaderBuffer;
+    std::vector<uint8_t> m_segmentHeaderBuffer;
+    std::vector<uint8_t> m_segmentFooterBuffer;
+    std::vector<uint8_t> m_streamFooterBuffer;
 
     std::unique_ptr<Crc64Hash> m_segmentCrc64Hash;
     std::unique_ptr<Crc64Hash> m_streamCrc64Hash;
@@ -69,8 +69,8 @@ namespace Azure { namespace Storage { namespace _internal {
           m_segmentHeaderLength(StructuredMessageHelper::SegmentHeaderLength), m_segmentCount(0),
           m_segmentNumber(0), m_offset(0), m_innerOffset(0),
           m_currentRegion(StructuredMessageCurrentRegion::StreamHeader), m_currentRegionOffset(0),
-          m_streamHeaderCache(0), m_segmentHeaderCache(0), m_segmentFooterCache(0),
-          m_streamFooterCache(0), m_segmentCrc64Hash(std::make_unique<Crc64Hash>()),
+          m_streamHeaderBuffer(0), m_segmentHeaderBuffer(0), m_segmentFooterBuffer(0),
+          m_streamFooterBuffer(0), m_segmentCrc64Hash(std::make_unique<Crc64Hash>()),
           m_streamCrc64Hash(std::make_unique<Crc64Hash>())
     {
       m_segmentFooterLength = m_options.Flags == StructuredMessageFlags::Crc64
@@ -79,8 +79,10 @@ namespace Azure { namespace Storage { namespace _internal {
       m_streamFooterLength = m_options.Flags == StructuredMessageFlags::Crc64
           ? StructuredMessageHelper::Crc64Length
           : 0;
-      m_segmentCount = static_cast<uint16_t>(
-          (m_inner->Length() + m_options.MaxSegmentLength - 1) / m_options.MaxSegmentLength);
+      int64_t segmentCount64
+          = (m_inner->Length() + m_options.MaxSegmentLength - 1) / m_options.MaxSegmentLength;
+      AZURE_ASSERT(segmentCount64 <= (std::numeric_limits<uint16_t>::max)());
+      m_segmentCount = static_cast<uint16_t>(segmentCount64);
     }
 
     int64_t Length() const override
@@ -99,10 +101,10 @@ namespace Azure { namespace Storage { namespace _internal {
       this->m_innerOffset = 0;
       this->m_currentRegion = StructuredMessageCurrentRegion::StreamHeader;
       this->m_currentRegionOffset = 0;
-      this->m_streamHeaderCache.clear();
-      this->m_segmentHeaderCache.clear();
-      this->m_segmentFooterCache.clear();
-      this->m_streamFooterCache.clear();
+      this->m_streamHeaderBuffer.clear();
+      this->m_segmentHeaderBuffer.clear();
+      this->m_segmentFooterBuffer.clear();
+      this->m_streamFooterBuffer.clear();
       this->m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
       this->m_streamCrc64Hash = std::make_unique<Crc64Hash>();
     }

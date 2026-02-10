@@ -257,10 +257,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 .Value.BodyStream);
       };
 
-      _internal::ReliableStreamOptions reliableStreamOptions;
-      reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
-      auto reliableStream = std::make_unique<_internal::ReliableStream>(
-          std::move(downloadResponse.Value.BodyStream), reliableStreamOptions, retryFunction);
+      auto bodyStream = std::move(downloadResponse.Value.BodyStream);
       if (isStructuredMessage)
       {
         _internal::StructuredMessageDecodingStreamOptions decodingOptions;
@@ -268,14 +265,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           decodingOptions.ContentLength = downloadResponse.Value.StructuredContentLength.Value();
         }
-        downloadResponse.Value.BodyStream
-            = std::make_unique<_internal::StructuredMessageDecodingStream>(
-                std::move(reliableStream), decodingOptions);
+        bodyStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+            std::move(bodyStream), decodingOptions);
       }
-      else
-      {
-        downloadResponse.Value.BodyStream = std::move(reliableStream);
-      }
+      _internal::ReliableStreamOptions reliableStreamOptions;
+      reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
+      auto reliableStream = std::make_unique<_internal::ReliableStream>(
+          std::move(bodyStream), reliableStreamOptions, retryFunction);
+      downloadResponse.Value.BodyStream = std::move(reliableStream);
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {

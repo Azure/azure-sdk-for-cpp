@@ -23,11 +23,11 @@ namespace Azure { namespace Storage { namespace _internal {
       switch (m_currentRegion)
       {
         case StructuredMessageCurrentRegion::StreamHeader: {
-          if (m_streamHeaderCache.empty())
+          if (m_streamHeaderBuffer.empty())
           {
-            m_streamHeaderCache.resize(m_streamHeaderLength);
+            m_streamHeaderBuffer.resize(m_streamHeaderLength);
             StructuredMessageHelper::WriteStreamHeader(
-                m_streamHeaderCache.data(),
+                m_streamHeaderBuffer.data(),
                 m_streamHeaderLength,
                 this->Length(),
                 m_options.Flags,
@@ -38,7 +38,7 @@ namespace Azure { namespace Storage { namespace _internal {
               static_cast<size_t>(m_streamHeaderLength - m_currentRegionOffset));
           std::memcpy(
               buffer + totalBytesRead,
-              m_streamHeaderCache.data() + m_currentRegionOffset,
+              m_streamHeaderBuffer.data() + m_currentRegionOffset,
               bytesToRead);
           m_offset += bytesToRead;
           m_currentRegionOffset += bytesToRead;
@@ -52,12 +52,12 @@ namespace Azure { namespace Storage { namespace _internal {
           break;
         }
         case StructuredMessageCurrentRegion::SegmentHeader: {
-          if (m_segmentHeaderCache.empty())
+          if (m_segmentHeaderBuffer.empty())
           {
-            m_segmentHeaderCache.resize(m_segmentHeaderLength);
+            m_segmentHeaderBuffer.resize(m_segmentHeaderLength);
             m_segmentNumber += 1;
             StructuredMessageHelper::WriteSegmentHeader(
-                m_segmentHeaderCache.data(),
+                m_segmentHeaderBuffer.data(),
                 m_segmentHeaderLength,
                 m_segmentNumber,
                 std::min<uint64_t>(m_options.MaxSegmentLength, m_inner->Length() - m_innerOffset));
@@ -67,7 +67,7 @@ namespace Azure { namespace Storage { namespace _internal {
               static_cast<size_t>(m_segmentHeaderLength - m_currentRegionOffset));
           std::memcpy(
               buffer + totalBytesRead,
-              m_segmentHeaderCache.data() + m_currentRegionOffset,
+              m_segmentHeaderBuffer.data() + m_currentRegionOffset,
               bytesToRead);
           m_offset += bytesToRead;
           m_currentRegionOffset += bytesToRead;
@@ -103,11 +103,11 @@ namespace Azure { namespace Storage { namespace _internal {
         case StructuredMessageCurrentRegion::SegmentFooter: {
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
-            if (m_segmentFooterCache.empty())
+            if (m_segmentFooterBuffer.empty())
             {
-              m_segmentFooterCache.resize(m_segmentFooterLength);
+              m_segmentFooterBuffer.resize(m_segmentFooterLength);
               StructuredMessageHelper::WriteCrc64(
-                  m_segmentFooterCache.data(), m_segmentFooterLength, m_segmentCrc64Hash->Final());
+                  m_segmentFooterBuffer.data(), m_segmentFooterLength, m_segmentCrc64Hash->Final());
               // Accumulate segment hash into stream hash once, when finalized.
               m_streamCrc64Hash->Concatenate(*m_segmentCrc64Hash);
               m_segmentCrc64Hash = std::make_unique<Crc64Hash>();
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace _internal {
                 static_cast<size_t>(m_segmentFooterLength - m_currentRegionOffset));
             std::memcpy(
                 buffer + totalBytesRead,
-                m_segmentFooterCache.data() + m_currentRegionOffset,
+                m_segmentFooterBuffer.data() + m_currentRegionOffset,
                 bytesToRead);
             m_offset += bytesToRead;
             m_currentRegionOffset += bytesToRead;
@@ -129,26 +129,26 @@ namespace Azure { namespace Storage { namespace _internal {
                 ? StructuredMessageCurrentRegion::StreamFooter
                 : StructuredMessageCurrentRegion::SegmentHeader;
             m_currentRegionOffset = 0;
-            m_segmentHeaderCache.clear();
-            m_segmentFooterCache.clear();
+            m_segmentHeaderBuffer.clear();
+            m_segmentFooterBuffer.clear();
           }
           break;
         }
         case StructuredMessageCurrentRegion::StreamFooter: {
           if (m_options.Flags == StructuredMessageFlags::Crc64)
           {
-            if (m_streamFooterCache.empty())
+            if (m_streamFooterBuffer.empty())
             {
-              m_streamFooterCache.resize(m_streamFooterLength);
+              m_streamFooterBuffer.resize(m_streamFooterLength);
               StructuredMessageHelper::WriteCrc64(
-                  m_streamFooterCache.data(), m_streamFooterLength, m_streamCrc64Hash->Final());
+                  m_streamFooterBuffer.data(), m_streamFooterLength, m_streamCrc64Hash->Final());
             }
             size_t bytesToRead = std::min<size_t>(
                 count - totalBytesRead,
                 static_cast<size_t>(m_streamFooterLength - m_currentRegionOffset));
             std::memcpy(
                 buffer + totalBytesRead,
-                m_streamFooterCache.data() + m_currentRegionOffset,
+                m_streamFooterBuffer.data() + m_currentRegionOffset,
                 bytesToRead);
             m_offset += bytesToRead;
             m_currentRegionOffset += bytesToRead;

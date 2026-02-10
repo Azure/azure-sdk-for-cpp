@@ -3,6 +3,7 @@
 
 #include "test_base.hpp"
 
+#include <azure/storage/common/internal/reliable_stream.hpp>
 #include <azure/storage/common/internal/structured_message_decoding_stream.hpp>
 #include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 #include <azure/storage/common/storage_exception.hpp>
@@ -608,7 +609,7 @@ namespace Azure { namespace Storage { namespace Test {
       _internal::StructuredMessageDecodingStream decodingStream(
           std::move(innerStream), decodingOptions);
       std::vector<uint8_t> decodedData;
-      EXPECT_NO_THROW(decodedData = decodingStream.ReadToEnd());
+      EXPECT_NO_THROW(decodedData = ReadToEnd(decodingStream, 4096));
 
       EXPECT_EQ(content, decodedData);
     }
@@ -928,5 +929,398 @@ namespace Azure { namespace Storage { namespace Test {
     // Verify content correctness via second read and comparison
     std::vector<uint8_t> firstSegment(readBuffer.begin(), readBuffer.begin() + bytesRead);
     EXPECT_EQ(firstSegment, std::vector<uint8_t>(content.begin(), content.begin() + segmentSize));
+  }
+
+  // Helper: A body stream that owns its data buffer (for use in retry lambdas)
+  class OwningMemoryBodyStream final : public Azure::Core::IO::BodyStream {
+    std::vector<uint8_t> m_data;
+    size_t m_offset = 0;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const&) override
+    {
+      size_t toRead = (std::min)(count, m_data.size() - m_offset);
+      if (toRead > 0)
+      {
+        std::copy(m_data.data() + m_offset, m_data.data() + m_offset + toRead, buffer);
+      }
+      m_offset += toRead;
+      return toRead;
+    }
+
+  public:
+    explicit OwningMemoryBodyStream(std::vector<uint8_t> data) : m_data(std::move(data)) {}
+    int64_t Length() const override { return static_cast<int64_t>(m_data.size()); }
+    void Rewind() override { m_offset = 0; }
+  };
+
+  // Helper: A body stream that simulates a network failure after delivering a specified
+  // number of raw bytes from the inner stream
+  class FailingBodyStream final : public Azure::Core::IO::BodyStream {
+    std::unique_ptr<Azure::Core::IO::BodyStream> m_inner;
+    size_t m_failAfterBytes;
+    size_t m_bytesDelivered = 0;
+    size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override
+    {
+      if (m_bytesDelivered >= m_failAfterBytes)
+      {
+        throw std::runtime_error("Simulated network failure");
+      }
+      size_t maxRead = (std::min)(count, m_failAfterBytes - m_bytesDelivered);
+      auto bytesRead = m_inner->Read(buffer, maxRead, context);
+      m_bytesDelivered += bytesRead;
+      return bytesRead;
+    }
+
+  public:
+    FailingBodyStream(std::unique_ptr<Azure::Core::IO::BodyStream> inner, size_t failAfterBytes)
+        : m_inner(std::move(inner)), m_failAfterBytes(failAfterBytes)
+    {
+    }
+    int64_t Length() const override { return m_inner->Length(); }
+    void Rewind() override
+    {
+      m_inner->Rewind();
+      m_bytesDelivered = 0;
+    }
+  };
+
+  // Helper: Creates a DecodingStream wrapping an OwningMemoryBodyStream for retry scenarios.
+  // Encodes the remaining content (from retryOffset) as a fresh structured message, then wraps
+  // it in a DecodingStream — mirroring what blob_client/share_file_client Download() does on retry.
+  std::unique_ptr<Azure::Core::IO::BodyStream> CreateRetryDecodingStream(
+      const std::vector<uint8_t>& content,
+      int64_t retryOffset,
+      _internal::StructuredMessageFlags flags,
+      int64_t maxSegmentLength)
+  {
+    std::vector<uint8_t> remainingContent(content.begin() + retryOffset, content.end());
+    size_t remainingSize = remainingContent.size();
+    auto remainingEncoded = EncodeContent(remainingContent, flags, maxSegmentLength);
+    auto owningStream = std::make_unique<OwningMemoryBodyStream>(std::move(remainingEncoded));
+    _internal::StructuredMessageDecodingStreamOptions opts;
+    opts.ContentLength = static_cast<int64_t>(remainingSize);
+    return std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(owningStream), opts);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_NoFailure)
+  {
+    // Basic composition: DecodingStream wrapped in ReliableStream with no failures.
+    // Mirrors the blob_client/share_file_client Download() stream chain.
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto encodedData = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, 1024);
+
+    auto innerStream = std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+        encodedData.data(), encodedData.size());
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(innerStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    auto retryFunction
+        = [](int64_t, Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      EXPECT_TRUE(false) << "Retry should not be called when there are no failures";
+      return nullptr;
+    };
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    auto decodedData = ReadToEnd(reliableStream, 4096);
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_RetryOnFailure)
+  {
+    // ReliableStream retries when the inner transport fails mid-read.
+    // The reconnector produces a fresh DecodingStream for the remaining content.
+    const size_t contentSize = 4 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    // Fail after delivering half the raw encoded bytes
+    size_t failAfterRawBytes = encodedData.size() / 2;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    int retryCount = 0;
+    auto retryFunction
+        = [&content, &retryCount, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      retryCount++;
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    auto decodedData = ReadToEnd(reliableStream, 4096);
+    EXPECT_EQ(content, decodedData);
+    EXPECT_GT(retryCount, 0);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_RetryWithReadToCount)
+  {
+    // Tests the ReadToCount pattern used by DownloadTo() buffer overload:
+    //   stream->ReadToCount(buffer, length, context)
+    const size_t contentSize = 4 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    size_t failAfterRawBytes = encodedData.size() / 3;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    auto retryFunction
+        = [&content, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    // Use ReadToCount like DownloadTo() does
+    std::vector<uint8_t> buffer(contentSize);
+    Azure::Core::Context context;
+    size_t bytesRead = reliableStream.ReadToCount(buffer.data(), contentSize, context);
+    EXPECT_EQ(bytesRead, contentSize);
+    EXPECT_EQ(std::vector<uint8_t>(buffer.begin(), buffer.begin() + bytesRead), content);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_FailureAtStart)
+  {
+    // Failure before any raw bytes are delivered — retryOffset should be 0.
+    const size_t contentSize = 2 * 1024;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    // Fail immediately (0 raw bytes delivered)
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        0);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    int retryCount = 0;
+    auto retryFunction
+        = [&content, &retryCount, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      retryCount++;
+      EXPECT_EQ(retryOffset, 0);
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    auto decodedData = ReadToEnd(reliableStream, 4096);
+    EXPECT_EQ(content, decodedData);
+    EXPECT_GT(retryCount, 0);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_NoCrc64)
+  {
+    // Same retry pattern but without CRC64 flags.
+    const size_t contentSize = 3 * 1024 + 256;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::None, maxSegmentLength);
+
+    size_t failAfterRawBytes = encodedData.size() / 2;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    auto retryFunction
+        = [&content, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::None, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    auto decodedData = ReadToEnd(reliableStream, 4096);
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_SmallReadChunks)
+  {
+    // Small read chunks exercise segment boundary handling during retry.
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    size_t failAfterRawBytes = encodedData.size() / 4;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    auto retryFunction
+        = [&content, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    // Read with very small chunks to stress boundary handling
+    auto decodedData = ReadToEnd(reliableStream, 7);
+    EXPECT_EQ(content, decodedData);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_ThreeRetries)
+  {
+    // Exercises multiple retries within a single OnRead() call.
+    // Initial stream fails mid-read, first 2 reconnector calls return immediately-failing
+    // streams, and the 3rd reconnector returns a working stream.
+    //
+    // OnRead intent trace (MaxRetryRequests=5):
+    //   intent=1: initial DecodingStream(FailingBodyStream) fails  catch
+    //   intent=2: reconnector #1 (fails immediately)              catch
+    //   intent=3: reconnector #2 (fails immediately)              catch
+    //   intent=4: reconnector #3 (working stream)                 succeeds
+    const size_t contentSize = 4 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1024;
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    // Initial stream delivers half the raw encoded bytes, then fails
+    size_t failAfterRawBytes = encodedData.size() / 2;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    // MaxRetryRequests must be > 3 so the 3rd reconnector call (intent=4) is allowed
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 5;
+    int retryCount = 0;
+    auto retryFunction
+        = [&content, &retryCount, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      retryCount++;
+      if (retryCount <= 2)
+      {
+        // First 2 retries return a stream that fails immediately
+        return std::make_unique<FailingBodyStream>(
+            std::make_unique<OwningMemoryBodyStream>(std::vector<uint8_t>()), 0);
+      }
+      // 3rd retry returns a working stream
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    auto decodedData = ReadToEnd(reliableStream, 4096);
+    EXPECT_EQ(content, decodedData);
+    EXPECT_EQ(retryCount, 3);
+  }
+
+  TEST_F(StructuredMessageTest, ReliableStreamWithDecodingStream_4MBContent)
+  {
+    // Large 4MB content with multiple 1MB segments. The transport fails mid-download
+    // and the reconnector provides a fresh DecodingStream for the remaining content.
+    const size_t contentSize = 4 * 1024 * 1024;
+    auto content = RandomBuffer(contentSize);
+    const int64_t maxSegmentLength = 1 * 1024 * 1024; // 1MB segments  4 segments
+    auto encodedData
+        = EncodeContent(content, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+
+    // Fail roughly halfway through the raw encoded bytes
+    size_t failAfterRawBytes = encodedData.size() / 2;
+    auto failingStream = std::make_unique<FailingBodyStream>(
+        std::make_unique<Azure::Core::IO::MemoryBodyStream>(encodedData.data(), encodedData.size()),
+        failAfterRawBytes);
+
+    _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+    decodingOptions.ContentLength = static_cast<int64_t>(contentSize);
+    auto decodingStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+        std::move(failingStream), decodingOptions);
+
+    _internal::ReliableStreamOptions reliableOptions;
+    reliableOptions.MaxRetryRequests = 3;
+    int retryCount = 0;
+    auto retryFunction
+        = [&content, &retryCount, maxSegmentLength](
+              int64_t retryOffset,
+              Azure::Core::Context const&) -> std::unique_ptr<Azure::Core::IO::BodyStream> {
+      retryCount++;
+      return CreateRetryDecodingStream(
+          content, retryOffset, _internal::StructuredMessageFlags::Crc64, maxSegmentLength);
+    };
+
+    _internal::ReliableStream reliableStream(
+        std::move(decodingStream), reliableOptions, std::move(retryFunction));
+
+    // Use 1MB read chunks matching the segment size
+    auto decodedData = ReadToEnd(reliableStream, 1024 * 1024);
+    EXPECT_EQ(content, decodedData);
+    EXPECT_GT(retryCount, 0);
   }
 }}} // namespace Azure::Storage::Test

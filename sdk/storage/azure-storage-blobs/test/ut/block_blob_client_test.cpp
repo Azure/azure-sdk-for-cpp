@@ -2627,6 +2627,35 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlockBlobClientTest, DISABLED_StructuredMessageTest_Large)
+  {
+    const size_t contentSize = 1ull * 1024 * 1024 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    const std::string tempFileName = RandomString();
+    WriteFile(tempFileName, content);
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    // Upload Download
+    Blobs::UploadBlockBlobOptions uploadOptions;
+    uploadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::UploadBlockBlobResult uploadResult;
+    EXPECT_NO_THROW(uploadResult = m_blockBlobClient->Upload(bodyStream, uploadOptions).Value);
+    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = m_blockBlobClient->Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(content, downloadedData);
+    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
+    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
+    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.BlobSize, contentSize);
+  }
+
   TEST_F(BlockBlobClientTest, DeleteWithConditions)
   {
     auto blobClient = GetBlockBlobClientForTest(RandomString());
