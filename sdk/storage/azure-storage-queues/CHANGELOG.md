@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Bumped up API version to `2026-04-06`.
 - Added support for Cross Tenant User Bound Delegation SAS.
     - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
     - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
