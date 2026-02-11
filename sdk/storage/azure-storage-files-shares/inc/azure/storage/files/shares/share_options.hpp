@@ -261,7 +261,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   /**
    * Configures whether to do content validation for blob uploads and downloads.
    */
-  struct TransferValidationOptions
+  struct TransferValidationOptions final
   {
     /**
      * @brief The algorithm used for storage checksum.

@@ -89,7 +89,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   /**
    * Configures whether to do content validation for file uploads and downloads.
    */
-  struct TransferValidationOptions
+  struct TransferValidationOptions final
   {
     /**
      * @brief The algorithm used for storage checksum.
