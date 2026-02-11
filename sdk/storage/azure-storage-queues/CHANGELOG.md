@@ -4,11 +4,9 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added support for Cross Tenant User Bound Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
 
 ## 12.6.0 (2026-01-07)
 

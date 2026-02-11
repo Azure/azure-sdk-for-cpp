@@ -4,11 +4,8 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up Account SAS version to `2026-02-06`.
+- Added new enum `StorageChecksumAlgorithm` for configuring checksum validation in Structured Message uploads and downloads.
 
 ## 12.12.0 (2026-01-07)
 

@@ -4,11 +4,22 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-04-06`.
+- Added cross-tenant support for Principal-Bound Identity User Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Content Validation via Structured Message.
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `BlobClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `UploadBlockBlobOptions`, `UploadBlockBlobFromOptions`, `StageBlockOptions`, `StageBlockFromUriOptions`, `AppendBlockOptions`, and `UploadPagesOptions`.
+        - Added new field `StructuredBodyType` in `UploadPagesResult`, `AppendBlockResult`, `UploadBlockBlobResult`, and `StageBlockResult`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadBlobOptions` and `DownloadBlobToOptions`.
+        - Added new fields `StructuredBodyType` and `StructuredContentLength` in `DownloadBlobResult`.
+- Added support for `AccessTierConditions` in Delete Blob API.
+- Added support for `SourceCustomerProvidedKey` for copy APIs.
+- Added support for Dynamic User Delegation SAS.
+    - Added new fields `RequestHeaders` and `RequestQueryParameters` in `BlobSasBuilder`.
 
 ## 12.16.0 (2026-01-07)
 

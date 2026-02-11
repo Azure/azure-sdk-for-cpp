@@ -4,11 +4,20 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-04-06`.
+- Added cross-tenant support for Principal-Bound Identity User Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Storage Structured Message (Content Validation).
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `DataLakeClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `AppendFileOptions` and `UploadFileFromOptions`.
+        - Added new field `StructuredBodyType` in `AppendFileResult`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadFileOptions`.
+        - Added new fields `StructuredBodyType` and `StructuredContentLength` in `DownloadFileResult`.
+- Added support for Dynamic User Delegation SAS.
+    - Added new fields `RequestHeaders` and `RequestQueryParameters` in `DataLakeSasBuilder`.
 
 ## 12.14.0 (2026-01-07)
 
