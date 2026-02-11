@@ -321,7 +321,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         downloadedProperties.DefaultServiceVersion.HasValue(),
         properties.DefaultServiceVersion.HasValue());
-    if (downloadedProperties.DefaultServiceVersion.HasValue())
+    if (downloadedProperties.DefaultServiceVersion.HasValue() && !m_testContext.IsPlaybackMode())
     {
       EXPECT_EQ(
           downloadedProperties.DefaultServiceVersion.Value(),

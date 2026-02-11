@@ -26,6 +26,7 @@ namespace Azure { namespace Storage { namespace _internal {
       = "The provided service version is not enabled on this storage account.  Please see "
         "https://learn.microsoft.com/rest/api/storageservices/"
         "versioning-for-the-azure-storage-services for additional information.";
+  constexpr static const char* CrcStructuredMessage = "XSM/1.0; properties=crc64";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal

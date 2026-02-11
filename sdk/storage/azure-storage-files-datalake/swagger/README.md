@@ -43,13 +43,12 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
-      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
           delete $[h];
         }
       }
@@ -89,12 +88,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-02-06"]
+        "enum": ["2026-04-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-02-06";
+      $.ApiVersionParameter.enum[0] = "2026-04-06";
 ```
 
 ### Rename Operations
@@ -210,6 +209,9 @@ directive:
       for (const h in $) {
         if (h === "x-ms-encryption-key-sha256") {
           $[h]["format"] = "byte";
+        }
+        if (h === "x-ms-structured-body" || h === "x-ms-structured-content-length") {
+          $[h]["x-nullable"] = true;
         }
       }
   - from: swagger-document

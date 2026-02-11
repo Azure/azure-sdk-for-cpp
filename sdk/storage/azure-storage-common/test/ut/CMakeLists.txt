@@ -19,6 +19,7 @@ add_executable (
     crypt_functions_test.cpp
     metadata_test.cpp
     storage_credential_test.cpp
+    structured_message_test.cpp
     test_base.cpp
     test_base.hpp
 )
