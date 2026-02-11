@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-02-06/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg101base/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-04-06/file.json
 ```
 
 ## ModelFour Options
@@ -43,13 +43,12 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
-      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
           delete $[h];
         }
       }
@@ -80,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-02-06"]
+        "enum": ["2026-04-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-02-06";
+      $.ApiVersionParameter.enum[0] = "2026-04-06";
 ```
 
 ### Rename Operations
@@ -360,6 +359,9 @@ directive:
         }
         if (header === "x-ms-meta") {
           $[header]["x-ms-format"] = "caseinsensitivemap";
+        }
+        if (header === "x-ms-structured-body" || header === "x-ms-structured-content-length") {
+          $[header]["x-nullable"] = true;
         }
       }
 ```

@@ -54,4 +54,25 @@ namespace Azure { namespace Storage {
 
   using Metadata = Azure::Core::CaseInsensitiveMap;
 
+  /**
+   * @brief The algorithm used for storage checksum.
+   */
+  enum class StorageChecksumAlgorithm
+  {
+    /**
+     * @brief No selected algorithm. Do not calculate or request checksums.
+     */
+    None,
+
+    /**
+     * @brief Recommended. Allow the library to choose an algorithm. Different library versions may
+     * make different choices.
+     */
+    Auto,
+
+    /**
+     * @brief Cyclic redundancy check.
+     */
+    Crc64
+  };
 }} // namespace Azure::Storage

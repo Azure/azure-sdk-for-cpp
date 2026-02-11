@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-02-06";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -354,6 +354,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * If the lease was auto-renewed with this request.
        */
       Nullable<bool> IsLeaseRenewed;
+      /**
+       * Indicates the structured message body was accepted and mirrors back the message schema
+       * version and properties.
+       */
+      Nullable<std::string> StructuredBodyType;
     };
   } // namespace Models
   namespace _detail {
@@ -537,6 +542,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<bool> Flush;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::AppendFileResult> Append(
           Core::Http::_internal::HttpPipeline& pipeline,

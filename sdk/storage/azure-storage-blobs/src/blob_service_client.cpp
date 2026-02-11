@@ -111,7 +111,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& serviceUrl,
       const BlobClientOptions& options)
       : m_serviceUrl(serviceUrl), m_customerProvidedKey(options.CustomerProvidedKey),
-        m_encryptionScope(options.EncryptionScope)
+        m_encryptionScope(options.EncryptionScope),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -144,6 +146,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     blobContainerClient.m_pipeline = m_pipeline;
     blobContainerClient.m_customerProvidedKey = m_customerProvidedKey;
     blobContainerClient.m_encryptionScope = m_encryptionScope;
+    blobContainerClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    blobContainerClient.m_downloadValidationOptions = m_downloadValidationOptions;
     blobContainerClient.m_batchRequestPipeline = m_batchRequestPipeline;
     blobContainerClient.m_batchSubrequestPipeline = m_batchSubrequestPipeline;
     return blobContainerClient;
@@ -184,6 +188,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
     protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
+    protocolLayerOptions.KeyInfo.DelegatedUserTid = options.DelegatedUserTid;
     return _detail::ServiceClient::GetUserDelegationKey(
         *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
   }

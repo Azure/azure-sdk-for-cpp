@@ -880,7 +880,7 @@ namespace Azure { namespace Storage { namespace Test {
     return {};
   }
 
-  TEST_F(BlobSasTest, DISABLED_PrincipalBoundDelegationSas)
+  TEST_F(BlobSasTest, PrincipalBoundDelegationSas_LIVEONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -920,7 +920,7 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
         GetTestCredential(),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
-    EXPECT_NO_THROW(blobClient1.GetProperties());
+    EXPECT_NO_THROW(blobClient1.Download());
 
     blobSasBuilder.DelegatedUserObjectId = "invalidObjectId";
     sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
@@ -928,6 +928,146 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
         GetTestCredential(),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
-    EXPECT_THROW(blobClient2.GetProperties(), StorageException);
+    EXPECT_THROW(blobClient2.Download(), StorageException);
   }
+
+  TEST_F(BlobSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+    Azure::Identity::ClientSecretCredentialOptions credentialOptions;
+    credentialOptions.AdditionallyAllowedTenants = {"*"};
+    auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnv("AZURE_TENANT_ID_CROSS_TENANT"),
+        GetEnv("AZURE_CLIENT_ID_CROSS_TENANT"),
+        GetEnv("AZURE_CLIENT_SECRET_CROSS_TENANT"));
+    auto delegatedUserObjectId = getObjectIdFromTokenCredential(endUserCredential);
+
+    auto blobServiceClient = Blobs::BlobServiceClient(
+        m_blobServiceClient->GetUrl(),
+        GetTestCredential(),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    Blobs::Models::UserDelegationKey userDelegationKey;
+    {
+      Blobs::GetUserDelegationKeyOptions options;
+      options.DelegatedUserTid = "4ab3a968-f1ae-47a6-b82c-f654612122a9";
+      userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn, options).Value;
+    }
+
+    auto blobContainerClient = *m_blobContainerClient;
+    auto blobClient = *m_blockBlobClient;
+    const std::string blobName = m_blobName;
+
+    Sas::BlobSasBuilder blobSasBuilder;
+    blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    blobSasBuilder.StartsOn = sasStartsOn;
+    blobSasBuilder.ExpiresOn = sasExpiresOn;
+    blobSasBuilder.BlobContainerName = m_containerName;
+    blobSasBuilder.BlobName = blobName;
+    blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+    blobSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
+
+    blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
+    auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Blobs::BlockBlobClient blobClient1(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        endUserCredential,
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_NO_THROW(blobClient1.Download());
+
+    {
+      Blobs::GetUserDelegationKeyOptions options;
+      // Invalid Tenant Id
+      options.DelegatedUserTid = "00000000-0000-0000-0000-000000000000";
+      userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn, options).Value;
+    }
+    sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Blobs::BlockBlobClient blobClient2(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_THROW(blobClient2.Download(), StorageException);
+  }
+
+  TEST_F(BlobSasTest, DynamicSas_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Blobs::Models::UserDelegationKey userDelegationKey;
+    {
+      auto blobServiceClient = Blobs::BlobServiceClient(
+          m_blobServiceClient->GetUrl(),
+          GetTestCredential(),
+          InitStorageClientOptions<Blobs::BlobClientOptions>());
+      userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn).Value;
+    }
+
+    auto blobContainerClient = *m_blobContainerClient;
+    auto blobClient = *m_blockBlobClient;
+    const std::string blobName = m_blobName;
+
+    Sas::BlobSasBuilder blobSasBuilder;
+    blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    blobSasBuilder.StartsOn = sasStartsOn;
+    blobSasBuilder.ExpiresOn = sasExpiresOn;
+    blobSasBuilder.BlobContainerName = m_containerName;
+    blobSasBuilder.BlobName = blobName;
+    blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
+
+    blobSasBuilder.SetPermissions(Sas::BlobSasPermissions::All);
+
+    // cSpell:disable
+    std::map<std::string, std::string> requestHeaders;
+    requestHeaders["x-ms-range"] = "bytes=0-1023";
+    requestHeaders["x-ms-range-get-content-md5"] = "true";
+
+    std::map<std::string, std::string> requestQueryParameters;
+    requestQueryParameters["spr"] = "https,http";
+    requestQueryParameters["sks"] = "b";
+
+    blobSasBuilder.RequestHeaders = requestHeaders;
+    blobSasBuilder.RequestQueryParameters = requestQueryParameters;
+    auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Blobs::DownloadBlobOptions downloadOptions;
+    Core::Http::HttpRange range;
+    range.Offset = 0;
+    range.Length = 1024;
+    downloadOptions.Range = range;
+    downloadOptions.RangeHashAlgorithm = HashAlgorithm::Md5;
+
+    Blobs::BlockBlobClient blobClient1(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_NO_THROW(blobClient1.Download(downloadOptions));
+
+    requestHeaders["foo$"] = "bar!";
+    requestHeaders["company"] = "msft";
+    requestHeaders["city"] = "redmond,atlanta,reston";
+
+    requestQueryParameters["hello$"] = "world!";
+    requestQueryParameters["abra"] = "cadabra";
+    requestQueryParameters["firstName"] = "john,Tim";
+    // cSpell:enable
+
+    blobSasBuilder.RequestHeaders = requestHeaders;
+    blobSasBuilder.RequestQueryParameters = requestQueryParameters;
+
+    sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Blobs::BlockBlobClient blobClient2(
+        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    EXPECT_THROW(blobClient2.Download(downloadOptions), StorageException);
+  }
+
 }}} // namespace Azure::Storage::Test

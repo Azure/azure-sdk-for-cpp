@@ -86,12 +86,41 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Specifies HTTP options for conditional requests based on AccessTier.
+   */
+  struct AccessTierAccessConditions
+  {
+    /**
+     * @brief Destructor.
+     *
+     */
+    virtual ~AccessTierAccessConditions() = default;
+
+    /**
+     * @brief Specify this header value to operate only on a blob if the access-tier has been
+     * modified since the specified date/time. Note: If this is specified,
+     * AccessTierIfUnmodifiedSince cannot be specified.
+     * Only valid for Delete Blob API.
+     */
+    Azure::Nullable<Azure::DateTime> AccessTierIfModifiedSince;
+
+    /**
+     * @brief Specify this header value to operate only on a blob if the access-tier has not been
+     * modified since the specified date/time. Note: If this is specified, AccessTierIfModifiedSince
+     * cannot be specified.
+     * Only valid for Delete Blob API.
+     */
+    Azure::Nullable<Azure::DateTime> AccessTierIfUnmodifiedSince;
+  };
+
+  /**
    * @brief Specifies access conditions for a blob.
    */
   struct BlobAccessConditions : public Azure::ModifiedConditions,
                                 public Azure::MatchConditions,
                                 public LeaseAccessConditions,
-                                public TagAccessConditions
+                                public TagAccessConditions,
+                                public AccessTierAccessConditions
   {
   };
 
@@ -169,6 +198,17 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * Configures whether to do content validation for blob uploads and downloads.
+   */
+  struct TransferValidationOptions final
+  {
+    /**
+     * @brief The algorithm used for storage checksum.
+     */
+    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
+  };
+
+  /**
    * @brief Client options used to initialize all kinds of blob clients.
    */
   struct BlobClientOptions final : Azure::Core::_internal::ClientOptions
@@ -210,6 +250,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * not set.
      */
     Azure::Nullable<BlobAudience> Audience;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
   };
 
   /**
@@ -254,6 +304,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * will be truncated to second.
      */
     Azure::DateTime StartsOn = std::chrono::system_clock::now();
+
+    /**
+     * The delegated user tenant id in Azure AD.
+     */
+    Nullable<std::string> DelegatedUserTid;
   };
 
   /**
@@ -684,6 +739,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     BlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -718,6 +778,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       int32_t Concurrency = 5;
     } TransferOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -906,6 +971,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Indicates whether the blob has a legal hold.
      */
     Azure::Nullable<bool> HasLegalHold;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -965,6 +1035,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * Indicates whether the blob has a legal hold.
      */
     Azure::Nullable<bool> HasLegalHold;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1040,6 +1115,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1058,6 +1139,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1102,6 +1188,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1364,6 +1456,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     AppendBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1401,6 +1498,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**
@@ -1479,6 +1582,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional conditions that must be met to perform this operation.
      */
     PageBlobAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1518,6 +1626,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * token authentication. Used to indicate the intent of the request.
      */
     Azure::Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+
+    /**
+     * Optional. Specifies the source customer provided key to use to encrypt the source blob.
+     * Applicable only for service version 2026-02-06 or later.
+     */
+    Azure::Nullable<EncryptionKey> SourceCustomerProvidedKey;
   };
 
   /**

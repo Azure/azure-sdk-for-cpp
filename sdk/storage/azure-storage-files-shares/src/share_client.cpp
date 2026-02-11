@@ -44,7 +44,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -69,7 +71,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
 
@@ -99,7 +103,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
       : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -120,6 +126,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     directoryClient.m_allowTrailingDot = m_allowTrailingDot;
     directoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
     directoryClient.m_shareTokenIntent = m_shareTokenIntent;
+    directoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
+    directoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
     return directoryClient;
   }
 
