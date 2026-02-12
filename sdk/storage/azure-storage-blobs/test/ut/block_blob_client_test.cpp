@@ -2388,9 +2388,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(downloadResult = m_blockBlobClient->Download(downloadOptions).Value);
     auto downloadedData = downloadResult.BodyStream->ReadToEnd();
     EXPECT_EQ(content, downloadedData);
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
     EXPECT_EQ(downloadResult.BlobSize, contentSize);
     // partial download
     downloadOptions.Range = Core::Http::HttpRange();
@@ -2399,9 +2396,6 @@ namespace Azure { namespace Storage { namespace Test {
     downloadedData = downloadResult.BodyStream->ReadToEnd();
     EXPECT_EQ(
         downloadedData, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize / 2);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
     EXPECT_EQ(downloadResult.BlobSize, contentSize);
     downloadOptions.Range.Reset();
 
@@ -2473,8 +2467,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         dataPart1,
         std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
-    EXPECT_FALSE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_FALSE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.BlobSize, contentSize * 2);
   }
 
   TEST_F(BlockBlobClientTest, StructuredMessageTest_ClientOptions)
@@ -2498,10 +2491,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
       auto downloadedData = downloadResult.BodyStream->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+      EXPECT_EQ(downloadResult.BlobSize, contentSize);
     };
 
     auto validateAllApis = [&](Blobs::BlockBlobClient& client) {
@@ -2597,10 +2587,7 @@ namespace Azure { namespace Storage { namespace Test {
             EXPECT_NO_THROW(downloadResult = blobClient.Download(downloadOptions).Value);
             auto downloadedData = downloadResult.BodyStream->ReadToEnd();
             EXPECT_EQ(expectedData, downloadedData);
-            EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-            EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-            EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-            EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+            EXPECT_EQ(downloadResult.BlobSize, contentSize);
 
             Blobs::DownloadBlobToOptions downloadToOptions;
             downloadToOptions.ValidationOptions = validationOptions;
@@ -2650,9 +2637,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(downloadResult = m_blockBlobClient->Download(downloadOptions).Value);
     auto downloadedData = downloadResult.BodyStream->ReadToEnd();
     EXPECT_EQ(content, downloadedData);
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
     EXPECT_EQ(downloadResult.BlobSize, contentSize);
   }
 

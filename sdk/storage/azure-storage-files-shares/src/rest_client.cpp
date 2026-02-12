@@ -3848,15 +3848,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.Details.LeaseStatus
             = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
-      {
-        response.StructuredContentLength
-            = std::stoll(pRawResponse->GetHeaders().at("x-ms-structured-content-length"));
-      }
       if (pRawResponse->GetHeaders().count("x-ms-mode") != 0)
       {
         response.Details.FileMode = pRawResponse->GetHeaders().at("x-ms-mode");

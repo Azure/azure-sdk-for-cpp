@@ -326,6 +326,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto downloadResponse
         = _detail::FileClient::Download(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
+    int64_t structuredContentLength = 0;
+    if (isStructuredMessage)
+    {
+      if (downloadResponse.RawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
+      {
+        structuredContentLength = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at("x-ms-structured-content-length"));
+      }
+      else
+      {
+        throw StorageException(
+            "Structured message response without x-ms-structured-content-length header.");
+      }
+    }
+
     {
       // In case network failure during reading the body
       auto eTag = downloadResponse.Value.Details.ETag;
@@ -361,10 +376,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (isStructuredMessage)
       {
         _internal::StructuredMessageDecodingStreamOptions decodingOptions;
-        if (downloadResponse.Value.StructuredContentLength.HasValue())
-        {
-          decodingOptions.ContentLength = downloadResponse.Value.StructuredContentLength.Value();
-        }
+        decodingOptions.ContentLength = structuredContentLength;
         bodyStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
             std::move(bodyStream), decodingOptions);
       }
@@ -378,12 +390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       if (isStructuredMessage)
       {
-        if (!downloadResponse.Value.StructuredContentLength.HasValue())
-        {
-          throw StorageException(
-              "Structured message response without x-ms-structured-content-length header.");
-        }
-        downloadResponse.Value.FileSize = downloadResponse.Value.StructuredContentLength.Value();
+        downloadResponse.Value.FileSize = structuredContentLength;
       }
       else
       {
@@ -416,8 +423,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     result.FileSize = downloadResponse.Value.FileSize;
     result.HttpHeaders = std::move(downloadResponse.Value.HttpHeaders);
     result.TransactionalContentHash = std::move(downloadResponse.Value.TransactionalContentHash);
-    result.StructuredBodyType = std::move(downloadResponse.Value.StructuredBodyType);
-    result.StructuredContentLength = downloadResponse.Value.StructuredContentLength;
     result.Details.CopyCompletedOn = std::move(downloadResponse.Value.Details.CopyCompletedOn);
     result.Details.CopyId = std::move(downloadResponse.Value.Details.CopyId);
     result.Details.CopyProgress = std::move(downloadResponse.Value.Details.CopyProgress);

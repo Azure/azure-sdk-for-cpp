@@ -846,9 +846,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(
         content,
         std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
+    EXPECT_EQ(downloadResult.BlobSize, contentSize);
   }
 
   TEST_F(PageBlobClientTest, StructuredMessageTest_ClientOptions)
@@ -873,10 +871,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
       auto downloadedData = downloadResult.BodyStream->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+      EXPECT_EQ(downloadResult.BlobSize, contentSize);
     };
 
     auto validateAllApis = [&](Blobs::PageBlobClient& client) {

@@ -246,8 +246,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
-    ret.StructuredBodyType = response.Value.StructuredBodyType;
-    ret.StructuredContentLength = response.Value.StructuredContentLength;
     auto& headers = response.RawResponse->GetHeaders();
     auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
     if (encryptionContext != headers.end())
