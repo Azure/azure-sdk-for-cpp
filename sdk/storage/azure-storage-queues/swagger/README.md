@@ -9,7 +9,7 @@ package-name: azure-storage-queues
 namespace: Azure::Storage::Queues
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg101base/specification/storage/data-plane/Microsoft.QueueStorage/stable/2026-04-06/queue.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.QueueStorage/stable/2026-04-06/queue.json
 ```
 
 ## ModelFour Options
@@ -83,7 +83,7 @@ directive:
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-04-06";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations

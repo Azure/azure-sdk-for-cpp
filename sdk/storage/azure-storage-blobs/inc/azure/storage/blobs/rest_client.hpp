@@ -1620,16 +1620,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The blob's type.
        */
       Models::BlobType BlobType;
-      /**
-       * Indicates the response body contains a structured message and specifies the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
-      /**
-       * The length of the blob/file content inside the message body when the response body is
-       * returned as a structured message. Will always be smaller than Content-Length.
-       */
-      Nullable<std::int64_t> StructuredContentLength;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::GetProperties.

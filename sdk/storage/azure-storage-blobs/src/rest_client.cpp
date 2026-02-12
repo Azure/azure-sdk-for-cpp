@@ -3900,15 +3900,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Details.HasLegalHold
             = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
-      {
-        response.StructuredContentLength
-            = std::stoll(pRawResponse->GetHeaders().at("x-ms-structured-content-length"));
-      }
       if (httpStatusCode == Core::Http::HttpStatusCode::Ok)
       {
         if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
