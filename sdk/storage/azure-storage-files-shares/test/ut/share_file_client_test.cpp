@@ -2636,9 +2636,6 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(downloadResult = fileClient.Download(downloadOptions).Value);
     auto downloadedData = downloadResult.BodyStream->ReadToEnd();
     EXPECT_EQ(content, downloadedData);
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
     EXPECT_EQ(downloadResult.FileSize, contentSize);
     // partial download
     downloadOptions.Range = Core::Http::HttpRange();
@@ -2647,9 +2644,6 @@ namespace Azure { namespace Storage { namespace Test {
     downloadedData = downloadResult.BodyStream->ReadToEnd();
     EXPECT_EQ(
         downloadedData, std::vector<uint8_t>(content.begin(), content.begin() + contentSize / 2));
-    EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-    EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize / 2);
-    EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
     EXPECT_EQ(downloadResult.FileSize, contentSize);
     downloadOptions.Range.Reset();
 
@@ -2714,10 +2708,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
       auto downloadedData = downloadResult.BodyStream->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+      EXPECT_EQ(downloadResult.FileSize, contentSize);
     };
 
     auto validateApis = [&](Files::Shares::ShareFileClient& client) {
@@ -2732,10 +2723,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
       auto downloadedData = downloadResult.BodyStream->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredContentLength.HasValue());
-      EXPECT_EQ(downloadResult.StructuredContentLength.Value(), contentSize);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+      EXPECT_EQ(downloadResult.FileSize, contentSize);
 
       Files::Shares::UploadFileFromOptions uploadFromOptions;
       uploadFromOptions.TransferOptions.SingleUploadThreshold = 0;
@@ -2800,8 +2788,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);
       auto downloadedData = downloadResult.BodyStream->ReadToEnd();
       EXPECT_EQ(content, downloadedData);
-      EXPECT_TRUE(downloadResult.StructuredBodyType.HasValue());
-      EXPECT_EQ(downloadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
+      EXPECT_EQ(downloadResult.FileSize, contentSize);
     }
 
     // Scenario 2: RenameSubdirectory returns a client with validation options

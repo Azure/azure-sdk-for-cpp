@@ -93,7 +93,7 @@ directive:
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-04-06";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations

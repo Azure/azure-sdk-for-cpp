@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg101base/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-04-06/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-04-06/blob.json
 ```
 
 ## ModelFour Options
@@ -105,7 +105,7 @@ directive:
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-04-06";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations
@@ -1050,6 +1050,8 @@ directive:
         delete $[status_code].headers["x-ms-blob-content-md5"];
         delete $[status_code].headers["x-ms-content-crc64"];
         delete $[status_code].headers["x-ms-or"];
+        delete $[status_code].headers["x-ms-structured-content-length"];
+        delete $[status_code].headers["x-ms-structured-body"];
       }
       $["200"].headers["Content-MD5"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-ms-client-path": "Details.HttpHeaders.ContentHash", "x-nullable": true};
       $["206"].headers["Content-MD5"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};

@@ -229,6 +229,21 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto downloadResponse = _detail::BlobClient::Download(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
 
+    int64_t structuredContentLength = 0;
+    if (isStructuredMessage)
+    {
+      if (downloadResponse.RawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
+      {
+        structuredContentLength = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at("x-ms-structured-content-length"));
+      }
+      else
+      {
+        throw StorageException(
+            "Structured message response without x-ms-structured-content-length header.");
+      }
+    }
+
     {
       // In case network failure during reading the body
       const Azure::ETag eTag = downloadResponse.Value.Details.ETag;
@@ -258,13 +273,11 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
 
       auto bodyStream = std::move(downloadResponse.Value.BodyStream);
+
       if (isStructuredMessage)
       {
         _internal::StructuredMessageDecodingStreamOptions decodingOptions;
-        if (downloadResponse.Value.StructuredContentLength.HasValue())
-        {
-          decodingOptions.ContentLength = downloadResponse.Value.StructuredContentLength.Value();
-        }
+        decodingOptions.ContentLength = structuredContentLength;
         bodyStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
             std::move(bodyStream), decodingOptions);
       }
@@ -278,12 +291,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       if (isStructuredMessage)
       {
-        if (!downloadResponse.Value.StructuredContentLength.HasValue())
-        {
-          throw StorageException(
-              "Structured message response without x-ms-structured-content-length header.");
-        }
-        downloadResponse.Value.BlobSize = downloadResponse.Value.StructuredContentLength.Value();
+        downloadResponse.Value.BlobSize = structuredContentLength;
       }
       else
       {

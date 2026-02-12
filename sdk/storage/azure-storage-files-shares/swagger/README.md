@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg101base/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-04-06/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-04-06/file.json
 ```
 
 ## ModelFour Options
@@ -84,7 +84,7 @@ directive:
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2026-04-06";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations
@@ -1050,6 +1050,8 @@ directive:
         delete $[status_code].headers["Accept-Ranges"];
         delete $[status_code].headers["Content-Length"];
         delete $[status_code].headers["Content-Range"];
+        delete $[status_code].headers["x-ms-structured-content-length"];
+        delete $[status_code].headers["x-ms-structured-body"];
         $[status_code].schema = {"$ref": "#/definitions/DownloadFileResult"};
       }
       $["200"].headers["Content-MD5"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-ms-client-path": "HttpHeaders.ContentHash", "x-nullable": true};
