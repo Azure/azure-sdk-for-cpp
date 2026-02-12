@@ -15,7 +15,6 @@
         - Added new field `StructuredBodyType` in `AppendFileResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadFileOptions`.
-        - Added new fields `StructuredBodyType` and `StructuredContentLength` in `DownloadFileResult`.
 - Added support for Dynamic User Delegation SAS.
     - Added new fields `RequestHeaders` and `RequestQueryParameters` in `DataLakeSasBuilder`.
 

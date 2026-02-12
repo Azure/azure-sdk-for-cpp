@@ -15,7 +15,6 @@
         - Added new field `StructuredBodyType` in `UploadPagesResult`, `AppendBlockResult`, `UploadBlockBlobResult`, and `StageBlockResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadBlobOptions` and `DownloadBlobToOptions`.
-        - Added new fields `StructuredBodyType` and `StructuredContentLength` in `DownloadBlobResult`.
 - Added support for `AccessTierConditions` in Delete Blob API.
 - Added support for `SourceCustomerProvidedKey` for copy APIs.
 - Added support for Dynamic User Delegation SAS.

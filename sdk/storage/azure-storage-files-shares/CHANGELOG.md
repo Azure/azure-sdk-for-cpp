@@ -15,7 +15,6 @@
         - Added new field `StructuredBodyType` in `UploadFileRangeResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadFileOptions` and `DownloadFileToOptions`.
-        - Added new fields `StructuredBodyType` and `StructuredContentLength` in `DownloadFileResult`.
 
 ## 12.16.0 (2026-01-07)
 
