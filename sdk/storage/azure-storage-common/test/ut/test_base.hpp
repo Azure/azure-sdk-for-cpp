@@ -169,7 +169,7 @@ namespace Azure { namespace Storage {
 
     protected:
       std::vector<std::function<void()>> m_resourceCleanupFunctions;
-      constexpr static bool m_useTokenCredentialByDefault = false;
+      constexpr static bool m_useTokenCredentialByDefault = true;
 
     private:
       void InitLoggingOptions(Azure::Core::_internal::ClientOptions& options);
