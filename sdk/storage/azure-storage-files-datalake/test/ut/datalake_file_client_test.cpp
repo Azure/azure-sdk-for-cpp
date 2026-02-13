@@ -1335,4 +1335,18 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(DataLakeFileClientTest, PathSystemProperties)
+  {
+    auto res = m_fileClient->GetSystemProperties();
+    auto systemProperties = res.Value;
+    EXPECT_FALSE(systemProperties.IsDirectory);
+    EXPECT_TRUE(systemProperties.ETag.HasValue());
+    EXPECT_FALSE(systemProperties.LastModified.ToString().empty());
+    EXPECT_FALSE(systemProperties.Owner.empty());
+    EXPECT_FALSE(systemProperties.Group.empty());
+    EXPECT_FALSE(systemProperties.Permissions.empty());
+    EXPECT_TRUE(systemProperties.IsServerEncrypted);
+    EXPECT_TRUE(systemProperties.CreatedOn.HasValue());
+  }
+
 }}} // namespace Azure::Storage::Test

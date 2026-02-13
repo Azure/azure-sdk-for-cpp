@@ -217,6 +217,18 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Returns system properties stored for the given path.
+     * @param options Optional parameters to get system properties from the resource the path points
+     * to.
+     * @param context Context for cancelling long running operations.
+     * @return Azure::Response<Models::PathSystemProperties> containing the system properties.
+     * @remark This request is sent to dfs endpoint.
+     */
+    Azure::Response<Models::PathSystemProperties> GetSystemProperties(
+        const GetPathSystemPropertiesOptions& opitons = GetPathSystemPropertiesOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Sets the metadata of a resource the path points to.
      * @param metadata User-defined metadata to be stored with the filesystem. Note that the string
      *                 may only contain ASCII characters in the ISO-8859-1 character set.
