@@ -38,6 +38,11 @@ namespace Azure { namespace Storage { namespace Sas {
      * corresponding root blob.
      */
     BlobVersion,
+
+    /**
+     * @brief Grants access to the blobs in a virtual directory and to list blobs in the virtual directory.
+     */
+    VirtualDirectory
   };
 
   /**
@@ -233,9 +238,21 @@ namespace Azure { namespace Storage { namespace Sas {
     std::string BlobContainerName;
 
     /**
-     * @brief The name of the blob being made accessible, or empty for a container SAS..
+     * @brief The name of the blob being made accessible, or empty for a container SAS.
+     * Beginning in version 2020-02-10, setting \p IsVirtualDirectory to true means this is a virtual
+     * directory name for a directory SAS. Do not prefix or suffix \p BlobName with slashes for directory SAS.
      */
     std::string BlobName;
+
+    /**
+     * @brief This value defines whether \p BlobName is a virtual directory.
+     */
+    bool IsVirtualDirectory = false;
+
+    /**
+     * @brief Required when \p IsVirtualDirectory is set to true. Depth of the virtual blob directory.
+     */
+    Azure::Nullable<int32_t> VirtualDirectoryDepth;
 
     /**
      * @brief The name of the blob snapshot being made accessible, or empty for a container
