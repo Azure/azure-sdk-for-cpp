@@ -1050,6 +1050,27 @@ namespace Azure { namespace Storage { namespace Test {
         blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
   }
 
+  TEST_F(BlockBlobClientTest, RehydrateTierToSmart)
+  {
+    m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Archive);
+    m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Smart);
+    auto properties = m_blockBlobClient->GetProperties().Value;
+    ASSERT_TRUE(properties.ArchiveStatus.HasValue());
+    EXPECT_EQ(
+        properties.ArchiveStatus.Value(), Blobs::Models::ArchiveStatus::RehydratePendingToSmart);
+    ASSERT_TRUE(properties.RehydratePriority.HasValue());
+    EXPECT_EQ(properties.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
+
+    auto blobItem = GetBlobItem(m_blobName);
+    ASSERT_TRUE(blobItem.Details.ArchiveStatus.HasValue());
+    EXPECT_EQ(
+        blobItem.Details.ArchiveStatus.Value(),
+        Blobs::Models::ArchiveStatus::RehydratePendingToSmart);
+    ASSERT_TRUE(blobItem.Details.RehydratePriority.HasValue());
+    EXPECT_EQ(
+        blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
+  }
+
   TEST_F(BlockBlobClientTest, SetTierCold)
   {
     m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Cold);
@@ -2647,5 +2668,28 @@ namespace Azure { namespace Storage { namespace Test {
     deleteOptions = Blobs::DeleteBlobOptions{};
     deleteOptions.AccessConditions.IfModifiedSince = lastModifiedTime - std::chrono::hours(1);
     EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
+  }
+
+  TEST_F(BlockBlobClientTest, SmartTier)
+  {
+    const auto blobName = RandomString();
+    auto blobClient = GetBlockBlobClientForTest(blobName);
+
+    std::vector<uint8_t> emptyContent;
+    Blobs::UploadBlockBlobFromOptions options;
+    options.AccessTier = Blobs::Models::AccessTier::Smart;
+    blobClient.UploadFrom(emptyContent.data(), emptyContent.size(), options);
+
+    auto ret = blobClient.GetProperties().Value;
+    EXPECT_TRUE(ret.AccessTier.HasValue());
+    EXPECT_EQ(ret.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
+    EXPECT_TRUE(ret.SmartAccessTier.HasValue());
+    EXPECT_FALSE(ret.SmartAccessTier.Value().ToString().empty());
+
+    auto blobItem = GetBlobItem(blobName);
+    EXPECT_TRUE(blobItem.Details.AccessTier.HasValue());
+    EXPECT_EQ(blobItem.Details.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
+    EXPECT_TRUE(blobItem.Details.SmartAccessTier.HasValue());
+    EXPECT_FALSE(blobItem.Details.SmartAccessTier.Value().ToString().empty());
   }
 }}} // namespace Azure::Storage::Test

@@ -152,9 +152,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     const AccessTier AccessTier::Archive("Archive");
     const AccessTier AccessTier::Premium("Premium");
     const AccessTier AccessTier::Cold("Cold");
+    const AccessTier AccessTier::Smart("Smart");
     const ArchiveStatus ArchiveStatus::RehydratePendingToHot("rehydrate-pending-to-hot");
     const ArchiveStatus ArchiveStatus::RehydratePendingToCool("rehydrate-pending-to-cool");
     const ArchiveStatus ArchiveStatus::RehydratePendingToCold("rehydrate-pending-to-cold");
+    const ArchiveStatus ArchiveStatus::RehydratePendingToSmart("rehydrate-pending-to-smart");
     const RehydratePriority RehydratePriority::High("High");
     const RehydratePriority RehydratePriority::Standard("Standard");
     const ObjectReplicationStatus ObjectReplicationStatus::Complete("complete");
@@ -2306,6 +2308,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kAccessTier,
           kAccessTierInferred,
           kArchiveStatus,
+          kSmartAccessTier,
           kCustomerProvidedKeySha256,
           kEncryptionScope,
           kAccessTierChangeTime,
@@ -2367,6 +2370,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"AccessTier", XmlTagEnum::kAccessTier},
             {"AccessTierInferred", XmlTagEnum::kAccessTierInferred},
             {"ArchiveStatus", XmlTagEnum::kArchiveStatus},
+            {"SmartAccessTier", XmlTagEnum::kSmartAccessTier},
             {"CustomerProvidedKeySha256", XmlTagEnum::kCustomerProvidedKeySha256},
             {"EncryptionScope", XmlTagEnum::kEncryptionScope},
             {"AccessTierChangeTime", XmlTagEnum::kAccessTierChangeTime},
@@ -2650,6 +2654,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[4] == XmlTagEnum::kArchiveStatus)
             {
               vectorElement1.Details.ArchiveStatus = Models::ArchiveStatus(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kSmartAccessTier)
+            {
+              vectorElement1.Details.SmartAccessTier = Models::AccessTier(node.Value);
             }
             else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -2996,6 +3008,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           kAccessTier,
           kAccessTierInferred,
           kArchiveStatus,
+          kSmartAccessTier,
           kCustomerProvidedKeySha256,
           kEncryptionScope,
           kAccessTierChangeTime,
@@ -3059,6 +3072,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {"AccessTier", XmlTagEnum::kAccessTier},
             {"AccessTierInferred", XmlTagEnum::kAccessTierInferred},
             {"ArchiveStatus", XmlTagEnum::kArchiveStatus},
+            {"SmartAccessTier", XmlTagEnum::kSmartAccessTier},
             {"CustomerProvidedKeySha256", XmlTagEnum::kCustomerProvidedKeySha256},
             {"EncryptionScope", XmlTagEnum::kEncryptionScope},
             {"AccessTierChangeTime", XmlTagEnum::kAccessTierChangeTime},
@@ -3350,6 +3364,14 @@ namespace Azure { namespace Storage { namespace Blobs {
                 && xmlPath[4] == XmlTagEnum::kArchiveStatus)
             {
               vectorElement1.Details.ArchiveStatus = Models::ArchiveStatus(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kSmartAccessTier)
+            {
+              vectorElement1.Details.SmartAccessTier = Models::AccessTier(node.Value);
             }
             else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -4162,6 +4184,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.AccessTierChangedOn = DateTime::Parse(
             pRawResponse->GetHeaders().at("x-ms-access-tier-change-time"),
             Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-smart-access-tier") != 0)
+      {
+        response.SmartAccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-smart-access-tier"));
       }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
