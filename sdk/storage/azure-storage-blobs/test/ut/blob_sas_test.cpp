@@ -796,8 +796,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = accountSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-          Azure::Core::Convert::Base64Decode(accountKey)));
+              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+              Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
 
@@ -816,8 +816,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = blobSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-          Azure::Core::Convert::Base64Decode(accountKey)));
+              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+              Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
 
@@ -846,8 +846,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = blobSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-          Azure::Core::Convert::Base64Decode(accountKey)));
+              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+              Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
   }
@@ -1068,6 +1068,42 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
         InitStorageClientOptions<Blobs::BlobClientOptions>());
     EXPECT_THROW(blobClient2.Download(downloadOptions), StorageException);
+  }
+
+  TEST_F(BlobSasTest, VirtualDirectorySas_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential
+        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+
+    const std::string blobName = "foo/bar/baz/qux/" + RandomString();
+    auto blobClient = GetBlockBlobClientForTest(blobName);
+    blobClient.UploadFrom(reinterpret_cast<const uint8_t*>("a"), 1);
+
+    Sas::BlobSasBuilder blobSasBuilder;
+    blobSasBuilder.Protocol = Sas::SasProtocol::HttpsOnly;
+    blobSasBuilder.StartsOn = sasStartsOn;
+    blobSasBuilder.ExpiresOn = sasExpiresOn;
+    blobSasBuilder.BlobContainerName = m_containerName;
+    blobSasBuilder.BlobName = "foo/bar";
+    blobSasBuilder.SetPermissions(
+        Sas::BlobContainerSasPermissions::Read | Sas::BlobContainerSasPermissions::List);
+    blobSasBuilder.IsVirtualDirectory = true;
+    blobSasBuilder.VirtualDirectoryDepth = 2;
+    blobSasBuilder.Resource = Sas::BlobSasResource::VirtualDirectory;
+
+    auto sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyBlobSasRead(blobClient, sasToken);
+
+    blobSasBuilder.VirtualDirectoryDepth = 3;
+    sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyBlobSasNonRead(blobClient, sasToken);
+
+    blobSasBuilder.BlobName = "foo/bar/baz";
+    sasToken = blobSasBuilder.GenerateSasToken(*keyCredential);
+    VerifyBlobSasRead(blobClient, sasToken);
   }
 
 }}} // namespace Azure::Storage::Test
