@@ -309,6 +309,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Models::_detail::PathSetAccessControlListRecursiveMode::Remove, acls, options, context);
     }
 
+    /**
+     * @brief Sets tags on the path.
+     *
+     * @param tags The tags to set on the path.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A SetBlobTagsResult on successfully setting tags.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Response<Models::SetPathTagsResult> SetTags(
+        std::map<std::string, std::string> tags,
+        const SetPathTagsOptions& options = SetPathTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Gets the tags associated with the path.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return path tags on successfully getting tags.
+     * @remark This request is sent to blob endpoint.
+     */
+    Azure::Response<std::map<std::string, std::string>> GetTags(
+        const GetPathTagsOptions& options = GetPathTagsOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   protected:
     /** @brief Url to the resource on the service */
     Azure::Core::Url m_pathUrl;
