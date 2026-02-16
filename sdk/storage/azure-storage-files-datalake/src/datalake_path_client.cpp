@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_pathUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
+            m_pathUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
@@ -95,7 +95,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
+            m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
@@ -132,7 +132,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
+            m_pathUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
@@ -356,9 +356,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = m_blobClient.GetProperties(
         blobOptions,
         options.IncludeUserPrincipalName.HasValue() ? context.WithValue(
-            Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
-            options.IncludeUserPrincipalName.Value())
-                                                    : context);
+                  Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
+                  options.IncludeUserPrincipalName.Value())
+            : context);
     Models::PathProperties ret;
     ret.ETag = std::move(response.Value.ETag);
     ret.LastModified = std::move(response.Value.LastModified);
@@ -522,6 +522,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
+  }
+
+  Azure::Response<Models::SetPathTagsResult> DataLakePathClient::SetTags(
+      std::map<std::string, std::string> tags,
+      const SetPathTagsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    return m_blobClient.SetTags(tags, options, context);
+  }
+
+  Azure::Response<std::map<std::string, std::string>> DataLakePathClient::GetTags(
+      const GetPathTagsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    return m_blobClient.GetTags(options, context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

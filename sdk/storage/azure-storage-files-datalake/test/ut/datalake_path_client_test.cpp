@@ -592,4 +592,14 @@ namespace Azure { namespace Storage { namespace Test {
         = Files::DataLake::DataLakePathClient(m_pathClient->GetUrl(), credential, clientOptions);
     EXPECT_THROW(pathClient.GetProperties(), StorageException);
   }
+
+  TEST_F(DataLakePathClientTest, GetSetTags) {
+    std::map<std::string, std::string> tags;
+    tags["key1"] = "value1";
+    tags["key2"] = "value2";
+    tags["key3 +-./:=_"] = "v1 +-./:=_";
+    m_pathClient->SetTags(tags);
+    EXPECT_EQ(tags, m_pathClient->GetTags().Value);
+  }
+
 }}} // namespace Azure::Storage::Test

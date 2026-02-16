@@ -1086,4 +1086,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     std::function<void(FileQueryError)> ErrorHandler;
   };
+
+  using SetPathTagsOptions = Blobs::SetBlobTagsOptions;
+  using GetPathTagsOptions = Blobs::GetBlobTagsOptions;
 }}}} // namespace Azure::Storage::Files::DataLake
