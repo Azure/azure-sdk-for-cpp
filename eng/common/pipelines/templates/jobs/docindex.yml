@@ -1,5 +1,6 @@
 jobs:
   - job: CreateDocIndex
+    condition: ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr')
     pool:
       name: azsdk-pool
       demands: ImageOverride -equals windows-2022
