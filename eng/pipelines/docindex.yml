@@ -14,7 +14,6 @@ jobs:
   - template: /eng/common/pipelines/templates/jobs/docindex.yml
 
   - job: UpdateDocsMsBuildConfig
-    condition: ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr')
     pool:
       name: $(LINUXPOOL)
       demands: ImageOverride -equals $(LINUXVMIMAGE)
