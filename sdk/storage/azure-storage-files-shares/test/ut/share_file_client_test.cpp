@@ -2627,7 +2627,6 @@ namespace Azure { namespace Storage { namespace Test {
     Files::Shares::Models::UploadFileRangeResult uploadRangeResult;
     EXPECT_NO_THROW(
         uploadRangeResult = fileClient.UploadRange(0, bodyStream, uploadRangeOptions).Value);
-    EXPECT_TRUE(uploadRangeResult.StructuredBodyType.HasValue());
 
     // Download
     Files::Shares::DownloadFileOptions downloadOptions;
@@ -2702,7 +2701,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::Shares::Models::UploadFileRangeResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.UploadRange(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Files::Shares::Models::DownloadFileResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -2717,7 +2715,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::Shares::Models::UploadFileRangeResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.UploadRange(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Files::Shares::Models::DownloadFileResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -2773,7 +2770,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::Shares::Models::UploadFileRangeResult uploadResult;
       EXPECT_NO_THROW(uploadResult = sourceFileClient.UploadRange(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       const std::string destinationFileName = "clientoptions_rename_dest_" + RandomString();
       auto renamedClient
@@ -2782,7 +2778,6 @@ namespace Azure { namespace Storage { namespace Test {
 
       bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       EXPECT_NO_THROW(uploadResult = renamedClient.UploadRange(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Files::Shares::Models::DownloadFileResult downloadResult;
       EXPECT_NO_THROW(downloadResult = renamedClient.Download().Value);

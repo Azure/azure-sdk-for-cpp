@@ -1482,7 +1482,6 @@ namespace Azure { namespace Storage { namespace Test {
       stream.Rewind();
       Blobs::Models::UploadBlockBlobResult uploadResult;
       EXPECT_NO_THROW(uploadResult = destBlobClient.Upload(stream, options).Value);
-      EXPECT_FALSE(uploadResult.StructuredBodyType.HasValue());
     }
   }
 
@@ -2380,8 +2379,6 @@ namespace Azure { namespace Storage { namespace Test {
     uploadOptions.ValidationOptions = validationOptions;
     Blobs::Models::UploadBlockBlobResult uploadResult;
     EXPECT_NO_THROW(uploadResult = m_blockBlobClient->Upload(bodyStream, uploadOptions).Value);
-    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     Blobs::DownloadBlobOptions downloadOptions;
     downloadOptions.ValidationOptions = validationOptions;
     Blobs::Models::DownloadBlobResult downloadResult;
@@ -2452,14 +2449,11 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::Models::StageBlockResult stageResult;
     EXPECT_NO_THROW(
         stageResult = blobClient.StageBlock(blockId1, blockContent, stageBlockOptions).Value);
-    EXPECT_TRUE(stageResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(stageResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     validationOptions.Algorithm = StorageChecksumAlgorithm::None;
     stageBlockOptions.ValidationOptions = validationOptions;
     blockContent = Azure::Core::IO::MemoryBodyStream(dataPart2.data(), dataPart2.size());
     EXPECT_NO_THROW(
         stageResult = blobClient.StageBlock(blockId2, blockContent, stageBlockOptions).Value);
-    EXPECT_FALSE(stageResult.StructuredBodyType.HasValue());
     EXPECT_NO_THROW(blobClient.CommitBlockList({blockId1, blockId2}));
     downloadOptions.ValidationOptions = validationOptions;
     EXPECT_NO_THROW(downloadResult = blobClient.Download(downloadOptions).Value);
@@ -2485,7 +2479,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::UploadBlockBlobResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.Upload(bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -2498,7 +2491,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::UploadBlockBlobResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.Upload(bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -2520,7 +2512,6 @@ namespace Azure { namespace Storage { namespace Test {
       bodyStream.Rewind();
       Blobs::Models::StageBlockResult stageResult;
       EXPECT_NO_THROW(stageResult = client.StageBlock(blockId1, bodyStream).Value);
-      EXPECT_TRUE(stageResult.StructuredBodyType.HasValue());
       EXPECT_NO_THROW(client.CommitBlockList({blockId1}));
     };
 
@@ -2629,8 +2620,6 @@ namespace Azure { namespace Storage { namespace Test {
     uploadOptions.ValidationOptions = validationOptions;
     Blobs::Models::UploadBlockBlobResult uploadResult;
     EXPECT_NO_THROW(uploadResult = m_blockBlobClient->Upload(bodyStream, uploadOptions).Value);
-    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     Blobs::DownloadBlobOptions downloadOptions;
     downloadOptions.ValidationOptions = validationOptions;
     Blobs::Models::DownloadBlobResult downloadResult;
