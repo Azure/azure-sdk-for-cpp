@@ -157,8 +157,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
-        return _detail::BlockBlobClient::Upload(
+        auto response = _detail::BlockBlobClient::Upload(
             *m_pipeline, m_blobUrl, structuredContent, protocolLayerOptions, context);
+        if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
+        {
+          throw StorageException(
+              "Structured message response without x-ms-structured-body header.");
+        }
+        return response;
       }
     }
 
@@ -465,8 +471,14 @@ namespace Azure { namespace Storage { namespace Blobs {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
-        return _detail::BlockBlobClient::StageBlock(
+        auto response = _detail::BlockBlobClient::StageBlock(
             *m_pipeline, m_blobUrl, structuredContent, protocolLayerOptions, context);
+        if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
+        {
+          throw StorageException(
+              "Structured message response without x-ms-structured-body header.");
+        }
+        return response;
       }
     }
     return _detail::BlockBlobClient::StageBlock(
