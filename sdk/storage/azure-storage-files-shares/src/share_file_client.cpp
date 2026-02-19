@@ -220,7 +220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
     protocolLayerOptions.FilePropertySemantics = options.PropertySemantics;
 
-    std::unique_ptr<Response<Models::_detail::CreateFileResult>> resultPtr;
+    Nullable<Response<Models::_detail::CreateFileResult>> resultNullable;
     if (options.Content) {
       Azure::Nullable<TransferValidationOptions> validationOptions
           = options.ValidationOptions.HasValue() ? options.ValidationOptions
@@ -241,16 +241,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           throw StorageException(
               "Structured message response without x-ms-structured-body header.");
         }
-        resultPtr = std::make_unique<decltype(resultPtr)::element_type>(std::move(result));
+        resultNullable = std::move(result);
       }
     }
-    if (!resultPtr)
+    if (!resultNullable.HasValue())
     {
       if (options.Content)
       {
         auto result = _detail::FileClient::Create(
             *m_pipeline, m_shareFileUrl, *options.Content, protocolLayerOptions, context);
-        resultPtr = std::make_unique<decltype(resultPtr)::element_type>(std::move(result));
+        resultNullable = std::move(result);
       }
       else
       {
@@ -261,10 +261,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             options.Content ? (*options.Content) : emptyBody,
             protocolLayerOptions,
             context);
-        resultPtr = std::make_unique<decltype(resultPtr)::element_type>(std::move(result));
+        resultNullable = std::move(result);
       }
     }
-    auto result = std::move(*resultPtr);
+    auto result = std::move(resultNullable.Value());
    
     Models::CreateFileResult ret;
     ret.Created = true;
