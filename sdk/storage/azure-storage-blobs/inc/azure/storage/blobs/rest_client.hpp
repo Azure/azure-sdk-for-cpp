@@ -2598,11 +2598,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::PageBlobClient::ClearPages.
@@ -2899,11 +2894,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::AppendBlobClient::AppendBlockFromUri.
@@ -3017,11 +3007,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::UploadFromUri.
@@ -3094,11 +3079,6 @@ namespace Azure { namespace Storage { namespace Blobs {
        * encryption scope.
        */
       Nullable<std::string> EncryptionScope;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlockBlobClient::StageBlockFromUri.

@@ -2149,11 +2149,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * encrypted using the specified algorithm, and false otherwise.
        */
       bool IsServerEncrypted = false;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::UploadRangeFromUri.
