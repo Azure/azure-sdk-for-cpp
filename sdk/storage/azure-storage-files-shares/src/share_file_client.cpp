@@ -803,8 +803,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
-        return _detail::FileClient::UploadRange(
+        auto response = _detail::FileClient::UploadRange(
             *m_pipeline, m_shareFileUrl, structuredContent, protocolLayerOptions, context);
+        if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
+        {
+          throw Azure::Storage::StorageException(
+              "Structured message response without x-ms-structured-body header.");
+        }
+        return response;
       }
     }
     return _detail::FileClient::UploadRange(

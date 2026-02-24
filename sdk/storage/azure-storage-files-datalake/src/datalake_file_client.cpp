@@ -12,6 +12,7 @@
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 #include <azure/storage/common/storage_common.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
@@ -112,8 +113,14 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
-        return _detail::FileClient::Append(
+        auto response = _detail::FileClient::Append(
             *m_pipeline, m_pathUrl, structuredContent, protocolLayerOptions, context);
+        if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
+        {
+          throw Azure::Storage::StorageException(
+              "Structured message response without x-ms-structured-body header.");
+        }
+        return response;
       }
     }
     return _detail::FileClient::Append(
