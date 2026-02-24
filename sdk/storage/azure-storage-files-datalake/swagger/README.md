@@ -483,6 +483,7 @@ directive:
       $["x-ms-lease-renewed"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
       delete $["ETag"];
+      delete $["x-ms-structured-body"];
 ```
 
 ### FlushFile
