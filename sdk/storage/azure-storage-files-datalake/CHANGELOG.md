@@ -12,7 +12,6 @@
     - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `DataLakeClientOptions`.
     - Upload APIs:
         - Added new field `ValidationOptions` in `AppendFileOptions` and `UploadFileFromOptions`.
-        - Added new field `StructuredBodyType` in `AppendFileResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadFileOptions`.
 - Added support for Dynamic User Delegation SAS.

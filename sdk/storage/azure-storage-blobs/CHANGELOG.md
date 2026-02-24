@@ -12,7 +12,6 @@
     - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `BlobClientOptions`.
     - Upload APIs:
         - Added new field `ValidationOptions` in `UploadBlockBlobOptions`, `UploadBlockBlobFromOptions`, `StageBlockOptions`, `StageBlockFromUriOptions`, `AppendBlockOptions`, and `UploadPagesOptions`.
-        - Added new field `StructuredBodyType` in `UploadPagesResult`, `AppendBlockResult`, `UploadBlockBlobResult`, and `StageBlockResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadBlobOptions` and `DownloadBlobToOptions`.
 - Added support for `AccessTierConditions` in Delete Blob API.

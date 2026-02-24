@@ -12,7 +12,6 @@
     - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `ShareClientOptions`.
     - Upload APIs:
         - Added new field `ValidationOptions` in `UploadFileRangeOptions` and `UploadFileFromOptions`.
-        - Added new field `StructuredBodyType` in `UploadFileRangeResult`.
     - Download APIs:
         - Added new field `ValidationOptions` in `DownloadFileOptions` and `DownloadFileToOptions`.
 
