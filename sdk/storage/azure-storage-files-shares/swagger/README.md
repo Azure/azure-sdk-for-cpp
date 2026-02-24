@@ -1101,6 +1101,7 @@ directive:
       $.headers["x-ms-request-server-encrypted"]["x-ms-client-default"] = false;
       $.headers["x-ms-request-server-encrypted"]["x-nullable"] = true;
       delete $.headers["x-ms-file-last-write-time"];
+      delete $.headers["x-ms-structured-body"];
 ```
 
 ### UploadFileRangeFromUri

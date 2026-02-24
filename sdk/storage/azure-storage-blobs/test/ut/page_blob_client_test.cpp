@@ -834,8 +834,6 @@ namespace Azure { namespace Storage { namespace Test {
     uploadOptions.ValidationOptions = validationOptions;
     Blobs::Models::UploadPagesResult uploadResult;
     EXPECT_NO_THROW(uploadResult = pageBlob.UploadPages(0, bodyStream, uploadOptions).Value);
-    EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(uploadResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
 
     // Download
     Blobs::DownloadBlobOptions downloadOptions;
@@ -865,7 +863,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::UploadPagesResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.UploadPages(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -879,7 +876,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::UploadPagesResult uploadResult;
       EXPECT_NO_THROW(uploadResult = client.UploadPages(0, bodyStream).Value);
-      EXPECT_TRUE(uploadResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);

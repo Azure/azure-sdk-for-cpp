@@ -1417,6 +1417,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### UploadPagesFromUri
@@ -1589,6 +1590,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### AppendBlockFromUri
@@ -1623,6 +1625,7 @@ directive:
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      delete $["x-ms-structured-body"];
 ```
 
 ### StageBlock
@@ -1638,6 +1641,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### StageBlockFromUri

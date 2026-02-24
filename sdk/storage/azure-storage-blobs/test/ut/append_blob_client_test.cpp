@@ -519,19 +519,14 @@ namespace Azure { namespace Storage { namespace Test {
     appendOptions.ValidationOptions = validationOptions;
     Blobs::Models::AppendBlockResult appendResult;
     EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
-    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     validationOptions.Algorithm = StorageChecksumAlgorithm::None;
     appendOptions.ValidationOptions = validationOptions;
     bodyStream.Rewind();
     EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
-    EXPECT_FALSE(appendResult.StructuredBodyType.HasValue());
     validationOptions.Algorithm = StorageChecksumAlgorithm::Auto;
     appendOptions.ValidationOptions = validationOptions;
     bodyStream.Rewind();
     EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
-    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
-    EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
 
     // Download
     Blobs::DownloadBlobOptions downloadOptions;
@@ -561,7 +556,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::AppendBlockResult appendResult;
       EXPECT_NO_THROW(appendResult = client.AppendBlock(bodyStream).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);
@@ -575,7 +569,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Blobs::Models::AppendBlockResult appendResult;
       EXPECT_NO_THROW(appendResult = client.AppendBlock(bodyStream).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
 
       Blobs::Models::DownloadBlobResult downloadResult;
       EXPECT_NO_THROW(downloadResult = client.Download().Value);

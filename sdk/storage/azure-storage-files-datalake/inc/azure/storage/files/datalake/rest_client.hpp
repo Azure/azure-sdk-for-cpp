@@ -354,11 +354,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * If the lease was auto-renewed with this request.
        */
       Nullable<bool> IsLeaseRenewed;
-      /**
-       * Indicates the structured message body was accepted and mirrors back the message schema
-       * version and properties.
-       */
-      Nullable<std::string> StructuredBodyType;
     };
   } // namespace Models
   namespace _detail {

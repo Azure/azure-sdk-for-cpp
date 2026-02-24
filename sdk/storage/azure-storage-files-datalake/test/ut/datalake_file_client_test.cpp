@@ -1091,7 +1091,6 @@ namespace Azure { namespace Storage { namespace Test {
     appendOptions.ValidationOptions = validationOptions;
     Files::DataLake::Models::AppendFileResult appendResult;
     EXPECT_NO_THROW(appendResult = m_fileClient->Append(bodyStream, 0, appendOptions).Value);
-    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
     // Service Bug: Upper Case returned.
     // EXPECT_EQ(appendResult.StructuredBodyType.Value(), _internal::CrcStructuredMessage);
     // Flush
@@ -1160,7 +1159,6 @@ namespace Azure { namespace Storage { namespace Test {
     auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
     Files::DataLake::Models::AppendFileResult appendResult;
     EXPECT_NO_THROW(appendResult = client.Append(bodyStream, 0).Value);
-    EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
     client.Flush(contentSize);
 
     Files::DataLake::Models::DownloadFileResult downloadResult;
@@ -1243,7 +1241,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
       EXPECT_NO_THROW(appendResult = sourceFileClient->Append(bodyStream, 0).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
       sourceFileClient->Flush(contentSize);
 
       const std::string destinationFileName = "clientoptions_rename_dest_" + RandomString();
@@ -1278,7 +1275,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
       Files::DataLake::Models::AppendFileResult appendResult;
       EXPECT_NO_THROW(appendResult = renamedClient->Append(bodyStream, 0).Value);
-      EXPECT_TRUE(appendResult.StructuredBodyType.HasValue());
       renamedClient->Flush(contentSize);
 
       Files::DataLake::Models::DownloadFileResult downloadResult;

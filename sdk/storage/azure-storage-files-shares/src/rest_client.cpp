@@ -4509,10 +4509,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.IsServerEncrypted
             = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
       return Response<Models::UploadFileRangeResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::UploadFileRangeFromUriResult> FileClient::UploadRangeFromUri(

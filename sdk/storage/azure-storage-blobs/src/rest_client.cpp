@@ -6226,10 +6226,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
       return Response<Models::UploadPagesResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::ClearPagesResult> PageBlobClient::ClearPages(
@@ -7345,10 +7341,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
       return Response<Models::AppendBlockResult>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
@@ -7752,10 +7744,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
       }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
-      }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
         response.TransactionalContentHash = ContentHash();
@@ -8074,10 +8062,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
-      {
-        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
       }
       return Response<Models::StageBlockResult>(std::move(response), std::move(pRawResponse));
     }
