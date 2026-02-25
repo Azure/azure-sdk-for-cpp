@@ -88,7 +88,7 @@ stages:
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
               # Release tag must exist for link substitution to work
               dependsOn:
                 - TagRepository
@@ -121,7 +121,7 @@ stages:
             
             - job: PublishDocsMs
               displayName: Docs.MS Release
-              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'))
+              condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
 
               # C++ learn docs are generated from hosted doxygen docs so this
               # can only run after the static docs have been published.
