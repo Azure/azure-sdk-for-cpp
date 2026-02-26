@@ -1,14 +1,19 @@
 # Release History
 
-## 12.17.0-beta.1 (Unreleased)
+## 12.17.0-beta.1 (2026-02-26)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-04-06`.
+- Added support for Cross Tenant User Bound Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Storage Structured Message (Content Validation).
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `ShareClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `UploadFileRangeOptions` and `UploadFileFromOptions`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadFileOptions` and `DownloadFileToOptions`.
 
 ## 12.16.0 (2026-01-07)
 
