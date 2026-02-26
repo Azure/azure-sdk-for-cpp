@@ -1,14 +1,11 @@
 # Release History
 
-## 12.13.0-beta.1 (Unreleased)
+## 12.13.0-beta.1 (2026-02-26)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up Account SAS version to `2026-04-06`.
+- Added new enum `StorageChecksumAlgorithm` for configuring checksum validation in Structured Message uploads and downloads.
 
 ## 12.12.0 (2026-01-07)
 
