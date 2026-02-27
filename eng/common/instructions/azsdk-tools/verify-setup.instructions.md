@@ -14,8 +14,6 @@ Your goal is to identify the project repo root, and pass in the `packagePath` to
 The user can specify multiple languages to check. If the user wants to check all languages, pass in ALL supported languages. Passing in no languages will only check the core requirements.
 
 ## Output
-Display clear, step-by-step instructions on how to resolve any missing requirements identified. Explain why the requirement is necessary if it has a `reason` field. Organize requirements into categorical sections. 
-
-Based on the user's shell environment, enhance the tool instructions with shell-specific commands for resolving missing dependencies.
+Display results in a user-friendly and concise format, highlighting any missing dependencies that need to be addressed and how to resolve them.
 
 When Python tool requirements fail, inform the user about the `AZSDKTOOLS_PYTHON_VENV_PATH` environment variable if they have setup issues. The verify-setup tool can only check Python requirements within the virtual environment specified by this environment variable.
