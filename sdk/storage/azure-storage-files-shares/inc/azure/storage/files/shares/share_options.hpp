@@ -965,7 +965,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Core::IO::BodyStream* Content = nullptr;
 
     /**
-     * Optional. Configures whether to do content validation for blob downloads.
+     * Optional. Configures whether to perform content validation for file uploads.
      */
     Azure::Nullable<TransferValidationOptions> ValidationOptions;
 

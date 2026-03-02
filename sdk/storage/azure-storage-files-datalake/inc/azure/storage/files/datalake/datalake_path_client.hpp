@@ -225,7 +225,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @remark This request is sent to dfs endpoint.
      */
     Azure::Response<Models::PathSystemProperties> GetSystemProperties(
-        const GetPathSystemPropertiesOptions& opitons = GetPathSystemPropertiesOptions(),
+        const GetPathSystemPropertiesOptions& options = GetPathSystemPropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
