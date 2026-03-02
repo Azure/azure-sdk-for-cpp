@@ -2829,6 +2829,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(downloadedContent, content);
     }
     {
+      memBodyStream.Rewind();
       auto fileName = RandomString();
       auto client = m_fileShareDirectoryClient->GetFileClient(fileName);
       Files::Shares::CreateFileOptions createOptions;
