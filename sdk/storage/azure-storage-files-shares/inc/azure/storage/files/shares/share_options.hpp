@@ -637,8 +637,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Models::FilePosixProperties PosixProperties;
 
     /**
-     * Optional. Only applies to SMB directories. How attributes and permissions should be set on the
-     * directory.
+     * Optional. Only applies to SMB directories. How attributes and permissions should be set on
+     * the directory.
      */
     Azure::Nullable<Models::FilePropertySemantics> PropertySemantics;
   };
@@ -970,7 +970,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<TransferValidationOptions> ValidationOptions;
 
     /**
-     * Optional. Only applies to SMB files. How attributes and permissions should be set on the file.
+     * Optional. Only applies to SMB files. How attributes and permissions should be set on the
+     * file.
      */
     Azure::Nullable<Models::FilePropertySemantics> PropertySemantics;
   };

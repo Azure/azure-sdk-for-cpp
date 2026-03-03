@@ -195,11 +195,11 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = Identifier.empty()
         ? ExpiresOn.ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
 
     std::string stringToSign = Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n"
@@ -209,8 +209,8 @@ namespace Azure { namespace Storage { namespace Sas {
         + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-            std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-            Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
+        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+        Azure::Core::Convert::Base64Decode(credential.GetAccountKey())));
 
     Azure::Core::Url builder;
     builder.AppendQueryParameter("sv", _internal::UrlEncodeQueryParameter(SasVersion));
@@ -296,7 +296,7 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = ExpiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
@@ -317,8 +317,8 @@ namespace Azure { namespace Storage { namespace Sas {
         + ContentDisposition + "\n" + ContentEncoding + "\n" + ContentLanguage + "\n" + ContentType;
 
     std::string signature = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-            std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-            Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));
+        std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+        Azure::Core::Convert::Base64Decode(userDelegationKey.Value)));
 
     Azure::Core::Url builder;
     builder.AppendQueryParameter("sv", _internal::UrlEncodeQueryParameter(SasVersion));
@@ -423,11 +423,11 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = Identifier.empty()
         ? ExpiresOn.ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
 
     return Permissions + "\n" + startsOnStr + "\n" + expiresOnStr + "\n" + canonicalName + "\n"
@@ -463,7 +463,7 @@ namespace Azure { namespace Storage { namespace Sas {
 
     std::string startsOnStr = StartsOn.HasValue()
         ? StartsOn.Value().ToString(
-              Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
+            Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate)
         : "";
     std::string expiresOnStr = ExpiresOn.ToString(
         Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
