@@ -221,7 +221,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FilePropertySemantics = options.PropertySemantics;
 
     Nullable<Response<Models::_detail::CreateFileResult>> resultNullable;
-    if (options.Content) {
+    if (options.Content)
+    {
       Azure::Nullable<TransferValidationOptions> validationOptions
           = options.ValidationOptions.HasValue() ? options.ValidationOptions
                                                  : m_uploadValidationOptions;
@@ -234,7 +235,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(options.Content, encodingStreamOptions);
-        auto result =  _detail::FileClient::Create(
+        auto result = _detail::FileClient::Create(
             *m_pipeline, m_shareFileUrl, structuredContent, protocolLayerOptions, context);
         if (!result.Value.StructuredBodyType.HasValue())
         {
@@ -265,7 +266,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       }
     }
     auto result = std::move(resultNullable.Value());
-   
+
     Models::CreateFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result.Value.ETag);
@@ -1359,8 +1360,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
     auto emptyBody = Core::IO::_internal::NullBodyStream();
-    auto createResult
-        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
+    auto createResult = _detail::FileClient::Create(
+        *m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
@@ -1474,8 +1475,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
     auto emptyBody = Core::IO::_internal::NullBodyStream();
-    auto createResult
-        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
+    auto createResult = _detail::FileClient::Create(
+        *m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;

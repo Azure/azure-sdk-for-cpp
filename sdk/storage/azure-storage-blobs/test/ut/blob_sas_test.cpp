@@ -796,8 +796,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = accountSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-              Azure::Core::Convert::Base64Decode(accountKey)));
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
 
@@ -816,8 +816,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = blobSasBuilder.GenerateSasStringToSign(*keyCredential);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-              Azure::Core::Convert::Base64Decode(accountKey)));
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
 
@@ -846,8 +846,8 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Url(blobUrl + sasToken).GetQueryParameters().find("sig")->second);
       auto stringToSign = blobSasBuilder.GenerateSasStringToSign(userDelegationKey, accountName);
       auto signatureFromStringToSign = Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
-              std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
-              Azure::Core::Convert::Base64Decode(accountKey)));
+          std::vector<uint8_t>(stringToSign.begin(), stringToSign.end()),
+          Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
   }
