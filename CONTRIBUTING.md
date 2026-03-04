@@ -8,6 +8,8 @@ Thank you for your interest in contributing to Azure SDK for C++.
 
 - To make code changes, or contribute something new, please follow the [GitHub Forks / Pull requests model](https://docs.github.com/articles/fork-a-repo/): Fork the repo, make the change and propose it back by submitting a pull request.
 
+- For guidance on deprecating packages, APIs, or features, refer to the [Deprecation Guide](doc/deprecation.md).
+
 ## Pull Requests
 
 - **DO** follow the API design and implementation [C++ Guidelines](https://azure.github.io/azure-sdk/cpp_introduction.html).
