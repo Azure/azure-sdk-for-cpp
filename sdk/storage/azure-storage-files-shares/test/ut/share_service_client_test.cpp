@@ -35,6 +35,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     // Most APIs don't work for premium shares
+    if (m_useTokenCredentialByDefault)
+    {
+      m_premiumShareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
+          GetPremiumShareServiceUrl(), GetTestCredential(), options);
+    }
+    else
     {
       std::string premiumConnectionString;
       try
@@ -58,11 +64,27 @@ namespace Azure { namespace Storage { namespace Test {
       Files::Shares::ShareClientOptions clientOptions)
   {
     InitStorageClientOptions(clientOptions);
-    auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
-        PremiumFileConnectionString(), shareName, clientOptions);
-    m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
-
-    return shareClient;
+    if (m_useTokenCredentialByDefault)
+    {
+      if (!clientOptions.ShareTokenIntent.HasValue())
+      {
+        clientOptions.ShareTokenIntent
+            = Azure::Storage::Files::Shares::Models::ShareTokenIntent::Backup;
+      }
+      auto shareServiceClient = m_premiumShareServiceClient
+          = std::make_shared<Files::Shares::ShareServiceClient>(
+              GetPremiumShareServiceUrl(), GetTestCredential(), clientOptions);
+      auto shareClient = shareServiceClient->GetShareClient(shareName);
+      m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
+      return shareClient;
+    }
+    else
+    {
+      auto shareClient = Files::Shares::ShareClient::CreateFromConnectionString(
+          PremiumFileConnectionString(), shareName, clientOptions);
+      m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
+      return shareClient;
+    }
   }
 
   TEST_F(FileShareServiceClientTest, Constructors_LIVEONLY_)
@@ -171,7 +193,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareServiceClientTest, ListSharesEnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  TEST_F(FileShareServiceClientTest, ListSharesEnableSnapshotVirtualDirectoryAccess)
   {
     auto premiumFileShareServiceClient = *m_premiumShareServiceClient;
     std::string shareName1 = LowercaseRandomString();
@@ -419,7 +441,7 @@ namespace Azure { namespace Storage { namespace Test {
     premiumFileShareServiceClient.SetProperties(originalProperties);
   }
 
-  TEST_F(FileShareServiceClientTest, OAuth_PLAYBACKONLY_)
+  TEST_F(FileShareServiceClientTest, OAuth)
   {
     auto credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
