@@ -1014,4 +1014,19 @@ namespace Azure { namespace Storage { namespace Test {
     ASSERT_TRUE(paths[0].ExpiresOn.HasValue());
     EXPECT_EQ(options.ExpiresOn.Value(), paths[0].ExpiresOn.Value());
   }
+
+  TEST_F(DataLakeDirectoryClientTest, PathSystemProperties)
+  {
+    auto res = m_directoryClient->GetSystemProperties();
+    auto systemProperties = res.Value;
+    EXPECT_TRUE(systemProperties.IsDirectory);
+    EXPECT_TRUE(systemProperties.ETag.HasValue());
+    EXPECT_FALSE(systemProperties.LastModified.ToString().empty());
+    EXPECT_FALSE(systemProperties.Owner.empty());
+    EXPECT_FALSE(systemProperties.Group.empty());
+    EXPECT_FALSE(systemProperties.Permissions.empty());
+    EXPECT_TRUE(systemProperties.IsServerEncrypted);
+    EXPECT_TRUE(systemProperties.CreatedOn.HasValue());
+  }
+
 }}} // namespace Azure::Storage::Test

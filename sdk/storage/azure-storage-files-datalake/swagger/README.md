@@ -391,12 +391,12 @@ directive:
     transform: >
       $["/{filesystem}/{path}?getAccessControlList"] = {};
       $["/{filesystem}/{path}?getAccessControlList"].head = JSON.parse(JSON.stringify($["/{filesystem}/{path}"].head));
-      delete $["/{filesystem}/{path}"].head;
   - from: swagger-document
     where: $["x-ms-paths"]["/{filesystem}/{path}?getAccessControlList"].head
     transform: >
       $.operationId = "Path_GetAccessControlList";
       $.parameters[0]["enum"] = ["getAccessControl"];
+      delete $.parameters[0]["x-ms-enum"];
       $.parameters.push({"$ref": "#/parameters/ApiVersionParameter"});
       delete $.responses["200"].headers["Accept-Ranges"];
       delete $.responses["200"].headers["Cache-Control"];
@@ -428,6 +428,54 @@ directive:
         "x-namespace": "_detail",
         "properties": {
           "__placeHolder": {"type": "integer"}
+        }
+      };
+```
+
+### GetPathSystemProperties
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      $["/{filesystem}/{path}?getStatus"] = {};
+      $["/{filesystem}/{path}?getStatus"].head = JSON.parse(JSON.stringify($["/{filesystem}/{path}"].head));
+      delete $["/{filesystem}/{path}"].head;
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?getStatus"].head
+    transform: >
+      $.operationId = "Path_GetSystemProperties";
+      delete $.parameters[0]["x-ms-enum"];
+      $.parameters[0]["enum"] = ["getStatus"];
+      $.parameters.push({"$ref": "#/parameters/ApiVersionParameter"});
+      delete $.responses["200"].headers["Accept-Ranges"];
+      delete $.responses["200"].headers["Cache-Control"];
+      delete $.responses["200"].headers["Content-Disposition"];
+      delete $.responses["200"].headers["Content-Encoding"];
+      delete $.responses["200"].headers["Content-Language"];
+      delete $.responses["200"].headers["Content-Range"];
+      delete $.responses["200"].headers["Content-Type"];
+      delete $.responses["200"].headers["Content-MD5"];
+      delete $.responses["200"].headers["x-ms-resource-type"];
+      delete $.responses["200"].headers["x-ms-properties"];
+      delete $.responses["200"].headers["x-ms-lease-duration"];
+      delete $.responses["200"].headers["x-ms-lease-state"];
+      delete $.responses["200"].headers["x-ms-lease-status"];
+      delete $.responses["200"].headers["x-ms-acl"];
+      $.responses["200"].headers["Content-Length"]["x-ms-client-name"] = "FileSize";
+      $.responses["200"].headers["x-ms-encryption-key-sha256"]["x-nullable"] = true;
+      $.responses["200"].headers["x-ms-encryption-context"]["x-nullable"] = true;
+      $.responses["200"].headers["x-ms-encryption-scope"]["x-nullable"] = true;
+      $.responses["200"].headers["x-ms-creation-time"]["x-nullable"] = true;
+      $.responses["200"].headers["x-ms-creation-time"]["x-ms-client-name"] = "CreatedOn";
+      $.responses["200"].headers["x-ms-expiry-time"]["x-nullable"] = true;
+      $.responses["200"].schema = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-ms-client-name": "PathSystemProperties",
+        "properties": {
+          "IsDirectory": {"type": "boolean", "x-ms-json": ""}
         }
       };
 ```
