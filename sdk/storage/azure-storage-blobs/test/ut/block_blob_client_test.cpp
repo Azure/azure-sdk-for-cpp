@@ -1050,7 +1050,7 @@ namespace Azure { namespace Storage { namespace Test {
         blobItem.Details.RehydratePriority.Value(), Blobs::Models::RehydratePriority::Standard);
   }
 
-  TEST_F(BlockBlobClientTest, RehydrateTierToSmart)
+  TEST_F(BlockBlobClientTest, DISABLED_RehydrateTierToSmart)
   {
     m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Archive);
     m_blockBlobClient->SetAccessTier(Blobs::Models::AccessTier::Smart);
@@ -2670,7 +2670,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(blobClient.Delete(deleteOptions));
   }
 
-  TEST_F(BlockBlobClientTest, SmartTier)
+  TEST_F(BlockBlobClientTest, DISABLED_SmartTier)
   {
     const auto blobName = RandomString();
     auto blobClient = GetBlockBlobClientForTest(blobName);

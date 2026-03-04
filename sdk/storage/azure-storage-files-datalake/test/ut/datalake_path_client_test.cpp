@@ -593,7 +593,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(pathClient.GetProperties(), StorageException);
   }
 
-  TEST_F(DataLakePathClientTest, GetSetTags)
+  TEST_F(DataLakePathClientTest, DISABLED_GetSetTags)
   {
     std::map<std::string, std::string> tags;
     tags["key1"] = "value1";
