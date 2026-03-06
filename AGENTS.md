@@ -185,7 +185,7 @@ azure-sdk-for-cpp/
 
 ### 1. Code Generation
 
-The C++ repository generates SDKs using TypeSpec with the [typespec-cpp emitter](https://github.com/azure/typespec-cpp):
+The C++ repository generates SDKs using TypeSpec with the typespec-cpp emitter:
 
 - **TypeSpec Projects**: Located in package directories with `tspconfig.yaml` and `tsp-location.yaml` files
 - **Configuration**: Service-specific settings in `tspconfig.yaml` define emitter options
