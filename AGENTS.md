@@ -13,7 +13,7 @@ The **Azure SDK for C++** provides modern C++ libraries for Azure services, foll
 - **Test infrastructure** including unit tests and integration tests
 
 ### Key Technologies
-- **Language**: C++14 or higher
+- **Language**: C++14
 - **Build System**: CMake (version 3.13+)
 - **Package Manager**: vcpkg (manifest mode)
 - **Testing**: Google Test (gtest)
@@ -329,7 +329,7 @@ See [doc/TestProxy.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/
 ## Metadata
 
 - **Repository**: <https://github.com/Azure/azure-sdk-for-cpp>
-- **Language**: C++14+
+- **Language**: C++14
 - **License**: MIT
 - **Maintainers**: Azure SDK Team
 - **Last Updated**: 2025-01-09
