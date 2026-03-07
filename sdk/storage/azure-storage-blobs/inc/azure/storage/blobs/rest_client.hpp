@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2025-07-05";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -502,6 +502,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          * The date-time the key expires in ISO 8601 UTC time.
          */
         std::string Expiry;
+        /**
+         * The delegated user tenant id in Azure AD.
+         */
+        Nullable<std::string> DelegatedUserTid;
       };
     } // namespace _detail
     /**
@@ -533,6 +537,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The service version that created the key.
        */
       std::string SignedVersion;
+      /**
+       * The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified.
+       */
+      Nullable<std::string> SignedDelegatedUserTid;
       /**
        * The key as a base64 string.
        */
@@ -1756,8 +1764,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       /**
        * The tier of page blob on a premium storage account or tier of block blob on blob storage
        * LRS accounts. For a list of allowed premium page blob tiers, see
-       * https://docs.microsoft.com/en-us/azure/virtual-machines/windows/premium-storage#features.
-       * For blob storage LRS accounts, valid values are Hot/Cool/Archive.
+       * https://learn.microsoft.com/azure/virtual-machines/disks-types#premium-ssd. For blob
+       * storage LRS accounts, valid values are Hot/Cool/Archive.
        */
       Nullable<Models::AccessTier> AccessTier;
       /**
@@ -3474,6 +3482,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Marker;
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
+        Nullable<std::string> StartFrom;
       };
       static Response<Models::_detail::ListBlobsResult> ListBlobs(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3487,6 +3496,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> Marker;
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
+        Nullable<std::string> StartFrom;
         Nullable<std::string> ShowOnly;
       };
       static Response<Models::_detail::ListBlobsByHierarchyResult> ListBlobsByHierarchy(
@@ -3513,6 +3523,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> LeaseId;
         Nullable<bool> RangeGetContentMD5;
         Nullable<bool> RangeGetContentCRC64;
+        Nullable<std::string> StructuredBodyType;
         Nullable<std::string> EncryptionKey;
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
@@ -3559,6 +3570,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<DateTime> AccessTierIfModifiedSince;
+        Nullable<DateTime> AccessTierIfUnmodifiedSince;
       };
       static Response<Models::DeleteBlobResult> Delete(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3859,6 +3872,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> VersionId;
         Nullable<std::string> IfTags;
         Nullable<std::string> LeaseId;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
       };
       static Response<std::map<std::string, std::string>> GetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3873,6 +3890,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
         Nullable<std::string> IfTags;
         Nullable<std::string> LeaseId;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
       };
       static Response<Models::SetBlobTagsResult> SetTags(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3932,6 +3953,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadPagesResult> UploadPages(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3987,6 +4010,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::UploadPagesFromUriResult> UploadPagesFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4128,6 +4154,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag IfMatch;
         ETag IfNoneMatch;
         Nullable<std::string> IfTags;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::AppendBlockResult> AppendBlock(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4160,6 +4188,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::AppendBlockFromUriResult> AppendBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4209,6 +4240,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<Models::BlobImmutabilityPolicyMode> ImmutabilityPolicyMode;
         Nullable<bool> LegalHold;
         Nullable<std::vector<std::uint8_t>> TransactionalContentCrc64;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadBlockBlobResult> Upload(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4248,6 +4281,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::BlobCopySourceTagsMode> CopySourceTags;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
         Nullable<std::vector<std::uint8_t>> SourceContentcrc64;
       };
       static Response<Models::UploadBlockBlobFromUriResult> UploadFromUri(
@@ -4265,6 +4301,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<std::string> EncryptionScope;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::StageBlockResult> StageBlock(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -4290,6 +4328,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         ETag SourceIfNoneMatch;
         Nullable<std::string> CopySourceAuthorization;
         Nullable<Models::FileShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> SourceEncryptionKey;
+        Nullable<std::vector<std::uint8_t>> SourceEncryptionKeySha256;
+        Nullable<std::string> SourceEncryptionAlgorithm;
       };
       static Response<Models::StageBlockFromUriResult> StageBlockFromUri(
           Core::Http::_internal::HttpPipeline& pipeline,

@@ -18,6 +18,8 @@
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_per_retry_policy.hpp>
 #include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/structured_message_decoding_stream.hpp>
+#include <azure/storage/common/internal/structured_message_encoding_stream.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
@@ -51,7 +53,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
     newOptions.PerRetryPolicies.emplace_back(
@@ -76,7 +80,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     ShareClientOptions newOptions = options;
 
@@ -108,7 +114,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareFileUrl(shareFileUrl), m_allowTrailingDot(options.AllowTrailingDot),
         m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent)
+        m_shareTokenIntent(options.ShareTokenIntent),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -210,6 +218,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
+
     auto result
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
@@ -271,6 +280,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DownloadFileOptions& options,
       const Azure::Core::Context& context) const
   {
+    bool isStructuredMessage = false;
     auto protocolLayerOptions = _detail::FileClient::DownloadFileOptions();
     if (options.Range.HasValue())
     {
@@ -297,12 +307,39 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         protocolLayerOptions.RangeGetContentMD5 = true;
       }
     }
+    else
+    {
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_downloadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        isStructuredMessage = true;
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
+      }
+    }
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
 
     auto downloadResponse
         = _detail::FileClient::Download(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    int64_t structuredContentLength = 0;
+    if (isStructuredMessage)
+    {
+      if (downloadResponse.RawResponse->GetHeaders().count("x-ms-structured-content-length") != 0)
+      {
+        structuredContentLength = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at("x-ms-structured-content-length"));
+      }
+      else
+      {
+        throw StorageException(
+            "Structured message response without x-ms-structured-content-length header.");
+      }
+    }
 
     {
       // In case network failure during reading the body
@@ -335,15 +372,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         return std::move(newResponse.Value.BodyStream);
       };
 
+      auto bodyStream = std::move(downloadResponse.Value.BodyStream);
+      if (isStructuredMessage)
+      {
+        _internal::StructuredMessageDecodingStreamOptions decodingOptions;
+        decodingOptions.ContentLength = structuredContentLength;
+        bodyStream = std::make_unique<_internal::StructuredMessageDecodingStream>(
+            std::move(bodyStream), decodingOptions);
+      }
       _internal::ReliableStreamOptions reliableStreamOptions;
       reliableStreamOptions.MaxRetryRequests = _internal::ReliableStreamRetryCount;
-      downloadResponse.Value.BodyStream = std::make_unique<_internal::ReliableStream>(
-          std::move(downloadResponse.Value.BodyStream), reliableStreamOptions, retryFunction);
+      auto reliableStream = std::make_unique<_internal::ReliableStream>(
+          std::move(bodyStream), reliableStreamOptions, retryFunction);
+      downloadResponse.Value.BodyStream = std::move(reliableStream);
     }
     if (downloadResponse.RawResponse->GetStatusCode() == Azure::Core::Http::HttpStatusCode::Ok)
     {
-      downloadResponse.Value.FileSize = std::stoll(
-          downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
+      if (isStructuredMessage)
+      {
+        downloadResponse.Value.FileSize = structuredContentLength;
+      }
+      else
+      {
+        downloadResponse.Value.FileSize = std::stoll(
+            downloadResponse.RawResponse->GetHeaders().at(_internal::HttpHeaderContentLength));
+      }
       downloadResponse.Value.ContentRange.Offset = 0;
       downloadResponse.Value.ContentRange.Length = downloadResponse.Value.FileSize;
     }
@@ -725,6 +778,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.FileRangeWrite = "update";
     protocolLayerOptions.Range = std::string("bytes=") + std::to_string(offset) + std::string("-")
         + std::to_string(offset + content.Length() - 1);
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     if (options.TransactionalContentHash.HasValue())
     {
       AZURE_ASSERT_MSG(
@@ -732,10 +789,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "This operation only supports MD5 content hash.");
       protocolLayerOptions.ContentMD5 = options.TransactionalContentHash.Value().Value;
     }
-    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
-    protocolLayerOptions.FileLastWrittenMode = options.FileLastWrittenMode;
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    else
+    {
+      Azure::Nullable<TransferValidationOptions> validationOptions
+          = options.ValidationOptions.HasValue() ? options.ValidationOptions
+                                                 : m_uploadValidationOptions;
+      if (validationOptions.HasValue()
+          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
+      {
+        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
+        protocolLayerOptions.StructuredContentLength = content.Length();
+        _internal::StructuredMessageEncodingStreamOptions encodingStreamOptions;
+        encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
+        auto structuredContent
+            = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
+        auto response = _detail::FileClient::UploadRange(
+            *m_pipeline, m_shareFileUrl, structuredContent, protocolLayerOptions, context);
+        if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
+        {
+          throw Azure::Storage::StorageException(
+              "Structured message response without x-ms-structured-body header.");
+        }
+        return response;
+      }
+    }
     return _detail::FileClient::UploadRange(
         *m_pipeline, m_shareFileUrl, content, protocolLayerOptions, context);
   }
@@ -945,6 +1022,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     DownloadFileOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    firstChunkOptions.ValidationOptions = options.ValidationOptions;
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
@@ -1003,6 +1081,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
+            chunkOptions.ValidationOptions = options.ValidationOptions;
             auto chunk = Download(chunkOptions, context);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
@@ -1055,6 +1134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     DownloadFileOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    firstChunkOptions.ValidationOptions = options.ValidationOptions;
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
@@ -1123,6 +1203,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             chunkOptions.Range = Core::Http::HttpRange();
             chunkOptions.Range.Value().Offset = offset;
             chunkOptions.Range.Value().Length = length;
+            chunkOptions.ValidationOptions = options.ValidationOptions;
             auto chunk = Download(chunkOptions, context);
             if (chunk.Value.Details.ETag != etag)
             {
@@ -1231,6 +1312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
+
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1246,6 +1328,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         uploadRangeOptions.FileLastWrittenMode
             = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
       }
+      uploadRangeOptions.ValidationOptions = options.ValidationOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 
@@ -1343,6 +1426,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
+
     auto createResult
         = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
@@ -1357,6 +1441,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         uploadRangeOptions.FileLastWrittenMode
             = Azure::Storage::Files::Shares::Models::FileLastWrittenMode::Preserve;
       }
+      uploadRangeOptions.ValidationOptions = options.ValidationOptions;
       UploadRange(offset, contentStream, uploadRangeOptions, context);
     };
 

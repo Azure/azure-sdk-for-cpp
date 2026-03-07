@@ -18,7 +18,7 @@ macro(az_vcpkg_integrate)
       message("AZURE_SDK_DISABLE_AUTO_VCPKG is not defined. Fetch a local copy of vcpkg.")
       # GET VCPKG FROM SOURCE
       #  User can set env var AZURE_SDK_VCPKG_COMMIT to pick the VCPKG commit to fetch
-      set(VCPKG_COMMIT_STRING 120deac3062162151622ca4860575a33844ba10b) # default SDK tested commit
+      set(VCPKG_COMMIT_STRING 66c0373dc7fca549e5803087b9487edfe3aca0a1) # default SDK tested commit
       if(DEFINED ENV{AZURE_SDK_VCPKG_COMMIT})
         message("AZURE_SDK_VCPKG_COMMIT is defined. Using that instead of the default.")
         set(VCPKG_COMMIT_STRING "$ENV{AZURE_SDK_VCPKG_COMMIT}") # default SDK tested commit
@@ -112,8 +112,8 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
 
   # If building a Windows DLL, patch the dll_import_export.hpp
   if(WIN32 AND BUILD_SHARED_LIBS)
-    add_compile_definitions(AZ_${macroNamePart}_BEING_BUILT)
     target_compile_definitions(${targetName} PUBLIC AZ_${macroNamePart}_DLL)
+    target_compile_definitions(${targetName} PRIVATE AZ_${macroNamePart}_BEING_BUILT)
 
     set(AZ_${macroNamePart}_DLL_INSTALLED_AS_PACKAGE "*/ + 1 /*")
     configure_file(
@@ -169,3 +169,21 @@ macro(az_vcpkg_export targetName macroNamePart dllImportExportHeaderPath)
   # Export all the installs above as package.
   export(PACKAGE "${targetName}-cpp")
 endmacro()
+
+function(copy_shared_lib_binaries targetName)
+  set(targets ${ARGN})
+  if(WIN32 AND BUILD_SHARED_LIBS)
+    message (STATUS "Setting up post-build copy for target: ${targetName}: ${targets}")
+    foreach(depTarget IN LISTS targets)
+      add_custom_command(TARGET ${targetName} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E echo "Copying dependency: ${depTarget}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${depTarget}> $<TARGET_FILE_DIR:${targetName}>
+        COMMAND ${CMAKE_COMMAND} 
+          -DSOURCE_DIR=$<TARGET_FILE_DIR:${depTarget}>
+          -DDEST_DIR=$<TARGET_FILE_DIR:${targetName}>
+          -P ${CMAKE_CURRENT_FUNCTION_LIST_DIR}/CopyDllsAndPdbs.cmake
+        )
+    endforeach()
+
+  endif()
+endfunction()

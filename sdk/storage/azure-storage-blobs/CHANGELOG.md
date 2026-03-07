@@ -1,6 +1,6 @@
 # Release History
 
-## 12.15.0-beta.2 (Unreleased)
+## 12.17.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,47 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.17.0-beta.1 (2026-02-26)
+
+### Features Added
+
+- Bumped up API version to `2026-04-06`.
+- Added cross-tenant support for Principal-Bound Identity User Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Content Validation via Structured Message.
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `BlobClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `UploadBlockBlobOptions`, `UploadBlockBlobFromOptions`, `StageBlockOptions`, `StageBlockFromUriOptions`, `AppendBlockOptions`, and `UploadPagesOptions`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadBlobOptions` and `DownloadBlobToOptions`.
+- Added support for `AccessTierConditions` in Delete Blob API.
+- Added support for `SourceCustomerProvidedKey` for copy APIs.
+- Added support for Dynamic User Delegation SAS.
+    - Added new fields `RequestHeaders` and `RequestQueryParameters` in `BlobSasBuilder`.
+
+## 12.16.0 (2026-01-07)
+
+### Features Added
+
+- Features in `12.16.0-beta.1` are now generally available.
+
+## 12.16.0-beta.1 (2025-11-27)
+
+### Features Added
+
+- Bumped up API version to `2026-02-06`.
+- Added new field `StartFrom` parameter in `ListBlobsOptions`.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `BlobSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+- Added support for conditional headers in `SetBlobTagsOptions` and `GetBlobTagsOptions`.
+
+## 12.15.0 (2025-10-15)
+
+### Features Added
+
+- Features in `12.15.0-beta.1` are now generally available.
 
 ## 12.14.0 (2025-07-21)
 

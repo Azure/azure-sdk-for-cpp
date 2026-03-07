@@ -1,6 +1,6 @@
 # Release History
 
-## 12.13.0-beta.2 (Unreleased)
+## 12.15.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,44 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.15.0-beta.1 (2026-02-26)
+
+### Features Added
+
+- Bumped up API version to `2026-04-06`.
+- Added cross-tenant support for Principal-Bound Identity User Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Storage Structured Message (Content Validation).
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `DataLakeClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `AppendFileOptions` and `UploadFileFromOptions`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadFileOptions`.
+- Added support for Dynamic User Delegation SAS.
+    - Added new fields `RequestHeaders` and `RequestQueryParameters` in `DataLakeSasBuilder`.
+
+## 12.14.0 (2026-01-07)
+
+### Features Added
+
+- Features in `12.14.0-beta.1` are now generally available.
+
+## 12.14.0-beta.1 (2025-11-27)
+
+### Features Added
+
+- Bumped up API version to `2026-02-06`.
+- Added new field `StartFrom` parameter in `ListPathsOptions`.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `DataLakeSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+
+## 12.13.0 (2025-10-15)
+
+### Features Added
+
+- Features in `12.13.0-beta.1` are now generally available.
 
 ## 12.13.0-beta.1 (2025-06-24)
 

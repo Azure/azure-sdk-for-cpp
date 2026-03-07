@@ -163,6 +163,17 @@ if (MSVC)
 endif()
 target_link_libraries(azure-core-global-context-test PRIVATE azure-core gtest_main)
 
+if(MSVC)
+  if(BUILD_SHARED_LIBS)
+    target_compile_definitions(azure-core-test PRIVATE GTEST_LINKED_AS_SHARED_LIBRARY)
+  endif()
+endif()
+
+     
+# Automated runtime dependency copying
+copy_shared_lib_binaries(azure-core-test azure-core)
+copy_shared_lib_binaries(azure-core-global-context-test azure-core GTest::gmock GTest::gtest)
+
 # gtest_discover_tests will scan the test from azure-core-test and call add_test
 # for each test to ctest. This enables `ctest -r` to run specific tests directly.
 gtest_discover_tests(azure-core-test
@@ -180,6 +191,9 @@ if(BUILD_TRANSPORT_CURL)
     azure-core-libcurl-test
     azure_libcurl_core_main_test.cpp
   )
+if(MSVC AND BUILD_TRANSPORT_CURL)
+  copy_shared_lib_binaries(azure-core-libcurl-test azure-core)
+endif()
 
   create_map_file(azure-core-libcurl-test azure-core-libcurl-test.map)
 
@@ -193,15 +207,17 @@ if(BUILD_TRANSPORT_CURL)
   target_include_directories (azure-core-libcurl-test PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
   target_link_libraries(azure-core-libcurl-test PRIVATE azure-core gtest gmock)
+  copy_shared_lib_binaries(azure-core-libcurl-test azure-core GTest::gmock GTest::gtest)
 
   # Use the same prefix to run this test
   gtest_discover_tests(azure-core-libcurl-test
         TEST_PREFIX azure-core.
         DISCOVERY_TIMEOUT 600)
-
 endif()
+
 gtest_discover_tests(azure-core-global-context-test
      TEST_PREFIX azure-core.
      NO_PRETTY_TYPES
      NO_PRETTY_VALUES
      DISCOVERY_TIMEOUT 600)
+

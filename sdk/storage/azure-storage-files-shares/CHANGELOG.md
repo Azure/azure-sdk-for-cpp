@@ -1,6 +1,6 @@
 # Release History
 
-## 12.15.0-beta.2 (Unreleased)
+## 12.17.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,50 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.17.0-beta.1 (2026-02-26)
+
+### Features Added
+
+- Bumped up API version to `2026-04-06`.
+- Added support for Cross Tenant User Bound Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+- Added support for Storage Structured Message (Content Validation).
+    - Added new fields `UploadValidationOptions` and `DownloadValidationOptions` in `ShareClientOptions`.
+    - Upload APIs:
+        - Added new field `ValidationOptions` in `UploadFileRangeOptions` and `UploadFileFromOptions`.
+    - Download APIs:
+        - Added new field `ValidationOptions` in `DownloadFileOptions` and `DownloadFileToOptions`.
+
+## 12.16.0 (2026-01-07)
+
+### Features Added
+
+- Features in `12.16.0-beta.1` are now generally available.
+
+## 12.16.0-beta.1 (2025-11-27)
+
+### Features Added
+
+- Bumped up API version to `2026-02-06`.
+- Added support for User Delegation SAS.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `ShareSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+- Added support for `EncryptionInTransit` on `ShareServiceClient::SetProperties()`.
+    - Added new field `NfsSettings` in `ShareServiceProperties.Protocol`.
+    - Added new field `EncryptionInTransit` in `ShareServiceProperties.Protocol.Settings` and `ShareServiceProperties.Protocol.NfsSettings`.
+
+### Breaking Changes
+
+- Changed the type of `MultiChannel` from `SmbMultichannel` to `Nullable<SmbMultichannel>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not support Multi-Channel.
+- Changed the type of `Settings` from `SmbSettings` to `Nullable<SmbSettings>` in `ShareServiceProperties`. This allows the property to be unset, which is useful for accounts that do not need to set SmbSettings.
+
+## 12.15.0 (2025-10-15)
+
+### Features Added
+
+- Features in `12.15.0-beta.1` are now generally available.
 
 ## 12.14.0 (2025-07-21)
 

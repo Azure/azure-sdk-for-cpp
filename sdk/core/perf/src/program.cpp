@@ -88,16 +88,47 @@ inline void PrintOptions(
     {
       try
       {
-        auto optionName{option.Name};
-        optionsAsJson[optionName]
-            = option.SensitiveData ? "***" : parsedArgs[optionName].as<std::string>();
+        if (parsedArgs.has_option(option.Name))
+        {
+          auto optionName{option.Name};
+          if (option.ExpectedArgs != 0)
+          {
+            optionsAsJson[optionName]
+                = (option.SensitiveData ? "***" : parsedArgs[optionName].as<std::string>());
+          }
+          else
+          {
+            optionsAsJson[optionName] = true;
+          }
+        }
+        else
+        {
+          if (option.Required)
+          {
+            // re-throw
+            throw std::invalid_argument("Missing mandatory parameter: " + option.Name);
+          }
+          else
+          {
+            if (option.ExpectedArgs == 0)
+            {
+              // arg was not parsed
+              optionsAsJson[option.Name] = false;
+            }
+            else
+            {
+              // arg was not parsed
+              optionsAsJson[option.Name] = nullptr;
+            }
+          }
+        }
       }
       catch (std::out_of_range const&)
       {
         if (!option.Required)
         {
           // arg was not parsed
-          optionsAsJson[option.Name] = "default value";
+          optionsAsJson[option.Name] = nullptr;
         }
         else
         {

@@ -503,4 +503,104 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(shareClient.DeleteIfExists());
   }
 
+  TEST_F(AppendBlobClientTest, StructuredMessageTest)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+    auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+
+    auto appendBlob = GetAppendBlobClientForTest(LowercaseRandomString());
+    appendBlob.Create();
+
+    // Append
+    Blobs::AppendBlockOptions appendOptions;
+    appendOptions.ValidationOptions = validationOptions;
+    Blobs::Models::AppendBlockResult appendResult;
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+    validationOptions.Algorithm = StorageChecksumAlgorithm::None;
+    appendOptions.ValidationOptions = validationOptions;
+    bodyStream.Rewind();
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Auto;
+    appendOptions.ValidationOptions = validationOptions;
+    bodyStream.Rewind();
+    EXPECT_NO_THROW(appendResult = appendBlob.AppendBlock(bodyStream, appendOptions).Value);
+
+    // Download
+    Blobs::DownloadBlobOptions downloadOptions;
+    downloadOptions.ValidationOptions = validationOptions;
+    Blobs::Models::DownloadBlobResult downloadResult;
+    EXPECT_NO_THROW(downloadResult = appendBlob.Download(downloadOptions).Value);
+    auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+    EXPECT_EQ(
+        content,
+        std::vector<uint8_t>(downloadedData.begin(), downloadedData.begin() + contentSize));
+    EXPECT_EQ(downloadResult.BlobSize, contentSize * 3);
+  }
+
+  TEST_F(AppendBlobClientTest, StructuredMessageTest_ClientOptions)
+  {
+    const size_t contentSize = 2 * 1024 + 512;
+    auto content = RandomBuffer(contentSize);
+
+    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    Blobs::TransferValidationOptions validationOptions;
+    validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
+    clientOptions.UploadValidationOptions = validationOptions;
+    clientOptions.DownloadValidationOptions = validationOptions;
+
+    auto validateTypicalApis = [&](Blobs::AppendBlobClient& client) {
+      client.Create();
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Blobs::Models::AppendBlockResult appendResult;
+      EXPECT_NO_THROW(appendResult = client.AppendBlock(bodyStream).Value);
+
+      Blobs::Models::DownloadBlobResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+      EXPECT_EQ(downloadResult.BlobSize, contentSize);
+    };
+
+    auto validateAllApis = [&](Blobs::AppendBlobClient& client) {
+      client.Create();
+      auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
+      Blobs::Models::AppendBlockResult appendResult;
+      EXPECT_NO_THROW(appendResult = client.AppendBlock(bodyStream).Value);
+
+      Blobs::Models::DownloadBlobResult downloadResult;
+      EXPECT_NO_THROW(downloadResult = client.Download().Value);
+      auto downloadedData = downloadResult.BodyStream->ReadToEnd();
+      EXPECT_EQ(content, downloadedData);
+
+      Blobs::Models::DownloadBlobToResult downloadToResult;
+      auto downloadBuffer = std::vector<uint8_t>(contentSize, '\x00');
+      EXPECT_NO_THROW(
+          downloadToResult = client.DownloadTo(downloadBuffer.data(), contentSize).Value);
+      EXPECT_EQ(downloadBuffer, content);
+    };
+
+    // Scenario 1: Direct constructor with options
+    {
+      const std::string blobName = "clientoptions_ctor_" + LowercaseRandomString();
+      auto blobUrl = m_blobContainerClient->GetAppendBlobClient(blobName).GetUrl();
+      auto credential
+          = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
+      Blobs::AppendBlobClient appendBlobClient(blobUrl, credential, clientOptions);
+      validateTypicalApis(appendBlobClient);
+    }
+
+    // Scenario 2: Service -> Container -> Blob (GetBlobContainerClient)
+    {
+      const std::string blobName = "clientoptions_service_" + LowercaseRandomString();
+      auto serviceClient = Blobs::BlobServiceClient::CreateFromConnectionString(
+          StandardStorageConnectionString(), clientOptions);
+      auto containerClient = serviceClient.GetBlobContainerClient(m_containerName);
+      auto appendBlobClient = containerClient.GetAppendBlobClient(blobName);
+      validateAllApis(appendBlobClient);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

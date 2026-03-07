@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2025-05-05";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -120,6 +120,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       bool Enabled = bool();
     };
     /**
+     * @brief Enable or disable encryption in transit.
+     */
+    struct SmbEncryptionInTransit final
+    {
+      /**
+       * If encryption in transit is required.
+       */
+      bool Required = bool();
+    };
+    /**
      * @brief Settings for SMB protocol.
      */
     struct SmbSettings final
@@ -127,7 +137,31 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Settings for SMB Multichannel.
        */
-      SmbMultichannel Multichannel;
+      Nullable<SmbMultichannel> Multichannel;
+      /**
+       * Enable or disable encryption in transit.
+       */
+      Nullable<SmbEncryptionInTransit> EncryptionInTransit;
+    };
+    /**
+     * @brief Enable or disable encryption in transit.
+     */
+    struct NfsEncryptionInTransit final
+    {
+      /**
+       * If encryption in transit is required.
+       */
+      bool Required = bool();
+    };
+    /**
+     * @brief Settings for SMB protocol.
+     */
+    struct NfsSettings final
+    {
+      /**
+       * Enable or disable encryption in transit.
+       */
+      Nullable<NfsEncryptionInTransit> EncryptionInTransit;
     };
     /**
      * @brief Protocol settings.
@@ -137,7 +171,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * Settings for SMB protocol.
        */
-      SmbSettings Settings;
+      Nullable<SmbSettings> Settings;
+      /**
+       * Settings for NFS protocol.
+       */
+      Nullable<Models::NfsSettings> NfsSettings;
     };
     /**
      * @brief Valid value is backup.
@@ -479,7 +517,63 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         std::vector<ShareItem> ShareItems;
         std::string NextMarker;
       };
+      /**
+       * @brief Key information.
+       */
+      struct KeyInfo final
+      {
+        /**
+         * The date-time the key is active in ISO 8601 UTC time.
+         */
+        Nullable<std::string> Start;
+        /**
+         * The date-time the key expires in ISO 8601 UTC time.
+         */
+        std::string Expiry;
+        /**
+         * The delegated user tenant id in Azure AD.
+         */
+        Nullable<std::string> DelegatedUserTid;
+      };
     } // namespace _detail
+    /**
+     * @brief A user delegation key.
+     */
+    struct UserDelegationKey final
+    {
+      /**
+       * The Azure Active Directory object ID in GUID format.
+       */
+      std::string SignedObjectId;
+      /**
+       * The Azure Active Directory tenant ID in GUID format.
+       */
+      std::string SignedTenantId;
+      /**
+       * The date-time the key is active.
+       */
+      DateTime SignedStartsOn;
+      /**
+       * The date-time the key expires.
+       */
+      DateTime SignedExpiresOn;
+      /**
+       * Abbreviation of the Azure Storage service that accepts the key.
+       */
+      std::string SignedService;
+      /**
+       * The service version that created the key.
+       */
+      std::string SignedVersion;
+      /**
+       * The delegated user tenant id in Azure AD. Return if DelegatedUserTid is specified.
+       */
+      Nullable<std::string> SignedDelegatedUserTid;
+      /**
+       * The key as a base64 string.
+       */
+      std::string Value;
+    };
     /**
      * @brief Response type for #Azure::Storage::Files::Shares::ShareClient::Create.
      */
@@ -1101,7 +1195,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Regular;
       /** Constant value of type NfsFileType: Directory */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Directory;
-      /** Constant value of type NfsFileType: Symlink */
+      /** Constant value of type NfsFileType: SymLink */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType SymLink;
     };
     namespace _detail {
@@ -2416,6 +2510,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           const Core::Url& url,
           const ListServiceSharesSegmentOptions& options,
           const Core::Context& context);
+      struct GetServiceUserDelegationKeyOptions final
+      {
+        Models::_detail::KeyInfo KeyInfo;
+      };
+      static Response<Models::UserDelegationKey> GetUserDelegationKey(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetServiceUserDelegationKeyOptions& options,
+          const Core::Context& context);
     };
     class ShareClient final {
     public:
@@ -2795,6 +2898,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         Nullable<std::string> Range;
         Nullable<bool> RangeGetContentMD5;
+        Nullable<std::string> StructuredBodyType;
         Nullable<std::string> LeaseId;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
       };
@@ -2921,6 +3025,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::UploadFileRangeResult> UploadRange(
           Core::Http::_internal::HttpPipeline& pipeline,

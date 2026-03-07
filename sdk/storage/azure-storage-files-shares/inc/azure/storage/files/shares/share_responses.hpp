@@ -159,6 +159,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * MD5 hash for the downloaded range of data.
        */
       Nullable<ContentHash> TransactionalContentHash;
+
       /**
        * Standard HTTP properties supported files.
        */

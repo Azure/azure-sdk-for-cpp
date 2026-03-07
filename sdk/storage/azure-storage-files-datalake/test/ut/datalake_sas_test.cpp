@@ -3,6 +3,7 @@
 
 #include "datalake_file_system_client_test.hpp"
 
+#include <azure/core/internal/json/json.hpp>
 #include <azure/identity/client_secret_credential.hpp>
 #include <azure/storage/blobs/blob_sas_builder.hpp>
 #include <azure/storage/files/datalake/datalake_sas_builder.hpp>
@@ -843,6 +844,7 @@ namespace Azure { namespace Storage { namespace Test {
       datalakeSasBuilder.FileSystemName = "container";
       datalakeSasBuilder.Path = "blob";
       datalakeSasBuilder.Resource = Sas::DataLakeSasResource::File;
+      datalakeSasBuilder.DelegatedUserObjectId = "TestDelegatedUserObjectId";
       datalakeSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::Read);
       auto sasToken = datalakeSasBuilder.GenerateSasToken(userDelegationKey, accountName);
       auto signature = Azure::Core::Url::Decode(
@@ -854,5 +856,213 @@ namespace Azure { namespace Storage { namespace Test {
           Azure::Core::Convert::Base64Decode(accountKey)));
       EXPECT_EQ(signature, signatureFromStringToSign);
     }
+  }
+
+  std::string getObjectIdFromTokenCredential(
+      const std::shared_ptr<const Azure::Core::Credentials::TokenCredential>& tokenCredential)
+  {
+    Azure::Core::Credentials::TokenRequestContext requestContext;
+    requestContext.Scopes = {Storage::_internal::StorageScope};
+    auto accessToken = tokenCredential->GetToken(requestContext, Azure::Core::Context());
+
+    std::istringstream iss(accessToken.Token);
+    std::string header, payload, signature;
+    getline(iss, header, '.');
+    getline(iss, payload, '.');
+    getline(iss, signature, '.');
+
+    size_t padding = payload.length() % 4;
+    if (padding > 0)
+    {
+      payload.append(4 - padding, '=');
+    }
+
+    auto decodedPayload = Azure::Core::Convert::Base64Decode(payload);
+    auto json = Core::Json::_internal::json::parse(decodedPayload.begin(), decodedPayload.end());
+    if (json.contains("oid"))
+    {
+      return json["oid"].get<std::string>();
+    }
+    return {};
+  }
+
+  TEST_F(DataLakeSasTest, PrincipalBoundDelegationSas_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    auto tokenCredential = GetTestCredential();
+    auto delegatedUserObjectId = getObjectIdFromTokenCredential(tokenCredential);
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
+
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Files::DataLake::DataLakeFileClient fileClient1(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_NO_THROW(fileClient1.GetProperties());
+
+    fileSasBuilder.DelegatedUserObjectId = "invalidObjectId";
+    sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Files::DataLake::DataLakeFileClient fileClient2(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        GetTestCredential(),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_THROW(fileClient2.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Azure::Identity::ClientSecretCredentialOptions credentialOptions;
+    credentialOptions.AdditionallyAllowedTenants = {"*"};
+    auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
+        GetEnv("AZURE_TENANT_ID_CROSS_TENANT"),
+        GetEnv("AZURE_CLIENT_ID_CROSS_TENANT"),
+        GetEnv("AZURE_CLIENT_SECRET_CROSS_TENANT"));
+    auto delegatedUserObjectId = getObjectIdFromTokenCredential(endUserCredential);
+
+    Files::DataLake::GetUserDelegationKeyOptions options;
+    options.DelegatedUserTid = "4ab3a968-f1ae-47a6-b82c-f654612122a9";
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn, options).Value;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+    fileSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
+
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Files::DataLake::DataLakeFileClient fileClient1(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        endUserCredential,
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_NO_THROW(fileClient1.GetProperties());
+
+    options.DelegatedUserTid = "00000000-0000-0000-0000-000000000000";
+    userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn, options).Value;
+
+    sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Files::DataLake::DataLakeFileClient fileClient2(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        endUserCredential,
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_THROW(fileClient2.GetProperties(), StorageException);
+  }
+
+  TEST_F(DataLakeSasTest, DynamicSas_LIVEONLY_)
+  {
+    auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
+    auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
+
+    auto keyCredential = _internal::ParseConnectionString(AdlsGen2ConnectionString()).KeyCredential;
+    auto accountName = keyCredential->AccountName;
+
+    Files::DataLake::Models::UserDelegationKey userDelegationKey
+        = GetDataLakeServiceClientOAuth().GetUserDelegationKey(sasExpiresOn).Value;
+
+    std::string fileName = RandomString();
+
+    auto dataLakeFileSystemClient = *m_fileSystemClient;
+    auto dataLakeFileClient = dataLakeFileSystemClient.GetFileClient(fileName);
+    dataLakeFileClient.Create();
+    auto buffer = RandomBuffer(1024);
+    auto stream = Azure::Core::IO::MemoryBodyStream(buffer);
+    Files::DataLake::AppendFileOptions appendOptions;
+    appendOptions.Flush = true;
+    dataLakeFileClient.Append(stream, 0, appendOptions);
+
+    Sas::DataLakeSasBuilder fileSasBuilder;
+    fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
+    fileSasBuilder.StartsOn = sasStartsOn;
+    fileSasBuilder.ExpiresOn = sasExpiresOn;
+    fileSasBuilder.FileSystemName = m_fileSystemName;
+    fileSasBuilder.Path = fileName;
+    fileSasBuilder.Resource = Sas::DataLakeSasResource::File;
+
+    fileSasBuilder.SetPermissions(Sas::DataLakeSasPermissions::All);
+
+    // cSpell:disable
+    std::map<std::string, std::string> requestHeaders;
+    requestHeaders["x-ms-range"] = "bytes=0-1023";
+    requestHeaders["x-ms-upn"] = "true";
+
+    std::map<std::string, std::string> requestQueryParameters;
+    requestQueryParameters["spr"] = "https,http";
+    requestQueryParameters["sks"] = "b";
+
+    fileSasBuilder.RequestHeaders = requestHeaders;
+    fileSasBuilder.RequestQueryParameters = requestQueryParameters;
+    auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+
+    Files::DataLake::DownloadFileOptions downloadOptions;
+    Core::Http::HttpRange range;
+    range.Offset = 0;
+    range.Length = 1024;
+    downloadOptions.Range = range;
+    downloadOptions.IncludeUserPrincipalName = true;
+
+    Files::DataLake::DataLakeFileClient fileClient1(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_NO_THROW(fileClient1.Download(downloadOptions));
+
+    requestHeaders["foo$"] = "bar!";
+    requestHeaders["company"] = "msft";
+    requestHeaders["city"] = "redmond,atlanta,reston";
+
+    requestQueryParameters["hello$"] = "world!";
+    requestQueryParameters["abra"] = "cadabra";
+    requestQueryParameters["firstName"] = "john,Tim";
+    // cSpell:enable
+
+    fileSasBuilder.RequestHeaders = requestHeaders;
+    fileSasBuilder.RequestQueryParameters = requestQueryParameters;
+
+    sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+    Files::DataLake::DataLakeFileClient fileClient2(
+        AppendQueryParameters(Azure::Core::Url(dataLakeFileClient.GetUrl()), sasToken),
+        InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>());
+    EXPECT_THROW(fileClient2.Download(downloadOptions), StorageException);
   }
 }}} // namespace Azure::Storage::Test

@@ -64,6 +64,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       // Get connection string from env
       const static std::string envConnectionString
           = Azure::Core::_internal::Environment::GetVariable("STORAGE_CONNECTION_STRING");
+
+      const static std::string hostName
+          = Azure::Core::_internal::Environment::GetVariable("AZURE_STORAGE_ACCOUNT_NAME");
       m_connectionString = envConnectionString;
 
       // Generate random container and blob names.
@@ -71,9 +74,19 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       m_blobName = "blob" + Azure::Core::Uuid::CreateUuid().ToString();
 
       // Create client, container and blobClient
-      m_serviceClient = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
-          Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
-              m_connectionString, InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>()));
+      if (!m_options.HasOption("TokenCredential"))
+      {
+        m_serviceClient = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
+            Azure::Storage::Blobs::BlobServiceClient::CreateFromConnectionString(
+                m_connectionString, InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>()));
+      }
+      else
+      {
+        m_serviceClient = std::make_unique<Azure::Storage::Blobs::BlobServiceClient>(
+            "https://" + hostName + ".blob.core.windows.net",
+            GetTestCredential(),
+            InitClientOptions<Azure::Storage::Blobs::BlobClientOptions>());
+      }
       m_containerClient = std::make_unique<Azure::Storage::Blobs::BlobContainerClient>(
           m_serviceClient->GetBlobContainerClient(m_containerName));
       m_containerClient->CreateIfNotExists();
@@ -99,5 +112,4 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     std::vector<Azure::Perf::TestOption> GetTestOptions() override { return {}; }
   };
-
 }}}} // namespace Azure::Storage::Blobs::Test

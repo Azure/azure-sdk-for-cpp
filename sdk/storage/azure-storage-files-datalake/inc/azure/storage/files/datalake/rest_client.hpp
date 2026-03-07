@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2024-08-04";
+    constexpr static const char* ApiVersion = "2026-04-06";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -368,6 +368,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         bool Recursive = bool();
         Nullable<std::int32_t> MaxResults;
         Nullable<bool> Upn;
+        Nullable<std::string> BeginFrom;
       };
       static Response<Models::_detail::PathList> ListPaths(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -536,6 +537,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
         Nullable<std::string> EncryptionAlgorithm;
         Nullable<bool> Flush;
+        Nullable<std::string> StructuredBodyType;
+        Nullable<std::int64_t> StructuredContentLength;
       };
       static Response<Models::AppendFileResult> Append(
           Core::Http::_internal::HttpPipeline& pipeline,

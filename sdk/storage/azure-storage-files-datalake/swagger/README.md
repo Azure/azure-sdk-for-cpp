@@ -9,7 +9,7 @@ package-name: azure-storage-files-datalake
 namespace: Azure::Storage::Files::DataLake
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/stable/2023-05-03/DataLakeStorage.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Azure.Storage.Files.DataLake/stable/2026-02-06/DataLakeStorage.json
 ```
 
 ## ModelFour Options
@@ -88,12 +88,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2024-08-04"]
+        "enum": ["2026-04-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2024-08-04";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations
@@ -209,6 +209,9 @@ directive:
       for (const h in $) {
         if (h === "x-ms-encryption-key-sha256") {
           $[h]["format"] = "byte";
+        }
+        if (h === "x-ms-structured-body" || h === "x-ms-structured-content-length") {
+          $[h]["x-nullable"] = true;
         }
       }
   - from: swagger-document
@@ -411,6 +414,12 @@ directive:
       delete $.responses["200"].headers["x-ms-lease-duration"];
       delete $.responses["200"].headers["x-ms-lease-state"];
       delete $.responses["200"].headers["x-ms-lease-status"];
+      delete $.responses["200"].headers["x-ms-server-encrypted"];
+      delete $.responses["200"].headers["x-ms-creation-time"];
+      delete $.responses["200"].headers["x-ms-encryption-key-sha256"];
+      delete $.responses["200"].headers["x-ms-encryption-context"];
+      delete $.responses["200"].headers["x-ms-expiry-time"];
+      delete $.responses["200"].headers["x-ms-encryption-scope"];
       $.responses["200"].headers["x-ms-acl"]["x-ms-client-name"] = "Acl";
       $.responses["200"].schema = {
         "type": "object",
@@ -474,6 +483,7 @@ directive:
       $["x-ms-lease-renewed"]["x-nullable"] = true;
       $["x-ms-lease-renewed"]["x-ms-client-name"] = "IsLeaseRenewed";
       delete $["ETag"];
+      delete $["x-ms-structured-body"];
 ```
 
 ### FlushFile

@@ -94,6 +94,7 @@
     "centralindia",
     "centralus",
     "centraluseuap",
+    "cgmanifest",
     "Chelnokov",
     "chewi",
     "Chukwu",
@@ -103,6 +104,7 @@
     "Contoso",
     "countof",
     "ctest",
+    "cuirot",
     "Curtiz",
     "cuse",
     "CUSEUAP",
@@ -138,6 +140,7 @@
     "gmock",
     "gtest",
     "Gzrs",
+    "harshitkr",
     "HKEY",
     "hlocal",
     "HLOCAL",
@@ -309,6 +312,19 @@
     "zulu"
   ],
   "overrides": [
+    { 
+      "filename": "**/eng/pipelines/docindex.yml",
+      "words": [
+        "msdocs",
+        "SDKCI"
+      ]
+    },
+    { 
+      "filename": "**/eng/pipelines/templates/stages/archetype-cpp-release.yml",
+      "words": [
+        "docsms"
+      ]
+    },
     {
       "filename": "CMakePresets.json",
       "words": [

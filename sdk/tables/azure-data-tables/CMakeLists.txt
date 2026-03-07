@@ -106,7 +106,7 @@ az_vcpkg_export(
     DATA_TABLES
     azure/data/tables/dll_import_export.hpp
   )
-  
+
 az_rtti_setup(
   azure-data-tables
   DATA_TABLES

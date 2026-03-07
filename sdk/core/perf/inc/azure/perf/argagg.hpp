@@ -393,7 +393,7 @@ struct parser_results
    * Returns the name of the program from the original arguments list. This is
    * always the first argument.
    */
-  const char* program;
+  const char* program = nullptr;
 
   /**
    * @brief

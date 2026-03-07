@@ -209,23 +209,8 @@ az_rtti_setup(
 if(BUILD_TESTING)
   # define a symbol that enables some test hooks in code
   add_compile_definitions(_azure_TESTING_BUILD)
-  
-  if (NOT AZ_ALL_LIBRARIES)
-    include(AddGoogleTest)
-    enable_testing ()
-  endif()
-  
-  add_subdirectory(test/ut)
-  if(DEFINED ENV{AZURE_CORE_ENABLE_JSON_TESTS})
-    add_subdirectory(test/nlohmann-json-test)
-  endif()
-  add_subdirectory(test/fault-injector)
-  
-  if(BUILD_TRANSPORT_CURL)
-    add_subdirectory(test/libcurl-stress-test)
-  endif()
 endif()
 
-if (BUILD_PERFORMANCE_TESTS)
-  add_subdirectory(test/perf)
-endif()
+# define and configure building tests.
+add_subdirectory(test)
+

@@ -109,6 +109,38 @@
     {
       "StaticConfigs": {
         "Win2022": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "RunProxyTests": true,
+          "CMAKE_GENERATOR": "Visual Studio 17 2022"
+        }
+      },
+      "TargetPlatform": {
+        "Debug_shared_lib_curl": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_SHARED_LIBS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON -DDISABLE_AMQP=ON ",
+          "BuildArgs": "--parallel 8 --config Debug",
+          "PublishMapFiles": "true"
+        },
+        "Debug_shared_lib_winhttp": {
+          "CmakeArgs": " -DBUILD_TESTING=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_SHARED_LIBS=ON -DDISABLE_AZURE_CORE_OPENTELEMETRY=ON -DDISABLE_AMQP=ON ",
+          "BuildArgs": "--parallel 8 --config Debug",
+          "PublishMapFiles": "true"
+        }
+      },
+      "TargetArchitecture": {
+        "x86": {
+          "CMAKE_GENERATOR_PLATFORM": "Win32",
+          "VCPKG_DEFAULT_TRIPLET": "x86-windows"
+        },
+        "x64": {
+          "CMAKE_GENERATOR_PLATFORM": "x64",
+          "VCPKG_DEFAULT_TRIPLET": "x64-windows"
+        }
+      }
+    },
+    {
+      "StaticConfigs": {
+        "Win2022": {
           "VcpkgInstall": "openssl",
           "OSVmImage": "env:WINDOWSVMIMAGE",
           "Pool": "env:WINDOWSPOOL",

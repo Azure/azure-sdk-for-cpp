@@ -10,6 +10,18 @@
 
 ### Other Changes
 
+## 1.16.2 (2026-01-16)
+
+### Bugs Fixed
+
+- [[#6817]](https://github.com/Azure/azure-sdk-for-cpp/issues/6817) Fix CPU spinning when `curl_easy_send` returns 0 bytes on SSL socket writes. (A community contribution, courtesy of _[harshitkr12](https://github.com/harshitkr12)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- harshitkr12 _([GitHub](https://github.com/harshitkr12))_
+
 ## 1.16.1 (2025-09-11)
 
 ### Bugs Fixed

@@ -259,6 +259,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
+   * Configures whether to do content validation for blob uploads and downloads.
+   */
+  struct TransferValidationOptions final
+  {
+    /**
+     * @brief The algorithm used for storage checksum.
+     */
+    StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
+  };
+
+  /**
    * @brief Client options used to initialize share clients.
    */
   struct ShareClientOptions final : Azure::Core::_internal::ClientOptions
@@ -294,6 +305,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * Audience is not set.
      */
     Azure::Nullable<ShareAudience> Audience;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
   };
 
   /**
@@ -343,6 +364,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    */
   struct GetServicePropertiesOptions final
   {
+  };
+
+  /**
+   * @brief Optional parameters for
+   * #Azure::Storage::Files::Shares::ShareServiceClient::GetUserDelegationKey.
+   */
+  struct GetUserDelegationKeyOptions final
+  {
+    /**
+     * @brief Start time for the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     */
+    Azure::DateTime StartsOn = std::chrono::system_clock::now();
+
+    /**
+     * The delegated user tenant id in Azure AD.
+     */
+    Nullable<std::string> DelegatedUserTid;
   };
 
   /**
@@ -945,6 +984,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The operation will only succeed if the access condition is met.
      */
     LeaseAccessConditions AccessConditions;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for blob downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1121,6 +1165,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * or the last write time currently associated with the file should be preserved.
      */
     Azure::Nullable<Models::FileLastWrittenMode> FileLastWrittenMode;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
   };
 
   /**
@@ -1257,6 +1306,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Azure::Nullable<Core::Http::HttpRange> Range;
 
     /**
+     * @brief Optional. Configures whether to do content validation for file downloads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
+
+    /**
      * @brief Options for parallel transfer.
      */
     struct
@@ -1320,6 +1374,11 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
+
+    /**
+     * @brief Optional. Configures whether to do content validation for file uploads.
+     */
+    Azure::Nullable<TransferValidationOptions> ValidationOptions;
 
     /**
      * @brief Options for parallel transfer.

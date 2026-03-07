@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.0-beta.2 (Unreleased)
+## 12.7.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,36 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 12.7.0-beta.1 (2026-02-26)
+
+### Features Added
+
+- Bumped up API version to `2026-04-06`.
+- Added support for Cross Tenant User Bound Delegation SAS.
+    - Added new field `SignedDelegatedUserTid` in `UserDelegationKey`.
+    - Added new field `DelegatedUserTid` in `GetUserDelegationKeyOptions`.
+
+## 12.6.0 (2026-01-07)
+
+### Features Added
+
+- New features in `12.6.0-beta.1` are now generally available.
+
+## 12.6.0-beta.1 (2025-11-27)
+
+### Features Added
+
+- Bumped up API version to `2026-02-06`.
+- Added support for User Delegation SAS.
+- Added support for Principal-Bound Identity User Delegation SAS.
+    - Added new Sas parameter `DelegatedUserObjectId` in `QueueSasBuilder` which means the object id of the user in Azure AD to which the SAS is delegated.
+
+## 12.5.0 (2025-10-15)
+
+### Features Added
+
+- New features in `12.5.0-beta.1` are now generally available.
 
 ## 12.5.0-beta.1 (2025-06-24)
 

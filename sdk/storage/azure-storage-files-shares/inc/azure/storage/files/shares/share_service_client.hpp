@@ -114,11 +114,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const GetServicePropertiesOptions& options = GetServicePropertiesOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Retrieves a key that can be used to delegate Active Directory authorization to
+     * shared access signatures.
+     *
+     * @param expiresOn Expiration of the key's validity. The time should be specified in UTC, and
+     * will be truncated to second.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A deserialized UserDelegationKey instance.
+     */
+    Azure::Response<Models::UserDelegationKey> GetUserDelegationKey(
+        const Azure::DateTime& expiresOn,
+        const GetUserDelegationKeyOptions& options = GetUserDelegationKeyOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     Nullable<bool> m_allowTrailingDot;
     Nullable<bool> m_allowSourceTrailingDot;
     Nullable<Models::ShareTokenIntent> m_shareTokenIntent;
+    /** @brief Upload TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
+    /** @brief Download TransferValidationOptions */
+    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
   };
 }}}} // namespace Azure::Storage::Files::Shares

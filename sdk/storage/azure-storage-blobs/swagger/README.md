@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2025-07-05/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-04-06/blob.json
 ```
 
 ## ModelFour Options
@@ -52,13 +52,12 @@ directive:
   - from: swagger-document
     where: $["x-ms-paths"].*.*.parameters
     transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId")
-      || p["$ref"].endsWith("#/parameters/StructuredBodyGet") || p["$ref"].endsWith("#/parameters/StructuredBodyPut") || p["$ref"].endsWith("#/parameters/StructuredContentLength"))));
+      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/Timeout") || p["$ref"].endsWith("#/parameters/ClientRequestId"))));
   - from: swagger-document
     where: $["x-ms-paths"].*.*.responses.*.headers
     transform: >
       for (const h in $) {
-        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date", "x-ms-structured-body", "x-ms-structured-content-length"].includes(h)) {
+        if (["x-ms-client-request-id", "x-ms-request-id", "x-ms-version", "Date"].includes(h)) {
           delete $[h];
         }
       }
@@ -101,12 +100,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2025-07-05"]
+        "enum": ["2026-04-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum[0] = "2025-07-05";
+      $.ApiVersionParameter.enum = ["2026-04-06"];
 ```
 
 ### Rename Operations
@@ -291,6 +290,8 @@ directive:
       $.SequenceNumberAction["x-ms-enum"]["name"] = "SequenceNumberAction";
       delete $.EncryptionAlgorithm["enum"];
       delete $.EncryptionAlgorithm["x-ms-enum"];
+      delete $.SourceEncryptionAlgorithm["enum"];
+      delete $.SourceEncryptionAlgorithm["x-ms-enum"];
       $.ImmutabilityPolicyMode.enum = $.ImmutabilityPolicyMode.enum.map(e => e.toLowerCase());
       $.CopySourceTags["x-ms-enum"]["name"] = "BlobCopySourceTagsMode";
       delete $.FilterBlobsInclude;
@@ -325,6 +326,16 @@ directive:
           {"value": "Cold", "name": "Cold"}
       ];
       $.EncryptionAlgorithm = {
+        "type": "string",
+        "enum": ["AES256"],
+        "x-ms-enum": {
+          "name": "EncryptionAlgorithmType",
+          "modelAsString": false,
+          "values": [{"value": "__placeHolder", "name": "__placeHolder"}, {"value": "AES256", "name": "Aes256"}]
+        },
+        "x-ms-export": true
+      };
+      $.SourceEncryptionAlgorithm = {
         "type": "string",
         "enum": ["AES256"],
         "x-ms-enum": {
@@ -384,11 +395,15 @@ directive:
         if (h === "x-ms-meta") {
           $[h]["x-ms-format"] = "caseinsensitivemap";
         }
+        if (h === "x-ms-structured-body" || h === "x-ms-structured-content-length") {
+          $[h]["x-nullable"] = true;
+        }
       }
   - from: swagger-document
     where: $.parameters
     transform: >
       $.EncryptionKeySha256["format"] = "byte";
+      $.SourceEncryptionKeySha256["format"] = "byte";
       $.BlobContentType["required"] = true;
       $.BlobContentEncoding["required"] = true;
       $.BlobContentLanguage["required"] = true;
@@ -1035,6 +1050,8 @@ directive:
         delete $[status_code].headers["x-ms-blob-content-md5"];
         delete $[status_code].headers["x-ms-content-crc64"];
         delete $[status_code].headers["x-ms-or"];
+        delete $[status_code].headers["x-ms-structured-content-length"];
+        delete $[status_code].headers["x-ms-structured-body"];
       }
       $["200"].headers["Content-MD5"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-ms-client-path": "Details.HttpHeaders.ContentHash", "x-nullable": true};
       $["206"].headers["Content-MD5"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
@@ -1400,6 +1417,7 @@ directive:
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### UploadPagesFromUri
@@ -1572,6 +1590,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### AppendBlockFromUri
@@ -1606,6 +1625,7 @@ directive:
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      delete $["x-ms-structured-body"];
 ```
 
 ### StageBlock
@@ -1621,6 +1641,7 @@ directive:
       $["Content-MD5"]["x-nullable"] = true;
       $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
+      delete $["x-ms-structured-body"];
 ```
 
 ### StageBlockFromUri

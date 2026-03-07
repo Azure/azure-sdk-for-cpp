@@ -198,7 +198,9 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::string& blobContainerUrl,
       const BlobClientOptions& options)
       : m_blobContainerUrl(blobContainerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
-        m_encryptionScope(options.EncryptionScope)
+        m_encryptionScope(options.EncryptionScope),
+        m_uploadValidationOptions(options.UploadValidationOptions),
+        m_downloadValidationOptions(options.DownloadValidationOptions)
   {
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
@@ -225,7 +227,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto blobUrl = m_blobContainerUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
-    return BlobClient(std::move(blobUrl), m_pipeline, m_customerProvidedKey, m_encryptionScope);
+    return BlobClient(
+        std::move(blobUrl),
+        m_pipeline,
+        m_customerProvidedKey,
+        m_encryptionScope,
+        m_uploadValidationOptions,
+        m_downloadValidationOptions);
   }
 
   BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const
@@ -349,6 +357,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
+    protocolLayerOptions.StartFrom = options.StartFrom;
     auto response = _detail::BlobContainerClient::ListBlobs(
         *m_pipeline,
         m_blobContainerUrl,
@@ -383,6 +392,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
+    protocolLayerOptions.StartFrom = options.StartFrom;
     auto response = _detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline,
         m_blobContainerUrl,
