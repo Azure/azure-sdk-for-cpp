@@ -475,7 +475,7 @@ directive:
         "x-ms-sealed": false,
         "x-ms-client-name": "PathSystemProperties",
         "properties": {
-          "IsDirectory": {"type": "boolean", "x-ms-json": ""}
+          "IsDirectory": {"type": "boolean", "x-ms-json": "", "description": "Indicates the resource is a directory or a file."}
         }
       };
 ```
@@ -575,4 +575,9 @@ directive:
       $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
       $["202"].schema.properties["Deleted"].description = "Indicates if the file or directory was successfully deleted by this operation.";
       $["202"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::Delete.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{filesystem}/{path}?getStatus"].head.responses
+    transform: >
+      $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::GetSystemProperties.";
+      $["200"].
 ```

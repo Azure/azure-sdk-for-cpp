@@ -281,6 +281,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      */
     struct PathSystemProperties final
     {
+      /**
+       * Indicates the resource is a directory or a file.
+       */
       bool IsDirectory = bool();
       /**
        * The size of the resource in bytes.
