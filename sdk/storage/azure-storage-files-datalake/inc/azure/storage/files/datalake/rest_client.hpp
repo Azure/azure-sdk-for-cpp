@@ -277,7 +277,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       };
     } // namespace _detail
     /**
-     * @brief Response type for #Azure::Storage::Files::DataLake::PathClient::GetSystemProperties.
+     * @brief Response type for
+     * #Azure::Storage::Files::DataLake::DataLakePathClient::GetSystemProperties.
      */
     struct PathSystemProperties final
     {

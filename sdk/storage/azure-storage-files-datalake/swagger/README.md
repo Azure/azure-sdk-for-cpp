@@ -579,5 +579,4 @@ directive:
     where: $["x-ms-paths"]["/{filesystem}/{path}?getStatus"].head.responses
     transform: >
       $["200"].schema.description = "Response type for #Azure::Storage::Files::DataLake::DataLakePathClient::GetSystemProperties.";
-      $["200"].
 ```
