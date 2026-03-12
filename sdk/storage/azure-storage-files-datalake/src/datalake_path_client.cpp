@@ -449,6 +449,30 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(response.RawResponse));
   }
 
+  Azure::Response<Models::PathSystemProperties> DataLakePathClient::GetSystemProperties(
+      const GetPathSystemPropertiesOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::PathClient::GetPathSystemPropertiesOptions protocolLayerOptions;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.Upn = options.IncludeUserPrincipalName;
+    auto response = _detail::PathClient::GetSystemProperties(
+        *m_pipeline, m_pathUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    if (response.RawResponse->GetHeaders().at("x-ms-resource-type") == "file")
+    {
+      response.Value.IsDirectory = false;
+    }
+    else
+    {
+      response.Value.IsDirectory = true;
+    }
+    return response;
+  }
+
   Azure::Response<Models::SetPathMetadataResult> DataLakePathClient::SetMetadata(
       Storage::Metadata metadata,
       const SetPathMetadataOptions& options,
@@ -498,6 +522,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
+  }
+
+  Azure::Response<Models::SetPathTagsResult> DataLakePathClient::SetTags(
+      std::map<std::string, std::string> tags,
+      const SetPathTagsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    return m_blobClient.SetTags(tags, options, context);
+  }
+
+  Azure::Response<std::map<std::string, std::string>> DataLakePathClient::GetTags(
+      const GetPathTagsOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    return m_blobClient.GetTags(options, context);
   }
 
 }}}} // namespace Azure::Storage::Files::DataLake

@@ -792,6 +792,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     using CreateDirectoryResult = CreatePathResult;
     using DeleteDirectoryResult = DeletePathResult;
+    using SetPathTagsResult = Blobs::Models::SetBlobTagsResult;
 
   } // namespace Models
 

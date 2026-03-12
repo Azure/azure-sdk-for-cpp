@@ -987,6 +987,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Premium;
       /** Constant value of type AccessTier: Cold */
       AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Cold;
+      /** Constant value of type AccessTier: Smart */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static AccessTier Smart;
     };
     /**
      * @brief For blob storage LRS accounts, valid values are
@@ -1007,6 +1009,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCool;
       /** Constant value of type ArchiveStatus: RehydratePendingToCold */
       AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToCold;
+      /** Constant value of type ArchiveStatus: RehydratePendingToSmart */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static ArchiveStatus RehydratePendingToSmart;
     };
     /**
      * @brief Optional: Indicates the priority with which to rehydrate an archived blob.
@@ -1253,6 +1257,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * destination tier.
        */
       Nullable<Models::ArchiveStatus> ArchiveStatus;
+      /**
+       * The tier of page blob on a premium storage account or tier of block blob on blob storage or
+       * general purpose v2 account.
+       */
+      Nullable<Models::AccessTier> SmartAccessTier;
       /**
        * SHA-256 hash of the encryption key.
        */
@@ -1786,6 +1795,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * blob was ever set.
        */
       Nullable<DateTime> AccessTierChangedOn;
+      /**
+       * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
+       */
+      Nullable<Models::AccessTier> SmartAccessTier;
       /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
        * this header indicates the blob version, and may be used in subsequent requests to access

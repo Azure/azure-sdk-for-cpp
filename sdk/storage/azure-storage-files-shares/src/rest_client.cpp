@@ -185,6 +185,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const FileAttributes FileAttributes::Offline("Offline");
     const FileAttributes FileAttributes::NotContentIndexed("NotContentIndexed");
     const FileAttributes FileAttributes::NoScrubData("NoScrubData");
+    const FilePropertySemantics FilePropertySemantics::New("New");
+    const FilePropertySemantics FilePropertySemantics::Restore("Restore");
     const NfsFileType NfsFileType::Regular("Regular");
     const NfsFileType NfsFileType::Directory("Directory");
     const NfsFileType NfsFileType::SymLink("SymLink");
@@ -376,7 +378,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -401,7 +403,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -696,7 +698,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             _internal::UrlEncodeQueryParameter(
                 ListSharesIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -1155,7 +1157,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "userdelegationkey");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1289,7 +1291,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-access-tier", options.AccessTier.Value().ToString());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.EnabledProtocols.HasValue()
           && !options.EnabledProtocols.Value().ToString().empty())
       {
@@ -1388,7 +1390,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -1545,7 +1547,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.DeleteSnapshots.HasValue() && !options.DeleteSnapshots.Value().ToString().empty())
       {
         request.SetHeader("x-ms-delete-snapshots", options.DeleteSnapshots.Value().ToString());
@@ -1596,7 +1598,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1635,7 +1637,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1677,7 +1679,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1716,7 +1718,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1759,7 +1761,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Sharesnapshot.HasValue() && !options.Sharesnapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1797,7 +1799,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -1840,7 +1842,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "filepermission");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -1876,7 +1878,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-file-permission-format", options.FilePermissionFormat.Value().ToString());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -1911,7 +1913,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Quota.HasValue())
       {
         request.SetHeader("x-ms-share-quota", std::to_string(options.Quota.Value()));
@@ -2042,7 +2044,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2073,7 +2075,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2225,7 +2227,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "acl");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2257,7 +2259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "share");
       request.GetUrl().AppendQueryParameter("comp", "stats");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -2348,7 +2350,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
@@ -2395,6 +2397,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       if (options.FileMode.HasValue() && !options.FileMode.Value().empty())
       {
         request.SetHeader("x-ms-mode", options.FileMode.Value());
+      }
+      if (options.FilePropertySemantics.HasValue()
+          && !options.FilePropertySemantics.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-property-semantics", options.FilePropertySemantics.Value().ToString());
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -2476,7 +2484,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -2563,7 +2571,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-allow-trailing-dot", options.AllowTrailingDot.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -2587,7 +2595,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "directory");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FilePermission.HasValue() && !options.FilePermission.Value().empty())
       {
         request.SetHeader("x-ms-file-permission", options.FilePermission.Value());
@@ -2710,7 +2718,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -2764,7 +2772,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "maxresults", std::to_string(options.MaxResults.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Include.HasValue()
           && !ListFilesIncludeFlagsToString(options.Include.Value()).empty())
       {
@@ -3157,7 +3165,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-recursive", options.Recursive.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -3370,7 +3378,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-recursive", options.Recursive.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -3408,7 +3416,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "directory");
       request.GetUrl().AppendQueryParameter("comp", "rename");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (!options.RenameSource.empty())
       {
         request.SetHeader("x-ms-file-rename-source", options.RenameSource);
@@ -3513,16 +3521,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     Response<Models::_detail::CreateFileResult> FileClient::Create(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
+        Core::IO::BodyStream& requestBody,
         const CreateFileOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url, &requestBody);
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
             "x-ms-allow-trailing-dot", options.AllowTrailingDot.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       request.SetHeader("x-ms-content-length", std::to_string(options.FileContentLength));
       request.SetHeader("x-ms-type", "file");
       if (options.FileContentType.HasValue() && !options.FileContentType.Value().empty())
@@ -3611,6 +3620,28 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-file-file-type", options.NfsFileType.Value().ToString());
       }
+      if (options.ContentMD5.HasValue()
+          && !Core::Convert::Base64Encode(options.ContentMD5.Value()).empty())
+      {
+        request.SetHeader("Content-MD5", Core::Convert::Base64Encode(options.ContentMD5.Value()));
+      }
+      if (options.FilePropertySemantics.HasValue()
+          && !options.FilePropertySemantics.Value().ToString().empty())
+      {
+        request.SetHeader(
+            "x-ms-file-property-semantics", options.FilePropertySemantics.Value().ToString());
+      }
+      request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
+      if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
+      {
+        request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
+      }
+      if (options.StructuredContentLength.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-structured-content-length",
+            std::to_string(options.StructuredContentLength.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -3670,6 +3701,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.NfsFileType
             = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-structured-body") != 0)
+      {
+        response.StructuredBodyType = pRawResponse->GetHeaders().at("x-ms-structured-body");
+      }
       return Response<Models::_detail::CreateFileResult>(
           std::move(response), std::move(pRawResponse));
     }
@@ -3685,7 +3720,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-allow-trailing-dot", options.AllowTrailingDot.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Range.HasValue() && !options.Range.Value().empty())
       {
         request.SetHeader("x-ms-range", options.Range.Value());
@@ -3894,7 +3929,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4057,7 +4092,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-allow-trailing-dot", options.AllowTrailingDot.Value() ? "true" : "false");
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4088,7 +4123,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileContentLength.HasValue())
       {
         request.SetHeader("x-ms-content-length", std::to_string(options.FileContentLength.Value()));
@@ -4249,7 +4284,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4293,7 +4328,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -4331,7 +4366,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -4372,7 +4407,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-proposed-lease-id", options.ProposedLeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -4410,7 +4445,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -4457,7 +4492,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("Content-MD5", Core::Convert::Base64Encode(options.ContentMD5.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4554,7 +4589,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "x-ms-source-if-none-match-crc64",
             Core::Convert::Base64Encode(options.SourceIfNoneMatchCrc64.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4630,7 +4665,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "prevsharesnapshot",
             _internal::UrlEncodeQueryParameter(options.Prevsharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.Range.HasValue() && !options.Range.Value().empty())
       {
         request.SetHeader("x-ms-range", options.Range.Value());
@@ -4759,7 +4794,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Core::Context& context)
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       for (const auto& p : options.Metadata)
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
@@ -4886,7 +4921,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "copyid", _internal::UrlEncodeQueryParameter(options.CopyId));
       }
       request.SetHeader("x-ms-copy-action", "abort");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -4933,7 +4968,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -5142,7 +5177,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         request.SetHeader("x-ms-handle-id", options.HandleId);
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.AllowTrailingDot.HasValue())
       {
         request.SetHeader(
@@ -5179,7 +5214,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "rename");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (!options.RenameSource.empty())
       {
         request.SetHeader("x-ms-file-rename-source", options.RenameSource);
@@ -5293,7 +5328,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "symboliclink");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       for (const auto& p : options.Metadata)
       {
         request.SetHeader("x-ms-meta-" + p.first, p.second);
@@ -5378,7 +5413,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.GetUrl().AppendQueryParameter(
             "sharesnapshot", _internal::UrlEncodeQueryParameter(options.Sharesnapshot.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       if (options.FileRequestIntent.HasValue()
           && !options.FileRequestIntent.Value().ToString().empty())
       {
@@ -5406,7 +5441,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "hardlink");
-      request.SetHeader("x-ms-version", "2026-04-06");
+      request.SetHeader("x-ms-version", "2026-06-06");
       request.SetHeader("x-ms-type", "file");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {

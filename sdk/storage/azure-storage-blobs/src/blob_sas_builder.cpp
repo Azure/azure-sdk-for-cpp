@@ -33,6 +33,10 @@ namespace Azure { namespace Storage { namespace Sas {
       {
         return "bv";
       }
+      else if (resource == BlobSasResource::VirtualDirectory)
+      {
+        return "d";
+      }
       else
       {
         throw std::invalid_argument("Unknown BlobSasResource value.");
@@ -171,7 +175,8 @@ namespace Azure { namespace Storage { namespace Sas {
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
-        || Resource == BlobSasResource::BlobVersion)
+        || Resource == BlobSasResource::BlobVersion
+        || Resource == BlobSasResource::VirtualDirectory)
     {
       canonicalName += "/" + BlobName;
     }
@@ -256,6 +261,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
     }
+    if (IsVirtualDirectory && VirtualDirectoryDepth.HasValue())
+    {
+      builder.AppendQueryParameter(
+          "sdd", _internal::UrlEncodeQueryParameter(std::to_string(VirtualDirectoryDepth.Value())));
+    }
 
     return builder.GetAbsoluteUrl();
   }
@@ -266,7 +276,8 @@ namespace Azure { namespace Storage { namespace Sas {
   {
     std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
-        || Resource == BlobSasResource::BlobVersion)
+        || Resource == BlobSasResource::BlobVersion
+        || Resource == BlobSasResource::VirtualDirectory)
     {
       canonicalName += "/" + BlobName;
     }
@@ -378,6 +389,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       builder.AppendQueryParameter("ses", _internal::UrlEncodeQueryParameter(EncryptionScope));
     }
+    if (IsVirtualDirectory && VirtualDirectoryDepth.HasValue())
+    {
+      builder.AppendQueryParameter(
+          "sdd", _internal::UrlEncodeQueryParameter(std::to_string(VirtualDirectoryDepth.Value())));
+    }
     builder.AppendQueryParameter("sig", _internal::UrlEncodeQueryParameter(signature));
 
     return builder.GetAbsoluteUrl();
@@ -387,7 +403,8 @@ namespace Azure { namespace Storage { namespace Sas {
   {
     std::string canonicalName = "/blob/" + credential.AccountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
-        || Resource == BlobSasResource::BlobVersion)
+        || Resource == BlobSasResource::BlobVersion
+        || Resource == BlobSasResource::VirtualDirectory)
     {
       canonicalName += "/" + BlobName;
     }
@@ -426,7 +443,8 @@ namespace Azure { namespace Storage { namespace Sas {
   {
     std::string canonicalName = "/blob/" + accountName + "/" + BlobContainerName;
     if (Resource == BlobSasResource::Blob || Resource == BlobSasResource::BlobSnapshot
-        || Resource == BlobSasResource::BlobVersion)
+        || Resource == BlobSasResource::BlobVersion
+        || Resource == BlobSasResource::VirtualDirectory)
     {
       canonicalName += "/" + BlobName;
     }
