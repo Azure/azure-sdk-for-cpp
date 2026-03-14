@@ -386,6 +386,7 @@ Many people all over the world have helped make this project better.  You'll wan
 - [What are some good first issues for new contributors to the repo?](https://github.com/azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
 - [How to build and test your change](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide)
 - [How you can make a change happen!](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests)
+- [How to deprecate packages and APIs](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/deprecation.md)
 - Frequently Asked Questions (FAQ) and Conceptual Topics in the detailed [Azure SDK for C++ wiki](https://github.com/azure/azure-sdk-for-cpp/wiki).
 
 <!-- ### Community-->
