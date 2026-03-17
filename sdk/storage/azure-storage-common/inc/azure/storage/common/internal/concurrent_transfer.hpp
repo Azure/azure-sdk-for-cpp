@@ -13,6 +13,8 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
+  int GetHardwareConcurrency();
+
   inline void ConcurrentTransfer(
       int64_t offset,
       int64_t length,
