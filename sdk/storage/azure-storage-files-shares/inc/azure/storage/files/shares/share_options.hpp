@@ -9,7 +9,9 @@
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
 #include <azure/storage/common/access_conditions.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -1353,7 +1355,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The maximum number of threads that may be used in a parallel transfer.
        */
-      int32_t Concurrency = 5;
+      int32_t Concurrency = (std::min)(96, (std::max)(8, _internal::GetHardwareConcurrency()));
     } TransferOptions;
   };
 
@@ -1422,7 +1424,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /**
        * The maximum number of threads that may be used in a parallel transfer.
        */
-      int32_t Concurrency = 5;
+      int32_t Concurrency = (std::min)(96, (std::max)(8, _internal::GetHardwareConcurrency()));
     } TransferOptions;
   };
 

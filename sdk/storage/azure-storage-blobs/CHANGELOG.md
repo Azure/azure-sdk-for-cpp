@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated the default concurrency settings for upload and download operations.
+
 ## 12.18.0 (2026-06-11)
 
 ### Features Added
