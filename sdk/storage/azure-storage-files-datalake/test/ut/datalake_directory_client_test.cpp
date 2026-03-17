@@ -1029,4 +1029,12 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(systemProperties.CreatedOn.HasValue());
   }
 
+  TEST_F(DataLakeDirectoryClientTest, DoubleEncodedDirectoryClientUrl)
+  {
+    auto directoryClient = m_fileSystemClient->GetDirectoryClient(RandomString() + "a+a");
+    directoryClient.CreateIfNotExists();
+    EXPECT_NO_THROW(directoryClient.ListPaths(true));
+
+  }
+
 }}} // namespace Azure::Storage::Test
