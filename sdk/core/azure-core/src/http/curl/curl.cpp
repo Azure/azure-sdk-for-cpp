@@ -1434,6 +1434,7 @@ long GetConnectionTimeout(
   }
 
   long connectionTimeoutLong = 0;
+  long connectionTimeoutLong = 0;
   if (connectionTimeout.count() > 0
       && connectionTimeout.count() <= std::numeric_limits<long>::max())
   {
@@ -2435,6 +2436,7 @@ CurlConnection::CurlConnection(
           + std::string(curl_easy_strerror(result)));
     }
     if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1L, &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1L, &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
@@ -2452,6 +2454,8 @@ CurlConnection::CurlConnection(
   }
 
   if (request.GetUrl().GetPort() != 0
+      && !SetLibcurlOption(
+          m_handle, CURLOPT_PORT, static_cast<long>(request.GetUrl().GetPort()), &result))
       && !SetLibcurlOption(
           m_handle, CURLOPT_PORT, static_cast<long>(request.GetUrl().GetPort()), &result))
   {
@@ -2658,11 +2662,15 @@ CurlConnection::CurlConnection(
     {
       // CURLINFO_SSL_VERIFYRESULT requires a long* parameter per libcurl documentation.
       long sslVerifyResult = 0;
-      curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &sslVerifyResult);
+      CURLcode getInfoResult
+          = curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &sslVerifyResult);
+      std::string underlyingError = (getInfoResult == CURLE_OK)
+          ? std::string(". Underlying error: ") + X509_verify_cert_error_string(sslVerifyResult)
+          : std::string(". Failed to retrieve SSL verify result: ")
+              + curl_easy_strerror(getInfoResult);
       throw Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
-          + std::string(curl_easy_strerror(performResult))
-          + ". Underlying error: " + X509_verify_cert_error_string(sslVerifyResult));
+          + std::string(curl_easy_strerror(performResult)) + underlyingError);
     }
     else
 #endif
