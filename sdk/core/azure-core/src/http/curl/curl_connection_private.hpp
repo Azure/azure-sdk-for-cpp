@@ -170,7 +170,7 @@ namespace Azure { namespace Core {
     private:
       Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       Azure::Core::_detail::UniqueCURLSHHandle m_sslShareHandle;
-      curl_socket_t m_curlSocket;
+      curl_socket_t m_curlSocket = CURL_SOCKET_BAD;
       std::chrono::steady_clock::time_point m_lastUseTime;
       std::string m_connectionKey;
       // CRL validation is disabled by default to be consistent with WinHTTP behavior

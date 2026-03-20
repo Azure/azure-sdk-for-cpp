@@ -1433,7 +1433,7 @@ long GetConnectionTimeout(
         : connectionTimeoutOverride;
   }
 
-  auto connectionTimeoutLong = 0;
+  long connectionTimeoutLong = 0;
   if (connectionTimeout.count() > 0
       && connectionTimeout.count() <= std::numeric_limits<long>::max())
   {
@@ -2434,7 +2434,7 @@ CurlConnection::CurlConnection(
           + std::string(". Could not enable logging callback.")
           + std::string(curl_easy_strerror(result)));
     }
-    if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1, &result))
+    if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1L, &result))
     {
       throw TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate
@@ -2452,7 +2452,8 @@ CurlConnection::CurlConnection(
   }
 
   if (request.GetUrl().GetPort() != 0
-      && !SetLibcurlOption(m_handle, CURLOPT_PORT, request.GetUrl().GetPort(), &result))
+      && !SetLibcurlOption(
+          m_handle, CURLOPT_PORT, static_cast<long>(request.GetUrl().GetPort()), &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
@@ -2655,11 +2656,13 @@ CurlConnection::CurlConnection(
 #if defined(AZ_PLATFORM_LINUX)
     if (performResult == CURLE_PEER_FAILED_VERIFICATION)
     {
-      curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &result);
+      // CURLINFO_SSL_VERIFYRESULT requires a long* parameter per libcurl documentation.
+      long sslVerifyResult = 0;
+      curl_easy_getinfo(m_handle.get(), CURLINFO_SSL_VERIFYRESULT, &sslVerifyResult);
       throw Http::TransportException(
           _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
           + std::string(curl_easy_strerror(performResult))
-          + ". Underlying error: " + X509_verify_cert_error_string(result));
+          + ". Underlying error: " + X509_verify_cert_error_string(sslVerifyResult));
     }
     else
 #endif
