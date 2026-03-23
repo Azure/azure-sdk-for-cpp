@@ -2454,8 +2454,6 @@ CurlConnection::CurlConnection(
   if (request.GetUrl().GetPort() != 0
       && !SetLibcurlOption(
           m_handle, CURLOPT_PORT, static_cast<long>(request.GetUrl().GetPort()), &result))
-      && !SetLibcurlOption(
-          m_handle, CURLOPT_PORT, static_cast<long>(request.GetUrl().GetPort()), &result))
   {
     throw Azure::Core::Http::TransportException(
         _detail::DefaultFailedToGetNewConnectionTemplate + hostDisplayName + ". "
