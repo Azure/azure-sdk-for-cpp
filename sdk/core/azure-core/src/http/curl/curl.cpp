@@ -1434,7 +1434,6 @@ long GetConnectionTimeout(
   }
 
   long connectionTimeoutLong = 0;
-  long connectionTimeoutLong = 0;
   if (connectionTimeout.count() > 0
       && connectionTimeout.count() <= std::numeric_limits<long>::max())
   {
@@ -2435,7 +2434,6 @@ CurlConnection::CurlConnection(
           + std::string(". Could not enable logging callback.")
           + std::string(curl_easy_strerror(result)));
     }
-    if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1L, &result))
     if (!SetLibcurlOption(m_handle, CURLOPT_VERBOSE, 1L, &result))
     {
       throw TransportException(
