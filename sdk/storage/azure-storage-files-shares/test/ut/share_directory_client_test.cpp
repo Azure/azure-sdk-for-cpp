@@ -1448,4 +1448,25 @@ namespace Azure { namespace Storage { namespace Test {
         properties.PosixProperties.NfsFileType.Value(),
         Files::Shares::Models::NfsFileType::Directory);
   }
+
+  TEST_F(FileShareDirectoryClientTest, FilePermissionSemantics)
+  {
+    std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+                             "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+                             "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
+
+    {
+      auto client = m_fileShareDirectoryClient->GetSubdirectoryClient(RandomString());
+      Files::Shares::CreateDirectoryOptions options;
+      options.DirectoryPermission = permission;
+      options.PropertySemantics = Files::Shares::Models::FilePropertySemantics::Restore;
+      EXPECT_NO_THROW(client.Create(options));
+    }
+    {
+      auto client = m_fileShareDirectoryClient->GetSubdirectoryClient(RandomString());
+      Files::Shares::CreateDirectoryOptions options;
+      options.PropertySemantics = Files::Shares::Models::FilePropertySemantics::New;
+      EXPECT_NO_THROW(client.Create(options));
+    }
+  }
 }}} // namespace Azure::Storage::Test
