@@ -103,6 +103,11 @@ namespace Azure { namespace Storage { namespace Sas {
     {
       Permissions += "l";
     }
+    if ((permissions & DataLakeFileSystemSasPermissions::Tags)
+        == DataLakeFileSystemSasPermissions::Tags)
+    {
+      Permissions += "t";
+    }
   }
 
   void DataLakeSasBuilder::SetPermissions(DataLakeSasPermissions permissions)
@@ -132,6 +137,10 @@ namespace Azure { namespace Storage { namespace Sas {
     if ((permissions & DataLakeSasPermissions::List) == DataLakeSasPermissions::List)
     {
       Permissions += "l";
+    }
+    if ((permissions & DataLakeSasPermissions::Tags) == DataLakeSasPermissions::Tags)
+    {
+      Permissions += "t";
     }
     if ((permissions & DataLakeSasPermissions::Move) == DataLakeSasPermissions::Move)
     {
