@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/nickliu-msft/azure-rest-api-specs/1ee23319226b26175ed9dbb27fc65d24932b9227/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-06-06/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-06-06/blob.json
 ```
 
 ## ModelFour Options
