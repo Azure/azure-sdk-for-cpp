@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-04-06/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-06-06/file.json
 ```
 
 ## ModelFour Options
@@ -79,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-04-06"]
+        "enum": ["2026-06-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-04-06"];
+      $.ApiVersionParameter.enum = ["2026-06-06"];
 ```
 
 ### Rename Operations
@@ -238,7 +238,6 @@ directive:
       $.FilePermissionFormat["enum"] = ["sddl", "binary"];
       $.FileAttributes["required"] = true;
       delete $.EnableSmbDirectoryLease;
-      delete $.FilePropertySemantics;
   - from: swagger-document
     where: $.definitions
     transform: >
@@ -752,10 +751,6 @@ directive:
         },
         "x-namespace" : "_detail"
       };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}?restype=directory"].put.parameters
-    transform: >
-      $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/FilePropertySemantics"));
 ```
 
 ### DeleteDirectory
@@ -868,10 +863,6 @@ directive:
         },
         "x-namespace" : "_detail"
       };
-  - from: swagger-document
-    where: $["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].put.parameters
-    transform: >
-      $ = $.filter(p => !(p["$ref"] && (p["$ref"].endsWith("#/parameters/ContentMD5") || p["$ref"].endsWith("#/parameters/FilePropertySemantics") || p["$ref"].endsWith("#/parameters/ContentLengthOptional") || p["$ref"].endsWith("#/parameters/OptionalBody"))));
 ```
 
 ### GetFileProperties

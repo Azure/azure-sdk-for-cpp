@@ -2814,4 +2814,53 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(FileShareFileClientTest, CreateWithData)
+  {
+    std::vector<uint8_t> content = RandomBuffer(100);
+    auto memBodyStream = Core::IO::MemoryBodyStream(content);
+
+    {
+      auto fileName = RandomString();
+      auto client = m_fileShareDirectoryClient->GetFileClient(fileName);
+      Files::Shares::CreateFileOptions createOptions;
+      createOptions.Content = &memBodyStream;
+      EXPECT_NO_THROW(client.Create(content.size(), createOptions));
+      auto downloadedContent = client.Download().Value.BodyStream->ReadToEnd();
+      EXPECT_EQ(downloadedContent, content);
+    }
+    {
+      memBodyStream.Rewind();
+      auto fileName = RandomString();
+      auto client = m_fileShareDirectoryClient->GetFileClient(fileName);
+      Files::Shares::CreateFileOptions createOptions;
+      createOptions.ValidationOptions = Files::Shares::TransferValidationOptions();
+      createOptions.ValidationOptions.Value().Algorithm = StorageChecksumAlgorithm::Crc64;
+      createOptions.Content = &memBodyStream;
+      EXPECT_NO_THROW(client.Create(content.size(), createOptions));
+      auto downloadedContent = client.Download().Value.BodyStream->ReadToEnd();
+      EXPECT_EQ(downloadedContent, content);
+    }
+  }
+
+  TEST_F(FileShareFileClientTest, FilePermissionSemantics)
+  {
+    std::string permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-"
+                             "2127521184-1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;"
+                             "0x1200a9;;;S-1-5-21-397955417-626881126-188441444-3053964)";
+
+    {
+      auto client = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      Files::Shares::CreateFileOptions options;
+      options.Permission = permission;
+      options.PropertySemantics = Files::Shares::Models::FilePropertySemantics::Restore;
+      EXPECT_NO_THROW(client.Create(1024, options));
+    }
+    {
+      auto client = m_fileShareDirectoryClient->GetFileClient(RandomString());
+      Files::Shares::CreateFileOptions options;
+      options.PropertySemantics = Files::Shares::Models::FilePropertySemantics::New;
+      EXPECT_NO_THROW(client.Create(1024, options));
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

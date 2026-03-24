@@ -27,7 +27,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-04-06";
+    constexpr static const char* ApiVersion = "2026-06-06";
   } // namespace _detail
   namespace Models {
     namespace _detail {
@@ -277,6 +277,74 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       };
     } // namespace _detail
     /**
+     * @brief Response type for
+     * #Azure::Storage::Files::DataLake::DataLakePathClient::GetSystemProperties.
+     */
+    struct PathSystemProperties final
+    {
+      /**
+       * Indicates the resource is a directory or a file.
+       */
+      bool IsDirectory = bool();
+      /**
+       * The size of the resource in bytes.
+       */
+      std::int64_t FileSize = std::int64_t();
+      /**
+       * An HTTP entity tag associated with the file or directory.
+       */
+      Azure::ETag ETag;
+      /**
+       * The data and time the file or directory was last modified.  Write operations on the file or
+       * directory update the last modified time.
+       */
+      DateTime LastModified;
+      /**
+       * The owner of the file or directory. Included in the response if Hierarchical Namespace is
+       * enabled for the account.
+       */
+      std::string Owner;
+      /**
+       * The owning group of the file or directory. Included in the response if Hierarchical
+       * Namespace is enabled for the account.
+       */
+      std::string Group;
+      /**
+       * The POSIX access permissions for the file owner, the file owning group, and others.
+       * Included in the response if Hierarchical Namespace is enabled for the account.
+       */
+      std::string Permissions;
+      /**
+       * The value of this header is set to true if the directory metadata is completely encrypted
+       * using the specified algorithm. Otherwise, the value is set to false.
+       */
+      bool IsServerEncrypted = bool();
+      /**
+       * The SHA-256 hash of the encryption key used to encrypt the blob. This header is only
+       * returned when the blob was encrypted with a customer-provided key.
+       */
+      Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
+      /**
+       * The encryption context used to encrypt the blob. This header is only returned when the blob
+       * was encrypted with a customer-provided key.
+       */
+      Nullable<std::string> EncryptionContext;
+      /**
+       * Returns the name of the encryption scope used to encrypt the blob contents and application
+       * metadata.  Note that the absence of this header implies use of the default account
+       * encryption scope.
+       */
+      Nullable<std::string> EncryptionScope;
+      /**
+       * Returns the date and time the blob was created.
+       */
+      Nullable<DateTime> CreatedOn;
+      /**
+       * The time this blob will expire.
+       */
+      Nullable<DateTime> ExpiresOn;
+    };
+    /**
      * @brief Optional. If "acquire" it will acquire the lease. If "auto-renew" it will renew the
      * lease. If "release" it will release the lease only on flush. If "acquire-release" it will
      * acquire & complete the operation & release the lease once operation is done.
@@ -492,6 +560,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetPathAccessControlListOptions& options,
+          const Core::Context& context);
+      struct GetPathSystemPropertiesOptions final
+      {
+        Nullable<bool> Upn;
+        Nullable<std::string> LeaseId;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+      };
+      static Response<Models::PathSystemProperties> GetSystemProperties(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetPathSystemPropertiesOptions& options,
           const Core::Context& context);
     };
     class FileClient final {

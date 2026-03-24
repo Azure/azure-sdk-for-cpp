@@ -354,7 +354,7 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @param tags The tags to set on the blob.
      * @param options Optional parameters to execute this function.
      * @param context Context for cancelling long running operations.
-     * @return A SetBlobTagsInfo on successfully setting tags.
+     * @return A SetBlobTagsResult on successfully setting tags.
      */
     Azure::Response<Models::SetBlobTagsResult> SetTags(
         std::map<std::string, std::string> tags,

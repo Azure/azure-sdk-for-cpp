@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-04-06/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-06-06/blob.json
 ```
 
 ## ModelFour Options
@@ -100,12 +100,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-04-06"]
+        "enum": ["2026-06-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-04-06"];
+      $.ApiVersionParameter.enum = ["2026-06-06"];
 ```
 
 ### Rename Operations
@@ -323,7 +323,8 @@ directive:
           {"value": "Cool", "name": "Cool"},
           {"value": "Archive", "name": "Archive"},
           {"value": "Premium", "name": "Premium"},
-          {"value": "Cold", "name": "Cold"}
+          {"value": "Cold", "name": "Cold"},
+          {"value": "Smart", "name": "Smart"},
       ];
       $.EncryptionAlgorithm = {
         "type": "string",
@@ -1121,8 +1122,11 @@ directive:
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["x-ms-access-tier"]["x-nullable"] = true;
-      $["x-ms-access-tier"]["enum"] = ["P1", "P2", "P3", "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive"];
+      $["x-ms-access-tier"]["enum"] = ["P1", "P2", "P3", "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Smart"];
       $["x-ms-access-tier"]["x-ms-enum"] = {"name": "AccessTier", "modelAsString": true};
+      $["x-ms-smart-access-tier"]["x-nullable"] = true;
+      $["x-ms-smart-access-tier"]["enum"] = ["P1", "P2", "P3", "P4", "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Smart"];
+      $["x-ms-smart-access-tier"]["x-ms-enum"] = {"name": "AccessTier", "modelAsString": true};
       $["x-ms-access-tier-inferred"]["x-ms-client-name"] = "IsAccessTierInferred";
       $["x-ms-access-tier-inferred"]["x-nullable"] = true;
       $["x-ms-archive-status"]["x-nullable"] = true;

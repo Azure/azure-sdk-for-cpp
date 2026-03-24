@@ -73,6 +73,11 @@ namespace Azure { namespace Storage { namespace Sas {
     Create = 32,
 
     /**
+     * @brief Indicates that reading and writing tags is permitted.
+     */
+    Tags = 64,
+
+    /**
      * @brief Indicates that all permissions are set.
      */
     All = ~0,
@@ -153,6 +158,11 @@ namespace Azure { namespace Storage { namespace Sas {
      * @brief Allows the caller to set permissions and POSIX ACLs on blobs (files and directories).
      */
     ManageAccessControl = 512,
+
+    /**
+     * @brief Indicates that reading and writing tags is permitted.
+     */
+    Tags = 1024,
 
     /**
      * @brief Indicates that all permissions are set.
