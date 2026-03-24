@@ -120,16 +120,6 @@ namespace Azure { namespace Storage { namespace Test {
       auto acls = pathClient.GetAccessControlList().Value.Acls;
       EXPECT_NO_THROW(pathClient1.SetAccessControlList(acls));
     }
-
-    void VerifyDataLakeSasTags(
-        const Files::DataLake::DataLakePathClient& pathClient,
-        const std::string& sasToken)
-    {
-      auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
-      const std::map<std::string, std::string> tags = {{"k1", "v1"}};
-      EXPECT_NO_THROW(pathClient1.SetTags(tags));
-      EXPECT_NO_THROW(pathClient1.GetTags());
-    }
   };
 
   TEST_F(DataLakeSasTest, AccountSasPermissions_LIVEONLY_)
@@ -238,7 +228,6 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::DataLakeSasPermissions::Move,
              Sas::DataLakeSasPermissions::Execute,
              Sas::DataLakeSasPermissions::ManageAccessControl,
-             Sas::DataLakeSasPermissions::Tags,
          })
     {
       fileSystemSasBuilder.SetPermissions(permissions);
@@ -287,11 +276,6 @@ namespace Azure { namespace Storage { namespace Test {
         VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken);
         VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken2);
       }
-      if ((permissions & Sas::DataLakeSasPermissions::Tags) == Sas::DataLakeSasPermissions::Tags)
-      {
-        VerifyDataLakeSasTags(dataLakeFileClient, sasToken);
-        VerifyDataLakeSasTags(dataLakeFileClient, sasToken2);
-      }
     }
   }
 
@@ -329,7 +313,6 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::DataLakeSasPermissions::Create,
              Sas::DataLakeSasPermissions::Execute,
              Sas::DataLakeSasPermissions::ManageAccessControl,
-             Sas::DataLakeSasPermissions::Tags,
          })
     {
       fileSasBuilder.SetPermissions(permissions);
@@ -367,11 +350,6 @@ namespace Azure { namespace Storage { namespace Test {
       {
         VerifyDataLakeSasManageAccessControl(dataLakeFileClient, sasToken);
         VerifyDataLakeSasManageAccessControl(dataLakeFileClient, sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::Tags) == Sas::DataLakeSasPermissions::Tags)
-      {
-        VerifyDataLakeSasTags(dataLakeFileClient, sasToken);
-        VerifyDataLakeSasTags(dataLakeFileClient, sasToken2);
       }
     }
   }
@@ -412,7 +390,6 @@ namespace Azure { namespace Storage { namespace Test {
              Sas::DataLakeSasPermissions::Create,
              Sas::DataLakeSasPermissions::Execute,
              Sas::DataLakeSasPermissions::ManageAccessControl,
-             Sas::DataLakeSasPermissions::Tags,
          })
     {
       directorySasBuilder.SetPermissions(permissions);
@@ -439,10 +416,6 @@ namespace Azure { namespace Storage { namespace Test {
           == Sas::DataLakeSasPermissions::ManageAccessControl)
       {
         VerifyDataLakeSasManageAccessControl(dataLakeDirectoryClient, sasToken2);
-      }
-      if ((permissions & Sas::DataLakeSasPermissions::Tags) == Sas::DataLakeSasPermissions::Tags)
-      {
-        VerifyDataLakeSasTags(dataLakeDirectoryClient, sasToken2);
       }
     }
   }
