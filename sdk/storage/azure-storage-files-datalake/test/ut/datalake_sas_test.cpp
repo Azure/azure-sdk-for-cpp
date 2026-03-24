@@ -126,7 +126,7 @@ namespace Azure { namespace Storage { namespace Test {
         const std::string& sasToken)
     {
       auto pathClient1 = GetSasAuthenticatedClient(pathClient, sasToken);
-      const std::map<std::string, std::string> tags = {{"k1" , "v1"}};
+      const std::map<std::string, std::string> tags = {{"k1", "v1"}};
       EXPECT_NO_THROW(pathClient1.SetTags(tags));
       EXPECT_NO_THROW(pathClient1.GetTags());
     }
