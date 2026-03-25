@@ -1,14 +1,10 @@
 # Release History
 
-## 12.13.0-beta.2 (Unreleased)
+## 12.14.0-beta.1 (2026-03-25)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up Account SAS version to `2026-06-06`.
 
 ## 12.13.0-beta.1 (2026-02-26)
 
