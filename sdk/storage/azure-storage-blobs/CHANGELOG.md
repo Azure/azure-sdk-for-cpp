@@ -1,14 +1,12 @@
 # Release History
 
-## 12.17.0-beta.2 (Unreleased)
+## 12.18.0-beta.1 (2026-03-25)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bumped up API version to `2026-06-06`.
+- Added support for directory-level SAS.
+- Added support for smart tier.
 
 ## 12.17.0-beta.1 (2026-02-26)
 
