@@ -178,7 +178,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options,
       const Azure::Core::Context& context) const
   {
-    constexpr int64_t DefaultStageBlockSize = 4 * 1024 * 1024ULL;
+    constexpr int64_t DefaultStageBlockSize = 16 * 1024 * 1024ULL;
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
@@ -270,7 +270,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const UploadBlockBlobFromOptions& options,
       const Azure::Core::Context& context) const
   {
-    constexpr int64_t DefaultStageBlockSize = 4 * 1024 * 1024ULL;
+    constexpr int64_t DefaultStageBlockSize = 16 * 1024 * 1024ULL;
     constexpr int64_t MaxStageBlockSize = 4000 * 1024 * 1024ULL;
     constexpr int64_t MaxBlockNumber = 50000;
     constexpr int64_t BlockGrainSize = 1 * 1024 * 1024;
