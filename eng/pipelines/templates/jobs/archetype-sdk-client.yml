@@ -331,24 +331,11 @@ jobs:
             ArtifactPath: $(Build.ArtifactStagingDirectory)/PackageInfo
             ArtifactName: PackageInfo
 
-        - ${{ if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest'), not(endsWith(variables['Build.Repository.Name'], '-pr'))) }}:
-          - task: AzureCLI@2
-            inputs:
-              azureSubscription: 'APIView prod deployment'
-              scriptType: pscore
-              scriptLocation: scriptPath
-              scriptPath: $(System.DefaultWorkingDirectory)/eng/common/scripts/Create-APIReview.ps1
-              arguments: >
-                -ArtifactList ('${{ convertToJson(parameters.Artifacts) }}' | ConvertFrom-Json | Select-Object Name)
-                -ArtifactPath "$(Build.ArtifactStagingDirectory)/packages"
-                -SourceBranch $(Build.SourceBranchName)
-                -DefaultBranch $(DefaultBranch)
-                -BuildId $(Build.BuildId)
-                -RepoName "$(Build.Repository.Name)"
-              pwsh: true
-              workingDirectory: $(Pipeline.Workspace)
-            displayName: Create API Review
-            condition: and(succeeded(), ne(variables['Skip.CreateApiReview'], 'true'))
+        - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+          parameters:
+            ArtifactPath: $(Build.ArtifactStagingDirectory)/packages
+            Artifacts: ${{ parameters.Artifacts }}
+            ConfigFileDir: $(Build.ArtifactStagingDirectory)/PackageInfo
 
         - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
           - ${{ each artifact in parameters.Artifacts }}:
