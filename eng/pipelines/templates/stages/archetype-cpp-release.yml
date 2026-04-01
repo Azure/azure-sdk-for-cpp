@@ -84,6 +84,15 @@ stages:
                   PackageRepository: CPP
                   ReleaseSha: $(Build.SourceVersion)
                   RepoId: Azure/azure-sdk-for-cpp
+              - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+                parameters:
+                  ArtifactPath: $(Pipeline.Workspace)/packages
+                  Artifacts: ${{parameters.Artifacts}}
+                  ConfigFileDir: $(Pipeline.Workspace)/packages/PackageInfo
+                  MarkPackageAsShipped: true
+                  ArtifactName: ${{parameters.ArtifactName}}
+                  PackageName: ${{artifact.name}}
+                  SourceRootPath: $(Build.SourcesDirectory)
 
           - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
             - job: PublishDocs
