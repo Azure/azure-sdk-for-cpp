@@ -280,7 +280,7 @@ UniquePrivateKey ImportRsaPrivateKey(const BYTE* data, DWORD size)
   THROW_IF_NTSTATUS_FAILED(BCryptImportKeyPair(
       alg.get(),
       nullptr,
-      BCRYPT_RSAPRIVATE_BLOB,
+      BCRYPT_RSAPRIVATE_BLOB, // cspell: disable-line
       &key,
       reinterpret_cast<uint8_t*>(rsaKeyBlob.get()),
       keySize,
