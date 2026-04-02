@@ -27,14 +27,21 @@
 #include <wincrypt.h>
 
 #if !defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP // not UWP
+#if defined(_MSC_VER)
 #pragma warning(push)
+#pragma warning(disable : 6001)
+#pragma warning(disable : 6387)
 #pragma warning(disable : 6553)
-#pragma warning(disable : 6001) // Using uninitialized memory 'pNode'.
-#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
-                                // 'GetProcAddress'.
+#pragma warning(disable : 28182)
+#endif
+
 #include <wil/resource.h>
 #include <wil/result.h>
+
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
+
 #endif // UWP
 #endif
 

@@ -5,9 +5,24 @@
 
 #include <chrono>
 #include <memory>
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <wincrypt.h>
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 6001)
+#pragma warning(disable : 6387)
+#pragma warning(disable : 6553)
+#pragma warning(disable : 28182)
+#endif
+
 #include <wil/resource.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
   class WinHttpTransportImpl : HttpTransport {

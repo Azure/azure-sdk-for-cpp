@@ -25,14 +25,24 @@
 #include <chrono>
 #include <memory>
 #include <mutex>
+
+#if defined(_MSC_VER)
 #pragma warning(push)
+#pragma warning(disable : 6001)
+#pragma warning(disable : 6387)
 #pragma warning(disable : 6553)
-#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
-                                // 'GetProcAddress'.
+#pragma warning(disable : 28182)
+
+#endif
+
 #include <wincrypt.h>
 
 #include <wil\resource.h>
+
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
+
 #include <winhttp.h>
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {

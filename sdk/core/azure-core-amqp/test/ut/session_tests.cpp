@@ -35,10 +35,9 @@
 #include <netinet/in.h> // for sockaddr_in
 #include <sys/socket.h> // for socket shutdown
 #elif defined(AZ_PLATFORM_WINDOWS)
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <winsock2.h> // for WSAPoll();
-#ifdef max
-#undef max
-#endif
 #endif // AZ_PLATFORM_POSIX/AZ_PLATFORM_WINDOWS
 #endif // USE_NATIVE_BROKER
 
