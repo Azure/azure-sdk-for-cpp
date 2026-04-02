@@ -37,7 +37,7 @@
 
 #include <wincrypt.h>
 
-#include <wil\resource.h>
+#include <wil/resource.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
