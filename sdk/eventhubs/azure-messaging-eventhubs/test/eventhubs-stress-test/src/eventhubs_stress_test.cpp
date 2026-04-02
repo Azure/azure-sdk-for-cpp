@@ -20,6 +20,8 @@
 #include <memory>
 
 #if defined(AZ_PLATFORM_WINDOWS)
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <winsock.h>
 #else // Assume POSIX
 #include <unistd.h>

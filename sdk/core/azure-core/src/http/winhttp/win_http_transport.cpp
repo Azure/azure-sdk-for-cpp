@@ -29,12 +29,22 @@
 #include <sstream>
 #include <string>
 #include <type_traits>
+
+#if defined(_MSC_VER)
 #pragma warning(push)
+#pragma warning(disable : 6001)
+#pragma warning(disable : 6387)
 #pragma warning(disable : 6553)
-#pragma warning(disable : 6387) // An argument in result_macros.h may be '0', for the function
-                                // 'GetProcAddress'.
+#pragma warning(disable : 28182)
+
+#endif
+
 #include <wil/resource.h> // definitions for wil::unique_cert_chain_context and other RAII type wrappers for Windows types.
+
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
+
 #include "private/win_http_transport_impl.hpp"
 
 #include <wincrypt.h>
@@ -195,8 +205,14 @@ std::string WideStringToStringASCII(
     std::vector<WCHAR>::iterator wideStringEnd)
 {
   // Converting this way is only safe when the text is ASCII.
-#pragma warning(suppress : 4244)
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 4244)
+#endif
   std::string str(wideStringStart, wideStringEnd);
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
   return str;
 }
 
@@ -1243,11 +1259,14 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   void WinHttpRequest::EnableWebSocketsSupport()
   {
+#if defined(_MSC_VER)
 #pragma warning(push)
-    // warning C6387: _Param_(3) could be '0'.
-#pragma warning(disable : 6387)
+#pragma warning(disable : 6387) // warning C6387: _Param_(3) could be '0'.
+#endif
     if (!WinHttpSetOption(m_requestHandle.get(), WINHTTP_OPTION_UPGRADE_TO_WEB_SOCKET, nullptr, 0))
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
     {
       GetErrorAndThrow("Error while Enabling WebSocket upgrade.");
     }
