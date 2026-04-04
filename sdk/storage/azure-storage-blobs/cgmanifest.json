@@ -52,6 +52,16 @@
         }
       },
       "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "git",
+        "git": {
+          "RepositoryUrl": "https://github.com/apache/arrow-nanoarrow",
+          "CommitHash": "a579fbf5d192e85b6249935e117de7d02a6dc4e9"
+        }
+      },
+      "DevelopmentDependency": false
     }
   ]
 }

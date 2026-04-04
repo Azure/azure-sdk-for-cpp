@@ -38,6 +38,7 @@ elseif(NOT AZ_ALL_LIBRARIES)
     find_package(azure-storage-common-cpp REQUIRED)
   endif()
 endif()
+find_package(nanoarrow REQUIRED)
 
 set(
   AZURE_STORAGE_BLOBS_HEADER
@@ -92,6 +93,7 @@ target_include_directories(
 )
 
 target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
+target_link_libraries(azure-storage-blobs PRIVATE nanoarrow::flatccrt nanoarrow::nanoarrow_shared nanoarrow::nanoarrow_static nanoarrow::nanoarrow_ipc_shared)
 
 target_compile_definitions(azure-storage-blobs PRIVATE _azure_BUILDING_SDK)
 

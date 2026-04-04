@@ -37,6 +37,9 @@
     {
       "name": "umock-c",
       "platform": "!uwp"
+    },
+    {
+      "name": "nanoarrow"
     }
   ],
   "overrides": []

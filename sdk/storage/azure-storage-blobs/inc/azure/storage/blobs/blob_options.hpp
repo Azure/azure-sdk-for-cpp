@@ -481,6 +481,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies the relative path to list paths from.
      */
     Azure::Nullable<std::string> StartFrom;
+
+    /**
+     * @brief Specifies the relative path to list paths until.
+     */
+    Azure::Nullable<std::string> EndBefore;
+
+    /**
+     * @brief Specifies whether to use Apache Arrow format instead of XML for the listing response.
+     */
+    bool UseApacheArrow = false;
   };
 
   /**
