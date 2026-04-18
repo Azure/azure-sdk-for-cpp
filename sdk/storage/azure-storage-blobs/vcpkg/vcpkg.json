@@ -29,7 +29,10 @@
       "host": true
     },
     {
-      "name": "nanoarrow"
+      "name": "nanoarrow",
+      "features": [
+        "ipc"
+      ]
     }
   ]
 }

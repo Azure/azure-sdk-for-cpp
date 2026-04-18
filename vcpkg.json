@@ -39,7 +39,10 @@
       "platform": "!uwp"
     },
     {
-      "name": "nanoarrow"
+      "name": "nanoarrow",
+      "features": [
+        "ipc"
+      ]
     }
   ],
   "overrides": []

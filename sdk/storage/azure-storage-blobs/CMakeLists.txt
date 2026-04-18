@@ -93,7 +93,11 @@ target_include_directories(
 )
 
 target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
-target_link_libraries(azure-storage-blobs PRIVATE nanoarrow::flatccrt nanoarrow::nanoarrow_shared nanoarrow::nanoarrow_static nanoarrow::nanoarrow_ipc_shared)
+if (BUILD_SHARED_LIBS)
+  target_link_libraries(azure-storage-blobs PRIVATE nanoarrow::nanoarrow_shared nanoarrow::nanoarrow_ipc_shared)
+else()
+  target_link_libraries(azure-storage-blobs PRIVATE nanoarrow::nanoarrow_static nanoarrow::nanoarrow_ipc_static)
+endif()
 
 target_compile_definitions(azure-storage-blobs PRIVATE _azure_BUILDING_SDK)
 
