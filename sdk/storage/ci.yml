@@ -6,9 +6,6 @@ trigger:
       - feature/*
       - release/*
       - hotfix/*
-  paths:
-    include:
-      - sdk/storage
 
 pr:
   branches:
@@ -17,10 +14,6 @@ pr:
       - feature/*
       - release/*
       - hotfix/*
-  paths:
-    include:
-      - sdk/storage
-      - eng/common/testproxy
 
 extends:
     template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
