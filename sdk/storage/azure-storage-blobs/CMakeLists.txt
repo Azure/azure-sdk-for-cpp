@@ -93,6 +93,10 @@ target_include_directories(
 )
 
 target_link_libraries(azure-storage-blobs PUBLIC Azure::azure-storage-common)
+add_library(flatccrt STATIC IMPORTED)
+find_library(FLATCCRT_LIB_PATH_DEBUG NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}flatccrt_d${CMAKE_STATIC_LIBRARY_SUFFIX} ${CMAKE_STATIC_LIBRARY_PREFIX}flatccrt${CMAKE_STATIC_LIBRARY_SUFFIX})
+find_library(FLATCCRT_LIB_PATH_RELEASE NAMES ${CMAKE_STATIC_LIBRARY_PREFIX}flatccrt${CMAKE_STATIC_LIBRARY_SUFFIX})
+set_target_properties(flatccrt PROPERTIES IMPORTED_LOCATION_DEBUG ${FLATCCRT_LIB_PATH_DEBUG} IMPORTED_LOCATION_RELEASE ${FLATCCRT_LIB_PATH_RELEASE})
 target_link_libraries(azure-storage-blobs PRIVATE nanoarrow::nanoarrow nanoarrow::nanoarrow_ipc)
 
 target_compile_definitions(azure-storage-blobs PRIVATE _azure_BUILDING_SDK)
