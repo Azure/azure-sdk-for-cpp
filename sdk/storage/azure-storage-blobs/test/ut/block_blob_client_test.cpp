@@ -2692,4 +2692,62 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(blobItem.Details.SmartAccessTier.HasValue());
     EXPECT_FALSE(blobItem.Details.SmartAccessTier.Value().ToString().empty());
   }
+
+  TEST_F(BlockBlobClientTest, SessionToken)
+  {
+    std::shared_ptr<std::string> authorizationHeader = std::make_shared<std::string>();
+    auto callback = [authorizationHeader](const Core::Http::Request& request) {
+      const auto headers = request.GetHeaders();
+      auto ite = headers.find(Azure::Storage::_internal::HttpHeaderAuthorization);
+      if (ite != headers.end())
+      {
+        *authorizationHeader = ite->second;
+      }
+      else
+      {
+        authorizationHeader->clear();
+      }
+    };
+
+    auto peekPolicyPtr = std::make_unique<PeekHttpRequestPolicy>(callback);
+    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    clientOptions.PerRetryPolicies.emplace_back(std::move(peekPolicyPtr));
+    {
+      clientOptions.SessionMode = Blobs::SessionMode::Auto;
+
+      auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
+      auto blobClient = containerClient.GetBlobClient(m_blobName);
+
+      EXPECT_NO_THROW(blobClient.Download().Value.BodyStream->ReadToEnd());
+      EXPECT_EQ(authorizationHeader->substr(0, 8), "Session ");
+    }
+    {
+      clientOptions.SessionMode = Blobs::SessionMode::None;
+
+      auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
+      auto blobClient = containerClient.GetBlobClient(m_blobName);
+
+      EXPECT_NO_THROW(blobClient.Download().Value.BodyStream->ReadToEnd());
+      EXPECT_EQ(authorizationHeader->substr(0, 7), "Bearer ");
+    }
+  }
+
+  TEST_F(BlockBlobClientTest, SessionTokenErrors)
+  {
+    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    clientOptions.SessionMode = Blobs::SessionMode::Auto;
+    {
+      auto containerClient = GetBlobContainerClientForTest(RandomString(), clientOptions);
+      auto blobClient = containerClient.GetBlobClient(m_blobName);
+
+      EXPECT_THROW(blobClient.Download(), StorageException);
+    }
+    {
+      auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
+      auto blobClient = containerClient.GetBlobClient(RandomString());
+
+      EXPECT_THROW(blobClient.Download(), StorageException);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test
