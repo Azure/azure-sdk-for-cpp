@@ -2710,7 +2710,7 @@ namespace Azure { namespace Storage { namespace Test {
     };
 
     auto peekPolicyPtr = std::make_unique<PeekHttpRequestPolicy>(callback);
-    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(peekPolicyPtr));
     {
       clientOptions.SessionMode = Blobs::SessionMode::Auto;
@@ -2734,7 +2734,7 @@ namespace Azure { namespace Storage { namespace Test {
 
   TEST_F(BlockBlobClientTest, SessionTokenErrors)
   {
-    Blobs::BlobClientOptions clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    Blobs::BlobClientOptions clientOptions;
     clientOptions.SessionMode = Blobs::SessionMode::Auto;
     {
       auto containerClient = GetBlobContainerClientForTest(RandomString(), clientOptions);
