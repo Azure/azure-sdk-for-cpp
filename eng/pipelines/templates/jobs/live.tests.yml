@@ -94,7 +94,7 @@ jobs:
     - name: AZURE_TEST_MODE
       value: "LIVE"
     - name: AZURE_LOG_LEVEL
-      value: "verbose"
+      value: "debug"
       # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     - name: AZURE_SERVICE_DIRECTORY
       value: ${{ parameters.ServiceDirectory }}
