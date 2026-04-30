@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+# Copyright (c) Microsoft Corporation. 
 # Licensed under the MIT License.
 
 # We need to know an absolute path to our repo root to do things like referencing ./LICENSE.txt file.
