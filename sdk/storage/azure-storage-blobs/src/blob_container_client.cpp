@@ -23,8 +23,17 @@
 
 #include <unordered_map>
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable : 28251)
+#endif
+
 #include <nanoarrow/nanoarrow.hpp>
 #include <nanoarrow/nanoarrow_ipc.hpp>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 namespace Azure { namespace Storage { namespace Blobs {
 
