@@ -315,7 +315,8 @@ namespace Azure { namespace Storage { namespace _internal {
         if (sessionTokenToUse.HasValue())
         {
           request.RemoveHeader(HttpHeaderAuthorization);
-          const auto signature = SharedKeyPolicy::GetSignature(request, accountName, sessionTokenToUse.Value().Key);
+          const auto signature
+              = SharedKeyPolicy::GetSignature(request, accountName, sessionTokenToUse.Value().Key);
           request.SetHeader(
               HttpHeaderAuthorization,
               "Session " + sessionTokenToUse.Value().Token + ":" + signature);

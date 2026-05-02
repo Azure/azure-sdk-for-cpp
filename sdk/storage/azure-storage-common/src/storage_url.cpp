@@ -8,7 +8,7 @@
 namespace Azure { namespace Storage { namespace _internal {
   std::string StripAccountSuffix(std::string accountName)
   {
-    for (const std::string& suffix : {"-ipv6", "-dualstack", "-secondary"})
+    for (const std::string suffix : {"-ipv6", "-dualstack", "-secondary"})
     {
       if (accountName.length() > suffix.length()
           && accountName.compare(accountName.length() - suffix.length(), suffix.length(), suffix) == 0)
@@ -23,7 +23,7 @@ namespace Azure { namespace Storage { namespace _internal {
   {
     const auto& hostname = url.GetHost();
     std::string endpoint;
-    for (const std::string& e : {".preprod.core.windows.net", ".core.windows.net"})
+    for (const std::string e : {".preprod.core.windows.net", ".core.windows.net"})
     {
       if (hostname.find(e) != std::string::npos)
       {
@@ -35,7 +35,7 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       return Azure::Nullable<StorageUrlParts>();
     }
-    for (const std::string& service : {"blob", "dfs", "file", "queue", "table", "web"})
+    for (const std::string service : {"blob", "dfs", "file", "queue", "table", "web"})
     {
       const auto suffix = "." + service + endpoint;
       if (hostname.length() > suffix.length()
