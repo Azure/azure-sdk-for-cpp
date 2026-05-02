@@ -295,7 +295,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * @brief Specifies session options used to authenticate blob requests.
      */
-    SessionOptions SessionOptions;
+    Blobs::SessionOptions SessionOptions;
   };
 
   /**

@@ -11,7 +11,8 @@ namespace Azure { namespace Storage { namespace _internal {
     for (const std::string suffix : {"-ipv6", "-dualstack", "-secondary"})
     {
       if (accountName.length() > suffix.length()
-          && accountName.compare(accountName.length() - suffix.length(), suffix.length(), suffix) == 0)
+          && accountName.compare(accountName.length() - suffix.length(), suffix.length(), suffix)
+              == 0)
       {
         accountName = accountName.substr(0, accountName.length() - suffix.length());
       }
