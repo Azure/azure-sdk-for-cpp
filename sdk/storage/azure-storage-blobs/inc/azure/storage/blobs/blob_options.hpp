@@ -214,13 +214,29 @@ namespace Azure { namespace Storage { namespace Blobs {
   enum class SessionMode
   {
     /**
-     * @brief Off
+     * @brief Disabled
      */
-    None,
+    Disabled,
     /**
-     * @brief Use SDK default settings.
+     * @brief Enabled.
      */
-    Auto,
+    Enabled,
+  };
+
+  /**
+   * @brief Options for configuring session token authentication for blob operations.
+   */
+  struct SessionOptions final
+  {
+    /**
+     * @brief The Account name to use for signing the session key.
+     */
+    std::string AccountName;
+
+    /**
+     * @brief The session authentication mode to use for blob operations.
+     */
+    SessionMode Mode = SessionMode::Disabled;
   };
 
   /**
@@ -277,9 +293,9 @@ namespace Azure { namespace Storage { namespace Blobs {
     Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
 
     /**
-     * @brief Optional. Specifies session token mode used to authenticate blob requests.
+     * @brief Specifies session options used to authenticate blob requests.
      */
-    Azure::Nullable<SessionMode> SessionMode;
+    SessionOptions SessionOptions;
   };
 
   /**

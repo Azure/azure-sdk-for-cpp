@@ -1263,20 +1263,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
-      _internal::SessionMode sessionMode = _internal::SessionMode::None;
-      if (options.SessionMode.HasValue())
+      _internal::SessionOptions sessionOptions;
+      if (options.SessionOptions.Mode == SessionMode::Enabled)
       {
-        if (options.SessionMode.Value() == SessionMode::None)
-        {
-          sessionMode = _internal::SessionMode::None;
-        }
-        else if (options.SessionMode.Value() == SessionMode::Auto)
-        {
-          sessionMode = _internal::SessionMode::Always;
-        }
+        sessionOptions.Enabled = true;
+        sessionOptions.AccountName = options.SessionOptions.AccountName;
       }
       tokenAuthPolicy = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-          credential, tokenContext, options.EnableTenantDiscovery, sessionMode);
+          credential, tokenContext, options.EnableTenantDiscovery, sessionOptions);
       perRetryPolicies.emplace_back(tokenAuthPolicy->Clone());
     }
     perOperationPolicies.emplace_back(

@@ -2713,7 +2713,7 @@ namespace Azure { namespace Storage { namespace Test {
     Blobs::BlobClientOptions clientOptions;
     clientOptions.PerRetryPolicies.emplace_back(std::move(peekPolicyPtr));
     {
-      clientOptions.SessionMode = Blobs::SessionMode::Auto;
+      clientOptions.SessionOptions.Mode = Blobs::SessionMode::Enabled;
 
       auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
       auto blobClient = containerClient.GetBlobClient(m_blobName);
@@ -2722,7 +2722,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(authorizationHeader->substr(0, 8), "Session ");
     }
     {
-      clientOptions.SessionMode = Blobs::SessionMode::None;
+      clientOptions.SessionOptions.Mode = Blobs::SessionMode::Disabled;
 
       auto containerClient = GetBlobContainerClientForTest(m_containerName, clientOptions);
       auto blobClient = containerClient.GetBlobClient(m_blobName);
@@ -2735,7 +2735,8 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_F(BlockBlobClientTest, SessionTokenErrors)
   {
     Blobs::BlobClientOptions clientOptions;
-    clientOptions.SessionMode = Blobs::SessionMode::Auto;
+    clientOptions.SessionOptions.Mode = Blobs::SessionMode::Enabled;
+    clientOptions.SessionOptions.AccountName = m_accountName;
     {
       auto containerClient = GetBlobContainerClientForTest(RandomString(), clientOptions);
       auto blobClient = containerClient.GetBlobClient(m_blobName);

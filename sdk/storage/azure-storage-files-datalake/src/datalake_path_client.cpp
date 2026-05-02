@@ -108,7 +108,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               credential,
               tokenContext,
               options.EnableTenantDiscovery,
-              _internal::SessionMode::None));
+              _internal::SessionOptions()));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));

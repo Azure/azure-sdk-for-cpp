@@ -182,9 +182,20 @@ namespace Azure { namespace Storage { namespace _internal {
       }
     };
 
-    if (m_sessionMode == SessionMode::Always)
+    if (m_sessionOptions.Enabled)
     {
       const auto urlParts = ParseStorageUrl(request.GetUrl());
+      const auto accountName = [this, &urlParts]() {
+        if (!m_sessionOptions.AccountName.empty())
+        {
+          return m_sessionOptions.AccountName;
+        }
+        else if (urlParts.HasValue())
+        {
+          return urlParts.Value().AccountName;
+        }
+        return std::string();
+      }();
       const auto queryParameters = request.GetUrl().GetQueryParameters();
       const bool isGetObject = request.GetMethod() == Azure::Core::Http::HttpMethod::Get
           && queryParameters.count("restype") == 0 && queryParameters.count("comp") == 0;
@@ -193,7 +204,7 @@ namespace Azure { namespace Storage { namespace _internal {
           && urlParts.Value().ContainerName.HasValue() && urlParts.Value().ContainerUrl.HasValue()
           && isGetObject)
       {
-        const auto lookupKey = urlParts.Value().Service + "/" + urlParts.Value().AccountName + "/"
+        const auto lookupKey = urlParts.Value().Service + "/" + accountName + "/"
             + urlParts.Value().ContainerName.Value();
         auto& sessionContext = GetSessionTokenGlobalContext().GetContextFor(lookupKey);
         Azure::Nullable<SessionToken> sessionTokenToUse;
@@ -304,8 +315,7 @@ namespace Azure { namespace Storage { namespace _internal {
         if (sessionTokenToUse.HasValue())
         {
           request.RemoveHeader(HttpHeaderAuthorization);
-          const auto signature = SharedKeyPolicy::GetSignature(
-              request, urlParts.Value().AccountName, sessionTokenToUse.Value().Key);
+          const auto signature = SharedKeyPolicy::GetSignature(request, accountName, sessionTokenToUse.Value().Key);
           request.SetHeader(
               HttpHeaderAuthorization,
               "Session " + sessionTokenToUse.Value().Token + ":" + signature);

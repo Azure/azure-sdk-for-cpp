@@ -10,10 +10,10 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  enum class SessionMode
+  struct SessionOptions
   {
-    None,
-    Always,
+    std::string AccountName;
+    bool Enabled = false;
   };
 
   class StorageBearerTokenAuthenticationPolicy final
@@ -30,10 +30,10 @@ namespace Azure { namespace Storage { namespace _internal {
         std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
         bool enableTenantDiscovery,
-        SessionMode sessionMode)
+        SessionOptions sessionOptions)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
           m_scopes(tokenRequestContext.Scopes), m_safeTenantId(tokenRequestContext.TenantId),
-          m_enableTenantDiscovery(enableTenantDiscovery), m_sessionMode(sessionMode)
+          m_enableTenantDiscovery(enableTenantDiscovery), m_sessionOptions(sessionOptions)
     {
     }
 
@@ -72,7 +72,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::vector<std::string> m_scopes;
     mutable SafeTenantId m_safeTenantId;
     bool m_enableTenantDiscovery;
-    SessionMode m_sessionMode;
+    SessionOptions m_sessionOptions;
 
     std::unique_ptr<Azure::Core::Http::RawResponse> AuthorizeAndSendRequest(
         Azure::Core::Http::Request& request,
