@@ -202,7 +202,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
       if (urlParts.HasValue() && urlParts.Value().Service == "blob"
           && urlParts.Value().ContainerName.HasValue() && urlParts.Value().ContainerUrl.HasValue()
-          && isGetObject)
+          && isGetObject && !accountName.empty())
       {
         const auto lookupKey = urlParts.Value().Service + "/" + accountName + "/"
             + urlParts.Value().ContainerName.Value();
