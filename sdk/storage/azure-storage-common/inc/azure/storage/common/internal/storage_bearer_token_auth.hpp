@@ -29,7 +29,8 @@ namespace Azure { namespace Storage { namespace _internal {
     explicit StorageBearerTokenAuthenticationPolicy(
         std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
         Azure::Core::Credentials::TokenRequestContext tokenRequestContext,
-        bool enableTenantDiscovery, SessionMode sessionMode)
+        bool enableTenantDiscovery,
+        SessionMode sessionMode)
         : BearerTokenAuthenticationPolicy(std::move(credential), tokenRequestContext),
           m_scopes(tokenRequestContext.Scopes), m_safeTenantId(tokenRequestContext.TenantId),
           m_enableTenantDiscovery(enableTenantDiscovery), m_sessionMode(sessionMode)

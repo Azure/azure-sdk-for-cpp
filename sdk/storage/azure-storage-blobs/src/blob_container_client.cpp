@@ -23,8 +23,8 @@
 
 #include <unordered_map>
 
-#include <nanoarrow/nanoarrow_ipc.hpp>
 #include <nanoarrow/nanoarrow.hpp>
+#include <nanoarrow/nanoarrow_ipc.hpp>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
@@ -113,8 +113,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const std::vector<uint8_t> responseBody = result.BodyStream->ReadToEnd();
 
       int ret = NANOARROW_OK;
-      auto checkNanoarrowError = [&ret]()
-      {
+      auto checkNanoarrowError = [&ret]() {
         if (ret != NANOARROW_OK)
         {
           throw StorageException("Failed to parse Apache Arrow IPC response body");
@@ -226,7 +225,7 @@ namespace Azure { namespace Storage { namespace Blobs {
                 break;
               }
               case NANOARROW_TYPE_INT64:
-              case NANOARROW_TYPE_BOOL: 
+              case NANOARROW_TYPE_BOOL:
                 parsedIntValue = ArrowArrayViewGetIntUnsafe(columnView, r);
                 break;
               case NANOARROW_TYPE_UINT64:
@@ -240,7 +239,6 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               result.Items[batchRowStartOffset + r].Name.Encoded = false;
               result.Items[batchRowStartOffset + r].Name.Content = std::move(parsedStringValue);
-             
             }
             else if (columnName == "Creation-Time")
             {
@@ -254,7 +252,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (columnName == "BlobType")
             {
-              result.Items[batchRowStartOffset + r].BlobType = Models::BlobType(std::move(parsedStringValue));
+              result.Items[batchRowStartOffset + r].BlobType
+                  = Models::BlobType(std::move(parsedStringValue));
             }
             else if (columnName == "ResourceType")
             {

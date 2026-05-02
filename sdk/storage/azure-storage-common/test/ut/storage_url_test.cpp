@@ -28,7 +28,8 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(res.Value().Service, "dfs");
     EXPECT_TRUE(res.Value().ContainerName.HasValue());
     EXPECT_EQ(res.Value().ContainerName.Value(), "container");
-    EXPECT_EQ(res.Value().ContainerUrl.Value(), "http://account.dfs.preprod.core.windows.net/container");
+    EXPECT_EQ(
+        res.Value().ContainerUrl.Value(), "http://account.dfs.preprod.core.windows.net/container");
 
     res = _internal::ParseStorageUrl(
         Azure::Core::Url("https://account.file.core.windows.net/container/"));
