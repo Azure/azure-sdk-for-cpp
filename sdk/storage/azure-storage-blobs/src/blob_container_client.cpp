@@ -25,6 +25,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning(push)
+#pragma warning(disable : 6385)
 #pragma warning(disable : 28251)
 #endif
 
@@ -214,7 +215,8 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               case NANOARROW_TYPE_STRING: {
                 ArrowStringView stringView = ArrowArrayViewGetStringUnsafe(columnView, r);
-                parsedStringValue.assign(stringView.data, static_cast<size_t>(stringView.size_bytes));
+                parsedStringValue.assign(
+                    stringView.data, static_cast<size_t>(stringView.size_bytes));
                 break;
               }
               case NANOARROW_TYPE_MAP: {
