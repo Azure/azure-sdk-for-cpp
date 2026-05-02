@@ -150,11 +150,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         ArrowStringView valueView;
         while (ArrowMetadataReaderRead(&reader, &keyView, &valueView) == NANOARROW_OK)
         {
-          const std::string key(keyView.data, keyView.size_bytes);
-          std::string value(valueView.data, valueView.size_bytes);
+          const std::string key(keyView.data, static_cast<size_t>(keyView.size_bytes));
+          std::string value(valueView.data, static_cast<size_t>(valueView.size_bytes));
           if (key == "NumberOfRecords")
           {
-            result.Items.reserve(std::stoull(value));
+            result.Items.reserve(static_cast<size_t>(std::stoull(value)));
           }
           else if (key == "NextMarker")
           {
@@ -177,7 +177,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           break;
         }
 
-        const size_t batchSize = array->length;
+        const size_t batchSize = static_cast<size_t>(array->length);
         const size_t batchRowStartOffset = result.Items.size();
         result.Items.resize(result.Items.size() + batchSize);
 
@@ -205,7 +205,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             {
               case NANOARROW_TYPE_STRING: {
                 ArrowStringView stringView = ArrowArrayViewGetStringUnsafe(columnView, r);
-                parsedStringValue.assign(stringView.data, stringView.size_bytes);
+                parsedStringValue.assign(stringView.data, static_cast<size_t>(stringView.size_bytes));
                 break;
               }
               case NANOARROW_TYPE_MAP: {
@@ -217,9 +217,9 @@ namespace Azure { namespace Storage { namespace Blobs {
                 for (int64_t i = startOffset; i < endOffset; ++i)
                 {
                   ArrowStringView stringView = ArrowArrayViewGetStringUnsafe(keyView, i);
-                  std::string key(stringView.data, stringView.size_bytes);
+                  std::string key(stringView.data, static_cast<size_t>(stringView.size_bytes));
                   stringView = ArrowArrayViewGetStringUnsafe(valueView, i);
-                  std::string value(stringView.data, stringView.size_bytes);
+                  std::string value(stringView.data, static_cast<size_t>(stringView.size_bytes));
                   parsedMapValue.emplace(std::move(key), std::move(value));
                 }
                 break;
