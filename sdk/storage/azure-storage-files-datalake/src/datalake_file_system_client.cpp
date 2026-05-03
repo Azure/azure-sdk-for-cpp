@@ -520,11 +520,21 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.ShowOnly = "deleted";
     protocolLayerOptions.StartFrom = options.StartFrom;
-    auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
+    auto response = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
+    if (response.Value.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
+    {
+      Blobs::_detail::ParseListBlobsResultFromXml(response.Value);
+    }
+    else if (
+        response.Value.ContentType.find(_internal::ContentTypeApacheArrowStream)
+        != std::string::npos)
+    {
+      Blobs::_detail::ParseListBlobsResultFromArrow(response.Value);
+    }
 
     ListDeletedPathsPagedResponse pagedResponse;
-    for (auto& item : result.Value.Items)
+    for (auto& item : response.Value.Items)
     {
       Models::PathDeletedItem pathDeletedItem;
       if (item.Name.Encoded)
@@ -544,8 +554,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = std::move(result.Value.ContinuationToken);
-    pagedResponse.RawResponse = std::move(result.RawResponse);
+    pagedResponse.NextPageToken = std::move(response.Value.ContinuationToken);
+    pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
   }

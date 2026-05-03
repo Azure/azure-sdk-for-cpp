@@ -86,7 +86,7 @@ namespace Azure { namespace Storage { namespace Test {
             1, 1, Core::Http::HttpStatusCode::NotFound, "The specified blob does not exist."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("content-type", _internal::ContentTypeXml);
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
         response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "BlobNotFound");
@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
             "The condition specified using HTTP conditional header(s) is not met."));
         response->SetBody(std::vector<uint8_t>(errorResponseBody.begin(), errorResponseBody.end()));
         response->SetHeader("content-length", std::to_string(errorResponseBody.length()));
-        response->SetHeader("content-type", "application/xml");
+        response->SetHeader("content-type", _internal::ContentTypeXml);
         response->SetHeader("x-ms-request-id", Core::Uuid::CreateUuid().ToString());
         response->SetHeader("x-ms-version", Blobs::_detail::ApiVersion);
         response->SetHeader("x-ms-error-code", "ConditionNotMet");

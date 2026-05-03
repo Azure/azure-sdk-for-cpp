@@ -28,6 +28,8 @@ namespace Azure { namespace Storage { namespace _internal {
         "https://learn.microsoft.com/rest/api/storageservices/"
         "versioning-for-the-azure-storage-services for additional information.";
   constexpr static const char* CrcStructuredMessage = "XSM/1.0; properties=crc64";
+  constexpr static const char* ContentTypeXml = "application/xml";
+  constexpr static const char* ContentTypeApacheArrowStream = "application/vnd.apache.arrow.stream";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal

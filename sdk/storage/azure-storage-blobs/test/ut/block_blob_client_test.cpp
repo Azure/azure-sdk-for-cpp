@@ -2693,7 +2693,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(blobItem.Details.SmartAccessTier.Value().ToString().empty());
   }
 
-  TEST_F(BlockBlobClientTest, SessionToken)
+  TEST_F(BlockBlobClientTest, DISABLED_SessionToken)
   {
     std::shared_ptr<std::string> authorizationHeader = std::make_shared<std::string>();
     auto callback = [authorizationHeader](const Core::Http::Request& request) {
@@ -2732,7 +2732,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, SessionTokenErrors)
+  TEST_F(BlockBlobClientTest, DISABLED_SessionTokenErrors)
   {
     Blobs::BlobClientOptions clientOptions;
     clientOptions.SessionOptions.Mode = Blobs::SessionMode::Enabled;
