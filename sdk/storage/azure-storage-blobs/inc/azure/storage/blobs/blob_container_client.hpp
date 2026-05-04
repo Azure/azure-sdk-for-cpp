@@ -354,8 +354,4 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class Files::DataLake::DataLakeFileSystemClient;
   };
 
-  namespace _detail {
-    void ParseListBlobsResult(Models::_detail::ListBlobsResult& result);
-  } // namespace _detail
-
 }}} // namespace Azure::Storage::Blobs
