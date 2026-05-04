@@ -92,7 +92,10 @@ bool comparator(const std::string& lhs, const std::string& rhs)
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  std::string SharedKeyPolicy::GetSignature(const Core::Http::Request& request) const
+  std::string SharedKeyPolicy::GetSignature(
+      const Core::Http::Request& request,
+      const std::string& accountName,
+      const std::string& signingKey)
   {
     std::string string_to_sign;
     string_to_sign += request.GetMethod().ToString() + "\n";
@@ -146,7 +149,7 @@ namespace Azure { namespace Storage { namespace _internal {
     ordered_kv.clear();
 
     // canonicalized resource
-    string_to_sign += "/" + m_credential->AccountName + "/" + request.GetUrl().GetPath() + "\n";
+    string_to_sign += "/" + accountName + "/" + request.GetUrl().GetPath() + "\n";
     for (const auto& query : request.GetUrl().GetQueryParameters())
     {
       std::string key = Azure::Core::_internal::StringExtensions::ToLower(query.first);
@@ -164,6 +167,6 @@ namespace Azure { namespace Storage { namespace _internal {
 
     return Azure::Core::Convert::Base64Encode(_internal::HmacSha256(
         std::vector<uint8_t>(string_to_sign.begin(), string_to_sign.end()),
-        Azure::Core::Convert::Base64Decode(m_credential->GetAccountKey())));
+        Azure::Core::Convert::Base64Decode(signingKey)));
   }
 }}} // namespace Azure::Storage::_internal

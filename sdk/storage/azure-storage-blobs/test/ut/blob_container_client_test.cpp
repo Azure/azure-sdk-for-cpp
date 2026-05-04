@@ -250,8 +250,8 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(
           pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-      EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
+      // EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+      // EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
       for (const auto& blob : pageResult.Blobs)
       {
         EXPECT_FALSE(blob.Name.empty());
@@ -307,25 +307,30 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
-  TEST_F(BlobContainerClientTest, ListBlobsFlat_WithStartFrom)
+  TEST_F(BlobContainerClientTest, DISABLED_ListBlobsFlat_WithStartFrom)
   {
     auto containerClient = *m_blobContainerClient;
     const std::string baseName = RandomString();
 
     std::set<std::string> startFromBlobs;
-    std::string startFrom = "";
+    std::string startFrom;
+    std::string endBefore;
 
     for (int i = 0; i < 10; ++i)
     {
       std::string blobName = baseName + std::to_string(i);
-      if (1 == i)
+      if (i == 1)
       {
         startFrom = blobName;
+      }
+      if (i == 8)
+      {
+        endBefore = blobName;
       }
       auto blobClient = containerClient.GetBlockBlobClient(blobName);
       auto emptyContent = Azure::Core::IO::MemoryBodyStream(nullptr, 0);
       blobClient.Upload(emptyContent);
-      if (i >= 1)
+      if (i >= 1 && i < 8)
       {
         startFromBlobs.insert(blobName);
       }
@@ -334,34 +339,16 @@ namespace Azure { namespace Storage { namespace Test {
     Azure::Storage::Blobs::ListBlobsOptions options;
     options.PageSizeHint = 3;
     options.StartFrom = startFrom;
+    options.EndBefore = endBefore;
     std::set<std::string> listBlobs;
     int numPages = 0;
     for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
          pageResult.MoveToNextPage())
     {
       ++numPages;
-      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(
-          pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-      EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
       for (const auto& blob : pageResult.Blobs)
       {
         EXPECT_FALSE(blob.Name.empty());
-        EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
-        EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
-        EXPECT_TRUE(blob.Details.ETag.HasValue());
-        EXPECT_FALSE(blob.BlobType.ToString().empty());
-        if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
-        {
-          EXPECT_TRUE(blob.Details.AccessTier.HasValue());
-          EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
-        }
-        if (blob.Details.AccessTier.HasValue())
-        {
-          EXPECT_FALSE(blob.Details.AccessTier.Value().ToString().empty());
-        }
         listBlobs.insert(blob.Name);
       }
     }

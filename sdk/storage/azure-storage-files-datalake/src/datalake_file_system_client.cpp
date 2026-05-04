@@ -107,7 +107,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
               : _internal::StorageScope);
       perRetryPolicies.emplace_back(
           std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-              credential, tokenContext, options.EnableTenantDiscovery));
+              credential,
+              tokenContext,
+              options.EnableTenantDiscovery,
+              _internal::SessionOptions()));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
@@ -517,11 +520,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.ShowOnly = "deleted";
     protocolLayerOptions.StartFrom = options.StartFrom;
-    auto result = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
+    auto response = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
+    Blobs::_detail::ParseListBlobsResult(response.Value);
 
     ListDeletedPathsPagedResponse pagedResponse;
-    for (auto& item : result.Value.Items)
+    for (auto& item : response.Value.Items)
     {
       Models::PathDeletedItem pathDeletedItem;
       if (item.Name.Encoded)
@@ -541,8 +545,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pagedResponse.m_operationOptions = options;
     pagedResponse.m_fileSystemClient = std::make_shared<DataLakeFileSystemClient>(*this);
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = std::move(result.Value.ContinuationToken);
-    pagedResponse.RawResponse = std::move(result.RawResponse);
+    pagedResponse.NextPageToken = std::move(response.Value.ContinuationToken);
+    pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
   }

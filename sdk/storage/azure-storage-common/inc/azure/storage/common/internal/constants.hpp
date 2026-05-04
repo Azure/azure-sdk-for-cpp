@@ -13,6 +13,7 @@ namespace Azure { namespace Storage { namespace _internal {
   constexpr static const char* HttpQueryTimeout = "timeout";
   constexpr static const char* StorageScope = "https://storage.azure.com/.default";
   constexpr static const char* StorageDefaultAudience = "https://storage.azure.com";
+  constexpr static const char* HttpHeaderAuthorization = "authorization";
   constexpr static const char* HttpHeaderDate = "date";
   constexpr static const char* HttpHeaderXMsDate = "x-ms-date";
   constexpr static const char* HttpHeaderXMsVersion = "x-ms-version";
@@ -27,6 +28,8 @@ namespace Azure { namespace Storage { namespace _internal {
         "https://learn.microsoft.com/rest/api/storageservices/"
         "versioning-for-the-azure-storage-services for additional information.";
   constexpr static const char* CrcStructuredMessage = "XSM/1.0; properties=crc64";
+  constexpr static const char* ContentTypeXml = "application/xml";
+  constexpr static const char* ContentTypeApacheArrowStream = "application/vnd.apache.arrow.stream";
 
   constexpr int ReliableStreamRetryCount = 3;
 }}} // namespace Azure::Storage::_internal
