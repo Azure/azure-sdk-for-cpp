@@ -522,16 +522,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.StartFrom = options.StartFrom;
     auto response = Blobs::_detail::BlobContainerClient::ListBlobsByHierarchy(
         *m_pipeline, m_blobContainerClient.m_blobContainerUrl, protocolLayerOptions, context);
-    if (response.Value.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
-    {
-      Blobs::_detail::ParseListBlobsResultFromXml(response.Value);
-    }
-    else if (
-        response.Value.ContentType.find(_internal::ContentTypeApacheArrowStream)
-        != std::string::npos)
-    {
-      Blobs::_detail::ParseListBlobsResultFromArrow(response.Value);
-    }
+    Blobs::_detail::ParseListBlobsResult(response.Value);
 
     ListDeletedPathsPagedResponse pagedResponse;
     for (auto& item : response.Value.Items)

@@ -355,8 +355,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   namespace _detail {
-    void ParseListBlobsResultFromArrow(Models::_detail::ListBlobsResult& result);
-    void ParseListBlobsResultFromXml(Models::_detail::ListBlobsResult& result);
+    void ParseListBlobsResult(Models::_detail::ListBlobsResult& result);
   } // namespace _detail
 
 }}} // namespace Azure::Storage::Blobs

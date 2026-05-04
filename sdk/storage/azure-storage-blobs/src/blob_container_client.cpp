@@ -38,7 +38,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  namespace _detail {
+  namespace {
     Models::BlobItem BlobItemConversion(Models::_detail::BlobItem& item)
     {
       Models::BlobItem blobItem;
@@ -1201,6 +1201,22 @@ namespace Azure { namespace Storage { namespace Blobs {
         }
       }
     }
+  } // namespace
+
+  namespace _detail {
+    void ParseListBlobsResult(Models::_detail::ListBlobsResult& result)
+    {
+      if (result.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
+      {
+        return ParseListBlobsResultFromXml(result);
+      }
+      else if (
+          result.ContentType.find(_internal::ContentTypeApacheArrowStream) != std::string::npos)
+      {
+        return ParseListBlobsResultFromArrow(result);
+      }
+      AZURE_UNREACHABLE_CODE();
+    }
   } // namespace _detail
 
   BlobContainerClient BlobContainerClient::CreateFromConnectionString(
@@ -1474,16 +1490,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-
-    if (response.Value.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
-    {
-      _detail::ParseListBlobsResultFromXml(response.Value);
-    }
-    else if (
-        response.Value.ContentType.find(_internal::ContentTypeApacheArrowStream) != std::string::npos)
-    {
-      _detail::ParseListBlobsResultFromArrow(response.Value);
-    }
+    _detail::ParseListBlobsResult(response.Value);
 
     ListBlobsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
@@ -1491,7 +1498,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.Prefix = std::move(response.Value.Prefix);
     for (auto& i : response.Value.Items)
     {
-      pagedResponse.Blobs.push_back(_detail::BlobItemConversion(i));
+      pagedResponse.Blobs.push_back(BlobItemConversion(i));
     }
     pagedResponse.m_blobContainerClient = std::make_shared<BlobContainerClient>(*this);
     pagedResponse.m_operationOptions = options;
@@ -1524,17 +1531,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl,
         protocolLayerOptions,
         _internal::WithReplicaStatus(context));
-
-    if (response.Value.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
-    {
-      _detail::ParseListBlobsResultFromXml(response.Value);
-    }
-    else if (
-        response.Value.ContentType.find(_internal::ContentTypeApacheArrowStream)
-        != std::string::npos)
-    {
-      _detail::ParseListBlobsResultFromArrow(response.Value);
-    }
+    _detail::ParseListBlobsResult(response.Value);
 
     ListBlobsByHierarchyPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
@@ -1543,7 +1540,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pagedResponse.Delimiter = std::move(response.Value.Delimiter);
     for (auto& i : response.Value.Items)
     {
-      pagedResponse.Blobs.push_back(_detail::BlobItemConversion(i));
+      pagedResponse.Blobs.push_back(BlobItemConversion(i));
     }
     for (auto& i : response.Value.BlobPrefixes)
     {

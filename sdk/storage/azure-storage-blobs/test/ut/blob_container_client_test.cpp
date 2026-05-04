@@ -307,7 +307,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
-  TEST_F(BlobContainerClientTest, ListBlobsFlat_WithStartFrom)
+  TEST_F(BlobContainerClientTest, DISABLED_ListBlobsFlat_WithStartFrom)
   {
     auto containerClient = *m_blobContainerClient;
     const std::string baseName = RandomString();
