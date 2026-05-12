@@ -218,55 +218,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Owner = options.PosixProperties.Owner;
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
-    protocolLayerOptions.FilePropertySemantics = options.PropertySemantics;
 
-    Nullable<Response<Models::_detail::CreateFileResult>> resultNullable;
-    if (options.Content)
-    {
-      Azure::Nullable<TransferValidationOptions> validationOptions
-          = options.ValidationOptions.HasValue() ? options.ValidationOptions
-                                                 : m_uploadValidationOptions;
-      if (validationOptions.HasValue()
-          && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
-      {
-        protocolLayerOptions.StructuredBodyType = _internal::CrcStructuredMessage;
-        protocolLayerOptions.StructuredContentLength = options.Content->Length();
-        _internal::StructuredMessageEncodingStreamOptions encodingStreamOptions;
-        encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
-        auto structuredContent
-            = _internal::StructuredMessageEncodingStream(options.Content, encodingStreamOptions);
-        auto result = _detail::FileClient::Create(
-            *m_pipeline, m_shareFileUrl, structuredContent, protocolLayerOptions, context);
-        if (!result.Value.StructuredBodyType.HasValue())
-        {
-          throw StorageException(
-              "Structured message response without x-ms-structured-body header.");
-        }
-        resultNullable = std::move(result);
-      }
-    }
-    if (!resultNullable.HasValue())
-    {
-      if (options.Content)
-      {
-        auto result = _detail::FileClient::Create(
-            *m_pipeline, m_shareFileUrl, *options.Content, protocolLayerOptions, context);
-        resultNullable = std::move(result);
-      }
-      else
-      {
-        auto emptyBody = Core::IO::_internal::NullBodyStream();
-        auto result = _detail::FileClient::Create(
-            *m_pipeline,
-            m_shareFileUrl,
-            options.Content ? (*options.Content) : emptyBody,
-            protocolLayerOptions,
-            context);
-        resultNullable = std::move(result);
-      }
-    }
-    auto result = std::move(resultNullable.Value());
-
+    auto result
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
     Models::CreateFileResult ret;
     ret.Created = true;
     ret.ETag = std::move(result.Value.ETag);
@@ -1359,9 +1313,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    auto emptyBody = Core::IO::_internal::NullBodyStream();
-    auto createResult = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
+    auto createResult
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;
@@ -1474,9 +1427,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Group = options.PosixProperties.Group;
     protocolLayerOptions.NfsFileType = options.PosixProperties.NfsFileType;
 
-    auto emptyBody = Core::IO::_internal::NullBodyStream();
-    auto createResult = _detail::FileClient::Create(
-        *m_pipeline, m_shareFileUrl, emptyBody, protocolLayerOptions, context);
+    auto createResult
+        = _detail::FileClient::Create(*m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
 
     auto uploadPageFunc = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
       (void)chunkId;

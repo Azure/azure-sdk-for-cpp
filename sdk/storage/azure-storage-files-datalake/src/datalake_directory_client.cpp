@@ -271,7 +271,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       }
       if (!directoryPath.empty())
       {
-        protocolLayerOptions.Path = Core::Url::Decode(directoryPath);
+        protocolLayerOptions.Path = directoryPath;
       }
     }
     else
@@ -286,7 +286,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       const std::string directoryPath(firstSlashPos, currentPath.end());
       if (!directoryPath.empty())
       {
-        protocolLayerOptions.Path = Core::Url::Decode(directoryPath);
+        protocolLayerOptions.Path = directoryPath;
       }
 
       fileSystemUrl = m_pathUrl;

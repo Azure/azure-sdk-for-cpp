@@ -635,12 +635,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
-
-    /**
-     * Optional. Only applies to SMB directories. How attributes and permissions should be set on
-     * the directory.
-     */
-    Azure::Nullable<Models::FilePropertySemantics> PropertySemantics;
   };
 
   /**
@@ -957,23 +951,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * The NFS related properties for the file.
      */
     Models::FilePosixProperties PosixProperties;
-
-    /**
-     * Optional. The content to upload to the file when it's created. Must be less than or equal to
-     * 4MiB in size.
-     */
-    Azure::Core::IO::BodyStream* Content = nullptr;
-
-    /**
-     * Optional. Configures whether to perform content validation for file uploads.
-     */
-    Azure::Nullable<TransferValidationOptions> ValidationOptions;
-
-    /**
-     * Optional. Only applies to SMB files. How attributes and permissions should be set on the
-     * file.
-     */
-    Azure::Nullable<Models::FilePropertySemantics> PropertySemantics;
   };
 
   /**

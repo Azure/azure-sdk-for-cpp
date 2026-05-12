@@ -1,6 +1,6 @@
 # Release History
 
-## 12.16.0-beta.2 (Unreleased)
+## 12.15.0-beta.2 (Unreleased)
 
 ### Features Added
 
@@ -9,18 +9,6 @@
 ### Bugs Fixed
 
 ### Other Changes
-
-## 12.16.0-beta.1 (2026-03-25)
-
-### Features Added
-
-- Bumped up API version to `2026-06-06`.
-- Added new APIs `DataLakePathClient::GetSystemProperties`, `DataLakePathClient::SetTags`, `DataLakePathClient::GetTags`.
-- Added `Tags` permission in DataLake SAS builder.
-
-### Bugs Fixed
-
-- Fixed a bug where directory path is double-encoded when listing paths in it.
 
 ## 12.15.0-beta.1 (2026-02-26)
 
