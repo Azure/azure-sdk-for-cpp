@@ -103,6 +103,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Close all the connections and sessions.
      *
      * @param context Context for the operation can be used for request cancellation.
+     *
+     * @remark Performs best-effort teardown: if one step throws, the remaining
+     * steps are still attempted. The first exception encountered is rethrown
+     * to the caller after all steps have run.
      */
     void Close(Azure::Core::Context const& context = {});
 

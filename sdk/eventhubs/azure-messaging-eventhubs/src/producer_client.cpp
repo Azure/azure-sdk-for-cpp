@@ -66,18 +66,61 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";
+
+    // Best-effort teardown: a throw from one step must not skip the rest. The
+    // first exception encountered is captured and rethrown after every step
+    // has been attempted.
+    std::exception_ptr firstException;
+    auto attemptStep
+        = [&firstException](auto&& step, char const* description) noexcept {
+            try
+            {
+              step();
+            }
+            catch (std::exception const& e)
+            {
+              if (!firstException)
+              {
+                firstException = std::current_exception();
+              }
+              try
+              {
+                Log::Stream(Logger::Level::Warning)
+                    << "ProducerClient::Close: " << description << " failed: " << e.what();
+              }
+              catch (...)
+              {
+              }
+            }
+            catch (...)
+            {
+              if (!firstException)
+              {
+                firstException = std::current_exception();
+              }
+              try
+              {
+                Log::Stream(Logger::Level::Warning) << "ProducerClient::Close: " << description
+                                                    << " failed with unknown exception.";
+              }
+              catch (...)
+              {
+              }
+            }
+          };
+
     {
       std::unique_lock<std::mutex> lock(m_propertiesClientLock);
       if (m_propertiesClient)
       {
-        m_propertiesClient->Close(context);
+        attemptStep([&] { m_propertiesClient->Close(context); }, "properties client");
         m_propertiesClient.reset();
       }
     }
     Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
     for (auto& sender : m_senders)
     {
-      sender.second.Close(context);
+      attemptStep([&] { sender.second.Close(context); }, "message sender");
     }
     m_senders.clear();
 
@@ -85,17 +128,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
     for (auto& session : m_sessions)
     {
-      session.second.End(context);
+      attemptStep([&] { session.second.End(context); }, "session");
     }
     Log::Stream(Logger::Level::Verbose) << "Closing connections.";
     for (auto& connection : m_connections)
     {
-      connection.second.Close(context);
+      attemptStep([&] { connection.second.Close(context); }, "connection");
     }
 #endif
     // Remove all the sessions and connections after they've been closed.
     m_sessions.clear();
     m_connections.clear();
+
+    if (firstException)
+    {
+      std::rethrow_exception(firstException);
+    }
   }
 
   EventDataBatch ProducerClient::CreateBatch(

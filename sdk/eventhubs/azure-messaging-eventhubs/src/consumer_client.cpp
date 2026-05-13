@@ -68,45 +68,85 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ConsumerClient::Close(Azure::Core::Context const& context)
   {
-    Log::Stream(Logger::Level::Verbose) << "Close producer client.";
+    Log::Stream(Logger::Level::Verbose) << "Close consumer client.";
+
+    // Best-effort teardown: a throw from one step must not skip the rest. The
+    // first exception encountered is captured and rethrown after every step
+    // has been attempted.
+    std::exception_ptr firstException;
+    auto attemptStep
+        = [&firstException](auto&& step, char const* description) noexcept {
+            try
+            {
+              step();
+            }
+            catch (std::exception const& e)
+            {
+              if (!firstException)
+              {
+                firstException = std::current_exception();
+              }
+              try
+              {
+                Log::Stream(Logger::Level::Warning)
+                    << "ConsumerClient::Close: " << description << " failed: " << e.what();
+              }
+              catch (...)
+              {
+              }
+            }
+            catch (...)
+            {
+              if (!firstException)
+              {
+                firstException = std::current_exception();
+              }
+              try
+              {
+                Log::Stream(Logger::Level::Warning) << "ConsumerClient::Close: " << description
+                                                    << " failed with unknown exception.";
+              }
+              catch (...)
+              {
+              }
+            }
+          };
+
     {
       std::unique_lock<std::mutex> lock(m_propertiesClientLock);
       if (m_propertiesClient)
       {
-        m_propertiesClient->Close(context);
+        attemptStep([&] { m_propertiesClient->Close(context); }, "properties client");
         m_propertiesClient.reset();
       }
     }
-    Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
-    // Tear down the sessions and then the connections, in that order.
+    Log::Stream(Logger::Level::Verbose) << "Closing message receivers.";
     for (auto& receiver : m_receivers)
     {
-      receiver.second.Close(context);
+      attemptStep([&] { receiver.second.Close(context); }, "message receiver");
     }
 
 #if ENABLE_RUST_AMQP
     Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
     for (auto& session : m_sessions)
     {
-      session.second.End(context);
+      attemptStep([&] { session.second.End(context); }, "session");
     }
     Log::Stream(Logger::Level::Verbose) << "Closing connections.";
     for (auto& connection : m_connections)
     {
-      connection.second.Close(context);
+      attemptStep([&] { connection.second.Close(context); }, "connection");
     }
 #endif
 
-    while (!m_sessions.empty())
-    {
-      m_sessions.erase(m_sessions.begin());
-    }
-
-    while (!m_connections.empty())
-    {
-      m_connections.erase(m_connections.begin());
-    };
+    m_sessions.clear();
+    m_connections.clear();
     m_receivers.clear();
+
+    if (firstException)
+    {
+      std::rethrow_exception(firstException);
+    }
   }
 
   Azure::Core::Amqp::_internal::Connection ConsumerClient::CreateConnection(
