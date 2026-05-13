@@ -25,6 +25,9 @@ file(REMOVE_RECURSE ${unused})
 file(GLOB_RECURSE unused "${SOURCE_PATH}/Cargo.toml")
 file(REMOVE_RECURSE ${unused})
 
+file(GLOB_RECURSE unused "${SOURCE_PATH}/Cargo.lock")
+file(REMOVE_RECURSE ${unused})
+
 if(EXISTS "${SOURCE_PATH}/sdk/core/azure-core")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/core/_")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/_")
