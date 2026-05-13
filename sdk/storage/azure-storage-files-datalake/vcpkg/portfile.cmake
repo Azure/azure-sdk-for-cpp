@@ -18,6 +18,9 @@ file(REMOVE_RECURSE ${unused})
 file(GLOB_RECURSE unused "${SOURCE_PATH}/Cargo.toml")
 file(REMOVE_RECURSE ${unused})
 
+file(GLOB_RECURSE unused "${SOURCE_PATH}/Cargo.lock")
+file(REMOVE_RECURSE ${unused})
+
 if(EXISTS "${SOURCE_PATH}/sdk/storage/azure-storage-files-datalake")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/storage/_")
   file(REMOVE_RECURSE "${SOURCE_PATH}/sdk/_")
