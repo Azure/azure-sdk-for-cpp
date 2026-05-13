@@ -33,6 +33,36 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
+  ProducerClient::~ProducerClient() noexcept
+  {
+    try
+    {
+      Close();
+    }
+    catch (std::exception const& e)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~ProducerClient(): exception thrown during Close(): " << e.what();
+      }
+      catch (...)
+      {
+      }
+    }
+    catch (...)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~ProducerClient(): unknown exception thrown during Close().";
+      }
+      catch (...)
+      {
+      }
+    }
+  }
+
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";

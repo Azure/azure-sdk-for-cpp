@@ -70,7 +70,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** Destroy this partition client.
      */
-    virtual ~PartitionClient();
+    virtual ~PartitionClient() noexcept;
 
     /** Receive events from the partition.
      *

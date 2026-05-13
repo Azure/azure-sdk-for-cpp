@@ -106,7 +106,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Move a consumer client */
     ConsumerClient& operator=(ConsumerClient&& other) = delete;
 
-    ~ConsumerClient();
+    ~ConsumerClient() noexcept;
 
     /** @brief Getter for event hub name
      *

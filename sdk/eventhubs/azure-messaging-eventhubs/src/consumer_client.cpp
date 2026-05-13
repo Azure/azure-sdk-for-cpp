@@ -28,11 +28,42 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
   }
 
-  ConsumerClient::~ConsumerClient()
+  ConsumerClient::~ConsumerClient() noexcept
   {
-    Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
+    try
+    {
+      Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
+    }
+    catch (...)
+    {
+    }
 
-    Close({});
+    try
+    {
+      Close({});
+    }
+    catch (std::exception const& e)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~ConsumerClient(): exception thrown during Close(): " << e.what();
+      }
+      catch (...)
+      {
+      }
+    }
+    catch (...)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~ConsumerClient(): unknown exception thrown during Close().";
+      }
+      catch (...)
+      {
+      }
+    }
   }
 
   void ConsumerClient::Close(Azure::Core::Context const& context)

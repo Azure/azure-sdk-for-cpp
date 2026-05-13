@@ -11,6 +11,8 @@
 
 ### Bugs Fixed
 
+- [[#6957]](https://github.com/Azure/azure-sdk-for-cpp/issues/6957) Catch and log exceptions thrown from `Close()` inside the `ProducerClient`, `ConsumerClient`, and `PartitionClient` destructors so cleanup failures no longer terminate the program via `std::terminate`.
+
 ### Other Changes
 
 ## 1.0.0-beta.10 (2024-11-01)

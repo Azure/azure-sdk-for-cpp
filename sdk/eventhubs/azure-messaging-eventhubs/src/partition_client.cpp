@@ -208,11 +208,43 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
-  PartitionClient::~PartitionClient()
+  PartitionClient::~PartitionClient() noexcept
   {
-    Log::Stream(Logger::Level::Verbose) << "~PartitionClient() "
-                                        << "Close Receiver.";
-    m_receiver.Close();
+    try
+    {
+      Log::Stream(Logger::Level::Verbose) << "~PartitionClient() "
+                                          << "Close Receiver.";
+    }
+    catch (...)
+    {
+    }
+
+    try
+    {
+      m_receiver.Close();
+    }
+    catch (std::exception const& e)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~PartitionClient(): exception thrown during m_receiver.Close(): " << e.what();
+      }
+      catch (...)
+      {
+      }
+    }
+    catch (...)
+    {
+      try
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "~PartitionClient(): unknown exception thrown during m_receiver.Close().";
+      }
+      catch (...)
+      {
+      }
+    }
   }
 
   /** Receive events from the partition.
