@@ -23,7 +23,7 @@ struct SessionToken
 };
 
 constexpr static const int g_sessionTokenRefreshIntervalInSeconds = 3;
-constexpr static const int g_rereshLeadTimeInSeconds = 30;
+constexpr static const int g_refeshLeadTimeInSeconds = 30;
 
 struct SessionTokenContainerContext
 {
@@ -214,7 +214,7 @@ namespace Azure { namespace Storage { namespace _internal {
           if (sessionContext.IsTokenValidUnlocked())
           {
             sessionTokenToUse = sessionContext.Token;
-            if (Azure::DateTime::clock::now() + std::chrono::seconds(g_rereshLeadTimeInSeconds)
+            if (Azure::DateTime::clock::now() + std::chrono::seconds(g_refeshLeadTimeInSeconds)
                 > sessionContext.Token.Value().ExpiresOn)
             {
               shouldRefreshToken = true;
