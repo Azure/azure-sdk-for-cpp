@@ -30,9 +30,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   ConsumerClient::~ConsumerClient()
   {
-    Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
+    try
+    {
+      Log::Stream(Logger::Level::Informational) << "Destroy consumer client.";
 
-    Close({});
+      Close({});
+    }
+    catch (std::exception const&)
+    {
+    }
   }
 
   void ConsumerClient::Close(Azure::Core::Context const& context)

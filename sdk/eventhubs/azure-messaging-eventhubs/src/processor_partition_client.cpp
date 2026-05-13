@@ -16,12 +16,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   ProcessorPartitionClient::~ProcessorPartitionClient()
   {
-    // Only log the destructor if the partition client has a value.
-    if (!m_partitionId.empty())
+    try
     {
-      Log::Stream(Logger::Level::Verbose) << "~ProcessorPartitionClient() for " << m_partitionId;
-      Log::Stream(Logger::Level::Verbose)
-          << "PartitionClient is " << (m_partitionClient ? "not " : "") << "null.";
+      // Only log the destructor if the partition client has a value.
+      if (!m_partitionId.empty())
+      {
+        Log::Stream(Logger::Level::Verbose) << "~ProcessorPartitionClient() for " << m_partitionId;
+        Log::Stream(Logger::Level::Verbose)
+            << "PartitionClient is " << (m_partitionClient ? "not " : "") << "null.";
+      }
+    }
+    catch (std::exception const&)
+    {
     }
   }
 

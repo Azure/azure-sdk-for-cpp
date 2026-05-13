@@ -33,6 +33,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
+  ProducerClient::~ProducerClient()
+  {
+    try
+    {
+      Close();
+    }
+    catch (std::exception const&)
+    {
+    }
+  }
+
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";

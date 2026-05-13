@@ -98,7 +98,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Default Constructor for a ProducerClient */
     ProducerClient() = default;
 
-    ~ProducerClient() { Close(); }
+    ~ProducerClient();
 
     /** @brief Close all the connections and sessions.
      *
