@@ -43,9 +43,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   Processor::~Processor()
   {
-    Log::Stream(Logger::Level::Verbose) << "~Processor.";
-    Stop();
-    m_consumerClient.reset();
+    try
+    {
+      Log::Stream(Logger::Level::Verbose) << "~Processor.";
+      Stop();
+      m_consumerClient.reset();
+    }
+    catch (std::exception const& ex)
+    {
+      Log::Stream(Logger::Level::Warning) << "Exception in Processor::~Processor(): " << ex.what();
+    }
   }
 
   void Processor::Start(Azure::Core::Context const& context)
