@@ -38,7 +38,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         options.PartitionExpirationDuration == Azure::DateTime::duration::zero()
             ? std::chrono::minutes(1)
             : std::chrono::duration_cast<std::chrono::minutes>(
-                  options.PartitionExpirationDuration));
+                options.PartitionExpirationDuration));
   }
 
   Processor::~Processor()
