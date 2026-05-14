@@ -1,8 +1,6 @@
 # Release History
 
-## 1.0.0-beta.11 (Unreleased)
-
-### Features Added
+## 1.0.0-beta.11 (2026-05-14)
 
 ### Breaking Changes
 
@@ -12,8 +10,6 @@
 ### Bugs Fixed
 
 - [[#6957]](https://github.com/Azure/azure-sdk-for-cpp/issues/6957) Do not throw exceptions past destructors.
-
-### Other Changes
 
 ## 1.0.0-beta.10 (2024-11-01)
 

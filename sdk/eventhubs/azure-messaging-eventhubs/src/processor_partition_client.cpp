@@ -26,8 +26,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             << "PartitionClient is " << (m_partitionClient ? "not " : "") << "null.";
       }
     }
-    catch (std::exception const&)
+    catch (std::exception const& ex)
     {
+      Log::Stream(Logger::Level::Warning)
+          << "Exception in ProcessorPartitionClient::~ProcessorPartitionClient(): " << ex.what();
     }
   }
 

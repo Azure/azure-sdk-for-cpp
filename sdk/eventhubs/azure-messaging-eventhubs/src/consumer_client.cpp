@@ -36,8 +36,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       Close({});
     }
-    catch (std::exception const&)
+    catch (std::exception const& ex)
     {
+      Log::Stream(Logger::Level::Warning)
+          << "Exception in ConsumerClient::~ConsumerClient(): " << ex.what();
     }
   }
 
