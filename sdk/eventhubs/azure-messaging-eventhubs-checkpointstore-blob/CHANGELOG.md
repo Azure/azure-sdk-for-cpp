@@ -1,10 +1,12 @@
 # Release History
 
-## 1.0.0-beta.2 (Unreleased)
+## 1.0.0-beta.2 (2026-05-15)
 
 ### Features Added
 
 ### Breaking Changes
+
+- Changed type of EventHubs Offset from `std::int64_t` to `std::string`.
 
 ### Bugs Fixed
 
@@ -15,4 +17,3 @@
 ### Features Added
 
 - Initial release. Split from the `azure-messaging-eventubs-cpp` package.
-
