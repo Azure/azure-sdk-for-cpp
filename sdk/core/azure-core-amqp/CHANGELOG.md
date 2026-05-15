@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.12 (Unreleased)
+## 1.0.0-beta.12 (2026-05-14)
 
 ### Features Added
 
@@ -8,11 +8,7 @@ Rust based AMQP library is now available for use in the Azure SDK for C++. This 
 
 ### Breaking Changes
 
-Updated `MessageProperties`to remove `Azure::Nullable` from the types which are an `AmqpValue` because the `AmqpValue` already embeds the concept of nullability.
-
-### Bugs Fixed
-
-### Other Changes
+Updated `MessageProperties` to remove `Azure::Nullable` from the types which are an `AmqpValue` because the `AmqpValue` already embeds the concept of nullability.
 
 ## 1.0.0-beta.11 (2024-09-12)
 
