@@ -25,12 +25,12 @@ pipelines:
         credscan:
           lastModifiedDate: 2024-10-08
         armory:
-          lastModifiedDate: 2024-10-08
+          lastModifiedDate: 2026-05-18
       binary:
         credscan:
           lastModifiedDate: 2025-01-28
         binskim:
-          lastModifiedDate: 2026-02-24
+          lastModifiedDate: 2026-05-18
   1614:
     usedNonDefaultBranch: true
     retail:
