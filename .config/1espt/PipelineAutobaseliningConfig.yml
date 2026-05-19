@@ -50,16 +50,16 @@ pipelines:
         credscan:
           lastModifiedDate: 2025-09-12
         binskim:
-          lastModifiedDate: 2025-09-12
+          lastModifiedDate: 2026-05-19
         spotbugs:
-          lastModifiedDate: 2025-09-12
+          lastModifiedDate: 2026-05-19
       source:
         credscan:
           lastModifiedDate: 2025-09-15
         psscriptanalyzer:
-          lastModifiedDate: 2025-09-15
+          lastModifiedDate: 2026-05-19
         armory:
-          lastModifiedDate: 2025-09-15
+          lastModifiedDate: 2026-05-19
   1770:
     retail:
       binary:
