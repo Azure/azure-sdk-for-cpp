@@ -64,11 +64,11 @@ pipelines:
     retail:
       binary:
         binskim:
-          lastModifiedDate: 2026-05-11
+          lastModifiedDate: 2026-05-19
         spotbugs:
-          lastModifiedDate: 2026-05-11
+          lastModifiedDate: 2026-05-19
       source:
         psscriptanalyzer:
-          lastModifiedDate: 2026-05-12
+          lastModifiedDate: 2026-05-19
         armory:
-          lastModifiedDate: 2026-05-12
+          lastModifiedDate: 2026-05-19
