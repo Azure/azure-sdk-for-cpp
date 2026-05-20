@@ -29,6 +29,9 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
   int retryCount = 0;
+  // Capture the most recent exception so a retries-exhausted fallthrough can
+  // rethrow it instead of silently returning false. See issue #7130.
+  std::exception_ptr lastException;
   while (retryCount < m_retryOptions.MaxRetries)
   {
     std::chrono::milliseconds retryAfter{};
@@ -39,6 +42,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
 
       if (ShouldRetry(result, retryCount, retryAfter))
       {
+        lastException = nullptr;
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
       }
@@ -56,6 +60,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
       }
       if (ShouldRetry(IsFatalException(e), retryCount, retryAfter))
       {
+        lastException = std::current_exception();
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
       }
@@ -73,6 +78,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
       // We assume that all exceptions other than EventHubs exceptions might be retriable.
       if (ShouldRetry(false, retryCount, retryAfter))
       {
+        lastException = std::current_exception();
         retryCount++;
         std::this_thread::sleep_for(retryAfter);
       }
@@ -81,6 +87,10 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function
         throw;
       }
     }
+  }
+  if (lastException)
+  {
+    std::rethrow_exception(lastException);
   }
   return false;
 }
