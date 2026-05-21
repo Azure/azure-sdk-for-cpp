@@ -6,6 +6,7 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <exception>
 #include <thread>
 
 namespace {

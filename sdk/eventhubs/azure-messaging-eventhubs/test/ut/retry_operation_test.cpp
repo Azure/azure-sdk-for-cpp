@@ -163,6 +163,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
   TEST_F(RetryOperationTest, FalseAfterTransientExceptionDoesNotRethrow)
   {
     auto opts = LocalTest::MakeFastRetryOptions(3);
+    // Capture MaxRetries before constructing RetryOperation; the constructor takes
+    // RetryOptions by non-const lvalue ref and moves from it, so reading opts.MaxRetries
+    // afterwards would rely on moved-from state.
+    auto const maxRetries = opts.MaxRetries;
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
 
     int callCount = 0;
@@ -179,6 +183,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     // returns true, so the loop retries; on attempt 3 the loop terminates and Execute
     // returns false. The exception from attempt 1 must not be rethrown.
     EXPECT_NO_THROW({ EXPECT_FALSE(retryOp.Execute(throwsThenReturnsFalse)); });
-    EXPECT_EQ(opts.MaxRetries, callCount);
+    EXPECT_EQ(maxRetries, callCount);
   }
 }}}}} // namespace Azure::Messaging::EventHubs::_internal::Test
