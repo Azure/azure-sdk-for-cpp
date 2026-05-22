@@ -103,26 +103,42 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
         m_producerClientOptions.RetryOptions);
-    retryOp.Execute([&]() -> bool {
-      auto result = GetSender(eventDataBatch.GetPartitionId()).Send(message, context);
+    // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
+    // are exhausted, but if the lambda ever returns false directly the batch must not be
+    // silently dropped. See issue #7130.
+    auto const& partitionId = eventDataBatch.GetPartitionId();
+    if (!retryOp.Execute([&]() -> bool {
+          auto result = GetSender(partitionId).Send(message, context);
 #if ENABLE_UAMQP
-      auto sendStatus = std::get<0>(result);
-      if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-      {
-        return true;
-      }
-      // Throw an exception about the error we just received.
-      throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-          CreateEventHubsException(std::get<1>(result));
+          auto sendStatus = std::get<0>(result);
+          if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+          {
+            return true;
+          }
+          // Throw an exception about the error we just received.
+          throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+              CreateEventHubsException(std::get<1>(result));
 #elif ENABLE_RUST_AMQP
-      if (result)
-      {
-        throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-            CreateEventHubsException(result);
-      }
-      return true;
+          if (result)
+          {
+            throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                CreateEventHubsException(result);
+          }
+          return true;
 #endif
-    });
+        }))
+    {
+      std::string failureDetail = "ProducerClient::Send failed after exhausting "
+          + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
+          + " retry attempts (partition='"
+          + (partitionId.empty() ? std::string("<gateway>") : partitionId)
+          + "'). The underlying send returned false without throwing; no further "
+            "diagnostic detail is available from this layer.";
+      Azure::Messaging::EventHubs::EventHubsException ex(failureDetail);
+      ex.ErrorCondition = "eventhubs:client:retries-exhausted";
+      ex.IsTransient = true;
+      throw ex;
+    }
   }
 
   void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
