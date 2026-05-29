@@ -164,7 +164,7 @@ jobs:
 
         - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
           parameters:
-            npmrcPath: $(UserProfile)/.npmrc
+            npmrcPath: $(Agent.TempDirectory)/generate-release/.npmrc
 
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for learn.microsoft.com
