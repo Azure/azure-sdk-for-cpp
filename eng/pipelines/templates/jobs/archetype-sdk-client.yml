@@ -168,6 +168,8 @@ jobs:
 
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for learn.microsoft.com
+          env:
+            npm_config_userconfig: "$(Agent.TempDirectory)/generate-release/.npmrc"
 
         - pwsh: |
             Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
