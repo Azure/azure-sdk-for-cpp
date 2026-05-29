@@ -23,11 +23,16 @@ jobs:
       DocRepoName: azure-docs-sdk-cpp
 
     steps:
+      - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+        parameters:
+          TokenOwners:
+            - MicrosoftDocs
+
       # Sync docs repo (this can be sparse)
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           # TODO: Remove when C++ docs repo goes public
-          TokenToUseForAuth: $(azuresdk-github-pat)
+          TokenToUseForAuth: $(GH_TOKEN)
           SkipCheckoutNone: true
           Paths:
             - ci-configs/
@@ -84,6 +89,7 @@ jobs:
           TargetRepoName: $(DocRepoName)
           TargetRepoOwner: $(DocRepoOwner)
           WorkingDirectory: $(DocRepoLocation)
+          AuthToken: $(GH_TOKEN)
 
       - task: AzureCLI@2
         displayName: Queue Docs CI build
