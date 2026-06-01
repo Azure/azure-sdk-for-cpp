@@ -53,10 +53,10 @@
 # ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
 
 # PRLabel: %Event Hubs
-/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak
+/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @SwayGom @sagar0207
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners:                                                   @axisc @hmlam @sjkwak
+# ServiceOwners:                                                   @axisc @hmlam @sjkwak @j7nw4r @SwayGom @sagar0207
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                     @Azure/azure-sdk-write-keyvault
