@@ -28,7 +28,7 @@ calls to Invoke-Cspell.ps1 to prevent creating multiple working directories and
 redundant calls `npm ci`.
 
 .EXAMPLE
-./eng/common/scripts/Invoke-Cspell.ps1 -FileList @('./README.md', 'file2.txt')
+./eng/common/spelling/Invoke-Cspell.ps1 -FileList @('./README.md', 'file2.txt')
 
 .EXAMPLE
 git diff main --name-only | ./eng/common/spelling/Invoke-Cspell.ps1
@@ -57,9 +57,33 @@ param(
 
 begin {
   Set-StrictMode -Version 3.0
+  . (Join-Path $PSScriptRoot "../scripts/logging.ps1")
 
   if (!(Get-Command npm -ErrorAction SilentlyContinue)) {
     LogError "Could not locate npm. Install NodeJS (includes npm) https://nodejs.org/en/download/"
+    exit 1
+  }
+
+  if (!(Get-Command node -ErrorAction SilentlyContinue)) {
+    LogError "Could not locate node. Install NodeJS https://nodejs.org/en/download/"
+    exit 1
+  }
+
+  $nodeVersionRaw = (& node --version)
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($nodeVersionRaw)) {
+    LogError "Unable to determine NodeJS version. Node >=20.18.0 is required."
+    exit 1
+  }
+
+  $nodeVersionText = $nodeVersionRaw.Trim().TrimStart('v')
+  $nodeVersion = $null
+  if (-not [System.Version]::TryParse($nodeVersionText, [ref]$nodeVersion)) {
+    LogError "Unable to parse NodeJS version '$nodeVersionText'. Node >=20.18.0 is required."
+    exit 1
+  }
+
+  if ($nodeVersion -lt [System.Version]'20.18.0') {
+    LogError "Unsupported NodeJS version ($nodeVersionText); >=20.18.0 is required."
     exit 1
   }
 
@@ -86,10 +110,27 @@ begin {
   $filesToCheck = @()
  }
 process {
-  $filesToCheck += $FileList
+  if ($null -ne $FileList) {
+    $filesToCheck += $FileList
+  }
  }
 end {
-  npm --prefix $PackageInstallCache ci | Write-Host
+  if (($filesToCheck | Measure-Object).Count -eq 0) {
+    LogError "No files provided. Pass -FileList or pipe file paths into Invoke-Cspell.ps1."
+    exit 1
+  }
+
+  $nodeModulesPath = Join-Path $PackageInstallCache "node_modules"
+  if (!(Test-Path $nodeModulesPath)) {
+    npm --prefix $PackageInstallCache ci | Write-Host
+    if ($LASTEXITCODE -ne 0) {
+      LogError "npm ci failed with exit code $LASTEXITCODE"
+      exit $LASTEXITCODE
+    }
+  }
+  else {
+    Write-Host "Reusing package install cache at $PackageInstallCache"
+  }
 
   $command = "npm --prefix $PackageInstallCache exec --no -- cspell $JobType --config $CSpellConfigPath --no-must-find-files --root $SpellCheckRoot --file-list stdin"
   Write-Host $command
