@@ -35,6 +35,17 @@ parameters:
 
 steps:
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    # NOTE: azure-sdk-for-cpp:main removed the NodeTool@0 step because its
+    # hosted agent pools ship Node >=20.18 by default. The agent pools that
+    # service this feature branch still default to Node 18.20.8, which fails
+    # cspell 9.x's engines.node >=20.18 runtime check. Pin to 20.18.x here so
+    # the spelling step works regardless of the pool default. This is the only
+    # intentional divergence from main in this file.
+    - task: NodeTool@0
+      condition: and(succeeded(), ne(variables['Skip.SpellCheck'],'true'))
+      inputs:
+        versionSpec: 20.18.x
+      displayName: Use Node.js 20.18.x
     - task: PowerShell@2
       displayName: Check spelling (cspell)
       condition: and(succeeded(), ne(variables['Skip.SpellCheck'],'true'))
