@@ -7,11 +7,8 @@ BeforeAll {
   # We source the script file and then override Invoke-RestMethod / Invoke-WebRequest
   # inside each test via Mock so no real network calls are made.
 
-  # Stub out logging functions that the script depends on but are defined in logging.ps1
-  function LogWarning($msg) { Write-Warning $msg }
-  function LogError($msg) { Write-Error $msg }
-  function LogGroupStart($msg) {}
-  function LogGroupEnd {}
+  # Load shared logging functions used by Verify-Links.ps1
+  . (Resolve-Path "$PSScriptRoot/../logging.ps1").Path
 
   # Source only the function definitions (stop before the script-body runs)
   # by dot-sourcing within a script block that replaces the parameter-driven
@@ -140,7 +137,7 @@ Describe "ProcessNpmLink" {
     }
 
     It "Returns false when the specific version does not exist in upstream" {
-      $result = ProcessNpmLink ([System.Uri]"https://www.npmjs.com/package/@azure/ai-agents/v/9.9.9")
+      $result = ProcessNpmLink ([System.Uri]"https://www.npmjs.com/package/@azure/ai-agents/v/9999.9.9")
       $result | Should -Be $false
     }
   }
@@ -162,7 +159,7 @@ Describe "ProcessNpmLink" {
     }
 
     It "Returns false when unscoped versioned package version is missing" {
-      $result = ProcessNpmLink ([System.Uri]"https://www.npmjs.com/package/typescript/v/99.0.0")
+      $result = ProcessNpmLink ([System.Uri]"https://www.npmjs.com/package/typescript/v/9999.0.0")
       $result | Should -Be $false
     }
   }

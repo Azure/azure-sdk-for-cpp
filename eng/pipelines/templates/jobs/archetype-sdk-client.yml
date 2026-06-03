@@ -282,6 +282,8 @@ jobs:
                 ignoreLASTEXITCODE: true
                 pwsh: true
               displayName: Generate ${{ artifact.Name }} artifacts for docs.ms
+              env:
+                npm_config_userconfig: "$(Agent.TempDirectory)/generate-release/.npmrc"
 
             - task: Powershell@2
               inputs:
