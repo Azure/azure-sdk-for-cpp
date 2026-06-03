@@ -86,7 +86,7 @@ variables have been set by the user:
   certificate which contains the public key associated with policySigningKey0, Base64 encoded.
 
 The tests also assume that the currently logged on user is authorized to call
-into the attestation service instance because they use [Azure::Core::Credentials::TokenCredential](https://azuresdkdocs.blob.core.windows.net/$web/cpp/azure-core/1.3.1/class_azure_1_1_core_1_1_credentials_1_1_token_credential.html) for authorization.
+into the attestation service instance because they use [Azure::Core::Credentials::TokenCredential](https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-core/latest/class_azure_1_1_core_1_1_credentials_1_1_token_credential.html) for authorization.
 
 This directory contains functional samples for the attestation service SDK.
 

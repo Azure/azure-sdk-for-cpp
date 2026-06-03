@@ -1,3 +1,5 @@
+#!/usr/bin/env pwsh
+
 <#
 .SYNOPSIS
 Invokes cspell using dependencies defined in adjacent ./package*.json
@@ -5,10 +7,8 @@ Invokes cspell using dependencies defined in adjacent ./package*.json
 .PARAMETER JobType
 Maps to cspell command (e.g. `lint`, `trace`, etc.). Default is `lint`
 
-.PARAMETER ScanGlobs
-List of glob expressions to be scanned. This list is not constrained by
-npx/cmd's upper limit on command line length as the globs are inserted into the
-cspell config's `files` property.
+.PARAMETER FileList
+List of file paths to be scanned. This is piped into cspell via stdin.
 
 .PARAMETER CSpellConfigPath
 Location of cspell.json file to use when scanning. Defaults to
@@ -25,25 +25,13 @@ created in the temp folder, package*.json files will be placed in that folder.
 .PARAMETER LeavePackageInstallCache
 If set the PackageInstallCache will not be deleted. Use if there are multiple
 calls to Invoke-Cspell.ps1 to prevent creating multiple working directories and
-redundant calls `npm install`.
-
-.PARAMETER Test
-Run test functions against the script logic
+redundant calls `npm ci`.
 
 .EXAMPLE
-./eng/common/scripts/Invoke-Cspell.ps1 -ScanGlobs 'sdk/*/*/PublicAPI/**/*.md'
-
-This will run spell check with the given globs
+./eng/common/spelling/Invoke-Cspell.ps1 -FileList @('./README.md', 'file2.txt')
 
 .EXAMPLE
-./eng/common/scripts/Invoke-Cspell.ps1 -ScanGlobs @('sdk/storage/**', 'sdk/keyvault/**')
-
-This will run spell check against multiple globs
-
-.EXAMPLE
-./eng/common/scripts/Invoke-Cspell.ps1 -ScanGlobs './README.md'
-
-This will run spell check against a single file
+git diff main --name-only | ./eng/common/spelling/Invoke-Cspell.ps1
 
 #>
 [CmdletBinding()]
@@ -51,8 +39,8 @@ param(
   [Parameter()]
   [string] $JobType = 'lint',
 
-  [Parameter()]
-  [array]$ScanGlobs = '**',
+  [Parameter(ValueFromPipeline)]
+  [array]$FileList,
 
   [Parameter()]
   [string] $CSpellConfigPath = (Resolve-Path "$PSScriptRoot/../../../.vscode/cspell.json"),
@@ -64,131 +52,103 @@ param(
   [string] $PackageInstallCache = (Join-Path ([System.IO.Path]::GetTempPath()) "cspell-tool-path"),
 
   [Parameter()]
-  [switch] $LeavePackageInstallCache,
-
-  [Parameter()]
-  [switch] $Test
+  [switch] $LeavePackageInstallCache
 )
 
-Set-StrictMode -Version 3.0
+begin {
+  Set-StrictMode -Version 3.0
+  . (Join-Path $PSScriptRoot "../scripts/logging.ps1")
 
-if (!(Get-Command npm -ErrorAction SilentlyContinue)) {
-  LogError "Could not locate npm. Install NodeJS (includes npm) https://nodejs.org/en/download/"
-  exit 1
-}
-
-if (!(Test-Path $CSpellConfigPath)) {
-  LogError "Could not locate config file $CSpellConfigPath"
-  exit 1
-}
-
-function Test-VersionReportMatches() {
-  # Arrange
-  $expectedPackageVersion = '6.12.0'
-
-  # Act
-  $actual = &"$PSSCriptRoot/Invoke-Cspell.ps1" `
-    -JobType '--version'
-
-  # Assert
-  if ($actual -ne $expectedPackageVersion) {
-    throw "Mismatched version. Expected:`n$expectedPackageVersion`n`nActual:`n$actual"
+  if (!(Get-Command npm -ErrorAction SilentlyContinue)) {
+    LogError "Could not locate npm. Install NodeJS (includes npm) https://nodejs.org/en/download/"
+    exit 1
   }
-}
 
-function TestInvokeCspell() {
-  Test-VersionReportMatches
-}
+  if (!(Get-Command node -ErrorAction SilentlyContinue)) {
+    LogError "Could not locate node. Install NodeJS https://nodejs.org/en/download/"
+    exit 1
+  }
 
-if ($Test) {
-  TestInvokeCspell
-  Write-Host "Test complete"
-  exit 0
-}
+  $nodeVersionRaw = (& node --version)
+  if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($nodeVersionRaw)) {
+    LogError "Unable to determine NodeJS version. Node >=20.18.0 is required."
+    exit 1
+  }
 
-# Prepare the working directory if it does not already have requirements in
-# place.
-if (!(Test-Path $PackageInstallCache)) {
-  New-Item -ItemType Directory -Path $PackageInstallCache | Out-Null
-}
+  $nodeVersionText = $nodeVersionRaw.Trim().TrimStart('v')
+  $nodeVersion = $null
+  if (-not [System.Version]::TryParse($nodeVersionText, [ref]$nodeVersion)) {
+    LogError "Unable to parse NodeJS version '$nodeVersionText'. Node >=20.18.0 is required."
+    exit 1
+  }
 
-if (!(Test-Path "$PackageInstallCache/package.json")) {
-  Copy-Item "$PSScriptRoot/package.json" $PackageInstallCache
-}
+  if ($nodeVersion -lt [System.Version]'20.18.0') {
+    LogError "Unsupported NodeJS version ($nodeVersionText); >=20.18.0 is required."
+    exit 1
+  }
 
-if (!(Test-Path "$PackageInstallCache/package-lock.json")) {
-  Copy-Item "$PSScriptRoot/package-lock.json" $PackageInstallCache
-}
+  if (!(Test-Path $CSpellConfigPath)) {
+    LogError "Could not locate config file $CSpellConfigPath"
+    exit 1
+  }
 
-$deleteNotExcludedFile = $false
-$notExcludedFile = ""
-if (Test-Path "$SpellCheckRoot/LICENSE") {
-  $notExcludedFile = "$SpellCheckRoot/LICENSE"
-} elseif (Test-Path "$SpellCheckRoot/LICENSE.txt") {
-  $notExcludedFile = "$SpellCheckRoot/LICENSE.txt"
-} else {
-  # If there is no LICENSE file, fall back to creating a temporary file
-  # The "files" list must always contain a file which exists, is not empty, and is
-  # not excluded in ignorePaths. In this case it will be a file with the contents
-  # "1" (no spelling errors will be detected)
-  $notExcludedFile = Join-Path $SpellCheckRoot ([System.IO.Path]::GetRandomFileName())
-  "1" >> $notExcludedFile
-  $deleteNotExcludedFile = $true
-}
-$ScanGlobs += $notExcludedFile
+  # Prepare the working directory if it does not already have requirements in
+  # place.
+  if (!(Test-Path $PackageInstallCache)) {
+    New-Item -ItemType Directory -Path $PackageInstallCache | Out-Null
+  }
 
-$cspellConfigContent = Get-Content $CSpellConfigPath -Raw
-$cspellConfig = ConvertFrom-Json $cspellConfigContent
+  if (!(Test-Path "$PackageInstallCache/package.json")) {
+    Copy-Item "$PSScriptRoot/package.json" $PackageInstallCache
+  }
 
-# If the config has no "files" property this adds it. If the config has a
-# "files" property this sets the value, overwriting the existing value. In this
-# case, spell checking is only intended to check files from $ScanGlobs so
-# preexisting entries in "files" will be overwritten.
-Add-Member `
-  -MemberType NoteProperty `
-  -InputObject $cspellConfig `
-  -Name "files" `
-  -Value $ScanGlobs `
-  -Force
+  if (!(Test-Path "$PackageInstallCache/package-lock.json")) {
+    Copy-Item "$PSScriptRoot/package-lock.json" $PackageInstallCache
+  }
 
-# Set the temporary config file with the mutated configuration. The temporary
-# location is used to configure the command and the original file remains
-# unchanged.
-Write-Host "Setting config in: $CSpellConfigPath"
-Set-Content `
-  -Path $CSpellConfigPath `
-  -Value (ConvertTo-Json $cspellConfig -Depth 100)
 
-# Before changing the run location, resolve paths specified in parameters
-$CSpellConfigPath = Resolve-Path $CSpellConfigPath
-$SpellCheckRoot = Resolve-Path $SpellCheckRoot
+  $filesToCheck = @()
+ }
+process {
+  if ($null -ne $FileList) {
+    $filesToCheck += $FileList
+  }
+ }
+end {
+  if (($filesToCheck | Measure-Object).Count -eq 0) {
+    LogError "No files provided. Pass -FileList or pipe file paths into Invoke-Cspell.ps1."
+    exit 1
+  }
 
-$originalLocation = Get-Location
+  $nodeModulesPath = Join-Path $PackageInstallCache "node_modules"
+  if (!(Test-Path $nodeModulesPath)) {
+    npm --prefix $PackageInstallCache ci | Write-Host
+    if ($LASTEXITCODE -ne 0) {
+      LogError "npm ci failed with exit code $LASTEXITCODE"
+      exit $LASTEXITCODE
+    }
+  }
+  else {
+    Write-Host "Reusing package install cache at $PackageInstallCache"
+  }
 
-try {
-  Set-Location $PackageInstallCache
-  npm install | Out-Null
-
-  # Use the mutated configuration file when calling cspell
-  $command = "npx --no-install cspell $JobType --config $CSpellConfigPath --no-must-find-files --root $SpellCheckRoot --relative"
+  $command = "npm --prefix $PackageInstallCache exec --no -- cspell $JobType --config $CSpellConfigPath --no-must-find-files --root $SpellCheckRoot --file-list stdin"
   Write-Host $command
-  $cspellOutput = npx  `
-    --no-install `
+  $cspellOutput = $filesToCheck | npm --prefix $PackageInstallCache `
+    exec  `
+    --no `
+    '--' `
     cspell `
     $JobType `
     --config $CSpellConfigPath `
     --no-must-find-files `
     --root $SpellCheckRoot `
-    --relative
-} finally {
-  Set-Location $originalLocation
+    --file-list stdin
 
-  Write-Host "cspell run complete, restoring original configuration and removing temp file."
-  Set-Content -Path $CSpellConfigPath -Value $cspellConfigContent -NoNewLine
-
-  if ($deleteNotExcludedFile) {
-    Remove-Item -Path $notExcludedFile
+  if (!$LeavePackageInstallCache) {
+    Write-Host "Cleaning up package install cache at $PackageInstallCache"
+    Remove-Item -Path $PackageInstallCache -Recurse -Force | Out-Null
   }
-}
 
-return $cspellOutput
+  return $cspellOutput
+}
