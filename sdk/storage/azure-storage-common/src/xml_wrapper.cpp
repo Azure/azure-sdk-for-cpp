@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace _internal {
     const WS_XML_ELEMENT_NODE* attributeElementNode = nullptr;
   };
 
-  XmlReader::XmlReader(const char* data, size_t length) : m_data(data), m_length(length)
+  XmlReader::XmlReader(const char* data, size_t length)
   {
     if (length > static_cast<size_t>((std::numeric_limits<ULONG>::max)()))
     {
@@ -116,7 +116,7 @@ namespace Azure { namespace Storage { namespace _internal {
       HRESULT ret = WsReadNode(context->reader, context->error);
       if (!SUCCEEDED(ret))
       {
-        throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+        throw std::runtime_error("Failed to parse xml.");
       }
     };
 
@@ -153,7 +153,7 @@ namespace Azure { namespace Storage { namespace _internal {
     HRESULT ret = WsGetReaderNode(context->reader, &node, context->error);
     if (!SUCCEEDED(ret))
     {
-      throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+      throw std::runtime_error("Failed to parse xml.");
     }
     switch (node->nodeType)
     {
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace _internal {
           ret = WsGetReaderNode(context->reader, &node, context->error);
           if (!SUCCEEDED(ret))
           {
-            throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+            throw std::runtime_error("Failed to parse xml.");
           }
           if (node->nodeType != WS_XML_NODE_TYPE_TEXT)
           {
@@ -407,7 +407,7 @@ namespace Azure { namespace Storage { namespace _internal {
     explicit XmlReaderContext(XmlTextReaderPtr&& reader_) : reader(std::move(reader_)) {}
   };
 
-  XmlReader::XmlReader(const char* data, size_t length) : m_data(data), m_length(length)
+  XmlReader::XmlReader(const char* data, size_t length)
   {
     XmlGlobalInitialize();
 
@@ -421,7 +421,7 @@ namespace Azure { namespace Storage { namespace _internal {
 
     if (!reader)
     {
-      throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+      throw std::runtime_error("Failed to parse xml.");
     }
 
     m_context = std::make_unique<XmlReaderContext>(std::move(reader));
@@ -456,7 +456,7 @@ namespace Azure { namespace Storage { namespace _internal {
       }
       else
       {
-        throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+        throw std::runtime_error("Failed to parse xml.");
       }
     }
     if (context->readingEmptyTag)
@@ -472,7 +472,7 @@ namespace Azure { namespace Storage { namespace _internal {
     }
     if (ret != 1)
     {
-      throw std::runtime_error("Failed to parse xml." + std::string(m_data, m_length));
+      throw std::runtime_error("Failed to parse xml.");
     }
 
     int type = xmlTextReaderNodeType(reader);
