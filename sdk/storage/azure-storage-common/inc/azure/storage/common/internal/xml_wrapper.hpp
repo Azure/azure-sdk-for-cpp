@@ -48,6 +48,8 @@ namespace Azure { namespace Storage { namespace _internal {
     XmlNode Read();
 
   private:
+    const char* m_data;
+    const size_t m_length;
     struct XmlReaderContext;
     std::unique_ptr<XmlReaderContext> m_context;
   };
