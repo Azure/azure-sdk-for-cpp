@@ -71,8 +71,7 @@ namespace Azure { namespace Storage { namespace Test {
         clientOptions.ShareTokenIntent
             = Azure::Storage::Files::Shares::Models::ShareTokenIntent::Backup;
       }
-      auto shareServiceClient = m_premiumShareServiceClient
-          = std::make_shared<Files::Shares::ShareServiceClient>(
+      auto shareServiceClient = std::make_shared<Files::Shares::ShareServiceClient>(
               GetPremiumShareServiceUrl(), GetTestCredential(), clientOptions);
       auto shareClient = shareServiceClient->GetShareClient(shareName);
       m_resourceCleanupFunctions.push_back([shareClient]() { shareClient.DeleteIfExists(); });
