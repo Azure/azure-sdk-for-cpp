@@ -649,7 +649,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareClientTest, OAuth_PLAYBACKONLY_)
+  TEST_F(FileShareClientTest, OAuth)
   {
     auto credential = GetTestCredential();
     auto options = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
@@ -735,7 +735,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 
-  TEST_F(FileShareClientTest, Audience_PLAYBACKONLY_)
+  TEST_F(FileShareClientTest, Audience)
   {
     auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
@@ -764,7 +764,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(shareClient.GetPermission(created.FilePermissionKey), StorageException);
   }
 
-  TEST_F(FileShareClientTest, EnableSnapshotVirtualDirectoryAccess_PLAYBACKONLY_)
+  TEST_F(FileShareClientTest, EnableSnapshotVirtualDirectoryAccess)
   {
     std::string shareName = LowercaseRandomString();
     auto shareClient = GetPremiumShareClientForTest(shareName);
@@ -790,7 +790,7 @@ namespace Azure { namespace Storage { namespace Test {
         && !properties.EnableSnapshotVirtualDirectoryAccess.Value());
   }
 
-  TEST_F(FileShareClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  TEST_F(FileShareClientTest, FilePermissionFormat)
   {
     auto sddlPermission
         = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"

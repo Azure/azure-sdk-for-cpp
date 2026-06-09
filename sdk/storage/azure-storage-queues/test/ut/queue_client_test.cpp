@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Test {
     queueClient.Delete();
   }
 
-  TEST_F(QueueClientTest, AclOAuth_PLAYBACKONLY_)
+  TEST_F(QueueClientTest, AclOAuth)
   {
     auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();

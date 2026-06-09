@@ -1098,7 +1098,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false, false);
   }
 
-  TEST_F(FileShareDirectoryClientTest, OAuth_PLAYBACKONLY_)
+  TEST_F(FileShareDirectoryClientTest, OAuth)
   {
     const std::string directoryName = RandomString();
 
@@ -1232,7 +1232,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(directoryClient.GetProperties(), StorageException);
   }
 
-  TEST_F(FileShareDirectoryClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  TEST_F(FileShareDirectoryClientTest, FilePermissionFormat)
   {
     auto sddlPermission
         = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
@@ -1378,7 +1378,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareDirectoryClientTest, PremiumNfsProperties_PLAYBACKONLY_)
+  TEST_F(FileShareDirectoryClientTest, PremiumNfsProperties)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
