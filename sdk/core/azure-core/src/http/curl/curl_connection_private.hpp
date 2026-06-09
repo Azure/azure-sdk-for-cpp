@@ -168,8 +168,8 @@ namespace Azure { namespace Core {
      */
     class CurlConnection final : public CurlNetworkConnection {
     private:
-      Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       Azure::Core::_detail::UniqueCURLSHHandle m_sslShareHandle;
+      Azure::Core::_internal::UniqueHandle<CURL> m_handle;
       curl_socket_t m_curlSocket = CURL_SOCKET_BAD;
       std::chrono::steady_clock::time_point m_lastUseTime;
       std::string m_connectionKey;
