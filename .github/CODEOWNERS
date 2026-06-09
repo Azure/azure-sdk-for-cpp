@@ -85,7 +85,7 @@
 # Eng Sys
 ###########
 
-/eng/                    @danieljurek @weshaggard @benbp
+/eng/                    @danieljurek @mikeharder @benbp
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @ronniegeraghty @Azure/azure-sdk-eng @xirzec
