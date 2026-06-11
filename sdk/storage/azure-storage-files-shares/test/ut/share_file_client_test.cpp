@@ -1740,7 +1740,7 @@ namespace Azure { namespace Storage { namespace Test {
     testTrailingDot(false);
   }
 
-  TEST_F(FileShareFileClientTest, OAuth_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, OAuth)
   {
     const std::string fileName = RandomString();
 
@@ -1824,7 +1824,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(fileClient1.GetProperties());
   }
 
-  TEST_F(FileShareFileClientTest, OAuthCopy_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, OAuthCopy)
   {
     const std::string fileName = RandomString();
 
@@ -1911,7 +1911,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(client1.GetUrl().find("snapshot=" + timestamp2) == std::string::npos);
   }
 
-  TEST_F(FileShareFileClientTest, Audience_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, Audience)
   {
     auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
@@ -1987,7 +1987,7 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(xorAccessRights, accessRightsA ^ accessRightsB);
   }
 
-  TEST_F(FileShareFileClientTest, FilePermissionFormat_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, FilePermissionFormat)
   {
     auto sddlPermission
         = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
@@ -2117,7 +2117,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, FilePermissionFormatForCopy_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, FilePermissionFormatForCopy)
   {
     auto sddlPermission
         = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-1604012920-"
@@ -2211,7 +2211,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, PremiumPosixProperties_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, PremiumPosixProperties)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 
@@ -2467,7 +2467,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::Models::NfsFileType::Regular);
   }
 
-  TEST_F(FileShareFileClientTest, PremiumPosixPropertiesForCopy_PLAYBACKONLY_)
+  TEST_F(FileShareFileClientTest, PremiumPosixPropertiesForCopy)
   {
     auto shareServiceClient = *m_premiumShareServiceClient;
 

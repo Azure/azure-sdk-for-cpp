@@ -806,7 +806,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakeFileSystemClientTest, AclOAuth_PLAYBACKONLY_)
+  TEST_F(DataLakeFileSystemClientTest, AclOAuth)
   {
     auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();

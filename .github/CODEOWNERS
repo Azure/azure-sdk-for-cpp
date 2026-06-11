@@ -6,41 +6,41 @@
 ###########
 
 # Catch all for non-code project files and unowned files | folders
-/**                      @rickwinter @LarryOsterman
+/**                      @rickwinter @LarryOsterman @xirzec
 
 #Catch all for files at the root
-/*                       @rickwinter @LarryOsterman @antkmsft
-/sdk/                    @rickwinter @LarryOsterman
+/*                       @rickwinter @LarryOsterman @antkmsft @xirzec
+/sdk/                    @rickwinter @LarryOsterman @xirzec
 
 # Git Hub integration and bot rules
-/.github/                @rickwinter
+/.github/                @rickwinter @xirzec
 
 # Samples
-/samples/                @rickwinter @antkmsft @LarryOsterman
+/samples/                @rickwinter @antkmsft @LarryOsterman @xirzec
 
-# AzureSdkOwners: @rickwinter
+# AzureSdkOwners: @rickwinter @xirzec
 # ServiceLabel: %Azure.Core
 # PRLabel: %Azure.Core
-/sdk/core/               @rickwinter @antkmsft @LarryOsterman
+/sdk/core/               @rickwinter @antkmsft @LarryOsterman @xirzec
 
 # AzureSdkOwners: @antkmsft
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
-/sdk/identity/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity
+/sdk/identity/           @antkmsft @rickwinter @LarryOsterman @Azure/azure-sdk-write-identity @xirzec
 
 ####################
 # Client Libraries
 ####################
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/                                             @antkmsft @LarryOsterman @RickWinter
+/sdk/appconfiguration/                                             @antkmsft @LarryOsterman @RickWinter @xirzec
 
-# AzureSdkOwners:                                                  @rickwinter
+# AzureSdkOwners:                                                  @rickwinter @xirzec
 # ServiceLabel: %App Configuration
-# ServiceOwners:                                                   @antkmsft @LarryOsterman @RickWinter
+# ServiceOwners:                                                   @antkmsft @LarryOsterman @RickWinter @xirzec
 
 # PRLabel: %Attestation
-/sdk/attestation/                                                  @ahmadmsft @anilba06 @gkostal @LarryOsterman @rickwinter
+/sdk/attestation/                                                  @ahmadmsft @anilba06 @gkostal @LarryOsterman @rickwinter @xirzec
 
 # ServiceLabel: %Attestation
 # ServiceOwners:                                                   @ahmadmsft @anilba06 @gkostal
@@ -53,10 +53,10 @@
 # ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
 
 # PRLabel: %Event Hubs
-/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak
+/sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @SwayGom @sagar0207
 
 # ServiceLabel: %Event Hubs
-# ServiceOwners:                                                   @axisc @hmlam @sjkwak
+# ServiceOwners:                                                   @axisc @hmlam @sjkwak @j7nw4r @SwayGom @sagar0207
 
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                     @Azure/azure-sdk-write-keyvault
@@ -74,7 +74,7 @@
 # PRLabel: %Tables
 /sdk/tables/                                                       @antkmsft @LarryOsterman
 
-# AzureSdkOwners:                                                  @rickwinter
+# AzureSdkOwners:                                                  @rickwinter @xirzec
 # ServiceLabel: %Tables
 # ServiceOwners:                                                   @antkmsft @LarryOsterman
 
@@ -85,12 +85,12 @@
 # Eng Sys
 ###########
 
-/eng/                    @danieljurek @weshaggard @benbp
+/eng/                    @danieljurek @mikeharder @benbp
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
-/.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng
+/.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
 
-/.config/1espt/          @benbp @weshaggard
+/.config/1espt/          @benbp @mikeharder
 
 # Add owners for notifications for specific pipelines
-/eng/common/pipelines/codeowners-linter.yml       @rickwinter
+/eng/common/pipelines/codeowners-linter.yml       @rickwinter @xirzec

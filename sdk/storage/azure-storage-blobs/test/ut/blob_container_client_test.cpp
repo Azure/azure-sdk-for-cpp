@@ -645,7 +645,7 @@ namespace Azure { namespace Storage { namespace Test {
     containerClient.DeleteIfExists();
   }
 
-  TEST_F(BlobContainerClientTest, AclAndAccountInfoOAuth_PLAYBACKONLY_)
+  TEST_F(BlobContainerClientTest, AclAndAccountInfoOAuth)
   {
     auto credential = GetTestCredential();
     auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
