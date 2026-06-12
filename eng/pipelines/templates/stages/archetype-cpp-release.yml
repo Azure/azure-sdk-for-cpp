@@ -246,6 +246,7 @@ stages:
                     BaseRepoOwner: Azure
                     CommitMsg: Update vcpkg-configuration.json
                     BaseRepoBranch: $(DefaultBranch)
+                    AuthToken: ''
 
                 # Set $(HasChanges) to $(PublishToVcpkg) so that
                 # create-pull-request.yml creates or does not create a PR
@@ -263,6 +264,7 @@ stages:
                 - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                   parameters:
                     RepoOwner: $(VcpkgPrRepoOwner)
+                    PROwner: $(VcpkgPrRepoOwner)
                     RepoName: $(VcpkgPrRepoName)
                     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                     PrBranchName: $(PrBranchName)
@@ -272,6 +274,7 @@ stages:
                     BaseBranchName: $(DefaultBranch)
                     OpenAsDraft: ${{ parameters.TestPipeline }}
                     CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                    AuthToken: ''
 
                 - task: AzureCLI@2
                   displayName: Authenticate to OpenSource API
@@ -283,6 +286,11 @@ stages:
                     inlineScript: |
                       $jwt_accessToken = az account get-access-token --resource "api://2789159d-8d8b-4d13-b90b-ca29c1707afd" --query "accessToken" --output tsv
                       Write-Host "##vso[task.setvariable variable=opensource-api-token;isSecret=true]$jwt_accessToken"
+
+                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                  parameters:
+                    TokenOwners: 
+                      - $(VcpkgPrRepoOwner)
 
                 # Workaround: -Fallback uses names from CODEOWNERS who
                 # should be notified about the release in the event of a
@@ -299,7 +307,7 @@ stages:
                     }
 
                     ./eng/common/scripts/Add-IssueComment.ps1 `
-                      -AuthToken "$(azuresdk-github-pat)" `
+                      -AuthToken "$(GH_TOKEN)" `
                       -RepoOwner $(VcpkgPrRepoOwner) `
                       -RepoName $(VcpkgPrRepoName) `
                       -IssueNumber "$(Submitted.PullRequest.Number)" `
