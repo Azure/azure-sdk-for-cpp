@@ -13,7 +13,7 @@
 /sdk/                    @rickwinter @LarryOsterman @xirzec
 
 # Git Hub integration and bot rules
-/.github/                @rickwinter @ronniegeraghty @xirzec
+/.github/                @rickwinter @xirzec
 
 # Samples
 /samples/                @rickwinter @antkmsft @LarryOsterman @xirzec
@@ -88,7 +88,7 @@
 /eng/                    @danieljurek @mikeharder @benbp
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
-/.github/CODEOWNERS      @rickwinter @ronniegeraghty @Azure/azure-sdk-eng @xirzec
+/.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
 
 /.config/1espt/          @benbp @mikeharder
 
