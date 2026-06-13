@@ -9,7 +9,9 @@
 #include <azure/core/nullable.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
 #include <azure/storage/common/access_conditions.hpp>
+#include <azure/storage/common/internal/concurrent_transfer.hpp>
 
+#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -1040,7 +1042,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       /**
        * The maximum number of threads that may be used in a parallel transfer.
        */
-      int32_t Concurrency = 5;
+      int32_t Concurrency = (std::min)(96, (std::max)(8, _internal::GetHardwareConcurrency()));
     } TransferOptions;
 
     /**
