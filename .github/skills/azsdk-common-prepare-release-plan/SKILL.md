@@ -48,7 +48,7 @@ DO NOT USE FOR: SDK code generation, pipeline troubleshooting, API review feedba
 
 **Steps**:
 
-1. **Get TypeSpec Project Path** — Ask the user for the relative TypeSpec project path (directory containing `tspconfig.yaml`, e.g. `specification/my-service/My.Service`). Always use the relative path from the repo root, not an absolute path.
+1. **Get TypeSpec Project Path** — Ask the user for the relative TypeSpec project path (directory containing `tspconfig.yaml`, e.g. `specification/contosowidgetmanager/Contoso.WidgetManager`). Always use the relative path from the repo root, not an absolute path.
 2. **Check Existing** — Run `azure-sdk-mcp:azsdk_get_release_plan` with the relative `typeSpecProjectPath` to check if a release plan already exists.
    - If a release plan exists with the **same API release type** the user requested: inform the user that a release plan already exists, show the Release Plan ID, status, and API release type. Suggest the user use the existing release plan. Do NOT create a new one.
    - If a release plan exists but for a **different API release type**: inform the user about the existing plan and its API release type, then proceed to create a new release plan using `forceCreateReleasePlan: true` for the user's requested API release type. Do NOT attempt to update the existing release plan's API release type.
@@ -79,7 +79,7 @@ DO NOT USE FOR: SDK code generation, pipeline troubleshooting, API review feedba
 
 1. **Identify Plan** — Ask user for one of:
    - Release plan ID or work item ID
-   - Relative TypeSpec project path (e.g. `specification/my-service/My.Service`)
+   - Relative TypeSpec project path (e.g. `specification/contosowidgetmanager/Contoso.WidgetManager`)
    - Spec PR URL
 2. **Query** — Run `azure-sdk-mcp:azsdk_get_release_plan` with the provided identifier (always use relative path for `typeSpecProjectPath`), OR run `azure-sdk-mcp:azsdk_get_release_plan_for_spec_pr` if only a spec PR URL is available.
 3. **Display** — Show the release plan ID, status, linked PRs, and SDK details.
