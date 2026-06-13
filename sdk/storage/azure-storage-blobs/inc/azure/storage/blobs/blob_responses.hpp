@@ -482,5 +482,9 @@ namespace Azure { namespace Storage {
       friend class Azure::Core::PagedResponse<GetPageRangesDiffPagedResponse>;
     };
 
+    namespace _detail {
+      void ParseListBlobsResult(Models::_detail::ListBlobsResult& result);
+    } // namespace _detail
+
   } // namespace Blobs
 }} // namespace Azure::Storage

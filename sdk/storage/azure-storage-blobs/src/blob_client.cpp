@@ -95,9 +95,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
+      _internal::SessionOptions sessionOptions;
+      if (options.SessionOptions.Mode == SessionMode::Enabled)
+      {
+        sessionOptions.Enabled = true;
+        sessionOptions.AccountName = options.SessionOptions.AccountName;
+      }
       perRetryPolicies.emplace_back(
           std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-              credential, tokenContext, options.EnableTenantDiscovery));
+              credential, tokenContext, options.EnableTenantDiscovery, sessionOptions));
     }
     perOperationPolicies.emplace_back(
         std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));

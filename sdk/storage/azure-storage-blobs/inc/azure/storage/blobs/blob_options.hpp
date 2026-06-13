@@ -209,6 +209,37 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Specifies session token mode used to authenticate blob requests.
+   */
+  enum class SessionMode
+  {
+    /**
+     * @brief Disabled
+     */
+    Disabled,
+    /**
+     * @brief Enabled.
+     */
+    Enabled,
+  };
+
+  /**
+   * @brief Options for configuring session token authentication for blob operations.
+   */
+  struct SessionOptions final
+  {
+    /**
+     * @brief The Account name to use for signing the session key.
+     */
+    std::string AccountName;
+
+    /**
+     * @brief The session authentication mode to use for blob operations.
+     */
+    SessionMode Mode = SessionMode::Disabled;
+  };
+
+  /**
    * @brief Client options used to initialize all kinds of blob clients.
    */
   struct BlobClientOptions final : Azure::Core::_internal::ClientOptions
@@ -260,6 +291,11 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional. Configures whether to do content validation for blob downloads.
      */
     Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+
+    /**
+     * @brief Specifies session options used to authenticate blob requests.
+     */
+    Blobs::SessionOptions SessionOptions;
   };
 
   /**
@@ -481,6 +517,16 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies the relative path to list paths from.
      */
     Azure::Nullable<std::string> StartFrom;
+
+    /**
+     * @brief Specifies the relative path to list paths until.
+     */
+    Azure::Nullable<std::string> EndBefore;
+
+    /**
+     * @brief Specifies whether to use Apache Arrow format instead of XML for the listing response.
+     */
+    bool UseApacheArrow = false;
   };
 
   /**

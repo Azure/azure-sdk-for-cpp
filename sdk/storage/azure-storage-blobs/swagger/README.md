@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-06-06/blob.json
+input-file: https://raw.githubusercontent.com/nickliu-msft/azure-rest-api-specs/ab1ec63862fdf4506cfb1cdd4c8105281b5de3f0/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-10-06/blob.json
 ```
 
 ## ModelFour Options
@@ -73,6 +73,8 @@ directive:
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
+      delete $["/{containerName}?restype=container&comp=list&flat&arrow"];
+      delete $["/{containerName}?restype=container&comp=list&hierarchy&arrow"];
       
       for (const operation in $) {
         for (const verb in $[operation]) {
@@ -848,19 +850,37 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&flat"].get
+    transform: >
+      $.parameters.push({
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "type": "string",
+      });
+      $.parameters.push({"$ref": "#/parameters/ListBlobsEndBefore"});
+      $.responses["200"].schema = {"$ref": "#/definitions/ListBlobsResult"};
+  - from: swagger-document
     where: $.definitions
     transform: >
-      $.ListBlobsFlatSegmentResponse["x-ms-client-name"] = "ListBlobsResult";
-      $.ListBlobsFlatSegmentResponse.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
-      $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
-      $.ListBlobsFlatSegmentResponse.properties["Blobs"] = $.BlobFlatListSegment.properties["BlobItems"];
-      $.ListBlobsFlatSegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      delete $.BlobFlatListSegment;
-      delete $.ListBlobsFlatSegmentResponse.properties["Marker"];
-      delete $.ListBlobsFlatSegmentResponse.properties["MaxResults"];
-      delete $.ListBlobsFlatSegmentResponse.properties["Segment"];
-      delete $.ListBlobsFlatSegmentResponse.required;
-      $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-nullable"] = true;
+      $.ListBlobsResult = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "properties": {
+          "BodyStream": {"type": "object", "format": "file"},
+          "ServiceEndpoint": {"type": "string", "x-ms-xml": {"name": ""}},
+          "BlobContainerName": {"type": "string", "x-ms-xml": {"name": ""}},
+          "Prefix": {"type": "string", "x-ms-xml": {"name": ""}},
+          "ContinuationToken": {"type": "string", "x-nullable": true, "x-ms-xml": {"name": ""}},
+          "Delimiter": {"type": "string", "x-ms-xml": {"name": ""}},
+          "Items": $.BlobFlatListSegment.properties["BlobItems"],
+          "BlobPrefixes": $.BlobHierarchyListSegment.properties["BlobPrefixes"],
+        }
+      };
+      $.BlobFlatListSegment.properties["BlobItems"]["x-ms-xml"] = {"name": ""};
+      $.BlobHierarchyListSegment.properties["BlobPrefixes"]["x-ms-xml"] = {"name": ""};
+      $.BlobHierarchyListSegment.properties["BlobPrefixes"].items["$ref"] = "#/definitions/BlobName";
 
       $.BlobName["x-namespace"] = "_detail";
       delete $.BlobName.properties["content"]["xml"];
@@ -868,6 +888,7 @@ directive:
       $.BlobName.properties["content"]["x-ms-xml"] = {"name": "."};
       $.BlobItemInternal["x-ms-client-name"] = "BlobItem";
       $.BlobItemInternal["x-namespace"] = "_detail";
+      $.BlobItemInternal.properties["ResourceType"] = {"type": "string", "description": "Indicates this is a blob or blob prefix"};
       $.BlobItemInternal.properties["Deleted"]["x-ms-client-name"] = "IsDeleted";
       $.BlobItemInternal.properties["Properties"]["x-ms-client-name"] = "Details";
       $.BlobItemInternal.properties["BlobSize"] = $.BlobPropertiesInternal.properties["Content-Length"];
@@ -923,19 +944,16 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $.definitions
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&hierarchy"].get
     transform: >
-      $.ListBlobsHierarchySegmentResponse["x-ms-client-name"] = "ListBlobsByHierarchyResult";
-      $.ListBlobsHierarchySegmentResponse.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
-      $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
-      $.ListBlobsHierarchySegmentResponse.properties["Blobs"] = $.ListBlobsFlatSegmentResponse.properties["Blobs"];
-      $.ListBlobsHierarchySegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"$ref": "#/definitions/BlobName"}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
-      delete $.ListBlobsHierarchySegmentResponse.properties["Marker"];
-      delete $.ListBlobsHierarchySegmentResponse.properties["MaxResults"];
-      delete $.ListBlobsHierarchySegmentResponse.properties["Segment"];
-      delete $.ListBlobsHierarchySegmentResponse.required;
-      $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-nullable"] = true;
+      $.parameters.push({
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "type": "string",
+      });
+      $.parameters.push({"$ref": "#/parameters/ListBlobsEndBefore"});
+      $.responses["200"].schema = {"$ref": "#/definitions/ListBlobsResult"};
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&hierarchy"].get.parameters
     transform: >
