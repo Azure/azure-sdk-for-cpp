@@ -89,6 +89,7 @@
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
+/.github/skills/         @Azure/azsdk-cli
 
 /.config/1espt/          @benbp @mikeharder
 
