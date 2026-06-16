@@ -259,6 +259,11 @@ stages:
                   parameters:
                     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
 
+                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                  parameters:
+                    TokenOwners: 
+                      - $(VcpkgPrRepoOwner)
+
                 # SkipCheckingForChanges is true to skip the commit step
                 # (which is already done by Update-VcpkgPort.ps1)
                 - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
@@ -274,7 +279,7 @@ stages:
                     BaseBranchName: $(DefaultBranch)
                     OpenAsDraft: ${{ parameters.TestPipeline }}
                     CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
-                    AuthToken: ''
+                    AuthToken: "$(GH_TOKEN_${{ variables.VcpkgPrRepoOwner }})"
 
                 - task: AzureCLI@2
                   displayName: Authenticate to OpenSource API
@@ -307,7 +312,7 @@ stages:
                     }
 
                     ./eng/common/scripts/Add-IssueComment.ps1 `
-                      -AuthToken "$(GH_TOKEN)" `
+                      -AuthToken "$(GH_TOKEN_${{ variables.VcpkgPrRepoOwner }})" `
                       -RepoOwner $(VcpkgPrRepoOwner) `
                       -RepoName $(VcpkgPrRepoName) `
                       -IssueNumber "$(Submitted.PullRequest.Number)" `
