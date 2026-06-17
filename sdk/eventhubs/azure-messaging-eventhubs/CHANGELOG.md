@@ -1,26 +1,10 @@
 # Release History
 
-## 1.0.0-beta.13 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-## 1.0.0-beta.12 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0-beta.13 (2026-06-17)
 
 ### Bugs Fixed
 
 - [[#7130]](https://github.com/Azure/azure-sdk-for-cpp/issues/7130) Fixed `RetryOperation::Execute` silently swallowing the final exception when every retry attempt threw, which caused `ProducerClient::Send` to return without delivering the batch and without surfacing the underlying failure. The last exception is now rethrown when retries are exhausted, and `ProducerClient::Send` throws if `Execute` ever reports failure as a defense in depth.
-
-### Other Changes
 
 ## 1.0.0-beta.11 (2026-05-14)
 
