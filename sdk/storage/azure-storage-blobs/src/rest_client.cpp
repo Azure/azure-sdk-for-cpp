@@ -3814,7 +3814,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Details.SequenceNumber
             = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
       }
-      response.BlobType = Models::BlobType(pRawResponse->GetHeaders().at("x-ms-blob-type"));
+      if (pRawResponse->GetHeaders().count("x-ms-blob-type") != 0)
+      {
+        response.BlobType = Models::BlobType(pRawResponse->GetHeaders().at("x-ms-blob-type"));
+      }
       if (pRawResponse->GetHeaders().count("x-ms-copy-completion-time") != 0)
       {
         response.Details.CopyCompletedOn = DateTime::Parse(
@@ -4060,7 +4063,10 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.ObjectReplicationDestinationPolicyId
             = pRawResponse->GetHeaders().at("x-ms-or-policy-id");
       }
-      response.BlobType = Models::BlobType(pRawResponse->GetHeaders().at("x-ms-blob-type"));
+      if (pRawResponse->GetHeaders().count("x-ms-blob-type") != 0)
+      {
+        response.BlobType = Models::BlobType(pRawResponse->GetHeaders().at("x-ms-blob-type"));
+      }
       if (pRawResponse->GetHeaders().count("x-ms-copy-completion-time") != 0)
       {
         response.CopyCompletedOn = DateTime::Parse(
