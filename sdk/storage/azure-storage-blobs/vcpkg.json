@@ -16,6 +16,12 @@
     {
       "name": "vcpkg-cmake-config",
       "host": true
+    },
+    {
+      "name": "nanoarrow",
+      "features": [
+        "ipc"
+      ]
     }
   ]
 }

@@ -1370,6 +1370,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         Nullable<bool> HasVersionsOnly;
         /**
+         * Indicates this is a blob or blob prefix.
+         */
+        Nullable<std::string> ResourceType;
+        /**
          * Size in bytes.
          */
         std::int64_t BlobSize = std::int64_t();
@@ -1422,29 +1426,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     namespace _detail {
       /**
-       * @brief An enumeration of blobs.
+       * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
        */
       struct ListBlobsResult final
       {
+        std::unique_ptr<Core::IO::BodyStream> BodyStream;
         std::string ServiceEndpoint;
         std::string BlobContainerName;
         std::string Prefix;
         Nullable<std::string> ContinuationToken;
-        /**
-         * Array of BlobItem.
-         */
-        std::vector<BlobItem> Items;
-      };
-      /**
-       * @brief An enumeration of blobs.
-       */
-      struct ListBlobsByHierarchyResult final
-      {
-        std::string ServiceEndpoint;
-        std::string BlobContainerName;
-        std::string Prefix;
         std::string Delimiter;
-        Nullable<std::string> ContinuationToken;
         /**
          * Array of BlobItem.
          */
@@ -1453,6 +1444,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of BlobName.
          */
         std::vector<BlobName> BlobPrefixes;
+        /**
+         * The media type of the body of the response. For List Blobs this is 'application/xml'.
+         */
+        std::string ContentType;
       };
     } // namespace _detail
     /**
@@ -3496,6 +3491,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
         Nullable<std::string> StartFrom;
+        Nullable<std::string> Accept;
+        Nullable<std::string> EndBefore;
       };
       static Response<Models::_detail::ListBlobsResult> ListBlobs(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3510,9 +3507,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
         Nullable<std::string> StartFrom;
+        Nullable<std::string> Accept;
+        Nullable<std::string> EndBefore;
         Nullable<std::string> ShowOnly;
       };
-      static Response<Models::_detail::ListBlobsByHierarchyResult> ListBlobsByHierarchy(
+      static Response<Models::_detail::ListBlobsResult> ListBlobsByHierarchy(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const ListBlobContainerBlobsByHierarchyOptions& options,

@@ -446,6 +446,25 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   /**
+   * @brief Specifies the format used by the service for the listing response payload.
+   */
+  enum class StorageResponseFormat
+  {
+    /**
+     * @brief Let the service choose the response format (default).
+     */
+    Auto,
+    /**
+     * @brief Request the response in XML format.
+     */
+    Xml,
+    /**
+     * @brief Request the response in Apache Arrow format.
+     */
+    Arrow,
+  };
+
+  /**
    * @brief Optional parameters for #Azure::Storage::Blobs::BlobContainerClient::ListBlobs and
    * #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
    */
@@ -481,6 +500,17 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Specifies the relative path to list paths from.
      */
     Azure::Nullable<std::string> StartFrom;
+
+    /**
+     * @brief Specifies the relative path to list paths until.
+     * @note This option is only valid when ResponseFormat is set to StorageResponseFormat::Arrow.
+     */
+    Azure::Nullable<std::string> EndBefore;
+
+    /**
+     * @brief Specifies the response format the service should use for the listing response.
+     */
+    StorageResponseFormat ResponseFormat = StorageResponseFormat::Auto;
   };
 
   /**

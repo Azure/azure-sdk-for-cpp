@@ -238,7 +238,11 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Blobs.insert(blobName);
     }
 
+    for (const auto format : {Blobs::StorageResponseFormat::Arrow, Blobs::StorageResponseFormat::Xml})
+    {
+
     Azure::Storage::Blobs::ListBlobsOptions options;
+      options.ResponseFormat = format;
     options.PageSizeHint = 3;
     std::set<std::string> listBlobs;
     int numPages = 0;
@@ -246,12 +250,16 @@ namespace Azure { namespace Storage { namespace Test {
          pageResult.MoveToNextPage())
     {
       ++numPages;
-      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+        EXPECT_FALSE(
+            pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
       EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
       EXPECT_FALSE(
           pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+        if (format == Blobs::StorageResponseFormat::Xml)
+        {
       EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
       EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
+        }
       for (const auto& blob : pageResult.Blobs)
       {
         EXPECT_FALSE(blob.Name.empty());
@@ -304,7 +312,10 @@ namespace Azure { namespace Storage { namespace Test {
         listBlobs.insert(blob.Name);
       }
     }
-    EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
+      EXPECT_TRUE(
+          std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
+    
+  }
   }
 
   TEST_F(BlobContainerClientTest, ListBlobsFlat_WithStartFrom)
