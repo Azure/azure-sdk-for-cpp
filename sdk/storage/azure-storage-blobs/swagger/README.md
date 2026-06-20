@@ -1044,6 +1044,8 @@ directive:
         $[status_code].headers["x-ms-legal-hold"]["x-nullable"] = true;
         $[status_code].headers["x-ms-immutability-policy-until-date"]["x-ms-client-path"] = "Details.ImmutabilityPolicy.ExpiresOn";
         $[status_code].headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "Details.ImmutabilityPolicy.PolicyMode";
+        $[status_code].headers["x-ms-blob-type"]["x-nullable"] = true;
+        $[status_code].headers["x-ms-blob-type"]["x-ms-client-default"] = "";
         delete $[status_code].headers["Accept-Ranges"];
         delete $[status_code].headers["Content-Length"];
         delete $[status_code].headers["Content-Range"];
@@ -1150,6 +1152,8 @@ directive:
       $["x-ms-legal-hold"]["x-ms-client-name"] = "HasLegalHold";
       $["x-ms-legal-hold"]["x-ms-client-default"] = false;
       $["x-ms-legal-hold"]["x-nullable"] = true;
+      $["x-ms-blob-type"]["x-nullable"] = true;
+      $["x-ms-blob-type"]["x-ms-client-default"] = "";
       delete $["Accept-Ranges"];
       delete $["x-ms-or"];
 ```
