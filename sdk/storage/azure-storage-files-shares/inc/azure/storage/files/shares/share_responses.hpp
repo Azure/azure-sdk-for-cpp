@@ -375,6 +375,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** @brief The name of the item */
       std::string Name;
       /**
+       * NFS only. The number of hard links to this item.
+       */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
        * File properties.
        */
       DirectoryItemDetails Details;
@@ -388,9 +392,133 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** @brief The name of the item */
       std::string Name;
       /**
+       * NFS only. The number of hard links to this item.
+       */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
        * File properties.
        */
       FileItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a symbolic link item.
+     */
+    using SymLinkItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed symbolic link item.
+     */
+    struct SymLinkItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The file ID of the item */
+      Azure::Nullable<std::string> FileId;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The target of the symbolic link. */
+      Azure::Nullable<std::string> LinkText;
+      /**
+       * File properties.
+       */
+      SymLinkItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a block device item.
+     */
+    using BlockDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed block device item.
+     */
+    struct BlockDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The file ID of the item */
+      Azure::Nullable<std::string> FileId;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The major device number. */
+      Azure::Nullable<std::int64_t> DeviceMajor;
+      /** @brief The minor device number. */
+      Azure::Nullable<std::int64_t> DeviceMinor;
+      /**
+       * File properties.
+       */
+      BlockDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a character device item.
+     */
+    using CharDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed character device item.
+     */
+    struct CharDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The file ID of the item */
+      Azure::Nullable<std::string> FileId;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The major device number. */
+      Azure::Nullable<std::int64_t> DeviceMajor;
+      /** @brief The minor device number. */
+      Azure::Nullable<std::int64_t> DeviceMinor;
+      /**
+       * File properties.
+       */
+      CharDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a FIFO item.
+     */
+    using FifoItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed FIFO item.
+     */
+    struct FifoItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The file ID of the item */
+      Azure::Nullable<std::string> FileId;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
+       * File properties.
+       */
+      FifoItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a socket item.
+     */
+    using SocketItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed socket item.
+     */
+    struct SocketItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The file ID of the item */
+      Azure::Nullable<std::string> FileId;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
+       * File properties.
+       */
+      SocketItemDetails Details;
     };
 
     /**
@@ -941,6 +1069,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * File items.
      */
     std::vector<Models::FileItem> Files;
+    /**
+     * Symbolic link items.
+     */
+    std::vector<Models::SymLinkItem> SymLinks;
+    /**
+     * Block device items.
+     */
+    std::vector<Models::BlockDeviceItem> BlockDevices;
+    /**
+     * Character device items.
+     */
+    std::vector<Models::CharDeviceItem> CharDevices;
+    /**
+     * FIFO items.
+     */
+    std::vector<Models::FifoItem> Fifos;
+    /**
+     * Socket items.
+     */
+    std::vector<Models::SocketItem> Sockets;
     /**
      * FileId of the directory.
      */
