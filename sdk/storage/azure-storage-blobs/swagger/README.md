@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/nickliu-msft/azure-rest-api-specs/ab1ec63862fdf4506cfb1cdd4c8105281b5de3f0/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-10-06/blob.json
+input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-10-06/blob.json
 ```
 
 ## ModelFour Options
@@ -999,7 +999,11 @@ directive:
           "VersionId": {"type": "string"},
           "IsCurrentVersion": {"type": "boolean"},
           "ImmutabilityPolicy": {"$ref": "#/definitions/BlobImmutabilityPolicy", "x-nullable": true},
-          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false}
+          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false},
+          "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
+          "IsAccessTierInferred": {"type": "boolean", "x-nullable": true},
+          "AccessTierChangedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "SmartAccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true}
         }
       };
       $.DownloadBlobResult = {
@@ -1064,6 +1068,10 @@ directive:
         $[status_code].headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "Details.ImmutabilityPolicy.PolicyMode";
         $[status_code].headers["x-ms-blob-type"]["x-nullable"] = true;
         $[status_code].headers["x-ms-blob-type"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-access-tier"]["x-ms-client-path"] = "Details.AccessTier";
+        $[status_code].headers["x-ms-access-tier-inferred"]["x-ms-client-path"] = "Details.IsAccessTierInferred";
+        $[status_code].headers["x-ms-access-tier-change-time"]["x-ms-client-path"] = "Details.AccessTierChangedOn";
+        $[status_code].headers["x-ms-smart-access-tier"]["x-ms-client-path"] = "Details.SmartAccessTier";
         delete $[status_code].headers["Accept-Ranges"];
         delete $[status_code].headers["Content-Length"];
         delete $[status_code].headers["Content-Range"];
@@ -1929,6 +1937,9 @@ directive:
       $.DownloadBlobDetails.properties["VersionId"].description = "A string value returned by the service that uniquely identifies the blob version.";
       $.DownloadBlobDetails.properties["IsCurrentVersion"].description = "Indicates whether version of this blob is the current version.";
       $.DownloadBlobDetails.properties["HasLegalHold"].description = "Indicates whether the blob has a legal hold.";
+      $.DownloadBlobDetails.properties["IsAccessTierInferred"].description = "For page blobs on a premium storage account only. If the access tier is not explicitly set on the blob, the tier is inferred based on its content length and this header will be returned with true value.";
+      $.DownloadBlobDetails.properties["AccessTierChangedOn"].description = "The time the tier was changed on the object. This is only returned if the tier on the block blob was ever set.";
+      $.DownloadBlobDetails.properties["SmartAccessTier"].description = "The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.";
       $.DownloadBlobDetails.description = "Detailed information of the downloaded blob.";
       $.DownloadBlobResult.properties["BlobSize"].description = "Size of the blob in bytes.";
       $.DownloadBlobResult.properties["ContentRange"].description = "Indicates the range of bytes returned.";

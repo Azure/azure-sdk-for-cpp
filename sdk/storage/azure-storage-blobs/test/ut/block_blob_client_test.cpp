@@ -2691,5 +2691,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobItem.Details.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
     EXPECT_TRUE(blobItem.Details.SmartAccessTier.HasValue());
     EXPECT_FALSE(blobItem.Details.SmartAccessTier.Value().ToString().empty());
+
+    auto ret2 = blobClient.Download().Value;
+    EXPECT_TRUE(ret2.Details.AccessTier.HasValue());
+    EXPECT_FALSE(ret2.Details.AccessTier.Value().ToString().empty());
+    EXPECT_EQ(ret2.Details.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
+    EXPECT_TRUE(ret2.Details.SmartAccessTier.HasValue());
+    EXPECT_FALSE(ret2.Details.SmartAccessTier.Value().ToString().empty());
+    EXPECT_TRUE(ret2.Details.AccessTierChangedOn.HasValue());
   }
 }}} // namespace Azure::Storage::Test

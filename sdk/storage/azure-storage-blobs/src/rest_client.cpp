@@ -2632,6 +2632,27 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Details.HasLegalHold
             = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
       }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier") != 0)
+      {
+        response.Details.AccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-access-tier"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-inferred") != 0)
+      {
+        response.Details.IsAccessTierInferred
+            = pRawResponse->GetHeaders().at("x-ms-access-tier-inferred") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-change-time") != 0)
+      {
+        response.Details.AccessTierChangedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-access-tier-change-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-smart-access-tier") != 0)
+      {
+        response.Details.SmartAccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-smart-access-tier"));
+      }
       if (httpStatusCode == Core::Http::HttpStatusCode::Ok)
       {
         if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
@@ -6469,6 +6490,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("Content-MD5"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       }
+      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
+      {
+        response.TransactionalContentHash = ContentHash();
+        response.TransactionalContentHash.Value().Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
+        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -6483,13 +6511,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
-      {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
-            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       return Response<Models::UploadBlockBlobResult>(std::move(response), std::move(pRawResponse));
     }
@@ -6684,6 +6705,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("Content-MD5"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       }
+      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
+      {
+        response.TransactionalContentHash = ContentHash();
+        response.TransactionalContentHash.Value().Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
+        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -6698,13 +6726,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
-      {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
-            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       return Response<Models::UploadBlockBlobFromUriResult>(
           std::move(response), std::move(pRawResponse));

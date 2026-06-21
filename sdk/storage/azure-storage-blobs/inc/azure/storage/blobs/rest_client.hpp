@@ -1594,6 +1594,26 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates whether the blob has a legal hold.
        */
       bool HasLegalHold = false;
+      /**
+       * The tier of page blob on a premium storage account or tier of block blob on blob storage or
+       * general purpose v2 account.
+       */
+      Nullable<Models::AccessTier> AccessTier;
+      /**
+       * For page blobs on a premium storage account only. If the access tier is not explicitly set
+       * on the blob, the tier is inferred based on its content length and this header will be
+       * returned with true value.
+       */
+      Nullable<bool> IsAccessTierInferred;
+      /**
+       * The time the tier was changed on the object. This is only returned if the tier on the block
+       * blob was ever set.
+       */
+      Nullable<DateTime> AccessTierChangedOn;
+      /**
+       * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
+       */
+      Nullable<Models::AccessTier> SmartAccessTier;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
