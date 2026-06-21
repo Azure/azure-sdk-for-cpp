@@ -172,6 +172,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
 
+    Nullable<Azure::Response<Models::UploadPagesResult>> responseNullable;
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
@@ -206,11 +207,22 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageException(
               "Structured message response without x-ms-structured-body header.");
         }
-        return response;
+        responseNullable = std::move(response);
       }
     }
-    return _detail::PageBlobClient::UploadPages(
-        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    if (!responseNullable.HasValue())
+    {
+      responseNullable = _detail::PageBlobClient::UploadPages(
+          *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    }
+    auto response = std::move(responseNullable.Value());
+    if (response.Value.TransactionalContentHash2.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
+      response.Value.TransactionalContentHash2.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::UploadPagesFromUriResult> PageBlobClient::UploadPagesFromUri(
@@ -273,8 +285,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
     }
 
-    return _detail::PageBlobClient::UploadPagesFromUri(
+    auto response = _detail::PageBlobClient::UploadPagesFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    if (response.Value.TransactionalContentHash2.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
+      response.Value.TransactionalContentHash2.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::ClearPagesResult> PageBlobClient::ClearPages(

@@ -157,6 +157,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    Nullable<Azure::Response<Models::AppendBlockResult>> responseNullable;
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
@@ -191,11 +192,22 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageException(
               "Structured message response without x-ms-structured-body header.");
         }
-        return response;
+        responseNullable = std::move(response);
       }
     }
-    return _detail::AppendBlobClient::AppendBlock(
-        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    if (!responseNullable.HasValue())
+    {
+      responseNullable = _detail::AppendBlobClient::AppendBlock(
+          *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    }
+    auto response = std::move(responseNullable.Value());
+    if (response.Value.TransactionalContentHash2.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
+      response.Value.TransactionalContentHash2.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::AppendBlockFromUriResult> AppendBlobClient::AppendBlockFromUri(
@@ -255,8 +267,15 @@ namespace Azure { namespace Storage { namespace Blobs {
           = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
     }
 
-    return _detail::AppendBlobClient::AppendBlockFromUri(
+    auto response = _detail::AppendBlobClient::AppendBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    if (response.Value.TransactionalContentHash2.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
+      response.Value.TransactionalContentHash2.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::SealAppendBlobResult> AppendBlobClient::Seal(
