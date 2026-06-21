@@ -2751,8 +2751,7 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       options.TransactionalContentHash.Value().Value = contentMd5;
       auto result
-          = destBlobClient
-                .StageBlockFromUri(blockId, sourceBlobClient.GetUrl() + GetSas(), options)
+          = destBlobClient.StageBlockFromUri(blockId, sourceBlobClient.GetUrl() + GetSas(), options)
                 .Value;
       ASSERT_TRUE(result.TransactionalContentHash.HasValue());
       EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);

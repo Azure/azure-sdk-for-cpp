@@ -1010,8 +1010,7 @@ namespace Azure { namespace Storage { namespace Test {
       size_t aggregatedRanges = 0;
       size_t numPages = 0;
       std::string lastContinuationToken;
-      for (auto page = fileClient.GetAllRangeList(options); page.HasPage();
-           page.MoveToNextPage())
+      for (auto page = fileClient.GetAllRangeList(options); page.HasPage(); page.MoveToNextPage())
       {
         EXPECT_LE(page.Ranges.size(), static_cast<size_t>(options.PageSizeHint.Value()));
         aggregatedRanges += page.Ranges.size();
@@ -1049,8 +1048,7 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::GetFileRangeListOptions remainingOptions;
         remainingOptions.ContinuationToken = firstPageContinuationToken;
         Files::Shares::Models::GetFileRangeListResult remainingResult;
-        EXPECT_NO_THROW(
-            remainingResult = fileClient.GetRangeList(remainingOptions).Value);
+        EXPECT_NO_THROW(remainingResult = fileClient.GetRangeList(remainingOptions).Value);
         EXPECT_EQ(
             remainingResult.Ranges.size(),
             static_cast<size_t>(numRanges) - firstPage.Ranges.size());
@@ -1064,7 +1062,6 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
   }
-
 
   TEST_F(FileShareClientTest, GetAllRangeListDiffPaged)
   {
@@ -1177,7 +1174,6 @@ namespace Azure { namespace Storage { namespace Test {
       }
     }
   }
-
 
   TEST_F(FileShareFileClientTest, GetRangeListWithRange)
   {

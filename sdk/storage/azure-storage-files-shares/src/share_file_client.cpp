@@ -931,8 +931,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileSize = response.Value.FileSize;
     if (!response.Value.NextMarker.empty())
     {
-      throw StorageException(
-          "Service returned a next paged response. Please use GetAllRangeList to get paged response.");
+      throw StorageException("Service returned a next paged response. Please use GetAllRangeList "
+                             "to get paged response.");
     }
     return Azure::Response<Models::GetFileRangeListResult>(
         std::move(ret), std::move(response.RawResponse));

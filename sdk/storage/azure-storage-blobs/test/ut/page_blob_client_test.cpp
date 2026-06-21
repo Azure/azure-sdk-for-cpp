@@ -950,10 +950,10 @@ namespace Azure { namespace Storage { namespace Test {
       options.TransactionalContentHash = ContentHash();
       options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       options.TransactionalContentHash.Value().Value = contentMd5;
-      auto result = destBlobClient
-                        .UploadPagesFromUri(
-                            0, sourceBlobClient.GetUrl() + GetSas(), sourceRange, options)
-                        .Value;
+      auto result
+          = destBlobClient
+                .UploadPagesFromUri(0, sourceBlobClient.GetUrl() + GetSas(), sourceRange, options)
+                .Value;
       ASSERT_TRUE(result.TransactionalContentHash.HasValue());
       EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
       EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);

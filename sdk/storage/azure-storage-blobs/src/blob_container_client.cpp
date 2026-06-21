@@ -1483,8 +1483,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {
-      protocolLayerOptions.Accept = std::string(_internal::ContentTypeApacheArrowStream) + ","
-          + _internal::ContentTypeXml;
+      protocolLayerOptions.Accept
+          = std::string(_internal::ContentTypeApacheArrowStream) + "," + _internal::ContentTypeXml;
     }
 
     auto response = _detail::BlobContainerClient::ListBlobs(
@@ -1540,8 +1540,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {
-      protocolLayerOptions.Accept = std::string(_internal::ContentTypeApacheArrowStream) + ","
-          + _internal::ContentTypeXml;
+      protocolLayerOptions.Accept
+          = std::string(_internal::ContentTypeApacheArrowStream) + "," + _internal::ContentTypeXml;
     }
 
     auto response = _detail::BlobContainerClient::ListBlobsByHierarchy(
