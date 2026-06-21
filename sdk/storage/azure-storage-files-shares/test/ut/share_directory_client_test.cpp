@@ -1528,8 +1528,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& symLink : page.SymLinks)
       {
         EXPECT_FALSE(symLink.Name.empty());
-        ASSERT_TRUE(symLink.FileId.HasValue());
-        EXPECT_FALSE(symLink.FileId.Value().empty());
+        EXPECT_FALSE(symLink.Details.SmbProperties.FileId.empty());
         ASSERT_TRUE(symLink.LinkCount.HasValue());
         EXPECT_GT(symLink.LinkCount.Value(), 0);
         ASSERT_TRUE(symLink.LinkText.HasValue());
@@ -1543,14 +1542,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& blockDevice : page.BlockDevices)
       {
         EXPECT_FALSE(blockDevice.Name.empty());
-        ASSERT_TRUE(blockDevice.FileId.HasValue());
-        EXPECT_FALSE(blockDevice.FileId.Value().empty());
+        EXPECT_FALSE(blockDevice.Details.SmbProperties.FileId.empty());
         ASSERT_TRUE(blockDevice.LinkCount.HasValue());
         EXPECT_GT(blockDevice.LinkCount.Value(), 0);
-        ASSERT_TRUE(blockDevice.DeviceMajor.HasValue());
-        EXPECT_GE(blockDevice.DeviceMajor.Value(), 0);
-        ASSERT_TRUE(blockDevice.DeviceMinor.HasValue());
-        EXPECT_GE(blockDevice.DeviceMinor.Value(), 0);
+        EXPECT_GE(blockDevice.DeviceMajor, 0);
+        EXPECT_GE(blockDevice.DeviceMinor, 0);
         EXPECT_FALSE(blockDevice.Details.Owner.empty());
         EXPECT_FALSE(blockDevice.Details.Group.empty());
         EXPECT_FALSE(blockDevice.Details.FileMode.empty());
@@ -1560,14 +1556,11 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& charDevice : page.CharDevices)
       {
         EXPECT_FALSE(charDevice.Name.empty());
-        ASSERT_TRUE(charDevice.FileId.HasValue());
-        EXPECT_FALSE(charDevice.FileId.Value().empty());
+        EXPECT_FALSE(charDevice.Details.SmbProperties.FileId.empty());
         ASSERT_TRUE(charDevice.LinkCount.HasValue());
         EXPECT_GT(charDevice.LinkCount.Value(), 0);
-        ASSERT_TRUE(charDevice.DeviceMajor.HasValue());
-        EXPECT_GE(charDevice.DeviceMajor.Value(), 0);
-        ASSERT_TRUE(charDevice.DeviceMinor.HasValue());
-        EXPECT_GE(charDevice.DeviceMinor.Value(), 0);
+        EXPECT_GE(charDevice.DeviceMajor, 0);
+        EXPECT_GE(charDevice.DeviceMinor, 0);
         EXPECT_FALSE(charDevice.Details.Owner.empty());
         EXPECT_FALSE(charDevice.Details.Group.empty());
         EXPECT_FALSE(charDevice.Details.FileMode.empty());
@@ -1577,8 +1570,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& fifo : page.Fifos)
       {
         EXPECT_FALSE(fifo.Name.empty());
-        ASSERT_TRUE(fifo.FileId.HasValue());
-        EXPECT_FALSE(fifo.FileId.Value().empty());
+        EXPECT_FALSE(fifo.Details.SmbProperties.FileId.empty());
         ASSERT_TRUE(fifo.LinkCount.HasValue());
         EXPECT_GT(fifo.LinkCount.Value(), 0);
         EXPECT_FALSE(fifo.Details.Owner.empty());
@@ -1590,8 +1582,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (const auto& socket : page.Sockets)
       {
         EXPECT_FALSE(socket.Name.empty());
-        ASSERT_TRUE(socket.FileId.HasValue());
-        EXPECT_FALSE(socket.FileId.Value().empty());
+        EXPECT_FALSE(socket.Details.SmbProperties.FileId.empty());
         ASSERT_TRUE(socket.LinkCount.HasValue());
         EXPECT_GT(socket.LinkCount.Value(), 0);
         EXPECT_FALSE(socket.Details.Owner.empty());

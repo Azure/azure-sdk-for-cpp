@@ -3165,14 +3165,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
-                && xmlPath[3] == XmlTagEnum::kFileId)
-            {
-              vectorElement3.FileId = node.Value;
-              vectorElement3.Details.SmbProperties.FileId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
                 && xmlPath[3] == XmlTagEnum::kLinkCount)
             {
               vectorElement3.LinkCount = std::stoll(node.Value);
@@ -3278,18 +3270,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
-                && xmlPath[3] == XmlTagEnum::kName)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kFileId)
             {
-              vectorElement4.Name.Content = node.Value;
+              vectorElement3.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
-                && xmlPath[3] == XmlTagEnum::kFileId)
+                && xmlPath[3] == XmlTagEnum::kName)
             {
-              vectorElement4.FileId = node.Value;
-              vectorElement4.Details.SmbProperties.FileId = node.Value;
+              vectorElement4.Name.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3406,18 +3397,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
-                && xmlPath[3] == XmlTagEnum::kName)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kFileId)
             {
-              vectorElement5.Name.Content = node.Value;
+              vectorElement4.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
-                && xmlPath[3] == XmlTagEnum::kFileId)
+                && xmlPath[3] == XmlTagEnum::kName)
             {
-              vectorElement5.FileId = node.Value;
-              vectorElement5.Details.SmbProperties.FileId = node.Value;
+              vectorElement5.Name.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3534,18 +3524,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
-                && xmlPath[3] == XmlTagEnum::kName)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kFileId)
             {
-              vectorElement6.Name.Content = node.Value;
+              vectorElement5.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
-                && xmlPath[3] == XmlTagEnum::kFileId)
+                && xmlPath[3] == XmlTagEnum::kName)
             {
-              vectorElement6.FileId = node.Value;
-              vectorElement6.Details.SmbProperties.FileId = node.Value;
+              vectorElement6.Name.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3648,18 +3637,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
-                && xmlPath[3] == XmlTagEnum::kName)
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kFileId)
             {
-              vectorElement7.Name.Content = node.Value;
+              vectorElement6.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
-                && xmlPath[3] == XmlTagEnum::kFileId)
+                && xmlPath[3] == XmlTagEnum::kName)
             {
-              vectorElement7.FileId = node.Value;
-              vectorElement7.Details.SmbProperties.FileId = node.Value;
+              vectorElement7.Name.Content = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3759,6 +3747,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               vectorElement7.Details.SmbProperties.ChangedOn
                   = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement7.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults

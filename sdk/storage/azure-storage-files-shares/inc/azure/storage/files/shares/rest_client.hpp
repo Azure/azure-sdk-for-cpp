@@ -1501,7 +1501,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct SymLinkItem final
       {
         StringEncoded Name;
-        std::string FileId;
         Nullable<std::int64_t> LinkCount;
         std::string LinkText;
         /**
@@ -1515,7 +1514,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct BlockDeviceItem final
       {
         StringEncoded Name;
-        std::string FileId;
         Nullable<std::int64_t> LinkCount;
         std::int64_t DeviceMajor = std::int64_t();
         std::int64_t DeviceMinor = std::int64_t();
@@ -1530,7 +1528,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct CharDeviceItem final
       {
         StringEncoded Name;
-        std::string FileId;
         Nullable<std::int64_t> LinkCount;
         std::int64_t DeviceMajor = std::int64_t();
         std::int64_t DeviceMinor = std::int64_t();
@@ -1545,7 +1542,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct FifoItem final
       {
         StringEncoded Name;
-        std::string FileId;
         Nullable<std::int64_t> LinkCount;
         /**
          * File properties.
@@ -1558,7 +1554,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct SocketItem final
       {
         StringEncoded Name;
-        std::string FileId;
         Nullable<std::int64_t> LinkCount;
         /**
          * File properties.

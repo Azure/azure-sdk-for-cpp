@@ -695,14 +695,19 @@ directive:
 
       delete $.SymLinkItem.properties["Properties"];
       delete $.SymLinkItem.required;
+      delete $.SymLinkItem.properties["FileId"];
       delete $.BlockDeviceItem.properties["Properties"];
       delete $.BlockDeviceItem.required;
+      delete $.BlockDeviceItem.properties["FileId"];
       delete $.CharDeviceItem.properties["Properties"];
       delete $.CharDeviceItem.required;
+      delete $.CharDeviceItem.properties["FileId"];
       delete $.FifoItem.properties["Properties"];
       delete $.FifoItem.required;
+      delete $.FifoItem.properties["FileId"];
       delete $.SocketItem.properties["Properties"];
       delete $.SocketItem.required;
+      delete $.SocketItem.properties["FileId"];
       $.SymLinkItem.properties["Details"] = { "$ref": "#/definitions/FileItemDetails", "x-ms-xml" : {"name": "Properties"}};
       $.SymLinkItem["x-namespace"] = "_detail";
       $.SymLinkItem.properties["LinkCount"]["x-nullable"] = true;
