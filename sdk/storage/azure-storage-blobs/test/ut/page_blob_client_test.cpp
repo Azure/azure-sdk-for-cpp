@@ -910,4 +910,57 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST_F(BlobContainerClientTest, ResponseTransactionalContentHashesPageBlob)
+  {
+    auto pageBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
+
+    const std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    pageBlobClient.Create(blobContent.size());
+
+    {
+      auto contentStream
+          = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+      Blobs::UploadPagesOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result = pageBlobClient.UploadPages(0, contentStream, options).Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.TransactionalContentHash2.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash2.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.TransactionalContentHash2.Value().Value, contentCrc64);
+    }
+
+    {
+      const auto sourceBlobClient = pageBlobClient;
+
+      auto destBlobClient = m_blobContainerClient->GetPageBlobClient(RandomString());
+      destBlobClient.Create(blobContent.size());
+      Azure::Core::Http::HttpRange sourceRange;
+      sourceRange.Offset = 0;
+      sourceRange.Length = blobContent.size();
+      Blobs::UploadPagesFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result = destBlobClient
+                        .UploadPagesFromUri(
+                            0, sourceBlobClient.GetUrl() + GetSas(), sourceRange, options)
+                        .Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.TransactionalContentHash2.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash2.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.TransactionalContentHash2.Value().Value, contentCrc64);
+    }
+  }
+
 }}} // namespace Azure::Storage::Test

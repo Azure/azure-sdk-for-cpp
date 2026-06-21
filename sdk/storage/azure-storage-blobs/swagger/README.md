@@ -102,12 +102,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-06-06"]
+        "enum": ["2026-10-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-06-06"];
+      $.ApiVersionParameter.enum = ["2026-10-06"];
 ```
 
 ### Rename Operations
@@ -1446,7 +1446,7 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
@@ -1463,7 +1463,7 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
@@ -1622,7 +1622,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       delete $["x-ms-structured-body"];
 ```
@@ -1642,7 +1642,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
@@ -1658,7 +1658,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash2", "x-nullable": true};
       delete $["x-ms-structured-body"];
 ```
 
@@ -1673,7 +1673,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       delete $["x-ms-structured-body"];
 ```
@@ -1689,7 +1689,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash2";
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
@@ -1756,7 +1756,7 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash2", "x-nullable": true};
       $["x-ms-version-id"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
