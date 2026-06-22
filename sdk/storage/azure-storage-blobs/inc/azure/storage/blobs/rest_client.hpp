@@ -3037,6 +3037,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * header is returned so that the client can check for message content integrity.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
       Nullable<ContentHash> TransactionalContentHash2;
       /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
@@ -3082,6 +3087,11 @@ namespace Azure { namespace Storage { namespace Blobs {
        * header is returned so that the client can check for message content integrity.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
       Nullable<ContentHash> TransactionalContentHash2;
       /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of

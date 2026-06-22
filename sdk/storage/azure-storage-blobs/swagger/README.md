@@ -888,7 +888,7 @@ directive:
       $.BlobName.properties["content"]["x-ms-xml"] = {"name": "."};
       $.BlobItemInternal["x-ms-client-name"] = "BlobItem";
       $.BlobItemInternal["x-namespace"] = "_detail";
-      $.BlobItemInternal.properties["ResourceType"] = {"type": "string", "description": "Indicates this is a blob or blob prefix"};
+      $.BlobItemInternal.properties["ResourceType"] = {"type": "string"};
       $.BlobItemInternal.properties["Deleted"]["x-ms-client-name"] = "IsDeleted";
       $.BlobItemInternal.properties["Properties"]["x-ms-client-name"] = "Details";
       $.BlobItemInternal.properties["BlobSize"] = $.BlobPropertiesInternal.properties["Content-Length"];
@@ -1658,7 +1658,12 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash2", "x-nullable": true};
+      $["x-ms-content-crc64"] = {
+        "type": "string",
+        "format": "byte",
+        "x-ms-client-name": "TransactionalContentHash2",
+        "x-nullable": true
+      };
       delete $["x-ms-structured-body"];
 ```
 
@@ -1756,7 +1761,12 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash2", "x-nullable": true};
+      $["x-ms-content-crc64"] = {
+        "type": "string",
+        "format": "byte",
+        "x-ms-client-name": "TransactionalContentHash2",
+        "x-nullable": true
+      };
       $["x-ms-version-id"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
@@ -1892,6 +1902,7 @@ directive:
       $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
       $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
+      $.BlobItemInternal.properties["ResourceType"].description = "Indicates this is a blob or blob prefix";
       $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
       $.BlobItemInternal.properties["DeletionId"].description = "The deletion ID associated with the deleted path.";
       $.BlobPropertiesInternal.properties["Creation-Time"].description = "The date and time at which the blob was created.";
@@ -2035,4 +2046,12 @@ directive:
       $["200"].schema.properties["BlobSize"].description = "Size of the blob in bytes.";
       $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
       $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob"].put.responses["201"].headers
+    transform: >
+      $["x-ms-content-crc64"].description = "This header is returned so that the client can check for message content integrity. The value of this header is computed by the Blob service; it is not necessarily the same value specified in the request headers.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob&fromUrl"].put.responses["201"].headers
+    transform: >
+      $["x-ms-content-crc64"].description = "This header is returned so that the client can check for message content integrity. The value of this header is computed by the Blob service; it is not necessarily the same value specified in the request headers.";
 ```
