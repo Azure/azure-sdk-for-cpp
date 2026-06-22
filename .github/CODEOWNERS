@@ -66,10 +66,10 @@
 # ServiceOwners:                                                   @Azure/azure-sdk-write-keyvault
 
 # PRLabel: %Storage
-/sdk/storage/                                                      @antkmsft @EmmaZhu @Jinming-Hu @LarryOsterman @microzchang @vinjiang
+/sdk/storage/                                                      @antkmsft @Jinming-Hu @LarryOsterman @amnguye @gapra-msft
 
 # ServiceLabel: %Storage
-# ServiceOwners:                                                   @Jinming-Hu @microzchang @vinjiang
+# ServiceOwners:                                                   @Jinming-Hu @amnguye @gapra-msft
 
 # PRLabel: %Tables
 /sdk/tables/                                                       @antkmsft @LarryOsterman
