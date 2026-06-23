@@ -163,8 +163,14 @@ jobs:
               -DBUILD_TRANSPORT_CURL=OFF
               -DBUILD_DOCUMENTATION=YES
 
+        - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+          parameters:
+            npmrcPath: $(Agent.TempDirectory)/generate-release/.npmrc
+
         - pwsh: npm install -g moxygen
           displayName: Install Moxygen to generate markdown for learn.microsoft.com
+          env:
+            npm_config_userconfig: "$(Agent.TempDirectory)/generate-release/.npmrc"
 
         - pwsh: |
             Write-Host "Using apiview parser version ${{ variables.apiviewParserVersion }}"
@@ -277,6 +283,8 @@ jobs:
                 ignoreLASTEXITCODE: true
                 pwsh: true
               displayName: Generate ${{ artifact.Name }} artifacts for docs.ms
+              env:
+                npm_config_userconfig: "$(Agent.TempDirectory)/generate-release/.npmrc"
 
             - task: Powershell@2
               inputs:
