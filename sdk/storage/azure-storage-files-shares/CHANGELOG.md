@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Updated the default concurrency for upload and download operations. It now scales with the number of hardware threads available, clamped between 8 and 96 (previously a fixed value of 5).
+
 ## 12.18.0 (2026-06-11)
 
 ### Features Added

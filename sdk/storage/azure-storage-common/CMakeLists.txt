@@ -70,6 +70,7 @@ set(
 set(
   AZURE_STORAGE_COMMON_SOURCE
     src/account_sas_builder.cpp
+    src/concurrent_transfer.cpp
     src/crypt.cpp
     src/file_io.cpp
     src/private/package_version.hpp
