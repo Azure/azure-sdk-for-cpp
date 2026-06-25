@@ -933,9 +933,9 @@ namespace Azure { namespace Storage { namespace Test {
       ASSERT_TRUE(result.TransactionalContentHash.HasValue());
       EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
       EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
-      ASSERT_TRUE(result.TransactionalContentHash2.HasValue());
-      EXPECT_EQ(result.TransactionalContentHash2.Value().Algorithm, HashAlgorithm::Crc64);
-      EXPECT_EQ(result.TransactionalContentHash2.Value().Value, contentCrc64);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
     }
 
     {
@@ -957,9 +957,9 @@ namespace Azure { namespace Storage { namespace Test {
       ASSERT_TRUE(result.TransactionalContentHash.HasValue());
       EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
       EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
-      ASSERT_TRUE(result.TransactionalContentHash2.HasValue());
-      EXPECT_EQ(result.TransactionalContentHash2.Value().Algorithm, HashAlgorithm::Crc64);
-      EXPECT_EQ(result.TransactionalContentHash2.Value().Value, contentCrc64);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
     }
   }
 

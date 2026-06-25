@@ -4966,10 +4966,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
       {
@@ -5263,10 +5263,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
       {
@@ -6083,10 +6083,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.AppendOffset = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-append-offset"));
       response.CommittedBlockCount
@@ -6265,10 +6265,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.AppendOffset = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-append-offset"));
       response.CommittedBlockCount
@@ -6492,10 +6492,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
@@ -6707,10 +6707,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
@@ -6808,10 +6808,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
@@ -6950,10 +6950,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash2 = ContentHash();
-        response.TransactionalContentHash2.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash2.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");

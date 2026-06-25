@@ -175,11 +175,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
     }
     auto response = std::move(responseNullable.Value());
-    if (response.Value.TransactionalContentHash2.HasValue()
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
-      response.Value.TransactionalContentHash2.Reset();
+      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
   }
@@ -437,11 +437,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = _detail::BlockBlobClient::UploadFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
-    if (response.Value.TransactionalContentHash2.HasValue()
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
-      response.Value.TransactionalContentHash2.Reset();
+      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
   }
@@ -507,11 +507,11 @@ namespace Azure { namespace Storage { namespace Blobs {
           *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
     }
     auto response = std::move(responseNullable.Value());
-    if (response.Value.TransactionalContentHash2.HasValue()
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
-      response.Value.TransactionalContentHash2.Reset();
+      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
   }
@@ -574,11 +574,11 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response = _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
-    if (response.Value.TransactionalContentHash2.HasValue()
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.TransactionalContentHash2);
-      response.Value.TransactionalContentHash2.Reset();
+      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
   }

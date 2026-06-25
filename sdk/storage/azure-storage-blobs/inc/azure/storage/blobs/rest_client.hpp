@@ -2611,7 +2611,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The current sequence number for the page blob.
        */
@@ -2680,7 +2680,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The current sequence number for the page blob.
        */
@@ -2913,7 +2913,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
@@ -2967,7 +2967,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
@@ -3042,7 +3042,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
        * this header indicates the blob version, and may be used in subsequent requests to access
@@ -3092,7 +3092,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
        * this header indicates the blob version, and may be used in subsequent requests to access
@@ -3132,7 +3132,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -3166,7 +3166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * value of this header is computed by the Blob service; it is not necessarily the same value
        * specified in the request headers.
        */
-      Nullable<ContentHash> TransactionalContentHash2;
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
