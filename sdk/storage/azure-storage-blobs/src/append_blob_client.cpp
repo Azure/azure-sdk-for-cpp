@@ -204,7 +204,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
       response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
@@ -272,7 +273,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     if (response.Value.AdditionalTransactionalContentHash.HasValue()
         && !response.Value.TransactionalContentHash.HasValue())
     {
-      response.Value.TransactionalContentHash = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
       response.Value.AdditionalTransactionalContentHash.Reset();
     }
     return response;
