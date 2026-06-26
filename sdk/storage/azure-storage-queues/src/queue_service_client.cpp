@@ -9,8 +9,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
-#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
-#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_pipeline.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
@@ -40,23 +39,16 @@ namespace Azure { namespace Storage { namespace Queues {
       const QueueClientOptions& options)
       : QueueServiceClient(serviceUrl, options)
   {
-    QueueClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::QueueServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
+    pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
+    pipelineOptions.ApiVersion = options.ApiVersion.ToString();
+    pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_serviceUrl.GetHost(), newOptions.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion.ToString()));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        newOptions,
-        _internal::QueueServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueServiceClient::QueueServiceClient(
@@ -65,29 +57,25 @@ namespace Azure { namespace Storage { namespace Queues {
       const QueueClientOptions& options)
       : QueueServiceClient(serviceUrl, options)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_serviceUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::QueueServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
+    pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
+    pipelineOptions.ApiVersion = options.ApiVersion.ToString();
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
-      perRetryPolicies.emplace_back(
-          std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-              credential, tokenContext, options.EnableTenantDiscovery));
+      pipelineOptions.TokenAuthPolicy
+          = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
+              credential, tokenContext, options.EnableTenantDiscovery);
     }
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        options,
-        _internal::QueueServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueServiceClient::QueueServiceClient(
@@ -95,19 +83,15 @@ namespace Azure { namespace Storage { namespace Queues {
       const QueueClientOptions& options)
       : m_serviceUrl(serviceUrl)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
-        m_serviceUrl.GetHost(), options.SecondaryHostForRetryReads));
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion.ToString()));
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::QueueServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
+    pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
+    pipelineOptions.ApiVersion = options.ApiVersion.ToString();
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        options,
-        _internal::QueueServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueClient QueueServiceClient::GetQueueClient(const std::string& queueName) const
