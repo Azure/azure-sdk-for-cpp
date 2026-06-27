@@ -26,6 +26,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    *
    */
   class ListBlob : public Azure::Storage::Blobs::Test::BlobsTest {
+  private:
+    int m_pageSize = 0;
+
   public:
     /**
      * @brief Construct a new ListBlob test.
@@ -42,7 +45,18 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     {
       // Call base to create blob client
       BlobsTest::Setup();
-      long count = m_options.GetMandatoryOption<long>("Count");
+      // --num-blobs is the canonical name (matches the Go perf harness); --count is kept
+      // for backward compatibility with existing test definitions.
+      long count = 0;
+      if (m_options.HasOption("NumBlobs"))
+      {
+        count = m_options.GetMandatoryOption<long>("NumBlobs");
+      }
+      else
+      {
+        count = m_options.GetMandatoryOption<long>("Count");
+      }
+      m_pageSize = m_options.GetOptionOrDefault<int>("PageSize", 0);
 
       auto rawData = std::make_unique<std::vector<uint8_t>>(1);
       auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
@@ -62,8 +76,13 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Run(Azure::Core::Context const& context) override
     {
+      Azure::Storage::Blobs::ListBlobsOptions opts;
+      if (m_pageSize > 0)
+      {
+        opts.PageSizeHint = m_pageSize;
+      }
       // Loop each page
-      auto page = m_containerClient->ListBlobs({}, context);
+      auto page = m_containerClient->ListBlobs(opts, context);
       for (; page.HasPage(); page.MoveToNextPage(context))
       {
         // loop each blob
@@ -87,7 +106,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
            {"--token-credential"},
            "Use a token credential to run the test. By default, a connection string is used.",
            0},
-          {"Count", {"--count"}, "Number of blobs to list", 1, true}};
+          {"Count", {"--count"}, "Number of blobs to list (legacy alias of --num-blobs).", 1},
+          {"NumBlobs", {"--num-blobs"}, "Number of blobs to list.", 1},
+          {"PageSize",
+           {"--page-size"},
+           "Server page size hint for ListBlobs. Default: server default.",
+           1}};
     }
 
     /**

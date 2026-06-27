@@ -70,6 +70,11 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   {
     options.JobStatistics = parsedArgs["JobStatistics"].as<bool>();
   }
+  // .NET-compatible bare-switch alias --job-statistics; presence implies true.
+  if (parsedArgs["JobStatisticsSwitch"])
+  {
+    options.JobStatistics = true;
+  }
   if (parsedArgs["Latency"])
   {
     options.Latency = parsedArgs["Latency"].as<bool>();
@@ -77,6 +82,11 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   if (parsedArgs["NoCleanup"])
   {
     options.NoCleanup = parsedArgs["NoCleanup"].as<bool>();
+  }
+  // .NET-compatible bare-switch alias --no-cleanup; presence implies true.
+  if (parsedArgs["NoCleanupSwitch"])
+  {
+    options.NoCleanup = true;
   }
   if (parsedArgs["Parallel"])
   {
@@ -102,6 +112,18 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
     {
       options.TestProxies.push_back(proxy);
     }
+  }
+  if (parsedArgs["StatusInterval"])
+  {
+    options.StatusInterval = parsedArgs["StatusInterval"];
+  }
+  if (parsedArgs["ResultsFile"])
+  {
+    options.ResultsFile = parsedArgs["ResultsFile"].as<std::string>();
+  }
+  if (parsedArgs["Sync"])
+  {
+    options.Sync = true;
   }
 
   return options;

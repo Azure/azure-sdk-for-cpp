@@ -11,6 +11,7 @@
 ### Other Changes
 
 - Updated the default concurrency for upload and download operations. It now scales with the number of hardware threads available, clamped between 8 and 96 (previously a fixed value of 5).
+- Expanded the Storage Blobs performance test surface to align with the .NET and Go perf harnesses: added `--upload-method` (`buffer`/`stream`/`single`), `--download-method` (`buffer`/`stream`), `--block-size`, `--concurrency`, `--num-blobs`, and `--page-size` flags; added a memory-budget guard for buffer-mode tests; new test variants exercising streaming for multi-GiB payloads.
 
 ## 12.18.0 (2026-06-11)
 

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
+#include "azure/storage/blobs/test/memory_budget.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
@@ -24,11 +25,27 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
   /**
    * @brief A test to measure uploading a blob.
    *
+   * @details Supports three upload methods selected via `--upload-method`:
+   *  - `buffer` (default, preserves existing behavior): build a contiguous in-memory
+   *    payload and call `BlockBlobClient::UploadFrom(buffer, size)`. Guarded by a
+   *    `size * parallel` memory-budget check to avoid OOM kills.
+   *  - `stream`: do not materialize the payload; stream a circular `RandomStream` into
+   *    `BlockBlobClient::Upload(BodyStream)`. Use for multi-GiB sizes.
+   *  - `single`: same as `buffer` but uses the single-shot `Upload(BodyStream)` for the
+   *    in-memory buffer (no chunked staging). Useful to compare buffered vs. chunked
+   *    upload paths.
+   *
+   * `--block-size` and `--concurrency` are forwarded to `UploadBlockBlobFromOptions` for
+   * the `buffer` method.
    */
   class UploadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
   private:
     // C++ can upload and download from contiguous memory or file only
     std::vector<uint8_t> m_uploadBuffer;
+    long m_size = 0;
+    std::string m_uploadMethod = "buffer";
+    long m_blockSize = 0;
+    int m_concurrency = 0;
 
   public:
     /**
@@ -47,8 +64,24 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       // Call base to create blob client
       BlobsTest::Setup();
 
-      long size = m_options.GetMandatoryOption<long>("Size");
-      m_uploadBuffer = Azure::Perf::RandomStream::Create(size)->ReadToEnd(Azure::Core::Context{});
+      m_size = m_options.GetMandatoryOption<long>("Size");
+      m_uploadMethod = m_options.GetOptionOrDefault<std::string>("UploadMethod", "buffer");
+      m_blockSize = m_options.GetOptionOrDefault<long>("BlockSize", 0);
+      m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
+
+      if (m_uploadMethod == "buffer" || m_uploadMethod == "single")
+      {
+        // Allocates a contiguous buffer; guard against OOM on huge sizes.
+        CheckMemoryBudget(static_cast<uint64_t>(m_size), 1);
+        m_uploadBuffer
+            = Azure::Perf::RandomStream::Create(m_size)->ReadToEnd(Azure::Core::Context{});
+      }
+      else if (m_uploadMethod != "stream")
+      {
+        throw std::runtime_error(
+            "Invalid --upload-method '" + m_uploadMethod
+            + "'. Expected one of: buffer, stream, single.");
+      }
     }
 
     /**
@@ -57,7 +90,29 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
      */
     void Run(Azure::Core::Context const&) override
     {
-      m_blobClient->UploadFrom(m_uploadBuffer.data(), m_uploadBuffer.size());
+      if (m_uploadMethod == "stream")
+      {
+        auto stream = Azure::Perf::RandomStream::Create(m_size);
+        m_blobClient->Upload(*stream);
+        return;
+      }
+      if (m_uploadMethod == "single")
+      {
+        auto stream = Azure::Core::IO::MemoryBodyStream(m_uploadBuffer);
+        m_blobClient->Upload(stream);
+        return;
+      }
+      // Default: buffer (chunked via UploadFrom).
+      Azure::Storage::Blobs::UploadBlockBlobFromOptions opts;
+      if (m_blockSize > 0)
+      {
+        opts.TransferOptions.ChunkSize = m_blockSize;
+      }
+      if (m_concurrency > 0)
+      {
+        opts.TransferOptions.Concurrency = m_concurrency;
+      }
+      m_blobClient->UploadFrom(m_uploadBuffer.data(), m_uploadBuffer.size(), opts);
     }
 
     /**
@@ -73,7 +128,21 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
            {"--token-credential"},
            "Use a token credential to run the test. By default, a connection string is used.",
            0},
-          {"Size", {"--size", "-s"}, "Size of payload (in bytes)", 1, true}};
+          {"Size", {"--size", "-s"}, "Size of payload (in bytes)", 1, true},
+          {"UploadMethod",
+           {"--upload-method"},
+           "Upload method: 'buffer' (default, chunked UploadFrom), 'stream' (Upload "
+           "BodyStream from a circular RandomStream, no contiguous buffer), or 'single' "
+           "(single-shot Upload of an in-memory buffer).",
+           1},
+          {"BlockSize",
+           {"--block-size"},
+           "Chunk size (bytes) for buffer-mode UploadFrom. Default: client default.",
+           1},
+          {"Concurrency",
+           {"--concurrency"},
+           "Per-operation concurrency for buffer-mode UploadFrom. Default: client default.",
+           1}};
     }
 
     /**

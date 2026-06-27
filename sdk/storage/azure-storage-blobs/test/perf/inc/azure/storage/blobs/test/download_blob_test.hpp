@@ -10,9 +10,11 @@
 #pragma once
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
+#include "azure/storage/blobs/test/memory_budget.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
+#include <azure/perf/random_stream.hpp>
 
 #include <memory>
 #include <string>
@@ -23,10 +25,25 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
   /**
    * @brief A test to measure downloading a blob.
    *
+   * @details `--download-method` chooses between:
+   *  - `buffer` (default, preserves existing behavior): allocate a contiguous buffer and
+   *    call `DownloadTo(buffer, size)`. Guarded by a `size * parallel` memory-budget
+   *    check.
+   *  - `stream`: stream the response with `Download()` and drain its body stream without
+   *    materializing the payload in RAM. Use for multi-GiB sizes.
+   *
+   * `--block-size` and `--concurrency` are forwarded to `DownloadBlobToOptions` for the
+   * `buffer` method.
    */
   class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
   private:
     std::unique_ptr<std::vector<uint8_t>> m_downloadBuffer;
+    long m_size = 0;
+    std::string m_downloadMethod = "buffer";
+    long m_blockSize = 0;
+    int m_concurrency = 0;
+
+    static constexpr size_t StreamDrainBufferSize = 1024 * 1024;
 
   public:
     /**
@@ -45,22 +62,64 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       // Call base to create blob client
       BlobsTest::Setup();
 
-      long size = m_options.GetMandatoryOption<long>("Size");
+      m_size = m_options.GetMandatoryOption<long>("Size");
+      m_downloadMethod
+          = m_options.GetOptionOrDefault<std::string>("DownloadMethod", "buffer");
+      m_blockSize = m_options.GetOptionOrDefault<long>("BlockSize", 0);
+      m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 
-      m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(size);
+      if (m_downloadMethod == "buffer")
+      {
+        CheckMemoryBudget(static_cast<uint64_t>(m_size), 1);
+        m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(m_size);
+      }
+      else if (m_downloadMethod != "stream")
+      {
+        throw std::runtime_error(
+            "Invalid --download-method '" + m_downloadMethod
+            + "'. Expected one of: buffer, stream.");
+      }
 
-      auto rawData = std::make_unique<std::vector<uint8_t>>(size);
-      auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
-      m_blobClient->Upload(content);
+      // Stage the blob with random data. Use the streaming RandomStream so very large
+      // sizes do not materialize a contiguous staging buffer.
+      auto staging = Azure::Perf::RandomStream::Create(m_size);
+      m_blobClient->Upload(*staging);
     }
 
     /**
      * @brief Define the test
      *
      */
-    void Run(Azure::Core::Context const&) override
+    void Run(Azure::Core::Context const& context) override
     {
-      m_blobClient->DownloadTo(m_downloadBuffer->data(), m_downloadBuffer->size());
+      if (m_downloadMethod == "stream")
+      {
+        auto response = m_blobClient->Download({}, context);
+        auto& bodyStream = response.Value.BodyStream;
+        if (bodyStream)
+        {
+          uint8_t buffer[StreamDrainBufferSize];
+          while (true)
+          {
+            auto read = bodyStream->Read(buffer, sizeof(buffer), context);
+            if (read == 0)
+            {
+              break;
+            }
+          }
+        }
+        return;
+      }
+      Azure::Storage::Blobs::DownloadBlobToOptions opts;
+      if (m_blockSize > 0)
+      {
+        opts.TransferOptions.ChunkSize = m_blockSize;
+      }
+      if (m_concurrency > 0)
+      {
+        opts.TransferOptions.Concurrency = m_concurrency;
+      }
+      m_blobClient->DownloadTo(m_downloadBuffer->data(), m_downloadBuffer->size(), opts);
     }
 
     /**
@@ -77,7 +136,20 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
            {"--token-credential"},
            "Use a token credential to run the test. By default, a connection string is used.",
            0},
-          {"Size", {"--size"}, "Size of payload (in bytes)", 1, true}};
+          {"Size", {"--size"}, "Size of payload (in bytes)", 1, true},
+          {"DownloadMethod",
+           {"--download-method"},
+           "Download method: 'buffer' (default, contiguous buffer via DownloadTo) or "
+           "'stream' (drain the response BodyStream, no contiguous buffer).",
+           1},
+          {"BlockSize",
+           {"--block-size"},
+           "Chunk size (bytes) for buffer-mode DownloadTo. Default: client default.",
+           1},
+          {"Concurrency",
+           {"--concurrency"},
+           "Per-operation concurrency for buffer-mode DownloadTo. Default: client default.",
+           1}};
     }
 
     /**

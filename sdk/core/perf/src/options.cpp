@@ -16,7 +16,10 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
       {"Latency", p.Latency},
       {"NoCleanup", p.NoCleanup},
       {"Parallel", p.Parallel},
-      {"Warmup", p.Warmup}};
+      {"Warmup", p.Warmup},
+      {"StatusInterval", p.StatusInterval},
+      {"ResultsFile", p.ResultsFile.empty() ? "N/A" : p.ResultsFile},
+      {"Sync", p.Sync}};
   if (p.Port)
   {
     j["Port"] = p.Port.Value();
@@ -73,11 +76,22 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        "Number of iterations of main test loop. Default to 1.",
        1},
       {"JobStatistics", {"--statistics"}, "Print job statistics. Default to false", 1},
+      // .NET-compatible bare-switch alias for --statistics. When present, sets
+      // JobStatistics=true regardless of any --statistics value parsed.
+      {"JobStatisticsSwitch",
+       {"--job-statistics"},
+       "Print job statistics (bare switch, matches .NET --job-statistics).",
+       0},
       {"Latency",
        {"-l", "--latency"},
        "Track and print per-operation latency statistics. Default to false.",
        1},
       {"NoCleanup", {"--noclean"}, "Disables test clean up. Default to false.", 1},
+      // .NET-compatible bare-switch alias for --noclean.
+      {"NoCleanupSwitch",
+       {"--no-cleanup"},
+       "Disables test clean up (bare switch, matches .NET --no-cleanup).",
+       0},
       {"Parallel",
        {"-p", "--parallel"},
        "Number of operations to execute in parallel. Default to 1.",
@@ -88,5 +102,13 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+      {"StatusInterval",
+       {"--status-interval"},
+       "Interval in seconds between live status lines. Default to 1.",
+       1},
+      {"ResultsFile",
+       {"--results-file"},
+       "Write per-operation results ({Time, Size}) as JSON to this file. Requires --latency.",
+       1},
   };
 }

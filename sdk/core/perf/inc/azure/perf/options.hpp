@@ -109,6 +109,28 @@ namespace Azure { namespace Perf {
     std::vector<std::string> TestProxies;
 
     /**
+     * @brief Interval in seconds between live status lines printed during a run.
+     *
+     */
+    int StatusInterval = 1;
+
+    /**
+     * @brief When set, write a per-operation results file (JSON) containing the per-op
+     * latency (ms) and the per-op size (bytes) for every measured operation, matching the
+     * .NET `OperationResult { Time, Size }` schema.
+     *
+     * @remark Only populated when #Latency is also enabled.
+     *
+     */
+    std::string ResultsFile;
+
+    /**
+     * @brief Runs the sync version of the test. Not currently implemented for C++.
+     *
+     */
+    bool Sync = false;
+
+    /**
      * @brief Create an array of the performance framework options.
      *
      * @return An array of the options as #Azure::Perf::TestOption.
