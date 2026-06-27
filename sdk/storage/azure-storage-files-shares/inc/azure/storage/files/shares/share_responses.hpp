@@ -375,6 +375,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** @brief The name of the item */
       std::string Name;
       /**
+       * NFS only. The number of hard links to this item.
+       */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
        * File properties.
        */
       DirectoryItemDetails Details;
@@ -388,9 +392,123 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       /** @brief The name of the item */
       std::string Name;
       /**
+       * NFS only. The number of hard links to this item.
+       */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
        * File properties.
        */
       FileItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a symbolic link item.
+     */
+    using SymLinkItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed symbolic link item.
+     */
+    struct SymLinkItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The target of the symbolic link. */
+      Azure::Nullable<std::string> LinkText;
+      /**
+       * File properties.
+       */
+      SymLinkItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a block device item.
+     */
+    using BlockDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed block device item.
+     */
+    struct BlockDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The major device number. */
+      std::int64_t DeviceMajor = 0;
+      /** @brief The minor device number. */
+      std::int64_t DeviceMinor = 0;
+      /**
+       * File properties.
+       */
+      BlockDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a character device item.
+     */
+    using CharDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed character device item.
+     */
+    struct CharDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /** @brief The major device number. */
+      std::int64_t DeviceMajor = 0;
+      /** @brief The minor device number. */
+      std::int64_t DeviceMinor = 0;
+      /**
+       * File properties.
+       */
+      CharDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a FIFO item.
+     */
+    using FifoItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed FIFO item.
+     */
+    struct FifoItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
+       * File properties.
+       */
+      FifoItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a socket item.
+     */
+    using SocketItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed socket item.
+     */
+    struct SocketItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The number of hard links to this item. */
+      Azure::Nullable<std::int64_t> LinkCount;
+      /**
+       * File properties.
+       */
+      SocketItemDetails Details;
     };
 
     /**
@@ -769,6 +887,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       FilePosixProperties PosixProperties;
     };
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.
+     */
+    struct GetFileRangeListResult final
+    {
+      /**
+       * Array of Range.
+       */
+      std::vector<Core::Http::HttpRange> Ranges;
+      /**
+       * Array of ClearRange.
+       */
+      std::vector<Core::Http::HttpRange> ClearRanges;
+      /**
+       * The date/time that the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the file's last
+       * modified time.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * The size of the file in bytes.
+       */
+      std::int64_t FileSize = std::int64_t();
+    };
   } // namespace Models
 
   /**
@@ -840,6 +987,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetAllRangeList.
+   */
+  class GetFileRangeListPagedResponse final
+      : public Azure::Core::PagedResponse<GetFileRangeListPagedResponse> {
+  public:
+    /**
+     * Array of Range.
+     */
+    std::vector<Core::Http::HttpRange> Ranges;
+    /**
+     * Array of ClearRange.
+     */
+    std::vector<Core::Http::HttpRange> ClearRanges;
+    /**
+     * The date/time that the file was last modified.
+     */
+    DateTime LastModified;
+    /**
+     * The ETag contains a value which represents the version of the file, in quotes.
+     */
+    Azure::ETag ETag;
+    /**
+     * The size of the file in bytes.
+     */
+    std::int64_t FileSize = std::int64_t();
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareFileClient> m_shareFileClient;
+    GetFileRangeListOptions m_operationOptions;
+    Azure::Nullable<std::string> m_previousShareSnapshot;
+
+    friend class ShareFileClient;
+    friend class Azure::Core::PagedResponse<GetFileRangeListPagedResponse>;
+  };
+
+  /**
    * @brief Response type for
    * #Azure::Storage::Files::Shares::ShareDirectoryClient::ListFilesAndDirectories.
    */
@@ -874,6 +1059,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * File items.
      */
     std::vector<Models::FileItem> Files;
+    /**
+     * Symbolic link items.
+     */
+    std::vector<Models::SymLinkItem> SymLinks;
+    /**
+     * Block device items.
+     */
+    std::vector<Models::BlockDeviceItem> BlockDevices;
+    /**
+     * Character device items.
+     */
+    std::vector<Models::CharDeviceItem> CharDevices;
+    /**
+     * FIFO items.
+     */
+    std::vector<Models::FifoItem> Fifos;
+    /**
+     * Socket items.
+     */
+    std::vector<Models::SocketItem> Sockets;
     /**
      * FileId of the directory.
      */

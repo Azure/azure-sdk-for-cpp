@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-06-06/blob.json
+input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-10-06/blob.json
 ```
 
 ## ModelFour Options
@@ -73,6 +73,8 @@ directive:
       delete $["/{filesystem}/{path}?action=setAccessControl&blob"];
       delete $["/{filesystem}/{path}?action=getAccessControl&blob"];
       delete $["/{filesystem}/{path}?FileRename"];
+      delete $["/{containerName}?restype=container&comp=list&flat&arrow"];
+      delete $["/{containerName}?restype=container&comp=list&hierarchy&arrow"];
       
       for (const operation in $) {
         for (const verb in $[operation]) {
@@ -100,12 +102,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-06-06"]
+        "enum": ["2026-10-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-06-06"];
+      $.ApiVersionParameter.enum = ["2026-10-06"];
 ```
 
 ### Rename Operations
@@ -848,19 +850,37 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&flat"].get
+    transform: >
+      $.parameters.push({
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "type": "string",
+      });
+      $.parameters.push({"$ref": "#/parameters/ListBlobsEndBefore"});
+      $.responses["200"].schema = {"$ref": "#/definitions/ListBlobsResult"};
+  - from: swagger-document
     where: $.definitions
     transform: >
-      $.ListBlobsFlatSegmentResponse["x-ms-client-name"] = "ListBlobsResult";
-      $.ListBlobsFlatSegmentResponse.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
-      $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
-      $.ListBlobsFlatSegmentResponse.properties["Blobs"] = $.BlobFlatListSegment.properties["BlobItems"];
-      $.ListBlobsFlatSegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      delete $.BlobFlatListSegment;
-      delete $.ListBlobsFlatSegmentResponse.properties["Marker"];
-      delete $.ListBlobsFlatSegmentResponse.properties["MaxResults"];
-      delete $.ListBlobsFlatSegmentResponse.properties["Segment"];
-      delete $.ListBlobsFlatSegmentResponse.required;
-      $.ListBlobsFlatSegmentResponse.properties["NextMarker"]["x-nullable"] = true;
+      $.ListBlobsResult = {
+        "type": "object",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "properties": {
+          "BodyStream": {"type": "object", "format": "file"},
+          "ServiceEndpoint": {"type": "string", "x-ms-xml": {"name": ""}},
+          "BlobContainerName": {"type": "string", "x-ms-xml": {"name": ""}},
+          "Prefix": {"type": "string", "x-ms-xml": {"name": ""}},
+          "ContinuationToken": {"type": "string", "x-nullable": true, "x-ms-xml": {"name": ""}},
+          "Delimiter": {"type": "string", "x-ms-xml": {"name": ""}},
+          "Items": $.BlobFlatListSegment.properties["BlobItems"],
+          "BlobPrefixes": $.BlobHierarchyListSegment.properties["BlobPrefixes"],
+        }
+      };
+      $.BlobFlatListSegment.properties["BlobItems"]["x-ms-xml"] = {"name": ""};
+      $.BlobHierarchyListSegment.properties["BlobPrefixes"]["x-ms-xml"] = {"name": ""};
+      $.BlobHierarchyListSegment.properties["BlobPrefixes"].items["$ref"] = "#/definitions/BlobName";
 
       $.BlobName["x-namespace"] = "_detail";
       delete $.BlobName.properties["content"]["xml"];
@@ -868,6 +888,7 @@ directive:
       $.BlobName.properties["content"]["x-ms-xml"] = {"name": "."};
       $.BlobItemInternal["x-ms-client-name"] = "BlobItem";
       $.BlobItemInternal["x-namespace"] = "_detail";
+      $.BlobItemInternal.properties["ResourceType"] = {"type": "string"};
       $.BlobItemInternal.properties["Deleted"]["x-ms-client-name"] = "IsDeleted";
       $.BlobItemInternal.properties["Properties"]["x-ms-client-name"] = "Details";
       $.BlobItemInternal.properties["BlobSize"] = $.BlobPropertiesInternal.properties["Content-Length"];
@@ -923,19 +944,16 @@ directive:
 ```yaml
 directive:
   - from: swagger-document
-    where: $.definitions
+    where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&hierarchy"].get
     transform: >
-      $.ListBlobsHierarchySegmentResponse["x-ms-client-name"] = "ListBlobsByHierarchyResult";
-      $.ListBlobsHierarchySegmentResponse.properties["ContainerName"]["x-ms-client-name"] = "BlobContainerName";
-      $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-ms-client-name"] = "ContinuationToken";
-      $.ListBlobsHierarchySegmentResponse.properties["Blobs"] = $.ListBlobsFlatSegmentResponse.properties["Blobs"];
-      $.ListBlobsHierarchySegmentResponse.properties["Blobs"]["x-ms-client-name"] = "Items";
-      $.ListBlobsHierarchySegmentResponse.properties["BlobPrefixes"] = {"type": "array", "items": {"$ref": "#/definitions/BlobName"}, "x-ms-xml": {"wrapped": true, "name": "Blobs/BlobPrefix"}};
-      delete $.ListBlobsHierarchySegmentResponse.properties["Marker"];
-      delete $.ListBlobsHierarchySegmentResponse.properties["MaxResults"];
-      delete $.ListBlobsHierarchySegmentResponse.properties["Segment"];
-      delete $.ListBlobsHierarchySegmentResponse.required;
-      $.ListBlobsHierarchySegmentResponse.properties["NextMarker"]["x-nullable"] = true;
+      $.parameters.push({
+        "name": "Accept",
+        "in": "header",
+        "required": false,
+        "type": "string",
+      });
+      $.parameters.push({"$ref": "#/parameters/ListBlobsEndBefore"});
+      $.responses["200"].schema = {"$ref": "#/definitions/ListBlobsResult"};
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}?restype=container&comp=list&hierarchy"].get.parameters
     transform: >
@@ -981,7 +999,11 @@ directive:
           "VersionId": {"type": "string"},
           "IsCurrentVersion": {"type": "boolean"},
           "ImmutabilityPolicy": {"$ref": "#/definitions/BlobImmutabilityPolicy", "x-nullable": true},
-          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false}
+          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false},
+          "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
+          "IsAccessTierInferred": {"type": "boolean", "x-nullable": true},
+          "AccessTierChangedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "SmartAccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true}
         }
       };
       $.DownloadBlobResult = {
@@ -1046,6 +1068,10 @@ directive:
         $[status_code].headers["x-ms-immutability-policy-mode"]["x-ms-client-path"] = "Details.ImmutabilityPolicy.PolicyMode";
         $[status_code].headers["x-ms-blob-type"]["x-nullable"] = true;
         $[status_code].headers["x-ms-blob-type"]["x-ms-client-default"] = "";
+        $[status_code].headers["x-ms-access-tier"]["x-ms-client-path"] = "Details.AccessTier";
+        $[status_code].headers["x-ms-access-tier-inferred"]["x-ms-client-path"] = "Details.IsAccessTierInferred";
+        $[status_code].headers["x-ms-access-tier-change-time"]["x-ms-client-path"] = "Details.AccessTierChangedOn";
+        $[status_code].headers["x-ms-smart-access-tier"]["x-ms-client-path"] = "Details.SmartAccessTier";
         delete $[status_code].headers["Accept-Ranges"];
         delete $[status_code].headers["Content-Length"];
         delete $[status_code].headers["Content-Range"];
@@ -1420,7 +1446,7 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
@@ -1437,7 +1463,7 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       $["x-ms-blob-sequence-number"]["x-ms-client-name"] = "SequenceNumber";
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
@@ -1596,7 +1622,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       delete $["x-ms-structured-body"];
 ```
@@ -1616,7 +1642,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
@@ -1632,7 +1658,12 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      $["x-ms-content-crc64"] = {
+        "type": "string",
+        "format": "byte",
+        "x-ms-client-name": "AdditionalTransactionalContentHash",
+        "x-nullable": true
+      };
       delete $["x-ms-structured-body"];
 ```
 
@@ -1647,7 +1678,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
       delete $["x-ms-structured-body"];
 ```
@@ -1663,7 +1694,7 @@ directive:
       $["x-ms-encryption-scope"]["x-nullable"] = true;
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"]["x-ms-client-name"] = "TransactionalContentHash";
+      $["x-ms-content-crc64"]["x-ms-client-name"] = "AdditionalTransactionalContentHash";
       $["x-ms-content-crc64"]["x-nullable"] = true;
 ```
 
@@ -1730,7 +1761,12 @@ directive:
     transform: >
       $["Content-MD5"]["x-ms-client-name"] = "TransactionalContentHash";
       $["Content-MD5"]["x-nullable"] = true;
-      $["x-ms-content-crc64"] = {"type": "string", "format": "byte", "x-ms-client-name": "TransactionalContentHash", "x-nullable": true};
+      $["x-ms-content-crc64"] = {
+        "type": "string",
+        "format": "byte",
+        "x-ms-client-name": "AdditionalTransactionalContentHash",
+        "x-nullable": true
+      };
       $["x-ms-version-id"]["x-nullable"] = true;
       $["x-ms-encryption-key-sha256"]["x-nullable"] = true;
       $["x-ms-encryption-scope"]["x-nullable"] = true;
@@ -1866,6 +1902,7 @@ directive:
       $.BlobItemInternal.properties["VersionId"].description = "A string value that uniquely identifies a blob version.";
       $.BlobItemInternal.properties["IsCurrentVersion"].description = "Indicates if this is the current version of the blob.";
       $.BlobItemInternal.properties["BlobType"].description = "Type of the blob.";
+      $.BlobItemInternal.properties["ResourceType"].description = "Indicates this is a blob or blob prefix";
       $.BlobItemInternal.properties["HasVersionsOnly"].description = "Indicates that this root blob has been deleted, but it has versions that are active.";
       $.BlobItemInternal.properties["DeletionId"].description = "The deletion ID associated with the deleted path.";
       $.BlobPropertiesInternal.properties["Creation-Time"].description = "The date and time at which the blob was created.";
@@ -1911,6 +1948,9 @@ directive:
       $.DownloadBlobDetails.properties["VersionId"].description = "A string value returned by the service that uniquely identifies the blob version.";
       $.DownloadBlobDetails.properties["IsCurrentVersion"].description = "Indicates whether version of this blob is the current version.";
       $.DownloadBlobDetails.properties["HasLegalHold"].description = "Indicates whether the blob has a legal hold.";
+      $.DownloadBlobDetails.properties["IsAccessTierInferred"].description = "For page blobs on a premium storage account only. If the access tier is not explicitly set on the blob, the tier is inferred based on its content length and this header will be returned with true value.";
+      $.DownloadBlobDetails.properties["AccessTierChangedOn"].description = "The time the tier was changed on the object. This is only returned if the tier on the block blob was ever set.";
+      $.DownloadBlobDetails.properties["SmartAccessTier"].description = "The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.";
       $.DownloadBlobDetails.description = "Detailed information of the downloaded blob.";
       $.DownloadBlobResult.properties["BlobSize"].description = "Size of the blob in bytes.";
       $.DownloadBlobResult.properties["ContentRange"].description = "Indicates the range of bytes returned.";
@@ -2006,4 +2046,12 @@ directive:
       $["200"].schema.properties["BlobSize"].description = "Size of the blob in bytes.";
       $["200"].schema.properties["CommittedBlocks"].description = "List of committed blocks.";
       $["200"].schema.properties["UncommittedBlocks"].description = "List of uncommitted blocks.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob"].put.responses["201"].headers
+    transform: >
+      $["x-ms-content-crc64"].description = "This header is returned so that the client can check for message content integrity. The value of this header is computed by the Blob service; it is not necessarily the same value specified in the request headers.";
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?BlockBlob&fromUrl"].put.responses["201"].headers
+    transform: >
+      $["x-ms-content-crc64"].description = "This header is returned so that the client can check for message content integrity. The value of this header is computed by the Blob service; it is not necessarily the same value specified in the request headers.";
 ```

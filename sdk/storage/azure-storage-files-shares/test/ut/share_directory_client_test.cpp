@@ -1469,4 +1469,137 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_NO_THROW(client.Create(options));
     }
   }
+
+  TEST_F(NfsFileShareClientTest, ListAllNfsEntryTypes_PLAYBACKONLY_)
+  {
+    Files::Shares::ListFilesAndDirectoriesOptions options;
+    options.IncludeExtendedInfo = true;
+    options.Include = Files::Shares::Models::ListFilesIncludeFlags::Timestamps
+        | Files::Shares::Models::ListFilesIncludeFlags::ETag
+        | Files::Shares::Models::ListFilesIncludeFlags::Attributes
+        | Files::Shares::Models::ListFilesIncludeFlags::PermissionKey
+        | Files::Shares::Models::ListFilesIncludeFlags::Permissions
+        | Files::Shares::Models::ListFilesIncludeFlags::LinkCount
+        | Files::Shares::Models::ListFilesIncludeFlags::NfsAttributes;
+
+    size_t directoryCount = 0;
+    size_t fileCount = 0;
+    size_t symLinkCount = 0;
+    size_t blockDeviceCount = 0;
+    size_t charDeviceCount = 0;
+    size_t fifoCount = 0;
+    size_t socketCount = 0;
+
+    for (auto page = m_shareClient->GetRootDirectoryClient().ListFilesAndDirectories(options);
+         page.HasPage();
+         page.MoveToNextPage())
+    {
+      directoryCount += page.Directories.size();
+      fileCount += page.Files.size();
+      symLinkCount += page.SymLinks.size();
+      blockDeviceCount += page.BlockDevices.size();
+      charDeviceCount += page.CharDevices.size();
+      fifoCount += page.Fifos.size();
+      socketCount += page.Sockets.size();
+
+      for (const auto& directory : page.Directories)
+      {
+        EXPECT_FALSE(directory.Name.empty());
+        ASSERT_TRUE(directory.LinkCount.HasValue());
+        EXPECT_GT(directory.LinkCount.Value(), 0);
+        EXPECT_FALSE(directory.Details.Owner.empty());
+        EXPECT_FALSE(directory.Details.Group.empty());
+        EXPECT_FALSE(directory.Details.FileMode.empty());
+        EXPECT_NE(directory.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(directory.Details.Etag.ToString().empty());
+      }
+      for (const auto& file : page.Files)
+      {
+        EXPECT_FALSE(file.Name.empty());
+        ASSERT_TRUE(file.LinkCount.HasValue());
+        EXPECT_GT(file.LinkCount.Value(), 0);
+        EXPECT_GE(file.Details.FileSize, 0);
+        EXPECT_FALSE(file.Details.Owner.empty());
+        EXPECT_FALSE(file.Details.Group.empty());
+        EXPECT_FALSE(file.Details.FileMode.empty());
+        EXPECT_NE(file.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(file.Details.Etag.ToString().empty());
+      }
+      for (const auto& symLink : page.SymLinks)
+      {
+        EXPECT_FALSE(symLink.Name.empty());
+        EXPECT_FALSE(symLink.Details.SmbProperties.FileId.empty());
+        ASSERT_TRUE(symLink.LinkCount.HasValue());
+        EXPECT_GT(symLink.LinkCount.Value(), 0);
+        ASSERT_TRUE(symLink.LinkText.HasValue());
+        EXPECT_FALSE(symLink.LinkText.Value().empty());
+        EXPECT_FALSE(symLink.Details.Owner.empty());
+        EXPECT_FALSE(symLink.Details.Group.empty());
+        EXPECT_FALSE(symLink.Details.FileMode.empty());
+        EXPECT_NE(symLink.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(symLink.Details.Etag.ToString().empty());
+      }
+      for (const auto& blockDevice : page.BlockDevices)
+      {
+        EXPECT_FALSE(blockDevice.Name.empty());
+        EXPECT_FALSE(blockDevice.Details.SmbProperties.FileId.empty());
+        ASSERT_TRUE(blockDevice.LinkCount.HasValue());
+        EXPECT_GT(blockDevice.LinkCount.Value(), 0);
+        EXPECT_GE(blockDevice.DeviceMajor, 0);
+        EXPECT_GE(blockDevice.DeviceMinor, 0);
+        EXPECT_FALSE(blockDevice.Details.Owner.empty());
+        EXPECT_FALSE(blockDevice.Details.Group.empty());
+        EXPECT_FALSE(blockDevice.Details.FileMode.empty());
+        EXPECT_NE(blockDevice.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(blockDevice.Details.Etag.ToString().empty());
+      }
+      for (const auto& charDevice : page.CharDevices)
+      {
+        EXPECT_FALSE(charDevice.Name.empty());
+        EXPECT_FALSE(charDevice.Details.SmbProperties.FileId.empty());
+        ASSERT_TRUE(charDevice.LinkCount.HasValue());
+        EXPECT_GT(charDevice.LinkCount.Value(), 0);
+        EXPECT_GE(charDevice.DeviceMajor, 0);
+        EXPECT_GE(charDevice.DeviceMinor, 0);
+        EXPECT_FALSE(charDevice.Details.Owner.empty());
+        EXPECT_FALSE(charDevice.Details.Group.empty());
+        EXPECT_FALSE(charDevice.Details.FileMode.empty());
+        EXPECT_NE(charDevice.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(charDevice.Details.Etag.ToString().empty());
+      }
+      for (const auto& fifo : page.Fifos)
+      {
+        EXPECT_FALSE(fifo.Name.empty());
+        EXPECT_FALSE(fifo.Details.SmbProperties.FileId.empty());
+        ASSERT_TRUE(fifo.LinkCount.HasValue());
+        EXPECT_GT(fifo.LinkCount.Value(), 0);
+        EXPECT_FALSE(fifo.Details.Owner.empty());
+        EXPECT_FALSE(fifo.Details.Group.empty());
+        EXPECT_FALSE(fifo.Details.FileMode.empty());
+        EXPECT_NE(fifo.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(fifo.Details.Etag.ToString().empty());
+      }
+      for (const auto& socket : page.Sockets)
+      {
+        EXPECT_FALSE(socket.Name.empty());
+        EXPECT_FALSE(socket.Details.SmbProperties.FileId.empty());
+        ASSERT_TRUE(socket.LinkCount.HasValue());
+        EXPECT_GT(socket.LinkCount.Value(), 0);
+        EXPECT_FALSE(socket.Details.Owner.empty());
+        EXPECT_FALSE(socket.Details.Group.empty());
+        EXPECT_FALSE(socket.Details.FileMode.empty());
+        EXPECT_NE(socket.Details.LastModified, Azure::DateTime());
+        EXPECT_FALSE(socket.Details.Etag.ToString().empty());
+      }
+    }
+
+    EXPECT_GT(directoryCount, 0U);
+    EXPECT_GT(fileCount, 0U);
+    EXPECT_GT(symLinkCount, 0U);
+    EXPECT_GT(blockDeviceCount, 0U);
+    EXPECT_GT(charDeviceCount, 0U);
+    EXPECT_GT(fifoCount, 0U);
+    EXPECT_GT(socketCount, 0U);
+  }
+
 }}} // namespace Azure::Storage::Test

@@ -238,73 +238,84 @@ namespace Azure { namespace Storage { namespace Test {
       p1p2Blobs.insert(blobName);
     }
 
-    Azure::Storage::Blobs::ListBlobsOptions options;
-    options.PageSizeHint = 3;
-    std::set<std::string> listBlobs;
-    int numPages = 0;
-    for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
-         pageResult.MoveToNextPage())
+    for (const auto format :
+         {Blobs::StorageResponseFormat::Arrow, Blobs::StorageResponseFormat::Xml})
     {
-      ++numPages;
-      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
-      EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
-      EXPECT_FALSE(
-          pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
-      EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
-      EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
-      for (const auto& blob : pageResult.Blobs)
-      {
-        EXPECT_FALSE(blob.Name.empty());
-        EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
-        EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
-        EXPECT_TRUE(blob.Details.ETag.HasValue());
-        EXPECT_FALSE(blob.BlobType.ToString().empty());
-        if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
-        {
-          EXPECT_TRUE(blob.Details.AccessTier.HasValue());
-          EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
-        }
-        if (blob.Details.AccessTier.HasValue())
-        {
-          EXPECT_FALSE(blob.Details.AccessTier.Value().ToString().empty());
-        }
-        if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
-        {
-          if (blob.Details.IsSealed.HasValue())
-          {
-            EXPECT_FALSE(blob.Details.IsSealed.Value());
-          }
-        }
-        else
-        {
-          EXPECT_FALSE(blob.Details.IsSealed.HasValue());
-        }
-        if (blob.BlobType == Blobs::Models::BlobType::PageBlob)
-        {
-          EXPECT_TRUE(blob.Details.SequenceNumber.HasValue());
-        }
-        else
-        {
-          EXPECT_FALSE(blob.Details.SequenceNumber.HasValue());
-        }
-        listBlobs.insert(blob.Name);
-      }
-    }
-    EXPECT_GT(numPages, 2);
-    EXPECT_TRUE(
-        std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
 
-    options.Prefix = prefix1;
-    listBlobs.clear();
-    for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
-         pageResult.MoveToNextPage())
-    {
-      for (const auto& blob : pageResult.Blobs)
+      Azure::Storage::Blobs::ListBlobsOptions options;
+      options.ResponseFormat = format;
+      options.PageSizeHint = 3;
+      std::set<std::string> listBlobs;
+      int numPages = 0;
+      for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
+           pageResult.MoveToNextPage())
       {
-        listBlobs.insert(blob.Name);
+        ++numPages;
+        EXPECT_FALSE(
+            pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderRequestId).empty());
+        EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
+        EXPECT_FALSE(
+            pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+        if (format == Blobs::StorageResponseFormat::Xml)
+        {
+          EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
+          EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
+        }
+        for (const auto& blob : pageResult.Blobs)
+        {
+          EXPECT_FALSE(blob.Name.empty());
+          EXPECT_TRUE(IsValidTime(blob.Details.CreatedOn));
+          EXPECT_TRUE(IsValidTime(blob.Details.LastModified));
+          EXPECT_TRUE(blob.Details.ETag.HasValue());
+          EXPECT_FALSE(blob.BlobType.ToString().empty());
+          if (blob.BlobType == Blobs::Models::BlobType::BlockBlob)
+          {
+            EXPECT_TRUE(blob.Details.AccessTier.HasValue());
+            EXPECT_TRUE(blob.Details.IsAccessTierInferred.HasValue());
+          }
+          if (blob.Details.AccessTier.HasValue())
+          {
+            EXPECT_FALSE(blob.Details.AccessTier.Value().ToString().empty());
+          }
+          if (blob.BlobType == Blobs::Models::BlobType::AppendBlob)
+          {
+            if (blob.Details.IsSealed.HasValue())
+            {
+              EXPECT_FALSE(blob.Details.IsSealed.Value());
+            }
+          }
+          else
+          {
+            EXPECT_FALSE(blob.Details.IsSealed.HasValue());
+          }
+          if (blob.BlobType == Blobs::Models::BlobType::PageBlob)
+          {
+            EXPECT_TRUE(blob.Details.SequenceNumber.HasValue());
+          }
+          else
+          {
+            EXPECT_FALSE(blob.Details.SequenceNumber.HasValue());
+          }
+          listBlobs.insert(blob.Name);
+        }
       }
+      EXPECT_GT(numPages, 2);
+      EXPECT_TRUE(
+          std::includes(listBlobs.begin(), listBlobs.end(), p1p2Blobs.begin(), p1p2Blobs.end()));
+
+      options.Prefix = prefix1;
+      listBlobs.clear();
+      for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
+           pageResult.MoveToNextPage())
+      {
+        for (const auto& blob : pageResult.Blobs)
+        {
+          listBlobs.insert(blob.Name);
+        }
+      }
+      EXPECT_TRUE(
+          std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
     }
-    EXPECT_TRUE(std::includes(listBlobs.begin(), listBlobs.end(), p1Blobs.begin(), p1Blobs.end()));
   }
 
   TEST_F(BlobContainerClientTest, ListBlobsFlat_WithStartFrom)

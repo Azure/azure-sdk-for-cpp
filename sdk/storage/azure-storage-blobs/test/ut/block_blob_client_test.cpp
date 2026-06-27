@@ -2691,5 +2691,92 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(blobItem.Details.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
     EXPECT_TRUE(blobItem.Details.SmartAccessTier.HasValue());
     EXPECT_FALSE(blobItem.Details.SmartAccessTier.Value().ToString().empty());
+
+    auto ret2 = blobClient.Download().Value;
+    EXPECT_TRUE(ret2.Details.AccessTier.HasValue());
+    EXPECT_FALSE(ret2.Details.AccessTier.Value().ToString().empty());
+    EXPECT_EQ(ret2.Details.AccessTier.Value(), Blobs::Models::AccessTier::Smart);
+    EXPECT_TRUE(ret2.Details.SmartAccessTier.HasValue());
+    EXPECT_FALSE(ret2.Details.SmartAccessTier.Value().ToString().empty());
+    EXPECT_TRUE(ret2.Details.AccessTierChangedOn.HasValue());
+  }
+  TEST_F(BlobContainerClientTest, ResponseTransactionalContentHashesBlockBlob)
+  {
+    auto blobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+
+    const std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(512));
+    const std::vector<uint8_t> contentMd5
+        = Azure::Core::Cryptography::Md5Hash().Final(blobContent.data(), blobContent.size());
+    const std::vector<uint8_t> contentCrc64
+        = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
+
+    {
+      auto stream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+      Blobs::UploadBlockBlobOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result = blobClient.Upload(stream, options).Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
+    }
+
+    {
+      auto stream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
+      const std::string blockId = Base64EncodeText("0");
+      Blobs::StageBlockOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result = blobClient.StageBlock(blockId, stream, options).Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
+    }
+
+    {
+      const auto sourceBlobClient = blobClient;
+
+      auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+      const std::string blockId = Base64EncodeText("0");
+      Blobs::StageBlockFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result
+          = destBlobClient.StageBlockFromUri(blockId, sourceBlobClient.GetUrl() + GetSas(), options)
+                .Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
+    }
+
+    {
+      const auto sourceBlobClient = blobClient;
+
+      auto destBlobClient = m_blobContainerClient->GetBlockBlobClient(RandomString());
+      Blobs::UploadBlockBlobFromUriOptions options;
+      options.TransactionalContentHash = ContentHash();
+      options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
+      options.TransactionalContentHash.Value().Value = contentMd5;
+      auto result
+          = destBlobClient.UploadFromUri(sourceBlobClient.GetUrl() + GetSas(), options).Value;
+      ASSERT_TRUE(result.TransactionalContentHash.HasValue());
+      EXPECT_EQ(result.TransactionalContentHash.Value().Algorithm, HashAlgorithm::Md5);
+      EXPECT_EQ(result.TransactionalContentHash.Value().Value, contentMd5);
+      ASSERT_TRUE(result.AdditionalTransactionalContentHash.HasValue());
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Algorithm, HashAlgorithm::Crc64);
+      EXPECT_EQ(result.AdditionalTransactionalContentHash.Value().Value, contentCrc64);
+    }
   }
 }}} // namespace Azure::Storage::Test
