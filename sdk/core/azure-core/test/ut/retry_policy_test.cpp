@@ -35,7 +35,7 @@ public:
   }
 };
 
-class RetryPolicyTest final : public RetryPolicy {
+class RetryPolicyTest final : public RetryPolicyBase {
 private:
   std::function<bool(RetryOptions const&, int32_t, std::chrono::milliseconds&, double)>
       m_shouldRetryOnTransportFailure;
@@ -51,7 +51,7 @@ public:
       std::chrono::milliseconds& retryAfter,
       double jitterFactor) const
   {
-    return RetryPolicy::ShouldRetryOnTransportFailure(
+    return RetryPolicyBase::ShouldRetryOnTransportFailure(
         retryOptions, attempt, retryAfter, jitterFactor);
   }
 
@@ -62,7 +62,7 @@ public:
       std::chrono::milliseconds& retryAfter,
       double jitterFactor) const
   {
-    return RetryPolicy::ShouldRetryOnResponse(
+    return RetryPolicyBase::ShouldRetryOnResponse(
         response, retryOptions, attempt, retryAfter, jitterFactor);
   }
 
@@ -70,7 +70,7 @@ public:
       RetryOptions const& retryOptions,
       decltype(m_shouldRetryOnTransportFailure) shouldRetryOnTransportFailure,
       decltype(m_shouldRetryOnResponse) shouldRetryOnResponse)
-      : RetryPolicy(retryOptions),
+      : RetryPolicyBase(retryOptions),
         m_shouldRetryOnTransportFailure(
             shouldRetryOnTransportFailure != nullptr //
                 ? shouldRetryOnTransportFailure
@@ -359,9 +359,16 @@ TEST(RetryPolicy, ShouldRetryOnTransportFailure)
 }
 
 namespace {
-class RetryLogic final : private RetryPolicy {
-  RetryLogic() : RetryPolicy(RetryOptions()) {}
+class RetryLogic final : private RetryPolicyBase {
+  RetryLogic() : RetryPolicyBase(RetryOptions()) {}
   ~RetryLogic() {}
+
+  std::unique_ptr<HttpPolicy> Clone() const override
+  {
+    // Not used; RetryLogic is only instantiated as a static helper for invoking the protected
+    // hook methods.
+    std::abort();
+  }
 
   static RetryLogic const g_retryPolicy;
 

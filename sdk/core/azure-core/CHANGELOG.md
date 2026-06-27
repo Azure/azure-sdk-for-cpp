@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#7196]](https://github.com/Azure/azure-sdk-for-cpp/pull/7196) Added `Azure::Core::Http::Policies::_internal::RetryPolicyBase`, an abstract base class that exposes the retry loop and the protected `ShouldRetryOnResponse`/`ShouldRetryOnTransportFailure` hook points. Service SDKs can derive from `RetryPolicyBase` to customize retry behavior; `RetryPolicy` remains a `final` concrete policy.
+
 ### Breaking Changes
 
 ### Bugs Fixed
