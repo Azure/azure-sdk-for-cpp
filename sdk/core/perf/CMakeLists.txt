@@ -27,7 +27,6 @@ set(
   inc/azure/perf/test.hpp
   inc/azure/perf/test_metadata.hpp
   inc/azure/perf/test_options.hpp
-  inc/azure/perf/versions.hpp
 )
 
 set(
@@ -40,7 +39,6 @@ set(
   src/program.cpp
   src/random_stream.cpp
   src/result_output.cpp
-  src/versions.cpp
 )
 
 add_library(azure-perf ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})

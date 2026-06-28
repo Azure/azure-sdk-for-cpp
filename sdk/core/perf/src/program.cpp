@@ -7,7 +7,6 @@
 #include "azure/perf/latency_stats.hpp"
 #include "azure/perf/process_stats.hpp"
 #include "azure/perf/result_output.hpp"
-#include "azure/perf/versions.hpp"
 
 #include <azure/core/internal/diagnostics/global_exception.hpp>
 #include <azure/core/internal/json/json.hpp>
@@ -638,8 +637,4 @@ void Azure::Perf::Program::Run(
     }
     test->GlobalCleanup();
   }
-
-  // Match .NET PerfProgram.cs: the assembly / runtime versions block is the LAST thing
-  // printed, after Cleanup, so automation parsers see it as the run terminator.
-  Azure::Perf::PrintVersionsBlock();
 }
