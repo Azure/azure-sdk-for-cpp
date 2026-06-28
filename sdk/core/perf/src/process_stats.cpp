@@ -77,8 +77,7 @@ namespace Azure { namespace Perf {
       double cpuSeconds = SampleCpuSeconds();
       uint64_t mem = SampleResidentMemoryBytes();
 
-      double wall
-          = std::chrono::duration<double>(now - previousTime).count();
+      double wall = std::chrono::duration<double>(now - previousTime).count();
       double cpuDelta = cpuSeconds - previousCpuSeconds;
       // Clamp to avoid negative readings if a counter is non-monotonic on some platforms.
       double cpuPct = (wall > 0) ? (std::max)(0.0, (cpuDelta / wall) * 100.0) : 0.0;
@@ -242,10 +241,7 @@ namespace Azure { namespace Perf {
     mach_task_basic_info info;
     mach_msg_type_number_t count = MACH_TASK_BASIC_INFO_COUNT;
     if (task_info(
-            mach_task_self(),
-            MACH_TASK_BASIC_INFO,
-            reinterpret_cast<task_info_t>(&info),
-            &count)
+            mach_task_self(), MACH_TASK_BASIC_INFO, reinterpret_cast<task_info_t>(&info), &count)
         != KERN_SUCCESS)
     {
       return 0;

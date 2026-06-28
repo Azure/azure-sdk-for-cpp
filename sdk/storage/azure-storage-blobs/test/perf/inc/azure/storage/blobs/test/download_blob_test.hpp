@@ -61,8 +61,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       BlobsTest::Setup();
 
       m_size = m_options.GetMandatoryOption<long>("Size");
-      m_downloadMethod
-          = m_options.GetOptionOrDefault<std::string>("DownloadMethod", "buffer");
+      m_downloadMethod = m_options.GetOptionOrDefault<std::string>("DownloadMethod", "buffer");
       m_blockSize = m_options.GetOptionOrDefault<long>("BlockSize", 0);
       m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 

@@ -80,7 +80,7 @@ TEST(result_output, print_job_statistics_matches_dotnet_envelope)
   EXPECT_NE(out.find("#StartJobStatistics"), std::string::npos);
   EXPECT_NE(out.find("#EndJobStatistics"), std::string::npos);
   // Match the .NET BenchmarkOutput envelope AND key order:
-  // { "Metadata": [...], "Measurements": [...] } — Metadata must appear before Measurements.
+  // { "Metadata": [...], "Measurements": [...] } -- Metadata must appear before Measurements.
   std::size_t metaPos = out.find("\"Metadata\"");
   std::size_t measPos = out.find("\"Measurements\"");
   EXPECT_NE(metaPos, std::string::npos);

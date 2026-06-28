@@ -40,15 +40,15 @@ std::string IsoUtcNow()
   // system_clock typically has microsecond resolution on Windows; pad with trailing zeros.
   auto ticks = duration_cast<duration<int64_t, std::ratio<1, 10000000>>>(now - secs).count();
   std::time_t tt = system_clock::to_time_t(secs);
-  std::tm tm {};
+  std::tm tm{};
 #if defined(_WIN32)
   gmtime_s(&tm, &tt);
 #else
   gmtime_r(&tt, &tm);
 #endif
   std::ostringstream os;
-  os << std::put_time(&tm, "%Y-%m-%dT%H:%M:%S") << "." << std::setw(7) << std::setfill('0')
-     << ticks << "Z";
+  os << std::put_time(&tm, "%Y-%m-%dT%H:%M:%S") << "." << std::setw(7) << std::setfill('0') << ticks
+     << "Z";
   return os.str();
 }
 
@@ -95,8 +95,7 @@ namespace Azure { namespace Perf {
        << "}],\"Measurements\":[{"
        << "\"Timestamp\":\"" << IsoUtcNow() << "\","
        << "\"Name\":\"perfstress/throughput\","
-       << "\"Value\":" << json(summary.OperationsPerSecond).dump()
-       << "}]}";
+       << "\"Value\":" << json(summary.OperationsPerSecond).dump() << "}]}";
     std::cout << "#StartJobStatistics" << std::endl;
     std::cout << os.str() << std::endl;
     std::cout << "#EndJobStatistics" << std::endl;

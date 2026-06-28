@@ -383,7 +383,7 @@ inline void RunTests(
       if (s.Count > 0)
       {
         // Match the .NET Azure.Test.Perf latency distribution exactly:
-        // format string is `{percentile,7:N3}%   {ms,8:N2}ms` — i.e., 7-char-wide
+        // format string is `{percentile,7:N3}%   {ms,8:N2}ms` -- i.e., 7-char-wide
         // percentile with 3 decimals, then "%   ", then 8-char-wide latency with
         // 2 decimals, then "ms". Reproduce the format here for byte-near parity.
         struct Row
@@ -408,8 +408,8 @@ inline void RunTests(
           pctSs << std::fixed << std::setprecision(3) << row.Pct;
           std::ostringstream msSs;
           msSs << std::fixed << std::setprecision(2) << row.Ms;
-          std::cout << std::right << std::setw(7) << pctSs.str() << "%   "
-                    << std::right << std::setw(8) << msSs.str() << "ms" << std::endl;
+          std::cout << std::right << std::setw(7) << pctSs.str() << "%   " << std::right
+                    << std::setw(8) << msSs.str() << "ms" << std::endl;
         }
       }
     }
