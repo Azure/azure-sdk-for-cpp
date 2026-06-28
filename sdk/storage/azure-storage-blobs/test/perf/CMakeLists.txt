@@ -21,7 +21,6 @@ set(
   inc/azure/storage/blobs/test/download_blob_test.hpp
   ${DOWNLOAD_WITH_LIBCURL}
   inc/azure/storage/blobs/test/list_blob_test.hpp
-  inc/azure/storage/blobs/test/memory_budget.hpp
   inc/azure/storage/blobs/test/upload_blob_test.hpp
 )
 

@@ -10,7 +10,6 @@
 #pragma once
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
-#include "azure/storage/blobs/test/memory_budget.hpp"
 
 #include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
@@ -70,7 +69,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
       if (m_downloadMethod == "buffer")
       {
-        CheckMemoryBudget(static_cast<uint64_t>(m_size), 1);
         m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(m_size);
       }
       else if (m_downloadMethod != "stream")
