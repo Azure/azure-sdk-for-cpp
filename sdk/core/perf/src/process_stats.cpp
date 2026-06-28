@@ -123,14 +123,10 @@ namespace Azure { namespace Perf {
 
   void ProcessStatsSampler::Reset()
   {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_startTime = std::chrono::steady_clock::now();
-    m_baselineCpuSeconds = SampleCpuSeconds();
-    m_haveBaseline = true;
-    m_lastCpuSeconds = m_baselineCpuSeconds;
-    m_sampleCount = 0;
-    m_memoryBytesSum = 0.0;
-    m_latest = Snapshot{};
+    // Stop the sampler thread first so we can re-prime baselines without racing the
+    // Run() loop, which caches previous* in locals at thread start.
+    Stop();
+    Start();
   }
 
 #if defined(AZ_PLATFORM_WINDOWS)

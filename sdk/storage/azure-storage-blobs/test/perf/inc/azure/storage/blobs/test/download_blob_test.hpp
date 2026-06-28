@@ -26,8 +26,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
    *
    * @details `--download-method` chooses between:
    *  - `buffer` (default, preserves existing behavior): allocate a contiguous buffer and
-   *    call `DownloadTo(buffer, size)`. Guarded by a `size * parallel` memory-budget
-   *    check.
+   *    call `DownloadTo(buffer, size)`.
    *  - `stream`: stream the response with `Download()` and drain its body stream without
    *    materializing the payload in RAM. Use for multi-GiB sizes.
    *
@@ -96,10 +95,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
         auto& bodyStream = response.Value.BodyStream;
         if (bodyStream)
         {
-          uint8_t buffer[StreamDrainBufferSize];
+          // Drain into a thread-local heap buffer; a stack buffer this large would
+          // overflow the default Windows thread stack (1 MiB) under high --parallel.
+          static thread_local std::vector<uint8_t> buffer(StreamDrainBufferSize);
           while (true)
           {
-            auto read = bodyStream->Read(buffer, sizeof(buffer), context);
+            auto read = bodyStream->Read(buffer.data(), buffer.size(), context);
             if (read == 0)
             {
               break;
