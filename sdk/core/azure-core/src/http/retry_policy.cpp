@@ -103,7 +103,7 @@ bool WasLastAttempt(RetryOptions const& retryOptions, int32_t attempt)
 Context::Key const RetryKey;
 } // namespace
 
-int32_t RetryPolicy::GetRetryCount(Context const& context)
+int32_t RetryPolicyBase::GetRetryCount(Context const& context)
 {
   int32_t number = -1;
 
@@ -118,7 +118,7 @@ int32_t RetryPolicy::GetRetryCount(Context const& context)
   return *ptr;
 }
 
-std::unique_ptr<RawResponse> RetryPolicy::Send(
+std::unique_ptr<RawResponse> RetryPolicyBase::Send(
     Request& request,
     NextHttpPolicy nextPolicy,
     Context const& context) const
@@ -189,7 +189,7 @@ std::unique_ptr<RawResponse> RetryPolicy::Send(
   }
 }
 
-bool RetryPolicy::ShouldRetryOnTransportFailure(
+bool RetryPolicyBase::ShouldRetryOnTransportFailure(
     RetryOptions const& retryOptions,
     int32_t attempt,
     std::chrono::milliseconds& retryAfter,
@@ -205,7 +205,7 @@ bool RetryPolicy::ShouldRetryOnTransportFailure(
   return true;
 }
 
-bool RetryPolicy::ShouldRetryOnResponse(
+bool RetryPolicyBase::ShouldRetryOnResponse(
     RawResponse const& response,
     RetryOptions const& retryOptions,
     int32_t attempt,

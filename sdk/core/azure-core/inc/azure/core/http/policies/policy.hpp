@@ -388,28 +388,26 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
     };
 
     /**
-     * @brief HTTP retry policy.
+     * @brief Base class for HTTP retry policies.
+     *
+     * @details Provides the retry loop implementation together with the protected hook points
+     * (#ShouldRetryOnResponse, #ShouldRetryOnTransportFailure) that derived classes may override
+     * to customize retry behavior. This class intentionally does not implement `Clone()`, which
+     * keeps it abstract and forces every concrete derived policy to provide its own `Clone()`.
+     * That prevents object slicing when a derived policy adds state of its own.
      */
-    class RetryPolicy
-#if !defined(_azure_TESTING_BUILD)
-        final
-#endif
-        : public HttpPolicy {
+    class RetryPolicyBase : public HttpPolicy {
     private:
       RetryOptions m_retryOptions;
 
     public:
       /**
-       * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
+       * Constructs an HTTP retry policy base with the provided
+       * #Azure::Core::Http::Policies::RetryOptions.
        *
        * @param options #Azure::Core::Http::Policies::RetryOptions.
        */
-      explicit RetryPolicy(RetryOptions options) : m_retryOptions(std::move(options)) {}
-
-      std::unique_ptr<HttpPolicy> Clone() const override
-      {
-        return std::make_unique<RetryPolicy>(*this);
-      }
+      explicit RetryPolicyBase(RetryOptions options) : m_retryOptions(std::move(options)) {}
 
       std::unique_ptr<RawResponse> Send(
           Request& request,
@@ -420,8 +418,8 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
        * @brief Get the Retry Count from the context.
        *
        * @remark The sentinel `-1` is returned if there is no information in the \p Context about
-       * #RetryPolicy is trying to send a request. Then `0` is returned for the first try of sending
-       * a request by the #RetryPolicy. Any subsequent retry will be referenced with a number
+       * #RetryPolicyBase is trying to send a request. Then `0` is returned for the first try of
+       * sending a request by the policy. Any subsequent retry will be referenced with a number
        * greater than 0.
        *
        * @param context A context to control the request lifetime.
@@ -442,6 +440,24 @@ namespace Azure { namespace Core { namespace Http { namespace Policies {
           int32_t attempt,
           std::chrono::milliseconds& retryAfter,
           double jitterFactor = -1) const;
+    };
+
+    /**
+     * @brief HTTP retry policy.
+     */
+    class RetryPolicy final : public RetryPolicyBase {
+    public:
+      /**
+       * Constructs HTTP retry policy with the provided #Azure::Core::Http::Policies::RetryOptions.
+       *
+       * @param options #Azure::Core::Http::Policies::RetryOptions.
+       */
+      explicit RetryPolicy(RetryOptions options) : RetryPolicyBase(std::move(options)) {}
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<RetryPolicy>(*this);
+      }
     };
 
     /**

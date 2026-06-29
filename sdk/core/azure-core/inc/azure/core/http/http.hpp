@@ -171,7 +171,7 @@ namespace Azure { namespace Core { namespace Http {
   }; // extensible enum HttpMethod
 
   namespace Policies { namespace _internal {
-    class RetryPolicy;
+    class RetryPolicyBase;
   }} // namespace Policies::_internal
 
   /**
@@ -181,7 +181,7 @@ namespace Azure { namespace Core { namespace Http {
    * resource, the URL of the resource, and the protocol version in use.
    */
   class Request final {
-    friend class Azure::Core::Http::Policies::_internal::RetryPolicy;
+    friend class Azure::Core::Http::Policies::_internal::RetryPolicyBase;
 #if defined(_azure_TESTING_BUILD)
     // make tests classes friends to validate set Retry
     friend class Azure::Core::Test::TestHttp_getters_Test;
