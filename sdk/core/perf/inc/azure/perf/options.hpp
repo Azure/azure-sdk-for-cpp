@@ -125,12 +125,6 @@ namespace Azure { namespace Perf {
     std::string ResultsFile;
 
     /**
-     * @brief Runs the sync version of the test. Not currently implemented for C++.
-     *
-     */
-    bool Sync = false;
-
-    /**
      * @brief Create an array of the performance framework options.
      *
      * @return An array of the options as #Azure::Perf::TestOption.

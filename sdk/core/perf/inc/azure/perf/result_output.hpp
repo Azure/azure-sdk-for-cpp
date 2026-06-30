@@ -10,7 +10,6 @@
 #pragma once
 
 #include "azure/perf/latency_stats.hpp"
-#include "azure/perf/process_stats.hpp"
 
 #include <cstdint>
 #include <string>
@@ -34,8 +33,6 @@ namespace Azure { namespace Perf {
     double WeightedAverageSeconds = 0;
     double OperationsPerSecond = 0;
     double SecondsPerOperation = 0;
-    double AverageCpuPercent = 0;
-    uint64_t AverageMemoryBytes = 0;
     LatencyCollector::Summary Latency;
     std::vector<std::pair<std::string, LatencyCollector::Summary>> LatencyByCallType;
   };

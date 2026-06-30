@@ -20,7 +20,6 @@ set(
   inc/azure/perf/dynamic_test_options.hpp
   inc/azure/perf/latency_stats.hpp
   inc/azure/perf/options.hpp
-  inc/azure/perf/process_stats.hpp
   inc/azure/perf/program.hpp
   inc/azure/perf/random_stream.hpp
   inc/azure/perf/result_output.hpp
@@ -35,7 +34,6 @@ set(
   src/base_test.cpp
   src/latency_stats.cpp
   src/options.cpp
-  src/process_stats.cpp
   src/program.cpp
   src/random_stream.cpp
   src/result_output.cpp

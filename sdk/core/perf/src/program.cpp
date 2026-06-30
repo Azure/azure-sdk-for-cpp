@@ -5,7 +5,6 @@
 
 #include "azure/perf/argagg.hpp"
 #include "azure/perf/latency_stats.hpp"
-#include "azure/perf/process_stats.hpp"
 #include "azure/perf/result_output.hpp"
 
 #include <azure/core/internal/diagnostics/global_exception.hpp>
@@ -240,7 +239,6 @@ inline void RunTests(
     std::vector<std::unique_ptr<Azure::Perf::PerfTest>> const& tests,
     Azure::Perf::GlobalTestOptions const& options,
     std::string const& title,
-    Azure::Perf::ProcessStatsSampler* sampler,
     Azure::Perf::LatencyCollector* latencyCollector,
     Azure::Perf::RunSummary* outSummary,
     bool warmup = false)
@@ -258,10 +256,6 @@ inline void RunTests(
   {
     latencyCollector->Reset();
   }
-  if (!warmup && sampler != nullptr)
-  {
-    sampler->Reset();
-  }
 
   /********************* Progress Reporter ******************************/
   Azure::Core::Context progressToken;
@@ -272,11 +266,10 @@ inline void RunTests(
                                      &lastCompletionTimes,
                                      &lastCompleted,
                                      &progressToken,
-                                     sampler,
                                      statusInterval]() {
     std::cout << std::endl
               << "=== " << title << " ===" << std::endl
-              << "Current\t\tTotal\t\tAverage\t\tCPU\t\tMemory(MiB)" << std::endl;
+              << "Current\t\tTotal\t\tAverage" << std::endl;
     while (!progressToken.IsCancelled())
     {
       std::this_thread::sleep_for(std::chrono::seconds(statusInterval));
@@ -284,16 +277,7 @@ inline void RunTests(
       auto current = total - lastCompleted;
       auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
       lastCompleted = total;
-      double cpuPct = 0;
-      double memMiB = 0;
-      if (sampler != nullptr)
-      {
-        auto snap = sampler->Latest();
-        cpuPct = snap.CpuPercent;
-        memMiB = static_cast<double>(snap.MemoryBytes) / (1024.0 * 1024.0);
-      }
-      std::cout << current << "\t\t" << total << "\t\t" << avg << "\t\t" << cpuPct << "\t\t"
-                << memMiB << std::endl;
+      std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
     }
   });
 
@@ -346,20 +330,14 @@ inline void RunTests(
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
-  // Append `, NN.NN% CPU` inside the parens to match the .NET results-line format that
-  // perf-automation downstream parsers may key on. The leading `(...) ops/s` substring is
-  // preserved verbatim so Cpp.cs's existing ops/s regex still matches.
-  double resultsCpuPercent = 0;
-  if (sampler != nullptr)
-  {
-    resultsCpuPercent = sampler->Average().CpuPercent;
-  }
+  // Match the established `Completed N operations in a weighted-average of Ts (X ops/s,
+  // Y s/op)` line format that downstream tools (Cpp.cs's ops/s regex) key off.
   std::cout << std::endl
             << "Completed " << FormatNumber(totalOperations, false)
             << " operations in a weighted-average of "
             << FormatNumber(weightedAverageSeconds, false) << "s ("
-            << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op, "
-            << resultsCpuPercent << "% CPU)" << std::endl
+            << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
+            << std::endl
             << std::endl;
 
   if (!warmup && outSummary != nullptr)
@@ -368,12 +346,6 @@ inline void RunTests(
     outSummary->OperationsPerSecond = operationsPerSecond;
     outSummary->SecondsPerOperation = secondsPerOperation;
     outSummary->WeightedAverageSeconds = weightedAverageSeconds;
-    if (sampler != nullptr)
-    {
-      auto avg = sampler->Average();
-      outSummary->AverageCpuPercent = avg.CpuPercent;
-      outSummary->AverageMemoryBytes = avg.MemoryBytes;
-    }
     if (recordLatency && latencyCollector != nullptr)
     {
       outSummary->Latency = latencyCollector->Summarize();
@@ -485,10 +457,6 @@ void Azure::Perf::Program::Run(
     }
   }
 
-  /******************** Always-on CPU/memory sampler ****************/
-  Azure::Perf::ProcessStatsSampler sampler;
-  sampler.Start();
-
   /******************** Per-run latency collector (when --latency) ****************/
   Azure::Perf::LatencyCollector latencyCollector;
 
@@ -536,7 +504,7 @@ void Azure::Perf::Program::Run(
   /******************** WarmUp ******************************/
   if (options.Warmup)
   {
-    RunTests(context, parallelTest, options, "Warmup", &sampler, nullptr, nullptr, true);
+    RunTests(context, parallelTest, options, "Warmup", nullptr, nullptr, true);
   }
 
   /******************** Tests ******************************/
@@ -558,14 +526,11 @@ void Azure::Perf::Program::Run(
         parallelTest,
         options,
         "Test" + iterationInfo,
-        &sampler,
         options.Latency ? &latencyCollector : nullptr,
         &finalSummary);
   }
 
   /******************** End-of-run artifacts ************************/
-  sampler.Stop();
-
   if (options.Latency && !options.ResultsFile.empty())
   {
     // Match the .NET `--results-file` shape: an array of OperationResult { Time, Size }.

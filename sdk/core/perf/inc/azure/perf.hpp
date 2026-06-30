@@ -14,7 +14,6 @@
 #include "azure/perf/dynamic_test_options.hpp"
 #include "azure/perf/latency_stats.hpp"
 #include "azure/perf/options.hpp"
-#include "azure/perf/process_stats.hpp"
 #include "azure/perf/program.hpp"
 #include "azure/perf/random_stream.hpp"
 #include "azure/perf/result_output.hpp"

@@ -20,7 +20,6 @@ include(GoogleTest)
 add_executable (
   azure-perf-unit-test
     src/latency_stats_test.cpp
-    src/process_stats_test.cpp
     src/random_stream_test.cpp
     src/result_output_test.cpp
 )

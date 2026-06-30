@@ -18,8 +18,7 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
       {"Parallel", p.Parallel},
       {"Warmup", p.Warmup},
       {"StatusInterval", p.StatusInterval},
-      {"ResultsFile", p.ResultsFile.empty() ? "N/A" : p.ResultsFile},
-      {"Sync", p.Sync}};
+      {"ResultsFile", p.ResultsFile.empty() ? "N/A" : p.ResultsFile}};
   if (p.Port)
   {
     j["Port"] = p.Port.Value();
@@ -59,7 +58,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
     [Option('p', "parallel", Default = 1, HelpText = "Number of operations to execute in parallel")]
     [Option("port", HelpText = "Port to redirect HTTP requests")]
     [Option('r', "rate", HelpText = "Target throughput (ops/sec)")]
-    [Option("sync", HelpText = "Runs sync version of test")]  -- Not supported
     [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")]
     [Option('x', "proxy", Default = "", HelpText = "Proxy server")]
   */
@@ -76,12 +74,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        "Number of iterations of main test loop. Default to 1.",
        1},
       {"JobStatistics", {"--statistics"}, "Print job statistics. Default to false", 1},
-      // .NET-compatible bare-switch alias for --statistics. When present, sets
-      // JobStatistics=true regardless of any --statistics value parsed.
-      {"JobStatisticsSwitch",
-       {"--job-statistics"},
-       "Print job statistics (bare switch, matches .NET --job-statistics).",
-       0},
       {"Latency",
        {"-l", "--latency"},
        "Track and print per-operation latency statistics. Default to false.",
@@ -99,7 +91,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
 
-      {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
       {"StatusInterval",
