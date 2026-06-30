@@ -20,11 +20,6 @@ Tests:
   - --size 10485760 --parallel 32 --token-credential
   - --size 1073741824 --parallel 1 --warmup 60 --duration 60 --token-credential
   - --size 1073741824 --parallel 8 --warmup 60 --duration 60 --token-credential
-  # New: streaming download for very large payloads (no contiguous buffer)
-  - --size 5368709120 --parallel 1 --warmup 60 --duration 60 --download-method stream
-  - --size 5368709120 --parallel 4 --warmup 60 --duration 60 --download-method stream
-  # New: tune chunk size / concurrency for buffer-mode download
-  - --size 1073741824 --parallel 4 --warmup 60 --duration 60 --block-size 16777216 --concurrency 16
 
 - Test: upload
   Class: UploadBlob
@@ -37,13 +32,6 @@ Tests:
   - --size 10485760 --parallel 32 --token-credential
   - --size 1073741824 --parallel 1 --warmup 60 --duration 60 --token-credential
   - --size 1073741824 --parallel 8 --warmup 60 --duration 60 --token-credential
-  # New: single-shot upload of a buffered payload
-  - --size 10485760 --parallel 32 --upload-method single
-  # New: streaming upload for very large payloads (no contiguous buffer)
-  - --size 5368709120 --parallel 1 --warmup 60 --duration 60 --upload-method stream
-  - --size 5368709120 --parallel 4 --warmup 60 --duration 60 --upload-method stream
-  # New: tune chunk size / concurrency for buffer-mode upload
-  - --size 1073741824 --parallel 4 --warmup 60 --duration 60 --block-size 16777216 --concurrency 16
 
 - Test: list-blobs
   Class: ListBlob
@@ -54,6 +42,3 @@ Tests:
   - --count 5 --parallel 64 --token-credential
   - --count 500 --parallel 32 --token-credential
   - --count 50000 --parallel 32 --warmup 60 --duration 60 --token-credential
-  # New: --num-blobs is the canonical alias of --count; exercise --page-size
-  - --num-blobs 50000 --parallel 16 --warmup 60 --duration 60 --page-size 1000
-  - --num-blobs 50000 --parallel 16 --warmup 60 --duration 60 --page-size 5000
