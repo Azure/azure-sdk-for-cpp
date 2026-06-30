@@ -91,6 +91,10 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
 
+      // Accepted for cross-language CLI compatibility (perf-automation appends --sync for
+      // sync-only languages). C++ is sync-only and has no async variant, so the flag is
+      // parsed and intentionally ignored.
+      {"Sync", {"-y", "--sync"}, "Accepted for compatibility; ignored (C++ is sync-only).", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
       {"StatusInterval",
