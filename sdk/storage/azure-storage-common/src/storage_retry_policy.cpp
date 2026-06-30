@@ -12,7 +12,10 @@ namespace Azure { namespace Storage { namespace _internal {
       std::chrono::milliseconds& retryAfter,
       double jitterFactor) const
   {
-    // Are we out of retry attempts?
+    // Are we out of retry attempts? The base ShouldRetryOnResponse below performs the same check
+    // today, but we guard explicitly here because a `false` return from the base is ambiguous
+    // (retries exhausted vs. non-retryable status code). Once storage-specific retry rules are
+    // added after the base call, we must not fall through to them when retries are exhausted.
     if (attempt > retryOptions.MaxRetries)
     {
       return false;
