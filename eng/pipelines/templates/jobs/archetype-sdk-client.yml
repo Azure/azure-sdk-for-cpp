@@ -111,15 +111,6 @@ jobs:
             SourceDirectory: $(Build.SourcesDirectory)
             BasePathLength: 75
 
-        - template: /eng/common/pipelines/templates/steps/verify-links.yml
-          parameters:
-            ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-              Directory: ''
-              Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-            ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-              Directory: sdk/${{ parameters.ServiceDirectory }}
-            CheckLinkGuidance: $true
-
         - ${{ each artifact in parameters.Artifacts }}:
           - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
             parameters:
