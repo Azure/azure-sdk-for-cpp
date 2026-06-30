@@ -4,15 +4,20 @@
 #include "azure/perf/program.hpp"
 
 #include "azure/perf/argagg.hpp"
+#include "azure/perf/latency_stats.hpp"
+#include "azure/perf/result_output.hpp"
 
 #include <azure/core/internal/diagnostics/global_exception.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/internal/strings.hpp>
 #include <azure/core/platform.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <csignal>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <thread>
 
 namespace {
@@ -151,13 +156,23 @@ inline void RunLoop(
     uint64_t& completedOperations,
     std::chrono::nanoseconds& lastCompletionTimes,
     bool latency,
+    Azure::Perf::LatencyCollector* latencyCollector,
     bool& isCancelled)
 {
-  (void)latency;
   auto start = std::chrono::system_clock::now();
   while (!isCancelled)
   {
-    test.Run(context);
+    if (latency && latencyCollector != nullptr)
+    {
+      auto opStart = std::chrono::steady_clock::now();
+      test.Run(context);
+      auto opEnd = std::chrono::steady_clock::now();
+      latencyCollector->Record(opEnd - opStart);
+    }
+    else
+    {
+      test.Run(context);
+    }
     completedOperations += 1;
     lastCompletionTimes = std::chrono::system_clock::now() - start;
   }
@@ -224,61 +239,79 @@ inline void RunTests(
     std::vector<std::unique_ptr<Azure::Perf::PerfTest>> const& tests,
     Azure::Perf::GlobalTestOptions const& options,
     std::string const& title,
+    Azure::Perf::LatencyCollector* latencyCollector,
+    Azure::Perf::RunSummary* outSummary,
     bool warmup = false)
 {
-  (void)title;
   auto parallelTestsCount = options.Parallel;
   auto durationInSeconds = warmup ? options.Warmup : options.Duration;
-  // auto jobStatistics = warmup ? false : options.JobStatistics;
-  // auto latency = warmup ? false : options.Latency;
+  auto recordLatency = warmup ? false : options.Latency;
 
   std::vector<uint64_t> completedOperations(parallelTestsCount);
   std::vector<std::chrono::nanoseconds> lastCompletionTimes(parallelTestsCount);
 
+  // Per-iteration reset: clear the latency collector so each iteration produces an
+  // independent summary, matching the Go perf-framework lifecycle.
+  if (recordLatency && latencyCollector != nullptr)
+  {
+    latencyCollector->Reset();
+  }
+
   /********************* Progress Reporter ******************************/
   Azure::Core::Context progressToken;
   uint64_t lastCompleted = 0;
-  auto progressThread = std::thread(
-      [&title, &completedOperations, &lastCompletionTimes, &lastCompleted, &progressToken]() {
-        std::cout << std::endl
-                  << "=== " << title << " ===" << std::endl
-                  << "Current\t\tTotal\t\tAverage" << std::endl;
-        while (!progressToken.IsCancelled())
-        {
-          using namespace std::chrono_literals;
-          std::this_thread::sleep_for(1000ms);
-          auto total = Sum(completedOperations);
-          auto current = total - lastCompleted;
-          auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
-          lastCompleted = total;
-          std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
-        }
-      });
+  int statusInterval = (options.StatusInterval > 0) ? options.StatusInterval : 1;
+  auto progressThread = std::thread([&title,
+                                     &completedOperations,
+                                     &lastCompletionTimes,
+                                     &lastCompleted,
+                                     &progressToken,
+                                     statusInterval]() {
+    std::cout << std::endl
+              << "=== " << title << " ===" << std::endl
+              << "Current\t\tTotal\t\tAverage" << std::endl;
+    while (!progressToken.IsCancelled())
+    {
+      std::this_thread::sleep_for(std::chrono::seconds(statusInterval));
+      auto total = Sum(completedOperations);
+      auto current = total - lastCompleted;
+      auto avg = Sum(ZipAvg(completedOperations, lastCompletionTimes));
+      lastCompleted = total;
+      std::cout << current << "\t\t" << total << "\t\t" << avg << std::endl;
+    }
+  });
 
   /********************* parallel test creation ******************************/
   std::vector<std::thread> tasks(tests.size());
   auto deadLineSeconds = std::chrono::seconds(durationInSeconds);
   for (size_t index = 0; index != tests.size(); index++)
   {
-    tasks[index] = std::thread(
-        [index, &tests, &completedOperations, &lastCompletionTimes, &deadLineSeconds, &context]() {
-          bool isCancelled = false;
-          // Azure::Context is not good performer for checking cancellation inside the test loop
-          auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
-            std::this_thread::sleep_for(deadLineSeconds);
-            isCancelled = true;
-          });
+    tasks[index] = std::thread([index,
+                                &tests,
+                                &completedOperations,
+                                &lastCompletionTimes,
+                                &deadLineSeconds,
+                                &context,
+                                latencyCollector,
+                                recordLatency]() {
+      bool isCancelled = false;
+      // Azure::Context is not good performer for checking cancellation inside the test loop
+      auto manualCancellation = std::thread([&deadLineSeconds, &isCancelled] {
+        std::this_thread::sleep_for(deadLineSeconds);
+        isCancelled = true;
+      });
 
-          RunLoop(
-              context,
-              *tests[index],
-              completedOperations[index],
-              lastCompletionTimes[index],
-              false,
-              isCancelled);
+      RunLoop(
+          context,
+          *tests[index],
+          completedOperations[index],
+          lastCompletionTimes[index],
+          recordLatency,
+          latencyCollector,
+          isCancelled);
 
-          manualCancellation.join();
-        });
+      manualCancellation.join();
+    });
   }
   // Wait for all tests to complete setUp
   for (auto& t : tasks)
@@ -297,6 +330,8 @@ inline void RunTests(
   auto secondsPerOperation = 1 / operationsPerSecond;
   auto weightedAverageSeconds = totalOperations / operationsPerSecond;
 
+  // Match the established `Completed N operations in a weighted-average of Ts (X ops/s,
+  // Y s/op)` line format that downstream tools (Cpp.cs's ops/s regex) key off.
   std::cout << std::endl
             << "Completed " << FormatNumber(totalOperations, false)
             << " operations in a weighted-average of "
@@ -304,6 +339,53 @@ inline void RunTests(
             << FormatNumber(operationsPerSecond) << " ops/s, " << secondsPerOperation << " s/op)"
             << std::endl
             << std::endl;
+
+  if (!warmup && outSummary != nullptr)
+  {
+    outSummary->TotalOperations = totalOperations;
+    outSummary->OperationsPerSecond = operationsPerSecond;
+    outSummary->SecondsPerOperation = secondsPerOperation;
+    outSummary->WeightedAverageSeconds = weightedAverageSeconds;
+    if (recordLatency && latencyCollector != nullptr)
+    {
+      outSummary->Latency = latencyCollector->Summarize();
+      outSummary->LatencyByCallType = latencyCollector->SummarizeByCallType();
+
+      auto const& s = outSummary->Latency;
+      if (s.Count > 0)
+      {
+        // Match the .NET Azure.Test.Perf latency distribution exactly:
+        // format string is `{percentile,7:N3}%   {ms,8:N2}ms` -- i.e., 7-char-wide
+        // percentile with 3 decimals, then "%   ", then 8-char-wide latency with
+        // 2 decimals, then "ms". Reproduce the format here for byte-near parity.
+        struct Row
+        {
+          double Pct;
+          double Ms;
+        };
+        Row rows[] = {
+            {50.0, s.P50Ms},
+            {75.0, s.P75Ms},
+            {90.0, s.P90Ms},
+            {99.0, s.P99Ms},
+            {99.9, s.P999Ms},
+            {99.99, s.P9999Ms},
+            {99.999, s.P99999Ms},
+            {100.0, s.P100Ms},
+        };
+        std::cout << "=== Latency Distribution ===" << std::endl;
+        for (auto const& row : rows)
+        {
+          std::ostringstream pctSs;
+          pctSs << std::fixed << std::setprecision(3) << row.Pct;
+          std::ostringstream msSs;
+          msSs << std::fixed << std::setprecision(2) << row.Ms;
+          std::cout << std::right << std::setw(7) << pctSs.str() << "%   " << std::right
+                    << std::setw(8) << msSs.str() << "ms" << std::endl;
+        }
+      }
+    }
+  }
 }
 
 } // namespace
@@ -327,7 +409,6 @@ void Azure::Perf::Program::Run(
 
   // Parse args only to get the test name first
   auto testMetadata = GetTestMetadata(tests, argc, argv);
-  auto const& testGenerator = testMetadata->Factory;
   if (testMetadata == nullptr)
   {
     // Wrong input. Print what are the options.
@@ -335,6 +416,7 @@ void Azure::Perf::Program::Run(
 
     return;
   }
+  auto const& testGenerator = testMetadata->Factory;
 
   // Initial test to get it's options, we can use a dummy parser results
   argagg::parser_results argResults;
@@ -374,6 +456,9 @@ void Azure::Perf::Program::Run(
       parallelTest[i]->AllowInsecureConnections(true);
     }
   }
+
+  /******************** Per-run latency collector (when --latency) ****************/
+  Azure::Perf::LatencyCollector latencyCollector;
 
   /******************** Global Set up ******************************/
   std::cout << std::endl << "=== Global Setup ===" << std::endl;
@@ -419,18 +504,67 @@ void Azure::Perf::Program::Run(
   /******************** WarmUp ******************************/
   if (options.Warmup)
   {
-    RunTests(context, parallelTest, options, "Warmup", true);
+    RunTests(context, parallelTest, options, "Warmup", nullptr, nullptr, true);
   }
 
   /******************** Tests ******************************/
   std::string iterationInfo;
+  Azure::Perf::RunSummary finalSummary;
+  finalSummary.TestName = testMetadata->Name;
+  finalSummary.Parallel = options.Parallel;
+  finalSummary.DurationSeconds = options.Duration;
+  finalSummary.Warmup = options.Warmup;
+  finalSummary.Iterations = options.Iterations;
   for (int iteration = 0; iteration < options.Iterations; iteration++)
   {
     if (iteration > 0)
     {
       iterationInfo.append(FormatNumber(iteration));
     }
-    RunTests(context, parallelTest, options, "Test" + iterationInfo);
+    RunTests(
+        context,
+        parallelTest,
+        options,
+        "Test" + iterationInfo,
+        options.Latency ? &latencyCollector : nullptr,
+        &finalSummary);
+  }
+
+  /******************** End-of-run artifacts ************************/
+  if (options.Latency && !options.ResultsFile.empty())
+  {
+    // Match the .NET `--results-file` shape: an array of OperationResult { Time, Size }.
+    // Time is per-op latency in ms; Size is taken from the test's --size option when
+    // present, otherwise -1 (mirroring .NET's `(options as SizeOptions)?.Size ?? -1`).
+    int64_t opSize = -1;
+    try
+    {
+      if (argResults["Size"])
+      {
+        opSize = argResults["Size"].as<int64_t>();
+      }
+    }
+    catch (std::exception const&)
+    {
+      opSize = -1;
+    }
+
+    std::vector<Azure::Perf::OperationResult> ops;
+    auto samples = latencyCollector.Samples();
+    ops.reserve(samples.size());
+    for (auto const& s : samples)
+    {
+      Azure::Perf::OperationResult r;
+      r.Time = std::chrono::duration<double, std::milli>(s.Duration).count();
+      r.Size = opSize;
+      ops.push_back(std::move(r));
+    }
+    Azure::Perf::WriteResultsFile(options.ResultsFile, ops);
+  }
+
+  if (options.JobStatistics)
+  {
+    Azure::Perf::PrintJobStatistics(finalSummary);
   }
 
   std::cout << std::endl << "=== Pre-Cleanup ===" << std::endl;

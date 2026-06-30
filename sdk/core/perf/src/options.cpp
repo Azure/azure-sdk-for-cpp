@@ -16,7 +16,9 @@ void Azure::Perf::to_json(Azure::Core::Json::_internal::json& j, const GlobalTes
       {"Latency", p.Latency},
       {"NoCleanup", p.NoCleanup},
       {"Parallel", p.Parallel},
-      {"Warmup", p.Warmup}};
+      {"Warmup", p.Warmup},
+      {"StatusInterval", p.StatusInterval},
+      {"ResultsFile", p.ResultsFile.empty() ? "N/A" : p.ResultsFile}};
   if (p.Port)
   {
     j["Port"] = p.Port.Value();
@@ -56,7 +58,6 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
     [Option('p', "parallel", Default = 1, HelpText = "Number of operations to execute in parallel")]
     [Option("port", HelpText = "Port to redirect HTTP requests")]
     [Option('r', "rate", HelpText = "Target throughput (ops/sec)")]
-    [Option("sync", HelpText = "Runs sync version of test")]  -- Not supported
     [Option('w', "warmup", Default = 5, HelpText = "Duration of warmup in seconds")]
     [Option('x', "proxy", Default = "", HelpText = "Proxy server")]
   */
@@ -78,6 +79,11 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
        "Track and print per-operation latency statistics. Default to false.",
        1},
       {"NoCleanup", {"--noclean"}, "Disables test clean up. Default to false.", 1},
+      // .NET-compatible bare-switch alias for --noclean.
+      {"NoCleanupSwitch",
+       {"--no-cleanup"},
+       "Disables test clean up (bare switch, matches .NET --no-cleanup).",
+       0},
       {"Parallel",
        {"-p", "--parallel"},
        "Number of operations to execute in parallel. Default to 1.",
@@ -85,8 +91,19 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Port", {"--port"}, "Port to redirect HTTP requests. Default to no redirection.", 1},
       {"Rate", {"-r", "--rate"}, "Target throughput (ops/sec). Default to no throughput.", 1},
 
-      {"Sync", {"-y", "--sync"}, "Runs sync version of test, not implemented", 0},
+      // Accepted for cross-language CLI compatibility (perf-automation appends --sync for
+      // sync-only languages). C++ is sync-only and has no async variant, so the flag is
+      // parsed and intentionally ignored.
+      {"Sync", {"-y", "--sync"}, "Accepted for compatibility; ignored (C++ is sync-only).", 0},
       {"TestProxies", {"-x", "--test-proxies"}, "URIs of TestProxy Servers (separated by ';')", 1},
       {"Warmup", {"-w", "--warmup"}, "Duration of warmup in seconds. Default to 5 seconds.", 1},
+      {"StatusInterval",
+       {"--status-interval"},
+       "Interval in seconds between live status lines. Default to 1.",
+       1},
+      {"ResultsFile",
+       {"--results-file"},
+       "Write per-operation results ({Time, Size}) as JSON to this file. Requires --latency.",
+       1},
   };
 }

@@ -78,6 +78,11 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   {
     options.NoCleanup = parsedArgs["NoCleanup"].as<bool>();
   }
+  // .NET-compatible bare-switch alias --no-cleanup; presence implies true.
+  if (parsedArgs["NoCleanupSwitch"])
+  {
+    options.NoCleanup = true;
+  }
   if (parsedArgs["Parallel"])
   {
     options.Parallel = parsedArgs["Parallel"];
@@ -102,6 +107,14 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
     {
       options.TestProxies.push_back(proxy);
     }
+  }
+  if (parsedArgs["StatusInterval"])
+  {
+    options.StatusInterval = parsedArgs["StatusInterval"];
+  }
+  if (parsedArgs["ResultsFile"])
+  {
+    options.ResultsFile = parsedArgs["ResultsFile"].as<std::string>();
   }
 
   return options;
