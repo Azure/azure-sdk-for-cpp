@@ -12,8 +12,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
-#include <azure/storage/common/internal/storage_per_retry_policy.hpp>
-#include <azure/storage/common/internal/storage_service_version_policy.hpp>
+#include <azure/storage/common/internal/storage_pipeline.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
@@ -48,21 +47,15 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_uploadValidationOptions(options.UploadValidationOptions),
         m_downloadValidationOptions(options.DownloadValidationOptions)
   {
-    ShareClientOptions newOptions = options;
-    newOptions.PerRetryPolicies.emplace_back(
-        std::make_unique<_internal::SharedKeyPolicy>(credential));
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::FileServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_shareUrl.GetHost();
+    pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        newOptions,
-        _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareClient::ShareClient(
@@ -75,29 +68,24 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_uploadValidationOptions(options.UploadValidationOptions),
         m_downloadValidationOptions(options.DownloadValidationOptions)
   {
-    ShareClientOptions newOptions = options;
-
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::FileServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_shareUrl.GetHost();
+    pipelineOptions.ApiVersion = options.ApiVersion;
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
-      perRetryPolicies.emplace_back(
-          std::make_unique<Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
-              credential, tokenContext));
+      pipelineOptions.TokenAuthPolicy = std::make_unique<
+          Azure::Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy>(
+          credential, tokenContext);
     }
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(newOptions.ApiVersion));
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        newOptions,
-        _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
@@ -107,17 +95,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         m_uploadValidationOptions(options.UploadValidationOptions),
         m_downloadValidationOptions(options.DownloadValidationOptions)
   {
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
-    std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
-    perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
-    perOperationPolicies.emplace_back(
-        std::make_unique<_internal::StorageServiceVersionPolicy>(options.ApiVersion));
+    _internal::BuildStoragePipelineOptions pipelineOptions;
+    pipelineOptions.PackageName = _internal::FileServicePackageName;
+    pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
+    pipelineOptions.PrimaryHost = m_shareUrl.GetHost();
+    pipelineOptions.ApiVersion = options.ApiVersion;
+
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        options,
-        _internal::FileServicePackageName,
-        _detail::PackageVersion::ToString(),
-        std::move(perRetryPolicies),
-        std::move(perOperationPolicies));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
