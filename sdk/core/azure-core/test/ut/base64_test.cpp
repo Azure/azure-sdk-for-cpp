@@ -184,6 +184,48 @@ TEST(Base64, InvalidDecode)
   EXPECT_THROW(Convert::Base64Decode("AD=====EF"), std::runtime_error);
   EXPECT_THROW(Convert::Base64Decode("AD======EF"), std::runtime_error);
 
+  // Invalid bytes map to the decode table's -1 sentinel, which must be rejected before
+  // any left shift: shifting a negative value is undefined behavior prior to C++20, so
+  // sanitizer builds (-fsanitize=undefined -fno-sanitize-recover=all) abort otherwise.
+  // Two distinct defects are covered:
+  //   1. bytes >= 0x80 must not sign-extend to a negative index (out-of-bounds read);
+  //   2. the resulting -1 sentinel must not be left-shifted (undefined behavior).
+  // std::string{...} avoids hex-escape ambiguity in the inputs.
+  for (char invalid : {'\x80', '\xC0', '\xFF', '\x01', '\x7F'})
+  {
+    // Tail path: invalid byte in each of the four positions of a single group.
+    EXPECT_THROW(Convert::Base64Decode(std::string{invalid, 'A', 'A', 'A'}), std::runtime_error);
+    EXPECT_THROW(Convert::Base64Decode(std::string{'A', invalid, 'A', 'A'}), std::runtime_error);
+    EXPECT_THROW(Convert::Base64Decode(std::string{'A', 'A', invalid, 'A'}), std::runtime_error);
+    EXPECT_THROW(Convert::Base64Decode(std::string{'A', 'A', 'A', invalid}), std::runtime_error);
+    // Loop path: invalid byte in each of the eight positions of two groups (the first
+    // group is decoded through the int32_t Base64Decode(const char*) helper).
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{invalid, 'A', 'A', 'A', 'A', 'A', 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', invalid, 'A', 'A', 'A', 'A', 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', invalid, 'A', 'A', 'A', 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', 'A', invalid, 'A', 'A', 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', 'A', 'A', invalid, 'A', 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', 'A', 'A', 'A', invalid, 'A', 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', 'A', 'A', 'A', 'A', invalid, 'A'}),
+        std::runtime_error);
+    EXPECT_THROW(
+        Convert::Base64Decode(std::string{'A', 'A', 'A', 'A', 'A', 'A', 'A', invalid}),
+        std::runtime_error);
+  }
+
   // cspell::enable
 }
 
