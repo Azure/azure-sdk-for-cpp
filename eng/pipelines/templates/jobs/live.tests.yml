@@ -98,6 +98,8 @@ jobs:
       # Surface the ServiceDirectory parameter as an environment variable so tests can take advantage of it.
     - name: AZURE_SERVICE_DIRECTORY
       value: ${{ parameters.ServiceDirectory }}
+    - name: DotNetDevOpsFeed
+      value: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
   steps:
   - checkout: self
@@ -146,8 +148,8 @@ jobs:
     displayName: vcpkg --version
 
   - script: |
-      dotnet tool install -g dotnet-reportgenerator-globaltool
-      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+      dotnet tool install -g --add-source "$(DotNetDevOpsFeed)" dotnet-reportgenerator-globaltool 
+      dotnet tool install --add-source "$(DotNetDevOpsFeed)" dotnet-reportgenerator-globaltool --tool-path tools 
     displayName: Install coverage tools
     # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
     # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled)
