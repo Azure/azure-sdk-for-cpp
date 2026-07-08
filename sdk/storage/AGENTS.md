@@ -6,8 +6,8 @@ This file provides guidance for AI agents working in `sdk/storage` of the Azure 
 
 This AGENTS file applies to:
 
-- `sdk/storage/*`
-- Cross-cutting storage concepts shared across blobs, files shares, datalake, queues, and storage common.
+- `sdk/storage/**`
+- Cross-cutting storage concepts shared across blobs, file shares, datalake, queues, and storage common.
 
 This file supplements the repository-root guidance in `/AGENTS.md`.  
 Agents working in `sdk/storage` must follow both files: apply root repository-wide policies first, then apply storage-specific guidance from this file.
@@ -15,7 +15,7 @@ Agents working in `sdk/storage` must follow both files: apply root repository-wi
 For service-specific guidance, prefer the local AGENTS files:
 
 - `sdk/storage/azure-storage-blobs/AGENTS.md`
-- `sdk/storage/azure-storage-datalake/AGENTS.md`
+- `sdk/storage/azure-storage-files-datalake/AGENTS.md`
 - `sdk/storage/azure-storage-files-shares/AGENTS.md`
 
 If guidance conflicts, the most local AGENTS file takes precedence.

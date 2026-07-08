@@ -1,12 +1,12 @@
 # AGENTS.md
 
-Guidance for AI agents working in `sdk/storage/azure-storage-datalake`.
+Guidance for AI agents working in `sdk/storage/azure-storage-files-datalake`.
 
 ## Scope
 
 This file applies to:
 
-- `sdk/storage/azure-storage-datalake/**`
+- `sdk/storage/azure-storage-files-datalake/**`
 
 It extends `sdk/storage/AGENTS.md` with datalake-specific guidance.
 
@@ -14,8 +14,7 @@ It extends `sdk/storage/AGENTS.md` with datalake-specific guidance.
 
 ## Naming and Package Note
 
-In this repository, Data Lake client code lives under `azure-storage-files-datalake`.  
-If this AGENTS file is placed in `azure-storage-datalake` for team workflow reasons, ensure changes still target the actual package paths and conventions used by the Data Lake library.
+The Data Lake client code lives under `azure-storage-files-datalake` in this repository. When making changes, ensure paths, includes, namespaces, and conventions target this package.
 
 ---
 
