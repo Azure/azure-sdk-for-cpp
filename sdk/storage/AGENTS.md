@@ -63,7 +63,7 @@ When making changes, prioritize:
 
 ---
 
-## Do / Don’t
+## Do / Don't
 
 ### Do
 
@@ -74,13 +74,13 @@ When making changes, prioritize:
 - Add or update tests for every functional change.
 - Keep generated code and hand-written code boundaries intact.
 
-### Don’t
+### Don't
 
-- Don’t introduce breaking public API changes without explicit review.
-- Don’t duplicate common logic that belongs in storage common.
-- Don’t hardcode secrets, account keys, SAS tokens, or connection strings.
-- Don’t manually edit generated assets when source-generation workflow is expected.
-- Don’t broaden scope into unrelated storage services in one change.
+- Don't introduce breaking public API changes without explicit review.
+- Don't duplicate common logic that belongs in storage common.
+- Don't hardcode secrets, account keys, SAS tokens, or connection strings.
+- Don't manually edit generated assets when source-generation workflow is expected.
+- Don't broaden scope into unrelated storage services in one change.
 
 ---
 
