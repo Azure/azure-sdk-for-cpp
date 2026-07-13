@@ -18,5 +18,5 @@ $vcpkgBinarySourceSas = New-AzStorageContainerSASToken `
 # Ensure redaction of SAS tokens in logs
 Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SAS_TOKEN;issecret=true;]$vcpkgBinarySourceSas"
 
-Write-Host "Setting vcpkg binary cache to read and write"
-Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azcopy-sas,https://$StorageAccountName.blob.core.windows.net/$StorageContainerName,$vcpkgBinarySourceSas,readwrite"
+Write-Host "Binary cache disabled (clear) to force full from-source builds and validate Terrapin asset coverage"
+Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear"
