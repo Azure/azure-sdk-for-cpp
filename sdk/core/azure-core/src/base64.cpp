@@ -346,15 +346,27 @@ std::string Base64Encode(uint8_t const* const data, size_t length)
 
 int32_t Base64Decode(const char* encodedBytes)
 {
-  int32_t i0 = encodedBytes[0];
-  int32_t i1 = encodedBytes[1];
-  int32_t i2 = encodedBytes[2];
-  int32_t i3 = encodedBytes[3];
+  // Read each input byte as unsigned so that bytes >= 0x80 do not sign-extend to a
+  // negative value, which would index Base64DecodeArray out of bounds. Invalid bytes
+  // map to the table's -1 sentinel, handled by the caller's `result < 0` check.
+  int32_t i0 = static_cast<unsigned char>(encodedBytes[0]);
+  int32_t i1 = static_cast<unsigned char>(encodedBytes[1]);
+  int32_t i2 = static_cast<unsigned char>(encodedBytes[2]);
+  int32_t i3 = static_cast<unsigned char>(encodedBytes[3]);
 
   i0 = Base64DecodeArray[i0];
   i1 = Base64DecodeArray[i1];
   i2 = Base64DecodeArray[i2];
   i3 = Base64DecodeArray[i3];
+
+  // An invalid character maps to the -1 sentinel. Bail out before the shifts:
+  // left-shifting a negative value is undefined behavior prior to C++20, which
+  // sanitizer builds (-fsanitize=undefined -fno-sanitize-recover=all) abort on.
+  // The caller rejects the negative return value.
+  if ((i0 | i1 | i2 | i3) < 0)
+  {
+    return -1;
+  }
 
   i0 <<= 18;
   i1 <<= 12;
@@ -418,13 +430,24 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
 
   // We are guaranteed to have an input with at least 4 bytes at this point, with a size that is a
   // multiple of 4.
-  int64_t i0 = inputPtr[inputSize - 4];
-  int64_t i1 = inputPtr[inputSize - 3];
-  int64_t i2 = inputPtr[inputSize - 2];
-  int64_t i3 = inputPtr[inputSize - 1];
+  // Read each input byte as unsigned so that bytes >= 0x80 do not sign-extend to a negative
+  // value, which would index Base64DecodeArray out of bounds. Invalid bytes map to the table's
+  // -1 sentinel, handled by the `i0 < 0` checks below.
+  int64_t i0 = static_cast<unsigned char>(inputPtr[inputSize - 4]);
+  int64_t i1 = static_cast<unsigned char>(inputPtr[inputSize - 3]);
+  int64_t i2 = static_cast<unsigned char>(inputPtr[inputSize - 2]);
+  int64_t i3 = static_cast<unsigned char>(inputPtr[inputSize - 1]);
 
   i0 = Base64DecodeArray[i0];
   i1 = Base64DecodeArray[i1];
+
+  // An invalid character maps to the -1 sentinel. Reject it before the shifts below:
+  // left-shifting a negative value is undefined behavior prior to C++20, which sanitizer
+  // builds (-fsanitize=undefined -fno-sanitize-recover=all) abort on.
+  if ((i0 | i1) < 0)
+  {
+    throw std::runtime_error("Unexpected character in Base64 encoded string");
+  }
 
   i0 <<= 18;
   i1 <<= 12;
@@ -436,15 +459,15 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
     i2 = Base64DecodeArray[i2];
     i3 = Base64DecodeArray[i3];
 
+    if ((i2 | i3) < 0)
+    {
+      throw std::runtime_error("Unexpected character in Base64 encoded string");
+    }
+
     i2 <<= 6;
 
     i0 |= i3;
     i0 |= i2;
-
-    if (i0 < 0)
-    {
-      throw std::runtime_error("Unexpected character in Base64 encoded string");
-    }
 
     Base64WriteThreeLowOrderBytes(destinationPtr, i0);
   }
@@ -452,24 +475,20 @@ std::vector<uint8_t> Base64Decode(const std::string& text)
   {
     i2 = Base64DecodeArray[i2];
 
-    i2 <<= 6;
-
-    i0 |= i2;
-    if (i0 < 0)
+    if (i2 < 0)
     {
       throw std::runtime_error("Unexpected character in Base64 encoded string");
     }
+
+    i2 <<= 6;
+
+    i0 |= i2;
 
     destinationPtr[1] = static_cast<uint8_t>(i0 >> 8);
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
   }
   else
   {
-    if (i0 < 0)
-    {
-      throw std::runtime_error("Unexpected character in Base64 encoded string");
-    }
-
     destinationPtr[0] = static_cast<uint8_t>(i0 >> 16);
   }
 
