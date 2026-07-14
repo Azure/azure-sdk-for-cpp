@@ -15,8 +15,11 @@
 #include <azure/core/uuid.hpp>
 #include <azure/perf.hpp>
 
+#include <algorithm>
+#include <atomic>
 #include <memory>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs { namespace Test {
@@ -58,15 +61,38 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       }
       m_pageSize = m_options.GetOptionOrDefault<int>("PageSize", 0);
 
-      auto rawData = std::make_unique<std::vector<uint8_t>>(1);
-      auto content = Azure::Core::IO::MemoryBodyStream(*rawData);
-
-      // Upload the number of blobs to be listed later in the test
-      for (auto blobCount = 0; blobCount < count; blobCount++)
+      // Upload the number of blobs to be listed later in the test, using multiple
+      // threads to upload the blobs in parallel to speed up setup.
+      unsigned int hardwareThreads = std::thread::hardware_concurrency();
+      if (hardwareThreads == 0)
       {
-        auto blobName = "Azure.Storage.Blobs.Perf.Scenarios.DownloadBlob-"
-            + Azure::Core::Uuid::CreateUuid().ToString();
-        m_containerClient->GetBlockBlobClient(blobName).Upload(content);
+        hardwareThreads = 4;
+      }
+      const unsigned int threadCount = static_cast<unsigned int>(
+          std::min<long>(static_cast<long>(hardwareThreads), std::max<long>(count, 1)));
+
+      std::atomic<long> nextBlobIndex(0);
+      auto uploadWorker = [this, count, &nextBlobIndex]() {
+        std::vector<uint8_t> rawData(1);
+        for (long blobCount = nextBlobIndex.fetch_add(1); blobCount < count;
+             blobCount = nextBlobIndex.fetch_add(1))
+        {
+          auto content = Azure::Core::IO::MemoryBodyStream(rawData);
+          auto blobName = "Azure.Storage.Blobs.Perf.Scenarios.DownloadBlob-"
+              + Azure::Core::Uuid::CreateUuid().ToString();
+          m_containerClient->GetBlockBlobClient(blobName).Upload(content);
+        }
+      };
+
+      std::vector<std::thread> threads;
+      threads.reserve(threadCount);
+      for (unsigned int i = 0; i < threadCount; i++)
+      {
+        threads.emplace_back(uploadWorker);
+      }
+      for (auto& thread : threads)
+      {
+        thread.join();
       }
     }
 

@@ -72,7 +72,7 @@ Azure::Perf::GlobalTestOptions Azure::Perf::Program::ArgParser::Parse(
   }
   if (parsedArgs["Latency"])
   {
-    options.Latency = parsedArgs["Latency"].as<bool>();
+    options.Latency = true;
   }
   if (parsedArgs["NoCleanup"])
   {

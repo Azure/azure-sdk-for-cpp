@@ -77,7 +77,7 @@ std::vector<Azure::Perf::TestOption> Azure::Perf::GlobalTestOptions::GetOptionMe
       {"Latency",
        {"-l", "--latency"},
        "Track and print per-operation latency statistics. Default to false.",
-       1},
+       0},
       {"NoCleanup", {"--noclean"}, "Disables test clean up. Default to false.", 1},
       // .NET-compatible bare-switch alias for --noclean.
       {"NoCleanupSwitch",
