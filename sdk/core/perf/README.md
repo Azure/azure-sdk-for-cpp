@@ -55,7 +55,7 @@ The next options can be used for any test:
 | Insecure   | --insecure       | Allow untrusted SSL certs                        | false | --insecure
 | Iterations | -i, --iterations | Number of iterations of main test loop           | 1     | -d 5
 | Statistics | --statistics     | Print job statistics                             | false | --statistics=true
-| Latency    | -l, --latency    | Track and print per-operation latency statistics | false | -l true
+| Latency    | -l, --latency    | Track and print per-operation latency statistics | false | --latency
 | No Clean   | --noclean        | Disables test clean up                           | false | --nocleanup=true
 | Parallel   | -p, --parallel   | Number of operations to execute in parallel      | 1     | -p 5
 | Port       | --port           | Port to redirect HTTP requests                   | NA    | --port=5000
