@@ -148,8 +148,8 @@ jobs:
     displayName: vcpkg --version
 
   - script: |
-      dotnet tool install -g --add-source "$(DotNetDevOpsFeed)" dotnet-reportgenerator-globaltool 
-      dotnet tool install --add-source "$(DotNetDevOpsFeed)" dotnet-reportgenerator-globaltool --tool-path tools 
+      dotnet tool install -g dotnet-reportgenerator-globaltool --add-source "$(DotNetDevOpsFeed)"
+      dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools --add-source "$(DotNetDevOpsFeed)"
     displayName: Install coverage tools
     # CODE_COVERAGE variable is '' (do-not-generate) in all matrix but linux-gcc
     # It is 'enabled' by default on linux-gcc but it can be opt-out by each pipeline (disabled)
