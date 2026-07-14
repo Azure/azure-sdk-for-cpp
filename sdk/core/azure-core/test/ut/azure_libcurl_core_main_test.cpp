@@ -35,7 +35,7 @@ namespace Azure { namespace Core { namespace Test {
   TEST(SdkWithLibcurl, globalCleanUp)
   {
     Azure::Core::Http::Request req(
-        Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://www.microsoft.com"));
+        Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
     using std::chrono::duration;
     using std::chrono::duration_cast;
     using std::chrono::high_resolution_clock;
