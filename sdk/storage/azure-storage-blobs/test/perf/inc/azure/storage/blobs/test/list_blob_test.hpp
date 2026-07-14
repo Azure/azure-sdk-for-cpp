@@ -17,7 +17,9 @@
 
 #include <algorithm>
 #include <atomic>
+#include <exception>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <vector>
@@ -72,15 +74,30 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
           std::min<long>(static_cast<long>(hardwareThreads), std::max<long>(count, 1)));
 
       std::atomic<long> nextBlobIndex(0);
-      auto uploadWorker = [this, count, &nextBlobIndex]() {
-        std::vector<uint8_t> rawData(1);
-        for (long blobCount = nextBlobIndex.fetch_add(1); blobCount < count;
-             blobCount = nextBlobIndex.fetch_add(1))
+      std::mutex exceptionMutex;
+      std::exception_ptr firstException;
+      auto uploadWorker = [this, count, &nextBlobIndex, &exceptionMutex, &firstException]() {
+        try
         {
-          auto content = Azure::Core::IO::MemoryBodyStream(rawData);
-          auto blobName = "Azure.Storage.Blobs.Perf.Scenarios.DownloadBlob-"
-              + Azure::Core::Uuid::CreateUuid().ToString();
-          m_containerClient->GetBlockBlobClient(blobName).Upload(content);
+          std::vector<uint8_t> rawData(1);
+          for (long blobCount = nextBlobIndex.fetch_add(1); blobCount < count;
+               blobCount = nextBlobIndex.fetch_add(1))
+          {
+            auto content = Azure::Core::IO::MemoryBodyStream(rawData);
+            auto blobName = "Azure.Storage.Blobs.Perf.Scenarios.ListBlob-"
+                + Azure::Core::Uuid::CreateUuid().ToString();
+            m_containerClient->GetBlockBlobClient(blobName).Upload(content);
+          }
+        }
+        catch (...)
+        {
+          // Capture the first exception thrown by any worker so it can be rethrown after
+          // joining, avoiding std::terminate from an exception escaping the thread function.
+          std::lock_guard<std::mutex> lock(exceptionMutex);
+          if (!firstException)
+          {
+            firstException = std::current_exception();
+          }
         }
       };
 
@@ -93,6 +110,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       for (auto& thread : threads)
       {
         thread.join();
+      }
+
+      if (firstException)
+      {
+        std::rethrow_exception(firstException);
       }
     }
 
