@@ -23,6 +23,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, get)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -77,6 +82,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, getLoop)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -97,6 +107,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, head)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 

@@ -120,6 +120,11 @@ Note, the listener callback is executed on the same thread as the operation that
 Where message processing is required, consider implementing in a way that the callback pushes the message 
 string into a thread-safe queue, so that another thread would pick the messages from that queue and handle them.
 
+### Running tests
+
+Some tests use `httpbin` server. In order to run them, set the `AZSDKCPPTEST_HTTPBIN_URL` environment variable to `https://httpbin.org/`, or to your deployed instance of that service.
+If the environment variable is not set, the corresponding unit test will get skipped.
+
 ## Next steps
 
 Explore and install available Azure SDK libraries.

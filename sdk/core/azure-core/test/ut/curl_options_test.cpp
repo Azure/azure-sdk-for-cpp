@@ -426,6 +426,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, disableSslCaching)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.EnableCurlSslCaching = false;
 

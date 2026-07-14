@@ -84,6 +84,7 @@
     "azcopy",
     "azcore",
     "azsdk",
+    "AZSDKCPPTEST",
     "azsdkengsys",
     "azurecr",
     "azuresdk",
