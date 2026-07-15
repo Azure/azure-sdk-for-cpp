@@ -29,6 +29,8 @@ namespace Azure { namespace Core { namespace Test {
   public:
     struct AzureSdkHttpbinServer final
     {
+      inline static bool IsEnabled() { return !Schema().empty() && !Host().empty(); }
+
       inline static std::string Get()
       {
         return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
@@ -430,6 +432,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
 
     // HTTP Connections.
@@ -647,6 +654,11 @@ namespace Azure { namespace Core { namespace Test {
       // store. That means that if we set the expected certificate, we won't be able to connect to
       // the server because the certificates root CA is not in the store.
 #if defined(AZ_PLATFORM_LINUX)
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      }
+
       // cspell:disable
       std::string azurewebsitesCertificate
           = "MIIF8zCCBNugAwIBAgIQCq+mxcpjxFFB6jvh98dTFzANBgkqhkiG9w0BAQwFADBh"
