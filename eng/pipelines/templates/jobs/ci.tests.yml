@@ -105,6 +105,8 @@ jobs:
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
+    - name: DotNetDevOpsFeed
+      value: "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
     steps:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
@@ -285,8 +287,8 @@ jobs:
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
-            dotnet tool install -g dotnet-reportgenerator-globaltool
-            dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory
+            dotnet tool install -g dotnet-reportgenerator-globaltool --add-source "$(DotNetDevOpsFeed)"
+            dotnet tool install dotnet-reportgenerator-globaltool --tool-path $toolsDirectory --add-source "$(DotNetDevOpsFeed)"
             Write-Host "##vso[task.setvariable variable=ToolsDirectory]$toolsDirectory"
           displayName: Install coverage tools
           condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
