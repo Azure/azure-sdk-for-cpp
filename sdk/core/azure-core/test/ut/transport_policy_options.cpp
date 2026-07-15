@@ -29,41 +29,40 @@ namespace Azure { namespace Core { namespace Test {
   public:
     struct AzureSdkHttpbinServer final
     {
+      inline static bool IsEnabled() { return !Schema().empty() && !Host().empty(); }
+
       inline static std::string Get()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + "/get";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + "/get";
       }
       inline static std::string Headers()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + "/headers";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + "/headers";
       }
       inline static std::string WithPort()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + ":443/get";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + ":443/get";
       }
       inline static std::string Put()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + "/put";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + "/put";
       }
       inline static std::string Delete()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + "/delete";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + "/delete";
       }
       inline static std::string Patch()
       {
-        return std::string(_detail::AzureSdkHttpbinServerSchema) + "://"
-            + std::string(_detail::AzureSdkHttpbinServer) + "/patch";
+        return _detail::AzureSdkHttpbinServerSchema + "://" + _detail::AzureSdkHttpbinServer
+            + "/patch";
       }
-      inline static std::string Host() { return std::string(_detail::AzureSdkHttpbinServer); }
-      inline static std::string Schema()
-      {
-        return std::string(_detail::AzureSdkHttpbinServerSchema);
-      }
+      inline static std::string Host() { return _detail::AzureSdkHttpbinServer; }
+      inline static std::string Schema() { return _detail::AzureSdkHttpbinServerSchema; }
     };
 
     static Azure::Core::Http::_internal::HttpPipeline CreateHttpPipeline(
@@ -433,6 +432,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_F(TransportAdapterOptions, DisableCrlValidation)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url testUrl(AzureSdkHttpbinServer::Get());
 
     // HTTP Connections.
@@ -650,6 +654,11 @@ namespace Azure { namespace Core { namespace Test {
       // store. That means that if we set the expected certificate, we won't be able to connect to
       // the server because the certificates root CA is not in the store.
 #if defined(AZ_PLATFORM_LINUX)
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       // cspell:disable
       std::string azurewebsitesCertificate
           = "MIIF8zCCBNugAwIBAgIQCq+mxcpjxFFB6jvh98dTFzANBgkqhkiG9w0BAQwFADBh"

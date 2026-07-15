@@ -47,6 +47,11 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, connectionPoolTest)
 #endif
     {
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
@@ -424,6 +429,11 @@ namespace Azure { namespace Core { namespace Test {
 
     TEST(CurlConnectionPool, uniquePort)
     {
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       {
         std::lock_guard<std::mutex> lock(
             CurlConnectionPool::g_curlConnectionPool.ConnectionPoolMutex);
@@ -592,6 +602,11 @@ namespace Azure { namespace Core { namespace Test {
 
     TEST(CurlConnectionPool, resiliencyOnConnectionClosed)
     {
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Get()));
 
@@ -616,6 +631,11 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, forceConnectionClosed)
 #endif
     {
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       Azure::Core::Http::Request req(
           Azure::Core::Http::HttpMethod::Get, Azure::Core::Url(AzureSdkHttpbinServer::Status(101)));
 
@@ -643,6 +663,11 @@ namespace Azure { namespace Core { namespace Test {
     TEST(CurlConnectionPool, connectionClose)
 #endif
     {
+      if (!AzureSdkHttpbinServer::IsEnabled())
+      {
+        GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+      }
+
       /// When getting the header connection: close from an HTTP response, the connection should not
       /// be moved back to the pool.
       {

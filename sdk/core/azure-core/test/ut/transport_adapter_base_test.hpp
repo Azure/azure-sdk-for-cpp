@@ -10,11 +10,16 @@
  */
 
 #include <azure/core/http/http.hpp>
+#include <azure/core/internal/diagnostics/log.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
+#include <azure/core/url.hpp>
 
+#include <exception>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -26,12 +31,45 @@
 namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
-    constexpr static const char AzureSdkHttpbinServerSchema[] = "https";
-    constexpr static const char AzureSdkHttpbinServer[] = "azuresdkforcpp.azurewebsites.net";
+    static Core::Url GetAzureSdkHttpbinServerUrl()
+    {
+      using Core::Diagnostics::Logger;
+      using Core::Diagnostics::_internal::Log;
+
+      constexpr const char HttpBinUrlEnvVarName[] = "AZSDKCPPTEST_HTTPBIN_URL";
+      auto const httpBinEnvVar = Core::_internal::Environment::GetVariable(HttpBinUrlEnvVarName);
+      if (httpBinEnvVar.empty())
+      {
+        Log::Stream(Logger::Level::Verbose) << '\'' << HttpBinUrlEnvVarName << "' not set.";
+        return {};
+      }
+
+      try
+      {
+        Core::Url const httpBinUrl(httpBinEnvVar);
+        Log::Stream(Logger::Level::Verbose)
+            << HttpBinUrlEnvVarName << "= { Scheme: \"" << httpBinUrl.GetScheme() << "\", Host: \""
+            << httpBinUrl.GetHost() << "\"}.";
+
+        return httpBinUrl;
+      }
+      catch (std::exception const&)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Error parsing '" << HttpBinUrlEnvVarName << "' (=\"" << httpBinEnvVar << "\").";
+        return {};
+      }
+    }
+
+    static std::string const AzureSdkHttpbinServerSchema
+        = GetAzureSdkHttpbinServerUrl().GetScheme();
+
+    static std::string const AzureSdkHttpbinServer = GetAzureSdkHttpbinServerUrl().GetHost();
   } // namespace _detail
 
   struct AzureSdkHttpbinServer final
   {
+    inline static bool IsEnabled() { return !Schema().empty() && !Host().empty(); }
     inline static std::string Get() { return Schema() + "://" + Host() + "/get"; }
     inline static std::string Headers() { return Schema() + "://" + Host() + "/headers"; }
     inline static std::string GetWithPort() { return Schema() + "://" + Host() + ":443/get"; }

@@ -37,6 +37,11 @@ namespace Azure { namespace Core { namespace Test {
   // Test is disabled until there is a reliable proxy to be used for CI111
   TEST(CurlTransportOptions, DISABLED_proxy)
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     // This proxy is currently alive but eventually we might want our own proxy server to be
     // available.
@@ -73,6 +78,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, noRevoke)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.SslOptions.EnableCertificateRevocationListCheck = true;
 
@@ -214,6 +224,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, sslVerifyOff)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     // If ssl verify is not disabled, this test would fail because the caInfo is not OK
     curlOptions.SslVerifyPeer = false;
@@ -253,6 +268,11 @@ namespace Azure { namespace Core { namespace Test {
 #if !defined(AZ_PLATFORM_MAC)
   TEST(CurlTransportOptions, setCADirectory)
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
 #if defined(AZ_PLATFORM_LINUX)
     // openssl default cert location will be used only if environment variable SSL_CERT_DIR
@@ -318,6 +338,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, httpsDefault)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     auto transportAdapter = std::make_shared<Azure::Core::Http::CurlTransport>();
     Azure::Core::Http::Policies::TransportOptions options;
     options.Transport = transportAdapter;
@@ -354,6 +379,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, disableKeepAlive)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.HttpKeepAlive = false;
 
@@ -396,6 +426,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST(CurlConnectionPool, disableSslCaching)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Http::CurlTransportOptions curlOptions;
     curlOptions.EnableCurlSslCaching = false;
 

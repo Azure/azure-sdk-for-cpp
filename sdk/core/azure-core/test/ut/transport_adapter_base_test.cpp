@@ -23,6 +23,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, get)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -52,6 +57,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, get204)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host("http://mt3.google.com/generate_204");
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -77,6 +87,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, getLoop)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host);
@@ -97,6 +112,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, head)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
@@ -116,6 +136,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, put)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1K
@@ -143,6 +168,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, deleteRequest)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
@@ -163,6 +193,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, patch)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
@@ -183,6 +218,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, getChunk)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length
     auto expectedChunkResponse = std::string(
@@ -205,6 +245,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, putErrorResponse)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     // Try to make a PUT to a GET url. This will return an error code from server.
@@ -230,6 +275,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, getWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
@@ -259,6 +309,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, getLoopWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
     auto request = Azure::Core::Http::Request(Azure::Core::Http::HttpMethod::Get, host, false);
@@ -279,6 +334,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, headWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     auto expectedResponseBodySize = 0;
 
@@ -298,6 +358,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, putWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1k
@@ -318,6 +383,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, deleteRequestWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
 
     // Delete with 1k payload
@@ -338,6 +408,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, patchWithStream)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
 
     // Patch with 1kb payload
@@ -379,6 +454,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, createResponseT)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
     std::string expectedType("This is the Response Type");
 
@@ -408,6 +488,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, customSizePut)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
 
     // PUT 1MB
@@ -430,6 +515,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, putWithStreamOnFail)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     // point to bad address pah to generate server MethodNotAllowed error
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
 
@@ -452,6 +542,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, cancelTransferUpload)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     Azure::Core::Context cancelThis;
 
@@ -481,6 +576,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, redirectsNotFollowed)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     // We don't expect the transport adapter to follow redirects automatically to this url.
     std::string redirectToUrl = AzureSdkHttpbinServer::ResponseHeaders("foo=bar");
 
@@ -634,6 +734,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, SizePutFromFile)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
@@ -663,6 +768,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, SizePutFromFileDefault)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
@@ -693,6 +803,11 @@ namespace Azure { namespace Core { namespace Test {
   TEST_P(TransportAdapter, SizePutFromFileBiggerPage)
 #endif
   {
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
+    }
+
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
     std::string testDataPath(AZURE_TEST_DATA_PATH);
 
