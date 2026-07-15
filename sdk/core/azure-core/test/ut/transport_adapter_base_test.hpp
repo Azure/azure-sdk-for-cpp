@@ -30,7 +30,7 @@
 namespace Azure { namespace Core { namespace Test {
 
   namespace _detail {
-    Core::Url GetAzureSdkHttpbinServerUrl()
+    static Core::Url GetAzureSdkHttpbinServerUrl()
     {
       using Core::Diagnostics::Logger;
       using Core::Diagnostics::_internal::Log;
