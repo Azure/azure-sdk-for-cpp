@@ -33,6 +33,8 @@ namespace Azure { namespace Core { namespace Test {
     Core::Url GetAzureSdkHttpbinServerUrl()
     {
       using Core::Diagnostics::_internal::Log;
+      using Core::Diagnostics::Logger;
+
       constexpr const char HttpBinUrlEnvVarName[] = "AZSDKCPPTEST_HTTPBIN_URL";
       auto const httpBinEnvVar = Core::_internal::Environment::GetVariable(HttpBinUrlEnvVarName);
       if (httpBinEnvVar.empty())
