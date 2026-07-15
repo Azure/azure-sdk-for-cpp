@@ -66,6 +66,7 @@ namespace Azure { namespace Core { namespace Test {
 
   struct AzureSdkHttpbinServer final
   {
+    inline static bool IsEnabled() { return !Schema().empty() && !Host().empty(); }
     inline static std::string Get() { return Schema() + "://" + Host() + "/get"; }
     inline static std::string Headers() { return Schema() + "://" + Host() + "/headers"; }
     inline static std::string GetWithPort() { return Schema() + "://" + Host() + ":443/get"; }
