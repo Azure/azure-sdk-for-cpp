@@ -17,6 +17,7 @@
 #include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
 
+#include <exception>
 #include <memory>
 #include <string>
 #include <vector>
