@@ -25,7 +25,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -59,7 +59,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host("http://mt3.google.com/generate_204");
@@ -89,7 +89,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -114,7 +114,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -138,7 +138,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -170,7 +170,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
@@ -195,7 +195,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
@@ -220,7 +220,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
@@ -247,7 +247,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -277,7 +277,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -311,7 +311,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -336,7 +336,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -360,7 +360,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -385,7 +385,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Delete());
@@ -410,7 +410,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Patch());
@@ -456,7 +456,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Get());
@@ -490,7 +490,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -517,7 +517,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     // point to bad address pah to generate server MethodNotAllowed error
@@ -544,7 +544,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -578,7 +578,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     // We don't expect the transport adapter to follow redirects automatically to this url.
@@ -736,7 +736,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -770,7 +770,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());
@@ -805,7 +805,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url host(AzureSdkHttpbinServer::Put());

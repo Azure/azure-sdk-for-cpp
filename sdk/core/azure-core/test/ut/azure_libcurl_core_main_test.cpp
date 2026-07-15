@@ -37,7 +37,7 @@ namespace Azure { namespace Core { namespace Test {
   {
     if (!AzureSdkHttpbinServer::IsEnabled())
     {
-      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+      GTEST_SKIP_("Skipping the test because httpbin URL environment variable is not set.");
     }
 
     Azure::Core::Url const url(AzureSdkHttpbinServer::Get());
