@@ -23,6 +23,7 @@
 #include "http/curl/curl_connection_pool_private.hpp"
 #include "http/curl/curl_connection_private.hpp"
 #include "http/curl/curl_session_private.hpp"
+#include "transport_adapter_base_test.hpp"
 
 #include <csignal>
 #include <cstdlib>
@@ -34,8 +35,14 @@ namespace Azure { namespace Core { namespace Test {
   // This test fails intermittently: https://github.com/Azure/azure-sdk-for-cpp/issues/4332
   TEST(SdkWithLibcurl, globalCleanUp)
   {
-    Azure::Core::Http::Request req(
-        Azure::Core::Http::HttpMethod::Get, Azure::Core::Url("https://httpbin.org/get"));
+    if (!AzureSdkHttpbinServer::IsEnabled())
+    {
+      GTEST_SKIP_("Skipping the test because httpbin URL environemnt variable is not set.");
+    }
+
+    Azure::Core::Url const url(AzureSdkHttpbinServer::Get());
+    Azure::Core::Http::Request req(Azure::Core::Http::HttpMethod::Get, url);
+
     using std::chrono::duration;
     using std::chrono::duration_cast;
     using std::chrono::high_resolution_clock;
