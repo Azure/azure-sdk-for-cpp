@@ -25,4 +25,18 @@ namespace Azure { namespace Storage { namespace Test {
     std::string m_shareName;
   };
 
+  class NfsFileShareClientTest : public FileShareServiceClientTest {
+  protected:
+    void SetUp() override;
+
+    std::string GetShareUrl(const std::string& shareName)
+    {
+      return GetPremiumShareServiceUrl() + "/" + shareName;
+    }
+
+  protected:
+    std::shared_ptr<Files::Shares::ShareClient> m_shareClient;
+    std::string m_shareName;
+  };
+
 }}} // namespace Azure::Storage::Test

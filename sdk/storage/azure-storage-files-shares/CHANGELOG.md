@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Bumped up API version to `2026-10-06`.
+- Added `ShareFileClient::GetAllRangeList` and `ShareFileClient::GetAllRangeListDiff`, paged
+  variants of `GetRangeList` / `GetRangeListDiff`.
+
 ### Breaking Changes
 
 ### Bugs Fixed

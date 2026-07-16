@@ -4,6 +4,14 @@
 
 ### Features Added
 
+- Bumped up API version to `2026-10-06`.
+- Added support for Apache Arrow response format on `ListBlobs` / `ListBlobsByHierarchy`.
+- Added `AccessTier`, `IsAccessTierInferred`, `AccessTierChangedOn`, and `SmartAccessTier` fields
+  in `DownloadBlobDetails`.
+- Added `AdditionalTransactionalContentHash` field in results of write operations
+  (`UploadBlockBlob`/`FromUri`, `StageBlock`/`FromUri`, `AppendBlock`/`FromUri`,
+  `UploadPages`/`FromUri`).
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-06-06";
+    constexpr static const char* ApiVersion = "2026-10-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -2200,34 +2200,37 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       bool IsServerEncrypted = false;
     };
-    /**
-     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.
-     */
-    struct GetFileRangeListResult final
-    {
+    namespace _detail {
       /**
-       * Array of Range.
+       * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.
        */
-      std::vector<Core::Http::HttpRange> Ranges;
-      /**
-       * Array of ClearRange.
-       */
-      std::vector<Core::Http::HttpRange> ClearRanges;
-      /**
-       * The date/time that the file was last modified. Any operation that modifies the file,
-       * including an update of the file's metadata or properties, changes the file's last modified
-       * time.
-       */
-      DateTime LastModified;
-      /**
-       * The ETag contains a value which represents the version of the file, in quotes.
-       */
-      Azure::ETag ETag;
-      /**
-       * The size of the file in bytes.
-       */
-      std::int64_t FileSize = std::int64_t();
-    };
+      struct GetFileRangeListResult final
+      {
+        /**
+         * Array of Range.
+         */
+        std::vector<Core::Http::HttpRange> Ranges;
+        /**
+         * Array of ClearRange.
+         */
+        std::vector<Core::Http::HttpRange> ClearRanges;
+        std::string NextMarker;
+        /**
+         * The date/time that the file was last modified. Any operation that modifies the file,
+         * including an update of the file's metadata or properties, changes the file's last
+         * modified time.
+         */
+        DateTime LastModified;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        Azure::ETag ETag;
+        /**
+         * The size of the file in bytes.
+         */
+        std::int64_t FileSize = std::int64_t();
+      };
+    } // namespace _detail
     /**
      * @brief Specifies the option to copy file security descriptor from source file or to set it
      * using the value which is defined by the header value of x-ms-file-permission or
@@ -3092,8 +3095,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<bool> AllowTrailingDot;
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<bool> SupportRename;
+        Nullable<std::string> Marker;
+        Nullable<std::int32_t> MaxResults;
       };
-      static Response<Models::GetFileRangeListResult> GetRangeList(
+      static Response<Models::_detail::GetFileRangeListResult> GetRangeList(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const GetFileRangeListOptions& options,
