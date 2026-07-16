@@ -916,8 +916,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileSize = response.Value.FileSize;
     if (!response.Value.NextMarker.empty())
     {
-      throw StorageException(
-          "Service returned a continuation token (NextMarker). Please use GetAllRangeList() to iterate the paged response.");
+      throw StorageException("Service returned a continuation token (NextMarker). Please use "
+                             "GetAllRangeList() to iterate the paged response.");
     }
     return Azure::Response<Models::GetFileRangeListResult>(
         std::move(ret), std::move(response.RawResponse));
@@ -962,8 +962,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.FileSize = response.Value.FileSize;
     if (!response.Value.NextMarker.empty())
     {
-      throw StorageException(
-          "Service returned a continuation token (NextMarker). Please use GetAllRangeListDiff() to iterate the paged response.");
+      throw StorageException("Service returned a continuation token (NextMarker). Please use "
+                             "GetAllRangeListDiff() to iterate the paged response.");
     }
     return Azure::Response<Models::GetFileRangeListResult>(
         std::move(ret), std::move(response.RawResponse));
