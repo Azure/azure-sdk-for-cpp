@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- [[#7229]](https://github.com/Azure/azure-sdk-for-cpp/pull/7229) Fixes for documentation generation with doxygen 1.16.
+
 ## 4.5.0-beta.3 (2025-04-08)
 
 ### Bugs Fixed

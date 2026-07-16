@@ -81,7 +81,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
   };
 
   /**
-   * @brief Define the specific options for the #KeyClient::CreateKey operaion.
+   * @brief Define the specific options for the KeyClient::CreateKey operation.
    *
    */
   struct CreateKeyOptions
