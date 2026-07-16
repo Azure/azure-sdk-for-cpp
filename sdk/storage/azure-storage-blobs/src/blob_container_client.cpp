@@ -22,6 +22,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
+#include <algorithm>
+#include <map>
 #include <unordered_map>
 
 #if defined(_MSC_VER)
