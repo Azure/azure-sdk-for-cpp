@@ -17,7 +17,9 @@
 #include <azure/perf/random_stream.hpp>
 
 #include <cstdint>
+#include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -64,13 +66,18 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       BlobsTest::Setup();
 
       m_size = m_options.GetMandatoryOption<int64_t>("Size");
+      if (m_size < 0 || static_cast<uint64_t>(m_size) > (std::numeric_limits<size_t>::max)())
+      {
+        throw std::runtime_error(
+            "--size exceeds the addressable range of this build (size_t max).");
+      }
       m_downloadMethod = m_options.GetOptionOrDefault<std::string>("DownloadMethod", "buffer");
       m_blockSize = m_options.GetOptionOrDefault<int64_t>("BlockSize", 0);
       m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 
       if (m_downloadMethod == "buffer")
       {
-        m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(m_size);
+        m_downloadBuffer = std::make_unique<std::vector<uint8_t>>(static_cast<size_t>(m_size));
       }
       else if (m_downloadMethod != "stream")
       {
@@ -84,7 +91,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
 
     void StageInBlocks()
     {
-      auto staging = Azure::Perf::RandomStream::Create(m_size);
+      auto staging = Azure::Perf::RandomStream::Create(static_cast<size_t>(m_size));
 
       std::vector<uint8_t> blockBuffer(StageBlockSize);
       std::vector<std::string> blockIds;

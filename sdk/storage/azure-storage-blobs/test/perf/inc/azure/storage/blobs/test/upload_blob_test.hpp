@@ -15,7 +15,10 @@
 #include <azure/perf.hpp>
 #include <azure/perf/random_stream.hpp>
 
+#include <cstdint>
+#include <limits>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -65,14 +68,19 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       BlobsTest::Setup();
 
       m_size = m_options.GetMandatoryOption<int64_t>("Size");
+      if (m_size < 0 || static_cast<uint64_t>(m_size) > (std::numeric_limits<size_t>::max)())
+      {
+        throw std::runtime_error(
+            "--size exceeds the addressable range of this build (size_t max).");
+      }
       m_uploadMethod = m_options.GetOptionOrDefault<std::string>("UploadMethod", "buffer");
       m_blockSize = m_options.GetOptionOrDefault<int64_t>("BlockSize", 0);
       m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 
       if (m_uploadMethod == "buffer" || m_uploadMethod == "single")
       {
-        m_uploadBuffer
-            = Azure::Perf::RandomStream::Create(m_size)->ReadToEnd(Azure::Core::Context{});
+        m_uploadBuffer = Azure::Perf::RandomStream::Create(static_cast<size_t>(m_size))
+                             ->ReadToEnd(Azure::Core::Context{});
       }
       else if (m_uploadMethod != "stream")
       {
@@ -90,7 +98,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     {
       if (m_uploadMethod == "stream")
       {
-        auto stream = Azure::Perf::RandomStream::Create(m_size);
+        auto stream = Azure::Perf::RandomStream::Create(static_cast<size_t>(m_size));
         m_blobClient->Upload(*stream);
         return;
       }
