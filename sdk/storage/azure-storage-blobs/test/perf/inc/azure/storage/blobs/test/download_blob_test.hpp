@@ -11,10 +11,12 @@
 
 #include "azure/storage/blobs/test/blob_base_test.hpp"
 
+#include <azure/core/base64.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/perf.hpp>
 #include <azure/perf/random_stream.hpp>
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -36,12 +38,18 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
   class DownloadBlob : public Azure::Storage::Blobs::Test::BlobsTest {
   private:
     std::unique_ptr<std::vector<uint8_t>> m_downloadBuffer;
-    long m_size = 0;
+    int64_t m_size = 0;
     std::string m_downloadMethod = "buffer";
-    long m_blockSize = 0;
+    int64_t m_blockSize = 0;
     int m_concurrency = 0;
 
     static constexpr size_t StreamDrainBufferSize = 1024 * 1024;
+
+    // Maximum size of a single staged block. The Put Blob API used by Upload() is limited to
+    // 5 GiB, so blobs are staged in blocks and committed with CommitBlockList(), which supports
+    // much larger blobs. 256 MiB keeps per-block memory bounded while staying well under the
+    // per-block and per-blob (50,000 block) service limits.
+    static constexpr size_t StageBlockSize = 256 * 1024 * 1024;
 
   public:
     /**
@@ -60,9 +68,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       // Call base to create blob client
       BlobsTest::Setup();
 
-      m_size = m_options.GetMandatoryOption<long>("Size");
+      m_size = m_options.GetMandatoryOption<int64_t>("Size");
       m_downloadMethod = m_options.GetOptionOrDefault<std::string>("DownloadMethod", "buffer");
-      m_blockSize = m_options.GetOptionOrDefault<long>("BlockSize", 0);
+      m_blockSize = m_options.GetOptionOrDefault<int64_t>("BlockSize", 0);
       m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 
       if (m_downloadMethod == "buffer")
@@ -76,10 +84,58 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
             + "'. Expected one of: buffer, stream.");
       }
 
-      // Stage the blob with random data. Use the streaming RandomStream so very large
-      // sizes do not materialize a contiguous staging buffer.
+      StageInBlocks();
+    }
+
+    void StageInBlocks()
+    {
       auto staging = Azure::Perf::RandomStream::Create(m_size);
-      m_blobClient->Upload(*staging);
+
+      std::vector<uint8_t> blockBuffer(StageBlockSize);
+      std::vector<std::string> blockIds;
+      uint64_t blockIndex = 0;
+
+      while (true)
+      {
+        size_t offset = 0;
+        while (offset < blockBuffer.size())
+        {
+          auto read = staging->Read(
+              blockBuffer.data() + offset, blockBuffer.size() - offset, Azure::Core::Context());
+          if (read == 0)
+          {
+            break;
+          }
+          offset += read;
+        }
+
+        if (offset == 0)
+        {
+          break;
+        }
+
+        // Block IDs must all be the same length before Base64 encoding; encode the index as
+        // an 8-byte big-endian value to guarantee a fixed length.
+        uint8_t rawBlockId[8];
+        for (int i = 0; i < 8; ++i)
+        {
+          rawBlockId[7 - i] = static_cast<uint8_t>((blockIndex >> (8 * i)) & 0xFF);
+        }
+        std::string blockId = Azure::Core::Convert::Base64Encode(
+            std::vector<uint8_t>(rawBlockId, rawBlockId + sizeof(rawBlockId)));
+
+        Azure::Core::IO::MemoryBodyStream blockContent(blockBuffer.data(), offset);
+        m_blobClient->StageBlock(blockId, blockContent);
+        blockIds.push_back(std::move(blockId));
+        ++blockIndex;
+
+        if (offset < blockBuffer.size())
+        {
+          break;
+        }
+      }
+
+      m_blobClient->CommitBlockList(blockIds);
     }
 
     /**
