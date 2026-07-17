@@ -44,11 +44,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
     int m_concurrency = 0;
 
     static constexpr size_t StreamDrainBufferSize = 1024 * 1024;
-
-    // Maximum size of a single staged block. The Put Blob API used by Upload() is limited to
-    // 5 GiB, so blobs are staged in blocks and committed with CommitBlockList(), which supports
-    // much larger blobs. 256 MiB keeps per-block memory bounded while staying well under the
-    // per-block and per-blob (50,000 block) service limits.
     static constexpr size_t StageBlockSize = 256 * 1024 * 1024;
 
   public:
