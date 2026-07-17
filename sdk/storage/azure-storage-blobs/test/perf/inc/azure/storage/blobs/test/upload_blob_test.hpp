@@ -41,9 +41,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
   private:
     // C++ can upload and download from contiguous memory or file only
     std::vector<uint8_t> m_uploadBuffer;
-    long m_size = 0;
+    // 64-bit: on MSVC `long` is 32-bit, so sizes above ~2.14 GB overflow when parsed.
+    int64_t m_size = 0;
     std::string m_uploadMethod = "buffer";
-    long m_blockSize = 0;
+    int64_t m_blockSize = 0;
     int m_concurrency = 0;
 
   public:
@@ -63,9 +64,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Test {
       // Call base to create blob client
       BlobsTest::Setup();
 
-      m_size = m_options.GetMandatoryOption<long>("Size");
+      m_size = m_options.GetMandatoryOption<int64_t>("Size");
       m_uploadMethod = m_options.GetOptionOrDefault<std::string>("UploadMethod", "buffer");
-      m_blockSize = m_options.GetOptionOrDefault<long>("BlockSize", 0);
+      m_blockSize = m_options.GetOptionOrDefault<int64_t>("BlockSize", 0);
       m_concurrency = m_options.GetOptionOrDefault<int>("Concurrency", 0);
 
       if (m_uploadMethod == "buffer" || m_uploadMethod == "single")
