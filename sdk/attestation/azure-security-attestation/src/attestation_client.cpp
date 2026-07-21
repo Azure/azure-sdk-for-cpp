@@ -203,12 +203,14 @@ Azure::Response<AttestationToken<AttestationResult>> AttestationClient::AttestOp
   }
 }
 
-Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
+template <typename ResultT>
+Azure::Response<ResultT> AttestationClient::AttestBackend(
     std::vector<uint8_t> const& dataToAttest,
-    AttestTpmOptions const&,
+    std::string const& tracingName,
+    std::string const& attestPath,
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
+  auto tracingContext(m_tracingFactory.CreateTracingContext(tracingName, context));
   try
   {
     std::string jsonToSend = TpmAndPlutonDataSerializer::Serialize(dataToAttest);
@@ -216,13 +218,13 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
     auto request = AttestationCommonRequest::CreateRequest(
-        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Tpm"}, &stream);
+        m_endpoint, m_apiVersion, HttpMethod::Post, {attestPath}, &stream);
 
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
     std::vector<uint8_t> returnedBody{TpmAndPlutonDataSerializer::Deserialize(response)};
-    return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
+    return Response<ResultT>(ResultT{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)
   {
@@ -231,32 +233,20 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
   }
 }
 
+Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
+    std::vector<uint8_t> const& dataToAttest,
+    AttestTpmOptions const&,
+    Azure::Core::Context const& context) const
+{
+  return AttestBackend<TpmAttestationResult>(dataToAttest, "AttestTpm", "attest/Tpm", context);
+}
+
 Azure::Response<PlutonAttestationResult> AttestationClient::AttestPluton(
     std::vector<uint8_t> const& dataToAttest,
     AttestPlutonOptions const&,
     Azure::Core::Context const& context) const
 {
-  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestPluton", context));
-  try
-  {
-    std::string jsonToSend = TpmAndPlutonDataSerializer::Serialize(dataToAttest);
-    auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
-    Azure::Core::IO::MemoryBodyStream stream(encodedVector);
-
-    auto request = AttestationCommonRequest::CreateRequest(
-        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Pluton"}, &stream);
-
-    // Send the request to the service.
-    auto response
-        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    std::vector<uint8_t> returnedBody{TpmAndPlutonDataSerializer::Deserialize(response)};
-    return Response<PlutonAttestationResult>(PlutonAttestationResult{returnedBody}, std::move(response));
-  }
-  catch (std::runtime_error const& ex)
-  {
-    tracingContext.Span.AddEvent(ex);
-    throw;
-  }
+  return AttestBackend<PlutonAttestationResult>(dataToAttest, "AttestPluton", "attest/Pluton", context);
 }
 
 namespace {

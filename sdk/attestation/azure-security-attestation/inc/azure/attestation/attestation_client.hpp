@@ -262,6 +262,13 @@ namespace Azure { namespace Security { namespace Attestation {
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
   private:
+    template <typename ResultT>
+    Response<ResultT> AttestBackend(
+        std::vector<uint8_t> const& dataToAttest,
+        std::string const& tracingName,
+        std::string const& attestPath,
+        Azure::Core::Context const& context) const;
+
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
