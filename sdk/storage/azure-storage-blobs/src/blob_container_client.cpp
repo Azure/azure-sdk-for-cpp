@@ -1209,16 +1209,11 @@ namespace Azure { namespace Storage { namespace Blobs {
   namespace _detail {
     void ParseListBlobsResult(Models::_detail::ListBlobsResult& result)
     {
-      if (result.ContentType.find(_internal::ContentTypeXml) != std::string::npos)
-      {
-        return ParseListBlobsResultFromXml(result);
-      }
-      else if (
-          result.ContentType.find(_internal::ContentTypeApacheArrowStream) != std::string::npos)
+      if (result.ContentType.find(_internal::ContentTypeApacheArrowStream) != std::string::npos)
       {
         return ParseListBlobsResultFromArrow(result);
       }
-      AZURE_UNREACHABLE_CODE();
+      return ParseListBlobsResultFromXml(result);
     }
   } // namespace _detail
 
