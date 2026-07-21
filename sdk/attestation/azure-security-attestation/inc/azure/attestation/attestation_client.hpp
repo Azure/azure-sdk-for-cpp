@@ -247,6 +247,20 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestTpmOptions const& options = AttestTpmOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
+    /**
+     * @brief Sends Pluton-based attestation data to the service.
+     *
+     * @param dataToAttest - Attestation request data.
+     * @param options - Options to the attestation request.
+     * @param context - Context for the operation.
+     *
+     * @return Response<PlutonAttestationResult> - The result of the attestation operation
+     */
+    Response<Models::PlutonAttestationResult> AttestPluton(
+        std::vector<uint8_t> const& dataToAttest,
+        AttestPlutonOptions const& options = AttestPlutonOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
   private:
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;

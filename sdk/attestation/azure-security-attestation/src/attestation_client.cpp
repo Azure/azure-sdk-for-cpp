@@ -211,7 +211,7 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
   auto tracingContext(m_tracingFactory.CreateTracingContext("AttestTpm", context));
   try
   {
-    std::string jsonToSend = TpmDataSerializer::Serialize(dataToAttest);
+    std::string jsonToSend = TpmAndPlutonDataSerializer::Serialize(dataToAttest);
     auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
     Azure::Core::IO::MemoryBodyStream stream(encodedVector);
 
@@ -221,8 +221,36 @@ Azure::Response<TpmAttestationResult> AttestationClient::AttestTpm(
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    std::vector<uint8_t> returnedBody{TpmDataSerializer::Deserialize(response)};
+    std::vector<uint8_t> returnedBody{TpmAndPlutonDataSerializer::Deserialize(response)};
     return Response<TpmAttestationResult>(TpmAttestationResult{returnedBody}, std::move(response));
+  }
+  catch (std::runtime_error const& ex)
+  {
+    tracingContext.Span.AddEvent(ex);
+    throw;
+  }
+}
+
+Azure::Response<PlutonAttestationResult> AttestationClient::AttestPluton(
+    std::vector<uint8_t> const& dataToAttest,
+    AttestPlutonOptions const&,
+    Azure::Core::Context const& context) const
+{
+  auto tracingContext(m_tracingFactory.CreateTracingContext("AttestPluton", context));
+  try
+  {
+    std::string jsonToSend = TpmAndPlutonDataSerializer::Serialize(dataToAttest);
+    auto encodedVector = std::vector<uint8_t>(jsonToSend.begin(), jsonToSend.end());
+    Azure::Core::IO::MemoryBodyStream stream(encodedVector);
+
+    auto request = AttestationCommonRequest::CreateRequest(
+        m_endpoint, m_apiVersion, HttpMethod::Post, {"attest/Pluton"}, &stream);
+
+    // Send the request to the service.
+    auto response
+        = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
+    std::vector<uint8_t> returnedBody{TpmAndPlutonDataSerializer::Deserialize(response)};
+    return Response<PlutonAttestationResult>(PlutonAttestationResult{returnedBody}, std::move(response));
   }
   catch (std::runtime_error const& ex)
   {

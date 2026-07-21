@@ -396,13 +396,13 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         returnValue.CertificateThumbprint, jsonResult, "x-ms-certificate-thumbprint");
     return returnValue;
   }
-  std::string TpmDataSerializer::Serialize(std::vector<uint8_t> const& tpmData)
+  std::string TpmAndPlutonDataSerializer::Serialize(std::vector<uint8_t> const& tpmData)
   {
     Azure::Core::Json::_internal::json jsonData;
     jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(tpmData);
     return jsonData.dump();
   }
-  std::vector<uint8_t> TpmDataSerializer::Deserialize(
+  std::vector<uint8_t> TpmAndPlutonDataSerializer::Deserialize(
       Azure::Core::Json::_internal::json const& jsonData)
   {
     std::vector<uint8_t> returnValue;
@@ -410,10 +410,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         returnValue, jsonData, "data", Azure::Core::_internal::Base64Url::Base64UrlDecode);
     return returnValue;
   }
-  std::vector<uint8_t> TpmDataSerializer::Deserialize(
+  std::vector<uint8_t> TpmAndPlutonDataSerializer::Deserialize(
       std::unique_ptr<Azure::Core::Http::RawResponse> const& response)
   {
-    return TpmDataSerializer::Deserialize(
+    return TpmAndPlutonDataSerializer::Deserialize(
         Azure::Core::Json::_internal::json::parse(response->GetBody()));
   }
 

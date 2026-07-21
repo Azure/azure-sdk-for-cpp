@@ -464,6 +464,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     std::vector<uint8_t> TpmResult;
   };
 
+  /** @brief The result of a call to AttestPluton.
+   */
+  struct PlutonAttestationResult final
+  {
+    /** @brief Attestation response data.
+     */
+    std::vector<uint8_t> PlutonResult;
+  };
+
   /**
    * @brief The PolicyModification enumeration represents the result of an attestation
    * policy modification.
