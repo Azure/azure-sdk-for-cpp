@@ -63,6 +63,43 @@ namespace Azure { namespace Storage { namespace Test {
     });
   }
 
+  void NfsFileShareClientTest::SetUp()
+  {
+    FileShareServiceClientTest::SetUp();
+    if (shouldSkipTest())
+    {
+      return;
+    }
+    m_shareName = GetLowercaseIdentifier();
+    m_shareClient = std::make_shared<Files::Shares::ShareClient>(
+        m_premiumShareServiceClient->GetShareClient(m_shareName));
+    while (true)
+    {
+      try
+      {
+        Files::Shares::CreateShareOptions options;
+        options.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
+        m_shareClient->CreateIfNotExists(options);
+        break;
+      }
+      catch (StorageException& e)
+      {
+        if (e.ErrorCode != "ShareBeingDeleted")
+        {
+          throw;
+        }
+        SUCCEED() << "Share is being deleted. Will try again after 3 seconds.";
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+      }
+    }
+
+    m_resourceCleanupFunctions.push_back([shareClient = *m_shareClient]() {
+      Files::Shares::DeleteShareOptions options;
+      options.DeleteSnapshots = true;
+      shareClient.DeleteIfExists(options);
+    });
+  }
+
   Files::Shares::ShareClient FileShareClientTest::GetShareClientForTest(
       const std::string& shareName,
       Files::Shares::ShareClientOptions clientOptions)

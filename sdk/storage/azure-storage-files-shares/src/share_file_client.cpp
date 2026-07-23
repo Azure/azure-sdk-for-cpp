@@ -4,6 +4,7 @@
 #include "azure/storage/files/shares/share_file_client.hpp"
 
 #include "azure/storage/files/shares/share_constants.hpp"
+#include "azure/storage/files/shares/share_responses.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
@@ -23,6 +24,8 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
+
+  constexpr static const int32_t DefaultListAllRangesPageSizeHint = 10000;
 
   ShareFileClient ShareFileClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -901,8 +904,23 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
-    return _detail::FileClient::GetRangeList(
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto response = _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    Models::GetFileRangeListResult ret;
+    ret.Ranges = std::move(response.Value.Ranges);
+    ret.ClearRanges = std::move(response.Value.ClearRanges);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileSize = response.Value.FileSize;
+    if (!response.Value.NextMarker.empty())
+    {
+      throw StorageException("Service returned a continuation token (NextMarker). Please use "
+                             "GetAllRangeList() to iterate the paged response.");
+    }
+    return Azure::Response<Models::GetFileRangeListResult>(
+        std::move(ret), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::GetFileRangeListResult> ShareFileClient::GetRangeListDiff(
@@ -932,8 +950,123 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
     protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
     protocolLayerOptions.SupportRename = options.IncludeRenames;
-    return _detail::FileClient::GetRangeList(
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults = options.PageSizeHint;
+    auto response = _detail::FileClient::GetRangeList(
         *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+    Models::GetFileRangeListResult ret;
+    ret.Ranges = std::move(response.Value.Ranges);
+    ret.ClearRanges = std::move(response.Value.ClearRanges);
+    ret.LastModified = std::move(response.Value.LastModified);
+    ret.ETag = std::move(response.Value.ETag);
+    ret.FileSize = response.Value.FileSize;
+    if (!response.Value.NextMarker.empty())
+    {
+      throw StorageException("Service returned a continuation token (NextMarker). Please use "
+                             "GetAllRangeListDiff() to iterate the paged response.");
+    }
+    return Azure::Response<Models::GetFileRangeListResult>(
+        std::move(ret), std::move(response.RawResponse));
+  }
+
+  GetFileRangeListPagedResponse ShareFileClient::GetAllRangeList(
+      const GetFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::FileClient::GetFileRangeListOptions();
+    if (options.Range.HasValue())
+    {
+      if (options.Range.Value().Length.HasValue())
+      {
+        protocolLayerOptions.Range = std::string("bytes=")
+            + std::to_string(options.Range.Value().Offset) + std::string("-")
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
+      }
+      else
+      {
+        protocolLayerOptions.Range = std::string("bytes=")
+            + std::to_string(options.Range.Value().Offset) + std::string("-");
+      }
+    }
+
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults
+        = options.PageSizeHint.ValueOr(DefaultListAllRangesPageSizeHint);
+
+    auto response = _detail::FileClient::GetRangeList(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    GetFileRangeListPagedResponse pagedResponse;
+    pagedResponse.Ranges = std::move(response.Value.Ranges);
+    pagedResponse.ClearRanges = std::move(response.Value.ClearRanges);
+    pagedResponse.LastModified = std::move(response.Value.LastModified);
+    pagedResponse.ETag = std::move(response.Value.ETag);
+    pagedResponse.FileSize = response.Value.FileSize;
+    pagedResponse.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    if (!response.Value.NextMarker.empty())
+    {
+      pagedResponse.NextPageToken = response.Value.NextMarker;
+    }
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+    return pagedResponse;
+  }
+
+  GetFileRangeListPagedResponse ShareFileClient::GetAllRangeListDiff(
+      std::string previousShareSnapshot,
+      const GetFileRangeListOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    auto protocolLayerOptions = _detail::FileClient::GetFileRangeListOptions();
+    if (options.Range.HasValue())
+    {
+      if (options.Range.Value().Length.HasValue())
+      {
+        protocolLayerOptions.Range = std::string("bytes=")
+            + std::to_string(options.Range.Value().Offset) + std::string("-")
+            + std::to_string(options.Range.Value().Offset + options.Range.Value().Length.Value()
+                             - 1);
+      }
+      else
+      {
+        protocolLayerOptions.Range = std::string("bytes=")
+            + std::to_string(options.Range.Value().Offset) + std::string("-");
+      }
+    }
+
+    protocolLayerOptions.Prevsharesnapshot = previousShareSnapshot;
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.SupportRename = options.IncludeRenames;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    protocolLayerOptions.MaxResults
+        = options.PageSizeHint.ValueOr(DefaultListAllRangesPageSizeHint);
+
+    auto response = _detail::FileClient::GetRangeList(
+        *m_pipeline, m_shareFileUrl, protocolLayerOptions, context);
+
+    GetFileRangeListPagedResponse pagedResponse;
+    pagedResponse.Ranges = std::move(response.Value.Ranges);
+    pagedResponse.ClearRanges = std::move(response.Value.ClearRanges);
+    pagedResponse.LastModified = std::move(response.Value.LastModified);
+    pagedResponse.ETag = std::move(response.Value.ETag);
+    pagedResponse.FileSize = response.Value.FileSize;
+    pagedResponse.m_shareFileClient = std::make_shared<ShareFileClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.m_previousShareSnapshot = std::move(previousShareSnapshot);
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    if (!response.Value.NextMarker.empty())
+    {
+      pagedResponse.NextPageToken = response.Value.NextMarker;
+    }
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+    return pagedResponse;
   }
 
   ListFileHandlesPagedResponse ShareFileClient::ListHandles(
