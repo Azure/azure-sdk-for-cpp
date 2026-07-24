@@ -1,6 +1,6 @@
 # Release History
 
-## 12.19.0-beta.1 (Unreleased)
+## 12.19.0-beta.1 (2026-07-29)
 
 ### Features Added
 
@@ -11,10 +11,6 @@
 - Added `AdditionalTransactionalContentHash` field in results of write operations
   (`UploadBlockBlob`/`FromUri`, `StageBlock`/`FromUri`, `AppendBlock`/`FromUri`,
   `UploadPages`/`FromUri`).
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

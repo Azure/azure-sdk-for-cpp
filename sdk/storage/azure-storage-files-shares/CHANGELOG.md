@@ -1,16 +1,12 @@
 # Release History
 
-## 12.19.0-beta.1 (Unreleased)
+## 12.19.0-beta.1 (2026-07-29)
 
 ### Features Added
 
 - Bumped up API version to `2026-10-06`.
 - Added `ShareFileClient::GetAllRangeList` and `ShareFileClient::GetAllRangeListDiff`, paged
   variants of `GetRangeList` / `GetRangeListDiff`.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
