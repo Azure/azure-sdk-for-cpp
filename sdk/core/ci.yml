@@ -58,7 +58,7 @@ extends:
       PreTestSteps:
         - task: UseDotNet@2
           inputs:
-            version: 8.0
+            version: 8.x
 
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
