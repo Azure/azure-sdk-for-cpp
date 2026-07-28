@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#7250]](https://github.com/Azure/azure-sdk-for-cpp/issues/7250) Restored the connection string constructors on `ProducerClient` and `ConsumerClient`. Version 1.0.0-beta.11 removed them. This also restores support for the Event Hubs emulator, which accepts a connection string only.
+
 ### Breaking Changes
 
 ### Bugs Fixed

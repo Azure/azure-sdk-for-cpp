@@ -244,6 +244,57 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 
   namespace {
+    // A connection string without an EntityPath key. The caller must name the event hub.
+    constexpr const char* ConnectionStringNoEntityPath
+        = "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=FakeKey;"
+          "SharedAccessKey=ZmFrZWtleWZha2VrZXlmYWtla2V5ZmFrZWtleQ==";
+    // A connection string that names the event hub in its EntityPath key.
+    constexpr const char* ConnectionStringWithEntityPath
+        = "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=FakeKey;"
+          "SharedAccessKey=ZmFrZWtleWZha2VrZXlmYWtla2V5ZmFrZWtleQ==;EntityPath=eventhub1";
+    // The connection string shape that the Event Hubs emulator uses.
+    constexpr const char* ConnectionStringEmulator
+        = "Endpoint=sb://localhost:5672/;SharedAccessKeyName=RootManageSharedAccessKey;"
+          "SharedAccessKey=abcdefabcdef;UseDevelopmentEmulator=true";
+  } // namespace
+
+  // These tests construct a client only. A client makes no network connection until the caller
+  // sends or receives, so these tests need no live Event Hub.
+  class ProducerClientConnectionStringTest : public EventHubsTestBase {
+  };
+
+  TEST_F(ProducerClientConnectionStringTest, EntityPathSuppliesEventHubName)
+  {
+    ProducerClient client(ConnectionStringWithEntityPath, "");
+    EXPECT_EQ("eventhub1", client.GetEventHubName());
+  }
+
+  TEST_F(ProducerClientConnectionStringTest, EntityPathMatchesEventHubName)
+  {
+    ProducerClient client(ConnectionStringWithEntityPath, "eventhub1");
+    EXPECT_EQ("eventhub1", client.GetEventHubName());
+  }
+
+  TEST_F(ProducerClientConnectionStringTest, EntityPathMismatchThrows)
+  {
+    EXPECT_THROW(
+        { ProducerClient client(ConnectionStringWithEntityPath, "otherhub"); },
+        std::invalid_argument);
+  }
+
+  TEST_F(ProducerClientConnectionStringTest, CallerSuppliesEventHubName)
+  {
+    ProducerClient client(ConnectionStringNoEntityPath, "eventhub2");
+    EXPECT_EQ("eventhub2", client.GetEventHubName());
+  }
+
+  TEST_F(ProducerClientConnectionStringTest, EmulatorConnectionString)
+  {
+    ProducerClient client(ConnectionStringEmulator, "eh1");
+    EXPECT_EQ("eh1", client.GetEventHubName());
+  }
+
+  namespace {
     static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
     {
       std::string stringValue = "";
@@ -251,6 +302,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
+          break;
+        case AuthType::ConnectionString:
+          stringValue = "ConnectionString_LIVEONLY_";
           break;
         case AuthType::Emulator:
           stringValue = "Emulator";
@@ -264,13 +318,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProducerClientTest,
-      ::testing::Values(AuthType::Key),
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString),
       GetSuffix);
 #else
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProducerClientTest,
-      ::testing::Values(AuthType::Key),
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString),
       GetSuffix);
 #endif
 }}}} // namespace Azure::Messaging::EventHubs::Test

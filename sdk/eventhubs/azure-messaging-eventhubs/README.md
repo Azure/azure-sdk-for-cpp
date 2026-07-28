@@ -133,15 +133,30 @@ That should output something like:
 Event Hub clients are created using a credential from the [Azure Identity package][azure_identity_pkg], like [DefaultAzureCredential][default_azure_credential].
 Alternatively, you can create a client using a connection string.
 
+Use a token credential in production. Use a connection string for local development, for the Event Hubs emulator, or when a shared access key is the only credential you have.
+
 <!-- NOTE: Fix dead Links -->
 #### Using a service principal
  - ConsumerClient: [link][consumer_client]
  - ProducerClient: [link][producer_client]
 
-<!-- NOTE: Fix dead links -->
+Samples: [create_consumer_aad.cpp](samples/basic-operations/create_consumer_aad.cpp) and [create_producer_aad.cpp](samples/basic-operations/create_producer_aad.cpp).
+
 #### Using a connection string
- - ConsumerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
- - ProducerClient: [link](https://azure.github.io/azure-sdk-for-cpp/storage.html)
+
+The connection string can be in one of two formats. When it does not carry an `EntityPath` key, name the event hub in the `eventHub` parameter:
+
+```
+Endpoint=sb://<your-namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>
+```
+
+When it does carry an `EntityPath` key, leave the `eventHub` parameter empty, or pass the same name. A different name throws `std::invalid_argument`:
+
+```
+Endpoint=sb://<your-namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>;EntityPath=<event-hub-name>
+```
+
+Samples: [create_consumer.cpp](samples/basic-operations/create_consumer.cpp) and [create_producer.cpp](samples/basic-operations/create_producer.cpp).
 
 # Key concepts
 
@@ -176,22 +191,26 @@ The following example shows how to send events to an event hub:
 std::string connectionString = "<connection_string>";
 std::string eventHubName = "<event_hub_name>";
 
-Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
-batchOptions.PartitionId = "1";
-Azure::Messaging::EventHubs::EventDataBatch eventBatch(batchOptions);
-
-Azure::Messaging::EventHubs::Models::EventData message;
-message.Body.Data = {'H', 'e', 'l', 'l', 'o', '2'};
-
-eventBatch.AddMessage(message);
-
 Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
-producerOptions.Name = "sender-link";
 producerOptions.ApplicationID = "some";
 
-auto client = Azure::Messaging::EventHubs::ProducerClient(
-      connectionString, eventHubName, producerOptions);
-auto result = client.SendEventDataBatch(eventBatch);
+Azure::Messaging::EventHubs::ProducerClient client(
+    connectionString, eventHubName, producerOptions);
+
+// By default the producer sends to all partitions in turn. Name a partition to send to one.
+Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
+batchOptions.PartitionId = "1";
+Azure::Messaging::EventHubs::EventDataBatch eventBatch{client.CreateBatch(batchOptions)};
+
+Azure::Messaging::EventHubs::Models::EventData message;
+message.Body = {'H', 'e', 'l', 'l', 'o', '2'};
+
+if (!eventBatch.TryAdd(message))
+{
+  throw std::runtime_error("Failed to add the event to the batch.");
+}
+
+client.Send(eventBatch);
 ```
 
 ## Receive events
@@ -201,16 +220,14 @@ The following example shows how to receive events from partition 1 on an event h
 ```cpp
 #include <azure/messaging/eventhubs.hpp>
 
-
 // Your Event Hubs namespace connection string is available in the Azure portal.
 std::string connectionString = "<connection_string>";
 std::string eventHubName = "<event_hub_name>";
 
-auto client = Azure::Messaging::EventHubs::ConsumerClient(
-	connectionString, eventHubName);
+Azure::Messaging::EventHubs::ConsumerClient client(connectionString, eventHubName);
 
 Azure::Messaging::EventHubs::PartitionClient partitionClient
-        = client.CreatePartitionClient("1");
+    = client.CreatePartitionClient("1");
 
 auto events = partitionClient.ReceiveEvents(1);
 ```

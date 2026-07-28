@@ -142,6 +142,28 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_consumerClientOptions.RetryOptions;
     }
 
+    /** @brief creates a ConsumerClient from a connection string.
+     *
+     * @param connectionString connection string to resource
+     * @param eventHub event hub name
+     * @param consumerGroup consumer group name
+     * @param options client options
+     *
+     * @remark The connection string can be in one of two formats, with or without an EntityPath
+     *  key. When the connection string does not have an entity path, as shown below, the eventHub
+     *  parameter cannot be empty and must contain the name of your event hub.
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>
+     *  When the connection string does have an entity path, as shown below, the eventHub parameter
+     *  must be empty or must match the entity path. A different value throws.
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;
+     *  SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>;EntityPath=\<entitypath\>;
+     */
+    ConsumerClient(
+        std::string const& connectionString,
+        std::string const& eventHub = {},
+        std::string const& consumerGroup = DefaultConsumerGroup,
+        ConsumerClientOptions const& options = {});
+
     /** @brief Create new Partition client
      *
      * @param partitionId targeted partition

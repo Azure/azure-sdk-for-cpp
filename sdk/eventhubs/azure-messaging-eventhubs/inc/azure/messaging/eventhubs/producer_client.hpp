@@ -98,6 +98,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Default Constructor for a ProducerClient */
     ProducerClient() = default;
 
+    /**@brief Constructs a new ProducerClient instance from a connection string.
+     *
+     * @param connectionString Event hubs connection string
+     * @param eventHub Event hub name
+     * @param options Additional options for creating the client
+     *
+     * @remark The connection string can be in one of two formats, with or without an EntityPath
+     *  key. When the connection string does not have an entity path, as shown below, the eventHub
+     *  parameter cannot be empty and must contain the name of your event hub.
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>
+     *  When the connection string does have an entity path, as shown below, the eventHub parameter
+     *  must be empty or must match the entity path. A different value throws.
+     *  Endpoint=sb://\<your-namespace\>.servicebus.windows.net/;
+     *  SharedAccessKeyName=\<key-name\>;SharedAccessKey=\<key\>;EntityPath=\<entitypath\>;
+     */
+    ProducerClient(
+        std::string const& connectionString,
+        std::string const& eventHub,
+        ProducerClientOptions options = {});
+
     ~ProducerClient();
 
     /** @brief Close all the connections and sessions.
