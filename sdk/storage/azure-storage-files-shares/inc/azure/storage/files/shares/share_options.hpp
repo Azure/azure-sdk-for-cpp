@@ -1274,6 +1274,21 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * operation will result in a failure with 409 (Conflict) response.
      */
     Azure::Nullable<bool> IncludeRenames;
+
+    /**
+     * A string value that identifies the portion of the list to be returned with the next
+     * list operation. The operation returns a marker value within the response body if the list
+     * returned was not complete. The marker value may then be used in a subsequent call to request
+     * the next set of list items. The marker value is opaque to the client.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * Specifies the maximum number of entries to return. If the request does not specify
+     * PageSizeHint, or specifies a value greater than 10,000, the server will return up to 10,000
+     * items.
+     */
+    Azure::Nullable<int32_t> PageSizeHint;
   };
 
   /**

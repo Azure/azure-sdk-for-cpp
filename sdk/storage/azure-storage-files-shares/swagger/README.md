@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-06-06/file.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-12-06/file.json
 ```
 
 ## ModelFour Options
@@ -79,12 +79,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-06-06"]
+        "enum": ["2026-10-06"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-06-06"];
+      $.ApiVersionParameter.enum = ["2026-10-06"];
 ```
 
 ### Rename Operations
@@ -660,12 +660,17 @@ directive:
       delete $.FileItemDetails.properties["CreationTime"];
       delete $.FileItemDetails.properties["LastWriteTime"];
       delete $.FileItemDetails.properties["ChangeTime"];
+      delete $.FileItemDetails.properties["Uid"];
+      delete $.FileItemDetails.properties["Gid"];
+      delete $.FileItemDetails.properties["Mode"];
       delete $.FileItemDetails.required;
       delete $.FileProperty;
       delete $.FileItem.properties["Properties"];
       delete $.FileItem.properties["FileId"];
       delete $.FileItem.properties["Attributes"];
       delete $.FileItem.properties["PermissionKey"];
+      delete $.FileItem.properties["LinkCount"];
+      delete $.FileItem.properties["FileType"];
       delete $.FileItem.required;
       $.FileItem.properties["Details"] = {"$ref": "#/definitions/FileItemDetails", "x-ms-xml" : {"name": "Properties"}};
       $.FileItem["x-namespace"] = "_detail";
@@ -674,12 +679,24 @@ directive:
       delete $.DirectoryItem.properties["FileId"];
       delete $.DirectoryItem.properties["Attributes"];
       delete $.DirectoryItem.properties["PermissionKey"];
+      delete $.DirectoryItem.properties["LinkCount"];
       delete $.DirectoryItem.required;
       $.DirectoryItemDetails = JSON.parse(JSON.stringify($.FileItemDetails));
       delete $.DirectoryItemDetails.properties["Content-Length"];
       $.DirectoryItem.properties["Details"] = {"$ref": "#/definitions/DirectoryItemDetails", "x-ms-xml" : {"name": "Properties"}};
       $.DirectoryItem["x-namespace"] = "_detail";
 
+      delete $.FilesAndDirectoriesListSegment.properties["SymLinkItems"];
+      delete $.FilesAndDirectoriesListSegment.properties["BlockDeviceItems"];
+      delete $.FilesAndDirectoriesListSegment.properties["CharDeviceItems"];
+      delete $.FilesAndDirectoriesListSegment.properties["FifoItems"];
+      delete $.FilesAndDirectoriesListSegment.properties["SocketItems"];
+      delete $.SymLinkItem;
+      delete $.BlockDeviceItem;
+      delete $.CharDeviceItem;
+      delete $.FifoItem;
+      delete $.SocketItem;
+      delete $.FileType;
       $.FilesAndDirectoriesListSegment.properties["DirectoryItems"]["x-ms-xml"] = {"name": "."};
       $.FilesAndDirectoriesListSegment.properties["FileItems"]["x-ms-xml"] = {"name": "."};
 ```
@@ -1123,6 +1140,7 @@ directive:
         "x-ms-sealed": false,
         "xml": {"name": "Ranges"},
         "type": "object",
+        "x-namespace" : "_detail",
         "properties": {
           "Range": {
             "type": "array",
@@ -1135,7 +1153,8 @@ directive:
             "x-ms-client-name": "ClearRanges",
             "x-ms-xml": {"name": "."},
             "items": {"$ref": "#/definitions/ClearRange"}
-          }
+          },
+          "NextMarker": {"type": "string"}
         }
       };
 ```
