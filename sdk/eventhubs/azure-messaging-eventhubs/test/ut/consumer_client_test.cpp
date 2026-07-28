@@ -344,6 +344,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 
   namespace {
+    // The keys below are fake base64 text. cspell tokenizes base64 into fragments that are not
+    // words, so spell checking is disabled across this block.
+    // cspell: disable
     // A connection string without an EntityPath key. The caller must name the event hub.
     constexpr const char* ConnectionStringNoEntityPath
         = "Endpoint=sb://fake.servicebus.windows.net/;SharedAccessKeyName=FakeKey;"
@@ -356,6 +359,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     constexpr const char* ConnectionStringEmulator
         = "Endpoint=sb://localhost:5672/;SharedAccessKeyName=RootManageSharedAccessKey;"
           "SharedAccessKey=abcdefabcdef;UseDevelopmentEmulator=true";
+    // cspell: enable
   } // namespace
 
   // These tests construct a client only. A client makes no network connection until the caller

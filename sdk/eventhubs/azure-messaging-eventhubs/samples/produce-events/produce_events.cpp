@@ -67,5 +67,5 @@ int main()
 
   producerClient.Send(batch);
 
-  std::cout << "Sent the batch to partition " << batchOptions.PartitionId.Value() << std::endl;
+  std::cout << "Sent the batch to partition " << batchOptions.PartitionId << std::endl;
 }

@@ -140,7 +140,7 @@ Use a token credential in production. Use a connection string for local developm
  - ConsumerClient: [link][consumer_client]
  - ProducerClient: [link][producer_client]
 
-Samples: [create_consumer_aad.cpp](samples/basic-operations/create_consumer_aad.cpp) and [create_producer_aad.cpp](samples/basic-operations/create_producer_aad.cpp).
+Samples: [create_consumer_aad.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_consumer_aad.cpp) and [create_producer_aad.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_producer_aad.cpp).
 
 #### Using a connection string
 
@@ -156,7 +156,7 @@ When it does carry an `EntityPath` key, leave the `eventHub` parameter empty, or
 Endpoint=sb://<your-namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>;EntityPath=<event-hub-name>
 ```
 
-Samples: [create_consumer.cpp](samples/basic-operations/create_consumer.cpp) and [create_producer.cpp](samples/basic-operations/create_producer.cpp).
+Samples: [create_consumer.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_consumer.cpp) and [create_producer.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_producer.cpp).
 
 # Key concepts
 
