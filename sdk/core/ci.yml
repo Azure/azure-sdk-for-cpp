@@ -56,8 +56,9 @@ extends:
       LineCoverageTarget: 81
       BranchCoverageTarget: 62
       PreTestSteps:
-        - task: NuGetAuthenticate@1
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+        - task: UseDotNet@2
+          inputs:
+            version: 8.0
 
         - pwsh: |
             $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
