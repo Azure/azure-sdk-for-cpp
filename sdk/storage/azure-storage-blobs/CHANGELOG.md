@@ -1,12 +1,16 @@
 # Release History
 
-## 12.19.0-beta.1 (Unreleased)
+## 12.19.0-beta.1 (2026-07-29)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Bumped up API version to `2026-10-06`.
+- Added support for Apache Arrow response format on `ListBlobs` / `ListBlobsByHierarchy`.
+- Added `AccessTier`, `IsAccessTierInferred`, `AccessTierChangedOn`, and `SmartAccessTier` fields
+  in `DownloadBlobDetails`.
+- Added `AdditionalTransactionalContentHash` field in results of write operations
+  (`UploadBlockBlob`/`FromUri`, `StageBlock`/`FromUri`, `AppendBlock`/`FromUri`,
+  `UploadPages`/`FromUri`).
 
 ### Other Changes
 

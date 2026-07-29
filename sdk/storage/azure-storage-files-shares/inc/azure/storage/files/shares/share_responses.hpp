@@ -769,6 +769,35 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       FilePosixProperties PosixProperties;
     };
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetRangeList.
+     */
+    struct GetFileRangeListResult final
+    {
+      /**
+       * Array of Range.
+       */
+      std::vector<Core::Http::HttpRange> Ranges;
+      /**
+       * Array of ClearRange.
+       */
+      std::vector<Core::Http::HttpRange> ClearRanges;
+      /**
+       * The date/time that the file was last modified. Any operation that modifies the file,
+       * including an update of the file's metadata or properties, changes the file's last
+       * modified time.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      Azure::ETag ETag;
+      /**
+       * The size of the file in bytes.
+       */
+      std::int64_t FileSize = std::int64_t();
+    };
   } // namespace Models
 
   /**
@@ -837,6 +866,44 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
     friend class ShareServiceClient;
     friend class Azure::Core::PagedResponse<ListSharesPagedResponse>;
+  };
+
+  /**
+   * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetAllRangeList.
+   */
+  class GetFileRangeListPagedResponse final
+      : public Azure::Core::PagedResponse<GetFileRangeListPagedResponse> {
+  public:
+    /**
+     * Array of Range.
+     */
+    std::vector<Core::Http::HttpRange> Ranges;
+    /**
+     * Array of ClearRange.
+     */
+    std::vector<Core::Http::HttpRange> ClearRanges;
+    /**
+     * The date/time that the file was last modified.
+     */
+    DateTime LastModified;
+    /**
+     * The ETag contains a value which represents the version of the file, in quotes.
+     */
+    Azure::ETag ETag;
+    /**
+     * The size of the file in bytes.
+     */
+    std::int64_t FileSize = std::int64_t();
+
+  private:
+    void OnNextPage(const Azure::Core::Context& context);
+
+    std::shared_ptr<ShareFileClient> m_shareFileClient;
+    GetFileRangeListOptions m_operationOptions;
+    Azure::Nullable<std::string> m_previousShareSnapshot;
+
+    friend class ShareFileClient;
+    friend class Azure::Core::PagedResponse<GetFileRangeListPagedResponse>;
   };
 
   /**
