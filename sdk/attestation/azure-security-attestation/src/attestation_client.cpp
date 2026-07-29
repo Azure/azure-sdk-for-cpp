@@ -223,8 +223,8 @@ Azure::Response<ResultT> AttestationClient::AttestBackend(
     // Send the request to the service.
     auto response
         = AttestationCommonRequest::SendRequest(*m_pipeline, request, tracingContext.Context);
-    std::vector<uint8_t> returnedBody{TpmAndPlutonDataSerializer::Deserialize(response)};
-    return Response<ResultT>(ResultT{returnedBody}, std::move(response));
+    auto returnedBody = TpmAndPlutonDataSerializer::Deserialize(response);
+    return Response<ResultT>(ResultT{std::move(returnedBody)}, std::move(response));
   }
   catch (std::runtime_error const& ex)
   {

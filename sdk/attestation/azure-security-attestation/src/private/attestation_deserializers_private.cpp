@@ -396,10 +396,10 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
         returnValue.CertificateThumbprint, jsonResult, "x-ms-certificate-thumbprint");
     return returnValue;
   }
-  std::string TpmAndPlutonDataSerializer::Serialize(std::vector<uint8_t> const& tpmData)
+  std::string TpmAndPlutonDataSerializer::Serialize(std::vector<uint8_t> const& data)
   {
     Azure::Core::Json::_internal::json jsonData;
-    jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(tpmData);
+    jsonData["data"] = Azure::Core::_internal::Base64Url::Base64UrlEncode(data);
     return jsonData.dump();
   }
   std::vector<uint8_t> TpmAndPlutonDataSerializer::Deserialize(

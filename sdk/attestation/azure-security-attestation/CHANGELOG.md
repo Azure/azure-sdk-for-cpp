@@ -4,6 +4,10 @@
 
 ### Features Added
 
+- Added `AttestationClient::AttestPluton` method for Pluton attestation support.
+- Added `PlutonAttestationResult` model type containing the attestation response data.
+- Added `AttestPlutonOptions` options type for configuring Pluton attestation requests.
+
 ### Breaking Changes
 
 ### Bugs Fixed

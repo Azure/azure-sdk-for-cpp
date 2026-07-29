@@ -138,7 +138,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace _detail
 
   struct TpmAndPlutonDataSerializer
   {
-    static std::string Serialize(std::vector<uint8_t> const& tpmData);
+    static std::string Serialize(std::vector<uint8_t> const& data);
     static std::vector<uint8_t> Deserialize(Azure::Core::Json::_internal::json const& jsonData);
     static std::vector<uint8_t> Deserialize(
         std::unique_ptr<Azure::Core::Http::RawResponse> const& response);
