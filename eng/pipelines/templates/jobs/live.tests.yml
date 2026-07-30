@@ -145,6 +145,12 @@ jobs:
         )
     displayName: vcpkg --version
 
+  - task: NuGetAuthenticate@1
+    displayName: Authenticate NuGet for coverage tools
+    # Matches the condition on "Install coverage tools" below so the credentials are
+    # available whenever the dotnet tool install actually runs.
+    condition: and(succeededOrFailed(), ne(variables['CODE_COVERAGE'], 'disabled'), ne(variables['CODE_COVERAGE'], ''))
+
   - script: |
       dotnet tool install -g dotnet-reportgenerator-globaltool
       dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools

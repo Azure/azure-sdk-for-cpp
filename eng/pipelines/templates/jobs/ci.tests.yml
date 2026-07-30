@@ -283,6 +283,10 @@ jobs:
         condition: succeededOrFailed()
 
       - ${{ if eq(parameters.CoverageEnabled, true) }}:
+        - task: NuGetAuthenticate@1
+          displayName: Authenticate NuGet for coverage tools
+          condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
+
         - pwsh: |
             $toolsDirectory = "$(Agent.TempDirectory)/coveragetools"
             dotnet tool install -g dotnet-reportgenerator-globaltool
