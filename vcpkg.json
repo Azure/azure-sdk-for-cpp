@@ -20,7 +20,7 @@
         "otlp-http"
       ],
       "platform": "!(windows & !static)",
-      "version>=": "1.3.0"
+      "version>=": "1.28.0"
     },
     {
       "name": "wil",
