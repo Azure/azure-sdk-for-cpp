@@ -30,6 +30,19 @@ try {
   Write-Host "Cloning repository from $repositoryUrl..."
   Invoke-LoggedCommand $cloneCommand
 
+  # The cloned repository ships its own nuget.config which adds api.nuget.org. A
+  # repository level config takes precedence over the agent's user level config, so the
+  # clone reintroduces a source that the CFSClean network isolation policy blocks.
+  # Replace it with the same Azure Artifacts feed config the rest of the pipeline uses.
+  $clonedNuGetConfig = Join-Path $WorkingDirectory "azure-amqp/nuget.config"
+  Copy-Item `
+    -Path (Join-Path $RepoRoot "eng/templates/NuGet.config.template") `
+    -Destination $clonedNuGetConfig `
+    -Force
+
+  Write-Host "Replaced $clonedNuGetConfig with the Azure Artifacts feed config:"
+  Get-Content $clonedNuGetConfig
+
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
   # TODO: Revert before merge. Temporary unblock for CFS/network-isolation validation.
