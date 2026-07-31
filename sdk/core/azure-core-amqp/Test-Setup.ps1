@@ -30,18 +30,17 @@ try {
   Write-Host "Cloning repository from $repositoryUrl..."
   Invoke-LoggedCommand $cloneCommand
 
-  # The cloned repository ships its own nuget.config which adds api.nuget.org. A
-  # repository level config takes precedence over the agent's user level config, so the
-  # clone reintroduces a source that the CFSClean network isolation policy blocks.
-  # Replace it with the same Azure Artifacts feed config the rest of the pipeline uses.
+  # The cloned repository's nuget.config adds api.nuget.org, which the CFSClean network
+  # isolation policy blocks, and a repository level config takes precedence over the
+  # agent's user level config. Swap that source for the Azure SDK public feed and leave
+  # the dotnet-public feed in place, so restores stay on Azure Artifacts.
   $clonedNuGetConfig = Join-Path $WorkingDirectory "azure-amqp/nuget.config"
-  Copy-Item `
-    -Path (Join-Path $RepoRoot "eng/templates/NuGet.config.template") `
-    -Destination $clonedNuGetConfig `
-    -Force
+  $azureSdkFeed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
 
-  Write-Host "Replaced $clonedNuGetConfig with the Azure Artifacts feed config:"
-  Get-Content $clonedNuGetConfig
+  Write-Host "Updating package sources in $clonedNuGetConfig"
+  dotnet nuget remove source "NuGet official package source" --configfile $clonedNuGetConfig
+  dotnet nuget add source $azureSdkFeed --name azure-sdk-for-net --configfile $clonedNuGetConfig
+  dotnet nuget list source --configfile $clonedNuGetConfig
 
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
