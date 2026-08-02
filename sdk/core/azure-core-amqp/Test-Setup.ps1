@@ -44,12 +44,7 @@ try {
 
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
-  # TODO: Revert before merge. Temporary unblock for CFS/network-isolation validation.
-  # Azure/azure-amqp master now targets <TargetFrameworks>net48;net10.0</TargetFrameworks>,
-  # so the previous net8.0 target no longer exists and both the build and the launch path
-  # below were failing. Bumping to net10.0 here (and at the Set-Location below) keeps CI
-  # moving; the real fix belongs to whoever owns the azure-amqp dependency uptake.
-  Invoke-LoggedCommand "dotnet build -p RollForward=LatestMajor --framework net10.0"
+  Invoke-LoggedCommand "dotnet build -p RollForward=LatestMajor --framework net8.0"
   if (!$? -ne 0) {
     Write-Error "Failed to build TestAmqpBroker."
     exit 1
@@ -60,8 +55,7 @@ try {
   # now that the Test broker has been built, launch the broker on a local address.
   Write-Host "Starting test broker listening on ${env:TEST_BROKER_ADDRESS} ..."
 
-  # TODO: Revert before merge. Must match the --framework used in the build above.
-  Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net10.0
+  Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net8.0
 
 #  $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
   $Process = Start-Process -NoNewWindow -FilePath "dotnet" -ArgumentList "exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless" -PassThru  -RedirectStandardOutput $WorkingDirectory/test-broker.log -RedirectStandardError $WorkingDirectory/test-broker-error.log
