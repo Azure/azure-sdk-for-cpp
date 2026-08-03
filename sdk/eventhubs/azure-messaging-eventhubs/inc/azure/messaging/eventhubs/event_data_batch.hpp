@@ -33,8 +33,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Nullable<std::uint64_t> MaxBytes;
 
-    /** @brief PartitionKey is hashed to calculate the partition assignment.Messages and message
-     * batches with the same PartitionKey are guaranteed to end up in the same partition.
+    /** @brief PartitionKey is hashed by the Event Hubs service to calculate the partition
+     * assignment. The service applies the partition key to the batch and to every event in the
+     * batch, so all batches with the same PartitionKey go to the same partition.
      * Note that if you use this option then PartitionId cannot be set.
      */
     std::string PartitionKey;
@@ -110,6 +111,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Attempts to add a raw AMQP message to the data batch
      *
+     * @remark The batch stores a copy of the message. If the message has no message ID, the batch
+     * sets a new UUID as the message ID on that copy. If the batch has a partition key, the batch
+     * also sets the partition key annotation on that copy. The message you supply does not change.
+     *
      * @param message The AMQP message to add to the batch
      *
      * @returns true if the message was added to the batch, false otherwise.
@@ -121,6 +126,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     /** @brief Attempts to add a message to the data batch
+     *
+     * @remark The batch stores a copy of the event. If the event has no message ID, the batch sets
+     * a new UUID as the message ID on that copy. If the batch has a partition key, the batch also
+     * sets the partition key annotation on that copy. The event you supply does not change.
      *
      * @param message The message to add to the batch
      *
@@ -139,6 +148,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Serializes the EventDataBatch to a single AmqpMessage to be sent to the EventHubs
      * service.
+     *
+     * @remark If the batch has a partition key, the returned message carries the partition key in
+     * its message annotations. The Event Hubs service routes on the message annotations.
      *
      * @return Azure::Core::Amqp::Models::AmqpMessage
      */
@@ -161,11 +173,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     Azure::Core::Amqp::Models::AmqpMessage CreateBatchEnvelope(
-        std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage const> const& message) const
+        Azure::Core::Amqp::Models::AmqpMessage const& message) const
     {
       // Create the batch envelope from the prototype message. This copies all the attributes
       // *except* the body attribute to the batch envelope.
-      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope{*message};
+      Azure::Core::Amqp::Models::AmqpMessage batchEnvelope{message};
       batchEnvelope.BodyType = Azure::Core::Amqp::Models::MessageBodyType::None;
       batchEnvelope.MessageFormat = BatchedMessageFormat;
       return batchEnvelope;
