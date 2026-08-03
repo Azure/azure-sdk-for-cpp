@@ -49,8 +49,7 @@ bool TryRunOneLakeSample()
       = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateForOneLakeWorkspace(
           serviceUrl, workspaceId, credential);
 
-  // OneLake supports data operations, while workspace, item, ACL, access-policy, encryption, and
-  // access-tier management remain Fabric-managed. See the OneLake API parity documentation.
+  // Use only OneLake-supported data operations; Fabric manages workspace and item lifecycle.
   auto filesDirectoryClient = workspaceClient.GetDirectoryClient(std::string(itemId) + "/Files");
   filesDirectoryClient.GetProperties();
   std::cout << "Connected to the OneLake Files directory: " << filesDirectoryClient.GetUrl()

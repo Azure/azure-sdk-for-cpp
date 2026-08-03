@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include <azure/core/http/transport.hpp>
+#include <azure/core/internal/json/json.hpp>
 #include <azure/identity.hpp>
 #include <azure/storage/files/datalake.hpp>
 
@@ -13,7 +14,6 @@
 #include <iostream>
 #include <memory>
 #include <set>
-#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -242,58 +242,17 @@ std::vector<std::string> SplitTabs(const std::string& line)
 
 bool IsValidUtf8(const std::string& value)
 {
-  for (std::size_t index = 0; index < value.size();)
-  {
-    const auto firstByte = static_cast<unsigned char>(value[index]);
-    if (firstByte <= 0x7f)
-    {
-      ++index;
-      continue;
-    }
+  using Azure::Core::Json::_internal::json;
 
-    std::size_t continuationBytes = 0;
-    std::uint32_t codePoint = 0;
-    if (firstByte >= 0xc2 && firstByte <= 0xdf)
-    {
-      continuationBytes = 1;
-      codePoint = firstByte & 0x1f;
-    }
-    else if (firstByte >= 0xe0 && firstByte <= 0xef)
-    {
-      continuationBytes = 2;
-      codePoint = firstByte & 0x0f;
-    }
-    else if (firstByte >= 0xf0 && firstByte <= 0xf4)
-    {
-      continuationBytes = 3;
-      codePoint = firstByte & 0x07;
-    }
-    else
-    {
-      return false;
-    }
-    if (index + continuationBytes >= value.size())
-    {
-      return false;
-    }
-    for (std::size_t offset = 1; offset <= continuationBytes; ++offset)
-    {
-      const auto continuationByte = static_cast<unsigned char>(value[index + offset]);
-      if (continuationByte < 0x80 || continuationByte > 0xbf)
-      {
-        return false;
-      }
-      codePoint = (codePoint << 6) | (continuationByte & 0x3f);
-    }
-    if ((continuationBytes == 2 && codePoint < 0x800)
-        || (continuationBytes == 3 && codePoint < 0x10000)
-        || (codePoint >= 0xd800 && codePoint <= 0xdfff) || codePoint > 0x10ffff)
-    {
-      return false;
-    }
-    index += continuationBytes + 1;
+  try
+  {
+    static_cast<void>(json(value).dump());
+    return true;
   }
-  return true;
+  catch (const json::type_error&)
+  {
+    return false;
+  }
 }
 
 std::vector<ManifestRow> ReadManifest(const std::string& manifestPath)
@@ -518,52 +477,6 @@ void RunMockProbe(const ManifestRow& row)
   }
 }
 
-std::string EscapeJson(const std::string& value)
-{
-  if (!IsValidUtf8(value))
-  {
-    throw std::invalid_argument("Invalid UTF-8 in JSON evidence");
-  }
-
-  const char* hexDigits = "0123456789abcdef";
-  std::string escaped;
-  for (const auto rawCharacter : value)
-  {
-    const auto character = static_cast<unsigned char>(rawCharacter);
-    switch (character)
-    {
-      case '\\':
-        escaped += "\\\\";
-        break;
-      case '"':
-        escaped += "\\\"";
-        break;
-      case '\n':
-        escaped += "\\n";
-        break;
-      case '\r':
-        escaped += "\\r";
-        break;
-      case '\t':
-        escaped += "\\t";
-        break;
-      default:
-        if (character < 0x20)
-        {
-          escaped += "\\u00";
-          escaped += hexDigits[(character >> 4) & 0x0f];
-          escaped += hexDigits[character & 0x0f];
-        }
-        else
-        {
-          escaped += static_cast<char>(character);
-        }
-        break;
-    }
-  }
-  return escaped;
-}
-
 std::string GetExecutionMode(const CommandLineOptions& options)
 {
   if (options.ValidateOnly)
@@ -580,33 +493,30 @@ std::string SerializeResults(
     const std::vector<CaseResult>& results,
     const std::vector<std::string>& matrixErrors)
 {
-  std::ostringstream output;
+  using Azure::Core::Json::_internal::json;
 
-  output << "{\n  \"mode\": \"" << executionMode << "\",\n  \"probeAttempts\": " << probeAttempts
-         << ",\n  \"summary\": {\"required\": " << summary.Required
-         << ", \"executed\": " << summary.Executed << ", \"passed\": " << summary.Passed
-         << ", \"failed\": " << summary.Failed << ", \"skipped\": " << summary.Skipped
-         << "},\n  \"results\": [";
-  for (std::size_t index = 0; index < results.size(); ++index)
+  json evidence{
+      {"mode", executionMode},
+      {"probeAttempts", probeAttempts},
+      {"summary",
+       {{"required", summary.Required},
+        {"executed", summary.Executed},
+        {"passed", summary.Passed},
+        {"failed", summary.Failed},
+        {"skipped", summary.Skipped}}},
+      {"results", json::array()},
+      {"matrixErrors", matrixErrors}};
+  for (const auto& result : results)
   {
-    const auto& result = results[index];
-    output << (index == 0 ? "\n" : ",\n") << "    {\"line\": " << result.LineNumber
-           << ", \"cloud\": \"" << EscapeJson(result.Cloud) << "\", \"ring\": \""
-           << EscapeJson(result.Ring) << "\", \"apiFamily\": \"" << EscapeJson(result.ApiFamily)
-           << "\", \"status\": \"" << EscapeJson(result.Status) << "\", \"message\": \""
-           << EscapeJson(result.Message) << "\"}";
+    evidence["results"].push_back(
+        {{"line", result.LineNumber},
+         {"cloud", result.Cloud},
+         {"ring", result.Ring},
+         {"apiFamily", result.ApiFamily},
+         {"status", result.Status},
+         {"message", result.Message}});
   }
-  output << (results.empty() ? "" : "\n  ") << "],\n  \"matrixErrors\": [";
-  for (std::size_t index = 0; index < matrixErrors.size(); ++index)
-  {
-    output << (index == 0 ? "" : ", ") << "\"" << EscapeJson(matrixErrors[index]) << "\"";
-  }
-  output << "]\n}\n";
-  if (!output)
-  {
-    throw std::runtime_error("Cannot serialize result evidence");
-  }
-  return output.str();
+  return evidence.dump(2) + "\n";
 }
 
 void WriteResults(const std::string& outputPath, const std::string& serializedResults)

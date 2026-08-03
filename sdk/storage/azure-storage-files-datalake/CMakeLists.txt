@@ -125,7 +125,7 @@ if(BUILD_TESTING)
   endif()
   set_target_properties(
     onelake-workspace-endpoint-live-test
-      PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/live"
+      PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/live/$<0:>"
   )
   target_compile_definitions(onelake-workspace-endpoint-live-test PRIVATE _azure_BUILDING_TESTS)
   target_link_libraries(
