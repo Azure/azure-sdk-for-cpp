@@ -1,0 +1,2 @@
+fabric.microsoft.com	base	dfs	https://onelake.dfs.fabric.microsoft.com	12345678-90ab-cdef-1234-567890abcdef	item-id/Files
+fabric.microsoft.com	base	dfs	https://onelake.dfs.fabric.microsoft.com	12345678-90ab-cdef-1234-567890abcdef	item-id/Files/duplicate

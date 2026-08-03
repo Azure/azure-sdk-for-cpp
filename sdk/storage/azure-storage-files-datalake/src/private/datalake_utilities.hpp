@@ -13,6 +13,16 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake { namespace _detail {
 
+  struct OneLakeWorkspaceEndpoints final
+  {
+    Azure::Core::Url DfsFileSystemUrl;
+    Azure::Core::Url BlobFileSystemUrl;
+  };
+
+  OneLakeWorkspaceEndpoints GetOneLakeWorkspaceEndpoints(
+      const std::string& oneLakeServiceUrl,
+      const std::string& workspaceId);
+
   Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url);
   Azure::Core::Url GetDfsUrlFromUrl(const Azure::Core::Url& url);
   std::string GetBlobUrlFromUrl(const std::string& url);

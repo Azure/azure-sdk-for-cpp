@@ -112,6 +112,38 @@ create_code_coverage(storage azure-storage-files-datalake azure-storage-test "te
 
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
+
+  find_package(Python3 COMPONENTS Interpreter REQUIRED)
+
+  add_executable(
+    onelake-workspace-endpoint-live-test
+      test/live/onelake_workspace_endpoint_live_test.cpp
+  )
+  create_per_service_target_build(storage onelake-workspace-endpoint-live-test)
+  if(MSVC)
+    target_compile_definitions(onelake-workspace-endpoint-live-test PRIVATE _CRT_SECURE_NO_WARNINGS)
+  endif()
+  set_target_properties(
+    onelake-workspace-endpoint-live-test
+      PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/test/live"
+  )
+  target_compile_definitions(onelake-workspace-endpoint-live-test PRIVATE _azure_BUILDING_TESTS)
+  target_link_libraries(
+    onelake-workspace-endpoint-live-test
+      PRIVATE azure-storage-files-datalake azure-identity
+  )
+  copy_shared_lib_binaries(
+    onelake-workspace-endpoint-live-test
+      azure-storage-files-datalake azure-storage-blobs azure-storage-common azure-identity azure-core
+  )
+  add_test(
+    NAME azure-storage-files-datalake.OneLakeWorkspaceEndpointHarness
+    COMMAND
+      ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/live/onelake_workspace_endpoint_live_test.py
+      $<TARGET_FILE:onelake-workspace-endpoint-live-test>
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/live/fixtures
+  )
 endif()
 
 if(BUILD_SAMPLES)

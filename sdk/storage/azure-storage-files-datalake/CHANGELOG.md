@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Added `DataLakeFileSystemClient::CreateForOneLakeWorkspace` to construct Microsoft Fabric
+  OneLake workspace clients from supported OneLake service endpoints. ([#7274](https://github.com/Azure/azure-sdk-for-cpp/issues/7274))
+
 ### Breaking Changes
 
 ### Bugs Fixed
