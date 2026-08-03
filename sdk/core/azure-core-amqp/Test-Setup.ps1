@@ -52,15 +52,15 @@ try {
   Write-Host "Test broker built successfully."
 
   # now that the Test broker has been built, launch the broker on a local address.
-  $env:TEST_BROKER_ADDRESS = 'amqp://127.0.0.1:25672'
+  $env:TEST_BROKER_ADDRESS = 'amqp://localhost:25672'
 
   Write-Host "Starting test broker listening on ${env:TEST_BROKER_ADDRESS} ..."
-
+  
   # Note that we cannot use `dotnet run -f` here because the TestAmqpBroker relies on args[0] being the broker address.
   # If we use `dotnet run -f`, the first argument is the csproj file.
   # Instead, we use `dotnet exec` to run the compiled DLL directly.
   # This allows us to pass the broker address as the first argument.
-  Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net8.0
+   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net8.0
   $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
 
   $env:TEST_BROKER_JOBID = $job.Id
