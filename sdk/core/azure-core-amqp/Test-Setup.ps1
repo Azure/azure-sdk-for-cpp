@@ -35,15 +35,15 @@ try {
   }
 
   $repositoryUrl = "https://github.com/Azure/azure-amqp.git"
-  $repositoryHash = "d82a86455c3459c5628bc95b25511f6e8a065598"
+  $repositoryHash = "111de654e170de3ab6cefe150043458c67b6660d"
   $cloneCommand = "git clone $repositoryUrl --revision $repositoryHash --depth=1"
-
+  
   Write-Host "Cloning repository from $repositoryUrl..."
   Invoke-LoggedCommand $cloneCommand
 
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
-  Invoke-LoggedCommand "dotnet build --framework net8.0"
+  Invoke-LoggedCommand "dotnet build --framework net10.0"
   if (-not $?) {
     Write-Error "Failed to build TestAmqpBroker."
     exit 1
@@ -60,7 +60,7 @@ try {
   # If we use `dotnet run -f`, the first argument is the csproj file.
   # Instead, we use `dotnet exec` to run the compiled DLL directly.
   # This allows us to pass the broker address as the first argument.
-   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net8.0
+   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net10.0
   $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
 
   $env:TEST_BROKER_JOBID = $job.Id
