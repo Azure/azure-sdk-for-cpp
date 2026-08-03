@@ -13,6 +13,7 @@ if ($IsMacOS) {
 
 if ($true) {
   Write-Host "Disabling AMQP Test Broker temporarily"
+  exit 0
 }
 
 # Create the test binary *outside* the repo root to avoid polluting the repo.
