@@ -37,6 +37,15 @@ steps:
     inputs:
       configFile: $(CargoConfigPath)
 
+  - pwsh: |
+      $forkCmakeArgs = ''
+      if ('${{ parameters.ServiceDirectory }}' -eq 'core' -and
+          $env:SYSTEM_PULLREQUEST_ISFORK -eq 'True') {
+        $forkCmakeArgs = '-DDISABLE_RUST_IN_BUILD=ON'
+      }
+      Write-Host "##vso[task.setvariable variable=ForkCmakeArgs]$forkCmakeArgs"
+    displayName: Configure fork CMake arguments
+
   - script: cmake --version
     workingDirectory: build
     displayName: cmake --version
@@ -46,7 +55,7 @@ steps:
     displayName: clang --version
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} $(ForkCmakeArgs) ..
     workingDirectory: build
     displayName: cmake generate
     env:
