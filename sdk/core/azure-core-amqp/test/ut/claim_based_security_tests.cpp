@@ -228,7 +228,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   {
     auto connection{CreateAmqpConnection()};
     auto session{CreateAmqpSession(connection)};
-    StartServerListening();
 
 #if ENABLE_RUST_CANCEL
     {
@@ -240,7 +239,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       EXPECT_EQ(CbsOpenResult::Cancelled, openResult);
     }
 #endif
-    StopServerListening();
     EndAmqpSession(session);
     CloseAmqpConnection(connection);
   }
