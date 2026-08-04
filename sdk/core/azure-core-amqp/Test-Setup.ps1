@@ -66,18 +66,15 @@ try {
   # Instead, we use `dotnet exec` to run the compiled DLL directly.
   # This allows us to pass the broker address as the first argument.
    Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net10.0
-  $job = dotnet exec ./TestAmqpBroker.dll ${env:TEST_BROKER_ADDRESS} /headless &
+  $process = Start-Process -FilePath "dotnet" -ArgumentList "exec", "./TestAmqpBroker.dll", "${env:TEST_BROKER_ADDRESS}", "/headless" -PassThru
 
-  $env:TEST_BROKER_JOBID = $job.Id
+  $env:TEST_BROKER_JOBID = $process.Id
 
   Write-Host "Waiting for test broker to start..."
   Start-Sleep -Seconds 3
 
-  Write-Host "Job Output after wait:"
-  Receive-Job $job.Id
-
-  $job = Get-Job -Id $env:TEST_BROKER_JOBID
-  if ($job.State -ne "Running") {
+  $process = Get-Process -Id $env:TEST_BROKER_JOBID -ErrorAction SilentlyContinue
+  if (-not $process -or $process.HasExited) {
     Write-Host "Test broker failed to start."
     exit 1
   }
