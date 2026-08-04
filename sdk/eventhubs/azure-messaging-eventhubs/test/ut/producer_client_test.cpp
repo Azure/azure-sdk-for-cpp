@@ -323,7 +323,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto const deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
     while (receivedEvents.size() < eventCount && std::chrono::system_clock::now() < deadline)
     {
-      auto batchOfEvents = receiver.ReceiveEvents(eventCount - receivedEvents.size());
+      // The loop guard keeps the difference below eventCount, so this cast cannot lose data.
+      auto const remaining = static_cast<uint32_t>(eventCount - receivedEvents.size());
+      auto batchOfEvents = receiver.ReceiveEvents(remaining);
       if (batchOfEvents.empty())
       {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
