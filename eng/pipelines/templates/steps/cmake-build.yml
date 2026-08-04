@@ -29,11 +29,22 @@ steps:
       Get-Content $configPath
       Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
     displayName: Configure cargo to use the azure-sdk-for-rust feed
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
   - task: CargoAuthenticate@0
     displayName: Authenticate cargo to the azure-sdk-for-rust feed
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
     inputs:
       configFile: $(CargoConfigPath)
+
+  - pwsh: |
+      $forkCmakeArgs = ''
+      if ('${{ parameters.ServiceDirectory }}' -eq 'core' -and
+          $env:SYSTEM_PULLREQUEST_ISFORK -eq 'True') {
+        $forkCmakeArgs = '-DDISABLE_RUST_IN_BUILD=ON'
+      }
+      Write-Host "##vso[task.setvariable variable=ForkCmakeArgs]$forkCmakeArgs"
+    displayName: Configure fork CMake arguments
 
   - script: cmake --version
     workingDirectory: build
@@ -44,7 +55,7 @@ steps:
     displayName: clang --version
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake ${{ parameters.VcpkgArgs }} ${{ parameters.GenerateArgs }} $(ForkCmakeArgs) ..
     workingDirectory: build
     displayName: cmake generate
     env:

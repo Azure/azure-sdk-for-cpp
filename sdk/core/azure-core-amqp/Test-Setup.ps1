@@ -23,12 +23,17 @@ Push-Location -Path $WorkingDirectory
 try {
 
   $repositoryUrl = "https://github.com/Azure/azure-amqp.git"
-  # We would like to use the "hotfix" branch because that is current, but unfortunately it references System.Net.Security version 4.0.0
-  $repositoryBranch = "master"
-  $cloneCommand = "git clone $repositoryUrl --branch $repositoryBranch"
+  $repositoryCommit = "d82a86455c3459c5628bc95b25511f6e8a065598"
+  $cloneCommand = "git clone $repositoryUrl"
 
   Write-Host "Cloning repository from $repositoryUrl..."
   Invoke-LoggedCommand $cloneCommand
+  Invoke-LoggedCommand "git -C azure-amqp checkout --detach $repositoryCommit"
+
+  $clonedNuGetConfig = Join-Path $WorkingDirectory "azure-amqp/nuget.config"
+  $azureSdkFeed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+  dotnet nuget remove source "NuGet official package source" --configfile $clonedNuGetConfig
+  dotnet nuget add source $azureSdkFeed --name azure-sdk-for-net --configfile $clonedNuGetConfig
 
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
