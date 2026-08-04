@@ -29,9 +29,11 @@ steps:
       Get-Content $configPath
       Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
     displayName: Configure cargo to use the azure-sdk-for-rust feed
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
 
   - task: CargoAuthenticate@0
     displayName: Authenticate cargo to the azure-sdk-for-rust feed
+    condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
     inputs:
       configFile: $(CargoConfigPath)
 

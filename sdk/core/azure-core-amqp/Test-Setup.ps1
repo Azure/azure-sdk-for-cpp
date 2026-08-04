@@ -30,6 +30,11 @@ try {
   Invoke-LoggedCommand $cloneCommand
   Invoke-LoggedCommand "git -C azure-amqp checkout --detach $repositoryCommit"
 
+  $clonedNuGetConfig = Join-Path $WorkingDirectory "azure-amqp/nuget.config"
+  $azureSdkFeed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+  dotnet nuget remove source "NuGet official package source" --configfile $clonedNuGetConfig
+  dotnet nuget add source $azureSdkFeed --name azure-sdk-for-net --configfile $clonedNuGetConfig
+
   Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
 
   Invoke-LoggedCommand "dotnet build -p RollForward=LatestMajor --framework net8.0"
