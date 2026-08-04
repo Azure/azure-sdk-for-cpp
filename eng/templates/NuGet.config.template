@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  NuGet configuration used by CI builds to route package restores through the
+  Centralized Feed Service (CFS) instead of the public internet.
+
+  Under the CFSClean network isolation policy, api.nuget.org is blocked. NuGet resolves
+  its package sources by merging the machine-wide config, the user (global) config, and
+  any NuGet.config found in or above the working directory. Because the CI consumers
+  here run from unrelated working directories (a global tool install for reportgenerator,
+  a tool-path install for test-proxy, and a build of TestAmqpBroker in a temporary
+  clone), a repo-local config would not apply. This file is therefore copied over the
+  user-level config by eng/pipelines/templates/steps/nuget-config.yml.
+
+  <clear /> discards nuget.org and anything else inherited from machine-wide config, and
+  the single <add> below makes the azure-sdk-for-net Azure Artifacts feed the only
+  source. That feed has an upstream to nuget.org, so third-party packages still resolve.
+
+  NuGetAuthenticate@1 does not add package sources - it only installs the Azure Artifacts
+  Credential Provider and binds it to feeds under pkgs.dev.azure.com/azure-sdk. Clearing
+  without adding a replacement would fail every restore with NU1100, so the <add> here is
+  required rather than optional.
+-->
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="azure-sdk-for-net" value="https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json" />
+  </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
+</configuration>
