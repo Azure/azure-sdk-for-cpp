@@ -46,6 +46,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Management object is already open.");
     }
+    if (context.IsCancelled())
+    {
+      return _internal::ManagementOpenStatus::Cancelled;
+    }
 
     try
     {

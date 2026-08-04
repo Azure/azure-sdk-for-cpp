@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include <azure/identity.hpp>
 #include <azure/storage/files/datalake.hpp>
 
 #include <cstdio>
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
@@ -24,9 +26,45 @@ std::string GetConnectionString()
   throw std::runtime_error("Cannot find connection string.");
 }
 
+bool TryRunOneLakeSample()
+{
+  const char* workspaceId = std::getenv("AZURE_ONELAKE_WORKSPACE_ID");
+  const char* itemId = std::getenv("AZURE_ONELAKE_ITEM_ID");
+  if (workspaceId == nullptr && itemId == nullptr)
+  {
+    return false;
+  }
+  if (workspaceId == nullptr || itemId == nullptr)
+  {
+    throw std::runtime_error(
+        "AZURE_ONELAKE_WORKSPACE_ID and AZURE_ONELAKE_ITEM_ID must both be set.");
+  }
+
+  const char* configuredServiceUrl = std::getenv("AZURE_ONELAKE_SERVICE_URL");
+  const std::string serviceUrl = configuredServiceUrl == nullptr
+      ? "https://onelake.dfs.fabric.microsoft.com"
+      : configuredServiceUrl;
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  auto workspaceClient
+      = Azure::Storage::Files::DataLake::DataLakeFileSystemClient::CreateForOneLakeWorkspace(
+          serviceUrl, workspaceId, credential);
+
+  // Use only OneLake-supported data operations; Fabric manages workspace and item lifecycle.
+  auto filesDirectoryClient = workspaceClient.GetDirectoryClient(std::string(itemId) + "/Files");
+  filesDirectoryClient.GetProperties();
+  std::cout << "Connected to the OneLake Files directory: " << filesDirectoryClient.GetUrl()
+            << std::endl;
+  return true;
+}
+
 int main()
 {
   using namespace Azure::Storage::Files::DataLake;
+
+  if (TryRunOneLakeSample())
+  {
+    return 0;
+  }
 
   const std::string fileSystemName = "sample-file-system";
   const std::string directoryName = "sample-directory";

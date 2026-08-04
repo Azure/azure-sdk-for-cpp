@@ -40,6 +40,31 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const DataLakeClientOptions& options = DataLakeClientOptions());
 
     /**
+     * @brief Creates a client for a Microsoft Fabric OneLake workspace.
+     *
+     * @param oneLakeServiceUrl A supported shared, regional, API, or workspace-specific OneLake
+     * service URL used to determine the workspace endpoint.
+     * @param workspaceId The workspace GUID, with or without hyphens.
+     * @param credential The token credential used to initialize the client.
+     * @param options Optional parameters used to initialize the client.
+     * @return A client targeting the workspace-specific OneLake endpoint.
+     * @throw std::invalid_argument If the URL or workspace ID is invalid, the credential is null,
+     * or the options specify a secondary host, customer-provided key, or non-default audience.
+     * @remark OneLake supports a subset of Azure Data Lake Storage operations. Workspace and item
+     * lifecycle, access policies, ACL mutation, encryption scopes, access tiers, and other
+     * Fabric-managed operations remain subject to the documented OneLake API parity limitations:
+     * https://learn.microsoft.com/fabric/onelake/onelake-api-parity.
+     * @remark Caller-provided policies and transports are trusted extension points. They can
+     * change request destinations after client construction and are outside this factory's
+     * destination validation guarantee.
+     */
+    static DataLakeFileSystemClient CreateForOneLakeWorkspace(
+        const std::string& oneLakeServiceUrl,
+        const std::string& workspaceId,
+        std::shared_ptr<const Core::Credentials::TokenCredential> credential,
+        const DataLakeClientOptions& options = DataLakeClientOptions());
+
+    /**
      * @brief Shared key authentication client.
      * @param fileSystemUrl The URL of the file system this client's request targets.
      * @param credential The shared key credential used to initialize the client.

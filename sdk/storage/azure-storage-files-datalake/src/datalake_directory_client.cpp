@@ -121,28 +121,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
-    if (m_clientConfiguration.UploadValidationOptions.HasValue())
-    {
-      Blobs::TransferValidationOptions blobOptions;
-      blobOptions.Algorithm = m_clientConfiguration.UploadValidationOptions.Value().Algorithm;
-      uploadValidationOptions = blobOptions;
-    }
-
-    Azure::Nullable<Blobs::TransferValidationOptions> downloadValidationOptions;
-    if (m_clientConfiguration.DownloadValidationOptions.HasValue())
-    {
-      Blobs::TransferValidationOptions blobOptions;
-      blobOptions.Algorithm = m_clientConfiguration.DownloadValidationOptions.Value().Algorithm;
-      downloadValidationOptions = blobOptions;
-    }
-    auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
-        m_pipeline,
-        m_clientConfiguration.CustomerProvidedKey,
-        Azure::Nullable<std::string>(),
-        std::move(uploadValidationOptions),
-        std::move(downloadValidationOptions));
+    auto renamedBlobClient = m_blobClient;
+    renamedBlobClient.m_blobUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    renamedBlobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(destinationFilePath));
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
@@ -192,29 +173,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     auto response = _detail::PathClient::Create(
         *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
 
-    Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
-    if (m_clientConfiguration.UploadValidationOptions.HasValue())
-    {
-      Blobs::TransferValidationOptions blobOptions;
-      blobOptions.Algorithm = m_clientConfiguration.UploadValidationOptions.Value().Algorithm;
-      uploadValidationOptions = blobOptions;
-    }
-
-    Azure::Nullable<Blobs::TransferValidationOptions> downloadValidationOptions;
-    if (m_clientConfiguration.DownloadValidationOptions.HasValue())
-    {
-      Blobs::TransferValidationOptions blobOptions;
-      blobOptions.Algorithm = m_clientConfiguration.DownloadValidationOptions.Value().Algorithm;
-      downloadValidationOptions = blobOptions;
-    }
-
-    auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
-        m_pipeline,
-        m_clientConfiguration.CustomerProvidedKey,
-        Azure::Nullable<std::string>(),
-        std::move(uploadValidationOptions),
-        std::move(downloadValidationOptions));
+    auto renamedBlobClient = m_blobClient;
+    renamedBlobClient.m_blobUrl.SetPath(_internal::UrlEncodePath(destinationFileSystem));
+    renamedBlobClient.m_blobUrl.AppendPath(_internal::UrlEncodePath(destinationDirectoryPath));
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
