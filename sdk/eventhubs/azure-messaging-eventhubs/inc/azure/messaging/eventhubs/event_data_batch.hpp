@@ -34,8 +34,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Azure::Nullable<std::uint64_t> MaxBytes;
 
     /** @brief PartitionKey is hashed by the Event Hubs service to calculate the partition
-     * assignment. The service applies the partition key to the batch and to every event in the
-     * batch, so all batches with the same PartitionKey go to the same partition.
+     * assignment. The client puts the partition key in the message annotations of the batch
+     * envelope and of every event in the batch. The service then reads that annotation and sends
+     * all batches with the same PartitionKey to the same partition.
      * Note that if you use this option then PartitionId cannot be set.
      */
     std::string PartitionKey;
