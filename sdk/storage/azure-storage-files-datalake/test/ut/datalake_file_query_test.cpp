@@ -4,7 +4,6 @@
 #include "datalake_file_client_test.hpp"
 
 #include <future>
-#include <iostream>
 #include <random>
 #include <vector>
 
@@ -371,8 +370,8 @@ xx
         {
           throw;
         }
-        std::cout << "Retrying large Data Lake query after response body transport failure: "
-                  << e.what() << std::endl;
+        SUCCEED() << "Retrying large Data Lake query after response body transport failure: "
+                  << e.what();
       }
     }
   }

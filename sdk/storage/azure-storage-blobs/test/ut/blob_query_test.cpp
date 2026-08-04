@@ -4,7 +4,6 @@
 #include "block_blob_client_test.hpp"
 
 #include <future>
-#include <iostream>
 #include <random>
 #include <vector>
 
@@ -366,8 +365,8 @@ xx
         {
           throw;
         }
-        std::cout << "Retrying large blob query after response body transport failure: " << e.what()
-                  << std::endl;
+        SUCCEED() << "Retrying large blob query after response body transport failure: "
+                  << e.what();
       }
     }
   }
