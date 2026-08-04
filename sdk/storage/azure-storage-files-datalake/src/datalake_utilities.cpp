@@ -23,14 +23,20 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
           && value.compare(value.size() - suffix.size(), suffix.size(), suffix) == 0;
     }
 
+    char ToLowerAscii(char value)
+    {
+      if (value >= 'A' && value <= 'Z')
+      {
+        return static_cast<char>(value - 'A' + 'a');
+      }
+      return value;
+    }
+
     std::string ToLowerAscii(std::string value)
     {
       for (auto& character : value)
       {
-        if (character >= 'A' && character <= 'Z')
-        {
-          character = static_cast<char>(character - 'A' + 'a');
-        }
+        character = ToLowerAscii(character);
       }
       return value;
     }
@@ -76,7 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
         {
           throw std::invalid_argument("OneLake workspace ID must be a GUID");
         }
-        compact.push_back(ToLowerAscii(workspaceId.substr(index, 1))[0]);
+        compact.push_back(ToLowerAscii(workspaceId[index]));
       }
       return compact;
     }

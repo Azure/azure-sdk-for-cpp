@@ -113,7 +113,7 @@ create_code_coverage(storage azure-storage-files-datalake azure-storage-test "te
 if(BUILD_TESTING)
   add_subdirectory(test/ut)
 
-  find_package(Python3 COMPONENTS Interpreter REQUIRED)
+  find_package(Python3 COMPONENTS Interpreter QUIET)
 
   add_executable(
     onelake-workspace-endpoint-live-test
@@ -136,14 +136,18 @@ if(BUILD_TESTING)
     onelake-workspace-endpoint-live-test
       azure-storage-files-datalake azure-storage-blobs azure-storage-common azure-identity azure-core
   )
-  add_test(
-    NAME azure-storage-files-datalake.OneLakeWorkspaceEndpointHarness
-    COMMAND
-      ${Python3_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/test/live/onelake_workspace_endpoint_live_test.py
-      $<TARGET_FILE:onelake-workspace-endpoint-live-test>
-      ${CMAKE_CURRENT_SOURCE_DIR}/test/live/fixtures
-  )
+  if(Python3_Interpreter_FOUND)
+    add_test(
+      NAME azure-storage-files-datalake.OneLakeWorkspaceEndpointHarness
+      COMMAND
+        ${Python3_EXECUTABLE}
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/live/onelake_workspace_endpoint_live_test.py
+        $<TARGET_FILE:onelake-workspace-endpoint-live-test>
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/live/fixtures
+    )
+  else()
+    message(STATUS "Python 3 interpreter not found; skipping OneLake workspace endpoint harness test")
+  endif()
 endif()
 
 if(BUILD_SAMPLES)
