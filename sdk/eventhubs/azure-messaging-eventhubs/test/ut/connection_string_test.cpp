@@ -7,6 +7,7 @@
 #include <azure/messaging/eventhubs.hpp>
 
 #include <chrono>
+#include <cstddef>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -173,7 +174,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto events = partitionClient.ReceiveEvents(1, context);
 
-    ASSERT_EQ(1ul, events.size());
+    ASSERT_EQ(std::size_t{1}, events.size());
     EXPECT_EQ(expectedBody, events[0]->Body);
   }
 #elif ENABLE_RUST_AMQP
