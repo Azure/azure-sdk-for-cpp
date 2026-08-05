@@ -126,7 +126,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   // Standard live-test resources disable local authentication. This test runs only when a
   // dedicated SAS-enabled resource supplies the required environment variables.
-  class ConnectionStringLiveTest : public EventHubsTestBase {};
+  class ConnectionStringLiveTest : public EventHubsTestBase {
+  };
 
   TEST_F(ConnectionStringLiveTest, RoundTrip_LIVEONLY_)
   {
