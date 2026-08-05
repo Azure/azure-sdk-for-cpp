@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- [[#7250]](https://github.com/Azure/azure-sdk-for-cpp/issues/7250) Restored connection-string authentication for `ProducerClient` and `ConsumerClient`, including support for the Event Hubs emulator when using the uAMQP backend.
+
 ### Breaking Changes
 
 ### Bugs Fixed

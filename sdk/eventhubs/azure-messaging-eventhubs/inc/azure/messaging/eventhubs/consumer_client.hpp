@@ -142,6 +142,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       return m_consumerClientOptions.RetryOptions;
     }
 
+    /** @brief Constructs a ConsumerClient from a connection string.
+     *
+     * @param connectionString The Event Hubs namespace or Event Hub connection string.
+     * @param eventHub The Event Hub name. This can be empty when the connection string contains an
+     * EntityPath value.
+     * @param consumerGroup The consumer group name.
+     * @param options Additional options for creating the client.
+     *
+     * @remark When the connection string contains an EntityPath value, eventHub must be empty or
+     * match that value.
+     *
+     * @throw std::invalid_argument When eventHub conflicts with the connection string EntityPath,
+     * or when neither value supplies an Event Hub name.
+     * @throw std::runtime_error When the client is built with the Rust AMQP backend.
+     */
+    ConsumerClient(
+        std::string const& connectionString,
+        std::string const& eventHub = {},
+        std::string const& consumerGroup = DefaultConsumerGroup,
+        ConsumerClientOptions const& options = {});
+
     /** @brief Create new Partition client
      *
      * @param partitionId targeted partition
