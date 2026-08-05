@@ -2,8 +2,11 @@
 // Licensed under the MIT License.
 
 #include "../src/private/eventhubs_constants.hpp"
+#include "../src/private/eventhubs_utilities.hpp"
 #include "azure/messaging/eventhubs.hpp"
 #include "eventhubs_test_base.hpp"
+
+#include <limits>
 
 #include <gtest/gtest.h>
 
@@ -11,6 +14,9 @@ using namespace Azure::Core::Amqp::Models;
 using namespace Azure::Messaging::EventHubs::Models;
 
 class EventDataTest : public EventHubsTestBase {
+};
+
+class EventDataBatchTest : public EventHubsTestBase {
 };
 
 // Construct an EventData object and convert it to an AMQP message.
@@ -241,4 +247,136 @@ TEST_F(EventDataTest, ReceivedEventData)
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
   }
+}
+
+// The Event Hubs service routes on the message annotations only. Make sure that the batch envelope
+// and every message in the batch carry the partition key there, and that the delivery annotations
+// stay empty.
+TEST_F(EventDataBatchTest, PartitionKeyIsInMessageAnnotations)
+{
+  constexpr const char* partitionKey = "test-partition-key";
+
+  Azure::Messaging::EventHubs::EventDataBatchOptions options;
+  options.MaxBytes = static_cast<std::uint64_t>((std::numeric_limits<uint16_t>::max)());
+  options.PartitionKey = partitionKey;
+
+  Azure::Messaging::EventHubs::EventDataBatch batch{
+      Azure::Messaging::EventHubs::_detail::EventDataBatchFactory::CreateEventDataBatch(options)};
+
+  EXPECT_TRUE(batch.TryAdd(EventData{"First message."}));
+  EXPECT_TRUE(batch.TryAdd(EventData{"Second message."}));
+
+  auto batchMessage{batch.ToAmqpMessage()};
+
+  AmqpSymbol const partitionKeyAnnotation{
+      Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation};
+
+  auto envelopeAnnotation = batchMessage.MessageAnnotations.find(partitionKeyAnnotation);
+  ASSERT_NE(envelopeAnnotation, batchMessage.MessageAnnotations.end())
+      << "The batch envelope has no partition key message annotation.";
+  EXPECT_EQ(partitionKey, static_cast<std::string>(envelopeAnnotation->second));
+
+  // Delivery annotations stop at the first hop, so the partition key must not be there.
+  EXPECT_EQ(
+      batchMessage.DeliveryAnnotations.find(partitionKeyAnnotation),
+      batchMessage.DeliveryAnnotations.end());
+
+  EXPECT_EQ(0x80013700u, batchMessage.MessageFormat);
+
+  auto const& batchedMessages = batchMessage.GetBodyAsBinary();
+  ASSERT_EQ(2ul, batchedMessages.size());
+  for (auto const& batchedMessage : batchedMessages)
+  {
+    AmqpMessage innerMessage{
+        AmqpMessage::Deserialize(batchedMessage.data(), batchedMessage.size())};
+    auto innerAnnotation = innerMessage.MessageAnnotations.find(partitionKeyAnnotation);
+    ASSERT_NE(innerAnnotation, innerMessage.MessageAnnotations.end())
+        << "A message in the batch has no partition key message annotation.";
+    EXPECT_EQ(partitionKey, static_cast<std::string>(innerAnnotation->second));
+  }
+
+  // The batch builds the envelope from the annotated copy of the first message. That copy also
+  // carries the generated message ID, so the envelope must carry the same message ID. This pins
+  // the source of the envelope, which the partition key assertions above cannot show on their own.
+  AmqpMessage firstMessage{
+      AmqpMessage::Deserialize(batchedMessages[0].data(), batchedMessages[0].size())};
+  ASSERT_FALSE(batchMessage.Properties.MessageId.IsNull())
+      << "The batch envelope did not come from the annotated copy of the first message.";
+  EXPECT_EQ(firstMessage.Properties.MessageId, batchMessage.Properties.MessageId);
+}
+
+// The partition key of the batch is the routing key for every message in the batch. Make sure that
+// it replaces a partition key annotation that the caller already set on a raw AMQP message.
+TEST_F(EventDataBatchTest, BatchPartitionKeyReplacesCallerAnnotation)
+{
+  constexpr const char* batchPartitionKey = "batch-partition-key";
+
+  Azure::Messaging::EventHubs::EventDataBatchOptions options;
+  options.MaxBytes = static_cast<std::uint64_t>((std::numeric_limits<uint16_t>::max)());
+  options.PartitionKey = batchPartitionKey;
+
+  Azure::Messaging::EventHubs::EventDataBatch batch{
+      Azure::Messaging::EventHubs::_detail::EventDataBatchFactory::CreateEventDataBatch(options)};
+
+  AmqpSymbol const partitionKeyAnnotation{
+      Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation};
+
+  auto callerMessage{std::make_shared<AmqpMessage>()};
+  callerMessage->SetBody(AmqpBinaryData{'a', 'b', 'c'});
+  callerMessage
+      ->MessageAnnotations[AmqpSymbol{Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation}]
+      = AmqpValue("caller-partition-key");
+
+  EXPECT_TRUE(batch.TryAdd(callerMessage));
+
+  auto batchMessage{batch.ToAmqpMessage()};
+
+  auto envelopeAnnotation = batchMessage.MessageAnnotations.find(partitionKeyAnnotation);
+  ASSERT_NE(envelopeAnnotation, batchMessage.MessageAnnotations.end());
+  EXPECT_EQ(batchPartitionKey, static_cast<std::string>(envelopeAnnotation->second));
+
+  auto const& batchedMessages = batchMessage.GetBodyAsBinary();
+  ASSERT_EQ(1ul, batchedMessages.size());
+  AmqpMessage innerMessage{
+      AmqpMessage::Deserialize(batchedMessages[0].data(), batchedMessages[0].size())};
+  auto innerAnnotation = innerMessage.MessageAnnotations.find(partitionKeyAnnotation);
+  ASSERT_NE(innerAnnotation, innerMessage.MessageAnnotations.end());
+  EXPECT_EQ(batchPartitionKey, static_cast<std::string>(innerAnnotation->second));
+
+  // The message that the caller supplied must not change.
+  auto callerAnnotation = callerMessage->MessageAnnotations.find(partitionKeyAnnotation);
+  ASSERT_NE(callerAnnotation, callerMessage->MessageAnnotations.end());
+  EXPECT_EQ("caller-partition-key", static_cast<std::string>(callerAnnotation->second));
+}
+
+// A batch without a partition key must not add a partition key annotation anywhere.
+TEST_F(EventDataBatchTest, NoPartitionKeyAddsNoAnnotation)
+{
+  Azure::Messaging::EventHubs::EventDataBatchOptions options;
+  options.MaxBytes = static_cast<std::uint64_t>((std::numeric_limits<uint16_t>::max)());
+
+  Azure::Messaging::EventHubs::EventDataBatch batch{
+      Azure::Messaging::EventHubs::_detail::EventDataBatchFactory::CreateEventDataBatch(options)};
+
+  EXPECT_TRUE(batch.TryAdd(EventData{"First message."}));
+
+  auto batchMessage{batch.ToAmqpMessage()};
+
+  AmqpSymbol const partitionKeyAnnotation{
+      Azure::Messaging::EventHubs::_detail::PartitionKeyAnnotation};
+
+  EXPECT_EQ(
+      batchMessage.MessageAnnotations.find(partitionKeyAnnotation),
+      batchMessage.MessageAnnotations.end());
+  EXPECT_EQ(
+      batchMessage.DeliveryAnnotations.find(partitionKeyAnnotation),
+      batchMessage.DeliveryAnnotations.end());
+
+  auto const& batchedMessages = batchMessage.GetBodyAsBinary();
+  ASSERT_EQ(1ul, batchedMessages.size());
+  AmqpMessage innerMessage{
+      AmqpMessage::Deserialize(batchedMessages[0].data(), batchedMessages[0].size())};
+  EXPECT_EQ(
+      innerMessage.MessageAnnotations.find(partitionKeyAnnotation),
+      innerMessage.MessageAnnotations.end());
 }

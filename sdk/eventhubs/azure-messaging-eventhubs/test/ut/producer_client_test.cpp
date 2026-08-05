@@ -6,6 +6,7 @@
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/uuid.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
@@ -240,6 +241,118 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     for (const auto i : iterationsPerThread)
     {
       GTEST_LOG_(INFO) << "Thread iterations: " << i.second;
+    }
+  }
+
+  // Send a batch that has a partition key and make sure that every event in the batch landed on one
+  // partition. The Event Hubs service routes on the partition key annotation in the message
+  // annotations of the batch envelope, so this test fails if the annotation is missing or if it is
+  // in the delivery annotations.
+  TEST_P(ProducerClientTest, SendBatchWithPartitionKey_LIVEONLY_)
+  {
+    constexpr uint32_t eventCount = 20;
+
+    auto client{CreateProducerClient()};
+
+    auto const partitionIds = client->GetEventHubProperties().PartitionIds;
+    ASSERT_GT(partitionIds.size(), 1ul) << "This test needs more than one partition.";
+
+    std::string const partitionKey{"ws5-" + Azure::Core::Uuid::CreateUuid().ToString()};
+
+    std::map<std::string, int64_t> sequenceNumberBeforeSend;
+    for (auto const& partitionId : partitionIds)
+    {
+      sequenceNumberBeforeSend[partitionId]
+          = client->GetPartitionProperties(partitionId).LastEnqueuedSequenceNumber;
+      // Attempt to avoid service throttling.
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    {
+      Azure::Messaging::EventHubs::EventDataBatchOptions batchOptions;
+      batchOptions.MaxBytes = (std::numeric_limits<uint16_t>::max)();
+      batchOptions.PartitionKey = partitionKey;
+      Azure::Messaging::EventHubs::EventDataBatch eventBatch{client->CreateBatch(batchOptions)};
+      for (uint32_t i = 0; i < eventCount; i++)
+      {
+        // The body starts with the unique marker of this run. The test finds its own events by
+        // that marker, so the check on the partition key below stays independent.
+        EXPECT_TRUE(eventBatch.TryAdd(Azure::Messaging::EventHubs::Models::EventData{
+            partitionKey + " message " + std::to_string(i)}));
+      }
+      // Stop here if the send fails, because the partition counts below would then report a
+      // misleading failure.
+      ASSERT_NO_THROW(client->Send(eventBatch));
+    }
+
+    // Give the service time to report the new events.
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
+    // Read every partition from the sequence number that it had before the send, and keep only the
+    // events of this batch. The unique marker in the body identifies them. A count of new events
+    // cannot do this, because another producer can write to the same Event Hub while this test
+    // runs and can add events to any partition.
+    auto consumer{CreateConsumerClient()};
+    std::vector<std::string> partitionsWithBatch;
+    std::vector<std::shared_ptr<const Azure::Messaging::EventHubs::Models::ReceivedEventData>>
+        batchEvents;
+
+    for (auto const& partitionId : partitionIds)
+    {
+      Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+      partitionOptions.StartPosition.SequenceNumber = sequenceNumberBeforeSend[partitionId];
+      auto receiver = consumer->CreatePartitionClient(partitionId, partitionOptions);
+
+      // ReceiveEvents returns as soon as the receiver queue is empty, so one call can return fewer
+      // events than the batch holds. Read until this partition holds the whole batch, or until the
+      // partition stays quiet, or until the time runs out.
+      std::vector<std::shared_ptr<const Azure::Messaging::EventHubs::Models::ReceivedEventData>>
+          eventsOnPartition;
+      auto const deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
+      int quietReads = 0;
+      while (eventsOnPartition.size() < eventCount && quietReads < 6
+             && std::chrono::system_clock::now() < deadline)
+      {
+        auto batchOfEvents = receiver.ReceiveEvents(eventCount);
+        if (batchOfEvents.empty())
+        {
+          quietReads++;
+          std::this_thread::sleep_for(std::chrono::milliseconds(500));
+          continue;
+        }
+        quietReads = 0;
+        for (auto const& receivedEvent : batchOfEvents)
+        {
+          std::string const body(receivedEvent->Body.begin(), receivedEvent->Body.end());
+          if (body.rfind(partitionKey, 0) == 0)
+          {
+            eventsOnPartition.push_back(receivedEvent);
+          }
+        }
+      }
+
+      GTEST_LOG_(INFO) << "Partition " << partitionId << " holds " << eventsOnPartition.size()
+                       << " events of this batch.";
+      if (!eventsOnPartition.empty())
+      {
+        partitionsWithBatch.push_back(partitionId);
+        batchEvents.insert(batchEvents.end(), eventsOnPartition.begin(), eventsOnPartition.end());
+      }
+    }
+
+    // Before the fix the service spread the batch over every partition, so more than one partition
+    // holds events of the batch and this assertion fails.
+    ASSERT_EQ(1ul, partitionsWithBatch.size())
+        << "A batch with a partition key must land on exactly one partition.";
+    ASSERT_EQ(static_cast<size_t>(eventCount), batchEvents.size())
+        << "The partition must hold every event of the batch.";
+
+    // The marker in the body found these events, so this check on the partition key does not
+    // depend on the way the test found them.
+    for (auto const& receivedEvent : batchEvents)
+    {
+      ASSERT_TRUE(receivedEvent->PartitionKey);
+      EXPECT_EQ(partitionKey, receivedEvent->PartitionKey.Value());
     }
   }
 
