@@ -102,13 +102,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.EncryptionScope = m_clientConfiguration.EncryptionScope;
     if (options.ImmutabilityPolicy.HasValue())
     {
       protocolLayerOptions.ImmutabilityPolicyExpiry = options.ImmutabilityPolicy.Value().ExpiresOn;
@@ -164,13 +166,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfSequenceNumberLessThan
         = options.AccessConditions.IfSequenceNumberLessThan;
     protocolLayerOptions.IfSequenceNumberEqualTo = options.AccessConditions.IfSequenceNumberEqual;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.EncryptionScope = m_clientConfiguration.EncryptionScope;
 
     Nullable<Azure::Response<Models::UploadPagesResult>> responseNullable;
     if (options.TransactionalContentHash.HasValue())
@@ -190,7 +194,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       Azure::Nullable<TransferValidationOptions> validationOptions
           = options.ValidationOptions.HasValue() ? options.ValidationOptions
-                                                 : m_uploadValidationOptions;
+                                                 : m_clientConfiguration.UploadValidationOptions;
       if (validationOptions.HasValue()
           && validationOptions.Value().Algorithm != StorageChecksumAlgorithm::None)
       {
@@ -265,13 +269,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.SourceIfMatch = options.SourceAccessConditions.IfMatch;
     protocolLayerOptions.SourceIfNoneMatch = options.SourceAccessConditions.IfNoneMatch;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.EncryptionScope = m_clientConfiguration.EncryptionScope;
     if (!options.SourceAuthorization.empty())
     {
       protocolLayerOptions.CopySourceAuthorization = options.SourceAuthorization;
@@ -317,13 +323,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfSequenceNumberLessThan
         = options.AccessConditions.IfSequenceNumberLessThan;
     protocolLayerOptions.IfSequenceNumberEqualTo = options.AccessConditions.IfSequenceNumberEqual;
-    if (m_customerProvidedKey.HasValue())
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_customerProvidedKey.Value().Key;
-      protocolLayerOptions.EncryptionKeySha256 = m_customerProvidedKey.Value().KeyHash;
-      protocolLayerOptions.EncryptionAlgorithm = m_customerProvidedKey.Value().Algorithm.ToString();
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
-    protocolLayerOptions.EncryptionScope = m_encryptionScope;
+    protocolLayerOptions.EncryptionScope = m_clientConfiguration.EncryptionScope;
     return _detail::PageBlobClient::ClearPages(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
   }

@@ -132,12 +132,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   private:
     Azure::Core::Url m_serviceUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Nullable<bool> m_allowTrailingDot;
-    Nullable<bool> m_allowSourceTrailingDot;
-    Nullable<Models::ShareTokenIntent> m_shareTokenIntent;
-    /** @brief Upload TransferValidationOptions */
-    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
-    /** @brief Download TransferValidationOptions */
-    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
+    _detail::ShareClientConfiguration m_clientConfiguration;
   };
 }}}} // namespace Azure::Storage::Files::Shares

@@ -340,10 +340,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   private:
     Azure::Core::Url m_blobContainerUrl;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
-    Azure::Nullable<EncryptionKey> m_customerProvidedKey;
-    Azure::Nullable<std::string> m_encryptionScope;
-    Azure::Nullable<TransferValidationOptions> m_uploadValidationOptions;
-    Azure::Nullable<TransferValidationOptions> m_downloadValidationOptions;
+    _detail::BlobClientConfiguration m_clientConfiguration;
 
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchRequestPipeline;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_batchSubrequestPipeline;
