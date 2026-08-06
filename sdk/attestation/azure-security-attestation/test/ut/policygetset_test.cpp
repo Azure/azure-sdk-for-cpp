@@ -94,6 +94,11 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
           = InitClientOptions<AttestationAdministrationClientOptions>();
       options.TokenValidationOptions = GetTokenValidationOptions();
 
+      if (GetParam().TeeType == AttestationType::Pluton)
+      {
+        options.ApiVersion = "2026-03-11-preview";
+      }
+
       auto credential = GetTestCredential();
 
       return AttestationAdministrationClient::Create(m_endpoint, credential, options);

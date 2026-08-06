@@ -27,7 +27,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   };
 
   // cspell: words plutonattestation
-  static const std::string PlutonApiVersion = "2026-03-11preview";
+  static const std::string PlutonApiVersion = "2026-03-11-preview";
 
   class PlutonAttestationTests : public Azure::Core::Test::TestBase {
   public:
