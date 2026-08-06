@@ -128,6 +128,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     *this = m_shareFileClient->ListHandles(m_operationOptions, context);
   }
 
+  void GetFileRangeListPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    if (m_previousShareSnapshot.HasValue())
+    {
+      *this = m_shareFileClient->GetAllRangeListDiff(
+          m_previousShareSnapshot.Value(), m_operationOptions, context);
+    }
+    else
+    {
+      *this = m_shareFileClient->GetAllRangeList(m_operationOptions, context);
+    }
+  }
+
   void ForceCloseAllFileHandlesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;

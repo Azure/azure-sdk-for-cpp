@@ -8,7 +8,13 @@
 
 ### Bugs Fixed
 
+- [[#7257]](https://github.com/Azure/azure-sdk-for-cpp/issues/7257) Fixed the partition key on a batch envelope. `EventDataBatch::ToAmqpMessage` wrote the `x-opt-partition-key` value to the AMQP delivery-annotations section. The Event Hubs service ignores that section. The batch also built the envelope from the message before the code applied the partition key annotation. A batch with a partition key thus spread across all partitions. The partition key now goes in the message-annotations section, on the batch envelope and on each message in the batch. A batch that sets `EventDataBatchOptions::PartitionKey` now lands on one partition.
+
 ### Other Changes
+
+- Documented that `EventDataBatch::TryAdd` generates a message ID for a copy of the event when the caller did not set one. The caller's own `EventData` object does not change.
+- The partition key of the batch now replaces a `x-opt-partition-key` annotation that the caller set on a raw AMQP message. The partition key of the batch is the routing key, so the two values must agree.
+- The batch envelope now carries the message ID of the first message in the batch. This includes a message ID that `TryAdd` generated.
 
 ## 1.0.0-beta.13 (2026-06-17)
 

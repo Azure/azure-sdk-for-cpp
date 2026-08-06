@@ -130,6 +130,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.LegalHold = options.HasLegalHold;
 
+    Nullable<Azure::Response<Models::UploadBlockBlobResult>> responseNullable;
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
@@ -164,12 +165,24 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageException(
               "Structured message response without x-ms-structured-body header.");
         }
-        return response;
+        responseNullable = std::move(response);
       }
     }
 
-    return _detail::BlockBlobClient::Upload(
-        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    if (!responseNullable.HasValue())
+    {
+      responseNullable = _detail::BlockBlobClient::Upload(
+          *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    }
+    auto response = std::move(responseNullable.Value());
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::UploadBlockBlobFromResult> BlockBlobClient::UploadFrom(
@@ -423,8 +436,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
     }
 
-    return _detail::BlockBlobClient::UploadFromUri(
+    auto response = _detail::BlockBlobClient::UploadFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::StageBlockResult> BlockBlobClient::StageBlock(
@@ -444,6 +465,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     protocolLayerOptions.EncryptionScope = m_encryptionScope;
 
+    Nullable<Azure::Response<Models::StageBlockResult>> responseNullable;
     if (options.TransactionalContentHash.HasValue())
     {
       if (options.TransactionalContentHash.Value().Algorithm == HashAlgorithm::Md5)
@@ -478,11 +500,23 @@ namespace Azure { namespace Storage { namespace Blobs {
           throw StorageException(
               "Structured message response without x-ms-structured-body header.");
         }
-        return response;
+        responseNullable = std::move(response);
       }
     }
-    return _detail::BlockBlobClient::StageBlock(
-        *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    if (!responseNullable.HasValue())
+    {
+      responseNullable = _detail::BlockBlobClient::StageBlock(
+          *m_pipeline, m_blobUrl, content, protocolLayerOptions, context);
+    }
+    auto response = std::move(responseNullable.Value());
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::StageBlockFromUriResult> BlockBlobClient::StageBlockFromUri(
@@ -541,8 +575,16 @@ namespace Azure { namespace Storage { namespace Blobs {
           = options.SourceCustomerProvidedKey.Value().Algorithm.ToString();
     }
 
-    return _detail::BlockBlobClient::StageBlockFromUri(
+    auto response = _detail::BlockBlobClient::StageBlockFromUri(
         *m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    if (response.Value.AdditionalTransactionalContentHash.HasValue()
+        && !response.Value.TransactionalContentHash.HasValue())
+    {
+      response.Value.TransactionalContentHash
+          = std::move(response.Value.AdditionalTransactionalContentHash);
+      response.Value.AdditionalTransactionalContentHash.Reset();
+    }
+    return response;
   }
 
   Azure::Response<Models::CommitBlockListResult> BlockBlobClient::CommitBlockList(

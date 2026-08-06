@@ -328,6 +328,36 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Gets the list of valid ranges from the file within specified range, returning a
+     * pageable response.
+     *
+     * @note This is the pageable variant of #GetRangeList.
+     *
+     * @param options Optional parameters to get the range list of this file.
+     * @param context Context for cancelling long running operations.
+     * @return GetFileRangeListPagedResponse describing the valid ranges within the file.
+     */
+    GetFileRangeListPagedResponse GetAllRangeList(
+        const GetFileRangeListOptions& options = GetFileRangeListOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
+     * @brief Gets the list of valid ranges from the file within specified range that have changed
+     * since previousShareSnapshot was taken, returning a pageable response.
+     *
+     * @note This is the pageable variant of #GetRangeListDiff.
+     *
+     * @param previousShareSnapshot Specifies the previous snapshot.
+     * @param options Optional parameters to get the range list of this file.
+     * @param context Context for cancelling long running operations.
+     * @return GetFileRangeListPagedResponse describing the changed ranges within the file.
+     */
+    GetFileRangeListPagedResponse GetAllRangeListDiff(
+        std::string previousShareSnapshot,
+        const GetFileRangeListOptions& options = GetFileRangeListOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Returns a sequence of the open handles on a directory or a file. Enumerating the
      * handles may make multiple requests to the service while fetching all the values.
      * @param options Optional parameters to list this file's open handles.

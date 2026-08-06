@@ -967,6 +967,214 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(static_cast<int32_t>(fileSize / 2) - 1024, result.Ranges[1].Length.Value());
   }
 
+  TEST_F(FileShareClientTest, GetAllRangeListPaged)
+  {
+    // Create a file with several non-contiguous valid ranges so the service can split them
+    // across pages when PageSizeHint is small.
+    const int32_t rangeSize = 512;
+    const int32_t numRanges = 5;
+    const int64_t gap = 4 * 1024;
+    const int64_t fileSize = gap * numRanges;
+
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+    fileClient.Create(fileSize);
+
+    const std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
+    for (int i = 0; i < numRanges; ++i)
+    {
+      auto stream = Core::IO::MemoryBodyStream(rangeContent);
+      EXPECT_NO_THROW(fileClient.UploadRange(i * gap, stream));
+    }
+
+    // Baseline: GetAllRangeList without pagination returns all ranges in a single page.
+    {
+      size_t totalRanges = 0;
+      Files::Shares::GetFileRangeListOptions options;
+      size_t numPages = 0;
+      for (auto pagedResponse = fileClient.GetAllRangeList(options); pagedResponse.HasPage();
+           pagedResponse.MoveToNextPage())
+      {
+        totalRanges += pagedResponse.Ranges.size();
+        ++numPages;
+        EXPECT_EQ(pagedResponse.FileSize, fileSize);
+      }
+      EXPECT_EQ(totalRanges, static_cast<size_t>(numRanges));
+      EXPECT_GE(numPages, 1U);
+    }
+
+    // PageSizeHint: server should split the result into multiple pages of at most 2 ranges each,
+    // and the aggregate across pages should still equal the total.
+    {
+      Files::Shares::GetFileRangeListOptions options;
+      options.PageSizeHint = 2;
+      size_t aggregatedRanges = 0;
+      size_t numPages = 0;
+      std::string lastContinuationToken;
+      for (auto page = fileClient.GetAllRangeList(options); page.HasPage(); page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Ranges.size(), static_cast<size_t>(options.PageSizeHint.Value()));
+        aggregatedRanges += page.Ranges.size();
+        ++numPages;
+        if (page.NextPageToken.HasValue())
+        {
+          lastContinuationToken = page.NextPageToken.Value();
+          EXPECT_FALSE(lastContinuationToken.empty());
+        }
+      }
+      EXPECT_EQ(aggregatedRanges, numRanges);
+      EXPECT_GE(numPages, 3U);
+    }
+
+    // ContinuationToken: explicitly drive the second page using the token returned from the
+    // first, and verify it returns the remaining ranges without overlap.
+    {
+      Files::Shares::GetFileRangeListOptions firstPageOptions;
+      firstPageOptions.PageSizeHint = 2;
+      auto firstPage = fileClient.GetAllRangeList(firstPageOptions);
+      ASSERT_TRUE(firstPage.HasPage());
+      ASSERT_TRUE(firstPage.NextPageToken.HasValue());
+      EXPECT_FALSE(firstPage.NextPageToken.Value().empty());
+      EXPECT_LE(firstPage.Ranges.size(), 2U);
+
+      const auto firstPageContinuationToken = firstPage.NextPageToken.Value();
+
+      Files::Shares::GetFileRangeListOptions secondPageOptions;
+      secondPageOptions.ContinuationToken = firstPageContinuationToken;
+      auto secondPage = fileClient.GetAllRangeList(secondPageOptions);
+      ASSERT_TRUE(secondPage.HasPage());
+      EXPECT_GT(secondPage.Ranges.size(), 0U);
+
+      {
+        Files::Shares::GetFileRangeListOptions remainingOptions;
+        remainingOptions.ContinuationToken = firstPageContinuationToken;
+        Files::Shares::Models::GetFileRangeListResult remainingResult;
+        EXPECT_NO_THROW(remainingResult = fileClient.GetRangeList(remainingOptions).Value);
+        EXPECT_EQ(
+            remainingResult.Ranges.size(),
+            static_cast<size_t>(numRanges) - firstPage.Ranges.size());
+      }
+
+      {
+        Files::Shares::GetFileRangeListOptions partialOptions;
+        partialOptions.ContinuationToken = firstPageContinuationToken;
+        partialOptions.PageSizeHint = 1;
+        EXPECT_THROW(fileClient.GetRangeList(partialOptions), StorageException);
+      }
+    }
+  }
+
+  TEST_F(FileShareClientTest, GetAllRangeListDiffPaged)
+  {
+    // Create a file with several non-contiguous valid ranges, snapshot it, then add more
+    // non-contiguous ranges after the snapshot so the diff has multiple changed ranges that
+    // the service can split across pages when PageSizeHint is small.
+    const int32_t rangeSize = 512;
+    const int32_t numRanges = 5;
+    const int64_t gap = 4 * 1024;
+    const int64_t fileSize = gap * numRanges * 2;
+
+    auto fileClient = m_shareClient->GetRootDirectoryClient().GetFileClient(RandomString());
+    fileClient.Create(fileSize);
+
+    const std::vector<uint8_t> rangeContent = RandomBuffer(rangeSize);
+    for (int i = 0; i < numRanges; ++i)
+    {
+      auto stream = Core::IO::MemoryBodyStream(rangeContent);
+      EXPECT_NO_THROW(fileClient.UploadRange(i * gap, stream));
+    }
+
+    // sleep for 1 second to make sure the previous operation is finished
+    TestSleep(std::chrono::milliseconds(1000));
+    auto snapshot = m_shareClient->CreateSnapshot().Value.Snapshot;
+
+    // Upload another set of non-contiguous ranges after the snapshot; these are the changed
+    // ranges that GetAllRangeListDiff should return.
+    for (int i = 0; i < numRanges; ++i)
+    {
+      auto stream = Core::IO::MemoryBodyStream(rangeContent);
+      EXPECT_NO_THROW(fileClient.UploadRange(numRanges * gap + i * gap, stream));
+    }
+
+    // Baseline: GetAllRangeListDiff without pagination returns all changed ranges.
+    {
+      size_t totalRanges = 0;
+      Files::Shares::GetFileRangeListOptions options;
+      size_t numPages = 0;
+      for (auto pagedResponse = fileClient.GetAllRangeListDiff(snapshot, options);
+           pagedResponse.HasPage();
+           pagedResponse.MoveToNextPage())
+      {
+        totalRanges += pagedResponse.Ranges.size();
+        ++numPages;
+        EXPECT_EQ(pagedResponse.FileSize, fileSize);
+      }
+      EXPECT_EQ(totalRanges, static_cast<size_t>(numRanges));
+      EXPECT_GE(numPages, 1U);
+    }
+
+    // PageSizeHint: server should split the result into multiple pages of at most 2 ranges each,
+    // and the aggregate across pages should still equal the total.
+    {
+      Files::Shares::GetFileRangeListOptions options;
+      options.PageSizeHint = 2;
+      size_t aggregatedRanges = 0;
+      size_t numPages = 0;
+      std::string lastContinuationToken;
+      for (auto page = fileClient.GetAllRangeListDiff(snapshot, options); page.HasPage();
+           page.MoveToNextPage())
+      {
+        EXPECT_LE(page.Ranges.size(), static_cast<size_t>(options.PageSizeHint.Value()));
+        aggregatedRanges += page.Ranges.size();
+        ++numPages;
+        if (page.NextPageToken.HasValue())
+        {
+          lastContinuationToken = page.NextPageToken.Value();
+          EXPECT_FALSE(lastContinuationToken.empty());
+        }
+      }
+      EXPECT_EQ(aggregatedRanges, numRanges);
+      EXPECT_GE(numPages, 3U);
+    }
+
+    // ContinuationToken: explicitly drive the second page using the token returned from the
+    // first, and verify it returns the remaining ranges without overlap.
+    {
+      Files::Shares::GetFileRangeListOptions firstPageOptions;
+      firstPageOptions.PageSizeHint = 2;
+      auto firstPage = fileClient.GetAllRangeListDiff(snapshot, firstPageOptions);
+      ASSERT_TRUE(firstPage.HasPage());
+      ASSERT_TRUE(firstPage.NextPageToken.HasValue());
+      EXPECT_FALSE(firstPage.NextPageToken.Value().empty());
+      EXPECT_LE(firstPage.Ranges.size(), 2U);
+
+      const auto firstPageContinuationToken = firstPage.NextPageToken.Value();
+
+      Files::Shares::GetFileRangeListOptions secondPageOptions;
+      secondPageOptions.ContinuationToken = firstPageContinuationToken;
+      auto secondPage = fileClient.GetAllRangeListDiff(snapshot, secondPageOptions);
+      ASSERT_TRUE(secondPage.HasPage());
+      EXPECT_GT(secondPage.Ranges.size(), 0U);
+
+      {
+        Files::Shares::GetFileRangeListOptions remainingOptions;
+        remainingOptions.ContinuationToken = firstPageContinuationToken;
+        Files::Shares::Models::GetFileRangeListResult remainingResult;
+        EXPECT_NO_THROW(
+            remainingResult = fileClient.GetRangeListDiff(snapshot, remainingOptions).Value);
+        EXPECT_EQ(
+            remainingResult.Ranges.size(),
+            static_cast<size_t>(numRanges) - firstPage.Ranges.size());
+      }
+
+      {
+        Files::Shares::GetFileRangeListOptions partialOptions;
+        partialOptions.ContinuationToken = firstPageContinuationToken;
+        partialOptions.PageSizeHint = 1;
+        EXPECT_THROW(fileClient.GetRangeListDiff(snapshot, partialOptions), StorageException);
+      }
+    }
+  }
+
   TEST_F(FileShareFileClientTest, GetRangeListWithRange)
   {
     size_t rangeSize = 128;

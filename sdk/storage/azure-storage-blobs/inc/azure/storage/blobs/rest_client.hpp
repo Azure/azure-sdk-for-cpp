@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-06-06";
+    constexpr static const char* ApiVersion = "2026-10-06";
   } // namespace _detail
   namespace Models {
     /**
@@ -1370,6 +1370,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          */
         Nullable<bool> HasVersionsOnly;
         /**
+         * Indicates this is a blob or blob prefix.
+         */
+        Nullable<std::string> ResourceType;
+        /**
          * Size in bytes.
          */
         std::int64_t BlobSize = std::int64_t();
@@ -1422,29 +1426,16 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     namespace _detail {
       /**
-       * @brief An enumeration of blobs.
+       * @brief Response type for #Azure::Storage::Blobs::BlobContainerClient::ListBlobsByHierarchy.
        */
       struct ListBlobsResult final
       {
+        std::unique_ptr<Core::IO::BodyStream> BodyStream;
         std::string ServiceEndpoint;
         std::string BlobContainerName;
         std::string Prefix;
         Nullable<std::string> ContinuationToken;
-        /**
-         * Array of BlobItem.
-         */
-        std::vector<BlobItem> Items;
-      };
-      /**
-       * @brief An enumeration of blobs.
-       */
-      struct ListBlobsByHierarchyResult final
-      {
-        std::string ServiceEndpoint;
-        std::string BlobContainerName;
-        std::string Prefix;
         std::string Delimiter;
-        Nullable<std::string> ContinuationToken;
         /**
          * Array of BlobItem.
          */
@@ -1453,6 +1444,10 @@ namespace Azure { namespace Storage { namespace Blobs {
          * Array of BlobName.
          */
         std::vector<BlobName> BlobPrefixes;
+        /**
+         * The media type of the body of the response. For List Blobs this is 'application/xml'.
+         */
+        std::string ContentType;
       };
     } // namespace _detail
     /**
@@ -1599,6 +1594,26 @@ namespace Azure { namespace Storage { namespace Blobs {
        * Indicates whether the blob has a legal hold.
        */
       bool HasLegalHold = false;
+      /**
+       * The tier of page blob on a premium storage account or tier of block blob on blob storage or
+       * general purpose v2 account.
+       */
+      Nullable<Models::AccessTier> AccessTier;
+      /**
+       * For page blobs on a premium storage account only. If the access tier is not explicitly set
+       * on the blob, the tier is inferred based on its content length and this header will be
+       * returned with true value.
+       */
+      Nullable<bool> IsAccessTierInferred;
+      /**
+       * The time the tier was changed on the object. This is only returned if the tier on the block
+       * blob was ever set.
+       */
+      Nullable<DateTime> AccessTierChangedOn;
+      /**
+       * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
+       */
+      Nullable<Models::AccessTier> SmartAccessTier;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
@@ -2592,6 +2607,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
+      /**
        * The current sequence number for the page blob.
        */
       std::int64_t SequenceNumber = int64_t();
@@ -2654,6 +2675,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * header is returned so that the client can check for message content integrity.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The current sequence number for the page blob.
        */
@@ -2882,6 +2909,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
+      /**
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
        */
@@ -2929,6 +2962,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * header is returned so that the client can check for message content integrity.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * This response header is returned only for append operations. It returns the offset at which
        * the block was committed, in bytes.
@@ -2999,6 +3038,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
+      /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
        * this header indicates the blob version, and may be used in subsequent requests to access
        * this version of the blob.
@@ -3043,6 +3088,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
+      /**
        * A DateTime value returned by the service that uniquely identifies the blob. The value of
        * this header indicates the blob version, and may be used in subsequent requests to access
        * this version of the blob.
@@ -3077,6 +3128,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<ContentHash> TransactionalContentHash;
       /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
+      /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
        */
@@ -3104,6 +3161,12 @@ namespace Azure { namespace Storage { namespace Blobs {
        * specified in the request headers.
        */
       Nullable<ContentHash> TransactionalContentHash;
+      /**
+       * This header is returned so that the client can check for message content integrity. The
+       * value of this header is computed by the Blob service; it is not necessarily the same value
+       * specified in the request headers.
+       */
+      Nullable<ContentHash> AdditionalTransactionalContentHash;
       /**
        * The value of this header is set to true if the contents of the request are successfully
        * encrypted using the specified algorithm, and false otherwise.
@@ -3496,6 +3559,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
         Nullable<std::string> StartFrom;
+        Nullable<std::string> Accept;
+        Nullable<std::string> EndBefore;
       };
       static Response<Models::_detail::ListBlobsResult> ListBlobs(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3510,9 +3575,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         Nullable<std::int32_t> MaxResults;
         Nullable<Models::ListBlobsIncludeFlags> Include;
         Nullable<std::string> StartFrom;
+        Nullable<std::string> Accept;
+        Nullable<std::string> EndBefore;
         Nullable<std::string> ShowOnly;
       };
-      static Response<Models::_detail::ListBlobsByHierarchyResult> ListBlobsByHierarchy(
+      static Response<Models::_detail::ListBlobsResult> ListBlobsByHierarchy(
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const ListBlobContainerBlobsByHierarchyOptions& options,

@@ -380,7 +380,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -400,7 +400,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -696,7 +696,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "stats");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -796,7 +796,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             _internal::UrlEncodeQueryParameter(
                 ListBlobContainersIncludeFlagsToString(options.Include.Value())));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1088,7 +1088,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("restype", "service");
       request.GetUrl().AppendQueryParameter("comp", "userdelegationkey");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1211,7 +1211,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -1241,7 +1241,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("Content-Type", options.MultipartContentType);
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1262,7 +1262,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "blobs");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.Where.HasValue() && !options.Where.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -1418,7 +1418,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-blob-public-access", options.Access.ToString());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.DefaultEncryptionScope.HasValue()
           && !options.DefaultEncryptionScope.Value().empty())
       {
@@ -1455,7 +1455,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1533,7 +1533,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1567,7 +1567,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Modified-Since",
             options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1594,7 +1594,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1763,7 +1763,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -1786,7 +1786,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "undelete");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.DeletedContainerName.HasValue() && !options.DeletedContainerName.Value().empty())
       {
         request.SetHeader("x-ms-deleted-container-name", options.DeletedContainerName.Value());
@@ -1816,7 +1816,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "rename");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (!options.SourceContainerName.empty())
       {
         request.SetHeader("x-ms-source-container-name", options.SourceContainerName);
@@ -1850,7 +1850,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("Content-Type", options.MultipartContentType);
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -1872,7 +1872,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "blobs");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.Where.HasValue() && !options.Where.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -2042,7 +2042,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -2083,7 +2083,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2123,7 +2123,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2164,7 +2164,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -2209,7 +2209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
             "If-Unmodified-Since",
             options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2230,7 +2230,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         const ListBlobContainerBlobsOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url, false);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "list");
       if (options.Prefix.HasValue() && !options.Prefix.Value().empty())
@@ -2261,7 +2261,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.GetUrl().AppendQueryParameter(
             "startFrom", _internal::UrlEncodeQueryParameter(options.StartFrom.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
+      if (options.Accept.HasValue() && !options.Accept.Value().empty())
+      {
+        request.SetHeader("Accept", options.Accept.Value());
+      }
+      if (options.EndBefore.HasValue() && !options.EndBefore.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "endBefore", _internal::UrlEncodeQueryParameter(options.EndBefore.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -2269,657 +2278,18 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
       Models::_detail::ListBlobsResult response;
-      {
-        const auto& responseBody = pRawResponse->GetBody();
-        _internal::XmlReader reader(
-            reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
-        enum class XmlTagEnum
-        {
-          kUnknown,
-          kEnumerationResults,
-          kPrefix,
-          kNextMarker,
-          kBlobs,
-          kBlob,
-          kName,
-          kDeleted,
-          kSnapshot,
-          kVersionId,
-          kIsCurrentVersion,
-          kProperties,
-          kCreationTime,
-          kLastModified,
-          kEtag,
-          kXMsBlobSequenceNumber,
-          kLeaseStatus,
-          kLeaseState,
-          kLeaseDuration,
-          kCopyId,
-          kCopyStatus,
-          kCopySource,
-          kCopyProgress,
-          kCopyCompletionTime,
-          kCopyStatusDescription,
-          kServerEncrypted,
-          kIncrementalCopy,
-          kCopyDestinationSnapshot,
-          kDeletedTime,
-          kRemainingRetentionDays,
-          kAccessTier,
-          kAccessTierInferred,
-          kArchiveStatus,
-          kSmartAccessTier,
-          kCustomerProvidedKeySha256,
-          kEncryptionScope,
-          kAccessTierChangeTime,
-          kExpiryTime,
-          kSealed,
-          kRehydratePriority,
-          kLastAccessTime,
-          kLegalHold,
-          kContentType,
-          kContentEncoding,
-          kContentLanguage,
-          kContentMD5,
-          kContentDisposition,
-          kCacheControl,
-          kMetadata,
-          kTags,
-          kTagSet,
-          kTag,
-          kKey,
-          kValue,
-          kOrMetadata,
-          kImmutabilityPolicyUntilDate,
-          kImmutabilityPolicyMode,
-          kHasVersionsOnly,
-          kContentLength,
-          kBlobType,
-          kDeletionId,
-        };
-        const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
-            {"EnumerationResults", XmlTagEnum::kEnumerationResults},
-            {"Prefix", XmlTagEnum::kPrefix},
-            {"NextMarker", XmlTagEnum::kNextMarker},
-            {"Blobs", XmlTagEnum::kBlobs},
-            {"Blob", XmlTagEnum::kBlob},
-            {"Name", XmlTagEnum::kName},
-            {"Deleted", XmlTagEnum::kDeleted},
-            {"Snapshot", XmlTagEnum::kSnapshot},
-            {"VersionId", XmlTagEnum::kVersionId},
-            {"IsCurrentVersion", XmlTagEnum::kIsCurrentVersion},
-            {"Properties", XmlTagEnum::kProperties},
-            {"Creation-Time", XmlTagEnum::kCreationTime},
-            {"Last-Modified", XmlTagEnum::kLastModified},
-            {"Etag", XmlTagEnum::kEtag},
-            {"x-ms-blob-sequence-number", XmlTagEnum::kXMsBlobSequenceNumber},
-            {"LeaseStatus", XmlTagEnum::kLeaseStatus},
-            {"LeaseState", XmlTagEnum::kLeaseState},
-            {"LeaseDuration", XmlTagEnum::kLeaseDuration},
-            {"CopyId", XmlTagEnum::kCopyId},
-            {"CopyStatus", XmlTagEnum::kCopyStatus},
-            {"CopySource", XmlTagEnum::kCopySource},
-            {"CopyProgress", XmlTagEnum::kCopyProgress},
-            {"CopyCompletionTime", XmlTagEnum::kCopyCompletionTime},
-            {"CopyStatusDescription", XmlTagEnum::kCopyStatusDescription},
-            {"ServerEncrypted", XmlTagEnum::kServerEncrypted},
-            {"IncrementalCopy", XmlTagEnum::kIncrementalCopy},
-            {"CopyDestinationSnapshot", XmlTagEnum::kCopyDestinationSnapshot},
-            {"DeletedTime", XmlTagEnum::kDeletedTime},
-            {"RemainingRetentionDays", XmlTagEnum::kRemainingRetentionDays},
-            {"AccessTier", XmlTagEnum::kAccessTier},
-            {"AccessTierInferred", XmlTagEnum::kAccessTierInferred},
-            {"ArchiveStatus", XmlTagEnum::kArchiveStatus},
-            {"SmartAccessTier", XmlTagEnum::kSmartAccessTier},
-            {"CustomerProvidedKeySha256", XmlTagEnum::kCustomerProvidedKeySha256},
-            {"EncryptionScope", XmlTagEnum::kEncryptionScope},
-            {"AccessTierChangeTime", XmlTagEnum::kAccessTierChangeTime},
-            {"Expiry-Time", XmlTagEnum::kExpiryTime},
-            {"Sealed", XmlTagEnum::kSealed},
-            {"RehydratePriority", XmlTagEnum::kRehydratePriority},
-            {"LastAccessTime", XmlTagEnum::kLastAccessTime},
-            {"LegalHold", XmlTagEnum::kLegalHold},
-            {"Content-Type", XmlTagEnum::kContentType},
-            {"Content-Encoding", XmlTagEnum::kContentEncoding},
-            {"Content-Language", XmlTagEnum::kContentLanguage},
-            {"Content-MD5", XmlTagEnum::kContentMD5},
-            {"Content-Disposition", XmlTagEnum::kContentDisposition},
-            {"Cache-Control", XmlTagEnum::kCacheControl},
-            {"Metadata", XmlTagEnum::kMetadata},
-            {"Tags", XmlTagEnum::kTags},
-            {"TagSet", XmlTagEnum::kTagSet},
-            {"Tag", XmlTagEnum::kTag},
-            {"Key", XmlTagEnum::kKey},
-            {"Value", XmlTagEnum::kValue},
-            {"OrMetadata", XmlTagEnum::kOrMetadata},
-            {"ImmutabilityPolicyUntilDate", XmlTagEnum::kImmutabilityPolicyUntilDate},
-            {"ImmutabilityPolicyMode", XmlTagEnum::kImmutabilityPolicyMode},
-            {"HasVersionsOnly", XmlTagEnum::kHasVersionsOnly},
-            {"Content-Length", XmlTagEnum::kContentLength},
-            {"BlobType", XmlTagEnum::kBlobType},
-            {"DeletionId", XmlTagEnum::kDeletionId},
-        };
-        std::vector<XmlTagEnum> xmlPath;
-        Models::_detail::BlobItem vectorElement1;
-        std::string mapKey2;
-        std::string mapValue3;
-        std::string mapKey4;
-        std::string mapValue5;
-        Models::ObjectReplicationPolicy vectorElement6;
-        Models::ObjectReplicationRule vectorElement7;
-        while (true)
-        {
-          auto node = reader.Read();
-          if (node.Type == _internal::XmlNodeType::End)
-          {
-            break;
-          }
-          else if (node.Type == _internal::XmlNodeType::StartTag)
-          {
-            auto ite = XmlTagEnumMap.find(node.Name);
-            xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
-            if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              mapKey2 = node.Name;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement6.PolicyId = node.Name;
-              vectorElement7.RuleId = node.Name;
-            }
-            else if (
-                ((xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                  && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                  && xmlPath[3] == XmlTagEnum::kProperties
-                  && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyUntilDate)
-                 || (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                     && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                     && xmlPath[3] == XmlTagEnum::kProperties
-                     && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyMode))
-                && !vectorElement1.Details.ImmutabilityPolicy.HasValue())
-            {
-              vectorElement1.Details.ImmutabilityPolicy = Models::BlobImmutabilityPolicy();
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::Text)
-          {
-            if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kPrefix)
-            {
-              response.Prefix = node.Value;
-            }
-            else if (
-                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kNextMarker)
-            {
-              response.ContinuationToken = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kName)
-            {
-              vectorElement1.Name.Content = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kDeleted)
-            {
-              vectorElement1.IsDeleted = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kSnapshot)
-            {
-              vectorElement1.Snapshot = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kVersionId)
-            {
-              vectorElement1.VersionId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kIsCurrentVersion)
-            {
-              vectorElement1.IsCurrentVersion = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
-            {
-              vectorElement1.Details.CreatedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
-            {
-              vectorElement1.Details.LastModified
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
-            {
-              vectorElement1.Details.ETag = ETag(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kXMsBlobSequenceNumber)
-            {
-              vectorElement1.Details.SequenceNumber = std::stoll(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLeaseStatus)
-            {
-              vectorElement1.Details.LeaseStatus = Models::LeaseStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLeaseState)
-            {
-              vectorElement1.Details.LeaseState = Models::LeaseState(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kLeaseDuration)
-            {
-              vectorElement1.Details.LeaseDuration = Models::LeaseDurationType(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyId)
-            {
-              vectorElement1.Details.CopyId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyStatus)
-            {
-              vectorElement1.Details.CopyStatus = Models::CopyStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopySource)
-            {
-              vectorElement1.Details.CopySource = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyProgress)
-            {
-              vectorElement1.Details.CopyProgress = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyCompletionTime)
-            {
-              vectorElement1.Details.CopyCompletedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyStatusDescription)
-            {
-              vectorElement1.Details.CopyStatusDescription = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kServerEncrypted)
-            {
-              vectorElement1.Details.IsServerEncrypted = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kIncrementalCopy)
-            {
-              vectorElement1.Details.IsIncrementalCopy = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyDestinationSnapshot)
-            {
-              vectorElement1.Details.IncrementalCopyDestinationSnapshot = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kDeletedTime)
-            {
-              vectorElement1.Details.DeletedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kRemainingRetentionDays)
-            {
-              vectorElement1.Details.RemainingRetentionDays = std::stoi(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kAccessTier)
-            {
-              vectorElement1.Details.AccessTier = Models::AccessTier(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kAccessTierInferred)
-            {
-              vectorElement1.Details.IsAccessTierInferred = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kArchiveStatus)
-            {
-              vectorElement1.Details.ArchiveStatus = Models::ArchiveStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kSmartAccessTier)
-            {
-              vectorElement1.Details.SmartAccessTier = Models::AccessTier(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCustomerProvidedKeySha256)
-            {
-              vectorElement1.Details.EncryptionKeySha256 = Core::Convert::Base64Decode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kEncryptionScope)
-            {
-              vectorElement1.Details.EncryptionScope = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kAccessTierChangeTime)
-            {
-              vectorElement1.Details.AccessTierChangedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kExpiryTime)
-            {
-              vectorElement1.Details.ExpiresOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kSealed)
-            {
-              vectorElement1.Details.IsSealed = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kRehydratePriority)
-            {
-              vectorElement1.Details.RehydratePriority = Models::RehydratePriority(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
-            {
-              vectorElement1.Details.LastAccessedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLegalHold)
-            {
-              vectorElement1.Details.HasLegalHold = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kContentType)
-            {
-              vectorElement1.Details.HttpHeaders.ContentType = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentEncoding)
-            {
-              vectorElement1.Details.HttpHeaders.ContentEncoding = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentLanguage)
-            {
-              vectorElement1.Details.HttpHeaders.ContentLanguage = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kContentMD5)
-            {
-              vectorElement1.Details.HttpHeaders.ContentHash.Value
-                  = Core::Convert::Base64Decode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentDisposition)
-            {
-              vectorElement1.Details.HttpHeaders.ContentDisposition = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCacheControl)
-            {
-              vectorElement1.Details.HttpHeaders.CacheControl = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              mapValue3 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kKey)
-            {
-              mapKey4 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
-            {
-              mapValue5 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement7.ReplicationStatus = Models::ObjectReplicationStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyUntilDate)
-            {
-              vectorElement1.Details.ImmutabilityPolicy.Value().ExpiresOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyMode)
-            {
-              vectorElement1.Details.ImmutabilityPolicy.Value().PolicyMode
-                  = Models::BlobImmutabilityPolicyMode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kHasVersionsOnly)
-            {
-              vectorElement1.HasVersionsOnly = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentLength)
-            {
-              vectorElement1.BlobSize = std::stoll(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kBlobType)
-            {
-              vectorElement1.BlobType = Models::BlobType(node.Value);
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kDeletionId)
-            {
-              vectorElement1.DeletionId = node.Value;
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::Attribute)
-          {
-            if (xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && node.Name == "ServiceEndpoint")
-            {
-              response.ServiceEndpoint = node.Value;
-            }
-            else if (
-                xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && node.Name == "ContainerName")
-            {
-              response.BlobContainerName = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
-            {
-              vectorElement1.Name.Encoded = node.Value == std::string("true");
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::EndTag)
-          {
-            if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              vectorElement1.Details.Metadata[std::move(mapKey2)] = std::move(mapValue3);
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
-            {
-              vectorElement1.Details.Tags[std::move(mapKey4)] = std::move(mapValue5);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement6.Rules.push_back(std::move(vectorElement7));
-              vectorElement7 = Models::ObjectReplicationRule();
-              vectorElement1.Details.ObjectReplicationSourceProperties.push_back(
-                  std::move(vectorElement6));
-              vectorElement6 = Models::ObjectReplicationPolicy();
-            }
-            else if (
-                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob)
-            {
-              response.Items.push_back(std::move(vectorElement1));
-              vectorElement1 = Models::_detail::BlobItem();
-            }
-            xmlPath.pop_back();
-          }
-        }
-      }
+      response.BodyStream = pRawResponse->ExtractBodyStream();
+      response.ContentType = pRawResponse->GetHeaders().at("Content-Type");
       return Response<Models::_detail::ListBlobsResult>(
           std::move(response), std::move(pRawResponse));
     }
-    Response<Models::_detail::ListBlobsByHierarchyResult> BlobContainerClient::ListBlobsByHierarchy(
+    Response<Models::_detail::ListBlobsResult> BlobContainerClient::ListBlobsByHierarchy(
         Core::Http::_internal::HttpPipeline& pipeline,
         const Core::Url& url,
         const ListBlobContainerBlobsByHierarchyOptions& options,
         const Core::Context& context)
     {
-      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url, false);
       request.GetUrl().AppendQueryParameter("restype", "container");
       request.GetUrl().AppendQueryParameter("comp", "list");
       if (options.Prefix.HasValue() && !options.Prefix.Value().empty())
@@ -2955,7 +2325,16 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.GetUrl().AppendQueryParameter(
             "startFrom", _internal::UrlEncodeQueryParameter(options.StartFrom.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
+      if (options.Accept.HasValue() && !options.Accept.Value().empty())
+      {
+        request.SetHeader("Accept", options.Accept.Value());
+      }
+      if (options.EndBefore.HasValue() && !options.EndBefore.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "endBefore", _internal::UrlEncodeQueryParameter(options.EndBefore.Value()));
+      }
       if (options.ShowOnly.HasValue() && !options.ShowOnly.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -2967,682 +2346,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         throw StorageException::CreateFromResponse(std::move(pRawResponse));
       }
-      Models::_detail::ListBlobsByHierarchyResult response;
-      {
-        const auto& responseBody = pRawResponse->GetBody();
-        _internal::XmlReader reader(
-            reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
-        enum class XmlTagEnum
-        {
-          kUnknown,
-          kEnumerationResults,
-          kPrefix,
-          kDelimiter,
-          kNextMarker,
-          kBlobs,
-          kBlob,
-          kName,
-          kDeleted,
-          kSnapshot,
-          kVersionId,
-          kIsCurrentVersion,
-          kProperties,
-          kCreationTime,
-          kLastModified,
-          kEtag,
-          kXMsBlobSequenceNumber,
-          kLeaseStatus,
-          kLeaseState,
-          kLeaseDuration,
-          kCopyId,
-          kCopyStatus,
-          kCopySource,
-          kCopyProgress,
-          kCopyCompletionTime,
-          kCopyStatusDescription,
-          kServerEncrypted,
-          kIncrementalCopy,
-          kCopyDestinationSnapshot,
-          kDeletedTime,
-          kRemainingRetentionDays,
-          kAccessTier,
-          kAccessTierInferred,
-          kArchiveStatus,
-          kSmartAccessTier,
-          kCustomerProvidedKeySha256,
-          kEncryptionScope,
-          kAccessTierChangeTime,
-          kExpiryTime,
-          kSealed,
-          kRehydratePriority,
-          kLastAccessTime,
-          kLegalHold,
-          kContentType,
-          kContentEncoding,
-          kContentLanguage,
-          kContentMD5,
-          kContentDisposition,
-          kCacheControl,
-          kMetadata,
-          kTags,
-          kTagSet,
-          kTag,
-          kKey,
-          kValue,
-          kOrMetadata,
-          kImmutabilityPolicyUntilDate,
-          kImmutabilityPolicyMode,
-          kHasVersionsOnly,
-          kContentLength,
-          kBlobType,
-          kDeletionId,
-          kBlobPrefix,
-        };
-        const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
-            {"EnumerationResults", XmlTagEnum::kEnumerationResults},
-            {"Prefix", XmlTagEnum::kPrefix},
-            {"Delimiter", XmlTagEnum::kDelimiter},
-            {"NextMarker", XmlTagEnum::kNextMarker},
-            {"Blobs", XmlTagEnum::kBlobs},
-            {"Blob", XmlTagEnum::kBlob},
-            {"Name", XmlTagEnum::kName},
-            {"Deleted", XmlTagEnum::kDeleted},
-            {"Snapshot", XmlTagEnum::kSnapshot},
-            {"VersionId", XmlTagEnum::kVersionId},
-            {"IsCurrentVersion", XmlTagEnum::kIsCurrentVersion},
-            {"Properties", XmlTagEnum::kProperties},
-            {"Creation-Time", XmlTagEnum::kCreationTime},
-            {"Last-Modified", XmlTagEnum::kLastModified},
-            {"Etag", XmlTagEnum::kEtag},
-            {"x-ms-blob-sequence-number", XmlTagEnum::kXMsBlobSequenceNumber},
-            {"LeaseStatus", XmlTagEnum::kLeaseStatus},
-            {"LeaseState", XmlTagEnum::kLeaseState},
-            {"LeaseDuration", XmlTagEnum::kLeaseDuration},
-            {"CopyId", XmlTagEnum::kCopyId},
-            {"CopyStatus", XmlTagEnum::kCopyStatus},
-            {"CopySource", XmlTagEnum::kCopySource},
-            {"CopyProgress", XmlTagEnum::kCopyProgress},
-            {"CopyCompletionTime", XmlTagEnum::kCopyCompletionTime},
-            {"CopyStatusDescription", XmlTagEnum::kCopyStatusDescription},
-            {"ServerEncrypted", XmlTagEnum::kServerEncrypted},
-            {"IncrementalCopy", XmlTagEnum::kIncrementalCopy},
-            {"CopyDestinationSnapshot", XmlTagEnum::kCopyDestinationSnapshot},
-            {"DeletedTime", XmlTagEnum::kDeletedTime},
-            {"RemainingRetentionDays", XmlTagEnum::kRemainingRetentionDays},
-            {"AccessTier", XmlTagEnum::kAccessTier},
-            {"AccessTierInferred", XmlTagEnum::kAccessTierInferred},
-            {"ArchiveStatus", XmlTagEnum::kArchiveStatus},
-            {"SmartAccessTier", XmlTagEnum::kSmartAccessTier},
-            {"CustomerProvidedKeySha256", XmlTagEnum::kCustomerProvidedKeySha256},
-            {"EncryptionScope", XmlTagEnum::kEncryptionScope},
-            {"AccessTierChangeTime", XmlTagEnum::kAccessTierChangeTime},
-            {"Expiry-Time", XmlTagEnum::kExpiryTime},
-            {"Sealed", XmlTagEnum::kSealed},
-            {"RehydratePriority", XmlTagEnum::kRehydratePriority},
-            {"LastAccessTime", XmlTagEnum::kLastAccessTime},
-            {"LegalHold", XmlTagEnum::kLegalHold},
-            {"Content-Type", XmlTagEnum::kContentType},
-            {"Content-Encoding", XmlTagEnum::kContentEncoding},
-            {"Content-Language", XmlTagEnum::kContentLanguage},
-            {"Content-MD5", XmlTagEnum::kContentMD5},
-            {"Content-Disposition", XmlTagEnum::kContentDisposition},
-            {"Cache-Control", XmlTagEnum::kCacheControl},
-            {"Metadata", XmlTagEnum::kMetadata},
-            {"Tags", XmlTagEnum::kTags},
-            {"TagSet", XmlTagEnum::kTagSet},
-            {"Tag", XmlTagEnum::kTag},
-            {"Key", XmlTagEnum::kKey},
-            {"Value", XmlTagEnum::kValue},
-            {"OrMetadata", XmlTagEnum::kOrMetadata},
-            {"ImmutabilityPolicyUntilDate", XmlTagEnum::kImmutabilityPolicyUntilDate},
-            {"ImmutabilityPolicyMode", XmlTagEnum::kImmutabilityPolicyMode},
-            {"HasVersionsOnly", XmlTagEnum::kHasVersionsOnly},
-            {"Content-Length", XmlTagEnum::kContentLength},
-            {"BlobType", XmlTagEnum::kBlobType},
-            {"DeletionId", XmlTagEnum::kDeletionId},
-            {"BlobPrefix", XmlTagEnum::kBlobPrefix},
-        };
-        std::vector<XmlTagEnum> xmlPath;
-        Models::_detail::BlobItem vectorElement1;
-        std::string mapKey2;
-        std::string mapValue3;
-        std::string mapKey4;
-        std::string mapValue5;
-        Models::ObjectReplicationPolicy vectorElement6;
-        Models::ObjectReplicationRule vectorElement7;
-        Models::_detail::BlobName vectorElement8;
-        while (true)
-        {
-          auto node = reader.Read();
-          if (node.Type == _internal::XmlNodeType::End)
-          {
-            break;
-          }
-          else if (node.Type == _internal::XmlNodeType::StartTag)
-          {
-            auto ite = XmlTagEnumMap.find(node.Name);
-            xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
-            if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              mapKey2 = node.Name;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement6.PolicyId = node.Name;
-              vectorElement7.RuleId = node.Name;
-            }
-            else if (
-                ((xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                  && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                  && xmlPath[3] == XmlTagEnum::kProperties
-                  && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyUntilDate)
-                 || (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                     && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                     && xmlPath[3] == XmlTagEnum::kProperties
-                     && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyMode))
-                && !vectorElement1.Details.ImmutabilityPolicy.HasValue())
-            {
-              vectorElement1.Details.ImmutabilityPolicy = Models::BlobImmutabilityPolicy();
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::Text)
-          {
-            if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kPrefix)
-            {
-              response.Prefix = node.Value;
-            }
-            else if (
-                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kDelimiter)
-            {
-              response.Delimiter = node.Value;
-            }
-            else if (
-                xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kNextMarker)
-            {
-              response.ContinuationToken = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kName)
-            {
-              vectorElement1.Name.Content = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kDeleted)
-            {
-              vectorElement1.IsDeleted = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kSnapshot)
-            {
-              vectorElement1.Snapshot = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kVersionId)
-            {
-              vectorElement1.VersionId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kIsCurrentVersion)
-            {
-              vectorElement1.IsCurrentVersion = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
-            {
-              vectorElement1.Details.CreatedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
-            {
-              vectorElement1.Details.LastModified
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
-            {
-              vectorElement1.Details.ETag = ETag(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kXMsBlobSequenceNumber)
-            {
-              vectorElement1.Details.SequenceNumber = std::stoll(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLeaseStatus)
-            {
-              vectorElement1.Details.LeaseStatus = Models::LeaseStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLeaseState)
-            {
-              vectorElement1.Details.LeaseState = Models::LeaseState(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kLeaseDuration)
-            {
-              vectorElement1.Details.LeaseDuration = Models::LeaseDurationType(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyId)
-            {
-              vectorElement1.Details.CopyId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyStatus)
-            {
-              vectorElement1.Details.CopyStatus = Models::CopyStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopySource)
-            {
-              vectorElement1.Details.CopySource = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCopyProgress)
-            {
-              vectorElement1.Details.CopyProgress = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyCompletionTime)
-            {
-              vectorElement1.Details.CopyCompletedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyStatusDescription)
-            {
-              vectorElement1.Details.CopyStatusDescription = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kServerEncrypted)
-            {
-              vectorElement1.Details.IsServerEncrypted = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kIncrementalCopy)
-            {
-              vectorElement1.Details.IsIncrementalCopy = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCopyDestinationSnapshot)
-            {
-              vectorElement1.Details.IncrementalCopyDestinationSnapshot = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kDeletedTime)
-            {
-              vectorElement1.Details.DeletedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kRemainingRetentionDays)
-            {
-              vectorElement1.Details.RemainingRetentionDays = std::stoi(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kAccessTier)
-            {
-              vectorElement1.Details.AccessTier = Models::AccessTier(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kAccessTierInferred)
-            {
-              vectorElement1.Details.IsAccessTierInferred = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kArchiveStatus)
-            {
-              vectorElement1.Details.ArchiveStatus = Models::ArchiveStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kSmartAccessTier)
-            {
-              vectorElement1.Details.SmartAccessTier = Models::AccessTier(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kCustomerProvidedKeySha256)
-            {
-              vectorElement1.Details.EncryptionKeySha256 = Core::Convert::Base64Decode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kEncryptionScope)
-            {
-              vectorElement1.Details.EncryptionScope = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kAccessTierChangeTime)
-            {
-              vectorElement1.Details.AccessTierChangedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kExpiryTime)
-            {
-              vectorElement1.Details.ExpiresOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kSealed)
-            {
-              vectorElement1.Details.IsSealed = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kRehydratePriority)
-            {
-              vectorElement1.Details.RehydratePriority = Models::RehydratePriority(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
-            {
-              vectorElement1.Details.LastAccessedOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLegalHold)
-            {
-              vectorElement1.Details.HasLegalHold = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kContentType)
-            {
-              vectorElement1.Details.HttpHeaders.ContentType = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentEncoding)
-            {
-              vectorElement1.Details.HttpHeaders.ContentEncoding = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentLanguage)
-            {
-              vectorElement1.Details.HttpHeaders.ContentLanguage = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kContentMD5)
-            {
-              vectorElement1.Details.HttpHeaders.ContentHash.Value
-                  = Core::Convert::Base64Decode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentDisposition)
-            {
-              vectorElement1.Details.HttpHeaders.ContentDisposition = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCacheControl)
-            {
-              vectorElement1.Details.HttpHeaders.CacheControl = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              mapValue3 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kKey)
-            {
-              mapKey4 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
-            {
-              mapValue5 = node.Value;
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement7.ReplicationStatus = Models::ObjectReplicationStatus(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyUntilDate)
-            {
-              vectorElement1.Details.ImmutabilityPolicy.Value().ExpiresOn
-                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kImmutabilityPolicyMode)
-            {
-              vectorElement1.Details.ImmutabilityPolicy.Value().PolicyMode
-                  = Models::BlobImmutabilityPolicyMode(node.Value);
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kHasVersionsOnly)
-            {
-              vectorElement1.HasVersionsOnly = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties
-                && xmlPath[4] == XmlTagEnum::kContentLength)
-            {
-              vectorElement1.BlobSize = std::stoll(node.Value);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kBlobType)
-            {
-              vectorElement1.BlobType = Models::BlobType(node.Value);
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kDeletionId)
-            {
-              vectorElement1.DeletionId = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlobPrefix
-                && xmlPath[3] == XmlTagEnum::kName)
-            {
-              vectorElement8.Content = node.Value;
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::Attribute)
-          {
-            if (xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && node.Name == "ServiceEndpoint")
-            {
-              response.ServiceEndpoint = node.Value;
-            }
-            else if (
-                xmlPath.size() == 1 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && node.Name == "ContainerName")
-            {
-              response.BlobContainerName = node.Value;
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
-            {
-              vectorElement1.Name.Encoded = node.Value == std::string("true");
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlobPrefix
-                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
-            {
-              vectorElement8.Encoded = node.Value == std::string("true");
-            }
-          }
-          else if (node.Type == _internal::XmlNodeType::EndTag)
-          {
-            if (xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kMetadata)
-            {
-              vectorElement1.Details.Metadata[std::move(mapKey2)] = std::move(mapValue3);
-            }
-            else if (
-                xmlPath.size() == 7 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kTags && xmlPath[4] == XmlTagEnum::kTagSet
-                && xmlPath[5] == XmlTagEnum::kTag && xmlPath[6] == XmlTagEnum::kValue)
-            {
-              vectorElement1.Details.Tags[std::move(mapKey4)] = std::move(mapValue5);
-            }
-            else if (
-                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob
-                && xmlPath[3] == XmlTagEnum::kOrMetadata)
-            {
-              vectorElement6.Rules.push_back(std::move(vectorElement7));
-              vectorElement7 = Models::ObjectReplicationRule();
-              vectorElement1.Details.ObjectReplicationSourceProperties.push_back(
-                  std::move(vectorElement6));
-              vectorElement6 = Models::ObjectReplicationPolicy();
-            }
-            else if (
-                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlob)
-            {
-              response.Items.push_back(std::move(vectorElement1));
-              vectorElement1 = Models::_detail::BlobItem();
-            }
-            else if (
-                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
-                && xmlPath[1] == XmlTagEnum::kBlobs && xmlPath[2] == XmlTagEnum::kBlobPrefix
-                && xmlPath[3] == XmlTagEnum::kName)
-            {
-              response.BlobPrefixes.push_back(std::move(vectorElement8));
-              vectorElement8 = Models::_detail::BlobName();
-            }
-            xmlPath.pop_back();
-          }
-        }
-      }
-      return Response<Models::_detail::ListBlobsByHierarchyResult>(
+      Models::_detail::ListBlobsResult response;
+      response.BodyStream = pRawResponse->ExtractBodyStream();
+      response.ContentType = pRawResponse->GetHeaders().at("Content-Type");
+      return Response<Models::_detail::ListBlobsResult>(
           std::move(response), std::move(pRawResponse));
     }
     Response<Models::AccountInfo> BlobContainerClient::GetAccountInfo(
@@ -3654,7 +2361,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -3749,7 +2456,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.UserPrincipalName.HasValue())
       {
         request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
@@ -3925,6 +2632,27 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Details.HasLegalHold
             = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
       }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier") != 0)
+      {
+        response.Details.AccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-access-tier"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-inferred") != 0)
+      {
+        response.Details.IsAccessTierInferred
+            = pRawResponse->GetHeaders().at("x-ms-access-tier-inferred") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-change-time") != 0)
+      {
+        response.Details.AccessTierChangedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-access-tier-change-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-smart-access-tier") != 0)
+      {
+        response.Details.SmartAccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-smart-access-tier"));
+      }
       if (httpStatusCode == Core::Http::HttpStatusCode::Ok)
       {
         if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
@@ -4032,7 +2760,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.UserPrincipalName.HasValue())
       {
         request.SetHeader("x-ms-upn", options.UserPrincipalName.Value() ? "true" : "false");
@@ -4306,7 +3034,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.AccessTierIfModifiedSince.HasValue())
       {
         request.SetHeader(
@@ -4338,7 +3066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "undelete");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4357,7 +3085,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "expiry");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (!options.ExpiryOptions.ToString().empty())
       {
         request.SetHeader("x-ms-expiry-option", options.ExpiryOptions.ToString());
@@ -4445,7 +3173,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-blob-content-disposition", options.BlobContentDisposition);
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4478,7 +3206,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "immutabilityPolicies");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.IfUnmodifiedSince.HasValue())
       {
         request.SetHeader(
@@ -4521,7 +3249,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Delete, url);
       request.GetUrl().AppendQueryParameter("comp", "immutabilityPolicies");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4541,7 +3269,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "legalhold");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       request.SetHeader("x-ms-legal-hold", options.LegalHold ? "true" : "false");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -4613,7 +3341,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4688,7 +3416,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -4746,7 +3474,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4803,7 +3531,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4865,7 +3593,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -4923,7 +3651,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -5003,7 +3731,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -5110,7 +3838,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -5229,7 +3957,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.SourceContentMD5.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentMD5.Value()).empty())
       {
@@ -5344,7 +4072,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::NoContent)
@@ -5382,7 +4110,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-rehydrate-priority", options.RehydratePriority.Value().ToString());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -5411,7 +4139,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("restype", "account");
       request.GetUrl().AppendQueryParameter("comp", "properties");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       (void)options;
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
@@ -5709,7 +4437,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.EncryptionScope.HasValue() && !options.EncryptionScope.Value().empty())
       {
         request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
@@ -5758,7 +4486,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
       request.GetUrl().AppendQueryParameter("comp", "tags");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.Snapshot.HasValue() && !options.Snapshot.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -5905,7 +4633,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       request.SetHeader("Content-Type", "application/xml; charset=UTF-8");
       request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
       request.GetUrl().AppendQueryParameter("comp", "tags");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.VersionId.HasValue() && !options.VersionId.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -6056,7 +4784,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader(
             "x-ms-blob-sequence-number", std::to_string(options.BlobSequenceNumber.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -6202,7 +4930,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
       {
         request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
@@ -6238,10 +4966,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
       {
@@ -6338,7 +5066,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -6481,7 +5209,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
@@ -6535,10 +5263,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
       {
@@ -6604,7 +5332,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.Marker.HasValue() && !options.Marker.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -6782,7 +5510,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.Marker.HasValue() && !options.Marker.Value().empty())
       {
         request.GetUrl().AppendQueryParameter(
@@ -6962,7 +5690,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
       request.SetHeader("x-ms-blob-content-length", std::to_string(options.BlobContentLength));
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -7028,7 +5756,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         request.SetHeader(
             "x-ms-blob-sequence-number", std::to_string(options.BlobSequenceNumber.Value()));
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
@@ -7086,7 +5814,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-copy-source", options.CopySource);
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Accepted)
@@ -7197,7 +5925,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -7325,7 +6053,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
       {
         request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
@@ -7355,10 +6083,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.AppendOffset = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-append-offset"));
       response.CommittedBlockCount
@@ -7489,7 +6217,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
@@ -7537,10 +6265,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.AppendOffset = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-append-offset"));
       response.CommittedBlockCount
@@ -7567,7 +6295,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       auto request = Core::Http::Request(Core::Http::HttpMethod::Put, url);
       request.GetUrl().AppendQueryParameter("comp", "seal");
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
       {
         request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
@@ -7706,7 +6434,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -7762,6 +6490,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("Content-MD5"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       }
+      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
+      {
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -7776,13 +6511,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
-      {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
-            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       return Response<Models::UploadBlockBlobResult>(std::move(response), std::move(pRawResponse));
     }
@@ -7899,7 +6627,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-tags", options.SourceIfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.SourceContentMD5.HasValue()
           && !Core::Convert::Base64Encode(options.SourceContentMD5.Value()).empty())
       {
@@ -7977,6 +6705,13 @@ namespace Azure { namespace Storage { namespace Blobs {
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("Content-MD5"));
         response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Md5;
       }
+      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
+      {
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+      }
       if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
       {
         response.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
@@ -7991,13 +6726,6 @@ namespace Azure { namespace Storage { namespace Blobs {
       if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
       {
         response.EncryptionScope = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
-      }
-      if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
-      {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
-            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       return Response<Models::UploadBlockBlobFromUriResult>(
           std::move(response), std::move(pRawResponse));
@@ -8053,7 +6781,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-encryption-scope", options.EncryptionScope.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.StructuredBodyType.HasValue() && !options.StructuredBodyType.Value().empty())
       {
         request.SetHeader("x-ms-structured-body", options.StructuredBodyType.Value());
@@ -8080,10 +6808,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
@@ -8177,7 +6905,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-source-if-none-match", options.SourceIfNoneMatch.ToString());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.CopySourceAuthorization.HasValue()
           && !options.CopySourceAuthorization.Value().empty())
       {
@@ -8222,10 +6950,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       if (pRawResponse->GetHeaders().count("x-ms-content-crc64") != 0)
       {
-        response.TransactionalContentHash = ContentHash();
-        response.TransactionalContentHash.Value().Value
+        response.AdditionalTransactionalContentHash = ContentHash();
+        response.AdditionalTransactionalContentHash.Value().Value
             = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-crc64"));
-        response.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
+        response.AdditionalTransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
       }
       response.IsServerEncrypted
           = pRawResponse->GetHeaders().at("x-ms-request-server-encrypted") == std::string("true");
@@ -8366,7 +7094,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       if (options.BlobTagsString.HasValue() && !options.BlobTagsString.Value().empty())
       {
         request.SetHeader("x-ms-tags", options.BlobTagsString.Value());
@@ -8455,7 +7183,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         request.SetHeader("x-ms-if-tags", options.IfTags.Value());
       }
-      request.SetHeader("x-ms-version", "2026-06-06");
+      request.SetHeader("x-ms-version", "2026-10-06");
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Ok)

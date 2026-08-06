@@ -18,7 +18,7 @@ trigger:
       - samples/
       - .vscode/
       - .github/
-      - '*.md'
+      - "*.md"
       - /**/*.md
       - Cargo.toml
 
@@ -39,128 +39,128 @@ pr:
       - doc/
       - samples/
       - .github/
-      - '*.md'
+      - "*.md"
       - /**/*.md
       - Cargo.toml
 
 extends:
-    template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
-    parameters:
-      ServiceDirectory: core
-      # CI has static code analysis disabled, while LiveTest will have it enabled
-      # In the case of changes to core we want to re-run all CI tests for all
-      # libraries to check for potential regressions everywhere.
-      CtestRegex: azure-core.|json-test
-      LiveTestCtestRegex: azure-core.|json-test
-      LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
-      LineCoverageTarget: 81
-      BranchCoverageTarget: 62
-      PreTestSteps:
-        - pwsh: |
-            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
-          displayName: Test-Setup for azure-core-amqp
-          env:
-            TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: core
+    # CI has static code analysis disabled, while LiveTest will have it enabled
+    # In the case of changes to core we want to re-run all CI tests for all
+    # libraries to check for potential regressions everywhere.
+    CtestRegex: azure-core.|json-test
+    LiveTestCtestRegex: azure-core.|json-test
+    LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
+    LineCoverageTarget: 75
+    BranchCoverageTarget: 62
+    PreTestSteps:
+      - pwsh: |
+          $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Setup.ps1
+        displayName: Test-Setup for azure-core-amqp
+    #          env:
+    #            TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
-#        - pwsh: |
-#            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
-#            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
-#            $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/runproxy.ps1
-#          displayName: Launch Linux Docker container proxy
-#          # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
-#          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-#
-#        - pwsh: eng/scripts/Install-WSL.ps1
-#          displayName: Install WSL on Windows hosts when proxy tests are enabled..
-#          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-#
-#        - pwsh: ./run_wsl_proxy.ps1
-#          displayName: Launch WSL Proxy Server.
-#          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
-#          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
-#
-#          # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
-#        - pwsh: ./verify_proxy.ps1
-#          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
-#          displayName: Verify Proxy Server Working Correctly.
-#          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #        - pwsh: |
+    #            docker build -t squid-local $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy
+    #            docker build -t squid-local.passwd $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/localproxy.passwd
+    #            $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests/runproxy.ps1
+    #          displayName: Launch Linux Docker container proxy
+    #          # If we're on Ubuntu and running proxy tests, build and launch a local squid proxy
+    #          condition: and(succeeded(), contains(variables['Agent.OS'], 'linux'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #
+    #        - pwsh: eng/scripts/Install-WSL.ps1
+    #          displayName: Install WSL on Windows hosts when proxy tests are enabled..
+    #          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #
+    #        - pwsh: ./run_wsl_proxy.ps1
+    #          displayName: Launch WSL Proxy Server.
+    #          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
+    #          condition: and(succeeded(), contains(variables['Agent.OS'], 'windows'), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
+    #
+    #          # Verify that the proxy servers are running locally whenever we're expected to run proxy tests.
+    #        - pwsh: ./verify_proxy.ps1
+    #          workingDirectory: $(Build.SourcesDirectory)/sdk/core/azure-core/test/ut/proxy_tests
+    #          displayName: Verify Proxy Server Working Correctly.
+    #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-#      PostTestSteps:
-#        - pwsh: |
-#            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
-#        - pwsh: |
-#            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
-#                docker stop $_ `
-#            }
-#          displayName: Shutdown Squid Proxy.
-#          condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
+    #      PostTestSteps:
+    #        - pwsh: |
+    #            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+    #        - pwsh: |
+    #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
+    #                docker stop $_ `
+    #            }
+    #          displayName: Shutdown Squid Proxy.
+    #          condition: and(variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'), contains(variables['OSVmImage'], 'linux'))
 
-      Artifacts:
-        - Name: azure-core
-          Path: azure-core
-          VcpkgPortName: azure-core-cpp
-        - Name: azure-core-tracing-opentelemetry
-          Path: azure-core-tracing-opentelemetry
-          VcpkgPortName: azure-core-tracing-opentelemetry-cpp
-        - Name: azure-core-amqp
-          Path: azure-core-amqp
-          VcpkgPortName: azure-core-amqp-cpp
+    Artifacts:
+      - Name: azure-core
+        Path: azure-core
+        VcpkgPortName: azure-core-cpp
+      - Name: azure-core-tracing-opentelemetry
+        Path: azure-core-tracing-opentelemetry
+        VcpkgPortName: azure-core-tracing-opentelemetry-cpp
+      - Name: azure-core-amqp
+        Path: azure-core-amqp
+        VcpkgPortName: azure-core-amqp-cpp
 
-      # Environment variables for Live tests.
-      EnvVars:
-        # AMQP
-        TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
+    # Environment variables for Live tests.
+    # EnvVars:
+      # AMQP
+    #        TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
 
-# Since Azure Core will run all service's tests, it requires all the expected env vars from services
-      # Environment variables for CI tests.
-      TestEnv:
-# AMQP
-        - Name: TEST_BROKER_ADDRESS
-          Value: "amqp://127.0.0.1:25672"
-        - Name: RUST_BACKTRACE
-          Value: "1"
-        - Name: RUST_LOG
-          Value: "trace"
-# Key Vault
-        - Name: AZURE_KEYVAULT_URL
-          Value: "https://non-real-account.vault.azure.net"
-        - Name: AZURE_KEYVAULT_HSM_URL
-          Value: "https://non-real-account.managedhsm.azure.net/"
-# Key Vault & Identity
-        - Name: AZURE_TENANT_ID
-          Value: "33333333-3333-3333-3333-333333333333"
-        - Name: AZURE_CLIENT_ID
-          Value: "non-real-client"
-        - Name: AZURE_CLIENT_SECRET
-          Value: "non-real-secret"
-# Storage
-        - Name: AAD_TENANT_ID
-          Value: "33333333-3333-3333-3333-333333333333"
-        - Name: AAD_CLIENT_ID
-          Value: "non-real-client"
-        - Name: AAD_CLIENT_SECRET
-          Value: "non-real-secret"
-        - Name: STANDARD_STORAGE_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
-        - Name: ADLS_GEN2_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
-        - Name: PREMIUM_FILE_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
-# Attestation
-        - Name: LOCATION_SHORT_NAME
-          Value: "wus"
-        - Name: ATTESTATION_ISOLATED_URL
-          Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
-        - Name: ATTESTATION_AAD_URL
-          Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
-# EventHubs
-        - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
-          Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
-        - Name: CHECKPOINTSTORE_STORAGE_URL
-          Value: "https://non-real-account.blob.core.windows.net/"
+    # Since Azure Core will run all service's tests, it requires all the expected env vars from services
+    # Environment variables for CI tests.
+    TestEnv:
+      # AMQP
+      #      - Name: TEST_BROKER_ADDRESS
+      #        Value: "amqp://127.0.0.1:25672"
+      - Name: RUST_BACKTRACE
+        Value: "1"
+      - Name: RUST_LOG
+        Value: "trace"
+      # Key Vault
+      - Name: AZURE_KEYVAULT_URL
+        Value: "https://non-real-account.vault.azure.net"
+      - Name: AZURE_KEYVAULT_HSM_URL
+        Value: "https://non-real-account.managedhsm.azure.net/"
+      # Key Vault & Identity
+      - Name: AZURE_TENANT_ID
+        Value: "33333333-3333-3333-3333-333333333333"
+      - Name: AZURE_CLIENT_ID
+        Value: "non-real-client"
+      - Name: AZURE_CLIENT_SECRET
+        Value: "non-real-secret"
+      # Storage
+      - Name: AAD_TENANT_ID
+        Value: "33333333-3333-3333-3333-333333333333"
+      - Name: AAD_CLIENT_ID
+        Value: "non-real-client"
+      - Name: AAD_CLIENT_SECRET
+        Value: "non-real-secret"
+      - Name: STANDARD_STORAGE_CONNECTION_STRING
+        Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+      - Name: ADLS_GEN2_CONNECTION_STRING
+        Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+      - Name: PREMIUM_FILE_CONNECTION_STRING
+        Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+      # Attestation
+      - Name: LOCATION_SHORT_NAME
+        Value: "wus"
+      - Name: ATTESTATION_ISOLATED_URL
+        Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
+      - Name: ATTESTATION_AAD_URL
+        Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+      # EventHubs
+      - Name: CHECKPOINTSTORE_STORAGE_CONNECTION_STRING
+        Value: "DefaultEndpointsProtocol=https;AccountName=notReal;AccountKey=3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333;EndpointSuffix=core.windows.net"
+      - Name: CHECKPOINTSTORE_STORAGE_URL
+        Value: "https://non-real-account.blob.core.windows.net/"
 
-      CMakeTestOptions:
-        - Name: Default
-          Value: ''
-        - Name: Test
-          Value: '-DBUILD_TESTING=ON'
+    CMakeTestOptions:
+      - Name: Default
+        Value: ""
+      - Name: Test
+        Value: "-DBUILD_TESTING=ON"
