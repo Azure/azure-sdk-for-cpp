@@ -135,6 +135,10 @@ jobs:
           )
         displayName: Xcode version
 
+      # Must precede every NuGet consumer in this job: test-proxy, the coverage tools
+      # install, and any PreTestSteps that restore packages (e.g. TestAmqpBroker).
+      - template: /eng/pipelines/templates/steps/nuget-config.yml
+
       - template: /eng/common/pipelines/templates/steps/set-vcpkg-cache-vars.yml
 
       - script: vcpkg --version

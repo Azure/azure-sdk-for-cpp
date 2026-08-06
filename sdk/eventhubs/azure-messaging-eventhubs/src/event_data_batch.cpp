@@ -27,11 +27,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       throw std::runtime_error("No messages added to the batch.");
     }
 
-    // Make sure that the partition key in the message is the current partition key.
+    // Make sure that the partition key in the message is the current partition key. The Event Hubs
+    // service routes on the message annotations, so the partition key goes there. The envelope
+    // already carries this same value, because the batch builds the envelope from the annotated
+    // copy of the first message. This assignment keeps the two in agreement.
     if (!m_partitionKey.empty())
     {
-      returnValue.DeliveryAnnotations.emplace(
-          _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+      returnValue.MessageAnnotations[_detail::PartitionKeyAnnotation]
+          = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
     }
 
     std::vector<Azure::Core::Amqp::Models::AmqpBinaryData> messageList;
@@ -57,10 +60,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           = Azure::Core::Amqp::Models::AmqpValue(Azure::Core::Uuid::CreateUuid().ToString());
     }
 
+    // Assign instead of emplace, so the batch partition key wins over a partition key annotation
+    // that the caller already put on the message.
     if (!m_partitionKey.empty())
     {
-      messageToSend.MessageAnnotations.emplace(
-          _detail::PartitionKeyAnnotation, Azure::Core::Amqp::Models::AmqpValue(m_partitionKey));
+      messageToSend.MessageAnnotations[_detail::PartitionKeyAnnotation]
+          = Azure::Core::Amqp::Models::AmqpValue(m_partitionKey);
     }
 
     auto serializedMessage = Azure::Core::Amqp::Models::AmqpMessage::Serialize(messageToSend);
@@ -70,8 +75,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     if (m_marshalledMessages.empty())
     {
       // The first message is special - we use its properties and annotations on the envelope for
-      // the batch message.
-      m_batchEnvelope = CreateBatchEnvelope(message);
+      // the batch message. Use the annotated copy, so the envelope also carries the partition key.
+      m_batchEnvelope = CreateBatchEnvelope(messageToSend);
       m_currentSize = serializedMessage.size();
     }
     auto actualPayloadSize = CalculateActualSizeForPayload(serializedMessage);
