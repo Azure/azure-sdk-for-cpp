@@ -10,6 +10,7 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -21,6 +22,32 @@ const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
 }
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  ProducerClient::ProducerClient(
+      std::string const& connectionString,
+      std::string const& eventHub,
+      Azure::Messaging::EventHubs::ProducerClientOptions options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
+  {
+    auto sasCredential
+        = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
+            connectionString, eventHub);
+
+    m_credential = sasCredential;
+
+    m_eventHub
+        = (sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath());
+    m_fullyQualifiedNamespace = sasCredential->GetHostName();
+    std::string serviceScheme = _detail::EventHubsServiceScheme;
+    if (sasCredential->UseDevelopmentEmulator())
+    {
+      serviceScheme = _detail::EventHubsServiceScheme_Emulator;
+      m_targetPort = Azure::Core::Amqp::_internal::AmqpPort; // When using the emulator, use the
+                                                             // non-TLS endpoint by default.
+    }
+    m_targetUrl = serviceScheme + m_fullyQualifiedNamespace + ":"
+        + std::to_string(sasCredential->GetPort()) + "/" + m_eventHub;
+  }
 
   ProducerClient::ProducerClient(
       std::string const& fullyQualifiedNamespace,

@@ -7,7 +7,7 @@ This repository contains samples for the Azure Event Hubs service.
 These samples are written with the assumption that the following environment
 variables have been set by the user:
 
-* EVENTHUBS_CONNECTION_STRING - The service connection string for the eventhubs instance.
+* EVENTHUB_CONNECTION_STRING - The service connection string for the eventhubs instance.
 * EVENTHUB_NAME - Name of the eventhubs instance to communicate with.
 * EVENTHUBS_HOST - Fully qualified domain name for the eventhubs instance.
 
@@ -32,7 +32,7 @@ az eventhubs namespace authorization-rule keys list --resource-group <your resou
 }
 ```
 
-The value of the `primaryConnectionString` property should be used as the `EVENTHUBS_CONNECTION_STRING` environment variable.
+The value of the `primaryConnectionString` property should be used as the `EVENTHUB_CONNECTION_STRING` environment variable.
 
 
 ## Samples

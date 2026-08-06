@@ -656,6 +656,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         case AuthType::Key:
           stringValue = "Key_LIVEONLY_";
           break;
+        case AuthType::ConnectionString:
+          stringValue = "ConnectionString_LIVEONLY_";
+          break;
         case AuthType::Emulator:
           stringValue = "Emulator";
           break;
@@ -666,7 +669,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   INSTANTIATE_TEST_SUITE_P(
       EventHubs,
       ProcessorTest,
-      ::testing::Values(AuthType::Key /*, AuthType::Emulator*/),
+      ::testing::Values(AuthType::Key, AuthType::ConnectionString /*, AuthType::Emulator*/),
       GetSuffix);
 
 }}}} // namespace Azure::Messaging::EventHubs::Test
