@@ -118,6 +118,39 @@ TEST(BearerTokenAuthenticationPolicy, InitialGet)
   }
 }
 
+TEST(BearerTokenAuthenticationPolicy, InitialGetUsesTokenType)
+{
+  using namespace std::chrono_literals;
+  auto accessToken = std::make_shared<AccessToken>();
+
+  std::vector<std::unique_ptr<HttpPolicy>> policies;
+
+  TokenRequestContext tokenRequestContext;
+  tokenRequestContext.Scopes = {"https://microsoft.com/.default"};
+
+  policies.emplace_back(std::make_unique<BearerTokenAuthenticationPolicy>(
+      std::make_shared<TestTokenCredential>(accessToken), tokenRequestContext));
+
+  policies.emplace_back(std::make_unique<TestTransportPolicy>());
+
+  HttpPipeline pipeline(policies);
+
+  {
+    Request request(HttpMethod::Get, Url("https://www.azure.com"));
+
+    *accessToken = {"ACCESSTOKEN1", std::chrono::system_clock::now() + 1h, "PoP"};
+
+    pipeline.Send(request, Context());
+
+    {
+      auto const headers = request.GetHeaders();
+      auto const authHeader = headers.find("authorization");
+      EXPECT_NE(authHeader, headers.end());
+      EXPECT_EQ(authHeader->second, "PoP ACCESSTOKEN1");
+    }
+  }
+}
+
 TEST(BearerTokenAuthenticationPolicy, ReuseWhileValid)
 {
   using namespace std::chrono_literals;

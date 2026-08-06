@@ -36,6 +36,12 @@ namespace Azure { namespace Core { namespace Credentials {
      *
      */
     DateTime ExpiresOn;
+
+    /**
+     * @brief Token type used in the Authorization header. Empty means "Bearer".
+     *
+     */
+    std::string TokenType;
   };
 
   /**
