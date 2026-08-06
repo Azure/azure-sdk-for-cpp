@@ -27,10 +27,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
         m_consumerClientOptions(options)
   {
-#if ENABLE_RUST_AMQP
-    throw std::runtime_error(
-        "Connection-string authentication is supported only with the uAMQP backend.");
-#else
     auto sasCredential
         = std::make_shared<ServiceBusSasConnectionStringCredential>(connectionString, eventHub);
 
@@ -59,7 +55,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     m_hostUrl = serviceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
         + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
-#endif
   }
 
   ConsumerClient::ConsumerClient(

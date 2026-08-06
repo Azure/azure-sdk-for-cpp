@@ -159,8 +159,6 @@ Samples: [create_consumer_aad.cpp](https://github.com/Azure/azure-sdk-for-cpp/bl
 
 Use a token credential for production applications when possible. A connection string is useful for local development, for the Event Hubs emulator, or when a shared access key is required.
 
-Connection-string authentication currently requires the uAMQP backend.
-
 A namespace connection string does not contain an `EntityPath`. Pass the Event Hub name separately:
 
 ```text

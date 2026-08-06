@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-// cspell: words amqpclaimsbasedsecurity
+// cspell: words amqpclaimsbasedsecurity sastoken servicebus
 #include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/common/runtime_context.hpp"
@@ -76,16 +76,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
-    // The Rust AMQP implementation only supports JWT tokens.
-    if (tokenType != CbsTokenType::Jwt)
+    // These are the same token type strings the uAMQP backend sends.
+    char const* tokenTypeString;
+    switch (tokenType)
     {
-      throw std::runtime_error("Unsupported Token Type");
+      case CbsTokenType::Jwt:
+        tokenTypeString = "jwt";
+        break;
+      case CbsTokenType::Sas:
+        tokenTypeString = "servicebus.windows.net:sastoken";
+        break;
+      default:
+        throw std::runtime_error("Unsupported CBS token type.");
     }
 
     if (amqpclaimsbasedsecurity_authorize_path(
             callContext.GetCallContext(),
             m_claimsBasedSecurity.get(),
             audience.c_str(),
+            tokenTypeString,
             token.c_str(),
             std::chrono::duration_cast<std::chrono::seconds>(expirationTime.time_since_epoch())
                 .count()))

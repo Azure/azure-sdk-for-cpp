@@ -32,10 +32,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
   {
-#if ENABLE_RUST_AMQP
-    throw std::runtime_error(
-        "Connection-string authentication is supported only with the uAMQP backend.");
-#else
     auto sasCredential
         = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
             connectionString, eventHub);
@@ -65,7 +61,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     m_targetUrl = serviceScheme + m_fullyQualifiedNamespace + ":" + std::to_string(m_targetPort)
         + "/" + m_eventHub;
-#endif
   }
 
   ProducerClient::ProducerClient(

@@ -35,7 +35,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     // cspell: enable
   } // namespace
 
-#if ENABLE_UAMQP
   TEST(ConnectionStringClientTest, ProducerUsesExplicitEventHubWithoutEntityPath)
   {
     ProducerClient client(ConnectionStringNoEntityPath, "eventhub1");
@@ -177,18 +176,5 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ASSERT_EQ(std::size_t{1}, events.size());
     EXPECT_EQ(expectedBody, events[0]->Body);
   }
-#elif ENABLE_RUST_AMQP
-  TEST(ConnectionStringClientTest, ProducerRejectsRustBackend)
-  {
-    EXPECT_THROW(
-        { ProducerClient client(ConnectionStringNoEntityPath, "eventhub1"); }, std::runtime_error);
-  }
-
-  TEST(ConnectionStringClientTest, ConsumerRejectsRustBackend)
-  {
-    EXPECT_THROW(
-        { ConsumerClient client(ConnectionStringNoEntityPath, "eventhub1"); }, std::runtime_error);
-  }
-#endif
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

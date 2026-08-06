@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // Licensed under the MIT License.
-// cspell: words amqp amqpclaimsbasedsecurity amqpsession
+// cspell: words amqp amqpclaimsbasedsecurity amqpsession sastoken servicebus
 
 use crate::{
     amqp::session::RustAmqpSession,
@@ -121,6 +121,7 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
     call_context: *mut RustCallContext,
     cbs: *mut RustAmqpClaimsBasedSecurity,
     path: *const c_char,
+    token_type: *const c_char,
     secret: *const c_char,
     expires_on: u64,
 ) -> i32 {
@@ -128,13 +129,28 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
     let cbs = &mut (*cbs).inner;
     let path = std::ffi::CStr::from_ptr(path).to_str().unwrap();
     let secret = std::ffi::CStr::from_ptr(secret).to_str().unwrap();
+
+    // A null token type keeps the previous behaviour, because the AMQP crate treats a
+    // missing token type as "jwt".
+    let token_type = if token_type.is_null() {
+        None
+    } else {
+        match std::ffi::CStr::from_ptr(token_type).to_str() {
+            Ok(value) => Some(value.to_string()),
+            Err(_) => {
+                call_context.set_error(crate::error_from_str("Token type is not valid UTF-8"));
+                return -1;
+            }
+        }
+    };
+
     let expires_on = UNIX_EPOCH + Duration::from_secs(expires_on);
     let expires_on = time::OffsetDateTime::from(expires_on);
 
     let result = call_context
         .runtime_context()
         .runtime()
-        .block_on(cbs.authorize_path(path.to_string(), None, secret.to_string(), expires_on));
+        .block_on(cbs.authorize_path(path.to_string(), token_type, secret.to_string(), expires_on));
     if let Err(e) = result {
         error!("Failed to authorize path: {:?}", e);
         call_context.set_error(Box::new(e));
@@ -189,10 +205,25 @@ mod tests {
             let secret = CString::new("test_secret").unwrap();
             let expires_on = UNIX_EPOCH + Duration::from_secs(1000);
 
+            // A null token type means the default, which the AMQP crate treats as "jwt".
             let result = amqpclaimsbasedsecurity_authorize_path(
                 call_context,
                 claims_based_security,
                 path.as_ptr(),
+                std::ptr::null(),
+                secret.as_ptr(),
+                expires_on.duration_since(UNIX_EPOCH).unwrap().as_secs(),
+            );
+
+            assert_eq!(result, 0);
+
+            // A SAS token uses an explicit token type.
+            let token_type = CString::new("servicebus.windows.net:sastoken").unwrap();
+            let result = amqpclaimsbasedsecurity_authorize_path(
+                call_context,
+                claims_based_security,
+                path.as_ptr(),
+                token_type.as_ptr(),
                 secret.as_ptr(),
                 expires_on.duration_since(UNIX_EPOCH).unwrap().as_secs(),
             );

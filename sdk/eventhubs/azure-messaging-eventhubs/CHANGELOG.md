@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- [[#7250]](https://github.com/Azure/azure-sdk-for-cpp/issues/7250) Restored connection-string authentication for `ProducerClient` and `ConsumerClient`, including support for the Event Hubs emulator when using the uAMQP backend.
+- [[#7250]](https://github.com/Azure/azure-sdk-for-cpp/issues/7250) Restored connection-string authentication for `ProducerClient` and `ConsumerClient`, including support for the Event Hubs emulator.
+- [[#7295]](https://github.com/Azure/azure-sdk-for-cpp/issues/7295) Connection-string authentication now works on the Rust AMQP backend. `ProducerClient` and `ConsumerClient` no longer throw when the caller passes a connection string.
 
 ### Breaking Changes
 
