@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `azure-deprecating` to the default list of allowed (unsanitized) HTTP response headers logged by the HTTP pipeline. See [Azure API guidelines: Deprecating Behavior Notification](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#deprecating-behavior-notification) for more information.
+- Added `azure-deprecating` to the default list of allowed (unsanitized) HTTP headers logged by the HTTP pipeline. See [Azure API guidelines: Deprecating Behavior Notification](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#deprecating-behavior-notification) for more information.
 
 ### Breaking Changes
 
