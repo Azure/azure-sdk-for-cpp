@@ -10,7 +10,13 @@
 
 ### Other Changes
 
-- [[#7229]](https://github.com/Azure/azure-sdk-for-cpp/pull/7229) Fixes for documentation generation with doxygen 1.16.
+- [[#7229]](https://github.com/Azure/azure-sdk-for-cpp/pull/7229) Fixes for documentation generation with doxygen 1.16. (A community contribution, courtesy of _[chewi](https://github.com/chewi)_)
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Security Key Vault better with their contributions to this release:
+
+- James Le Cuirot _([GitHub](https://github.com/chewi))_
 
 ## 4.5.0-beta.3 (2025-04-08)
 
