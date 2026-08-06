@@ -27,6 +27,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   };
 
   // cspell: words plutonattestation
+  static const std::string PlutonApiVersion = "2026-03-11preview";
+
   class PlutonAttestationTests : public Azure::Core::Test::TestBase {
   public:
     PlutonAttestationTests() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); };
@@ -47,7 +49,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
 
           // Set a minimal policy for Pluton attestation.
           m_adminClient->SetAttestationPolicy(
-              AttestationType::Tpm,
+              AttestationType::Pluton,
               "version=1.0; authorizationrules{=> permit();}; issuancerules{};");
         }
       }
@@ -59,7 +61,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         if (m_adminClient)
         {
-          m_adminClient->ResetAttestationPolicy(AttestationType::Tpm);
+          m_adminClient->ResetAttestationPolicy(AttestationType::Pluton);
         }
       }
 
@@ -105,6 +107,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     {
       // `InitClientOptions` takes care of setting up Record&Playback.
       AttestationClientOptions options = InitClientOptions<AttestationClientOptions>();
+      options.ApiVersion = PlutonApiVersion;
       options.TokenValidationOptions = GetTokenValidationOptions();
       auto credential = GetTestCredential();
       return AttestationClient::Create(GetInstanceUri(instanceType), credential, options);
@@ -115,6 +118,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       // `InitTestClient` takes care of setting up Record&Playback.
       AttestationAdministrationClientOptions options
           = InitClientOptions<AttestationAdministrationClientOptions>();
+      options.ApiVersion = PlutonApiVersion;
       options.TokenValidationOptions = GetTokenValidationOptions();
       auto credential = GetTestCredential();
       return AttestationAdministrationClient::Create(

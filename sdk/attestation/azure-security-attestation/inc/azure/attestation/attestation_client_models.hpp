@@ -61,6 +61,12 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationType Tpm;
+
+    /**
+     * @brief Specifies that this should apply to Pluton security processors.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const AttestationType Pluton;
   };
 
   /**
