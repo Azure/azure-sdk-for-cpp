@@ -35,7 +35,8 @@ Data Lake builds on Blob Storage primitives; maintain alignment where behavior i
 ## Data Lake-Specific Concepts to Preserve
 
 - **Hierarchical namespace semantics** (directories and path operations).
-- **Path operations:** create, rename (including relocation within a filesystem), delete.
+- **Path operations:** create, rename (including changing the parent path within a filesystem),
+  delete.
 - **File operations:** append + flush workflow (ordering and position semantics matter).
 - **Directory semantics:** recursive operations and path traversal/listing.
 - **Access control:** ACLs, permissions, owner/group where applicable.
@@ -68,7 +69,7 @@ Data Lake builds on Blob Storage primitives; maintain alignment where behavior i
 When modifying datalake code, prioritize tests for:
 
 1. Path create/delete/list operations (including continuation/paging).
-2. Rename/path-relocation behavior and conflict/condition handling.
+2. Rename behavior, including parent-path changes and conflict/condition handling.
 3. Append/flush positional correctness.
 4. ACL/permission operations (where touched).
 5. Deep directory recursive scenarios (if applicable).
@@ -98,7 +99,7 @@ Include edge cases for path encoding and unusual path names when relevant.
 
 Require/flag maintainer review for:
 
-- Rename/path-relocation semantic changes
+- Rename semantics, including parent-path changes
 - Append/flush logic changes
 - ACL/permission handling changes
 - Public API changes across path clients

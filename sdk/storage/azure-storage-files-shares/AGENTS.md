@@ -36,7 +36,7 @@ Preserve consistency of this hierarchy and existing naming conventions.
 - **SMB/NFS-relevant properties** (permissions/attributes/protocol-oriented metadata as applicable).
 - **Snapshots** of shares and snapshot-targeted operations.
 - **Quota/provisioning properties** and service/share-level settings.
-- **Rename semantics**, including relocation within the same share, where available.
+- **Rename semantics**, including changing the parent path within the same share, where available.
 
 ---
 
@@ -98,5 +98,5 @@ Flag for maintainer review when changes include:
 - Range write/read logic
 - Snapshot handling
 - Permission/attribute semantics
-- Rename/path-relocation semantics
+- Rename semantics, including parent-path changes
 - Public API changes
