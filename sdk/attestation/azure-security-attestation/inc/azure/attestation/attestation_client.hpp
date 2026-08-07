@@ -249,6 +249,7 @@ namespace Azure { namespace Security { namespace Attestation {
 
     /**
      * @brief Sends Pluton-based attestation data to the service.
+     * Pluton attestation is not currently supported for the default API version and can only be accessed via 2026-03-11-preview.
      *
      * @param dataToAttest - Attestation request data.
      * @param options - Options to the attestation request.
