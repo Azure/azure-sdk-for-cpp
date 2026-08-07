@@ -437,7 +437,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     explicit BlobClient(
         Azure::Core::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        _detail::BlobClientConfiguration clientConfiguration = _detail::BlobClientConfiguration())
+        _detail::BlobClientConfiguration clientConfiguration)
         : m_blobUrl(std::move(blobUrl)), m_pipeline(std::move(pipeline)),
           m_clientConfiguration(std::move(clientConfiguration))
     {

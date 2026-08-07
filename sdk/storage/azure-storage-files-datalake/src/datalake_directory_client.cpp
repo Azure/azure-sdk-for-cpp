@@ -142,7 +142,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobClientConfiguration.DownloadValidationOptions = std::move(downloadValidationOptions);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, blobClientConfiguration);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        std::move(blobClientConfiguration));
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
@@ -214,7 +216,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobClientConfiguration.DownloadValidationOptions = std::move(downloadValidationOptions);
 
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, blobClientConfiguration);
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
+        m_pipeline,
+        std::move(blobClientConfiguration));
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
