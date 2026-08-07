@@ -1,3 +1,4 @@
+<!-- cspell: ignore cfsclean -->
 # Azure SDK AMQP Library for C++
 
 Azure::Core::Amqp (`azure-core-amqp`) provides an implementation
@@ -126,4 +127,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [c_compiler]: https://visualstudio.microsoft.com/vs/features/cplusplus/
 [cloud_shell]: https://learn.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
-
