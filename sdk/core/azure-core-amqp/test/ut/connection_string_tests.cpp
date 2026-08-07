@@ -53,6 +53,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #if !defined(AZ_PLATFORM_MAC)
 #if ENABLE_UAMQP
         auto xport = credential.GetTransport();
+        (void)xport;
 #endif
 #endif // !defined(AZ_PLATFORM_MAC)
 

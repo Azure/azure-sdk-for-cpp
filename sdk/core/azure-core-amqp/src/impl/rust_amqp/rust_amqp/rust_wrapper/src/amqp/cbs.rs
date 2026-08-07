@@ -126,9 +126,29 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
     expires_on: u64,
 ) -> i32 {
     let call_context = call_context_from_ptr_mut(call_context);
-    let cbs = &mut (*cbs).inner;
-    let path = std::ffi::CStr::from_ptr(path).to_str().unwrap();
-    let secret = std::ffi::CStr::from_ptr(secret).to_str().unwrap();
+    if path.is_null() {
+        call_context.set_error(crate::error_from_str("Path must not be null"));
+        return -1;
+    }
+    let path = match std::ffi::CStr::from_ptr(path).to_str() {
+        Ok(value) => value,
+        Err(_) => {
+            call_context.set_error(crate::error_from_str("Path is not valid UTF-8"));
+            return -1;
+        }
+    };
+
+    if secret.is_null() {
+        call_context.set_error(crate::error_from_str("Secret must not be null"));
+        return -1;
+    }
+    let secret = match std::ffi::CStr::from_ptr(secret).to_str() {
+        Ok(value) => value,
+        Err(_) => {
+            call_context.set_error(crate::error_from_str("Secret is not valid UTF-8"));
+            return -1;
+        }
+    };
 
     // A null token type keeps the previous behaviour, because the AMQP crate treats a
     // missing token type as "jwt".
@@ -143,6 +163,12 @@ pub unsafe extern "C" fn amqpclaimsbasedsecurity_authorize_path(
             }
         }
     };
+
+    if cbs.is_null() {
+        call_context.set_error(crate::error_from_str("CBS must not be null"));
+        return -1;
+    }
+    let cbs = &mut (*cbs).inner;
 
     let expires_on = UNIX_EPOCH + Duration::from_secs(expires_on);
     let expires_on = time::OffsetDateTime::from(expires_on);
@@ -171,6 +197,36 @@ mod tests {
     use std::ffi::CString;
 
     use std::time::{Duration, UNIX_EPOCH};
+
+    #[test]
+    fn test_amqpclaimsbasedsecurity_authorize_path_rejects_invalid_utf8() {
+        unsafe {
+            let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
+            let call_context = Box::into_raw(Box::new(RustCallContext::new(runtime_context)));
+            let valid = CString::new("valid").unwrap();
+            let invalid = [0xff_u8, 0];
+
+            let result = amqpclaimsbasedsecurity_authorize_path(
+                call_context,
+                std::ptr::null_mut(),
+                invalid.as_ptr().cast(),
+                std::ptr::null(),
+                valid.as_ptr(),
+                0,
+            );
+            assert_eq!(result, -1);
+
+            let result = amqpclaimsbasedsecurity_authorize_path(
+                call_context,
+                std::ptr::null_mut(),
+                valid.as_ptr(),
+                std::ptr::null(),
+                invalid.as_ptr().cast(),
+                0,
+            );
+            assert_eq!(result, -1);
+        }
+    }
 
     #[test]
     fn test_amqpclaimsbasedsecurity_authorize_path_success() {

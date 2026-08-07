@@ -155,7 +155,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      *
      * @throw std::invalid_argument When eventHub conflicts with the connection string EntityPath,
      * or when neither value supplies an Event Hub name.
-     * @throw std::runtime_error When the client is built with the Rust AMQP backend.
      */
     ConsumerClient(
         std::string const& connectionString,

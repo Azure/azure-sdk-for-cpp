@@ -10,11 +10,9 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
-#include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
-#include <azure/core/url.hpp>
 
 #include <stdexcept>
 
@@ -32,35 +30,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
   {
-    auto sasCredential
-        = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
-            connectionString, eventHub);
-
-    m_credential = sasCredential;
-    m_eventHub = sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath();
-    if (m_eventHub.empty())
-    {
-      throw std::invalid_argument(
-          "An Event Hub name is required when the connection string does not contain EntityPath.");
-    }
-
-    m_fullyQualifiedNamespace = sasCredential->GetHostName();
-    m_targetPort = sasCredential->GetPort();
-
-    std::string serviceScheme = _detail::EventHubsServiceScheme;
-    if (sasCredential->UseDevelopmentEmulator())
-    {
-      serviceScheme = _detail::EventHubsServiceScheme_Emulator;
-      uint16_t const endpointPort{Azure::Core::Url(sasCredential->GetEndpoint()).GetPort()};
-      if (endpointPort == Azure::Core::Amqp::_internal::AmqpTlsPort)
-      {
-        throw std::invalid_argument("The Event Hubs emulator cannot use the TLS AMQP port 5671.");
-      }
-      m_targetPort = endpointPort == 0 ? Azure::Core::Amqp::_internal::AmqpPort : endpointPort;
-    }
-
-    m_targetUrl = serviceScheme + m_fullyQualifiedNamespace + ":" + std::to_string(m_targetPort)
-        + "/" + m_eventHub;
+    auto details
+        = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
+    m_credential = std::move(details.Credential);
+    m_eventHub = std::move(details.EventHub);
+    m_fullyQualifiedNamespace = std::move(details.FullyQualifiedNamespace);
+    m_targetPort = details.Port;
+    m_targetUrl = details.ServiceScheme + m_fullyQualifiedNamespace + ":"
+        + std::to_string(m_targetPort) + "/" + m_eventHub;
   }
 
   ProducerClient::ProducerClient(
