@@ -136,13 +136,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       blobOptions.Algorithm = m_clientConfiguration.DownloadValidationOptions.Value().Algorithm;
       downloadValidationOptions = blobOptions;
     }
+    Blobs::_detail::BlobClientConfiguration blobClientConfiguration;
+    blobClientConfiguration.CustomerProvidedKey = m_clientConfiguration.CustomerProvidedKey;
+    blobClientConfiguration.UploadValidationOptions = std::move(uploadValidationOptions);
+    blobClientConfiguration.DownloadValidationOptions = std::move(downloadValidationOptions);
+
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
-        m_pipeline,
-        m_clientConfiguration.CustomerProvidedKey,
-        Azure::Nullable<std::string>(),
-        std::move(uploadValidationOptions),
-        std::move(downloadValidationOptions));
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, blobClientConfiguration);
     auto renamedFileClient = DataLakeFileClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),
@@ -208,13 +208,13 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       downloadValidationOptions = blobOptions;
     }
 
+    Blobs::_detail::BlobClientConfiguration blobClientConfiguration;
+    blobClientConfiguration.CustomerProvidedKey = m_clientConfiguration.CustomerProvidedKey;
+    blobClientConfiguration.UploadValidationOptions = std::move(uploadValidationOptions);
+    blobClientConfiguration.DownloadValidationOptions = std::move(downloadValidationOptions);
+
     auto renamedBlobClient = Blobs::BlobClient(
-        _detail::GetBlobUrlFromUrl(destinationDfsUrl),
-        m_pipeline,
-        m_clientConfiguration.CustomerProvidedKey,
-        Azure::Nullable<std::string>(),
-        std::move(uploadValidationOptions),
-        std::move(downloadValidationOptions));
+        _detail::GetBlobUrlFromUrl(destinationDfsUrl), m_pipeline, blobClientConfiguration);
     auto renamedDirectoryClient = DataLakeDirectoryClient(
         std::move(destinationDfsUrl),
         std::move(renamedBlobClient),

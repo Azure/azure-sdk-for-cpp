@@ -1319,11 +1319,13 @@ namespace Azure { namespace Storage { namespace Blobs {
   BlobContainerClient::BlobContainerClient(
       const std::string& blobContainerUrl,
       const BlobClientOptions& options)
-      : m_blobContainerUrl(blobContainerUrl), m_customerProvidedKey(options.CustomerProvidedKey),
-        m_encryptionScope(options.EncryptionScope),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_blobContainerUrl(blobContainerUrl)
   {
+    m_clientConfiguration.CustomerProvidedKey = options.CustomerProvidedKey;
+    m_clientConfiguration.EncryptionScope = options.EncryptionScope;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perRetryPolicies;
     std::vector<std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy>> perOperationPolicies;
     perRetryPolicies.emplace_back(std::make_unique<_internal::StorageSwitchToSecondaryPolicy>(
@@ -1352,13 +1354,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   {
     auto blobUrl = m_blobContainerUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
-    return BlobClient(
-        std::move(blobUrl),
-        m_pipeline,
-        m_customerProvidedKey,
-        m_encryptionScope,
-        m_uploadValidationOptions,
-        m_downloadValidationOptions);
+    return BlobClient(std::move(blobUrl), m_pipeline, m_clientConfiguration);
   }
 
   BlockBlobClient BlobContainerClient::GetBlockBlobClient(const std::string& blobName) const

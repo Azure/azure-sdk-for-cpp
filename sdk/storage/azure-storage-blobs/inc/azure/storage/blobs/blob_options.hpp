@@ -210,6 +210,31 @@ namespace Azure { namespace Storage { namespace Blobs {
     StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
   };
 
+  namespace _detail {
+    struct BlobClientConfiguration
+    {
+      /**
+       * @brief Holds the customer provided key used when making requests.
+       */
+      Azure::Nullable<EncryptionKey> CustomerProvidedKey;
+
+      /**
+       * @brief Holds the encryption scope used when making requests.
+       */
+      Azure::Nullable<std::string> EncryptionScope;
+
+      /**
+       * @brief Upload TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+      /**
+       * @brief Download TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+    };
+  } // namespace _detail
+
   /**
    * @brief Client options used to initialize all kinds of blob clients.
    */

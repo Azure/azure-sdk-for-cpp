@@ -271,6 +271,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     StorageChecksumAlgorithm Algorithm = StorageChecksumAlgorithm::None;
   };
 
+  namespace _detail {
+    struct ShareClientConfiguration
+    {
+      /**
+       * If set to true, trailing dot (.) will be allowed to suffix directory and file names.
+       * If false, the trailing dot will be trimmed.
+       * Supported by x-ms-version 2022-11-02 and above.
+       */
+      Nullable<bool> AllowTrailingDot;
+
+      /**
+       * If set to true, trailing dot (.) will be allowed to source file names.
+       * If false, the trailing dot will be trimmed.
+       * Supported by x-ms-version 2022-11-02 and above.
+       */
+      Nullable<bool> AllowSourceTrailingDot;
+
+      /**
+       * Share Token Intent. For use with token authentication. Used to indicate the intent of the
+       * request. This is currently required when using token authentication.
+       */
+      Nullable<Models::ShareTokenIntent> ShareTokenIntent;
+
+      /**
+       * @brief Upload TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> UploadValidationOptions;
+
+      /**
+       * @brief Download TransferValidationOptions
+       */
+      Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+    };
+  } // namespace _detail
+
   /**
    * @brief Client options used to initialize share clients.
    */
