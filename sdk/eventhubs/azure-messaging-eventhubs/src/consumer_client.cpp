@@ -8,12 +8,32 @@
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <stdexcept>
+
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 using namespace Azure::Messaging::EventHubs::Models;
 using namespace Azure::Core::Amqp::_internal;
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  ConsumerClient::ConsumerClient(
+      std::string const& connectionString,
+      std::string const& eventHub,
+      std::string const& consumerGroup,
+      ConsumerClientOptions const& options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
+        m_consumerClientOptions(options)
+  {
+    auto details
+        = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
+    m_credential = std::move(details.Credential);
+    m_eventHub = std::move(details.EventHub);
+    m_fullyQualifiedNamespace = std::move(details.FullyQualifiedNamespace);
+    m_targetPort = details.Port;
+    m_hostUrl = details.ServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
+        + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
+  }
 
   ConsumerClient::ConsumerClient(
       std::string const& fullyQualifiedNamespace,

@@ -12,11 +12,13 @@ add_executable (
   eventhubs-${samplename}
   ${samplename}.cpp)
 
-CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename})
+CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename} ${ARGN})
 
 target_link_libraries(eventhubs-${samplename} PRIVATE azure-messaging-eventhubs azure-identity)
 target_compile_definitions(eventhubs-${samplename} PRIVATE _azure_BUILDING_SAMPLES)
 endmacro()
 
+define_sample(create_consumer DISABLE_RUN)
 define_sample(create_consumer_aad)
+define_sample(create_producer DISABLE_RUN)
 define_sample(create_producer_aad)
