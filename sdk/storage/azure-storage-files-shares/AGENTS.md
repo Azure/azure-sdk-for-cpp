@@ -18,8 +18,11 @@ Typical client hierarchy includes:
 
 - **ShareServiceClient** (service/account scope)
 - **ShareClient** (share scope)
-- **Directory and File clients** (path/item scope)
-- Optional related clients for handles/permissions/snapshots depending on API surface
+- **ShareDirectoryClient** and **ShareFileClient** (path/item scope)
+- **ShareLeaseClient** (share/file lease operations)
+
+Handles, permissions, and snapshots are exposed through these clients rather than separate
+client types.
 
 Preserve consistency of this hierarchy and existing naming conventions.
 
@@ -33,7 +36,7 @@ Preserve consistency of this hierarchy and existing naming conventions.
 - **SMB/NFS-relevant properties** (permissions/attributes/protocol-oriented metadata as applicable).
 - **Snapshots** of shares and snapshot-targeted operations.
 - **Quota/provisioning properties** and service/share-level settings.
-- **Rename/move semantics** where available in API versions.
+- **Rename semantics**, including changing the parent path within the same share, where available.
 
 ---
 
@@ -95,5 +98,5 @@ Flag for maintainer review when changes include:
 - Range write/read logic
 - Snapshot handling
 - Permission/attribute semantics
-- Rename/move/path semantics
+- Rename semantics, including parent-path changes
 - Public API changes

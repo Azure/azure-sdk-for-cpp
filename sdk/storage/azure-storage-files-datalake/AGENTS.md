@@ -23,8 +23,10 @@ The Data Lake client code lives under `azure-storage-files-datalake` in this rep
 Typical hierarchy includes:
 
 - **DataLakeServiceClient** (account/service scope)
-- **FileSystemClient** (filesystem/container scope)
-- **Path clients** (file or directory scope), often with dedicated file/directory operations
+- **DataLakeFileSystemClient** (filesystem/container scope)
+- **DataLakePathClient** (common path operations), with **DataLakeFileClient** and
+  **DataLakeDirectoryClient** specializations
+- **DataLakeLeaseClient** (filesystem/path lease operations)
 
 Data Lake builds on Blob Storage primitives; maintain alignment where behavior intentionally overlaps.
 
@@ -33,7 +35,8 @@ Data Lake builds on Blob Storage primitives; maintain alignment where behavior i
 ## Data Lake-Specific Concepts to Preserve
 
 - **Hierarchical namespace semantics** (directories and path operations).
-- **Path operations:** create, rename, move, delete.
+- **Path operations:** create, rename (including changing the parent path within a filesystem),
+  delete.
 - **File operations:** append + flush workflow (ordering and position semantics matter).
 - **Directory semantics:** recursive operations and path traversal/listing.
 - **Access control:** ACLs, permissions, owner/group where applicable.
@@ -45,7 +48,7 @@ Data Lake builds on Blob Storage primitives; maintain alignment where behavior i
 ## Common Pitfalls (avoid)
 
 - Treating datalake path behavior as identical to flat blob behavior.
-- Breaking rename/move atomicity assumptions or destination-conditions handling.
+- Breaking rename atomicity assumptions or destination-conditions handling.
 - Mis-handling append/flush offsets and finalization semantics.
 - Regressing recursive delete/list behavior with deep trees.
 - Inconsistent URL/path encoding treatment for special characters.
@@ -66,7 +69,7 @@ Data Lake builds on Blob Storage primitives; maintain alignment where behavior i
 When modifying datalake code, prioritize tests for:
 
 1. Path create/delete/list operations (including continuation/paging).
-2. Rename/move behavior and conflict/condition handling.
+2. Rename behavior, including parent-path changes and conflict/condition handling.
 3. Append/flush positional correctness.
 4. ACL/permission operations (where touched).
 5. Deep directory recursive scenarios (if applicable).
@@ -96,7 +99,7 @@ Include edge cases for path encoding and unusual path names when relevant.
 
 Require/flag maintainer review for:
 
-- Rename/move semantic changes
+- Rename semantics, including parent-path changes
 - Append/flush logic changes
 - ACL/permission handling changes
 - Public API changes across path clients
