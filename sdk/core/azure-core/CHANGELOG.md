@@ -10,7 +10,7 @@
 
 ### Bugs Fixed
 
-- [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in Base64Decode. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
+- [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
 
 ### Other Changes
 
