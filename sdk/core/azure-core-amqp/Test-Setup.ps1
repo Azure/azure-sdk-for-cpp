@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell: ignore JOBID depsfile
+# cspell: ignore depsfile
 
-
-# Load common ES scripts
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
 
 if ($IsMacOS) {
@@ -11,74 +9,249 @@ if ($IsMacOS) {
   exit 0
 }
 
-if ($true) {
-  Write-Host "Disabling AMQP Test Broker temporarily"
-  exit 0
+function Invoke-RequiredCommand {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string] $Description,
+
+    [Parameter(Mandatory = $true)]
+    [string] $FilePath,
+
+    [Parameter(Mandatory = $true)]
+    [string[]] $ArgumentList
+  )
+
+  Write-Host "> $FilePath $($ArgumentList -join ' ')"
+  & $FilePath @ArgumentList
+  if ($LASTEXITCODE -ne 0) {
+    throw "$Description failed with exit code $LASTEXITCODE."
+  }
 }
 
-# Create the test binary *outside* the repo root to avoid polluting the repo.
-$WorkingDirectory = [System.IO.Path]::Combine($RepoRoot, "../TestArtifacts")
+function Write-BrokerLogs {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string] $StandardOutputPath,
 
-# Create the working directory if it does not exist.
-Write-Host "Using Working Directory $WorkingDirectory"
+    [Parameter(Mandatory = $true)]
+    [string] $StandardErrorPath
+  )
 
-if (-not (Test-Path $WorkingDirectory)) {
-  Write-Host "Working directory does not exist, creating working directory: $WorkingDirectory"
-  New-Item -ItemType Directory -Path $WorkingDirectory
+  foreach ($log in @(
+      @{ Name = "standard output"; Path = $StandardOutputPath },
+      @{ Name = "standard error"; Path = $StandardErrorPath }
+    )) {
+    Write-Host "Test broker $($log.Name):"
+    if (Test-Path $log.Path) {
+      $content = Get-Content -Path $log.Path -Raw
+      if ($content) {
+        Write-Host $content
+      }
+      else {
+        Write-Host "<empty>"
+      }
+    }
+    else {
+      Write-Host "<not created>"
+    }
+  }
 }
 
-Write-Host "Setting current directory to working directory: $WorkingDirectory"
-Push-Location -Path $WorkingDirectory
+function Test-TcpEndpoint {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string] $HostName,
 
-# Clone and build the Test Amqp Broker.
+    [Parameter(Mandatory = $true)]
+    [int] $Port,
+
+    [int] $TimeoutMilliseconds = 1000
+  )
+
+  $client = [System.Net.Sockets.TcpClient]::new()
+  try {
+    $connection = $client.ConnectAsync($HostName, $Port)
+    return $connection.Wait($TimeoutMilliseconds) -and $client.Connected
+  }
+  catch {
+    return $false
+  }
+  finally {
+    $client.Dispose()
+  }
+}
+
+function Wait-BrokerReady {
+  param(
+    [Parameter(Mandatory = $true)]
+    [System.Diagnostics.Process] $Process,
+
+    [Parameter(Mandatory = $true)]
+    [System.Uri] $Address,
+
+    [int] $TimeoutSeconds = 30
+  )
+
+  $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+  while ((Get-Date) -lt $deadline) {
+    $Process.Refresh()
+    if ($Process.HasExited) {
+      throw "Test broker exited before becoming ready with exit code $($Process.ExitCode)."
+    }
+
+    if (Test-TcpEndpoint -HostName $Address.DnsSafeHost -Port $Address.Port) {
+      Write-Host "Test broker is accepting connections on $($Address.DnsSafeHost):$($Address.Port)."
+      return
+    }
+
+    Start-Sleep -Milliseconds 500
+  }
+
+  throw "Test broker did not accept connections on $($Address.DnsSafeHost):$($Address.Port) within $TimeoutSeconds seconds."
+}
+
+$WorkingDirectory = [System.IO.Path]::GetFullPath(
+  [System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
+$repositoryDir = [System.IO.Path]::Combine($WorkingDirectory, "azure-amqp")
+$standardOutputPath = [System.IO.Path]::Combine($WorkingDirectory, "test-broker.log")
+$standardErrorPath = [System.IO.Path]::Combine($WorkingDirectory, "test-broker-error.log")
+$repositoryUrl = "https://github.com/Azure/azure-amqp.git"
+$repositoryHash = "239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a"
+
+$env:TEST_BROKER_ADDRESS = if ($env:TEST_BROKER_ADDRESS) {
+  $env:TEST_BROKER_ADDRESS
+}
+else {
+  "amqp://127.0.0.1:25672"
+}
+
+$brokerAddress = [System.Uri] $env:TEST_BROKER_ADDRESS
+if ($brokerAddress.Port -le 0) {
+  throw "TEST_BROKER_ADDRESS must include a valid port: $($env:TEST_BROKER_ADDRESS)"
+}
+
+Write-Host "Using working directory $WorkingDirectory"
+New-Item -ItemType Directory -Path $WorkingDirectory -Force | Out-Null
+
+if (Test-Path $repositoryDir) {
+  Write-Host "Removing previously cloned repository $repositoryDir"
+  Remove-Item $repositoryDir -Force -Recurse
+}
+Remove-Item $standardOutputPath, $standardErrorPath -Force -ErrorAction SilentlyContinue
+
+$process = $null
 try {
+  # AIDEV-NOTE: Keep the explicit fetch and checkout for agents whose Git does not support
+  # clone --revision.
+  Invoke-RequiredCommand `
+    -Description "Test broker clone" `
+    -FilePath "git" `
+    -ArgumentList @(
+      "clone",
+      "--no-checkout",
+      "--depth", "1",
+      $repositoryUrl,
+      $repositoryDir
+    )
 
-  $repositoryDir = [System.IO.Path]::Combine($WorkingDirectory, "azure-amqp")
-  if (Test-Path $repositoryDir) {
-    Write-Host "Removing previously cloned repository: $repositoryDir"
-    Remove-Item $repositoryDir -Force -Recurse | Out-Null
+  Invoke-RequiredCommand `
+    -Description "Test broker commit fetch" `
+    -FilePath "git" `
+    -ArgumentList @(
+      "-C", $repositoryDir,
+      "fetch",
+      "--depth", "1",
+      "origin",
+      $repositoryHash
+    )
+
+  Invoke-RequiredCommand `
+    -Description "Test broker commit checkout" `
+    -FilePath "git" `
+    -ArgumentList @(
+      "-C", $repositoryDir,
+      "checkout",
+      "--detach",
+      $repositoryHash
+    )
+
+  $actualHash = & git -C $repositoryDir rev-parse HEAD
+  $actualHash = "$actualHash".Trim()
+  if ($LASTEXITCODE -ne 0 -or $actualHash -ne $repositoryHash) {
+    throw "Test broker clone resolved to '$actualHash' instead of '$repositoryHash'."
   }
 
-  $repositoryUrl = "https://github.com/Azure/azure-amqp.git"
-  $repositoryHash = "111de654e170de3ab6cefe150043458c67b6660d"
-  $cloneCommand = "git clone $repositoryUrl --revision $repositoryHash --depth=1"
-  
-  Write-Host "Cloning repository from $repositoryUrl..."
-  Invoke-LoggedCommand $cloneCommand
+  Push-Location $repositoryDir
+  try {
+    Invoke-RequiredCommand `
+      -Description "Test broker restore" `
+      -FilePath "dotnet" `
+      -ArgumentList @(
+        "restore",
+        "./test/TestAmqpBroker/TestAmqpBroker.csproj",
+        "--configfile", "./nuget.cfsclean.config"
+      )
 
-  Set-Location -Path "./azure-amqp/test/TestAmqpBroker"
-
-  Invoke-LoggedCommand "dotnet build --framework net10.0"
-  if (-not $?) {
-    Write-Error "Failed to build TestAmqpBroker."
-    exit 1
+    Invoke-RequiredCommand `
+      -Description "Test broker build" `
+      -FilePath "dotnet" `
+      -ArgumentList @(
+        "build",
+        "./test/TestAmqpBroker/TestAmqpBroker.csproj",
+        "--configuration", "Debug",
+        "--framework", "net10.0",
+        "--no-restore"
+      )
+  }
+  finally {
+    Pop-Location
   }
 
-  Write-Host "Test broker built successfully."
+  $brokerDirectory = [System.IO.Path]::Combine(
+    $repositoryDir, "bin", "Debug", "TestAmqpBroker", "net10.0")
+  $brokerDll = [System.IO.Path]::Combine($brokerDirectory, "TestAmqpBroker.dll")
+  if (-not (Test-Path $brokerDll)) {
+    throw "Test broker build did not produce $brokerDll."
+  }
 
-  # now that the Test broker has been built, launch the broker on a local address.
-  $env:TEST_BROKER_ADDRESS = 'amqp://localhost:25672'
+  if (Test-TcpEndpoint -HostName $brokerAddress.DnsSafeHost -Port $brokerAddress.Port) {
+    throw "The test broker endpoint $($brokerAddress.DnsSafeHost):$($brokerAddress.Port) is already in use."
+  }
 
-  Write-Host "Starting test broker listening on ${env:TEST_BROKER_ADDRESS} ..."
-  
-  # Note that we cannot use `dotnet run -f` here because the TestAmqpBroker relies on args[0] being the broker address.
-  # If we use `dotnet run -f`, the first argument is the csproj file.
-  # Instead, we use `dotnet exec` to run the compiled DLL directly.
-  # This allows us to pass the broker address as the first argument.
-   Set-Location -Path $WorkingDirectory/azure-amqp/bin/Debug/TestAmqpBroker/net10.0
-  $process = Start-Process -FilePath "dotnet" -ArgumentList "exec", "./TestAmqpBroker.dll", "${env:TEST_BROKER_ADDRESS}", "/headless" -PassThru
+  Write-Host "Starting test broker on $($env:TEST_BROKER_ADDRESS)"
+  $process = Start-Process `
+    -FilePath "dotnet" `
+    -ArgumentList @(
+      "exec",
+      "./TestAmqpBroker.dll",
+      $env:TEST_BROKER_ADDRESS,
+      "/headless"
+    ) `
+    -WorkingDirectory $brokerDirectory `
+    -RedirectStandardOutput $standardOutputPath `
+    -RedirectStandardError $standardErrorPath `
+    -PassThru
+
+  if (-not $process) {
+    throw "Start-Process did not return a test broker process."
+  }
 
   $env:TEST_BROKER_JOBID = $process.Id
-
-  Write-Host "Waiting for test broker to start..."
-  Start-Sleep -Seconds 3
-
-  $process = Get-Process -Id $env:TEST_BROKER_JOBID -ErrorAction SilentlyContinue
-  if (-not $process -or $process.HasExited) {
-    Write-Host "Test broker failed to start."
-    exit 1
-  }
+  Write-Host "Test broker process ID: $($process.Id)"
+  Wait-BrokerReady -Process $process -Address $brokerAddress
 }
-finally {
-  Pop-Location
+catch {
+  Write-Error "Test broker setup failed: $_"
+  Write-BrokerLogs `
+    -StandardOutputPath $standardOutputPath `
+    -StandardErrorPath $standardErrorPath
+
+  if ($process) {
+    $process.Refresh()
+    if (-not $process.HasExited) {
+      Stop-Process -Id $process.Id -ErrorAction SilentlyContinue
+    }
+  }
+
+  throw
 }
