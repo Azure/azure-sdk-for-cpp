@@ -4,6 +4,7 @@
 #pragma once
 
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/storage/common/internal/constants.hpp>
 
 #include <memory>
 #include <string>
