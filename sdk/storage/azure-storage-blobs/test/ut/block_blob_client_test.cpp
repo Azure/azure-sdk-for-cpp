@@ -1891,17 +1891,13 @@ namespace Azure { namespace Storage { namespace Test {
       }
     };
 
-    auto testDownloadToFile = [&](int concurrency,
+    auto testDownloadToFile = [&](std::string tempFilename,
+                                  int concurrency,
                                   int64_t downloadSize,
                                   Azure::Nullable<int64_t> offset = {},
                                   Azure::Nullable<int64_t> length = {},
                                   Azure::Nullable<int64_t> initialChunkSize = {},
                                   Azure::Nullable<int64_t> chunkSize = {}) {
-      std::string tempFilename = RandomString() + "file" + std::to_string(concurrency);
-      if (offset)
-      {
-        tempFilename.append(std::to_string(offset.Value()));
-      }
       std::vector<uint8_t> expectedData = blobContent;
       int64_t blobSize = blobContent.size();
       int64_t actualDownloadSize = (std::min)(downloadSize, blobSize);
@@ -1972,10 +1968,20 @@ namespace Azure { namespace Storage { namespace Test {
       {
         int64_t offset = RandomInt(0, blobContent.size() - 1);
         int64_t length = RandomInt(1, 64_KB);
+        std::string tempFilename
+            = RandomString() + "file" + std::to_string(c) + std::to_string(offset);
         futures.emplace_back(std::async(
             std::launch::async, testDownloadToBuffer, c, blobSize, offset, length, 8_KB, 4_KB));
         futures.emplace_back(std::async(
-            std::launch::async, testDownloadToFile, c, blobSize, offset, length, 4_KB, 7_KB));
+            std::launch::async,
+            testDownloadToFile,
+            std::move(tempFilename),
+            c,
+            blobSize,
+            offset,
+            length,
+            4_KB,
+            7_KB));
       }
 
       // buffer not big enough
@@ -2581,9 +2587,9 @@ namespace Azure { namespace Storage { namespace Test {
       {
         for (int i = 0; i < 4; ++i)
         {
-          futures.emplace_back(std::async(std::launch::async, [&, c, contentSize]() {
-            auto blobClient
-                = m_blobContainerClient->GetBlockBlobClient("structured_multi_" + RandomString());
+          const std::string blobName = "structured_multi_" + RandomString();
+          futures.emplace_back(std::async(std::launch::async, [&, c, contentSize, blobName]() {
+            auto blobClient = m_blobContainerClient->GetBlockBlobClient(blobName);
 
             Blobs::UploadBlockBlobFromOptions uploadOptions;
             uploadOptions.ValidationOptions = validationOptions;

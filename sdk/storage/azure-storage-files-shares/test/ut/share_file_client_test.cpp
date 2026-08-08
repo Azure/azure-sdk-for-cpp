@@ -542,13 +542,13 @@ namespace Azure { namespace Storage { namespace Test {
             StorageException);
       }
     };
-    auto testDownloadToFile = [&](int concurrency,
+    auto testDownloadToFile = [&](std::string tempFilename,
+                                  int concurrency,
                                   int64_t downloadSize,
                                   Azure::Nullable<int64_t> offset = {},
                                   Azure::Nullable<int64_t> length = {},
                                   Azure::Nullable<int64_t> initialChunkSize = {},
                                   Azure::Nullable<int64_t> chunkSize = {}) {
-      std::string tempFilename = RandomString();
       std::vector<uint8_t> expectedData = fileContent;
       int64_t fileSize = fileContent.size();
       int64_t actualDownloadSize = (std::min)(downloadSize, fileSize);
@@ -620,10 +620,19 @@ namespace Azure { namespace Storage { namespace Test {
         int64_t offset = offsetDistribution(random_generator);
         std::uniform_int_distribution<int64_t> lengthDistribution(1, 64_KB);
         int64_t length = lengthDistribution(random_generator);
+        std::string tempFilename = RandomString();
         futures.emplace_back(std::async(
             std::launch::async, testDownloadToBuffer, c, fileSize, offset, length, 4_KB, 4_KB));
         futures.emplace_back(std::async(
-            std::launch::async, testDownloadToFile, c, fileSize, offset, length, 4_KB, 4_KB));
+            std::launch::async,
+            testDownloadToFile,
+            std::move(tempFilename),
+            c,
+            fileSize,
+            offset,
+            length,
+            4_KB,
+            4_KB));
       }
 
       // buffer not big enough
