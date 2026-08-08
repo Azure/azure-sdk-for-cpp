@@ -301,12 +301,14 @@ namespace Azure { namespace Storage { namespace Test {
     directoryClient.Create();
     // Concurrent create 5000+ files
     std::vector<std::future<void>> futures;
-    for (int i = 0; i < 50; ++i)
+    for (int workerIndex = 0; workerIndex < 50; ++workerIndex)
     {
-      futures.emplace_back(std::async(std::launch::async, [&]() {
-        for (int i = 0; i < 101; ++i)
+      futures.emplace_back(std::async(std::launch::async, [&, workerIndex]() {
+        for (int fileIndex = 0; fileIndex < 101; ++fileIndex)
         {
-          directoryClient.GetFileClient(RandomString()).Create();
+          directoryClient
+              .GetFileClient(std::to_string(workerIndex) + "-" + std::to_string(fileIndex))
+              .Create();
         }
       }));
     }
