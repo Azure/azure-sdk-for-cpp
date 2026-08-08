@@ -3,11 +3,16 @@
 
 #include "private/eventhubs_utilities.hpp"
 
+#include "private/eventhubs_constants.hpp"
+
+#include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/amqp/internal/models/amqp_error.hpp>
+#include <azure/core/url.hpp>
 
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 using namespace Azure::Core::Amqp::Models::_internal;
 
@@ -64,6 +69,42 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       return bytesToWrite;
     }
   } // namespace
+
+  ConnectionStringDetails EventHubsUtilities::CreateConnectionStringDetails(
+      std::string const& connectionString,
+      std::string const& eventHub)
+  {
+    auto sasCredential
+        = std::make_shared<Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential>(
+            connectionString, eventHub);
+
+    ConnectionStringDetails details;
+    details.Credential = sasCredential;
+    details.EventHub
+        = sasCredential->GetEntityPath().empty() ? eventHub : sasCredential->GetEntityPath();
+    if (details.EventHub.empty())
+    {
+      throw std::invalid_argument(
+          "An Event Hub name is required when the connection string does not contain EntityPath.");
+    }
+
+    details.FullyQualifiedNamespace = sasCredential->GetHostName();
+    details.Port = sasCredential->GetPort();
+    details.ServiceScheme = EventHubsServiceScheme;
+
+    if (sasCredential->UseDevelopmentEmulator())
+    {
+      details.ServiceScheme = EventHubsServiceScheme_Emulator;
+      std::uint16_t const endpointPort{Azure::Core::Url(sasCredential->GetEndpoint()).GetPort()};
+      if (endpointPort == Azure::Core::Amqp::_internal::AmqpTlsPort)
+      {
+        throw std::invalid_argument("The Event Hubs emulator cannot use the TLS AMQP port 5671.");
+      }
+      details.Port = endpointPort == 0 ? Azure::Core::Amqp::_internal::AmqpPort : endpointPort;
+    }
+
+    return details;
+  }
 
   // Log the vector `value` in a structured format, bytesPerLine at a time.
   void EventHubsUtilities::LogRawBuffer(std::ostream& os, std::vector<uint8_t> const& value)
