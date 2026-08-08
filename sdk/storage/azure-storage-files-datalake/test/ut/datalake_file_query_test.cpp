@@ -318,8 +318,6 @@ xx
 
   TEST_F(DataLakeFileClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    auto client = m_fileSystemClient->GetFileClient(RandomString());
-
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
     int recordCounter = 0;
@@ -333,16 +331,17 @@ xx
       jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
     }
 
-    client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
-
     Files::DataLake::QueryFileOptions queryOptions;
     queryOptions.InputTextConfiguration
         = Files::DataLake::FileQueryInputTextOptions::CreateCsvTextOptions();
     queryOptions.OutputTextConfiguration
         = Files::DataLake::FileQueryOutputTextOptions::CreateJsonTextOptions();
     constexpr int MaxQueryAttempts = 2;
+    const std::string fileNamePrefix = RandomString();
     for (int attempt = 1; attempt <= MaxQueryAttempts; ++attempt)
     {
+      auto client = m_fileSystemClient->GetFileClient(fileNamePrefix + std::to_string(attempt));
+      client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
       auto queryResponse = client.Query("SELECT * FROM BlobStorage;", queryOptions);
       try
       {
