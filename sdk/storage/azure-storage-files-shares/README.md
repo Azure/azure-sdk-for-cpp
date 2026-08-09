@@ -83,9 +83,14 @@ uses credentials from your development environment. After signing in with `az lo
 #include <azure/identity.hpp>
 #include <azure/storage/files/shares.hpp>
 
+#include <cstddef>
+#include <cstdint>
 #include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 using namespace Azure::Storage::Files::Shares;
 
@@ -133,7 +138,7 @@ The library supports Microsoft Entra ID credentials, connection strings, shared 
 and shared access signatures. Microsoft Entra ID with `DefaultAzureCredential` is recommended for
 getting started when the account and operation support OAuth authentication. Token-authenticated
 requests must specify `ShareTokenIntent`; the only currently supported value is
-`Models::ShareTokenIntent::Backup`. See the [sample][samples] for other authentication options.
+`Models::ShareTokenIntent::Backup`. See the [samples][samples] for other authentication options.
 
 ### Thread safety
 
@@ -150,6 +155,9 @@ instances is safe, even across threads.
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
+
+The examples below use the clients created in
+[Create and authenticate clients](#create-and-authenticate-clients).
 
 ### Create a share and upload a file
 

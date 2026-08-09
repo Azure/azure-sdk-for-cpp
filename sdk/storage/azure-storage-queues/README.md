@@ -84,6 +84,7 @@ uses credentials from your development environment. After signing in with `az lo
 #include <azure/storage/queues.hpp>
 
 #include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 
@@ -146,6 +147,9 @@ instances is safe, even across threads.
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
+
+The examples below use the `queueClient` created in
+[Create and authenticate clients](#create-and-authenticate-clients).
 
 ### Create a queue and send a message
 

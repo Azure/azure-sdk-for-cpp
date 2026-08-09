@@ -84,9 +84,13 @@ uses credentials from your development environment. After signing in with `az lo
 #include <azure/identity.hpp>
 #include <azure/storage/files/datalake.hpp>
 
+#include <cstdint>
 #include <cstdlib>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 using namespace Azure::Storage::Files::DataLake;
 
@@ -136,7 +140,7 @@ Blob. This client library requires a Storage account with hierarchical namespace
 
 The library supports Microsoft Entra ID credentials, connection strings, shared key credentials,
 and shared access signatures. Microsoft Entra ID with `DefaultAzureCredential` is recommended for
-getting started. See the [sample][samples] for other authentication options.
+getting started. See the [samples][samples] for other authentication options.
 
 ### Thread safety
 
@@ -153,6 +157,9 @@ instances is safe, even across threads.
 <!-- CLIENT COMMON BAR -->
 
 ## Examples
+
+The examples below use the clients created in
+[Create and authenticate clients](#create-and-authenticate-clients).
 
 ### Create a directory and file
 

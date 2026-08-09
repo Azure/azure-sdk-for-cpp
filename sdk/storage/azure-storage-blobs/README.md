@@ -155,6 +155,9 @@ instances is safe, even across threads.
 
 ## Examples
 
+The examples below use the clients created in
+[Create and authenticate clients](#create-and-authenticate-clients).
+
 ### Upload a blob
 
 Create the container if it does not exist, and then upload data to a block blob:
