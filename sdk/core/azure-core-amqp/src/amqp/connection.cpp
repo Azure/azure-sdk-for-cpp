@@ -258,13 +258,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       requestContext.Scopes = m_options.AuthenticationScopes;
       auto accessToken{GetCredential()->GetToken(requestContext, context)};
 
-      PutTokenForAudience(
-          session,
-          (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
-          audienceUrl,
-          accessToken.Token,
-          accessToken.ExpiresOn,
-          context);
+      {
+#if ENABLE_UAMQP
+        // Only one claims based security object may exist on this connection at
+        // a time. See m_cbsMutex.
+        std::lock_guard<std::mutex> cbsLock(m_cbsMutex);
+#endif
+        PutTokenForAudience(
+            session,
+            (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
+            audienceUrl,
+            accessToken.Token,
+            accessToken.ExpiresOn,
+            context);
+      }
 
       if (m_options.EnableTrace)
       {
@@ -295,6 +302,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 #if ENABLE_UAMQP
   // Start the refresh thread if it is not running yet. The caller holds the
   // token mutex.
+  //
+  // A thread that stopped on an error stays joinable, so this function does not
+  // start a second one. That is deliberate. The connection then refreshes each
+  // token when a caller uses it, which is the behavior the error log describes.
   void ConnectionImpl::StartTokenRefresh()
   {
     if (m_tokenRefreshStop)
@@ -332,6 +343,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         // The refresh thread is running this call, which means it released the
         // last reference to this connection. It cannot join itself.
+        //
+        // This path only happens when the connection is destroyed while it is
+        // still open, and the destructor stops the process on that condition a
+        // moment after this call returns. So the detached thread does not
+        // outlive the connection today. If those asserts ever go away, this
+        // thread comes back to a destroyed mutex, so give it a way to stop
+        // before you relax them.
         threadToJoin.detach();
       }
       else
@@ -470,8 +488,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       requestContext.Scopes = scopes;
       accessToken = credential->GetToken(requestContext, context);
 
-      PutTokenForAudience(
-          session, tokenType, audienceUrl, accessToken.Token, accessToken.ExpiresOn, context);
+      {
+        // Only one claims based security object may exist on this connection at
+        // a time, so this waits for a caller that authenticates right now. See
+        // m_cbsMutex. This mutex is released before the token mutex is taken
+        // again, which keeps the lock order acyclic.
+        std::lock_guard<std::mutex> cbsLock(m_cbsMutex);
+        PutTokenForAudience(
+            session, tokenType, audienceUrl, accessToken.Token, accessToken.ExpiresOn, context);
+      }
       refreshed = true;
     }
     catch (std::exception const& e)

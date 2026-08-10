@@ -173,6 +173,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
 
+    // Serializes the CBS operation itself. uAMQP names the CBS links after the
+    // node, so every claims based security object on this connection attaches a
+    // link called "$cbs-sender" and one called "$cbs-receiver". AMQP 1.0 section
+    // 2.6.1 requires a link name to be unique for one direction between two
+    // containers, so only one of these objects may exist at a time. The refresh
+    // thread does its work without the token mutex, so this mutex is what keeps
+    // the refresh and a caller apart.
+    //
+    // Lock order: a caller takes m_tokenMutex and then this mutex. The refresh
+    // thread takes this mutex only while it does not hold m_tokenMutex.
+    std::mutex m_cbsMutex;
+
     // The session that authenticated each audience. The pointer is weak, so the
     // refresh thread never keeps a session alive.
     std::map<std::string, std::weak_ptr<SessionImpl>> m_tokenSessions;

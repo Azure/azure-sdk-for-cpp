@@ -485,6 +485,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ASSERT_GT(countAfterRefresh, countAfterFirstSend)
         << "The connection did not replace the CBS token before the token expired.";
 
+    // The count rises when the refresh asks for the token, which is before the
+    // refresh puts that token on the wire. Wait for the put to finish. A put
+    // that fails drops the cached token, and the send below then has to ask for
+    // a new one, which fails this test. A put that takes longer than this wait
+    // to fail stays invisible to the test. The next refresh is about thirty
+    // seconds out, so this wait cannot let another refresh raise the count.
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+    ASSERT_EQ(credential->GetTokenCount(), countAfterRefresh)
+        << "A second refresh ran during the wait, so this test cannot judge the first one.";
+
     // Make sure the replacement reached the service. A refresh that failed makes
     // the connection drop the cached token, and then this send has to ask the
     // credential for another token. So a send that does not raise the count
