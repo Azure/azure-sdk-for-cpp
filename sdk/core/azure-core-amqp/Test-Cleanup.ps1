@@ -11,11 +11,13 @@ if ($IsMacOS) {
 
 $paths = Get-TestBrokerPaths -RepositoryRoot $RepoRoot
 
+# Stop the broker first. It holds the log files open while it runs, and a read of an open file
+# can fail on Windows. This step also runs after the tests, and it runs even when the tests
+# fail, so it must not turn a test failure into a cleanup failure. It always reports success.
+Stop-TestBroker -ProcessIdPath $paths.ProcessIdPath
+
 Write-BrokerLogs `
   -StandardOutputPath $paths.StandardOutputPath `
   -StandardErrorPath $paths.StandardErrorPath
 
-# This step runs after the tests, and it runs even when the tests fail. It must not turn a
-# test failure into a cleanup failure, so it always reports success.
-Stop-TestBroker -ProcessIdPath $paths.ProcessIdPath
 exit 0

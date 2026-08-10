@@ -71,13 +71,23 @@ function Test-BrokerPinReachable {
     return "unknown"
   }
 
+  # Test the raw field for absence FIRST. `$null -as [int]` gives 0, not $null, so a coercion
+  # on its own would turn a missing field into 0 and read as "reachable".
   if ($null -eq $comparison -or $null -eq $comparison.ahead_by) {
     Write-Host "The compare answer held no ahead_by field."
     return "unknown"
   }
 
-  Write-Host "Compare answer: status=$($comparison.status) ahead_by=$($comparison.ahead_by)"
-  if ($comparison.ahead_by -eq 0) {
+  # Then coerce. A non-numeric ahead_by must count as "the test did not run", and must not
+  # read as "not reachable" and fail a build.
+  $aheadBy = $comparison.ahead_by -as [int]
+  if ($null -eq $aheadBy) {
+    Write-Host "The compare answer held a non-numeric ahead_by field."
+    return "unknown"
+  }
+
+  Write-Host "Compare answer: status=$($comparison.status) ahead_by=$aheadBy"
+  if ($aheadBy -eq 0) {
     return "reachable"
   }
 
@@ -369,11 +379,11 @@ try {
   Wait-BrokerReady -Process $process -Address $brokerAddress
 }
 catch {
-  Write-Error "Test broker setup failed: $_"
-  Write-BrokerLogs `
-    -StandardOutputPath $standardOutputPath `
-    -StandardErrorPath $standardErrorPath
-
+  # Stop the broker and drop its record BEFORE anything that can terminate this block. The
+  # pipeline pwsh task sets $ErrorActionPreference to "stop", which makes Write-Error a
+  # terminating error, so a Write-Error here would skip every line after it and leave a broker
+  # running that no later step can find. `throw` at the end reports the original error, so no
+  # Write-Error is needed.
   if ($process) {
     $process.Refresh()
     if (-not $process.HasExited) {
@@ -384,6 +394,11 @@ catch {
   # This run owns no broker now, so the record must go. Otherwise Test-Cleanup.ps1 or the next
   # run reads a stale process ID.
   Remove-Item $processIdPath -Force -ErrorAction SilentlyContinue
+
+  # Read the logs after the stop, so the broker no longer holds the files open.
+  Write-BrokerLogs `
+    -StandardOutputPath $standardOutputPath `
+    -StandardErrorPath $standardErrorPath
 
   throw
 }
