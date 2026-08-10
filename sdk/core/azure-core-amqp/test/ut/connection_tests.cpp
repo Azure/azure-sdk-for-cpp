@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../../src/amqp/private/token_refresh.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
@@ -17,6 +18,7 @@
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <functional>
 #include <random>
 
@@ -30,6 +32,94 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     void SetUp() override {}
     void TearDown() override {}
   };
+
+  // Tests for the rules that decide when a cached CBS token is still good, and
+  // when the connection must replace it. These rules are pure functions, so they
+  // run on every platform and need no service.
+  class TestTokenRefresh : public testing::Test {
+  protected:
+    static Azure::Core::Credentials::AccessToken TokenExpiringIn(std::chrono::seconds lifetime)
+    {
+      Azure::Core::Credentials::AccessToken token;
+      token.Token = "TestToken";
+      token.ExpiresOn = std::chrono::system_clock::now() + lifetime;
+      return token;
+    }
+  };
+
+  TEST_F(TestTokenRefresh, CachedTokenIsUsableWhileItHasLifeLeft)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_TRUE(
+        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+            TokenExpiringIn(std::chrono::hours(1)), now));
+    EXPECT_TRUE(
+        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+            TokenExpiringIn(std::chrono::minutes(2)), now));
+  }
+
+  TEST_F(TestTokenRefresh, CachedTokenIsNotUsableNearOrAfterExpiry)
+  {
+    auto const now = std::chrono::system_clock::now();
+    // Inside the minimum lifetime that a caller may use.
+    EXPECT_FALSE(
+        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+            TokenExpiringIn(std::chrono::seconds(10)), now));
+    // Already expired.
+    EXPECT_FALSE(
+        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+            TokenExpiringIn(std::chrono::seconds(-30)), now));
+  }
+
+  TEST_F(TestTokenRefresh, RefreshIsDueOneBufferBeforeExpiry)
+  {
+    auto const now = std::chrono::system_clock::now();
+    // A normal token has a long life, so no refresh is due yet.
+    EXPECT_FALSE(
+        Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+            TokenExpiringIn(std::chrono::minutes(90)), now));
+    // Inside the buffer, so the refresh thread must replace the token.
+    EXPECT_TRUE(
+        Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+            TokenExpiringIn(std::chrono::minutes(6)), now));
+  }
+
+  // A credential can put any value in ExpiresOn, and the cast from
+  // Azure::DateTime to a system clock time point throws outside the range of
+  // that clock. A default constructed ExpiresOn is year 1. These rules run on
+  // the refresh thread, where an exception would end the process, so they must
+  // not throw for any value.
+  TEST_F(TestTokenRefresh, ExtremeExpiryValuesDoNotThrow)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    // A default constructed token reports year 1.
+    Azure::Core::Credentials::AccessToken defaultToken;
+    EXPECT_NO_THROW({
+      EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(defaultToken, now));
+      EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(defaultToken, now));
+    });
+
+    // A token that reports a year past the range of the system clock.
+    Azure::Core::Credentials::AccessToken farFutureToken;
+    farFutureToken.Token = "TestToken";
+    farFutureToken.ExpiresOn = Azure::DateTime(9999, 12, 31);
+    EXPECT_NO_THROW({
+      EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(farFutureToken, now));
+      EXPECT_FALSE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(farFutureToken, now));
+    });
+  }
+
+  // A token with a lifetime shorter than the buffer is due as soon as it
+  // arrives. The connection must still hand it to a caller, because refusing it
+  // would make every call authenticate again.
+  TEST_F(TestTokenRefresh, ShortLivedTokenIsDueButStillUsable)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const token = TokenExpiringIn(std::chrono::seconds(80));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(token, now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(token, now));
+  }
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestConnections, SimpleConnection)

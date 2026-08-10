@@ -8,14 +8,19 @@
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/network/transport.hpp"
 
+#include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/url.hpp>
 
 #include <azure_uamqp_c/connection.h>
 
 #include <chrono>
+#include <condition_variable>
+#include <map>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 
 #if defined(_MSC_VER)
 #define _azure_ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
@@ -132,6 +137,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audience,
         Azure::Core::Context const& context);
 
+    // Stop the token refresh thread. This is safe to call more than once, and
+    // the connection calls it from Close and from the destructor.
+    void StopTokenRefresh();
+
     using LockType = std::recursive_mutex;
 
     _azure_ACQUIRES_LOCK(m_amqpMutex) std::unique_lock<LockType> Lock()
@@ -163,6 +172,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::mutex m_tokenMutex;
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
     std::map<std::string, Credentials::AccessToken> m_tokenStore;
+
+    // The session that authenticated each audience. The pointer is weak, so the
+    // refresh thread never keeps a session alive.
+    std::map<std::string, std::weak_ptr<SessionImpl>> m_tokenSessions;
+    // The thread that replaces each cached token before the token expires.
+    std::thread m_tokenRefreshThread;
+    std::condition_variable m_tokenRefreshCv;
+    bool m_tokenRefreshStop{false};
+    // Cancelled on shutdown, to stop a CBS operation that is in flight.
+    Azure::Core::Context m_tokenRefreshContext;
+
+    void StartTokenRefresh();
+    void TokenRefreshThread();
+    void RefreshTokenForAudience(
+        std::string const& audienceUrl,
+        std::unique_lock<std::mutex>& lock);
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

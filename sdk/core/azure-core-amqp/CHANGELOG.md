@@ -11,6 +11,8 @@
 ### Bugs Fixed
 
 - A close that fails now leaves the object closed. `ManagementClient`, `MessageSender`, and `MessageReceiver` kept the open flag when the close threw, and the destructor then stopped the process. [[#7323]](https://github.com/Azure/azure-sdk-for-cpp/issues/7323)
+- The connection no longer returns a cached CBS token that is at or near its expiry. It authenticates the audience again instead. [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254)
+- The connection now replaces each cached CBS token before that token expires, so a client that runs for longer than one token lifetime keeps working. This refresh applies to the uAMQP transport. [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254)
 
 ### Other Changes
 

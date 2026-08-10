@@ -9,12 +9,15 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
+#include "private/token_refresh.hpp"
 #include "session_impl.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <chrono>
 #include <memory>
+#include <vector>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -127,6 +130,48 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 }}}} // namespace Azure::Core::Amqp::_internal
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+
+  namespace {
+    // Put a token for one audience on the wire. Both the first authentication
+    // and the proactive refresh use this function, so the two paths stay the
+    // same. The caller holds the token mutex.
+    void PutTokenForAudience(
+        std::shared_ptr<SessionImpl> session,
+        CbsTokenType tokenType,
+        std::string const& audienceUrl,
+        std::string const& token,
+        Azure::DateTime const& expiresOn,
+        Azure::Core::Context const& context)
+    {
+      auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
+      auto cbsOpenStatus = claimsBasedSecurity->Open(context);
+      if (cbsOpenStatus != CbsOpenResult::Ok)
+      {
+        throw std::runtime_error("Could not open Claims Based Security object.");
+      }
+
+      try
+      {
+        auto result
+            = claimsBasedSecurity->PutToken(tokenType, audienceUrl, token, expiresOn, context);
+        if (std::get<0>(result) != CbsOperationResult::Ok)
+        {
+          throw Azure::Core::Credentials::AuthenticationException(
+              "Could not authenticate client. Error Status: " + std::to_string(std::get<1>(result))
+              + " reason: " + std::get<2>(result));
+        }
+        Log::Stream(Logger::Level::Verbose) << "Close CBS object";
+        claimsBasedSecurity->Close(context);
+      }
+      catch (...)
+      {
+        // Ensure that the claims based security object is closed before we leave this scope.
+        claimsBasedSecurity->Close(context);
+        throw;
+      }
+    }
+  } // namespace
+
   bool ConnectionImpl::IsSasCredential() const
   {
     if (GetCredential())
@@ -172,14 +217,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       std::unique_lock<std::mutex> lock(m_tokenMutex);
       // If we have authenticated this audience, we're done and can return success.
+      // A cached token is only good while it has enough life left to use. A token
+      // that is at or near its expiry is discarded here, so the audience is
+      // authenticated again below.
       auto token = m_tokenStore.find(audienceUrl);
       if (token != m_tokenStore.end())
       {
+        if (IsCachedTokenUsable(token->second, std::chrono::system_clock::now()))
+        {
+          if (m_options.EnableTrace)
+          {
+            Log::Stream(Logger::Level::Verbose) << "Using cached token for " << audienceUrl;
+          }
+#if ENABLE_UAMQP
+          // Point the refresh thread at a session that is in use now. The
+          // session that first authenticated this audience can be gone while
+          // another session still uses the token.
+          m_tokenSessions[audienceUrl] = session;
+#endif
+          return token->second;
+        }
         if (m_options.EnableTrace)
         {
-          Log::Stream(Logger::Level::Verbose) << "Using cached token for " << audienceUrl;
+          Log::Stream(Logger::Level::Verbose) << "Cached token for " << audienceUrl
+                                              << " is at or near expiry, authenticating again.";
         }
-        return token->second;
+        m_tokenStore.erase(token);
       }
       // We've not authenticated this audience.
       // Authenticate it with the server
@@ -190,49 +253,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             << "No cached token for " << audienceUrl << ", Authenticating.";
       }
 
-      auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
-      auto cbsOpenStatus = claimsBasedSecurity->Open(context);
-      if (cbsOpenStatus != CbsOpenResult::Ok)
+      Credentials::TokenRequestContext requestContext;
+
+      requestContext.Scopes = m_options.AuthenticationScopes;
+      auto accessToken{GetCredential()->GetToken(requestContext, context)};
+
+      PutTokenForAudience(
+          session,
+          (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
+          audienceUrl,
+          accessToken.Token,
+          accessToken.ExpiresOn,
+          context);
+
+      if (m_options.EnableTrace)
       {
-        throw std::runtime_error("Could not open Claims Based Security object.");
+        Log::Stream(Logger::Level::Verbose)
+            << "Authenticated connection for audience " << audienceUrl << " successfully.";
       }
 
-      try
-      {
-        Credentials::TokenRequestContext requestContext;
-
-        requestContext.Scopes = m_options.AuthenticationScopes;
-        auto accessToken{GetCredential()->GetToken(requestContext, context)};
-
-        auto result = claimsBasedSecurity->PutToken(
-            (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt),
-            audienceUrl,
-            accessToken.Token,
-            accessToken.ExpiresOn,
-            context);
-        if (std::get<0>(result) != CbsOperationResult::Ok)
-        {
-          throw Azure::Core::Credentials::AuthenticationException(
-              "Could not authenticate client. Error Status: " + std::to_string(std::get<1>(result))
-              + " reason: " + std::get<2>(result));
-        }
-        Log::Stream(Logger::Level::Verbose) << "Close CBS object";
-        claimsBasedSecurity->Close(context);
-        if (m_options.EnableTrace)
-        {
-          Log::Stream(Logger::Level::Verbose)
-              << "Authenticated connection for audience " << audienceUrl << " successfully.";
-        }
-
-        m_tokenStore.emplace(audienceUrl, accessToken);
-        return accessToken;
-      }
-      catch (...)
-      {
-        // Ensure that the claims based security object is closed before we leave this scope.
-        claimsBasedSecurity->Close(context);
-        throw;
-      }
+      // Assign, do not emplace. A refreshed token must replace the token that is
+      // already in the cache.
+      m_tokenStore[audienceUrl] = accessToken;
+#if ENABLE_UAMQP
+      // Remember the session that authenticated this audience, so the refresh
+      // thread can put a new token on the same session. The pointer is weak, so
+      // the refresh thread never keeps a session alive.
+      m_tokenSessions[audienceUrl] = session;
+      StartTokenRefresh();
+#endif
+      return accessToken;
     }
     else
     {
@@ -241,4 +291,227 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return {};
     }
   }
+
+#if ENABLE_UAMQP
+  // Start the refresh thread if it is not running yet. The caller holds the
+  // token mutex.
+  void ConnectionImpl::StartTokenRefresh()
+  {
+    if (m_tokenRefreshStop)
+    {
+      return;
+    }
+    if (!m_tokenRefreshThread.joinable())
+    {
+      m_tokenRefreshThread = std::thread([this]() { TokenRefreshThread(); });
+    }
+    m_tokenRefreshCv.notify_all();
+  }
+
+  void ConnectionImpl::StopTokenRefresh()
+  {
+    // Cancel before the lock, not after it. The refresh thread does its network
+    // work without the token mutex, but it can hold that mutex at other times.
+    // A cancel that waits for the mutex could not stop an operation that is in
+    // flight, which is the operation this call must stop. Context::Cancel is
+    // safe to call from any thread.
+    m_tokenRefreshContext.Cancel();
+
+    std::thread threadToJoin;
+    {
+      std::unique_lock<std::mutex> lock(m_tokenMutex);
+      m_tokenRefreshStop = true;
+      m_tokenRefreshCv.notify_all();
+      threadToJoin = std::move(m_tokenRefreshThread);
+    }
+
+    // Join outside the lock, because the refresh thread takes the token mutex.
+    if (threadToJoin.joinable())
+    {
+      if (threadToJoin.get_id() == std::this_thread::get_id())
+      {
+        // The refresh thread is running this call, which means it released the
+        // last reference to this connection. It cannot join itself.
+        threadToJoin.detach();
+      }
+      else
+      {
+        threadToJoin.join();
+      }
+    }
+  }
+
+  void ConnectionImpl::TokenRefreshThread()
+  {
+    // A background thread must not let an exception escape, because that ends
+    // the process. Every failure of one refresh is handled inside
+    // RefreshTokenForAudience, so this catch is for the unexpected.
+    try
+    {
+      std::unique_lock<std::mutex> lock(m_tokenMutex);
+      while (!m_tokenRefreshStop)
+      {
+        auto const now = std::chrono::system_clock::now();
+
+        // Idle wake time when no token is close to its expiry.
+        auto nextWake = now + IdleTokenRefreshPoll;
+        std::vector<std::string> dueAudiences;
+        for (auto const& entry : m_tokenStore)
+        {
+          if (IsTokenRefreshDue(entry.second, now))
+          {
+            dueAudiences.push_back(entry.first);
+          }
+          else if (IsTokenRefreshDue(entry.second, now + IdleTokenRefreshPoll))
+          {
+            // This token is due inside the idle poll time, so wake for it. The
+            // expiry is close to now, which makes the cast safe.
+            auto const expiry
+                = static_cast<std::chrono::system_clock::time_point>(entry.second.ExpiresOn);
+            nextWake = (std::min)(nextWake, expiry - TokenRefreshBuffer);
+          }
+        }
+
+        for (auto const& audience : dueAudiences)
+        {
+          if (m_tokenRefreshStop)
+          {
+            break;
+          }
+          RefreshTokenForAudience(audience, lock);
+        }
+
+        if (!dueAudiences.empty())
+        {
+          // Keep a minimum time between two refresh passes. A token with a
+          // lifetime shorter than the refresh buffer is due as soon as it
+          // arrives, and this wait stops the thread from spinning on it.
+          nextWake = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
+        }
+
+        if (m_tokenStore.empty())
+        {
+          // Nothing to refresh. Wait until an audience is authenticated, or
+          // until shutdown.
+          m_tokenRefreshCv.wait(
+              lock, [this]() { return m_tokenRefreshStop || !m_tokenStore.empty(); });
+        }
+        else
+        {
+          m_tokenRefreshCv.wait_until(lock, nextWake, [this]() { return m_tokenRefreshStop; });
+        }
+      }
+    }
+    catch (std::exception const& e)
+    {
+      Log::Stream(Logger::Level::Error)
+          << "The token refresh thread stopped on an error: " << e.what()
+          << ". Tokens are refreshed on use instead.";
+    }
+    catch (...)
+    {
+      Log::Stream(Logger::Level::Error)
+          << "The token refresh thread stopped on an unknown error. Tokens are refreshed on use "
+             "instead.";
+    }
+  }
+
+  // Replace the token for one audience.
+  //
+  // The caller holds the token mutex through `lock`. This function releases that
+  // mutex for the credential call and for the CBS operation, because both go to
+  // the network. Holding the mutex there would block every caller that opens a
+  // link, and it would stop a shutdown from cancelling this work.
+  void ConnectionImpl::RefreshTokenForAudience(
+      std::string const& audienceUrl,
+      std::unique_lock<std::mutex>& lock)
+  {
+    std::shared_ptr<SessionImpl> session;
+    auto sessionEntry = m_tokenSessions.find(audienceUrl);
+    if (sessionEntry != m_tokenSessions.end())
+    {
+      session = sessionEntry->second.lock();
+    }
+    if (!session)
+    {
+      // The session that authenticated this audience is gone. Drop the entry,
+      // and the next link open authenticates the audience again.
+      m_tokenStore.erase(audienceUrl);
+      m_tokenSessions.erase(audienceUrl);
+      return;
+    }
+
+    // Remember the token that this refresh replaces, so the result does not
+    // overwrite a newer token that a caller stored while the mutex was free.
+    auto const previousEntry = m_tokenStore.find(audienceUrl);
+    if (previousEntry == m_tokenStore.end())
+    {
+      return;
+    }
+    std::string const previousToken{previousEntry->second.Token};
+
+    auto const tokenType = (IsSasCredential() ? CbsTokenType::Sas : CbsTokenType::Jwt);
+    auto const credential = GetCredential();
+    auto const scopes = m_options.AuthenticationScopes;
+    auto const traceEnabled = m_options.EnableTrace;
+    auto const parentContext = m_tokenRefreshContext;
+
+    Credentials::AccessToken accessToken;
+    bool refreshed{false};
+    std::string failureMessage;
+
+    lock.unlock();
+    try
+    {
+      auto context = parentContext.WithDeadline(
+          std::chrono::system_clock::now() + TokenRefreshOperationTimeout);
+
+      Credentials::TokenRequestContext requestContext;
+      requestContext.Scopes = scopes;
+      accessToken = credential->GetToken(requestContext, context);
+
+      PutTokenForAudience(
+          session, tokenType, audienceUrl, accessToken.Token, accessToken.ExpiresOn, context);
+      refreshed = true;
+    }
+    catch (std::exception const& e)
+    {
+      failureMessage = e.what();
+    }
+    catch (...)
+    {
+      failureMessage = "unknown error";
+    }
+    // Release the session before the mutex is taken again. This reference can be
+    // the last one, and a session destructor takes other locks.
+    session.reset();
+    lock.lock();
+
+    auto currentEntry = m_tokenStore.find(audienceUrl);
+    if (currentEntry == m_tokenStore.end() || currentEntry->second.Token != previousToken)
+    {
+      // A caller replaced or dropped this token while the mutex was free. That
+      // token is newer than this one, so keep it.
+      return;
+    }
+
+    if (refreshed)
+    {
+      currentEntry->second = accessToken;
+      if (traceEnabled)
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "Refreshed the token for audience " << audienceUrl << " before its expiry.";
+      }
+    }
+    else
+    {
+      // Drop the cache entry, so the next link open authenticates again.
+      Log::Stream(Logger::Level::Warning)
+          << "Could not refresh the token for audience " << audienceUrl << ": " << failureMessage;
+      m_tokenStore.erase(currentEntry);
+      m_tokenSessions.erase(audienceUrl);
+    }
+  }
+#endif // ENABLE_UAMQP
 }}}} // namespace Azure::Core::Amqp::_detail
