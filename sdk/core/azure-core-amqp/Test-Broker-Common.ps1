@@ -71,13 +71,25 @@ function Stop-TestBroker {
     return
   }
 
-  $recordedId = (Get-Content -Path $ProcessIdPath -Raw).Trim()
+  # The file holds the process ID on the first line, and the start time in ticks on the second.
+  # Older files hold the ID alone, and those still work with the name check below.
+  $recorded = @(Get-Content -Path $ProcessIdPath -ErrorAction SilentlyContinue)
   Remove-Item $ProcessIdPath -Force -ErrorAction SilentlyContinue
 
   $processId = 0
-  if (-not [int]::TryParse($recordedId, [ref] $processId) -or $processId -le 0) {
-    Write-Host "The test broker process ID file held '$recordedId', which is not a process ID."
+  if ($recorded.Count -lt 1 -or
+    -not [int]::TryParse(("" + $recorded[0]).Trim(), [ref] $processId) -or
+    $processId -le 0) {
+    Write-Host "The test broker process ID file did not hold a process ID."
     return
+  }
+
+  $recordedTicks = $null
+  if ($recorded.Count -ge 2) {
+    $parsedTicks = [long] 0
+    if ([long]::TryParse(("" + $recorded[1]).Trim(), [ref] $parsedTicks)) {
+      $recordedTicks = $parsedTicks
+    }
   }
 
   $process = Get-Process -Id $processId -ErrorAction SilentlyContinue
@@ -92,6 +104,23 @@ function Stop-TestBroker {
     Write-Host ("Process $processId is '$($process.ProcessName)', not the test broker. " +
       "This script leaves it alone.")
     return
+  }
+
+  # A recycled process ID can belong to another dotnet process. Compare the start time, which
+  # makes the pair unique. A start time that cannot be read falls back to the name check above,
+  # because a broker that keeps running holds the port and breaks every later run.
+  if ($null -ne $recordedTicks) {
+    $actualTicks = $null
+    try { $actualTicks = $process.StartTime.Ticks } catch { $actualTicks = $null }
+
+    if ($null -eq $actualTicks) {
+      Write-Host "The start time of process $processId is not readable. Stopping it on the name alone."
+    }
+    elseif ($actualTicks -ne $recordedTicks) {
+      Write-Host ("Process $processId started at a different time than the recorded broker, so " +
+        "the operating system gave this ID to another process. This script leaves it alone.")
+      return
+    }
   }
 
   Write-Host "Stopping test broker process $processId."

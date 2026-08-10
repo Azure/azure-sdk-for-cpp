@@ -170,8 +170,10 @@ $repositoryBranch = "master"
 #      merged pull request, not the head commit of that pull request.
 #   2. Run the manual restore and build steps in README.md against that commit.
 #   3. Run the C++ AMQP tests against the broker that the commit builds.
-#   4. Make sure that the commit contains nuget.cfsclean.config.
-#   5. Replace the SHA below with the full 40 character SHA, and update README.md.
+#   4. Replace the SHA below with the full 40 character SHA, and update README.md.
+#
+# The commit does not need to carry a restore configuration. This repository owns that file,
+# and the restore names it by an absolute path.
 #
 # Set TEST_BROKER_COMMIT to point a pipeline at a different broker commit without a code change.
 $defaultRepositoryHash = "111de654e170de3ab6cefe150043458c67b6660d"
@@ -380,9 +382,11 @@ try {
     throw "Start-Process did not return a test broker process."
   }
 
-  # Record the process ID for Test-Cleanup.ps1. That script runs in a separate pwsh step, so an
-  # environment variable set here does not reach it.
-  Set-Content -Path $processIdPath -Value $process.Id -NoNewline
+  # Record the process ID and the start time for Test-Cleanup.ps1. That script runs in a
+  # separate pwsh step, so an environment variable set here does not reach it. The operating
+  # system reuses process IDs, and the pair of ID and start time identifies one process, so the
+  # cleanup can tell this broker apart from a later process that inherited the same ID.
+  Set-Content -Path $processIdPath -Value @($process.Id, $process.StartTime.Ticks)
   Write-Host "Test broker process ID: $($process.Id) (recorded in $processIdPath)"
   Wait-BrokerReady -Process $process -Address $brokerAddress
 }

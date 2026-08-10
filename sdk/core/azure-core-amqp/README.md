@@ -79,7 +79,7 @@ You can build and run the tests locally by executing `azure-core-amqp-test`. Exp
 
 ### Run broker-backed tests
 
-Some tests in this package need a live AMQP broker. They use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The default build sets `USE_RUST_AMQP`, so these tests exercise the Rust AMQP stack. The setup script clones the commit that `Test-Setup.ps1` pins, restores through the clone's checked-in `nuget.cfsclean.config`, builds the `net10.0` target, and waits for the broker to accept TCP connections.
+Some tests in this package need a live AMQP broker. They use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The default build sets `USE_RUST_AMQP`, so these tests exercise the Rust AMQP stack. The setup script clones the commit that `Test-Setup.ps1` pins, restores through the `nuget.cfsclean.config` in this directory, builds the `net10.0` target, and waits for the broker to accept TCP connections.
 
 Run the setup from the repository root before starting the tests:
 
@@ -112,11 +112,11 @@ The current pin is `111de654e170de3ab6cefe150043458c67b6660d`, the head of `mast
 To validate a broker update manually, clone the new commit and run these commands from the clone root:
 
 ```powershell
-dotnet restore .\test\TestAmqpBroker\TestAmqpBroker.csproj --configfile .\nuget.cfsclean.config
+dotnet restore .\test\TestAmqpBroker\TestAmqpBroker.csproj --configfile <this directory>\nuget.cfsclean.config
 dotnet build .\test\TestAmqpBroker\TestAmqpBroker.csproj --configuration Debug --framework net10.0 --no-restore
 ```
 
-Update the commit in `Test-Setup.ps1` and in this file only after the restore, build, readiness check, and C++ AMQP tests pass. The pinned commit must contain `nuget.cfsclean.config`. Prefer a commit that is reachable from `master`.
+Update the commit in `Test-Setup.ps1` and in this file only after the restore, build, readiness check, and C++ AMQP tests pass. Any commit that builds the broker works, because the restore configuration lives in this repository and not in the clone. Prefer a commit that is reachable from `master`.
 
 ## Troubleshooting
 
