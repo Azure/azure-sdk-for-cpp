@@ -79,7 +79,7 @@ You can build and run the tests locally by executing `azure-core-amqp-test`. Exp
 
 ### Run broker-backed tests
 
-The Rust AMQP tests use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The setup script clones commit `239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a`, restores through its checked-in `nuget.cfsclean.config`, builds the `net10.0` target, and waits for the broker to accept TCP connections.
+Some tests in this package need a live AMQP broker. They use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The default build sets `USE_RUST_AMQP`, so these tests exercise the Rust AMQP stack. The setup script clones the commit that `Test-Setup.ps1` pins, restores through the clone's checked-in `nuget.cfsclean.config`, builds the `net10.0` target, and waits for the broker to accept TCP connections.
 
 Run the setup from the repository root before starting the tests:
 
@@ -87,7 +87,27 @@ Run the setup from the repository root before starting the tests:
 .\sdk\core\azure-core-amqp\Test-Setup.ps1
 ```
 
-The default address is `amqp://127.0.0.1:25672`. Set `TEST_BROKER_ADDRESS` before running the script to use another local host or port.
+Stop the broker when the tests finish:
+
+```powershell
+.\sdk\core\azure-core-amqp\Test-Cleanup.ps1
+```
+
+`Test-Setup.ps1` writes the broker process ID to `TestArtifacts\test-broker.pid`, next to the broker logs. `Test-Cleanup.ps1` reads that file to stop the right process. The cleanup script reports success when the broker has already exited.
+
+The default address is `amqp://127.0.0.1:25672`. Set `TEST_BROKER_ADDRESS` before running the script to use another local host or port. When another process already holds that port, the setup script keeps that process and runs the tests against it.
+
+These environment variables change the setup:
+
+| Variable | Effect |
+| --- | --- |
+| `TEST_BROKER_ADDRESS` | Sets the broker address. The default is `amqp://127.0.0.1:25672`. |
+| `TEST_BROKER_COMMIT` | Overrides the pinned broker commit. The value must be a full 40 character commit SHA. |
+| `TEST_BROKER_REQUIRE_MERGED` | Turns the pin reachability warning into an error. Set this to make the run fail when the pinned commit is not reachable from `master` in Azure/azure-amqp. |
+
+The setup script asks the GitHub compare API whether the pinned commit is reachable from `master`. When that request fails, for example because the anonymous rate limit of 60 requests per hour is exhausted, the script warns and continues. It continues even when `TEST_BROKER_REQUIRE_MERGED` is set, because a request that did not run says nothing about the pin.
+
+The current pin is `239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a`. That commit is the head of a pull request in Azure/azure-amqp, so it is not reachable from `master` and the setup script warns. Azure/azure-amqp squash-merges its pull requests, so the head commit of a pull request never lands on `master`. After that pull request merges, set the pin to its `merge_commit_sha`, which is the squash commit on `master`. Do not use the `merge_commit_sha` of an open pull request, because that commit is a temporary test merge.
 
 To validate a broker update manually, clone the new commit and run these commands from the clone root:
 
@@ -96,7 +116,7 @@ dotnet restore .\test\TestAmqpBroker\TestAmqpBroker.csproj --configfile .\nuget.
 dotnet build .\test\TestAmqpBroker\TestAmqpBroker.csproj --configuration Debug --framework net10.0 --no-restore
 ```
 
-Update the commit in `Test-Setup.ps1` only after the restore, build, readiness check, and C++ AMQP tests pass. The pinned commit must contain `nuget.cfsclean.config`.
+Update the commit in `Test-Setup.ps1` and in this file only after the restore, build, readiness check, and C++ AMQP tests pass. The pinned commit must contain `nuget.cfsclean.config`. Prefer a commit that is reachable from `master`.
 
 ## Troubleshooting
 

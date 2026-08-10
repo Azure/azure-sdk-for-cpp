@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell: ignore AIDEV cfsclean depsfile
+# cspell: ignore cfsclean NETSDK
 
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
+. "$PSScriptRoot\Test-Broker-Common.ps1"
 
 if ($IsMacOS) {
   Write-Host "AMQP tests are not supported on macOS. Skipping test setup."
@@ -28,33 +29,59 @@ function Invoke-RequiredCommand {
   }
 }
 
-function Write-BrokerLogs {
+function Test-BrokerPinReachable {
   param(
     [Parameter(Mandatory = $true)]
-    [string] $StandardOutputPath,
+    [string] $RepositorySlug,
 
     [Parameter(Mandatory = $true)]
-    [string] $StandardErrorPath
+    [string] $CommitHash,
+
+    [Parameter(Mandatory = $true)]
+    [string] $BranchName,
+
+    [int] $TimeoutSeconds = 15
   )
 
-  foreach ($log in @(
-      @{ Name = "standard output"; Path = $StandardOutputPath },
-      @{ Name = "standard error"; Path = $StandardErrorPath }
-    )) {
-    Write-Host "Test broker $($log.Name):"
-    if (Test-Path $log.Path) {
-      $content = Get-Content -Path $log.Path -Raw
-      if ($content) {
-        Write-Host $content
+  # Returns "reachable", "unreachable", or "unknown".
+  #
+  # This script makes a --depth 1 clone, which holds no commit graph, so
+  # git merge-base --is-ancestor cannot answer this question. The GitHub compare API answers it
+  # in one request, and that request works without a token on a public repository.
+  #
+  # Read ahead_by, not status. A reachable commit gives status "identical" or "behind", and both
+  # of those give ahead_by 0. A commit that is not on the branch gives ahead_by above 0.
+  $uri = "https://api.github.com/repos/$RepositorySlug/compare/$BranchName...$CommitHash"
+  Write-Host "> GET $uri"
+
+  try {
+    $comparison = Invoke-RestMethod `
+      -Uri $uri `
+      -Method Get `
+      -TimeoutSec $TimeoutSeconds `
+      -Headers @{
+        "Accept"     = "application/vnd.github+json"
+        "User-Agent" = "azure-sdk-for-cpp-test-setup"
       }
-      else {
-        Write-Host "<empty>"
-      }
-    }
-    else {
-      Write-Host "<not created>"
-    }
   }
+  catch {
+    # A network error, a non-200 answer, and the 60 request per hour anonymous rate limit all
+    # arrive here. None of them says anything about the pin.
+    Write-Host "The compare request failed: $($_.Exception.Message)"
+    return "unknown"
+  }
+
+  if ($null -eq $comparison -or $null -eq $comparison.ahead_by) {
+    Write-Host "The compare answer held no ahead_by field."
+    return "unknown"
+  }
+
+  Write-Host "Compare answer: status=$($comparison.status) ahead_by=$($comparison.ahead_by)"
+  if ($comparison.ahead_by -eq 0) {
+    return "reachable"
+  }
+
+  return "unreachable"
 }
 
 function Test-TcpEndpoint {
@@ -110,13 +137,49 @@ function Wait-BrokerReady {
   throw "Test broker did not accept connections on $($Address.DnsSafeHost):$($Address.Port) within $TimeoutSeconds seconds."
 }
 
-$WorkingDirectory = [System.IO.Path]::GetFullPath(
-  [System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
-$repositoryDir = [System.IO.Path]::Combine($WorkingDirectory, "azure-amqp")
-$standardOutputPath = [System.IO.Path]::Combine($WorkingDirectory, "test-broker.log")
-$standardErrorPath = [System.IO.Path]::Combine($WorkingDirectory, "test-broker-error.log")
-$repositoryUrl = "https://github.com/Azure/azure-amqp.git"
-$repositoryHash = "239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a"
+$paths = Get-TestBrokerPaths -RepositoryRoot $RepoRoot
+$WorkingDirectory = $paths.WorkingDirectory
+$repositoryDir = $paths.RepositoryDir
+$standardOutputPath = $paths.StandardOutputPath
+$standardErrorPath = $paths.StandardErrorPath
+$processIdPath = $paths.ProcessIdPath
+$repositorySlug = "Azure/azure-amqp"
+$repositoryUrl = "https://github.com/${repositorySlug}.git"
+$repositoryBranch = "master"
+
+# The broker pin. This is a full 40 character commit SHA, so the build stays reproducible.
+# A tag is not a safe substitute, because azure-amqp uses lightweight tags that a maintainer
+# can move.
+#
+# This SHA comes from refs/pull/318/head of Azure/azure-amqp. It is not on master yet, and
+# that is intentional for now. The reachability test below reports this as a warning.
+#
+# To update the pin:
+#   1. Pick the new commit from Azure/azure-amqp. Prefer a commit on master.
+#      Azure/azure-amqp squash-merges, so the commit on master is the merge_commit_sha of the
+#      merged pull request, not the head commit of that pull request.
+#   2. Run the manual restore and build steps in README.md against that commit.
+#   3. Run the C++ AMQP tests against the broker that the commit builds.
+#   4. Make sure that the commit contains nuget.cfsclean.config.
+#   5. Replace the SHA below with the full 40 character SHA, and update README.md.
+#
+# Set TEST_BROKER_COMMIT to point a pipeline at a different broker commit without a code change.
+$defaultRepositoryHash = "239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a"
+
+$repositoryHash = if ($env:TEST_BROKER_COMMIT) {
+  $env:TEST_BROKER_COMMIT.Trim().ToLowerInvariant()
+}
+else {
+  $defaultRepositoryHash
+}
+
+if ($repositoryHash -notmatch '^[0-9a-f]{40}$') {
+  throw "TEST_BROKER_COMMIT must be a full 40 character commit SHA: '$repositoryHash'"
+}
+
+if ($repositoryHash -ne $defaultRepositoryHash) {
+  Write-Host "TEST_BROKER_COMMIT overrides the broker pin with $repositoryHash."
+}
 
 $env:TEST_BROKER_ADDRESS = if ($env:TEST_BROKER_ADDRESS) {
   $env:TEST_BROKER_ADDRESS
@@ -133,6 +196,11 @@ if ($brokerAddress.Port -le 0) {
 Write-Host "Using working directory $WorkingDirectory"
 New-Item -ItemType Directory -Path $WorkingDirectory -Force | Out-Null
 
+# Stop a broker that an earlier run left behind. A pipeline agent can be reused, and a stage
+# re-run starts this script again on the same machine. Without this step the old broker keeps
+# the port, and this run cannot start its own broker.
+Stop-TestBroker -ProcessIdPath $processIdPath
+
 if (Test-Path $repositoryDir) {
   Write-Host "Removing previously cloned repository $repositoryDir"
   Remove-Item $repositoryDir -Force -Recurse
@@ -141,8 +209,9 @@ Remove-Item $standardOutputPath, $standardErrorPath -Force -ErrorAction Silently
 
 $process = $null
 try {
-  # AIDEV-NOTE: Keep the explicit fetch and checkout for agents whose Git does not support
-  # clone --revision.
+  # Keep the clone, the fetch, and the checkout as three steps. A single clone --revision call
+  # would do the same work, but that option needs Git 2.49 or later, and some pipeline agents
+  # carry an older Git.
   Invoke-RequiredCommand `
     -Description "Test broker clone" `
     -FilePath "git" `
@@ -181,8 +250,57 @@ try {
     throw "Test broker clone resolved to '$actualHash' instead of '$repositoryHash'."
   }
 
+  # Report a pin that does not sit on the upstream branch. A pull request head can disappear,
+  # and a pin that is only on a pull request head cannot be rebuilt after the branch is deleted.
+  $pinState = Test-BrokerPinReachable `
+    -RepositorySlug $repositorySlug `
+    -CommitHash $repositoryHash `
+    -BranchName $repositoryBranch
+
+  switch ($pinState) {
+    "reachable" {
+      Write-Host "Broker pin $repositoryHash is reachable from $repositorySlug $repositoryBranch."
+    }
+
+    "unreachable" {
+      $pinMessage = @(
+        "Broker pin $repositoryHash is not reachable from $repositorySlug $repositoryBranch.",
+        "$repositorySlug squash-merges its pull requests, so the head commit of a pull request",
+        "never lands on $repositoryBranch.",
+        "If the source pull request has merged, set the pin to its merge_commit_sha, which is",
+        "the squash commit on $repositoryBranch.",
+        "Do not use the merge_commit_sha of an open pull request, because that commit is a",
+        "temporary test merge."
+      ) -join " "
+
+      if ($env:TEST_BROKER_REQUIRE_MERGED) {
+        throw "$pinMessage TEST_BROKER_REQUIRE_MERGED is set, so this is an error."
+      }
+
+      Write-Warning ("$pinMessage The setup continues. Set TEST_BROKER_REQUIRE_MERGED to make " +
+        "this an error.")
+    }
+
+    default {
+      # "unknown" means the test itself did not run. Continue always, even when
+      # TEST_BROKER_REQUIRE_MERGED is set. A shared CI address can exhaust the 60 request per
+      # hour anonymous rate limit, and that says nothing about the pin. A failure to test must
+      # never become a new source of flaky builds.
+      Write-Warning ("The script could not test whether broker pin $repositoryHash is reachable " +
+        "from $repositorySlug $repositoryBranch. The setup continues.")
+    }
+  }
+
+  # Push-Location is load-bearing. The dotnet calls below must run from the clone root, because
+  # the clone root holds the global.json that selects the .NET SDK, and because the paths below
+  # are relative to it. Do not replace these paths with absolute paths and drop the location
+  # change. That silently loses the SDK pin.
   Push-Location $repositoryDir
   try {
+    # The restore covers every target framework, and the build below covers only net10.0. That
+    # is intentional. A -p:TargetFramework argument is an MSBuild global property, so it flows
+    # into the netstandard2.0 Microsoft.Azure.Amqp project reference, and the build then fails
+    # with NETSDK1005. Do not add a framework filter here.
     Invoke-RequiredCommand `
       -Description "Test broker restore" `
       -FilePath "dotnet" `
@@ -214,8 +332,16 @@ try {
     throw "Test broker build did not produce $brokerDll."
   }
 
+  # A broker from an earlier run of this script is already gone, because Stop-TestBroker ran
+  # above. A process that still holds the port belongs to somebody else. This script did not
+  # start it, so this script does not stop it. Run the tests against it and report the reuse.
+  # A busy port is not a reason to fail the run.
   if (Test-TcpEndpoint -HostName $brokerAddress.DnsSafeHost -Port $brokerAddress.Port) {
-    throw "The test broker endpoint $($brokerAddress.DnsSafeHost):$($brokerAddress.Port) is already in use."
+    Write-Warning ("A process already listens on " +
+      "$($brokerAddress.DnsSafeHost):$($brokerAddress.Port). This script did not start it, so " +
+      "this script will not stop it. The tests will use that endpoint. Stop that process and " +
+      "run this script again if the tests fail in an unexpected way.")
+    exit 0
   }
 
   Write-Host "Starting test broker on $($env:TEST_BROKER_ADDRESS)"
@@ -236,8 +362,10 @@ try {
     throw "Start-Process did not return a test broker process."
   }
 
-  $env:TEST_BROKER_JOBID = $process.Id
-  Write-Host "Test broker process ID: $($process.Id)"
+  # Record the process ID for Test-Cleanup.ps1. That script runs in a separate pwsh step, so an
+  # environment variable set here does not reach it.
+  Set-Content -Path $processIdPath -Value $process.Id -NoNewline
+  Write-Host "Test broker process ID: $($process.Id) (recorded in $processIdPath)"
   Wait-BrokerReady -Process $process -Address $brokerAddress
 }
 catch {
@@ -252,6 +380,10 @@ catch {
       Stop-Process -Id $process.Id -ErrorAction SilentlyContinue
     }
   }
+
+  # This run owns no broker now, so the record must go. Otherwise Test-Cleanup.ps1 or the next
+  # run reads a stale process ID.
+  Remove-Item $processIdPath -Force -ErrorAction SilentlyContinue
 
   throw
 }

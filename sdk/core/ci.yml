@@ -85,9 +85,15 @@ extends:
     #          displayName: Verify Proxy Server Working Correctly.
     #          condition: and(succeeded(), variables.RunProxyTests, contains(variables.CmakeArgs, 'BUILD_TESTING=ON'))
 
-    #      PostTestSteps:
-    #        - pwsh: |
-    #            $(Build.SourcesDirectory)/sdk/core/azure-core-amqp//Test-Cleanup.ps1
+    PostTestSteps:
+      - pwsh: |
+          $(Build.SourcesDirectory)/sdk/core/azure-core-amqp/Test-Cleanup.ps1
+        displayName: Test-Cleanup for azure-core-amqp
+        # The broker must stop even when the tests fail, so this step always runs.
+        condition: always()
+        env:
+          TEST_BROKER_ADDRESS: "amqp://127.0.0.1:25672"
+
     #        - pwsh: |
     #            docker ps -q -f ancestor=azsdkengsys.azurecr.io/mirror/ubuntu/squid | ForEach-Object { `
     #                docker stop $_ `
