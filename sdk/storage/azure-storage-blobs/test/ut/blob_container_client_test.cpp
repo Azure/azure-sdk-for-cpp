@@ -1249,7 +1249,9 @@ namespace Azure { namespace Storage { namespace Test {
     std::vector<std::string> findResults2;
     int numPages1 = 0;
     int numPages2 = 0;
-    for (int i = 0; i < 30; ++i)
+    // Blob index tag updates are eventually consistent and are not immediately visible to
+    // FindBlobsByTags queries. Allow up to one minute for the index to catch up.
+    for (int i = 0; i < 60; ++i)
     {
       numPages1 = 0;
       numPages2 = 0;
