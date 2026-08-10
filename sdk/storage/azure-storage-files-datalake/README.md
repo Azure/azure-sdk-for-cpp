@@ -1,141 +1,203 @@
-# Azure Storage Files Data Lake Client Library for C++
+# Azure Storage Files Data Lake client library for C++
 
-Azure Data Lake includes all the capabilities required to make it easy for developers, data scientists, and analysts to store data of any size, shape, and speed, and do all types of processing and analytics across platforms and languages. It removes the complexities of ingesting and storing all of your data while making it faster to get up and running with batch, streaming, and interactive analytics.
+Azure Data Lake Storage is a scalable and secure data lake for high-performance analytics
+workloads. It combines the scale and cost benefits of Azure Blob Storage with a hierarchical file
+system that supports directory operations and POSIX access control lists.
+
+[Source code][source_code] | [Package (vcpkg)][vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][product_documentation] | [Samples][samples]
 
 ## Getting started
 
-### Install the package
-
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
-
-To install Azure Storage packages via vcpkg:
-
-```batch
-vcpkg install azure-storage-files-datalake-cpp
-```
-
-Then, use in your CMake file:
-
-```CMake
-find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-datalake)
-```
-
 ### Prerequisites
 
-You need an Azure subscription and a [Storage Account][storage_account_overview] to use this package.
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub]
+- An Azure Storage account with hierarchical namespace enabled
 
-To create a new Storage Account, you can use the [Azure Portal][create_account_with_azure_portal], [Azure PowerShell][create_account_with_powershell], or the [Azure CLI][create_account_with_azure_cli].
+If you need to create a Storage account, you can use the Azure portal or the [Azure CLI][azure_cli].
+When using the Azure CLI, replace `<your-resource-group-name>` and
+`<your-storage-account-name>` with your own values. Storage account names must be globally unique.
 
-### Build from Source
-
-First, download the repository to your local folder:
-
-```batch
-git clone https://github.com/Azure/azure-sdk-for-cpp.git
+```PowerShell
+az login
+az storage account create `
+  --resource-group <your-resource-group-name> `
+  --name <your-storage-account-name> `
+  --sku Standard_LRS `
+  --enable-hierarchical-namespace true
 ```
 
-Create a new folder under the root directory of local cloned repo, switch into this folder and run below commands:
+### Install the package
 
-Windows:
+The easiest way to acquire the C++ SDK is with the vcpkg package manager and CMake. See the
+[Azure SDK for C++ installation instructions][azsdk_vcpkg_install] for more information.
+The following commands use vcpkg in manifest mode.
 
-```batch
-cmake .. -A x64
-cmake --build . --target azure-storage-files-datalake
-```
-
-or Unix:
+Create a vcpkg manifest in the root of your project:
 
 ```batch
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build . --target azure-storage-files-datalake
+vcpkg new --application
 ```
+
+Add Azure Storage Files Data Lake and Azure Identity to the manifest:
+
+```batch
+vcpkg add port azure-storage-files-datalake-cpp azure-identity-cpp
+```
+
+Then add the following to your `CMakeLists.txt` file:
+
+```CMake
+find_package(azure-identity-cpp CONFIG REQUIRED)
+find_package(azure-storage-files-datalake-cpp CONFIG REQUIRED)
+
+target_link_libraries(
+  <your project name>
+  PRIVATE
+    Azure::azure-identity
+    Azure::azure-storage-files-datalake)
+```
+
+Set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` before the `project()` statement in your
+`CMakeLists.txt` file:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+You can instead pass the path with the `-DCMAKE_TOOLCHAIN_FILE` argument when configuring CMake.
+For other ways to acquire and install the library, see the
+[Azure C++ project setup samples][project_set_up_examples].
+
+### Create and authenticate clients
+
+`DataLakeServiceClient` operates on the Data Lake service at the Storage account level. From it,
+you can create clients for file systems, directories, and files.
+
+The following example uses `DefaultAzureCredential`, which supports multiple credential types and
+uses credentials from your development environment. After signing in with `az login`, set
+`AZURE_STORAGE_DATALAKE_ACCOUNT_URL` to a URL such as
+`https://<your-storage-account-name>.dfs.core.windows.net`.
+
+```cpp
+#include <azure/identity.hpp>
+#include <azure/storage/files/datalake.hpp>
+
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+using namespace Azure::Storage::Files::DataLake;
+
+int main()
+{
+  const char* accountUrl = std::getenv("AZURE_STORAGE_DATALAKE_ACCOUNT_URL");
+  if (accountUrl == nullptr)
+  {
+    throw std::runtime_error("AZURE_STORAGE_DATALAKE_ACCOUNT_URL is not set.");
+  }
+
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  DataLakeServiceClient serviceClient(accountUrl, credential);
+
+  DataLakeFileSystemClient fileSystemClient
+      = serviceClient.GetFileSystemClient("sample-file-system");
+  DataLakeDirectoryClient directoryClient
+      = fileSystemClient.GetDirectoryClient("sample-directory");
+  DataLakeFileClient fileClient = directoryClient.GetFileClient("sample-file");
+}
+```
+
+For more information about credential selection and configuration, see
+[DefaultAzureCredential][default_azure_credential].
 
 ## Key concepts
 
-DataLake Storage Gen2 was designed to:
-- Service multiple petabytes of information while sustaining hundreds of gigabits of throughput
-- Allow you to easily manage massive amounts of data
+Data Lake Storage is designed to:
 
-Key Features of DataLake Storage Gen2 include:
-- Hadoop compatible access
-- A superset of POSIX permissions
-- Cost effective in terms of low-cost storage capacity and transactions
-- Optimized driver for big data analytics
+- Store and analyze data at petabyte scale
+- Provide Hadoop-compatible access
+- Support POSIX-style permissions and access control lists
+- Improve directory management performance with a hierarchical namespace
+- Provide cost-effective storage for batch, streaming, and interactive analytics
 
-A fundamental part of Data Lake Storage Gen2 is the addition of a hierarchical namespace to Blob storage. The hierarchical namespace organizes objects/files into a hierarchy of directories for efficient data access.
+Data Lake Storage offers the following resource hierarchy:
 
-In the past, cloud-based analytics had to compromise in areas of performance, management, and security. Data Lake Storage Gen2 addresses each of these aspects in the following ways:
-- Performance is optimized because you do not need to copy or transform data as a prerequisite for analysis. The hierarchical namespace greatly improves the performance of directory management operations, which improves overall job performance.
-- Management is easier because you can organize and manipulate files through directories and subdirectories.
-- Security is enforceable because you can define POSIX permissions on directories or individual files.
-- Cost effectiveness is made possible as Data Lake Storage Gen2 is built on top of the low-cost Azure Blob storage. The additional features further lower the total cost of ownership for running big data analytics on Azure.
+- The Storage account, accessed through `DataLakeServiceClient`
+- A file system, accessed through `DataLakeFileSystemClient`
+- A directory, accessed through `DataLakeDirectoryClient`
+- A file, accessed through `DataLakeFileClient`
 
-Data Lake Storage Gen2 offers two types of resources:
+A Data Lake file system corresponds to a Blob container, and a Data Lake path corresponds to a
+Blob. This client library requires a Storage account with hierarchical namespace enabled.
 
-- The _filesystem_ used via 'DataLakeFileSystemClient'
-- The _path_ used via 'DataLakeFileClient' or 'DataLakeDirectoryClient'
+### Authentication
 
-|ADLS Gen2 	                | Blob       |
-| --------------------------| ---------- |
-|Filesystem                 | Container  | 
-|Path (File or Directory)   | Blob       |
-
-Note: This client library does not support hierarchical namespace (HNS) disabled storage accounts.
-
-Learn more about options for authentication (including Connection Strings, Shared Key, Shared Key Signatures, Active Directory, and anonymous public access) in our [samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake/samples).
+The library supports Microsoft Entra ID credentials, connection strings, shared key credentials,
+and shared access signatures. Microsoft Entra ID with `DefaultAzureCredential` is recommended for
+getting started. See the [samples][samples] for other authentication options.
 
 ### Thread safety
 
-We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+All client instance methods are thread-safe and independent of each other
+([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). Reusing client
+instances is safe, even across threads.
 
 ### Additional concepts
 
-Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types) | [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp#long-running-operations) | Handling failures
+<!-- CLIENT COMMON BAR -->
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
+[Response model types](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations)
+<!-- CLIENT COMMON BAR -->
 
 ## Examples
 
-### Appending Data to a DataLake File
+The examples below use the clients created in
+[Create and authenticate clients](#create-and-authenticate-clients).
+
+### Create a directory and file
 
 ```cpp
-const std::string connectionString = "<connection_string>";
-const std::string fileSystemName = "sample-filesystem";
-const std::string directoryName = "sample-directory";
-const std::string fileName = "sample-file";
-const std::string localFilePath = "<path_to_local_file>";
-
-// Create DataLakeServiceClient
-DataLakeServiceClient serviceClient = DataLakeServiceClient::CreateFromConnectionString(connectionString);
-
-// Get a reference to a filesystem named "sample-filesystem" and then create it
-DataLakeFileSystemClient filesystemClient = serviceClient.GetFileSystemClient(fileSystemName);
-filesystemClient.CreateIfNotExists();
-
-// Create a DataLake Directory
-DataLakeDirectoryClient directoryClient = filesystemClient.GetDirectoryClient(directoryName);
+fileSystemClient.CreateIfNotExists();
 directoryClient.CreateIfNotExists();
-
-// Create a DataLake File using a DataLake Directory
-DataLakeFileClient fileClient = directoryClient.GetFileClient(fileName);
 fileClient.CreateIfNotExists();
-
-// Append data to the DataLake File
-Azure::Core::IO::FileBodyStream fileStream(localFilePath);
-fileClient.Append(fileStream, 0);
-fileClient.Flush(fileStream.Length());
-```
-### Reading Data from a DataLake File
-```cpp
-Response<DownloadFileResult> fileContents = fileClient.Download();
 ```
 
-### Enumerating DataLake Paths
+### Append data to a file
+
+Data Lake files are updated by appending data and then flushing it:
+
 ```cpp
-for (auto pathPage = client.ListPaths(false); pathPage.HasPage(); pathPage.MoveToNextPage())
+const std::string fileContent = "Hello Azure!";
+std::vector<uint8_t> buffer(fileContent.begin(), fileContent.end());
+Azure::Core::IO::MemoryBodyStream stream(buffer);
+
+fileClient.Append(stream, 0);
+fileClient.Flush(buffer.size());
+```
+
+### Download a file
+
+```cpp
+auto downloadResponse = fileClient.Download();
+Azure::Core::Context context;
+std::vector<uint8_t> downloaded = downloadResponse.Value.Body->ReadToEnd(context);
+```
+
+### List paths
+
+```cpp
+for (auto pathPage = fileSystemClient.ListPaths(false); pathPage.HasPage();
+     pathPage.MoveToNextPage())
 {
-  for (auto& path : pathPage.Paths)
+  for (const auto& path : pathPage.Paths)
   {
-    // Below is what you want to do with each path
     std::cout << "path: " << path.Name << std::endl;
   }
 }
@@ -143,57 +205,87 @@ for (auto pathPage = client.ListPaths(false); pathPage.HasPage(); pathPage.MoveT
 
 ## Troubleshooting
 
-All File DataLake service operations will throw a [StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
-on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)s.
-Many of these errors are recoverable.
+Data Lake service operations throw an
+[`Azure::Storage::StorageException`](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
+on failure. The exception includes the HTTP status code, service error code, request ID, and other
+details that can help diagnose the failure. See the
+[Blob service error codes](https://learn.microsoft.com/rest/api/storageservices/blob-service-error-codes)
+for service-specific errors.
 
 ```cpp
 try
 {
   fileSystemClient.Delete();
 }
-catch (Azure::Storage::StorageException& e)
+catch (const Azure::Storage::StorageException& exception)
 {
-  if (e.ErrorCode == "ContainerNotFound")
+  if (exception.ErrorCode == "ContainerNotFound")
   {
-    // ignore the error if the file system does not exist.
+    // The file system has already been deleted.
   }
   else
   {
-    // handle other errors here
+    throw;
   }
 }
 ```
 
 ## Next steps
 
-Get started with our [DataLake samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake/samples):
-
-1. [Append and read DataLake Files](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/samples/datalake_getting_started.cpp)
+The [Data Lake getting-started sample](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-datalake/samples/datalake_getting_started.cpp)
+demonstrates how to create a file system, directory, and file, append data, and download the file.
 
 ## Contributing
 
-See the [Storage CONTRIBUTING.md][storage_contrib] for details on building,
-testing, and contributing to these libraries.
+For details on contributing to this repository, see the
+[contributing guide][azure_sdk_for_cpp_contributing].
 
-This project welcomes contributions and suggestions.  Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution. For
-details, visit [cla.microsoft.com][cla].
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit the
+[Contributor License Agreement](https://cla.microsoft.com).
 
-This project has adopted the [Microsoft Open Source Code of Conduct][coc].
-For more information see the [Code of Conduct FAQ][coc_faq]
-or contact [opencode@microsoft.com][coc_contact] with any
-additional questions or comments.
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately. Follow the instructions provided by the bot. You only need
+to do this once across all repositories using the CLA.
+
+This project has adopted the
+[Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information, see the
+[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
+[opencode@microsoft.com](mailto:opencode@microsoft.com) with any questions or comments.
+
+### Additional helpful links for contributors
+
+- [Good first issues for new contributors](https://github.com/Azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
+- [How to build and test your change][azure_sdk_for_cpp_contributing_developer_guide]
+- [How to submit a pull request][azure_sdk_for_cpp_contributing_pull_requests]
+- [Azure SDK for C++ wiki](https://github.com/Azure/azure-sdk-for-cpp/wiki)
+
+### Reporting security issues and security bugs
+
+Security issues and bugs should be reported privately to the Microsoft Security Response Center
+(MSRC) at <secure@microsoft.com>. You should receive a response within 24 hours. If you do not,
+follow up by email to confirm that your original message was received. For more information,
+including the MSRC PGP key, see the
+[Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
+
+### License
+
+Azure SDK for C++ is licensed under the
+[MIT license](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt).
 
 <!-- LINKS -->
-[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
-[storage_account_overview]: https://learn.microsoft.com/azure/storage/common/storage-account-overview
-[create_account_with_azure_portal]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[create_account_with_powershell]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
-[create_account_with_azure_cli]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
-[storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
-[cla]: https://cla.microsoft.com
-[coc]: https://opensource.microsoft.com/codeofconduct/
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[coc_contact]: mailto:opencode@microsoft.com
+[api_reference]: https://learn.microsoft.com/cpp/api/overview/azure/storage-files-datalake-readme?view=azure-cpp
+[azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
+[azure_sub]: https://azure.microsoft.com/free/
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#getting-started
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[product_documentation]: https://learn.microsoft.com/azure/storage/blobs/data-lake-storage-introduction
+[project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration
+[samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake/samples
+[source_code]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-datalake
+[vcpkg_package]: https://vcpkg.io/en/package/azure-storage-files-datalake-cpp
