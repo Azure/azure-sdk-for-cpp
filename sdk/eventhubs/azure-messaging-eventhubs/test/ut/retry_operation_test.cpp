@@ -355,6 +355,42 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_EQ(1, callCount);
   }
 
+  TEST_F(RetryOperationTest, SuccessfulOperationWinsCancellationRace)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    EXPECT_TRUE(retryOp.Execute(
+        [&]() {
+          ++callCount;
+          context.Cancel();
+          return true;
+        },
+        context));
+    EXPECT_EQ(1, callCount);
+  }
+
+  TEST_F(RetryOperationTest, FailedOperationSurfacesCancellationBeforeRetry)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    EXPECT_THROW(
+        retryOp.Execute(
+            [&]() {
+              ++callCount;
+              context.Cancel();
+              return false;
+            },
+            context),
+        Azure::Core::OperationCancelledException);
+    EXPECT_EQ(1, callCount);
+  }
+
   TEST_F(RetryOperationTest, CancelledContextDoesNotInvokeOperation)
   {
     auto opts = LocalTest::MakeFastRetryOptions();

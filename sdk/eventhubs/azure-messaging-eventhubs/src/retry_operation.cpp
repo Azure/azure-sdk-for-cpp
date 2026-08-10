@@ -61,7 +61,10 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     try
     {
       bool result = operation();
-      context.ThrowIfCancelled();
+      if (!result)
+      {
+        context.ThrowIfCancelled();
+      }
 
       if (!ShouldRetry(result, retryCount, retryAfter))
       {
