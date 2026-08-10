@@ -107,7 +107,7 @@ These environment variables change the setup:
 
 The setup script asks the GitHub compare API whether the pinned commit is reachable from `master`. When that request fails, for example because the anonymous rate limit of 60 requests per hour is exhausted, the script warns and continues. It continues even when `TEST_BROKER_REQUIRE_MERGED` is set, because a request that did not run says nothing about the pin.
 
-The current pin is `239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a`. That commit is the head of a pull request in Azure/azure-amqp, so it is not reachable from `master` and the setup script warns. Azure/azure-amqp squash-merges its pull requests, so the head commit of a pull request never lands on `master`. After that pull request merges, set the pin to its `merge_commit_sha`, which is the squash commit on `master`. Do not use the `merge_commit_sha` of an open pull request, because that commit is a temporary test merge.
+The current pin is `111de654e170de3ab6cefe150043458c67b6660d`, the head of `master` in Azure/azure-amqp. Set the pin to any commit that builds the broker. Azure/azure-amqp squash-merges its pull requests, so the commit that lands on `master` is the `merge_commit_sha` of a merged pull request and never the head commit of that pull request.
 
 To validate a broker update manually, clone the new commit and run these commands from the clone root:
 

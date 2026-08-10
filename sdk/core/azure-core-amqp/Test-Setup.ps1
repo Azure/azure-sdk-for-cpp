@@ -161,8 +161,8 @@ $repositoryBranch = "master"
 # A tag is not a safe substitute, because azure-amqp uses lightweight tags that a maintainer
 # can move.
 #
-# This SHA comes from refs/pull/318/head of Azure/azure-amqp. It is not on master yet, and
-# that is intentional for now. The reachability test below reports this as a warning.
+# This SHA is the head of master in Azure/azure-amqp. The reachability test below stays
+# quiet while the pin sits on master.
 #
 # To update the pin:
 #   1. Pick the new commit from Azure/azure-amqp. Prefer a commit on master.
@@ -174,7 +174,7 @@ $repositoryBranch = "master"
 #   5. Replace the SHA below with the full 40 character SHA, and update README.md.
 #
 # Set TEST_BROKER_COMMIT to point a pipeline at a different broker commit without a code change.
-$defaultRepositoryHash = "239aff0d87b2c19e1fa91636e0fc0f6ee6e9999a"
+$defaultRepositoryHash = "111de654e170de3ab6cefe150043458c67b6660d"
 
 $repositoryHash = if ($env:TEST_BROKER_COMMIT) {
   $env:TEST_BROKER_COMMIT.Trim().ToLowerInvariant()
