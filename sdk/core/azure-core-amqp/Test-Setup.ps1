@@ -301,6 +301,14 @@ try {
     }
   }
 
+  # The restore config belongs to this repository, and not to the broker clone. The restricted
+  # feed policy is this pipeline's requirement, so the file that satisfies it sits next to this
+  # script. Pass an absolute path, because the dotnet calls run from the clone root.
+  $nugetConfig = [System.IO.Path]::Combine($PSScriptRoot, "nuget.cfsclean.config")
+  if (-not (Test-Path $nugetConfig)) {
+    throw "This repository does not contain $nugetConfig."
+  }
+
   # Push-Location is load-bearing. The dotnet calls below must run from the clone root, because
   # the clone root holds the global.json that selects the .NET SDK, and because the paths below
   # are relative to it. Do not replace these paths with absolute paths and drop the location
@@ -317,7 +325,7 @@ try {
       -ArgumentList @(
         "restore",
         "./test/TestAmqpBroker/TestAmqpBroker.csproj",
-        "--configfile", "./nuget.cfsclean.config"
+        "--configfile", $nugetConfig
       )
 
     Invoke-RequiredCommand `
