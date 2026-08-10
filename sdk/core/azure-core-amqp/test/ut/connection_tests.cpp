@@ -50,38 +50,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   TEST_F(TestTokenRefresh, CachedTokenIsUsableWhileItHasLifeLeft)
   {
     auto const now = std::chrono::system_clock::now();
-    EXPECT_TRUE(
-        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
-            TokenExpiringIn(std::chrono::hours(1)), now));
-    EXPECT_TRUE(
-        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
-            TokenExpiringIn(std::chrono::minutes(2)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::hours(1)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::minutes(2)), now));
   }
 
   TEST_F(TestTokenRefresh, CachedTokenIsNotUsableNearOrAfterExpiry)
   {
     auto const now = std::chrono::system_clock::now();
     // Inside the minimum lifetime that a caller may use.
-    EXPECT_FALSE(
-        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
-            TokenExpiringIn(std::chrono::seconds(10)), now));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::seconds(10)), now));
     // Already expired.
-    EXPECT_FALSE(
-        Azure::Core::Amqp::_detail::IsCachedTokenUsable(
-            TokenExpiringIn(std::chrono::seconds(-30)), now));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::seconds(-30)), now));
   }
 
   TEST_F(TestTokenRefresh, RefreshIsDueOneBufferBeforeExpiry)
   {
     auto const now = std::chrono::system_clock::now();
     // A normal token has a long life, so no refresh is due yet.
-    EXPECT_FALSE(
-        Azure::Core::Amqp::_detail::IsTokenRefreshDue(
-            TokenExpiringIn(std::chrono::minutes(90)), now));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+        TokenExpiringIn(std::chrono::minutes(90)), now));
     // Inside the buffer, so the refresh thread must replace the token.
-    EXPECT_TRUE(
-        Azure::Core::Amqp::_detail::IsTokenRefreshDue(
-            TokenExpiringIn(std::chrono::minutes(6)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+        TokenExpiringIn(std::chrono::minutes(6)), now));
   }
 
   // A credential can put any value in ExpiresOn, and the cast from
