@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma once
+#include <azure/core/context.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/messaging/eventhubs/eventhubs_exception.hpp>
 
@@ -60,8 +61,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         double jitterFactor = -1);
 
   public:
-    explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions& retryOptions)
-        : m_retryOptions(std::move(retryOptions))
+    explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions const& retryOptions)
+        : m_retryOptions(retryOptions)
     {
     }
 
@@ -76,6 +77,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       return *this;
     }
 
-    bool Execute(std::function<bool()> operation);
+    bool Execute(std::function<bool()> operation, Azure::Core::Context const& context);
   };
 }}}} // namespace Azure::Messaging::EventHubs::_detail

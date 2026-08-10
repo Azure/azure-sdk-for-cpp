@@ -2,25 +2,27 @@
 // Licensed under the MIT License.
 
 #include "eventhubs_test_base.hpp"
+#include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
-#include <azure/core/internal/environment.hpp>
-#include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <atomic>
+#include <chrono>
+#include <exception>
 #include <functional>
+#include <future>
+#include <stdexcept>
+#include <string>
+#include <system_error>
+#include <thread>
 
 #include <gtest/gtest.h>
 
 namespace LocalTest {
-bool testFunc() { return true; }
-bool testNegative() { return false; }
-Azure::Core::Http::Policies::RetryOptions retryOptions;
-
-// Fast retry options keep regression tests for issue #7130 quick; the production
-// defaults (3 retries, 800ms base delay) would add several seconds of backoff per test.
 Azure::Core::Http::Policies::RetryOptions MakeFastRetryOptions(int32_t maxRetries = 3)
 {
   Azure::Core::Http::Policies::RetryOptions opts;
@@ -29,160 +31,414 @@ Azure::Core::Http::Policies::RetryOptions MakeFastRetryOptions(int32_t maxRetrie
   opts.MaxRetryDelay = std::chrono::milliseconds(2);
   return opts;
 }
+
+Azure::Messaging::EventHubs::EventHubsException MakeEventHubsException(
+    Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition,
+    std::string const& message)
+{
+  Azure::Core::Amqp::Models::_internal::AmqpError error;
+  error.Condition = condition;
+  error.Description = message;
+  return Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::CreateEventHubsException(
+      error);
+}
 } // namespace LocalTest
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
-  class RetryOperationTest : public EventHubsTestBase {
-  };
+  class RetryOperationTest : public EventHubsTestBase {};
+
   TEST_F(RetryOperationTest, ExecuteTrue)
   {
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
-    EXPECT_TRUE(retryOp.Execute(LocalTest::testFunc));
+    auto opts = LocalTest::MakeFastRetryOptions();
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+
+    EXPECT_TRUE(retryOp.Execute([]() { return true; }, context));
   }
 
   TEST_F(RetryOperationTest, ExecuteFalse)
   {
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
-    EXPECT_FALSE(retryOp.Execute(LocalTest::testNegative));
+    auto opts = LocalTest::MakeFastRetryOptions(2);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    EXPECT_FALSE(retryOp.Execute(
+        [&callCount]() {
+          ++callCount;
+          return false;
+        },
+        context));
+    EXPECT_EQ(opts.MaxRetries + 1, callCount);
   }
 
   TEST_F(RetryOperationTest, ShouldRetryTrue1)
   {
+    auto opts = LocalTest::MakeFastRetryOptions();
     std::chrono::milliseconds retryAfter{};
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+
     EXPECT_FALSE(retryOp.ShouldRetry(true, 0, retryAfter));
   }
 
   TEST_F(RetryOperationTest, ShouldRetryTrue2)
   {
+    auto opts = LocalTest::MakeFastRetryOptions();
     std::chrono::milliseconds retryAfter{};
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
-    EXPECT_FALSE(retryOp.ShouldRetry(true, LocalTest::retryOptions.MaxRetries, retryAfter));
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+
+    EXPECT_FALSE(retryOp.ShouldRetry(true, opts.MaxRetries, retryAfter));
   }
 
   TEST_F(RetryOperationTest, ShouldRetryFalse1)
   {
+    auto opts = LocalTest::MakeFastRetryOptions();
     std::chrono::milliseconds retryAfter{};
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
-    EXPECT_TRUE(retryOp.ShouldRetry(false, 0, retryAfter));
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+
+    EXPECT_TRUE(retryOp.ShouldRetry(false, 0, retryAfter, 1.0));
+    EXPECT_EQ(opts.RetryDelay, retryAfter);
+
+    EXPECT_TRUE(retryOp.ShouldRetry(false, 1, retryAfter, 1.0));
+    EXPECT_EQ(opts.RetryDelay * 2, retryAfter);
   }
 
   TEST_F(RetryOperationTest, ShouldRetryFalse2)
   {
+    auto opts = LocalTest::MakeFastRetryOptions();
     std::chrono::milliseconds retryAfter{};
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(LocalTest::retryOptions);
-    EXPECT_FALSE(retryOp.ShouldRetry(false, LocalTest::retryOptions.MaxRetries, retryAfter));
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+
+    EXPECT_FALSE(retryOp.ShouldRetry(false, opts.MaxRetries, retryAfter));
+    EXPECT_EQ(std::chrono::milliseconds::zero(), retryAfter);
   }
 
-  // Regression tests for issue #7130: RetryOperation::Execute must rethrow the last
-  // exception when all retry attempts have been exhausted; previously it returned false
-  // and silently dropped the failure.
   TEST_F(RetryOperationTest, RethrowsLastEventHubsExceptionWhenRetriesExhausted)
   {
     auto opts = LocalTest::MakeFastRetryOptions(3);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
-
+    Azure::Core::Context context;
     int callCount = 0;
+
     auto alwaysThrows = [&callCount]() -> bool {
       ++callCount;
-      throw Azure::Messaging::EventHubs::EventHubsException(
+      throw LocalTest::MakeEventHubsException(
+          Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
           "transient failure attempt " + std::to_string(callCount));
     };
 
     try
     {
-      retryOp.Execute(alwaysThrows);
+      retryOp.Execute(alwaysThrows, context);
       FAIL() << "Expected EventHubsException to be rethrown after retries were exhausted.";
     }
     catch (Azure::Messaging::EventHubs::EventHubsException const& e)
     {
-      EXPECT_STREQ("transient failure attempt 3", e.what());
+      EXPECT_STREQ("transient failure attempt 4", e.what());
     }
-    EXPECT_EQ(3, callCount);
+    EXPECT_EQ(opts.MaxRetries + 1, callCount);
   }
 
-  TEST_F(RetryOperationTest, RethrowsLastStdExceptionWhenRetriesExhausted)
+  TEST_F(RetryOperationTest, RethrowsLastSystemErrorWhenRetriesExhausted)
   {
     auto opts = LocalTest::MakeFastRetryOptions(2);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
-
+    Azure::Core::Context context;
+    auto const expectedError = std::make_error_code(std::errc::connection_reset);
     int callCount = 0;
-    auto alwaysThrows = [&callCount]() -> bool {
+
+    auto alwaysThrows = [&callCount, &expectedError]() -> bool {
       ++callCount;
-      throw std::runtime_error("network blip " + std::to_string(callCount));
+      throw std::system_error(expectedError, "network failure");
     };
 
     try
     {
-      retryOp.Execute(alwaysThrows);
-      FAIL() << "Expected std::runtime_error to be rethrown after retries were exhausted.";
+      retryOp.Execute(alwaysThrows, context);
+      FAIL() << "Expected std::system_error to be rethrown after retries were exhausted.";
     }
-    catch (std::runtime_error const& e)
+    catch (std::system_error const& e)
     {
-      EXPECT_STREQ("network blip 2", e.what());
+      EXPECT_EQ(expectedError, e.code());
     }
-    EXPECT_EQ(2, callCount);
+    EXPECT_EQ(opts.MaxRetries + 1, callCount);
   }
 
-  TEST_F(RetryOperationTest, ThrowsImmediatelyOnFatalEventHubsException)
+  TEST_F(RetryOperationTest, DoesNotRetryNonTransientSystemErrors)
   {
     auto opts = LocalTest::MakeFastRetryOptions(5);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    std::errc errorCodes[]
+        = {std::errc::host_unreachable, std::errc::invalid_argument, std::errc::permission_denied};
 
-    int callCount = 0;
-    auto throwsFatal = [&callCount]() -> bool {
-      ++callCount;
-      Azure::Messaging::EventHubs::EventHubsException ex("message too big");
-      ex.ErrorCondition = "amqp:link:message-size-exceeded";
-      throw ex;
-    };
+    for (auto const errorCode : errorCodes)
+    {
+      int callCount = 0;
+      auto throwsSystemError = [&callCount, errorCode]() -> bool {
+        ++callCount;
+        throw std::system_error(std::make_error_code(errorCode), "permanent system error");
+      };
 
-    EXPECT_THROW(retryOp.Execute(throwsFatal), Azure::Messaging::EventHubs::EventHubsException);
-    EXPECT_EQ(1, callCount) << "Fatal exception must not be retried.";
+      EXPECT_THROW(retryOp.Execute(throwsSystemError, context), std::system_error);
+      EXPECT_EQ(1, callCount);
+    }
+  }
+
+  TEST_F(RetryOperationTest, DoesNotRetryNonTransientEventHubsExceptions)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    Azure::Core::Amqp::Models::_internal::AmqpErrorCondition errorConditions[]
+        = {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::UnauthorizedAccess,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::PreconditionFailed,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkPayloadSizeExceeded};
+
+    for (auto const& errorCondition : errorConditions)
+    {
+      int callCount = 0;
+      auto throwsNonTransient = [&callCount, errorCondition]() -> bool {
+        ++callCount;
+        throw LocalTest::MakeEventHubsException(errorCondition, "non-transient failure");
+      };
+
+      EXPECT_THROW(
+          retryOp.Execute(throwsNonTransient, context),
+          Azure::Messaging::EventHubs::EventHubsException);
+      EXPECT_EQ(1, callCount) << errorCondition.ToString();
+    }
   }
 
   TEST_F(RetryOperationTest, SucceedsAfterTransientException)
   {
     auto opts = LocalTest::MakeFastRetryOptions(3);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
-
+    Azure::Core::Context context;
     int callCount = 0;
+
     auto eventuallySucceeds = [&callCount]() -> bool {
       ++callCount;
       if (callCount == 1)
       {
-        throw Azure::Messaging::EventHubs::EventHubsException("first attempt fails");
+        throw LocalTest::MakeEventHubsException(
+            Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
+            "first attempt fails");
       }
       return true;
     };
 
-    EXPECT_TRUE(retryOp.Execute(eventuallySucceeds));
+    EXPECT_TRUE(retryOp.Execute(eventuallySucceeds, context));
     EXPECT_EQ(2, callCount);
   }
 
   TEST_F(RetryOperationTest, FalseAfterTransientExceptionDoesNotRethrow)
   {
     auto opts = LocalTest::MakeFastRetryOptions(3);
-    // Capture MaxRetries before constructing RetryOperation; the constructor takes
-    // RetryOptions by non-const lvalue ref and moves from it, so reading opts.MaxRetries
-    // afterwards would rely on moved-from state.
-    auto const maxRetries = opts.MaxRetries;
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
-
+    Azure::Core::Context context;
     int callCount = 0;
+
     auto throwsThenReturnsFalse = [&callCount]() -> bool {
       ++callCount;
       if (callCount == 1)
       {
-        throw Azure::Messaging::EventHubs::EventHubsException("first attempt fails");
+        throw LocalTest::MakeEventHubsException(
+            Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
+            "first attempt fails");
       }
       return false;
     };
 
-    // Second attempt returns false cleanly. ShouldRetry(false=response, retryCount=1)
-    // returns true, so the loop retries; on attempt 3 the loop terminates and Execute
-    // returns false. The exception from attempt 1 must not be rethrown.
-    EXPECT_NO_THROW({ EXPECT_FALSE(retryOp.Execute(throwsThenReturnsFalse)); });
-    EXPECT_EQ(maxRetries, callCount);
+    EXPECT_NO_THROW({ EXPECT_FALSE(retryOp.Execute(throwsThenReturnsFalse, context)); });
+    EXPECT_EQ(opts.MaxRetries + 1, callCount);
+  }
+
+  TEST_F(RetryOperationTest, ZeroRetriesStillExecutesInitialAttempt)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(0);
+    opts.RetryDelay = std::chrono::seconds(5);
+    opts.MaxRetryDelay = std::chrono::seconds(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    auto throwsTransient = [&callCount]() -> bool {
+      ++callCount;
+      throw LocalTest::MakeEventHubsException(
+          Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
+          "initial attempt failed");
+    };
+
+    auto const attemptStart = std::chrono::steady_clock::now();
+    EXPECT_THROW(
+        retryOp.Execute(throwsTransient, context), Azure::Messaging::EventHubs::EventHubsException);
+    auto const attemptTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - attemptStart);
+
+    EXPECT_EQ(1, callCount);
+    EXPECT_LT(attemptTime.count(), 1000);
+  }
+
+#if ENABLE_UAMQP
+  TEST_F(RetryOperationTest, DoesNotRetryRuntimeError)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    auto throwsRuntimeError = [&callCount]() -> bool {
+      ++callCount;
+      throw std::runtime_error("invalid local state");
+    };
+
+    EXPECT_THROW(retryOp.Execute(throwsRuntimeError, context), std::runtime_error);
+    EXPECT_EQ(1, callCount);
+  }
+#endif
+
+  TEST_F(RetryOperationTest, DoesNotRetryAuthenticationException)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    auto throwsAuthenticationException = [&callCount]() -> bool {
+      ++callCount;
+      throw Azure::Core::Credentials::AuthenticationException("authentication failed");
+    };
+
+    EXPECT_THROW(
+        retryOp.Execute(throwsAuthenticationException, context),
+        Azure::Core::Credentials::AuthenticationException);
+    EXPECT_EQ(1, callCount);
+  }
+
+  TEST_F(RetryOperationTest, DoesNotRetryOperationCancelledException)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    auto throwsOperationCancelled = [&callCount]() -> bool {
+      ++callCount;
+      throw Azure::Core::OperationCancelledException("operation cancelled");
+    };
+
+    EXPECT_THROW(
+        retryOp.Execute(throwsOperationCancelled, context),
+        Azure::Core::OperationCancelledException);
+    EXPECT_EQ(1, callCount);
+  }
+
+  TEST_F(RetryOperationTest, CancellationDuringOperationSurfacesOperationCancelledException)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    int callCount = 0;
+
+    auto returnsCancelledAmqpError = [&]() -> bool {
+      ++callCount;
+      context.Cancel();
+      throw LocalTest::MakeEventHubsException(
+          Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::OperationCancelled,
+          "message send operation cancelled");
+    };
+
+    EXPECT_THROW(
+        retryOp.Execute(returnsCancelledAmqpError, context),
+        Azure::Core::OperationCancelledException);
+    EXPECT_EQ(1, callCount);
+  }
+
+  TEST_F(RetryOperationTest, CancelledContextDoesNotInvokeOperation)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions();
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    context.Cancel();
+    int callCount = 0;
+
+    EXPECT_THROW(
+        retryOp.Execute(
+            [&callCount]() {
+              ++callCount;
+              return true;
+            },
+            context),
+        Azure::Core::OperationCancelledException);
+    EXPECT_EQ(0, callCount);
+  }
+
+  TEST_F(RetryOperationTest, CancellingContextInterruptsBackoff)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(3);
+    opts.RetryDelay = std::chrono::seconds(5);
+    opts.MaxRetryDelay = std::chrono::seconds(5);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    std::atomic<int> callCount{0};
+    std::promise<void> firstAttempt;
+    auto firstAttemptFuture = firstAttempt.get_future();
+    std::exception_ptr workerException;
+
+    std::thread worker([&]() {
+      try
+      {
+        retryOp.Execute(
+            [&]() -> bool {
+              auto const attempt = ++callCount;
+              if (attempt == 1)
+              {
+                firstAttempt.set_value();
+              }
+              throw LocalTest::MakeEventHubsException(
+                  Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
+                  "transient failure");
+            },
+            context);
+      }
+      catch (...)
+      {
+        workerException = std::current_exception();
+      }
+    });
+
+    if (firstAttemptFuture.wait_for(std::chrono::seconds(2)) != std::future_status::ready)
+    {
+      context.Cancel();
+      worker.join();
+      FAIL() << "The first retry attempt did not start.";
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    auto const cancelStart = std::chrono::steady_clock::now();
+    context.Cancel();
+    worker.join();
+    auto const cancellationTime = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::steady_clock::now() - cancelStart);
+
+    EXPECT_LT(cancellationTime.count(), 1000);
+    EXPECT_EQ(1, callCount.load());
+    ASSERT_TRUE(workerException != nullptr);
+    EXPECT_THROW(std::rethrow_exception(workerException), Azure::Core::OperationCancelledException);
+  }
+
+  TEST_F(RetryOperationTest, ConstructorCopiesRetryOptions)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(7);
+    auto const expected = opts;
+
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    (void)retryOp;
+
+    EXPECT_EQ(expected.MaxRetries, opts.MaxRetries);
+    EXPECT_EQ(expected.RetryDelay, opts.RetryDelay);
+    EXPECT_EQ(expected.MaxRetryDelay, opts.MaxRetryDelay);
+    EXPECT_EQ(expected.StatusCodes, opts.StatusCodes);
   }
 }}}}} // namespace Azure::Messaging::EventHubs::_internal::Test

@@ -11,6 +11,7 @@
 
 ### Bugs Fixed
 
+- [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) Updated producer retries to honor `EventHubsException::IsTransient`, retry only allowlisted transient system errors, stop immediately for other failures, and make backoff cancellable through `Azure::Core::Context`. Retry accounting now always performs the initial attempt and treats `MaxRetries` as additional retry attempts.
 - [[#7257]](https://github.com/Azure/azure-sdk-for-cpp/issues/7257) Fixed the partition key on a batch envelope. `EventDataBatch::ToAmqpMessage` wrote the `x-opt-partition-key` value to the AMQP delivery-annotations section. The Event Hubs service ignores that section. The batch also built the envelope from the message before the code applied the partition key annotation. A batch with a partition key thus spread across all partitions. The partition key now goes in the message-annotations section, on the batch envelope and on each message in the batch. A batch that sets `EventDataBatchOptions::PartitionKey` now lands on one partition.
 
 ### Other Changes
