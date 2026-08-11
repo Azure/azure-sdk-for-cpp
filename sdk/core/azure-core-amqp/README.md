@@ -1,3 +1,4 @@
+<!-- cspell: ignore cfsclean -->
 # Azure SDK AMQP Library for C++
 
 Azure::Core::Amqp (`azure-core-amqp`) provides an implementation
@@ -76,6 +77,47 @@ while (messageSendCount < maxMessageSendCount)
 
 You can build and run the tests locally by executing `azure-core-amqp-test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
+### Run broker-backed tests
+
+Some tests in this package need a live AMQP broker. They use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The default build sets `USE_RUST_AMQP`, so these tests exercise the Rust AMQP stack. The setup script clones the commit that `Test-Setup.ps1` pins, restores through the `nuget.cfsclean.config` in this directory, builds the `net10.0` target, and waits for the broker to accept TCP connections.
+
+Run the setup from the repository root before starting the tests:
+
+```powershell
+.\sdk\core\azure-core-amqp\Test-Setup.ps1
+```
+
+Stop the broker when the tests finish:
+
+```powershell
+.\sdk\core\azure-core-amqp\Test-Cleanup.ps1
+```
+
+`Test-Setup.ps1` writes the broker process ID to `TestArtifacts\test-broker.pid`, next to the broker logs. `Test-Cleanup.ps1` reads that file to stop the right process. The cleanup script reports success when the broker has already exited.
+
+The default address is `amqp://127.0.0.1:25672`. Set `TEST_BROKER_ADDRESS` before running the script to use another local host or port. When another process already holds that port, the setup script keeps that process and runs the tests against it.
+
+These environment variables change the setup:
+
+| Variable | Effect |
+| --- | --- |
+| `TEST_BROKER_ADDRESS` | Sets the broker address. The default is `amqp://127.0.0.1:25672`. |
+| `TEST_BROKER_COMMIT` | Overrides the pinned broker commit. The value must be a full 40 character commit SHA. |
+| `TEST_BROKER_REQUIRE_MERGED` | Turns the pin reachability warning into an error. Set this to make the run fail when the pinned commit is not reachable from `master` in Azure/azure-amqp. |
+
+The setup script asks the GitHub compare API whether the pinned commit is reachable from `master`. When that request fails, for example because the anonymous rate limit of 60 requests per hour is exhausted, the script warns and continues. It continues even when `TEST_BROKER_REQUIRE_MERGED` is set, because a request that did not run says nothing about the pin.
+
+The current pin is `111de654e170de3ab6cefe150043458c67b6660d`, the head of `master` in Azure/azure-amqp. Set the pin to any commit that builds the broker. Azure/azure-amqp squash-merges its pull requests, so the commit that lands on `master` is the `merge_commit_sha` of a merged pull request and never the head commit of that pull request.
+
+To validate a broker update manually, clone the new commit and run these commands from the clone root:
+
+```powershell
+dotnet restore .\test\TestAmqpBroker\TestAmqpBroker.csproj --configfile <this directory>\nuget.cfsclean.config
+dotnet build .\test\TestAmqpBroker\TestAmqpBroker.csproj --configuration Debug --framework net10.0 --no-restore
+```
+
+Update the commit in `Test-Setup.ps1` and in this file only after the restore, build, readiness check, and C++ AMQP tests pass. Any commit that builds the broker works, because the restore configuration lives in this repository and not in the clone. Prefer a commit that is reachable from `master`.
+
 ## Troubleshooting
 
 If you run into issues while using this library, please feel free to [file an issue](https://github.com/Azure/azure-sdk-for-cpp/issues/new).
@@ -97,6 +139,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
 [azure_sdk_cpp_development_guidelines]: https://azure.github.io/azure-sdk/cpp_introduction.html
 [azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_amqp]: https://github.com/Azure/azure-amqp
 [azure_pattern_circuit_breaker]: https://learn.microsoft.com/azure/architecture/patterns/circuit-breaker
 [azure_pattern_retry]: https://learn.microsoft.com/azure/architecture/patterns/retry
 [azure_portal]: https://portal.azure.com
@@ -104,5 +147,3 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [c_compiler]: https://visualstudio.microsoft.com/vs/features/cplusplus/
 [cloud_shell]: https://learn.microsoft.com/azure/cloud-shell/overview
 [cloud_shell_bash]: https://shell.azure.com/bash
-
-

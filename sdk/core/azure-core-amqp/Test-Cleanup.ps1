@@ -1,21 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-# cspell: ignore JOBID
 
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
+. "$PSScriptRoot\Test-Broker-Common.ps1"
 
-Write-Host "Test Broker output:"
-Receive-Job -Id $env:TEST_BROKER_JOBID
-
-# Check if the test broker job is still running
-$job = Get-Job -Id $env:TEST_BROKER_JOBID
-if ($job.State -ne "Running") {
-  Write-Host "Test broker terminated unexpectedly."
-  exit 1
+if ($IsMacOS) {
+  Write-Host "AMQP tests are not supported on macOS. Skipping test cleanup."
+  exit 0
 }
 
-# Stop the test broker job started in Test-Setup.ps1
-Write-Host "Stopping test broker"
-Stop-Job -Id $env:TEST_BROKER_JOBID
-Remove-Job -Id $env:TEST_BROKER_JOBID
-Write-Host "Test broker stopped."
+$paths = Get-TestBrokerPaths -RepositoryRoot $RepoRoot
+
+# Stop the broker first. It holds the log files open while it runs, and a read of an open file
+# can fail on Windows. This step also runs after the tests, and it runs even when the tests
+# fail, so it must not turn a test failure into a cleanup failure. It always reports success.
+Stop-TestBroker -ProcessIdPath $paths.ProcessIdPath
+
+Write-BrokerLogs `
+  -StandardOutputPath $paths.StandardOutputPath `
+  -StandardErrorPath $paths.StandardErrorPath
+
+exit 0
