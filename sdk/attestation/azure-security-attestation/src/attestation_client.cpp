@@ -246,7 +246,8 @@ Azure::Response<PlutonAttestationResult> AttestationClient::AttestPluton(
     AttestPlutonOptions const&,
     Azure::Core::Context const& context) const
 {
-  return AttestBackend<PlutonAttestationResult>(dataToAttest, "AttestPluton", "attest/Pluton", context);
+  return AttestBackend<PlutonAttestationResult>(
+      dataToAttest, "AttestPluton", "attest/Pluton", context);
 }
 
 namespace {

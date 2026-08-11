@@ -212,8 +212,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
      * that the returned policy makes sense as an attestation policy (starts with the text "version"
      * - beyond that, we can't verify the response).
      *
-     * Note that VSM/VBS/TPM and Pluton policies can be empty, so if we encounter an empty policy, verify that
-     * the policy came from TPM or Pluton attestation.
+     * Note that VSM/VBS/TPM and Pluton policies can be empty, so if we encounter an empty policy,
+     * verify that the policy came from TPM or Pluton attestation.
      *
      * One additional check is performed in live mode: We verify that the issuer of the returned
      * attestation token matches the endpoint. This check cannot be run against recorded collateral
@@ -234,7 +234,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         if (policy.Value.Body.empty())
         {
           EXPECT_TRUE(
-              AttestationType::Tpm == attestationType || AttestationType::Pluton == attestationType);
+              AttestationType::Tpm == attestationType
+              || AttestationType::Pluton == attestationType);
         }
         else
         {
