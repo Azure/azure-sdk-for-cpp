@@ -9,23 +9,10 @@
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
-#include <system_error>
 #include <thread>
 
 namespace {
 constexpr std::chrono::milliseconds CancellationCheckInterval{100};
-
-bool IsRetryableSystemError(std::error_code const& errorCode)
-{
-  return errorCode == std::errc::broken_pipe || errorCode == std::errc::connection_aborted
-      || errorCode == std::errc::connection_refused || errorCode == std::errc::connection_reset
-      || errorCode == std::errc::interrupted || errorCode == std::errc::io_error
-      || errorCode == std::errc::network_down || errorCode == std::errc::network_reset
-      || errorCode == std::errc::network_unreachable || errorCode == std::errc::no_buffer_space
-      || errorCode == std::errc::not_connected || errorCode == std::errc::operation_would_block
-      || errorCode == std::errc::resource_unavailable_try_again
-      || errorCode == std::errc::timed_out;
-}
 
 void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Context const& context)
 {
@@ -88,19 +75,6 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     {
       throw;
     }
-    catch (std::system_error const& e)
-    {
-      context.ThrowIfCancelled();
-      if (Log::ShouldWrite(Logger::Level::Warning))
-      {
-        Log::Write(Logger::Level::Warning, std::string("System error while trying: ") + e.what());
-      }
-      if (!IsRetryableSystemError(e.code()) || !ShouldRetry(false, retryCount, retryAfter))
-      {
-        throw;
-      }
-    }
-#if ENABLE_RUST_AMQP
     catch (std::runtime_error const& e)
     {
       context.ThrowIfCancelled();
@@ -113,7 +87,6 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
         throw;
       }
     }
-#endif
 
     ++retryCount;
     WaitForRetryDelay(retryAfter, context);

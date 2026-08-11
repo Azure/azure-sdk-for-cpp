@@ -17,7 +17,6 @@
 #include <future>
 #include <stdexcept>
 #include <string>
-#include <system_error>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -140,61 +139,126 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_EQ(opts.MaxRetries + 1, callCount);
   }
 
-  TEST_F(RetryOperationTest, RethrowsLastSystemErrorWhenRetriesExhausted)
+  TEST_F(RetryOperationTest, RethrowsLastRuntimeErrorWhenRetriesExhausted)
   {
     auto opts = LocalTest::MakeFastRetryOptions(2);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
     Azure::Core::Context context;
-    auto const expectedError = std::make_error_code(std::errc::connection_reset);
     int callCount = 0;
 
-    auto alwaysThrows = [&callCount, &expectedError]() -> bool {
+    auto alwaysThrows = [&callCount]() -> bool {
       ++callCount;
-      throw std::system_error(expectedError, "network failure");
+      throw std::runtime_error("Could not send message attempt " + std::to_string(callCount));
     };
 
     try
     {
       retryOp.Execute(alwaysThrows, context);
-      FAIL() << "Expected std::system_error to be rethrown after retries were exhausted.";
+      FAIL() << "Expected std::runtime_error to be rethrown after retries were exhausted.";
     }
-    catch (std::system_error const& e)
+    catch (std::runtime_error const& e)
     {
-      EXPECT_EQ(expectedError, e.code());
+      EXPECT_STREQ("Could not send message attempt 3", e.what());
     }
     EXPECT_EQ(opts.MaxRetries + 1, callCount);
   }
 
-  TEST_F(RetryOperationTest, DoesNotRetryNonTransientSystemErrors)
+  TEST_F(RetryOperationTest, RetriesEmptyEventHubsCondition)
   {
-    auto opts = LocalTest::MakeFastRetryOptions(5);
+    auto opts = LocalTest::MakeFastRetryOptions(2);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
     Azure::Core::Context context;
-    std::errc errorCodes[]
-        = {std::errc::host_unreachable, std::errc::invalid_argument, std::errc::permission_denied};
+    int callCount = 0;
 
-    for (auto const errorCode : errorCodes)
+    auto succeedsAfterEmptyError = [&callCount]() -> bool {
+      ++callCount;
+      if (callCount == 1)
+      {
+        auto exception = LocalTest::MakeEventHubsException(
+            Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{},
+            "unknown communication failure");
+        EXPECT_TRUE(exception.IsTransient);
+        throw exception;
+      }
+      return true;
+    };
+
+    EXPECT_TRUE(retryOp.Execute(succeedsAfterEmptyError, context));
+    EXPECT_EQ(2, callCount);
+  }
+
+  TEST_F(RetryOperationTest, RetriesAllowlistedEventHubsConditions)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(2);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    Azure::Core::Amqp::Models::_internal::AmqpErrorCondition errorConditions[]
+        = {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ServerBusyError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkDetachForced,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ConnectionForced,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ConnectionFramingError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ProtonIo,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::NotFound,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::IllegalState};
+
+    for (auto const& errorCondition : errorConditions)
     {
       int callCount = 0;
-      auto throwsSystemError = [&callCount, errorCode]() -> bool {
+      auto succeedsAfterTransientError = [&callCount, errorCondition]() -> bool {
         ++callCount;
-        throw std::system_error(std::make_error_code(errorCode), "permanent system error");
+        if (callCount == 1)
+        {
+          auto exception = LocalTest::MakeEventHubsException(errorCondition, "transient failure");
+          EXPECT_TRUE(exception.IsTransient);
+          throw exception;
+        }
+        return true;
       };
 
-      EXPECT_THROW(retryOp.Execute(throwsSystemError, context), std::system_error);
-      EXPECT_EQ(1, callCount);
+      EXPECT_TRUE(retryOp.Execute(succeedsAfterTransientError, context));
+      EXPECT_EQ(2, callCount) << errorCondition.ToString();
     }
   }
 
-  TEST_F(RetryOperationTest, DoesNotRetryNonTransientEventHubsExceptions)
+  TEST_F(RetryOperationTest, DoesNotRetryUnknownOrKnownNonTransientEventHubsConditions)
   {
     auto opts = LocalTest::MakeFastRetryOptions(5);
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
     Azure::Core::Context context;
     Azure::Core::Amqp::Models::_internal::AmqpErrorCondition errorConditions[]
-        = {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::UnauthorizedAccess,
+        = {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{
+               "com.microsoft:future-unknown-error"},
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::UnauthorizedAccess,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::DecodeError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ResourceLimitExceeded,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ResourceLocked,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::NotAllowed,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InvalidField,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::NotImplemented,
            Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::PreconditionFailed,
-           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkPayloadSizeExceeded};
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ResourceDeleted,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::FrameSizeTooSmall,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkStolen,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkPayloadSizeExceeded,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ArgumentError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ArgumentOutOfRangeError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::EntityDisabledError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::PartitionNotOwnedError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::StoreLockLostError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::PublisherRevokedError,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TrackingIdProperty,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::OperationCancelled,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::MessageLockLost,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::SessionLockLost,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::SessionCannotBeLocked,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::MessageNotFound,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::SessionNotFound,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::EntityAlreadyExists,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::ConnectionRedirect,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::LinkRedirect,
+           Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TransferLimitExceeded};
 
     for (auto const& errorCondition : errorConditions)
     {
@@ -280,24 +344,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_EQ(1, callCount);
     EXPECT_LT(attemptTime.count(), 1000);
   }
-
-#if ENABLE_UAMQP
-  TEST_F(RetryOperationTest, DoesNotRetryRuntimeError)
-  {
-    auto opts = LocalTest::MakeFastRetryOptions(5);
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
-    Azure::Core::Context context;
-    int callCount = 0;
-
-    auto throwsRuntimeError = [&callCount]() -> bool {
-      ++callCount;
-      throw std::runtime_error("invalid local state");
-    };
-
-    EXPECT_THROW(retryOp.Execute(throwsRuntimeError, context), std::runtime_error);
-    EXPECT_EQ(1, callCount);
-  }
-#endif
 
   TEST_F(RetryOperationTest, DoesNotRetryAuthenticationException)
   {
