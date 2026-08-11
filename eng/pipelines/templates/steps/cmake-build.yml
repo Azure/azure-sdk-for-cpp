@@ -30,10 +30,32 @@ steps:
       Write-Host "##vso[task.setvariable variable=CargoConfigPath]$configPath"
     displayName: Configure cargo to use the azure-sdk-for-rust feed
 
+  # Workaround issue in public pipelines. Revert when root cause issue is fixed:
+  # https://github.com/microsoft/azure-pipelines-tasks/issues/22421
+  # CargoAuthenticate@0 authenticates with SYSTEM_ACCESSTOKEN, which Azure DevOps does
+  # not deliver to fork builds. The task still "succeeds", but writes the anonymous
+  # identity, and cargo then fails the index fetch with 401 / TF400813 for user
+  # aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa. NuGetAuthenticate@1 uses the SYSTEMVSSCONNECTION
+  # endpoint token, which is delivered to fork builds, and publishes it as
+  # VSS_NUGET_ACCESSTOKEN for later steps. It runs as `public Build Service (azure-sdk)`,
+  # which holds Feed and Upstream Reader on the cargo feed.
+  #
+  # This is declared here rather than relying on nuget-config.yml because
+  # archetype-sdk-client.yml includes this template without it.
+  - task: NuGetAuthenticate@1
+    displayName: Acquire an Azure Artifacts token that fork builds can use
+
   - task: CargoAuthenticate@0
     displayName: Authenticate cargo to the azure-sdk-for-rust feed
     inputs:
       configFile: $(CargoConfigPath)
+    # Workaround issue in public pipelines. Revert when root cause is fixed:
+    # https://github.com/microsoft/azure-pipelines-tasks/issues/22421
+    #
+    # NuGetAuthenticate@1 above publishes the endpoint token as VSS_NUGET_ACCESSTOKEN,
+    # which is populated in fork builds and useful as SYSTEM_ACCESSTOKEN here.
+    env:
+      SYSTEM_ACCESSTOKEN: $(VSS_NUGET_ACCESSTOKEN)
 
   - script: cmake --version
     workingDirectory: build
