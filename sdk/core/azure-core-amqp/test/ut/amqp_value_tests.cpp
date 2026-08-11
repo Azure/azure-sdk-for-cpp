@@ -220,6 +220,243 @@ TEST_F(TestValues, SimpleCreateDouble)
     EXPECT_TRUE(AmqpValue() < value);
   }
 }
+
+#if ENABLE_RUST_AMQP
+TEST_F(TestValues, SimpleCreateDecimal32)
+{
+  {
+    AmqpDecimal32 const decimal{0x01, 0x23, 0x45, 0x67};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal32, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Decimal32");
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal32>(value));
+    EXPECT_TRUE(AmqpValue() < value);
+
+    // A Decimal32 is not convertible to any other AMQP type.
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::uint32_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<float>(value));
+    EXPECT_ANY_THROW((void)static_cast<double>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::string>(value));
+    EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal64>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal128>(value));
+  }
+  {
+    // A default constructed (all zeroes) Decimal32.
+    AmqpDecimal32 const decimal{};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal32, value.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal32>(value));
+  }
+  {
+    // Copy, move, and equality semantics.
+    AmqpDecimal32 const decimal{0xde, 0xad, 0xbe, 0xef};
+    AmqpValue value(decimal);
+    AmqpValue copy(value);
+    EXPECT_EQ(value, copy);
+    EXPECT_EQ(AmqpValueType::Decimal32, copy.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal32>(copy));
+
+    AmqpValue moved(std::move(copy));
+    EXPECT_EQ(value, moved);
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal32>(moved));
+
+    EXPECT_NE(value, AmqpValue(AmqpDecimal32{0x00, 0xad, 0xbe, 0xef}));
+  }
+}
+
+TEST_F(TestValues, SimpleCreateDecimal64)
+{
+  {
+    AmqpDecimal64 const decimal{0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal64, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Decimal64");
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal64>(value));
+    EXPECT_TRUE(AmqpValue() < value);
+
+    // A Decimal64 is not convertible to any other AMQP type.
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::uint64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<double>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::string>(value));
+    EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal32>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal128>(value));
+  }
+  {
+    // A default constructed (all zeroes) Decimal64.
+    AmqpDecimal64 const decimal{};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal64, value.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal64>(value));
+  }
+  {
+    // Copy, move, and equality semantics.
+    AmqpDecimal64 const decimal{0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef};
+    AmqpValue value(decimal);
+    AmqpValue copy(value);
+    EXPECT_EQ(value, copy);
+    EXPECT_EQ(AmqpValueType::Decimal64, copy.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal64>(copy));
+
+    AmqpValue moved(std::move(copy));
+    EXPECT_EQ(value, moved);
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal64>(moved));
+
+    EXPECT_NE(value, AmqpValue(AmqpDecimal64{0x00, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef}));
+  }
+}
+
+TEST_F(TestValues, SimpleCreateDecimal128)
+{
+  {
+    AmqpDecimal128 const decimal{
+        0x00,
+        0x11,
+        0x22,
+        0x33,
+        0x44,
+        0x55,
+        0x66,
+        0x77,
+        0x88,
+        0x99,
+        0xaa,
+        0xbb,
+        0xcc,
+        0xdd,
+        0xee,
+        0xff};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal128, value.GetType());
+    TEST_OSTREAM_INSERTER(value, "Decimal128");
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal128>(value));
+    EXPECT_TRUE(AmqpValue() < value);
+
+    // A Decimal128 is not convertible to any other AMQP type.
+    EXPECT_ANY_THROW((void)static_cast<bool>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::uint64_t>(value));
+    EXPECT_ANY_THROW((void)static_cast<double>(value));
+    EXPECT_ANY_THROW((void)static_cast<std::string>(value));
+    EXPECT_ANY_THROW((void)static_cast<Azure::Core::Uuid>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal32>(value));
+    EXPECT_ANY_THROW((void)static_cast<AmqpDecimal64>(value));
+  }
+  {
+    // A default constructed (all zeroes) Decimal128.
+    AmqpDecimal128 const decimal{};
+    AmqpValue value(decimal);
+    EXPECT_EQ(AmqpValueType::Decimal128, value.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal128>(value));
+  }
+  {
+    // Copy, move, and equality semantics.
+    AmqpDecimal128 const decimal{
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef};
+    AmqpValue value(decimal);
+    AmqpValue copy(value);
+    EXPECT_EQ(value, copy);
+    EXPECT_EQ(AmqpValueType::Decimal128, copy.GetType());
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal128>(copy));
+
+    AmqpValue moved(std::move(copy));
+    EXPECT_EQ(value, moved);
+    EXPECT_EQ(decimal, static_cast<AmqpDecimal128>(moved));
+
+    AmqpDecimal128 other{decimal};
+    other[0] = 0x00;
+    EXPECT_NE(value, AmqpValue(other));
+  }
+}
+
+// The three decimal types are distinct AMQP types, even though they are all
+// backed by std::array<uint8_t, N>.
+TEST_F(TestValues, DecimalTypesAreDistinct)
+{
+  AmqpValue decimal32{AmqpDecimal32{}};
+  AmqpValue decimal64{AmqpDecimal64{}};
+  AmqpValue decimal128{AmqpDecimal128{}};
+
+  EXPECT_NE(decimal32.GetType(), decimal64.GetType());
+  EXPECT_NE(decimal64.GetType(), decimal128.GetType());
+  EXPECT_NE(decimal32.GetType(), decimal128.GetType());
+
+  EXPECT_NE(decimal32, decimal64);
+  EXPECT_NE(decimal64, decimal128);
+  EXPECT_NE(decimal32, decimal128);
+}
+
+// Decimal values should round trip when stored in the AMQP containers.
+TEST_F(TestValues, DecimalsInContainers)
+{
+  AmqpDecimal32 const decimal32{0x01, 0x02, 0x03, 0x04};
+  AmqpDecimal64 const decimal64{0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};
+  AmqpDecimal128 const decimal128{
+      0x01,
+      0x02,
+      0x03,
+      0x04,
+      0x05,
+      0x06,
+      0x07,
+      0x08,
+      0x09,
+      0x0a,
+      0x0b,
+      0x0c,
+      0x0d,
+      0x0e,
+      0x0f,
+      0x10};
+
+  {
+    AmqpList list;
+    list.push_back(AmqpValue{decimal32});
+    list.push_back(AmqpValue{decimal64});
+    list.push_back(AmqpValue{decimal128});
+
+    AmqpList roundTrip{list.AsAmqpValue().AsList()};
+    EXPECT_EQ(3, roundTrip.size());
+    EXPECT_EQ(AmqpValueType::Decimal32, roundTrip.at(0).GetType());
+    EXPECT_EQ(AmqpValueType::Decimal64, roundTrip.at(1).GetType());
+    EXPECT_EQ(AmqpValueType::Decimal128, roundTrip.at(2).GetType());
+    EXPECT_EQ(decimal32, static_cast<AmqpDecimal32>(roundTrip.at(0)));
+    EXPECT_EQ(decimal64, static_cast<AmqpDecimal64>(roundTrip.at(1)));
+    EXPECT_EQ(decimal128, static_cast<AmqpDecimal128>(roundTrip.at(2)));
+  }
+
+  {
+    AmqpMap map;
+    map["decimal32"] = AmqpValue{decimal32};
+    map["decimal64"] = AmqpValue{decimal64};
+    map["decimal128"] = AmqpValue{decimal128};
+
+    AmqpMap roundTrip{map.AsAmqpValue().AsMap()};
+    EXPECT_EQ(3, roundTrip.size());
+    EXPECT_EQ(decimal32, static_cast<AmqpDecimal32>(roundTrip["decimal32"]));
+    EXPECT_EQ(decimal64, static_cast<AmqpDecimal64>(roundTrip["decimal64"]));
+    EXPECT_EQ(decimal128, static_cast<AmqpDecimal128>(roundTrip["decimal128"]));
+  }
+}
+#endif // ENABLE_RUST_AMQP
+
 TEST_F(TestValues, SimpleCreateString)
 {
 
@@ -1028,6 +1265,120 @@ TEST_F(TestValueSerialization, SerializeDouble)
   auto val = AmqpValue::Serialize(value);
   EXPECT_EQ(val, testVector);
 }
+
+#if ENABLE_RUST_AMQP
+//  Test deserializing a Decimal32 value - section 1.6.13.
+TEST_F(TestValueSerialization, SerializeDecimal32)
+{
+  std::vector<uint8_t> testVector{0x74, 0x01, 0x23, 0x45, 0x67};
+  AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
+  EXPECT_EQ(value.GetType(), AmqpValueType::Decimal32);
+  EXPECT_EQ((AmqpDecimal32{0x01, 0x23, 0x45, 0x67}), static_cast<AmqpDecimal32>(value));
+
+  auto val = AmqpValue::Serialize(value);
+  EXPECT_EQ(val, testVector);
+}
+
+//  Test deserializing a Decimal64 value - section 1.6.14.
+TEST_F(TestValueSerialization, SerializeDecimal64)
+{
+  std::vector<uint8_t> testVector{0x84, 0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef};
+  AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
+  EXPECT_EQ(value.GetType(), AmqpValueType::Decimal64);
+  EXPECT_EQ(
+      (AmqpDecimal64{0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef}),
+      static_cast<AmqpDecimal64>(value));
+
+  auto val = AmqpValue::Serialize(value);
+  EXPECT_EQ(val, testVector);
+}
+
+//  Test deserializing a Decimal128 value - section 1.6.15.
+TEST_F(TestValueSerialization, SerializeDecimal128)
+{
+  std::vector<uint8_t> testVector{
+      0x94,
+      0x00,
+      0x11,
+      0x22,
+      0x33,
+      0x44,
+      0x55,
+      0x66,
+      0x77,
+      0x88,
+      0x99,
+      0xaa,
+      0xbb,
+      0xcc,
+      0xdd,
+      0xee,
+      0xff};
+  AmqpValue value{AmqpValue::Deserialize(testVector.data(), testVector.size())};
+  EXPECT_EQ(value.GetType(), AmqpValueType::Decimal128);
+  EXPECT_EQ(
+      (AmqpDecimal128{
+          0x00,
+          0x11,
+          0x22,
+          0x33,
+          0x44,
+          0x55,
+          0x66,
+          0x77,
+          0x88,
+          0x99,
+          0xaa,
+          0xbb,
+          0xcc,
+          0xdd,
+          0xee,
+          0xff}),
+      static_cast<AmqpDecimal128>(value));
+
+  auto val = AmqpValue::Serialize(value);
+  EXPECT_EQ(val, testVector);
+}
+
+//  Round trip the decimal types through Serialize/Deserialize.
+TEST_F(TestValueSerialization, SerializeDecimalRoundTrip)
+{
+  {
+    AmqpValue value{AmqpDecimal32{0xde, 0xad, 0xbe, 0xef}};
+    auto serialized = AmqpValue::Serialize(value);
+    AmqpValue deserialized{AmqpValue::Deserialize(serialized.data(), serialized.size())};
+    EXPECT_EQ(value, deserialized);
+  }
+  {
+    AmqpValue value{AmqpDecimal64{0xde, 0xad, 0xbe, 0xef, 0xde, 0xad, 0xbe, 0xef}};
+    auto serialized = AmqpValue::Serialize(value);
+    AmqpValue deserialized{AmqpValue::Deserialize(serialized.data(), serialized.size())};
+    EXPECT_EQ(value, deserialized);
+  }
+  {
+    AmqpValue value{AmqpDecimal128{
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef,
+        0xde,
+        0xad,
+        0xbe,
+        0xef}};
+    auto serialized = AmqpValue::Serialize(value);
+    AmqpValue deserialized{AmqpValue::Deserialize(serialized.data(), serialized.size())};
+    EXPECT_EQ(value, deserialized);
+  }
+}
+#endif // ENABLE_RUST_AMQP
 
 //  Test deserializing a Char value - section 1.6.16.
 // Note uAMQP does not appear to have support for encoding and decoding Char values.

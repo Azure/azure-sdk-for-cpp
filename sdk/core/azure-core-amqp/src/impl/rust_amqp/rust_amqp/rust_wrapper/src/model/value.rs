@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // Licensed under the MIT License.
 
-// cspell: words amqp amqpvalue repr
+// cspell: words amqp amqpvalue repr inplace
 
 use azure_core_amqp::{
     value::{
@@ -47,6 +47,9 @@ pub enum RustAmqpValueType {
     AmqpValueArray,
     AmqpValueComposite,
     AmqpValueDescribed,
+    AmqpValueDecimal128,
+    AmqpValueDecimal64,
+    AmqpValueDecimal32,
     AmqpValueUnknown,
 }
 
@@ -67,6 +70,9 @@ pub unsafe extern "C" fn amqpvalue_get_type(value: *const RustAmqpValue) -> Rust
         AmqpValue::Long(_) => RustAmqpValueType::AmqpValueLong,
         AmqpValue::Float(_) => RustAmqpValueType::AmqpValueFloat,
         AmqpValue::Double(_) => RustAmqpValueType::AmqpValueDouble,
+        AmqpValue::Decimal128(_) => RustAmqpValueType::AmqpValueDecimal128,
+        AmqpValue::Decimal64(_) => RustAmqpValueType::AmqpValueDecimal64,
+        AmqpValue::Decimal32(_) => RustAmqpValueType::AmqpValueDecimal32,
         AmqpValue::Char(_) => RustAmqpValueType::AmqpValueChar,
         AmqpValue::TimeStamp(_) => RustAmqpValueType::AmqpValueTimestamp,
         AmqpValue::Uuid(_) => RustAmqpValueType::AmqpValueUuid,
@@ -384,6 +390,79 @@ pub unsafe extern "C" fn amqpvalue_get_double(
     match value.inner {
         AmqpValue::Double(b) => {
             *double_value = b;
+            0
+        }
+        _ => -1,
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_create_decimal128(
+    decimal_value: *const u8,
+) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Decimal128(*(decimal_value as *const [u8; 16])),
+    };
+    Box::into_raw(Box::new(amqp_value))
+}
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_get_decimal128(
+    value: *const RustAmqpValue,
+    decimal_value: *mut u8,
+) -> i32 {
+    let value = &*value;
+    match value.inner {
+        AmqpValue::Decimal128(b) => {
+            *(decimal_value as *mut [u8; 16]) = b;
+            0
+        }
+        _ => -1,
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_create_decimal64(
+    decimal_value: *const u8,
+) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Decimal64(*(decimal_value as *const [u8; 8])),
+    };
+    Box::into_raw(Box::new(amqp_value))
+}
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_get_decimal64(
+    value: *const RustAmqpValue,
+    decimal_value: *mut u8,
+) -> i32 {
+    let value = &*value;
+    match value.inner {
+        AmqpValue::Decimal64(b) => {
+            *(decimal_value as *mut [u8; 8]) = b;
+            0
+        }
+        _ => -1,
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_create_decimal32(
+    decimal_value: *const u8,
+) -> *mut RustAmqpValue {
+    let amqp_value = RustAmqpValue {
+        inner: AmqpValue::Decimal32(*(decimal_value as *const [u8; 4])),
+    };
+    Box::into_raw(Box::new(amqp_value))
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn amqpvalue_get_decimal32(
+    value: *const RustAmqpValue,
+    decimal_value: *mut u8,
+) -> i32 {
+    let value = &*value;
+    match value.inner {
+        AmqpValue::Decimal32(b) => {
+            *(decimal_value as *mut [u8; 4]) = b;
             0
         }
         _ => -1,

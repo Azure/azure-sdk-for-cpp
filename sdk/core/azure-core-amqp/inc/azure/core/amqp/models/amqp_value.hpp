@@ -62,6 +62,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     Long,
     Float,
     Double,
+    Decimal32,
+    Decimal64,
+    Decimal128,
     Char,
     Timestamp,
     Uuid,
@@ -95,6 +98,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpTimestamp;
   class AmqpComposite;
   class AmqpDescribed;
+
+  using AmqpDecimal128 = std::array<std::uint8_t, 16>;
+  using AmqpDecimal64 = std::array<std::uint8_t, 8>;
+  using AmqpDecimal32 = std::array<std::uint8_t, 4>;
 
   /** An AMQP value.
    * @details An AMQP value is a polymorphic type that can be used to represent any AMQP type.
@@ -257,6 +264,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(double value);
+
+    /** @brief Construct an AMQP Decimal128 value.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal128).
+     *
+     * @param value to be set.
+     *
+     */
+    AmqpValue(AmqpDecimal128 const& value);
+    /** @brief Construct an AMQP Decimal64 value.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal64).
+     *
+     * @param value to be set.
+     *
+     */
+    AmqpValue(AmqpDecimal64 const& value);
+    /** @brief Construct an AMQP Decimal32 value.
+     *
+     * Defined in [AMQP Core Types
+     * section 1.6.20](http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal32).
+     *
+     * @param value to be set.
+     *
+     */
+    AmqpValue(AmqpDecimal32 const& value);
 
     /** @brief Construct an AMQP string value, a UTF-8 encoded sequence of characters.
      *
@@ -447,6 +482,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      */
     operator double() const;
 
+    /** @brief convert the current AMQP Value to an AmqpDecimal128 value.
+     *
+     * @returns the value as an AmqpDecimal128.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an AmqpDecimal128.
+     */
+    operator AmqpDecimal128() const;
+    /** @brief convert the current AMQP Value to an AmqpDecimal64 value.
+     *
+     * @returns the value as an AmqpDecimal64.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an AmqpDecimal64.
+     */
+    operator AmqpDecimal64() const;
+
+    /** @brief convert the current AMQP Value to an AmqpDecimal32 value.
+     *
+     * @returns the value as an AmqpDecimal32.
+     *
+     * @throws std::runtime_error if the underlying AMQP value is not an AmqpDecimal32.
+     */
+    operator AmqpDecimal32() const;
+
     /** @brief convert the current AMQP Value to a 32bit UCS32 value.
      *
      * @returns the value as a 32 bit character.
@@ -586,7 +644,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
 
     AmqpCollectionBase(initializer_type const& initializer) : m_value{initializer} {}
     AmqpCollectionBase(T initializer) : m_value{initializer} {}
-    AmqpCollectionBase(){};
+    AmqpCollectionBase() {};
 
     // Copy constructor
     AmqpCollectionBase(const AmqpCollectionBase& other) = default;
@@ -605,7 +663,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models { namespace
   public:
     /** @brief Returns the underlying value.
      */
-    explicit operator T const &() const { return m_value; }
+    explicit operator T const&() const { return m_value; }
 
     /** @brief Convert this collection type to an AMQP value.*/
     AmqpValue AsAmqpValue() const;
@@ -657,7 +715,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpArray final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpArray> {
   public:
     /** @brief Construct a new AmqpArray object. */
-    AmqpArray() : AmqpCollectionBase(){};
+    AmqpArray() : AmqpCollectionBase() {};
 
     /** @brief Construct a new AmqpArray object with an initializer list. */
     AmqpArray(initializer_type const& values);
@@ -700,7 +758,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   public:
     /** @brief Construct a new AmqpMap object. */
-    AmqpMap() : AmqpCollectionBase(){};
+    AmqpMap() : AmqpCollectionBase() {};
 
     /** @brief Construct a new AmqpArray object with an initializer list. */
     AmqpMap(std::initializer_list<std::map<AmqpValue, AmqpValue>::value_type> const& values)
@@ -772,7 +830,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   class AmqpList final : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpList> {
   public:
-    AmqpList() : AmqpCollectionBase(){};
+    AmqpList() : AmqpCollectionBase() {};
     virtual ~AmqpList() = default;
     /** @brief Construct a new AmqpList object with an initializer list. */
     AmqpList(std::initializer_list<std::vector<AmqpValue>::value_type> const& values)
@@ -812,12 +870,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpBinaryData final
       : public _detail::AmqpCollectionBase<std::vector<std::uint8_t>, AmqpBinaryData> {
   public:
-    AmqpBinaryData() : AmqpCollectionBase(){};
+    AmqpBinaryData() : AmqpCollectionBase() {};
     virtual ~AmqpBinaryData() = default;
     /** @brief Construct a new AmqpBinaryData object with an initializer list. */
-    AmqpBinaryData(initializer_type const& values) : AmqpCollectionBase(values){};
+    AmqpBinaryData(initializer_type const& values) : AmqpCollectionBase(values) {};
     /** @brief Construct a new AmqpBinaryData from a vector of bytes. */
-    AmqpBinaryData(std::vector<std::uint8_t> const& values) : AmqpCollectionBase(values){};
+    AmqpBinaryData(std::vector<std::uint8_t> const& values) : AmqpCollectionBase(values) {};
 
     /** @brief Copy constructor */
     AmqpBinaryData(const AmqpBinaryData& other) = default;
@@ -861,17 +919,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
    */
   class AmqpSymbol final : public _detail::AmqpCollectionBase<std::string, AmqpSymbol> {
   public:
-    AmqpSymbol() : AmqpCollectionBase(){};
+    AmqpSymbol() : AmqpCollectionBase() {};
     virtual ~AmqpSymbol() = default;
 
     /** @brief Construct a new AmqpSymbol object with an initializer list. */
-    AmqpSymbol(std::string const& values) : AmqpCollectionBase(values){};
+    AmqpSymbol(std::string const& values) : AmqpCollectionBase(values) {};
 
     /** @brief Construct a new AmqpSymbol object with an initializer list. */
     AmqpSymbol(initializer_type const& initializer) : AmqpCollectionBase(initializer) {}
 
     /** @brief Construct a new AmqpSymbol object from a constant string value. */
-    AmqpSymbol(const char* const values) : AmqpCollectionBase(values){};
+    AmqpSymbol(const char* const values) : AmqpCollectionBase(values) {};
 
     /** @brief Copy constructor */
     AmqpSymbol(const AmqpSymbol& other) = default;
@@ -932,7 +990,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   public:
     /** @brief Construct a new AmqpMap object. */
-    AmqpAnnotations() : AmqpCollectionBase(){};
+    AmqpAnnotations() : AmqpCollectionBase() {};
 
     /** @brief Construct a new AmqpArray object with an initializer list. */
     AmqpAnnotations(
@@ -1094,7 +1152,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       : public _detail::AmqpCollectionBase<std::vector<AmqpValue>, AmqpComposite> {
   public:
     /** @brief Construct a new AmqpComposite object. */
-    AmqpComposite() : AmqpCollectionBase(){};
+    AmqpComposite() : AmqpCollectionBase() {};
     virtual ~AmqpComposite() = default;
 
     /** @brief Construct a new AmqpComposite object with an initializer list. */
