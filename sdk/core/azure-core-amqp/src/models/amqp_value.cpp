@@ -103,6 +103,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         case AMQP_TYPE_DOUBLE:
           os << "AMQP_TYPE_DOUBLE";
           break;
+        case AMQP_TYPE_DECIMAL128:
+          os << "AMQP_TYPE_DECIMAL128";
+          break;
+        case AMQP_TYPE_DECIMAL64:
+          os << "AMQP_TYPE_DECIMAL64";
+          break;
+        case AMQP_TYPE_DECIMAL32:
+          os << "AMQP_TYPE_DECIMAL32";
+          break;
         case AMQP_TYPE_CHAR:
           os << "AMQP_TYPE_CHAR";
           break;
@@ -405,23 +414,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   {
   }
 
-#if ENABLE_RUST_AMQP
-  AmqpValue::AmqpValue(AmqpDecimal128 const &value)
+  AmqpValue::AmqpValue(AmqpDecimal128 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
             _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal128(value.data())})}
   {
   }
-  AmqpValue::AmqpValue(AmqpDecimal64 const &value)
+  AmqpValue::AmqpValue(AmqpDecimal64 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
             _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal64(value.data())})}
   {
   }
-  AmqpValue::AmqpValue(AmqpDecimal32 const &value)
+  AmqpValue::AmqpValue(AmqpDecimal32 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
             _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal32(value.data())})}
   {
   }
-#endif
 
   AmqpValue::AmqpValue(char32_t value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
@@ -617,7 +624,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::operator std::array<uint8_t, 4>() const
   {
     std::array<uint8_t, 4> value{};
-    if (amqpvalue_get_decimal32(*m_impl, value.data()))
+    if (amqpvalue_get_decimal32(*m_impl, const_cast<uint8_t*>(value.data())))
     {
       throw std::runtime_error("Could not retrieve decimal32 value");
     }
@@ -627,7 +634,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::operator std::array<uint8_t, 8>() const
   {
     std::array<uint8_t, 8> value{};
-    if (amqpvalue_get_decimal64(*m_impl, value.data()))
+    if (amqpvalue_get_decimal64(*m_impl, const_cast<uint8_t*>(value.data())))
     {
       throw std::runtime_error("Could not retrieve decimal64 value");
     }
@@ -637,7 +644,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::operator std::array<uint8_t, 16>() const
   {
     std::array<uint8_t, 16> value{};
-    if (amqpvalue_get_decimal128(*m_impl, value.data()))
+    if (amqpvalue_get_decimal128(*m_impl, const_cast<uint8_t*>(value.data())))
     {
       throw std::runtime_error("Could not retrieve decimal128 value");
     }
@@ -819,6 +826,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         {AMQP_TYPE_LONG, AmqpValueType::Long},
         {AMQP_TYPE_FLOAT, AmqpValueType::Float},
         {AMQP_TYPE_DOUBLE, AmqpValueType::Double},
+        {AMQP_TYPE_DECIMAL128, AmqpValueType::Decimal128},
+        {AMQP_TYPE_DECIMAL64, AmqpValueType::Decimal64},
+        {AMQP_TYPE_DECIMAL32, AmqpValueType::Decimal32},
         {AMQP_TYPE_CHAR, AmqpValueType::Char},
         {AMQP_TYPE_TIMESTAMP, AmqpValueType::Timestamp},
         {AMQP_TYPE_UUID, AmqpValueType::Uuid},

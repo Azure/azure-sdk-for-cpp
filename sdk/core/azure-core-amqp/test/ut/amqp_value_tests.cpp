@@ -221,7 +221,6 @@ TEST_F(TestValues, SimpleCreateDouble)
   }
 }
 
-#if ENABLE_RUST_AMQP
 TEST_F(TestValues, SimpleCreateDecimal32)
 {
   {
@@ -455,7 +454,6 @@ TEST_F(TestValues, DecimalsInContainers)
     EXPECT_EQ(decimal128, static_cast<AmqpDecimal128>(roundTrip["decimal128"]));
   }
 }
-#endif // ENABLE_RUST_AMQP
 
 TEST_F(TestValues, SimpleCreateString)
 {
@@ -1266,7 +1264,6 @@ TEST_F(TestValueSerialization, SerializeDouble)
   EXPECT_EQ(val, testVector);
 }
 
-#if ENABLE_RUST_AMQP
 //  Test deserializing a Decimal32 value - section 1.6.13.
 TEST_F(TestValueSerialization, SerializeDecimal32)
 {
@@ -1378,7 +1375,6 @@ TEST_F(TestValueSerialization, SerializeDecimalRoundTrip)
     EXPECT_EQ(value, deserialized);
   }
 }
-#endif // ENABLE_RUST_AMQP
 
 //  Test deserializing a Char value - section 1.6.16.
 // Note uAMQP does not appear to have support for encoding and decoding Char values.

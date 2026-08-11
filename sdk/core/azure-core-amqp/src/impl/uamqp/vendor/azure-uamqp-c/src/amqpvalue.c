@@ -82,6 +82,9 @@ typedef union AMQP_VALUE_UNION_TAG
     bool bool_value;
     float float_value;
     double double_value;
+    uint8_t decimal128_value[16];
+    uint8_t decimal64_value[8];
+    uint8_t decimal32_value[4];
     uint32_t char_value;
     int64_t timestamp_value;
     uuid uuid_value;
@@ -799,6 +802,181 @@ int amqpvalue_get_double(AMQP_VALUE value, double* double_value)
     return result;
 }
 
+/* Codes_SRS_AMQPVALUE_01_020: [1.6.15 128 bit decimal number (IEEE 754-2008
+ * decimal128).] */
+AMQP_VALUE amqpvalue_create_decimal128(const uint8_t* value)
+{
+  AMQP_VALUE result = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
+  if (result == NULL)
+  {
+    /* Codes_SRS_AMQPVALUE_01_087: [If allocating the AMQP_VALUE fails then amqpvalue_create_double
+     * shall return NULL.] */
+    LogError("Could not allocate memory for AMQP value");
+  }
+  else
+  {
+    /* Codes_SRS_AMQPVALUE_01_086: [amqpvalue_create_decimal128 shall return a handle to an
+     * AMQP_VALUE that stores a decimal128 value.] */
+    result->type = AMQP_TYPE_DECIMAL128;
+    memcpy(result->value.decimal128_value, value, 16);
+  }
+
+  return result;
+}
+
+int amqpvalue_get_decimal128(AMQP_VALUE value, uint8_t* decimal128_value)
+{
+  int result;
+
+  /* Codes_SRS_AMQPVALUE_01_090: [If any of the arguments is NULL then amqpvalue_get_decimal128
+   * shall return a non-zero value.] */
+  if ((value == NULL) || (decimal128_value == NULL))
+  {
+    LogError("Bad arguments: value = %p, decimal128_value = %p", value, decimal128_value);
+    result = MU_FAILURE;
+  }
+  else
+  {
+    AMQP_VALUE_DATA* value_data = (AMQP_VALUE_DATA*)value;
+    /* Codes_SRS_AMQPVALUE_01_091: [If the type of the value is not decimal128 (was not created with
+     * amqpvalue_create_decimal128), then amqpvalue_get_decimal128 shall return a non-zero value.]
+     */
+    if (value_data->type != AMQP_TYPE_DECIMAL128)
+    {
+      LogError("Value is not of type DECIMAL128");
+      result = MU_FAILURE;
+    }
+    else
+    {
+      /* Codes_SRS_AMQPVALUE_01_088: [amqpvalue_get_decimal128 shall fill in the decimal128_value
+       * argument the decimal128 value stored by the AMQP value indicated by the value argument.] */
+      memcpy((void*)decimal128_value, value_data->value.decimal128_value, 16);
+
+      /* Codes_SRS_AMQPVALUE_01_089: [On success amqpvalue_get_decimal128 shall return 0.] */
+      result = 0;
+    }
+  }
+
+  return result;
+}
+
+/* Codes_SRS_AMQPVALUE_01_020: [1.6.12 double 64-bit floating point number (IEEE 754-2008
+ * binary64).] */
+AMQP_VALUE amqpvalue_create_decimal64(const uint8_t* value)
+{
+  AMQP_VALUE result = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
+  if (result == NULL)
+  {
+    /* Codes_SRS_AMQPVALUE_01_087: [If allocating the AMQP_VALUE fails then amqpvalue_create_double
+     * shall return NULL.] */
+    LogError("Could not allocate memory for AMQP value");
+  }
+  else
+  {
+    /* Codes_SRS_AMQPVALUE_01_086: [amqpvalue_create_decimal64 shall return a handle to an
+     * AMQP_VALUE that stores a decimal64 value.] */
+    result->type = AMQP_TYPE_DECIMAL64;
+    memcpy(result->value.decimal64_value, value, 8);
+  }
+
+  return result;
+}
+
+int amqpvalue_get_decimal64(AMQP_VALUE value, uint8_t* decimal64_value)
+{
+  int result;
+
+  /* Codes_SRS_AMQPVALUE_01_090: [If any of the arguments is NULL then amqpvalue_get_decimal64
+   * shall return a non-zero value.] */
+  if ((value == NULL) || (decimal64_value == NULL))
+  {
+    LogError("Bad arguments: value = %p, decimal64_value = %p", value, decimal64_value);
+    result = MU_FAILURE;
+  }
+  else
+  {
+    AMQP_VALUE_DATA* value_data = (AMQP_VALUE_DATA*)value;
+    /* Codes_SRS_AMQPVALUE_01_091: [If the type of the value is not decimal64 (was not created with
+     * amqpvalue_create_decimal64), then amqpvalue_get_decimal64 shall return a non-zero value.]
+     */
+    if (value_data->type != AMQP_TYPE_DECIMAL64)
+    {
+      LogError("Value is not of type DECIMAL64");
+      result = MU_FAILURE;
+    }
+    else
+    {
+      /* Codes_SRS_AMQPVALUE_01_088: [amqpvalue_get_decimal64 shall fill in the decimal64_value
+       * argument the decimal64 value stored by the AMQP value indicated by the value argument.] */
+      memcpy((void*)decimal64_value, value_data->value.decimal64_value, 8);
+
+      /* Codes_SRS_AMQPVALUE_01_089: [On success amqpvalue_get_decimal64 shall return 0.] */
+      result = 0;
+    }
+  }
+
+  return result;
+}
+
+/* Codes_SRS_AMQPVALUE_01_020: [1.6.12 double 64-bit floating point number (IEEE 754-2008
+ * binary64).] */
+AMQP_VALUE amqpvalue_create_decimal32(const uint8_t* value)
+{
+  AMQP_VALUE result = REFCOUNT_TYPE_CREATE(AMQP_VALUE_DATA);
+  if (result == NULL)
+  {
+    /* Codes_SRS_AMQPVALUE_01_087: [If allocating the AMQP_VALUE fails then amqpvalue_create_double
+     * shall return NULL.] */
+    LogError("Could not allocate memory for AMQP value");
+  }
+  else
+  {
+    /* Codes_SRS_AMQPVALUE_01_086: [amqpvalue_create_decimal32 shall return a handle to an
+     * AMQP_VALUE that stores a decimal32 value.] */
+    result->type = AMQP_TYPE_DECIMAL32;
+    memcpy(result->value.decimal32_value, value, 4);
+  }
+
+  return result;
+}
+
+int amqpvalue_get_decimal32(AMQP_VALUE value, uint8_t* decimal32_value)
+{
+  int result;
+
+  /* Codes_SRS_AMQPVALUE_01_090: [If any of the arguments is NULL then amqpvalue_get_decimal32
+   * shall return a non-zero value.] */
+  if ((value == NULL) || (decimal32_value == NULL))
+  {
+    LogError("Bad arguments: value = %p, decimal32_value = %p", value, decimal32_value);
+    result = MU_FAILURE;
+  }
+  else
+  {
+    AMQP_VALUE_DATA* value_data = (AMQP_VALUE_DATA*)value;
+    /* Codes_SRS_AMQPVALUE_01_091: [If the type of the value is not decimal32 (was not created with
+     * amqpvalue_create_decimal32), then amqpvalue_get_decimal32 shall return a non-zero value.]
+     */
+    if (value_data->type != AMQP_TYPE_DECIMAL32)
+    {
+      LogError("Value is not of type DECIMAL32");
+      result = MU_FAILURE;
+    }
+    else
+    {
+      /* Codes_SRS_AMQPVALUE_01_088: [amqpvalue_get_decimal32 shall fill in the decimal32_value
+       * argument the decimal32 value stored by the AMQP value indicated by the value argument.] */
+      memcpy((void*)decimal32_value, value_data->value.decimal32_value, 4);
+
+      /* Codes_SRS_AMQPVALUE_01_089: [On success amqpvalue_get_decimal32 shall return 0.] */
+      result = 0;
+    }
+  }
+
+  return result;
+}
+
+/* Codes_SRS_AMQPVALUE_01_024: [1.6.16 char A single Unicode character.] *
 /* Codes_SRS_AMQPVALUE_01_024: [1.6.16 char A single Unicode character.] */
 AMQP_VALUE amqpvalue_create_char(uint32_t value)
 {
@@ -2162,7 +2340,35 @@ bool amqpvalue_are_equal(AMQP_VALUE value1, AMQP_VALUE value2)
                 result = (value1_data->value.double_value == value2_data->value.double_value);
                 break;
 
-            case AMQP_TYPE_CHAR:
+            case AMQP_TYPE_DECIMAL128:
+          /* Codes_SRS_AMQPVALUE_01_222: [- decimal128: compare the underlying 16 bytes.] */
+          result
+              = (memcmp(
+                     value1_data->value.decimal128_value,
+                     value2_data->value.decimal128_value,
+                     sizeof(value1_data->value.decimal128_value))
+                 == 0);
+          break;
+        case AMQP_TYPE_DECIMAL64:
+          /* Codes_SRS_AMQPVALUE_01_223: [- decimal64: compare the underlying 8 bytes.] */
+          result
+              = (memcmp(
+                     value1_data->value.decimal64_value,
+                     value2_data->value.decimal64_value,
+                     sizeof(value1_data->value.decimal64_value))
+                 == 0);
+          break;
+        case AMQP_TYPE_DECIMAL32:
+          /* Codes_SRS_AMQPVALUE_01_224: [- decimal32: compare the underlying 4 bytes.] */
+          result
+              = (memcmp(
+                     value1_data->value.decimal32_value,
+                     value2_data->value.decimal32_value,
+                     sizeof(value1_data->value.decimal32_value))
+                 == 0);
+          break;
+
+        case AMQP_TYPE_CHAR:
                 /* Codes_SRS_AMQPVALUE_01_226: [- char: compare the UNICODE character.] */
                 result = (value1_data->value.char_value == value2_data->value.char_value);
                 break;
@@ -3304,6 +3510,143 @@ static int encode_double(AMQPVALUE_ENCODER_OUTPUT encoder_output, void* context,
 
     return result;
 }
+
+static int encode_decimal32_constructor(AMQPVALUE_ENCODER_OUTPUT encoder_output, void* context)
+{
+  int result;
+
+  if (output_byte(encoder_output, context, 0x74) != 0)
+  {
+    LogError("Failed encoding decimal32 constructor");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal64_constructor(AMQPVALUE_ENCODER_OUTPUT encoder_output, void* context)
+{
+  int result;
+
+  if (output_byte(encoder_output, context, 0x84) != 0)
+  {
+    LogError("Failed encoding decimal64 constructor");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal128_constructor(AMQPVALUE_ENCODER_OUTPUT encoder_output, void* context)
+{
+  int result;
+
+  if (output_byte(encoder_output, context, 0x94) != 0)
+  {
+    LogError("Failed encoding decimal128 constructor");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal_value(
+    AMQPVALUE_ENCODER_OUTPUT encoder_output,
+    void* context,
+    const uint8_t* value,
+    size_t value_size)
+{
+  int result;
+
+  if (output_bytes(encoder_output, context, value, value_size) != 0)
+  {
+    LogError("Failed encoding decimal value");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal32(
+    AMQPVALUE_ENCODER_OUTPUT encoder_output,
+    void* context,
+    const uint8_t* value)
+{
+  int result;
+
+  if ((encode_decimal32_constructor(encoder_output, context) != 0)
+      || (encode_decimal_value(encoder_output, context, value, 4) != 0))
+  {
+    LogError("Failed encoding decimal32");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal64(
+    AMQPVALUE_ENCODER_OUTPUT encoder_output,
+    void* context,
+    const uint8_t* value)
+{
+  int result;
+
+  if ((encode_decimal64_constructor(encoder_output, context) != 0)
+      || (encode_decimal_value(encoder_output, context, value, 8) != 0))
+  {
+    LogError("Failed encoding decimal64");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+static int encode_decimal128(
+    AMQPVALUE_ENCODER_OUTPUT encoder_output,
+    void* context,
+    const uint8_t* value)
+{
+  int result;
+
+  if ((encode_decimal128_constructor(encoder_output, context) != 0)
+      || (encode_decimal_value(encoder_output, context, value, 16) != 0))
+  {
+    LogError("Failed encoding decimal128");
+    result = MU_FAILURE;
+  }
+  else
+  {
+    result = 0;
+  }
+
+  return result;
+}
+
+
 
 static int encode_timestamp_constructor(AMQPVALUE_ENCODER_OUTPUT encoder_output, void* context)
 {
@@ -4495,7 +4838,19 @@ int amqpvalue_encode(AMQP_VALUE value, AMQPVALUE_ENCODER_OUTPUT encoder_output, 
             result = encode_double(encoder_output, context, value_data->value.double_value);
             break;
 
-        case AMQP_TYPE_TIMESTAMP:
+        case AMQP_TYPE_DECIMAL32:
+        result = encode_decimal32(encoder_output, context, value_data->value.decimal32_value);
+        break;
+
+      case AMQP_TYPE_DECIMAL64:
+        result = encode_decimal64(encoder_output, context, value_data->value.decimal64_value);
+        break;
+
+      case AMQP_TYPE_DECIMAL128:
+        result = encode_decimal128(encoder_output, context, value_data->value.decimal128_value);
+        break;
+
+      case AMQP_TYPE_TIMESTAMP:
             result = encode_timestamp(encoder_output, context, value_data->value.timestamp_value);
             break;
 
@@ -5318,6 +5673,33 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                     break;
                 }
                 /* Codes_SRS_AMQPVALUE_01_369: [<encoding name="ms64" code="0x83" category="fixed" width="8" label="64-bit two's-complement integer representing milliseconds since the unix epoch"/>] */
+                case 0x74:
+                {
+                    internal_decoder_data->decode_to_value->type = AMQP_TYPE_DECIMAL32;
+                    internal_decoder_data->decoder_state = DECODER_STATE_TYPE_DATA;
+                    internal_decoder_data->bytes_decoded = 0;
+                    (void)memset(internal_decoder_data->decode_to_value->value.decimal32_value, 0, 4);
+                    result = 0;
+                    break;
+                }
+                case 0x84:
+                {
+                    internal_decoder_data->decode_to_value->type = AMQP_TYPE_DECIMAL64;
+                    internal_decoder_data->decoder_state = DECODER_STATE_TYPE_DATA;
+                    internal_decoder_data->bytes_decoded = 0;
+                    (void)memset(internal_decoder_data->decode_to_value->value.decimal64_value, 0, 8);
+                    result = 0;
+                    break;
+                }
+                case 0x94:
+                {
+                    internal_decoder_data->decode_to_value->type = AMQP_TYPE_DECIMAL128;
+                    internal_decoder_data->decoder_state = DECODER_STATE_TYPE_DATA;
+                    internal_decoder_data->bytes_decoded = 0;
+                    (void)memset(internal_decoder_data->decode_to_value->value.decimal128_value, 0, 16);
+                    result = 0;
+                    break;
+                }
                 case 0x83:
                 {
                     /* Codes_SRS_AMQPVALUE_01_368: [1.6.17 timestamp An absolute point in time.] */
@@ -5835,14 +6217,59 @@ static int internal_decoder_decode_bytes(INTERNAL_DECODER_DATA* internal_decoder
                         internal_decoder_data->on_value_decoded(internal_decoder_data->on_value_decoded_context, internal_decoder_data->decode_to_value);
                     }
 
-                    result = 0;
-                    break;
-                }
-                /* Codes_SRS_AMQPVALUE_01_369: [<encoding name="ms64" code="0x83" category="fixed" width="8" label="64-bit two's-complement integer representing milliseconds since the unix epoch"/>] */
-                case 0x83:
-                {
-                    internal_decoder_data->decode_to_value->value.timestamp_value = (int64_t)((uint64_t)internal_decoder_data->decode_to_value->value.timestamp_value + (((uint64_t)buffer[0]) << ((7 - internal_decoder_data->bytes_decoded) * 8)));
-                    internal_decoder_data->bytes_decoded++;
+                        result = 0;
+                        break;
+                    }
+                    case 0x74:
+                    {
+                        internal_decoder_data->decode_to_value->value.decimal32_value[internal_decoder_data->bytes_decoded] = buffer[0];
+                        internal_decoder_data->bytes_decoded++;
+                        buffer++;
+                        size--;
+                        if (internal_decoder_data->bytes_decoded == 4)
+                        {
+                            internal_decoder_data->decoder_state = DECODER_STATE_CONSTRUCTOR;
+                            internal_decoder_data->bytes_decoded = 0;
+                            internal_decoder_data->on_value_decoded(internal_decoder_data->on_value_decoded_context, internal_decoder_data->decode_to_value);
+                        }
+                        result = 0;
+                        break;
+                    }
+                    case 0x84:
+                    {
+                        internal_decoder_data->decode_to_value->value.decimal64_value[internal_decoder_data->bytes_decoded] = buffer[0];
+                        internal_decoder_data->bytes_decoded++;
+                        buffer++;
+                        size--;
+                        if (internal_decoder_data->bytes_decoded == 8)
+                        {
+                            internal_decoder_data->decoder_state = DECODER_STATE_CONSTRUCTOR;
+                            internal_decoder_data->bytes_decoded = 0;
+                            internal_decoder_data->on_value_decoded(internal_decoder_data->on_value_decoded_context, internal_decoder_data->decode_to_value);
+                        }
+                        result = 0;
+                        break;
+                    }
+                    case 0x94:
+                    {
+                        internal_decoder_data->decode_to_value->value.decimal128_value[internal_decoder_data->bytes_decoded] = buffer[0];
+                        internal_decoder_data->bytes_decoded++;
+                        buffer++;
+                        size--;
+                        if (internal_decoder_data->bytes_decoded == 16)
+                        {
+                            internal_decoder_data->decoder_state = DECODER_STATE_CONSTRUCTOR;
+                            internal_decoder_data->bytes_decoded = 0;
+                            internal_decoder_data->on_value_decoded(internal_decoder_data->on_value_decoded_context, internal_decoder_data->decode_to_value);
+                        }
+                        result = 0;
+                        break;
+                    }
+                    /* Codes_SRS_AMQPVALUE_01_369: [<encoding name="ms64" code="0x83" category="fixed" width="8" label="64-bit two's-complement integer representing milliseconds since the unix epoch"/>] */
+                    case 0x83:
+                    {
+                        internal_decoder_data->decode_to_value->value.timestamp_value = (int64_t)((uint64_t)internal_decoder_data->decode_to_value->value.timestamp_value + (((uint64_t)buffer[0]) << ((7 - internal_decoder_data->bytes_decoded) * 8)));
+                        internal_decoder_data->bytes_decoded++;
                     buffer++;
                     size--;
 
