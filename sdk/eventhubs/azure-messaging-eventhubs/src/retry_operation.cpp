@@ -191,11 +191,10 @@ std::chrono::milliseconds Azure::Messaging::EventHubs::_detail::RetryOperation::
                                           : (std::numeric_limits<int32_t>::max)());
 
   // Multiply exponentialRetryAfter by jitterFactor
-  exponentialRetryAfter = std::chrono::milliseconds(
-      static_cast<std::chrono::milliseconds::rep>(
-          (std::chrono::duration<double, std::chrono::milliseconds::period>(exponentialRetryAfter)
-           * jitterFactor)
-              .count()));
+  exponentialRetryAfter = std::chrono::milliseconds(static_cast<std::chrono::milliseconds::rep>(
+      (std::chrono::duration<double, std::chrono::milliseconds::period>(exponentialRetryAfter)
+       * jitterFactor)
+          .count()));
 
   return (std::min)(exponentialRetryAfter, m_retryOptions.MaxRetryDelay);
 }

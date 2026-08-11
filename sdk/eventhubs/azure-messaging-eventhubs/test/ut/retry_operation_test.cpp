@@ -45,7 +45,8 @@ Azure::Messaging::EventHubs::EventHubsException MakeEventHubsException(
 } // namespace LocalTest
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _internal { namespace Test {
-  class RetryOperationTest : public EventHubsTestBase {};
+  class RetryOperationTest : public EventHubsTestBase {
+  };
 
   TEST_F(RetryOperationTest, ExecuteTrue)
   {
