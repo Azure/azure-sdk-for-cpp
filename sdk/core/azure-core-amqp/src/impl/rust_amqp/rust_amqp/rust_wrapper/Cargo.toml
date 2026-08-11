@@ -22,6 +22,9 @@ tracing-subscriber.workspace = true
 tokio = { workspace = true, features = ["rt-multi-thread"] }
 url.workspace = true
 time.workspace = true
+base64.workspace = true
+hmac.workspace = true
+sha2.workspace = true
 
 [dev-dependencies]
 serde_amqp = { workspace = true }

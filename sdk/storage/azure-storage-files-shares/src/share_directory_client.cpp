@@ -43,12 +43,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareDirectoryUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -64,12 +66,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareDirectoryUrl,
       std::shared_ptr<const Core::Credentials::TokenCredential> credential,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -93,12 +97,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareDirectoryClient::ShareDirectoryClient(
       const std::string& shareDirectoryUrl,
       const ShareClientOptions& options)
-      : m_shareDirectoryUrl(shareDirectoryUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -114,26 +120,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(subdirectoryName));
-    ShareDirectoryClient subdirectoryClient(builder, m_pipeline);
-    subdirectoryClient.m_allowTrailingDot = m_allowTrailingDot;
-    subdirectoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
-    subdirectoryClient.m_shareTokenIntent = m_shareTokenIntent;
-    subdirectoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
-    subdirectoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
-    return subdirectoryClient;
+    return ShareDirectoryClient(builder, m_pipeline, m_clientConfiguration);
   }
 
   ShareFileClient ShareDirectoryClient::GetFileClient(const std::string& fileName) const
   {
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileName));
-    ShareFileClient fileClient(builder, m_pipeline);
-    fileClient.m_allowTrailingDot = m_allowTrailingDot;
-    fileClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
-    fileClient.m_shareTokenIntent = m_shareTokenIntent;
-    fileClient.m_uploadValidationOptions = m_uploadValidationOptions;
-    fileClient.m_downloadValidationOptions = m_downloadValidationOptions;
-    return fileClient;
+    return ShareFileClient(builder, m_pipeline, m_clientConfiguration);
   }
 
   ShareDirectoryClient ShareDirectoryClient::WithShareSnapshot(
@@ -187,8 +181,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
     }
 
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.DirectoryPermissionFormat;
     if (options.PosixProperties.FileMode.HasValue())
     {
@@ -286,21 +280,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
     }
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.AllowSourceTrailingDot = m_clientConfiguration.AllowSourceTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.FileContentType = options.ContentType;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
 
     auto response = _detail::FileClient::Rename(
         *m_pipeline, destinationFileUrl, protocolLayerOptions, context);
 
-    auto renamedFileClient = ShareFileClient(destinationFileUrl, m_pipeline);
-    renamedFileClient.m_allowTrailingDot = m_allowTrailingDot;
-    renamedFileClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
-    renamedFileClient.m_shareTokenIntent = m_shareTokenIntent;
-    renamedFileClient.m_uploadValidationOptions = m_uploadValidationOptions;
-    renamedFileClient.m_downloadValidationOptions = m_downloadValidationOptions;
+    auto renamedFileClient = ShareFileClient(destinationFileUrl, m_pipeline, m_clientConfiguration);
     return Azure::Response<ShareFileClient>(
         std::move(renamedFileClient), std::move(response.RawResponse));
   }
@@ -352,20 +341,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = options.SmbProperties.PermissionKey;
     }
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.AllowSourceTrailingDot = m_allowSourceTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.AllowSourceTrailingDot = m_clientConfiguration.AllowSourceTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
 
     auto response = _detail::DirectoryClient::Rename(
         *m_pipeline, destinationDirectoryUrl, protocolLayerOptions, context);
 
-    auto renamedSubdirectoryClient = ShareDirectoryClient(destinationDirectoryUrl, m_pipeline);
-    renamedSubdirectoryClient.m_allowTrailingDot = m_allowTrailingDot;
-    renamedSubdirectoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
-    renamedSubdirectoryClient.m_shareTokenIntent = m_shareTokenIntent;
-    renamedSubdirectoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
-    renamedSubdirectoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
+    auto renamedSubdirectoryClient
+        = ShareDirectoryClient(destinationDirectoryUrl, m_pipeline, m_clientConfiguration);
     return Azure::Response<ShareDirectoryClient>(
         std::move(renamedSubdirectoryClient), std::move(response.RawResponse));
   }
@@ -376,8 +361,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::DeleteDirectoryOptions();
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto result = _detail::DirectoryClient::Delete(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::DeleteDirectoryResult ret;
@@ -414,8 +399,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::GetDirectoryPropertiesOptions();
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto response = _detail::DirectoryClient::GetProperties(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::DirectoryProperties ret;
@@ -466,8 +451,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.FilePermissionKey = smbProperties.PermissionKey;
     }
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     if (options.PosixProperties.FileMode.HasValue())
     {
@@ -502,8 +487,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryMetadataOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(metadata.begin(), metadata.end());
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::DirectoryClient::SetMetadata(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
   }
@@ -519,8 +504,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Include = options.Include;
     protocolLayerOptions.IncludeExtendedInfo = options.IncludeExtendedInfo;
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto response = _detail::DirectoryClient::ListFilesAndDirectoriesSegment(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
 
@@ -591,8 +576,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
     protocolLayerOptions.Recursive = options.Recursive;
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto response = _detail::DirectoryClient::ListHandles(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
 
@@ -649,8 +634,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::ForceDirectoryCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto result = _detail::DirectoryClient::ForceCloseHandles(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
     Models::ForceCloseDirectoryHandleResult ret;
@@ -666,8 +651,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.Recursive = options.Recursive;
-    protocolLayerOptions.AllowTrailingDot = m_allowTrailingDot;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto response = _detail::DirectoryClient::ForceCloseHandles(
         *m_pipeline, m_shareDirectoryUrl, protocolLayerOptions, context);
 

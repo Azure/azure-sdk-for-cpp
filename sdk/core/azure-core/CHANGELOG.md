@@ -4,11 +4,21 @@
 
 ### Features Added
 
+- Added `azure-deprecating` to the default list of allowed (unsanitized) HTTP headers logged by the HTTP pipeline. See [Azure API guidelines: Deprecating Behavior Notification](https://github.com/microsoft/api-guidelines/blob/vNext/azure/Guidelines.md#deprecating-behavior-notification) for more information.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
+
 ### Other Changes
+
+### Acknowledgments
+
+Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
+
+- Groene AI _([GitHub](https://github.com/groeneai))_
 
 ## 1.16.4 (2026-07-10)
 

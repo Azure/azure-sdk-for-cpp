@@ -25,8 +25,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::FileClient::AcquireFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
-      protocolLayerOptions.AllowTrailingDot = m_fileClient.Value().m_allowTrailingDot;
-      protocolLayerOptions.FileRequestIntent = m_fileClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.AllowTrailingDot
+          = m_fileClient.Value().m_clientConfiguration.AllowTrailingDot;
+      protocolLayerOptions.FileRequestIntent
+          = m_fileClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::FileClient::AcquireLease(
           *(m_fileClient.Value().m_pipeline),
@@ -47,7 +49,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareClient::AcquireShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
-      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.FileRequestIntent
+          = m_shareClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::ShareClient::AcquireLease(
           *(m_shareClient.Value().m_pipeline),
@@ -83,7 +86,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       _detail::ShareClient::RenewShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
-      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.FileRequestIntent
+          = m_shareClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::ShareClient::RenewLease(
           *(m_shareClient.Value().m_pipeline),
@@ -114,8 +118,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       _detail::FileClient::ReleaseFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
-      protocolLayerOptions.AllowTrailingDot = m_fileClient.Value().m_allowTrailingDot;
-      protocolLayerOptions.FileRequestIntent = m_fileClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.AllowTrailingDot
+          = m_fileClient.Value().m_clientConfiguration.AllowTrailingDot;
+      protocolLayerOptions.FileRequestIntent
+          = m_fileClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::FileClient::ReleaseLease(
           *(m_fileClient.Value().m_pipeline),
@@ -134,7 +140,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       _detail::ShareClient::ReleaseShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
-      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.FileRequestIntent
+          = m_shareClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::ShareClient::ReleaseLease(
           *(m_shareClient.Value().m_pipeline),
@@ -166,8 +173,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::FileClient::ChangeFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
-      protocolLayerOptions.AllowTrailingDot = m_fileClient.Value().m_allowTrailingDot;
-      protocolLayerOptions.FileRequestIntent = m_fileClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.AllowTrailingDot
+          = m_fileClient.Value().m_clientConfiguration.AllowTrailingDot;
+      protocolLayerOptions.FileRequestIntent
+          = m_fileClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::FileClient::ChangeLease(
           *(m_fileClient.Value().m_pipeline),
@@ -193,7 +202,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       _detail::ShareClient::ChangeShareLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
-      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.FileRequestIntent
+          = m_shareClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::ShareClient::ChangeLease(
           *(m_shareClient.Value().m_pipeline),
@@ -228,8 +238,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     if (m_fileClient.HasValue())
     {
       _detail::FileClient::BreakFileLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.AllowTrailingDot = m_fileClient.Value().m_allowTrailingDot;
-      protocolLayerOptions.FileRequestIntent = m_fileClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.AllowTrailingDot
+          = m_fileClient.Value().m_clientConfiguration.AllowTrailingDot;
+      protocolLayerOptions.FileRequestIntent
+          = m_fileClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::FileClient::BreakLease(
           *(m_fileClient.Value().m_pipeline),
@@ -247,7 +259,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     else if (m_shareClient.HasValue())
     {
       _detail::ShareClient::BreakShareLeaseOptions protocolLayerOptions;
-      protocolLayerOptions.FileRequestIntent = m_shareClient.Value().m_shareTokenIntent;
+      protocolLayerOptions.FileRequestIntent
+          = m_shareClient.Value().m_clientConfiguration.ShareTokenIntent;
 
       auto response = _detail::ShareClient::BreakLease(
 

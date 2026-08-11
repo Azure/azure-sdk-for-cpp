@@ -12,6 +12,13 @@
 #include <stdexcept>
 #include <string>
 
+#if defined(_azure_TESTING_BUILD)
+// Define the test classes dependant on this class here.
+namespace Azure { namespace Core { namespace Amqp { namespace Tests {
+  class ConnectionStringTest_GenerateSasTokenFixedVector_Test;
+}}}} // namespace Azure::Core::Amqp::Tests
+#endif // _azure_TESTING_BUILD
+
 namespace Azure { namespace Core { namespace Amqp { namespace _internal {
   //
   // A ServiceBus connection string has the following format:
@@ -179,6 +186,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     // * @param expiresOn The expiration time for the SAS token.
     // */
     std::string GenerateSasToken(std::chrono::system_clock::time_point const& expiresOn) const;
+
+#if defined(_azure_TESTING_BUILD)
+    // The token test needs a fixed expiration time, so it calls GenerateSasToken directly.
+    // GetToken derives the expiration time from the clock, which cannot produce a stable
+    // token to compare against.
+    friend class Azure::Core::Amqp::Tests::ConnectionStringTest_GenerateSasTokenFixedVector_Test;
+#endif // _azure_TESTING_BUILD
   };
 
 }}}} // namespace Azure::Core::Amqp::_internal

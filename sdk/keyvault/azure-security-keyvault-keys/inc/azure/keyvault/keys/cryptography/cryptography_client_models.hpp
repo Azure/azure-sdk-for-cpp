@@ -388,7 +388,7 @@ namespace Azure {
 
     /**
      * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::KeyWrapAlgorithm used. This
-     * must be stored alongside the #WrapResult::EncryptedKey as the same algorithm must be used to
+     * must be stored alongside the WrapResult::EncryptedKey as the same algorithm must be used to
      * unwrap it.
      *
      */
@@ -429,7 +429,7 @@ namespace Azure {
   {
     /**
      * @brief Gets the key identifier of the #Azure::Security::KeyVault::Keys::KeyVaultKey used to
-     * encrypt. This must be stored alongside the #EncryptResult::Ciphertext as the same key must be
+     * encrypt. This must be stored alongside the EncryptResult::Ciphertext as the same key must be
      * used to decrypt it.
      *
      */
@@ -457,7 +457,7 @@ namespace Azure {
   {
     /**
      * @brief Gets the key identifier of the #Azure::Security::KeyVault::Keys::KeyVaultKey used to
-     * encrypt. This must be stored alongside the #EncryptResult::Ciphertext as the same key must be
+     * encrypt. This must be stored alongside the EncryptResult::Ciphertext as the same key must be
      * used to decrypt it.
      *
      */
@@ -471,7 +471,7 @@ namespace Azure {
 
     /**
      * @brief Gets the #Azure::Security::KeyVault::Keys::Cryptography::EncryptionAlgorithm used for
-     * encryption. This must be stored alongside the #DecryptParameters::Ciphertext as the same
+     * encryption. This must be stored alongside the DecryptParameters::Ciphertext as the same
      * algorithm must be used to decrypt it.
      *
      */
@@ -486,7 +486,7 @@ namespace Azure {
   {
     /**
      * @brief Gets the key identifier of the #Azure::Security::KeyVault::Keys::KeyVaultKey used to
-     * encrypt. This must be stored alongside the #DecryptParameters::Ciphertext as the same key
+     * encrypt. This must be stored alongside the DecryptParameters::Ciphertext as the same key
      * must be used to decrypt it.
      *
      */
@@ -506,7 +506,7 @@ namespace Azure {
 
     /**
      * @brief Gets the authentication tag resulting from encryption with a symmetric key including
-     * #EncryptionAlgorithm.A128Gcm, #EncryptionAlgorithm.A192Gcm, or #EncryptionAlgorithm.A256Gcm.
+     * EncryptionAlgorithm::A128Gcm, EncryptionAlgorithm::A192Gcm, or EncryptionAlgorithm::A256Gcm.
      *
      */
     std::vector<uint8_t> AuthenticationTag;
@@ -621,10 +621,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::Rsa15 encryption algorithm.
+     * EncryptionAlgorithm::Rsa15 encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::Rsa15
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::Rsa15
      * encryption algorithm.
      */
     static DecryptParameters Rsa15Parameters(std::vector<uint8_t> const& ciphertext)
@@ -634,10 +634,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::RsaOaep encryption algorithm.
+     * EncryptionAlgorithm::RsaOaep encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::RsaOaep
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::RsaOaep
      * encryption algorithm.
      */
     static DecryptParameters RsaOaepParameters(std::vector<uint8_t> const& ciphertext)
@@ -647,10 +647,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::RsaOaep256 encryption algorithm.
+     * EncryptionAlgorithm::RsaOaep256 encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::RsaOaep256
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::RsaOaep256
      * encryption algorithm.
      */
     static DecryptParameters RsaOaep256Parameters(std::vector<uint8_t> const& ciphertext)
@@ -660,7 +660,7 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A128Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A128Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
@@ -668,7 +668,7 @@ namespace Azure {
      * @param iv The initialization vector (or nonce) generated during encryption.
      * @param authenticationTag The authentication tag generated during encryption.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A128Gcm
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A128Gcm
      * encryption algorithm.
      */
     static DecryptParameters A128GcmParameters(
@@ -687,7 +687,7 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A192Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A192Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
@@ -695,7 +695,7 @@ namespace Azure {
      * @param iv The initialization vector (or nonce) generated during encryption.
      * @param authenticationTag The authentication tag generated during encryption.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A192Gcm
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A192Gcm
      * encryption algorithm.
      */
     static DecryptParameters A192GcmParameters(
@@ -714,7 +714,7 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A256Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A256Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
@@ -722,7 +722,7 @@ namespace Azure {
      * @param iv The initialization vector (or nonce) generated during encryption.
      * @param authenticationTag The authentication tag generated during encryption.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A256Gcm
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A256Gcm
      * encryption algorithm.
      */
     static DecryptParameters A256GcmParameters(
@@ -741,12 +741,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A128Cbc encryption algorithm.
+     * EncryptionAlgorithm::A128Cbc encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A128Cbc
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A128Cbc
      * encryption algorithm.
      */
     static DecryptParameters A128CbcParameters(
@@ -758,12 +758,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A192Cbc encryption algorithm.
+     * EncryptionAlgorithm::A192Cbc encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A192Cbc
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A192Cbc
      * encryption algorithm.
      */
     static DecryptParameters A192CbcParameters(
@@ -775,12 +775,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A256Cbc encryption algorithm.
+     * EncryptionAlgorithm::A256Cbc encryption algorithm.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A192Cbc
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A256Cbc
      * encryption algorithm.
      */
     static DecryptParameters A256CbcParameters(
@@ -792,12 +792,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A128CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A128CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #DecryptParameters class for the #EncryptionAlgorithm::A128CbcPad
+     * @return An instance of the #DecryptParameters class for the EncryptionAlgorithm::A128CbcPad
      * encryption algorithm.
      */
     static DecryptParameters A128CbcPadParameters(
@@ -809,7 +809,7 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A192CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A192CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
@@ -827,7 +827,7 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #DecryptParameters class for the
-     * #EncryptionAlgorithm::A256CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A256CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param ciphertext The ciphertext to decrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
@@ -924,10 +924,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::Rsa15 encryption algorithm.
+     * EncryptionAlgorithm::Rsa15 encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::Rsa15
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::Rsa15
      * encryption algorithm.
      */
     static EncryptParameters Rsa15Parameters(std::vector<uint8_t> const& plaintext)
@@ -937,10 +937,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::RsaOaep encryption algorithm.
+     * EncryptionAlgorithm::RsaOaep encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::RsaOaep
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::RsaOaep
      * encryption algorithm.
      */
     static EncryptParameters RsaOaepParameters(std::vector<uint8_t> const& plaintext)
@@ -950,10 +950,10 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::RsaOaep256 encryption algorithm.
+     * EncryptionAlgorithm::RsaOaep256 encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::RsaOaep256
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::RsaOaep256
      * encryption algorithm.
      */
     static EncryptParameters RsaOaep256Parameters(std::vector<uint8_t> const& plaintext)
@@ -963,13 +963,13 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A128Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A128Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
      * @param plaintext The plaintext to encrypt.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A128Gcm
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A128Gcm
      * encryption algorithm.
      */
     static EncryptParameters A128GcmParameters(
@@ -982,13 +982,13 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A192Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A192Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
      * @param plaintext The plaintext to encrypt.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A192Gcm
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A192Gcm
      * encryption algorithm.
      */
     static EncryptParameters A192GcmParameters(
@@ -1001,13 +1001,13 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A256Gcm encryption algorithm. The nonce will be generated automatically
+     * EncryptionAlgorithm::A256Gcm encryption algorithm. The nonce will be generated automatically
      * and returned in the #Azure::Security::KeyVault::Keys::Cryptography::EncryptResult after
      * encryption.
      *
      * @param plaintext The plaintext to encrypt.
      * @param additionalAuthenticationData Optional data that is authenticated but not encrypted.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A256Gcm
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A256Gcm
      * encryption algorithm.
      */
     static EncryptParameters A256GcmParameters(
@@ -1020,12 +1020,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A128Cbc encryption algorithm.
+     * EncryptionAlgorithm::A128Cbc encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A128Cbc
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A128Cbc
      * encryption algorithm.
      */
     static EncryptParameters A128CbcParameters(
@@ -1037,12 +1037,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A192Cbc encryption algorithm.
+     * EncryptionAlgorithm::A192Cbc encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A192Cbc
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A192Cbc
      * encryption algorithm.
      */
     static EncryptParameters A192CbcParameters(
@@ -1054,12 +1054,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A256Cbc encryption algorithm.
+     * EncryptionAlgorithm::A256Cbc encryption algorithm.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A192Cbc
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A256Cbc
      * encryption algorithm.
      */
     static EncryptParameters A256CbcParameters(
@@ -1071,12 +1071,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A128CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A128CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A128CbcPad
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A128CbcPad
      * encryption algorithm.
      */
     static EncryptParameters A128CbcPadParameters(
@@ -1088,12 +1088,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A192CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A192CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A192CbcPad
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A192CbcPad
      * encryption algorithm.
      */
     static EncryptParameters A192CbcPadParameters(
@@ -1105,12 +1105,12 @@ namespace Azure {
 
     /**
      * @brief Creates an instance of the #EncryptParameters class for the
-     * #EncryptionAlgorithm::A256CbcPad encryption algorithm with PKCS#7 padding.
+     * EncryptionAlgorithm::A256CbcPad encryption algorithm with PKCS#7 padding.
      *
      * @param plaintext The plaintext to encrypt.
      * @param iv Optional initialization vector. If null, a cryptographically random initialization
      * vector will be generated using RandomNumberGenerator.
-     * @return An instance of the #EncryptParameters class for the #EncryptionAlgorithm::A256CbcPad
+     * @return An instance of the #EncryptParameters class for the EncryptionAlgorithm::A256CbcPad
      * encryption algorithm.
      */
     static EncryptParameters A256CbcPadParameters(

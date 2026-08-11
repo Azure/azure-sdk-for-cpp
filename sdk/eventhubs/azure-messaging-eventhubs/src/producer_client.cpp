@@ -14,6 +14,8 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <stdexcept>
+
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 namespace {
@@ -21,6 +23,22 @@ const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
 }
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  ProducerClient::ProducerClient(
+      std::string const& connectionString,
+      std::string const& eventHub,
+      Azure::Messaging::EventHubs::ProducerClientOptions options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
+  {
+    auto details
+        = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
+    m_credential = std::move(details.Credential);
+    m_eventHub = std::move(details.EventHub);
+    m_fullyQualifiedNamespace = std::move(details.FullyQualifiedNamespace);
+    m_targetPort = details.Port;
+    m_targetUrl = details.ServiceScheme + m_fullyQualifiedNamespace + ":"
+        + std::to_string(m_targetPort) + "/" + m_eventHub;
+  }
 
   ProducerClient::ProducerClient(
       std::string const& fullyQualifiedNamespace,

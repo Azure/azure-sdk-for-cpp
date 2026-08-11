@@ -318,8 +318,6 @@ xx
 
   TEST_F(DataLakeFileClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    auto client = m_fileSystemClient->GetFileClient(RandomString());
-
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
     int recordCounter = 0;
@@ -333,28 +331,47 @@ xx
       jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
     }
 
-    client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
-
     Files::DataLake::QueryFileOptions queryOptions;
     queryOptions.InputTextConfiguration
         = Files::DataLake::FileQueryInputTextOptions::CreateCsvTextOptions();
     queryOptions.OutputTextConfiguration
         = Files::DataLake::FileQueryOutputTextOptions::CreateJsonTextOptions();
-    auto queryResponse = client.Query("SELECT * FROM BlobStorage;", queryOptions);
-
-    size_t comparePos = 0;
-    std::vector<uint8_t> readBuffer(4096);
-    while (true)
+    constexpr int MaxQueryAttempts = 2;
+    const std::string fileNamePrefix = RandomString();
+    for (int attempt = 1; attempt <= MaxQueryAttempts; ++attempt)
     {
-      auto s = queryResponse.Value.BodyStream->Read(readBuffer.data(), readBuffer.size());
-      if (s == 0)
+      auto client = m_fileSystemClient->GetFileClient(fileNamePrefix + std::to_string(attempt));
+      client.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
+      auto queryResponse = client.Query("SELECT * FROM BlobStorage;", queryOptions);
+      try
       {
-        break;
+        size_t comparePos = 0;
+        std::vector<uint8_t> readBuffer(4096);
+        while (true)
+        {
+          auto s = queryResponse.Value.BodyStream->Read(readBuffer.data(), readBuffer.size());
+          if (s == 0)
+          {
+            break;
+          }
+          ASSERT_TRUE(comparePos + s <= jsonData.size());
+          ASSERT_EQ(
+              std::string(readBuffer.begin(), readBuffer.begin() + s),
+              jsonData.substr(comparePos, s));
+          comparePos += s;
+        }
+        ASSERT_EQ(comparePos, jsonData.size());
+        return;
       }
-      ASSERT_TRUE(comparePos + s <= jsonData.size());
-      ASSERT_EQ(
-          std::string(readBuffer.begin(), readBuffer.begin() + s), jsonData.substr(comparePos, s));
-      comparePos += s;
+      catch (const Core::Http::TransportException& e)
+      {
+        if (attempt == MaxQueryAttempts)
+        {
+          throw;
+        }
+        SUCCEED() << "Retrying large Data Lake query after response body transport failure: "
+                  << e.what();
+      }
     }
   }
 

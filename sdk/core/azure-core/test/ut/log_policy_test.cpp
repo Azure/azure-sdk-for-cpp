@@ -72,6 +72,7 @@ void SendRequest(
 
     request.SetHeader("Accept", "Accept");
     request.SetHeader("accept-ranges", "Accept-Ranges");
+    request.SetHeader("azure-deprecating", "azure-deprecating");
     request.SetHeader("Cache-Control", "Cache-Control");
     request.SetHeader("Connection", "Connection");
     request.SetHeader("Content-Length", "Content-Length");
@@ -288,6 +289,7 @@ TEST(LogPolicy, DefaultHeaders)
       "&qparam1=REDACTED"
       "\naccept : Accept"
       "\naccept-ranges : Accept-Ranges"
+      "\nazure-deprecating : azure-deprecating"
       "\ncache-control : Cache-Control"
       "\nconnection : Connection"
       "\ncontent-length : Content-Length"

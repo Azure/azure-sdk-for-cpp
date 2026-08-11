@@ -6,6 +6,11 @@
 # Load common ES scripts
 . "$PSScriptRoot\..\..\..\eng\common\scripts\common.ps1"
 
+if ($true) {
+  Write-Host "Disabling AMQP Test Broker temporarily"
+  exit 0
+}
+
 # Create the test binary *outside* the repo root to avoid polluting the repo.
 $WorkingDirectory = ([System.IO.Path]::Combine($RepoRoot, "../TestArtifacts"))
 

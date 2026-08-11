@@ -41,12 +41,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareUrl(shareUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -62,12 +64,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const std::string& shareUrl,
       std::shared_ptr<const Core::Credentials::TokenCredential> credential,
       const ShareClientOptions& options)
-      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareUrl(shareUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -89,12 +93,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
-      : m_shareUrl(shareUrl), m_allowTrailingDot(options.AllowTrailingDot),
-        m_allowSourceTrailingDot(options.AllowSourceTrailingDot),
-        m_shareTokenIntent(options.ShareTokenIntent),
-        m_uploadValidationOptions(options.UploadValidationOptions),
-        m_downloadValidationOptions(options.DownloadValidationOptions)
+      : m_shareUrl(shareUrl)
   {
+    m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
+    m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
+    m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
+    m_clientConfiguration.UploadValidationOptions = options.UploadValidationOptions;
+    m_clientConfiguration.DownloadValidationOptions = options.DownloadValidationOptions;
+
     _internal::BuildStoragePipelineOptions pipelineOptions;
     pipelineOptions.PackageName = _internal::FileServicePackageName;
     pipelineOptions.PackageVersion = _detail::PackageVersion::ToString();
@@ -107,13 +113,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
-    ShareDirectoryClient directoryClient(m_shareUrl, m_pipeline);
-    directoryClient.m_allowTrailingDot = m_allowTrailingDot;
-    directoryClient.m_allowSourceTrailingDot = m_allowSourceTrailingDot;
-    directoryClient.m_shareTokenIntent = m_shareTokenIntent;
-    directoryClient.m_uploadValidationOptions = m_uploadValidationOptions;
-    directoryClient.m_downloadValidationOptions = m_downloadValidationOptions;
-    return directoryClient;
+    return ShareDirectoryClient(m_shareUrl, m_pipeline, m_clientConfiguration);
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
@@ -144,7 +144,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.RootSquash = options.RootSquash;
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
     protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
@@ -194,7 +194,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     {
       protocolLayerOptions.DeleteSnapshots = Models::DeleteSnapshotsOption::Include;
     }
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     auto result
         = _detail::ShareClient::Delete(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::DeleteShareResult ret;
@@ -232,7 +232,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::CreateShareSnapshotOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::CreateSnapshot(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -243,7 +243,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePropertiesOptions();
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::GetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -258,7 +258,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.RootSquash = options.RootSquash;
     protocolLayerOptions.EnableSnapshotVirtualDirectoryAccess
         = options.EnableSnapshotVirtualDirectoryAccess;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.PaidBurstingEnabled = options.EnablePaidBursting;
     protocolLayerOptions.PaidBurstingMaxIops = options.PaidBurstingMaxIops;
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::SetShareMetadataOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(metadata.begin(), metadata.end());
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::SetMetadata(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetShareAccessPolicyOptions();
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::GetAccessPolicy(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -301,7 +301,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::SetShareAccessPolicyOptions();
     protocolLayerOptions.ShareAcl = accessPolicy;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::SetAccessPolicy(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -312,7 +312,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetShareStatisticsOptions();
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::GetStatistics(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -326,7 +326,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     auto protocolLayerOptions = _detail::ShareClient::CreateSharePermissionOptions();
     protocolLayerOptions.SharePermission.Permission = permission;
     protocolLayerOptions.SharePermission.Format = options.FilePermissionFormat;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     return _detail::ShareClient::CreatePermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }
@@ -338,7 +338,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   {
     auto protocolLayerOptions = _detail::ShareClient::GetSharePermissionOptions();
     protocolLayerOptions.FilePermissionKey = permissionKey;
-    protocolLayerOptions.FileRequestIntent = m_shareTokenIntent;
+    protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
     protocolLayerOptions.FilePermissionFormat = options.FilePermissionFormat;
     auto result = _detail::ShareClient::GetPermission(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);

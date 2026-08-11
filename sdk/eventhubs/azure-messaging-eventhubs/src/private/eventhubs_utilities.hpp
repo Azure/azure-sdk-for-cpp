@@ -14,10 +14,14 @@
 #include <azure/core/amqp/internal/management.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 #include <azure/core/context.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/http.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <chrono>
+#include <cstdint>
+#include <memory>
+#include <string>
 #include <utility>
 
 using namespace Azure::Core::Amqp::Models;
@@ -25,6 +29,15 @@ using namespace Azure::Core::Amqp::Models;
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   constexpr bool EnableAmqpTrace = true;
+
+  struct ConnectionStringDetails final
+  {
+    std::shared_ptr<const Azure::Core::Credentials::TokenCredential> Credential;
+    std::string EventHub;
+    std::string FullyQualifiedNamespace;
+    std::string ServiceScheme;
+    std::uint16_t Port;
+  };
 
   class EventHubsExceptionFactory {
   public:
@@ -276,6 +289,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   class EventHubsUtilities {
 
   public:
+    static ConnectionStringDetails CreateConnectionStringDetails(
+        std::string const& connectionString,
+        std::string const& eventHub);
+
     template <typename T>
     static void SetUserAgent(T& options, std::string const& applicationId, long cplusplusValue)
     {

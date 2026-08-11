@@ -19,6 +19,7 @@ add_executable (
   azure-messaging-eventhubs-test
     azure_messaging_eventhubs_test.cpp
     checkpoint_store_test.cpp
+    connection_string_test.cpp
     consumer_client_test.cpp
     event_data_test.cpp
     eventhubs_admin_client_test.cpp

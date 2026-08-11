@@ -70,6 +70,7 @@ std::set<std::string> const Policies::_detail::g_defaultAllowedHttpQueryParamete
 CaseInsensitiveSet const Policies::_detail::g_defaultAllowedHttpHeaders
     = {"Accept",
        "Accept-Ranges",
+       "azure-deprecating",
        "Cache-Control",
        "Connection",
        "Content-Length",

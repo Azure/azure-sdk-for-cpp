@@ -190,7 +190,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto testBrokerUrl = Azure::Core::_internal::Environment::GetVariable("TEST_BROKER_ADDRESS");
     if (testBrokerUrl.empty())
     {
-      GTEST_FATAL_FAILURE_("Could not find required environment variable TEST_BROKER_ADDRESS");
+      GTEST_SKIP_("Could not find required environment variable TEST_BROKER_ADDRESS");
     }
     Azure::Core::Url brokerUrl(testBrokerUrl);
     Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;

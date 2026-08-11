@@ -184,7 +184,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /**
      * @brief Get a single page with the properties of all keys in the specified vault. You can
-     * use the returned #KeyProperties.Name in subsequent calls to #GetKey.
+     * use the returned KeyProperties::Name in subsequent calls to KeyClient::GetKey.
      *
      * @remark Retrieves a list of the keys in the Key Vault that contains the public part of a
      * stored key. The operation is applicable to all key types, however only the base key
@@ -192,7 +192,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * key are not listed in the response. This operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeysOptions.NextPageToken is not set, the operation will get the first
+     * GetPropertiesOfKeysOptions::NextPageToken is not set, the operation will get the first
      * page and it will set the `NextPageToken` from the
      * #Azure::Security::KeyVault::Keys::KeyPropertiesPagedResponse as the next page of the response
      * if there is a next page.
@@ -208,14 +208,14 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
 
     /**
      * @brief Get one page listing the properties of all the versions of the specified key. You
-     * can use the returned #KeyProperties.Name and #KeyProperties.Version in subsequent calls
-     * to #GetKey.
+     * can use the returned KeyProperties::Name and KeyProperties::Version in subsequent calls
+     * to KeyClient::GetKey.
      *
      * @remark The full identifier, attributes, and tags are provided in the response. This
      * operation requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetPropertiesOfKeyVersionsOptions.NextPageToken is not set, the operation will get the
+     * GetPropertiesOfKeyVersionsOptions::NextPageToken is not set, the operation will get the
      * first page and it will set the `NextPageToken` from the
      * #Azure::Security::KeyVault::Keys::KeyPropertiesPagedResponse as the next page of the response
      * if there is a next page.
@@ -291,7 +291,7 @@ namespace Azure { namespace Security { namespace KeyVault { namespace Keys {
      * requires the keys/list permission.
      *
      * @remark Use \p options to control which page to get. If
-     * #GetDeletedKeysOptions.NextPageToken is not set, the operation will get
+     * GetDeletedKeysOptions::NextPageToken is not set, the operation will get
      * the first page and it will set the `NextPageToken` from the
      * #Azure::Security::KeyVault::Keys::DeletedKeyPagedResponse as the next page of the response if
      * there is a next page.

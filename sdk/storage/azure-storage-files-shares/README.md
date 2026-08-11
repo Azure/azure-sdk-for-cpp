@@ -1,187 +1,285 @@
-# Azure Storage Files Shares Client Library for C++
+# Azure Storage Files Shares client library for C++
 
-Azure File Shares offers fully managed file shares in the cloud that are accessible via the industry standard Server Message Block (SMB) protocol. Azure file shares can be mounted concurrently by cloud or on-premises deployments of Windows, Linux, and macOS. Additionally, Azure file shares can be cached on Windows Servers with Azure File Sync for fast access near where the data is being used.
+Azure Files provides fully managed file shares in the cloud that are accessible through the Server
+Message Block (SMB) and Network File System (NFS) protocols. Azure file shares can be mounted
+concurrently by cloud or on-premises deployments and accessed through the Azure Files REST API.
+
+[Source code][source_code] | [Package (vcpkg)][vcpkg_package] | [API reference documentation][api_reference] | [Product documentation][product_documentation] | [Samples][samples]
 
 ## Getting started
 
-### Install the package
-
-The easiest way to acquire the C++ SDK is leveraging vcpkg package manager. See the corresponding [Azure SDK for C++ readme section][azsdk_vcpkg_install].
-
-To install Azure Storage packages via vcpkg:
-
-```batch
-vcpkg install azure-storage-files-shares-cpp
-```
-
-Then, use in your CMake file:
-
-```CMake
-find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
-target_link_libraries(<your project name> PRIVATE Azure::azure-storage-files-shares)
-```
-
 ### Prerequisites
 
-You need an Azure subscription and a [Storage Account][storage_account_overview] to use this package.
+- [vcpkg](https://learn.microsoft.com/vcpkg/get_started/overview) for package acquisition and dependency management
+- [CMake](https://cmake.org/download/) for project build
+- An [Azure subscription][azure_sub]
+- An existing [Azure Storage account][storage_account_overview]
 
-To create a new Storage Account, you can use the [Azure Portal][create_account_with_azure_portal], [Azure PowerShell][create_account_with_powershell], or the [Azure CLI][create_account_with_azure_cli].
+If you need to create a Storage account, you can use the Azure portal or the [Azure CLI][azure_cli].
+When using the Azure CLI, replace `<your-resource-group-name>` and
+`<your-storage-account-name>` with your own values. Storage account names must be globally unique.
 
-### Build from Source
-
-First, download the repository to your local folder:
-
-```batch
-git clone https://github.com/Azure/azure-sdk-for-cpp.git
+```PowerShell
+az login
+az storage account create `
+  --resource-group <your-resource-group-name> `
+  --name <your-storage-account-name> `
+  --sku Standard_LRS
 ```
 
-Create a new folder under the root directory of local cloned repo, switch into this folder and run below commands:
+### Install the package
 
-Windows:
+The easiest way to acquire the C++ SDK is with the vcpkg package manager and CMake. See the
+[Azure SDK for C++ installation instructions][azsdk_vcpkg_install] for more information.
+The following commands use vcpkg in manifest mode.
 
-```batch
-cmake .. -A x64
-cmake --build . --target azure-storage-files-shares
-```
-
-or Unix:
+Create a vcpkg manifest in the root of your project:
 
 ```batch
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-cmake --build . --target azure-storage-files-shares
+vcpkg new --application
 ```
+
+Add Azure Storage Files Shares and Azure Identity to the manifest:
+
+```batch
+vcpkg add port azure-storage-files-shares-cpp azure-identity-cpp
+```
+
+Then add the following to your `CMakeLists.txt` file:
+
+```CMake
+find_package(azure-identity-cpp CONFIG REQUIRED)
+find_package(azure-storage-files-shares-cpp CONFIG REQUIRED)
+
+target_link_libraries(
+  <your project name>
+  PRIVATE
+    Azure::azure-identity
+    Azure::azure-storage-files-shares)
+```
+
+Set `CMAKE_TOOLCHAIN_FILE` to the path to `vcpkg.cmake` before the `project()` statement in your
+`CMakeLists.txt` file:
+
+```CMake
+set(CMAKE_TOOLCHAIN_FILE "vcpkg-root/scripts/buildsystems/vcpkg.cmake")
+```
+
+You can instead pass the path with the `-DCMAKE_TOOLCHAIN_FILE` argument when configuring CMake.
+For other ways to acquire and install the library, see the
+[Azure C++ project setup samples][project_set_up_examples].
+
+### Create and authenticate clients
+
+`ShareServiceClient` operates on the Azure Files service at the Storage account level. From it,
+you can create clients for shares, directories, and files.
+
+The following example uses `DefaultAzureCredential`, which supports multiple credential types and
+uses credentials from your development environment. After signing in with `az login`, set
+`AZURE_STORAGE_FILE_ACCOUNT_URL` to a URL such as
+`https://<your-storage-account-name>.file.core.windows.net`.
+
+```cpp
+#include <azure/identity.hpp>
+#include <azure/storage/files/shares.hpp>
+
+#include <cstddef>
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+using namespace Azure::Storage::Files::Shares;
+
+int main()
+{
+  const char* accountUrl = std::getenv("AZURE_STORAGE_FILE_ACCOUNT_URL");
+  if (accountUrl == nullptr)
+  {
+    throw std::runtime_error("AZURE_STORAGE_FILE_ACCOUNT_URL is not set.");
+  }
+
+  auto credential = std::make_shared<Azure::Identity::DefaultAzureCredential>();
+  ShareClientOptions options;
+  options.ShareTokenIntent = Models::ShareTokenIntent::Backup;
+  ShareServiceClient serviceClient(accountUrl, credential, options);
+
+  ShareClient shareClient = serviceClient.GetShareClient("sample-share");
+  ShareDirectoryClient directoryClient = shareClient.GetRootDirectoryClient();
+  ShareFileClient fileClient = directoryClient.GetFileClient("sample-file");
+}
+```
+
+For more information about credential selection and configuration, see
+[DefaultAzureCredential][default_azure_credential].
 
 ## Key concepts
 
 Azure file shares can be used to:
 
-- Completely replace or supplement traditional on-premises file servers or NAS devices.
-- "Lift and shift" applications to the cloud that expect a file share to store file application or user data.
-- Simplify new cloud development projects with shared application settings, diagnostic shares, and Dev/Test/Debug tool file shares.
+- Replace or supplement on-premises file servers and network-attached storage
+- Lift and shift applications that expect a file share
+- Share application settings, diagnostics, and development tools
+- Provide concurrently mounted storage to cloud and on-premises systems
 
-Learn more about options for authentication (including Connection Strings, Shared Key, Shared Key Signatures, Active Directory, and anonymous public access) in our [samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-shares/samples).
+Azure Files offers the following resource hierarchy:
+
+- The Storage account, accessed through `ShareServiceClient`
+- A file share, accessed through `ShareClient`
+- A directory, accessed through `ShareDirectoryClient`
+- A file, accessed through `ShareFileClient`
+
+### Authentication
+
+The library supports Microsoft Entra ID credentials, connection strings, shared key credentials,
+and shared access signatures. Microsoft Entra ID with `DefaultAzureCredential` is recommended for
+getting started when the account and operation support OAuth authentication. Token-authenticated
+requests must specify `ShareTokenIntent`; the only currently supported value is
+`Models::ShareTokenIntent::Backup`. See the [samples][samples] for other authentication options.
 
 ### Thread safety
 
-We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+All client instance methods are thread-safe and independent of each other
+([guideline](https://azure.github.io/azure-sdk/cpp_introduction.html#thread-safety)). Reusing client
+instances is safe, even across threads.
 
 ### Additional concepts
 
-Client Options | [Accessing the response](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types) | [Long-running operations](https://github.com/Azure/azure-sdk-for-cpp#long-running-operations) | Handling failures
+<!-- CLIENT COMMON BAR -->
+[Replaceable HTTP transport adapter](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#http-transport-adapter) |
+[Response model types](https://github.com/Azure/azure-sdk-for-cpp#response-t-model-types) |
+[Long-running operations](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core#long-running-operations)
+<!-- CLIENT COMMON BAR -->
 
 ## Examples
+
+The examples below use the clients created in
+[Create and authenticate clients](#create-and-authenticate-clients).
 
 ### Create a share and upload a file
 
 ```cpp
-const std::string shareName = "sample-share";
-const std::string directoryName = "sample-directory";
-const std::string fileName = "sample-file";
-const std::string localFilePath = "<path_to_local_file>";
+const std::string fileContent = "Hello Azure!";
 
-// Get a reference to a share and then create it
-ShareClient shareClient = ShareClient::CreateFromConnectionString(connectionString, shareName);
 shareClient.CreateIfNotExists();
 
-// Get a reference to a directory and create it
-ShareDirectoryClient directoryClient = shareClient.GetRootDirectoryClient().GetSubdirectoryClient(directoryName);;
-directoryClient.CreateIfNotExists();
-
-// Get a reference to a file and upload it
-ShareFileClient fileClient = directoryClient.GetFileClient(fileName);
-// upload from local file
-fileClient.UploadFrom(localFilePath);
-// or upload from memory buffer
-fileClient.UploadFrom(bufferPtr, bufferLength);
+std::vector<uint8_t> buffer(fileContent.begin(), fileContent.end());
+fileClient.UploadFrom(buffer.data(), buffer.size());
 ```
 
 ### Download a file
 
 ```cpp
-// download to local file
-fileClient.DownloadTo(localFilePath);
-// or download to memory buffer
-fileClient.DownloadTo(bufferPtr, bufferLength);
+auto properties = fileClient.GetProperties().Value;
+std::vector<uint8_t> buffer(static_cast<std::size_t>(properties.FileSize));
+
+fileClient.DownloadTo(buffer.data(), buffer.size());
 ```
 
-### Traverse a share
+### List files and directories
 
 ```cpp
-std::vector<ShareDirectoryClient> remaining;
-remaining.push_back(shareClient.GetRootDirectoryClient());
-while (remaining.size() > 0)
+for (auto page = directoryClient.ListFilesAndDirectories(); page.HasPage();
+     page.MoveToNextPage())
 {
-  auto& directoryClient = remaining.back();
-  remaining.pop_back();
-  for (auto page = directoryClient.ListFilesAndDirectories(); page.HasPage();
-       page.MoveToNextPage())
+  for (const auto& file : page.Files)
   {
-    for (auto& file : page.Files)
-    {
-          std::cout << "file: " << file.Name << std::endl;
-    }
-    for (auto& directory : page.Directories)
-    {
-      std::cout << "directory: " << directory.Name << std::endl;
-      remaining.push_back(directoryClient.GetSubdirectoryClient(directory.Name));
-    }
+    std::cout << "file: " << file.Name << std::endl;
+  }
+  for (const auto& directory : page.Directories)
+  {
+    std::cout << "directory: " << directory.Name << std::endl;
   }
 }
 ```
 
 ## Troubleshooting
 
-All Azure Storage File Shares service operations will throw a [StorageException](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
-on failure with helpful [ErrorCode](https://learn.microsoft.com/rest/api/storageservices/file-service-error-codes)s.
-Many of these errors are recoverable.
+Azure Files service operations throw an
+[`Azure::Storage::StorageException`](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-common/inc/azure/storage/common/storage_exception.hpp)
+on failure. The exception includes the HTTP status code, service error code, request ID, and other
+details that can help diagnose the failure. See the
+[File service error codes](https://learn.microsoft.com/rest/api/storageservices/file-service-error-codes)
+for service-specific errors.
 
 ```cpp
 try
 {
   shareClient.Delete();
 }
-catch (Azure::Storage::StorageException& e)
+catch (const Azure::Storage::StorageException& exception)
 {
-  if (e.ErrorCode == "ShareNotFound")
+  if (exception.ErrorCode == "ShareNotFound")
   {
-    // ignore the error if the file share does not exist.
+    // The share has already been deleted.
   }
   else
   {
-    // handle other errors here
+    throw;
   }
 }
 ```
 
 ## Next steps
 
-Get started with our [File samples](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-shares/samples):
-
-1. [Upload and download files](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/samples/file_share_getting_started.cpp)
+The [Azure Files getting-started sample](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/storage/azure-storage-files-shares/samples/file_share_getting_started.cpp)
+demonstrates how to create a share and upload, download, and inspect a file.
 
 ## Contributing
 
-See the [Storage CONTRIBUTING.md][storage_contrib] for details on building,
-testing, and contributing to these libraries.
+For details on contributing to this repository, see the
+[contributing guide][azure_sdk_for_cpp_contributing].
 
-This project welcomes contributions and suggestions.  Most contributions require
-you to agree to a Contributor License Agreement (CLA) declaring that you have
-the right to, and actually do, grant us the rights to use your contribution. For
-details, visit [cla.microsoft.com][cla].
+This project welcomes contributions and suggestions. Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit the
+[Contributor License Agreement](https://cla.microsoft.com).
 
-This project has adopted the [Microsoft Open Source Code of Conduct][coc].
-For more information see the [Code of Conduct FAQ][coc_faq]
-or contact [opencode@microsoft.com][coc_contact] with any
-additional questions or comments.
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately. Follow the instructions provided by the bot. You only need
+to do this once across all repositories using the CLA.
+
+This project has adopted the
+[Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information, see the
+[Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
+[opencode@microsoft.com](mailto:opencode@microsoft.com) with any questions or comments.
+
+### Additional helpful links for contributors
+
+- [Good first issues for new contributors](https://github.com/Azure/azure-sdk-for-cpp/issues?q=is%3Aopen+is%3Aissue+label%3A%22up+for+grabs%22)
+- [How to build and test your change][azure_sdk_for_cpp_contributing_developer_guide]
+- [How to submit a pull request][azure_sdk_for_cpp_contributing_pull_requests]
+- [Azure SDK for C++ wiki](https://github.com/Azure/azure-sdk-for-cpp/wiki)
+
+### Reporting security issues and security bugs
+
+Security issues and bugs should be reported privately to the Microsoft Security Response Center
+(MSRC) at <secure@microsoft.com>. You should receive a response within 24 hours. If you do not,
+follow up by email to confirm that your original message was received. For more information,
+including the MSRC PGP key, see the
+[Security TechCenter](https://www.microsoft.com/msrc/faqs-report-an-issue).
+
+### License
+
+Azure SDK for C++ is licensed under the
+[MIT license](https://github.com/Azure/azure-sdk-for-cpp/blob/main/LICENSE.txt).
 
 <!-- LINKS -->
-[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#download--install-the-sdk
+[api_reference]: https://learn.microsoft.com/cpp/api/overview/azure/storage-files-shares-readme?view=azure-cpp
+[azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_sdk_for_cpp_contributing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
+[azure_sdk_for_cpp_contributing_developer_guide]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#developer-guide
+[azure_sdk_for_cpp_contributing_pull_requests]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md#pull-requests
+[azure_sub]: https://azure.microsoft.com/free/
+[azsdk_vcpkg_install]: https://github.com/Azure/azure-sdk-for-cpp#getting-started
+[default_azure_credential]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[product_documentation]: https://learn.microsoft.com/azure/storage/files/storage-files-introduction
+[project_set_up_examples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/samples/integration
+[samples]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-shares/samples
+[source_code]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/storage/azure-storage-files-shares
 [storage_account_overview]: https://learn.microsoft.com/azure/storage/common/storage-account-overview
-[create_account_with_azure_portal]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-portal
-[create_account_with_powershell]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-powershell
-[create_account_with_azure_cli]: https://learn.microsoft.com/azure/storage/common/storage-account-create?tabs=azure-cli
-[storage_contrib]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md
-[cla]: https://cla.microsoft.com
-[coc]: https://opensource.microsoft.com/codeofconduct/
-[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[coc_contact]: mailto:opencode@microsoft.com
+[vcpkg_package]: https://vcpkg.io/en/package/azure-storage-files-shares-cpp

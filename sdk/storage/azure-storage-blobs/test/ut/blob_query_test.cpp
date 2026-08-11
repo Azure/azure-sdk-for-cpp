@@ -314,8 +314,6 @@ xx
 
   TEST_F(BlockBlobClientTest, QueryLargeBlob_LIVEONLY_)
   {
-    auto blobClient = *m_blockBlobClient;
-
     constexpr size_t DataSize = static_cast<size_t>(32_MB);
 
     int recordCounter = 0;
@@ -329,27 +327,46 @@ xx
       jsonData += "{\"_1\":\"" + counter + "\",\"_2\":\"" + record + "\"}\n";
     }
 
-    blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
-
     Blobs::QueryBlobOptions queryOptions;
     queryOptions.InputTextConfiguration = Blobs::BlobQueryInputTextOptions::CreateCsvTextOptions();
     queryOptions.OutputTextConfiguration
         = Blobs::BlobQueryOutputTextOptions::CreateJsonTextOptions();
-    auto queryResponse = blobClient.Query("SELECT * FROM BlobStorage;", queryOptions);
-
-    size_t comparePos = 0;
-    std::vector<uint8_t> readBuffer(4096);
-    while (true)
+    constexpr int MaxQueryAttempts = 2;
+    const std::string blobNamePrefix = RandomString();
+    for (int attempt = 1; attempt <= MaxQueryAttempts; ++attempt)
     {
-      auto s = queryResponse.Value.BodyStream->Read(readBuffer.data(), readBuffer.size());
-      if (s == 0)
+      auto blobClient = GetBlockBlobClientForTest(blobNamePrefix + std::to_string(attempt));
+      blobClient.UploadFrom(reinterpret_cast<const uint8_t*>(csvData.data()), csvData.size());
+      auto queryResponse = blobClient.Query("SELECT * FROM BlobStorage;", queryOptions);
+      try
       {
-        break;
+        size_t comparePos = 0;
+        std::vector<uint8_t> readBuffer(4096);
+        while (true)
+        {
+          auto s = queryResponse.Value.BodyStream->Read(readBuffer.data(), readBuffer.size());
+          if (s == 0)
+          {
+            break;
+          }
+          ASSERT_TRUE(comparePos + s <= jsonData.size());
+          ASSERT_EQ(
+              std::string(readBuffer.begin(), readBuffer.begin() + s),
+              jsonData.substr(comparePos, s));
+          comparePos += s;
+        }
+        ASSERT_EQ(comparePos, jsonData.size());
+        return;
       }
-      ASSERT_TRUE(comparePos + s <= jsonData.size());
-      ASSERT_EQ(
-          std::string(readBuffer.begin(), readBuffer.begin() + s), jsonData.substr(comparePos, s));
-      comparePos += s;
+      catch (const Core::Http::TransportException& e)
+      {
+        if (attempt == MaxQueryAttempts)
+        {
+          throw;
+        }
+        SUCCEED() << "Retrying large blob query after response body transport failure: "
+                  << e.what();
+      }
     }
   }
 

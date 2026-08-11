@@ -224,7 +224,7 @@ namespace Azure {
      * @param signature The signature to verify.
      * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned
+     * VerifyResult::IsValid property of the returned
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> Verify(
@@ -242,7 +242,7 @@ namespace Azure {
      * @param signature The signature to verify.
      * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned
+     * VerifyResult::IsValid property of the returned
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
@@ -260,7 +260,7 @@ namespace Azure {
      * @param signature The signature to verify.
      * @param context A Azure::Core::Context to cancel the operation.
      * @return The result of the verify operation. If the signature is valid the
-     * #VerifyResult.IsValid property of the returned
+     * VerifyResult::IsValid property of the returned
      * #Azure::Security::KeyVault::Keys::Cryptography::VerifyResult will be set to true.
      */
     Azure::Response<VerifyResult> VerifyData(
