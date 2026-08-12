@@ -40,10 +40,10 @@
 # ServiceOwners:                                                   @antkmsft @LarryOsterman @RickWinter @xirzec
 
 # PRLabel: %Attestation
-/sdk/attestation/                                                  @ahmadmsft @anilba06 @gkostal @LarryOsterman @rickwinter @xirzec
+/sdk/attestation/                                                  @Azure/azure-sdk-write-attestation @rickwinter @xirzec
 
 # ServiceLabel: %Attestation
-# ServiceOwners:                                                   @ahmadmsft @anilba06 @gkostal
+# ServiceOwners:                                                   @Azure/azure-sdk-write-attestation
 
 # PRLabel: %EngSys
 /sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @weshaggard
