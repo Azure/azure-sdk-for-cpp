@@ -42,7 +42,6 @@
 # PRLabel: %Attestation
 /sdk/attestation/                                                  @Azure/azure-sdk-write-attestation @rickwinter @xirzec
 
-# AzureSdkOwners:                                                  @Azure/azure-sdk-write-attestation
 # ServiceLabel: %Attestation
 # ServiceOwners:                                                   @Azure/azure-sdk-write-attestation
 
