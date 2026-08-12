@@ -10,14 +10,17 @@
 #include <azure/core/internal/unique_handle.hpp>
 #include <azure/core/uuid.hpp>
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
 #include <exception>
 #include <functional>
+#include <initializer_list>
 #include <list>
 #include <map>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -99,9 +102,320 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   class AmqpComposite;
   class AmqpDescribed;
 
-  using AmqpDecimal128 = std::array<std::uint8_t, 16>;
-  using AmqpDecimal64 = std::array<std::uint8_t, 8>;
-  using AmqpDecimal32 = std::array<std::uint8_t, 4>;
+  /** @brief Represents an AMQP decimal128 value.
+   *
+   * The value contains the 16-byte IEEE 754-2008 decimal128 encoding defined by AMQP.
+   *
+   * @see https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal128
+   */
+  class AmqpDecimal128 final {
+    std::array<std::uint8_t, 16> data;
+
+  public:
+    /** @brief Constructs a decimal128 value initialized to zero. */
+    AmqpDecimal128() = default;
+
+    /** @brief Destructs the decimal128 value. */
+    ~AmqpDecimal128() = default;
+
+    /** @brief Constructs a decimal128 value from its encoded bytes.
+     *
+     * @param value The 16-byte decimal128 encoding.
+     */
+    explicit AmqpDecimal128(std::array<std::uint8_t, 16> const& value) : data(value) {}
+
+    /** @brief Constructs a decimal128 value from its encoded bytes.
+     *
+     * @param value The decimal128 encoding, which must contain exactly 16 bytes.
+     * @throws std::invalid_argument If @p value does not contain exactly 16 bytes.
+     */
+    explicit AmqpDecimal128(std::initializer_list<std::uint8_t> value)
+    {
+      if (value.size() != data.size())
+      {
+        throw std::invalid_argument("An AMQP decimal128 value must contain 16 bytes.");
+      }
+      std::copy(value.begin(), value.end(), data.begin());
+    }
+
+    /** @brief Gets the encoded bytes.
+     *
+     * @returns A reference to the 16-byte decimal128 encoding.
+     */
+    std::array<std::uint8_t, 16> const& AsArray() const { return data; }
+
+    /** @brief Compares two decimal128 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than @p that; otherwise, `false`.
+     */
+    bool operator<(AmqpDecimal128 const& that) const { return data < that.data; }
+
+    /** @brief Compares two decimal128 values for equality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are equal; otherwise, `false`.
+     */
+    bool operator==(AmqpDecimal128 const& that) const { return data == that.data; }
+
+    /** @brief Compares two decimal128 values for inequality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are not equal; otherwise, `false`.
+     */
+    bool operator!=(AmqpDecimal128 const& that) const { return data != that.data; }
+
+    /** @brief Compares two decimal128 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than @p that; otherwise, `false`.
+     */
+    bool operator>(AmqpDecimal128 const& that) const { return data > that.data; }
+
+    /** @brief Compares two decimal128 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than or equal to @p that; otherwise, `false`.
+     */
+    bool operator<=(AmqpDecimal128 const& that) const { return data <= that.data; }
+
+    /** @brief Compares two decimal128 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than or equal to @p that; otherwise, `false`.
+     */
+    bool operator>=(AmqpDecimal128 const& that) const { return data >= that.data; }
+
+    /** @brief Converts this value to its encoded byte array.
+     *
+     * @returns The 16-byte decimal128 encoding.
+     */
+    operator std::array<std::uint8_t, 16>() const { return data; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns A reference to the byte at @p index.
+     */
+    std::uint8_t& operator[](std::size_t index) { return data[index]; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns The byte at @p index.
+     */
+    std::uint8_t operator[](std::size_t index) const { return data[index]; }
+  };
+
+  /** @brief Represents an AMQP decimal64 value.
+   *
+   * The value contains the 8-byte IEEE 754-2008 decimal64 encoding defined by AMQP.
+   *
+   * @see https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal64
+   */
+  class AmqpDecimal64 final {
+    std::array<std::uint8_t, 8> data;
+
+  public:
+    /** @brief Constructs a decimal64 value initialized to zero. */
+    AmqpDecimal64() = default;
+
+    /** @brief Destructs the decimal64 value. */
+    ~AmqpDecimal64() = default;
+
+    /** @brief Constructs a decimal64 value from its encoded bytes.
+     *
+     * @param value The 8-byte decimal64 encoding.
+     */
+    explicit AmqpDecimal64(std::array<std::uint8_t, 8> const& value) : data(value) {}
+
+    /** @brief Constructs a decimal64 value from its encoded bytes.
+     *
+     * @param value The decimal64 encoding, which must contain exactly 8 bytes.
+     * @throws std::invalid_argument If @p value does not contain exactly 8 bytes.
+     */
+    explicit AmqpDecimal64(std::initializer_list<std::uint8_t> value)
+    {
+      if (value.size() != data.size())
+      {
+        throw std::invalid_argument("An AMQP decimal64 value must contain 8 bytes.");
+      }
+      std::copy(value.begin(), value.end(), data.begin());
+    }
+
+    /** @brief Gets the encoded bytes.
+     *
+     * @returns A reference to the 8-byte decimal64 encoding.
+     */
+    std::array<std::uint8_t, 8> const& AsArray() const { return data; }
+
+    /** @brief Compares two decimal64 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than @p that; otherwise, `false`.
+     */
+    bool operator<(AmqpDecimal64 const& that) const { return data < that.data; }
+
+    /** @brief Compares two decimal64 values for equality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are equal; otherwise, `false`.
+     */
+    bool operator==(AmqpDecimal64 const& that) const { return data == that.data; }
+
+    /** @brief Compares two decimal64 values for inequality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are not equal; otherwise, `false`.
+     */
+    bool operator!=(AmqpDecimal64 const& that) const { return data != that.data; }
+
+    /** @brief Compares two decimal64 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than @p that; otherwise, `false`.
+     */
+    bool operator>(AmqpDecimal64 const& that) const { return data > that.data; }
+
+    /** @brief Compares two decimal64 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than or equal to @p that; otherwise, `false`.
+     */
+    bool operator<=(AmqpDecimal64 const& that) const { return data <= that.data; }
+
+    /** @brief Compares two decimal64 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than or equal to @p that; otherwise, `false`.
+     */
+    bool operator>=(AmqpDecimal64 const& that) const { return data >= that.data; }
+
+    /** @brief Converts this value to its encoded byte array.
+     *
+     * @returns The 8-byte decimal64 encoding.
+     */
+    operator std::array<std::uint8_t, 8>() const { return data; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns A reference to the byte at @p index.
+     */
+    std::uint8_t& operator[](std::size_t index) { return data[index]; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns The byte at @p index.
+     */
+    std::uint8_t operator[](std::size_t index) const { return data[index]; }
+  };
+
+  /** @brief Represents an AMQP decimal32 value.
+   *
+   * The value contains the 4-byte IEEE 754-2008 decimal32 encoding defined by AMQP.
+   *
+   * @see https://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-types-v1.0-os.html#type-decimal32
+   */
+  class AmqpDecimal32 final {
+    std::array<std::uint8_t, 4> data;
+
+  public:
+    /** @brief Constructs a decimal32 value initialized to zero. */
+    AmqpDecimal32() = default;
+
+    /** @brief Destructs the decimal32 value. */
+    ~AmqpDecimal32() = default;
+
+    /** @brief Constructs a decimal32 value from its encoded bytes.
+     *
+     * @param value The 4-byte decimal32 encoding.
+     */
+    explicit AmqpDecimal32(std::array<std::uint8_t, 4> const& value) : data(value) {}
+
+    /** @brief Constructs a decimal32 value from its encoded bytes.
+     *
+     * @param value The decimal32 encoding, which must contain exactly 4 bytes.
+     * @throws std::invalid_argument If @p value does not contain exactly 4 bytes.
+     */
+    explicit AmqpDecimal32(std::initializer_list<std::uint8_t> value)
+    {
+      if (value.size() != data.size())
+      {
+        throw std::invalid_argument("An AMQP decimal32 value must contain 4 bytes.");
+      }
+      std::copy(value.begin(), value.end(), data.begin());
+    }
+
+    /** @brief Gets the encoded bytes.
+     *
+     * @returns A reference to the 4-byte decimal32 encoding.
+     */
+    std::array<std::uint8_t, 4> const& AsArray() const { return data; }
+
+    /** @brief Compares two decimal32 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than @p that; otherwise, `false`.
+     */
+    bool operator<(AmqpDecimal32 const& that) const { return data < that.data; }
+
+    /** @brief Compares two decimal32 values for equality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are equal; otherwise, `false`.
+     */
+    bool operator==(AmqpDecimal32 const& that) const { return data == that.data; }
+
+    /** @brief Compares two decimal32 values for inequality.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if the encoded bytes are not equal; otherwise, `false`.
+     */
+    bool operator!=(AmqpDecimal32 const& that) const { return data != that.data; }
+
+    /** @brief Compares two decimal32 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than @p that; otherwise, `false`.
+     */
+    bool operator>(AmqpDecimal32 const& that) const { return data > that.data; }
+
+    /** @brief Compares two decimal32 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is less than or equal to @p that; otherwise, `false`.
+     */
+    bool operator<=(AmqpDecimal32 const& that) const { return data <= that.data; }
+
+    /** @brief Compares two decimal32 values.
+     *
+     * @param that The value to compare against.
+     * @returns `true` if this value is greater than or equal to @p that; otherwise, `false`.
+     */
+    bool operator>=(AmqpDecimal32 const& that) const { return data >= that.data; }
+
+    /** @brief Converts this value to its encoded byte array.
+     *
+     * @returns The 4-byte decimal32 encoding.
+     */
+    operator std::array<std::uint8_t, 4>() const { return data; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns A reference to the byte at @p index.
+     */
+    std::uint8_t& operator[](std::size_t index) { return data[index]; }
+
+    /** @brief Accesses an encoded byte.
+     *
+     * @param index The zero-based byte index.
+     * @returns The byte at @p index.
+     */
+    std::uint8_t operator[](std::size_t index) const { return data[index]; }
+  };
 
   /** An AMQP value.
    * @details An AMQP value is a polymorphic type that can be used to represent any AMQP type.
@@ -336,10 +650,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
      *
      */
     AmqpValue(char32_t value);
-
-    /** TODO:
-     * Decimal32, Decimal64, and Decimal128.
-     */
 
     /** @brief Construct an AMQP Uuid value, an RFC-4122 Universally Unique Identifier.
      *

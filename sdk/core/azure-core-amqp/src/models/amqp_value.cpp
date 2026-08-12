@@ -416,17 +416,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
   AmqpValue::AmqpValue(AmqpDecimal128 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal128(value.data())})}
+            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal128(value.AsArray().data())})}
   {
   }
   AmqpValue::AmqpValue(AmqpDecimal64 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal64(value.data())})}
+            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal64(value.AsArray().data())})}
   {
   }
   AmqpValue::AmqpValue(AmqpDecimal32 const& value)
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal32(value.data())})}
+            _detail::UniqueAmqpValueHandle{amqpvalue_create_decimal32(value.AsArray().data())})}
   {
   }
 
@@ -628,7 +628,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not retrieve decimal32 value");
     }
-    return value;
+    return AmqpDecimal32{value};
   }
 
   AmqpValue::operator AmqpDecimal64() const
@@ -638,7 +638,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not retrieve decimal64 value");
     }
-    return value;
+    return AmqpDecimal64{value};
   }
 
   AmqpValue::operator AmqpDecimal128() const
@@ -648,7 +648,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     {
       throw std::runtime_error("Could not retrieve decimal128 value");
     }
-    return value;
+    return AmqpDecimal128{value};
   }
 
   AmqpValue::operator char32_t() const
