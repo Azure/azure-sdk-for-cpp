@@ -6,94 +6,91 @@
 
 #include <azure/core/internal/diagnostics/log.hpp>
 
-#include <exception>
+#include <algorithm>
+#include <cstdlib>
+#include <limits>
 #include <thread>
 
 namespace {
-// The set of AMQP error conditions that should be treated as fatal conditions.
-constexpr const char* AmqpFatalConditions[] = {"amqp:link:message-size-exceeded"};
+constexpr std::chrono::milliseconds CancellationCheckInterval{100};
 
-bool IsFatalException(Azure::Messaging::EventHubs::EventHubsException const& ex)
+void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Context const& context)
 {
-  for (auto const& condition : AmqpFatalConditions)
+  auto const deadline = std::chrono::steady_clock::now() + retryAfter;
+  while (true)
   {
-    if (ex.ErrorCondition == condition)
+    context.ThrowIfCancelled();
+
+    auto const now = std::chrono::steady_clock::now();
+    if (now >= deadline)
     {
-      return true;
+      return;
     }
+
+    std::this_thread::sleep_until((std::min)(deadline, now + CancellationCheckInterval));
   }
-  return false;
 }
 } // namespace
-bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(std::function<bool()> operation)
+
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
+    std::function<bool()> operation,
+    Azure::Core::Context const& context)
 {
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
-  int retryCount = 0;
-  // Capture the most recent exception so a retries-exhausted fallthrough can
-  // rethrow it instead of silently returning false. See issue #7130.
-  std::exception_ptr lastException;
-  while (retryCount < m_retryOptions.MaxRetries)
+
+  int32_t retryCount = 0;
+  while (true)
   {
+    context.ThrowIfCancelled();
     std::chrono::milliseconds retryAfter{};
 
     try
     {
       bool result = operation();
-
-      if (ShouldRetry(result, retryCount, retryAfter))
+      if (!result)
       {
-        lastException = nullptr;
-        retryCount++;
-        std::this_thread::sleep_for(retryAfter);
+        context.ThrowIfCancelled();
       }
-      else
+
+      if (!ShouldRetry(result, retryCount, retryAfter))
       {
         return result;
       }
     }
     catch (EventHubsException const& e)
     {
+      context.ThrowIfCancelled();
       if (Log::ShouldWrite(Logger::Level::Warning))
       {
         Log::Stream(Logger::Level::Warning)
             << "Exception thrown. " << e.ErrorCondition << " - " << e.ErrorDescription << std::endl;
       }
-      if (ShouldRetry(IsFatalException(e), retryCount, retryAfter))
-      {
-        lastException = std::current_exception();
-        retryCount++;
-        std::this_thread::sleep_for(retryAfter);
-      }
-      else
+      if (!ShouldRetry(e, retryCount, retryAfter))
       {
         throw;
       }
     }
-    catch (std::exception const& e)
+    catch (Azure::Core::OperationCancelledException const&)
     {
+      throw;
+    }
+    catch (std::runtime_error const& e)
+    {
+      context.ThrowIfCancelled();
       if (Log::ShouldWrite(Logger::Level::Warning))
       {
-        Log::Write(Logger::Level::Warning, std::string("Exception while trying ") + e.what());
+        Log::Write(Logger::Level::Warning, std::string("Runtime error while trying: ") + e.what());
       }
-      // We assume that all exceptions other than EventHubs exceptions might be retriable.
-      if (ShouldRetry(false, retryCount, retryAfter))
-      {
-        lastException = std::current_exception();
-        retryCount++;
-        std::this_thread::sleep_for(retryAfter);
-      }
-      else
+      if (!ShouldRetry(false, retryCount, retryAfter))
       {
         throw;
       }
     }
+
+    ++retryCount;
+    WaitForRetryDelay(retryAfter, context);
   }
-  if (lastException)
-  {
-    std::rethrow_exception(lastException);
-  }
-  return false;
 }
 
 bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
@@ -105,23 +102,46 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
   using Azure::Core::Diagnostics::Logger;
   using Azure::Core::Diagnostics::_internal::Log;
 
-  // Are we out of retry attempts?
-  if (response || WasLastAttempt(attempt))
+  if (response)
   {
     Log::Write(
         Logger::Level::Informational,
-        std::string("Response was true or last attempt.Operation will not be retried."));
+        std::string("Operation completed successfully and will not be retried."));
     return false;
   }
-  if (response == false)
+
+  if (WasLastAttempt(attempt))
   {
     Log::Write(
-        Logger::Level::Informational, std::string("Response was false.Operation will be retried."));
+        Logger::Level::Informational,
+        std::string("Retry attempts exhausted. Operation will not be retried."));
+    return false;
   }
 
-  retryAfter = CalculateExponentialDelay(attempt, jitterFactor);
+  retryAfter = CalculateExponentialDelay(attempt + 1, jitterFactor);
+  Log::Write(Logger::Level::Informational, std::string("Operation failed and will be retried."));
 
   return true;
+}
+
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
+    Azure::Messaging::EventHubs::EventHubsException const& exception,
+    int32_t attempt,
+    std::chrono::milliseconds& retryAfter,
+    double jitterFactor)
+{
+  using Azure::Core::Diagnostics::Logger;
+  using Azure::Core::Diagnostics::_internal::Log;
+
+  if (!exception.IsTransient)
+  {
+    Log::Write(
+        Logger::Level::Informational,
+        std::string("Event Hubs exception is not transient. Operation will not be retried."));
+    return false;
+  }
+
+  return ShouldRetry(false, attempt, retryAfter, jitterFactor);
 }
 
 std::chrono::milliseconds Azure::Messaging::EventHubs::_detail::RetryOperation::

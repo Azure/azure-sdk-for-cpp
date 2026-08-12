@@ -127,25 +127,31 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
   bool EventHubsExceptionFactory::IsErrorTransient(AmqpErrorCondition const& condition)
   {
-    bool isTransient = false;
-    if ((condition == AmqpErrorCondition::TimeoutError)
-        || (condition == AmqpErrorCondition::ServerBusyError)
-        || (condition == AmqpErrorCondition::InternalError)
-        || (condition == AmqpErrorCondition::LinkDetachForced)
-        || (condition == AmqpErrorCondition::ConnectionForced)
-        || (condition == AmqpErrorCondition::ConnectionFramingError)
-        || (condition == AmqpErrorCondition::ProtonIo))
+    if (condition.ToString().empty())
     {
-      isTransient = true;
+      return true;
     }
-    else if (condition == AmqpErrorCondition::NotFound)
+
+    static AmqpErrorCondition const TransientConditions[]
+        = {AmqpErrorCondition::TimeoutError,
+           AmqpErrorCondition::ServerBusyError,
+           AmqpErrorCondition::InternalError,
+           AmqpErrorCondition::LinkDetachForced,
+           AmqpErrorCondition::ConnectionForced,
+           AmqpErrorCondition::ConnectionFramingError,
+           AmqpErrorCondition::ProtonIo,
+           AmqpErrorCondition::NotFound,
+           AmqpErrorCondition::IllegalState};
+
+    for (auto const& transientCondition : TransientConditions)
     {
-      // Note: Java has additional processing here, it looks for the regex:
-      // "The messaging entity .* could not be found" in the error description and if it is
-      // found it treats the error as not transient. For now, just treat NotFound as transient.
-      isTransient = true;
+      if (condition == transientCondition)
+      {
+        return true;
+      }
     }
-    return isTransient;
+
+    return false;
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail

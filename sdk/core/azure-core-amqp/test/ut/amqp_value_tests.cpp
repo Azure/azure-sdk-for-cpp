@@ -44,6 +44,13 @@ TEST_F(TestValues, SimpleCreateNull)
     TEST_OSTREAM_INSERTER(value, "Null");
   }
 }
+
+TEST_F(TestValues, CustomErrorCondition)
+{
+  _internal::AmqpErrorCondition condition{"test:error"};
+  EXPECT_EQ("test:error", condition.ToString());
+}
+
 TEST_F(TestValues, SimpleCreateBool)
 {
   {
