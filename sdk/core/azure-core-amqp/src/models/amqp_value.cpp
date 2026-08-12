@@ -621,7 +621,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  AmqpValue::operator std::array<uint8_t, 4>() const
+  AmqpValue::operator AmqpDecimal32() const
   {
     std::array<uint8_t, 4> value{};
     if (amqpvalue_get_decimal32(*m_impl, const_cast<uint8_t*>(value.data())))
@@ -631,7 +631,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  AmqpValue::operator std::array<uint8_t, 8>() const
+  AmqpValue::operator AmqpDecimal64() const
   {
     std::array<uint8_t, 8> value{};
     if (amqpvalue_get_decimal64(*m_impl, const_cast<uint8_t*>(value.data())))
@@ -641,7 +641,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     return value;
   }
 
-  AmqpValue::operator std::array<uint8_t, 16>() const
+  AmqpValue::operator AmqpDecimal128() const
   {
     std::array<uint8_t, 16> value{};
     if (amqpvalue_get_decimal128(*m_impl, const_cast<uint8_t*>(value.data())))
