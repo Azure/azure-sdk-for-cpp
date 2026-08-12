@@ -632,18 +632,28 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   // * Last element is nullptr.
   // * First element (at index 0) is path to a program.
   {
+    std::vector<decltype(m_envpValues)::size_type> envValuePositions;
     auto const actualPathVarValue = Environment::GetVariable("PATH");
     auto const processPathVarStatement = std::string("PATH=") + actualPathVarValue
         + (actualPathVarValue.empty() ? "" : ":") + "/usr/bin:/usr/local/bin";
+    AppendToArgvValues(m_envpValues, envValuePositions, processPathVarStatement);
 
-    m_envpValues.insert(
-        m_envpValues.end(), processPathVarStatement.begin(), processPathVarStatement.end());
-
-    m_envpValues.push_back('\0');
+    // Azure CLI uses these to find the signed-in user's configuration and cache.
+    for (auto const envVarName : {"HOME", "XDG_CACHE_HOME", "AZURE_CONFIG_DIR"})
+    {
+      auto const value = Environment::GetVariable(envVarName);
+      if (!value.empty())
+      {
+        AppendToArgvValues(m_envpValues, envValuePositions, std::string(envVarName) + '=' + value);
+      }
+    }
 
     // We should only grab m_envpValues.data() as we're done appending to it, because appends may
     // reallocate the buffer to a different memory location.
-    m_envp.push_back(m_envpValues.data());
+    for (auto const pos : envValuePositions)
+    {
+      m_envp.push_back(m_envpValues.data() + pos);
+    }
     m_envp.push_back(nullptr);
   }
 
