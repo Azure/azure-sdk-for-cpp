@@ -23,6 +23,9 @@
 # PRLabel: %Azure.Core
 /sdk/core/               @rickwinter @antkmsft @LarryOsterman @xirzec
 
+# PRLabel: %Azure.Core
+/sdk/core/azure-core-amqp/                                         @rickwinter @antkmsft @LarryOsterman @xirzec @j7nw4r @sagar0207 @SwayGom @sjkwak @hmlam
+
 # AzureSdkOwners: @antkmsft
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
