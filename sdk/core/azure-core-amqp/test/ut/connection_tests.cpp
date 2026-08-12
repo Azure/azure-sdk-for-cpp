@@ -20,7 +20,10 @@
 
 #include <chrono>
 #include <functional>
+#include <memory>
+#include <mutex>
 #include <random>
+#include <stdexcept>
 
 #include <gtest/gtest.h>
 
@@ -113,6 +116,191 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     auto const token = TokenExpiringIn(std::chrono::seconds(80));
     EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(token, now));
     EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(token, now));
+  }
+
+  // The state that the connection shares with the refresh thread.
+  TEST_F(TestTokenRefresh, TheSharedStateStartsEmptyAndRuns)
+  {
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    EXPECT_FALSE(state.Stop);
+    EXPECT_TRUE(state.TokenStore.empty());
+    EXPECT_TRUE(state.TokenSessions.empty());
+  }
+
+  // The refresh thread co-owns the state block, so the block stays alive after
+  // the connection that made it is gone. That is what lets the thread come back
+  // from a release that destroyed the connection, take the mutex, and read the
+  // stop flag.
+  TEST_F(TestTokenRefresh, TheSharedStateOutlivesTheOwnerThatMadeIt)
+  {
+    std::weak_ptr<Azure::Core::Amqp::_detail::TokenRefreshState> observer;
+    std::shared_ptr<Azure::Core::Amqp::_detail::TokenRefreshState> threadCopy;
+    {
+      auto connectionCopy = std::make_shared<Azure::Core::Amqp::_detail::TokenRefreshState>();
+      observer = connectionCopy;
+      threadCopy = connectionCopy;
+    }
+    ASSERT_FALSE(observer.expired());
+
+    // The owner is gone, so this stands for the connection destructor setting
+    // the stop flag before it detaches the thread.
+    {
+      std::unique_lock<std::mutex> lock(threadCopy->Mutex);
+      threadCopy->Stop = true;
+    }
+    EXPECT_TRUE(threadCopy->Stop);
+
+    threadCopy.reset();
+    EXPECT_TRUE(observer.expired());
+  }
+
+  // Tests for ReleaseOutsideLock, the hold that the refresh thread puts the
+  // promoted session in. The session can be the last reference to the
+  // connection, and the connection destructor takes the token mutex, so the
+  // hold must always drop the pointer with that mutex free.
+  class TestReleaseOutsideLock : public testing::Test {
+  protected:
+    // Records the state of the lock at the moment it is destroyed.
+    class LockObserver final {
+    public:
+      LockObserver(std::unique_lock<std::mutex>& lock, bool& destroyed, bool& lockWasHeld)
+          : m_lock{lock}, m_destroyed{destroyed}, m_lockWasHeld{lockWasHeld}
+      {
+      }
+
+      ~LockObserver()
+      {
+        m_destroyed = true;
+        m_lockWasHeld = m_lock.owns_lock();
+      }
+
+    private:
+      std::unique_lock<std::mutex>& m_lock;
+      bool& m_destroyed;
+      bool& m_lockWasHeld;
+    };
+
+    std::mutex m_mutex;
+    bool m_destroyed{false};
+    bool m_lockWasHeld{true};
+
+    std::shared_ptr<LockObserver> MakeObserver(std::unique_lock<std::mutex>& lock)
+    {
+      return std::make_shared<LockObserver>(lock, m_destroyed, m_lockWasHeld);
+    }
+  };
+
+  TEST_F(TestReleaseOutsideLock, ReleaseDropsThePointerWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      EXPECT_TRUE(lock.owns_lock());
+      EXPECT_FALSE(m_destroyed);
+      hold.Release();
+      EXPECT_TRUE(m_destroyed);
+    }
+    EXPECT_FALSE(m_lockWasHeld);
+    // The lock is back in the state the caller left it in.
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The early return in the refresh path leaves the scope with the lock held
+  // and the session still in the hold. The destructor must give up the lock for
+  // that release too, or it locks a mutex this thread already holds.
+  TEST_F(TestReleaseOutsideLock, TheDestructorAlsoReleasesWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      EXPECT_FALSE(m_destroyed);
+    }
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // An exception on the refresh path must not leave the release under the lock
+  // either.
+  TEST_F(TestReleaseOutsideLock, AnExceptionStillReleasesWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    bool caught{false};
+    try
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      throw std::runtime_error("the refresh failed");
+    }
+    catch (std::runtime_error const&)
+    {
+      caught = true;
+    }
+    EXPECT_TRUE(caught);
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The refresh path releases on the normal path and then leaves the scope, so
+  // the pointer is released once and the second call does nothing.
+  TEST_F(TestReleaseOutsideLock, ASecondReleaseDoesNothing)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+    hold.Release();
+    EXPECT_EQ(nullptr, hold.Get());
+
+    m_destroyed = false;
+    hold.Release();
+    EXPECT_FALSE(m_destroyed);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The refresh path gives up the token mutex for the network work. A release
+  // that happens then must leave the lock free, not take it.
+  TEST_F(TestReleaseOutsideLock, AFreeLockStaysFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    lock.unlock();
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      hold.Release();
+    }
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_FALSE(lock.owns_lock());
+  }
+
+  // The hold keeps the pointer usable for the whole refresh, and it does not
+  // destroy an object that another owner still holds.
+  TEST_F(TestReleaseOutsideLock, TheHoldKeepsThePointerAndSharesIt)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    auto observer = MakeObserver(lock);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{observer, lock};
+      EXPECT_EQ(observer.get(), hold.Get().get());
+      hold.Release();
+      // This test still owns the object, so the release did not destroy it.
+      EXPECT_FALSE(m_destroyed);
+    }
+    EXPECT_FALSE(m_destroyed);
+    observer.reset();
+    EXPECT_TRUE(m_destroyed);
+  }
+
+  // An empty hold is what the refresh path never builds, but the class must not
+  // touch the lock for one.
+  TEST_F(TestReleaseOutsideLock, AnEmptyHoldLeavesTheLockAlone)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{nullptr, lock};
+      hold.Release();
+      EXPECT_TRUE(lock.owns_lock());
+    }
+    EXPECT_TRUE(lock.owns_lock());
+    EXPECT_FALSE(m_destroyed);
   }
 
 #if !defined(AZ_PLATFORM_MAC)
