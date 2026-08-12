@@ -438,9 +438,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
   AmqpValue::AmqpValue(Azure::Core::Uuid const& uuid)
 #if ENABLE_UAMQP
       : m_impl{std::make_unique<_detail::AmqpValueImpl>(
-            _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(
-                const_cast<unsigned char*>(
-                    static_cast<const unsigned char*>(uuid.AsArray().data())))})}
+            _detail::UniqueAmqpValueHandle{amqpvalue_create_uuid(const_cast<unsigned char*>(
+                static_cast<const unsigned char*>(uuid.AsArray().data())))})}
 #endif
   {
 #if ENABLE_RUST_AMQP
@@ -1106,10 +1105,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       Azure::Core::Amqp::_detail::AmqpValueImplementation *key{}, *val{};
       amqpvalue_get_map_key_value_pair(
           _detail::AmqpValueFactory::ToImplementation(value), i, &key, &val);
-      m_value.emplace(
-          std::make_pair(
-              _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{key}),
-              _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{val})));
+      m_value.emplace(std::make_pair(
+          _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{key}),
+          _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{val})));
     }
   }
 
@@ -1131,10 +1129,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
           _detail::AmqpValueFactory::ToImplementation(value), i, &key, &val);
       if (amqpvalue_get_type(key) == AMQP_TYPE_SYMBOL)
       {
-        m_value.emplace(
-            std::make_pair(
-                _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{key}),
-                _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{val})));
+        m_value.emplace(std::make_pair(
+            _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{key}),
+            _detail::AmqpValueFactory::FromImplementation(UniqueAmqpValueHandle{val})));
       }
       else
       {
@@ -1381,10 +1378,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
     for (std::uint32_t i = 0; i < compositeSize; i += 1)
     {
 #if ENABLE_UAMQP
-      push_back(
-          _detail::AmqpValueFactory::FromImplementation(
-              _detail::UniqueAmqpValueHandle{amqpvalue_clone(amqpvalue_get_composite_item_in_place(
-                  _detail::AmqpValueFactory::ToImplementation(value), i))}));
+      push_back(_detail::AmqpValueFactory::FromImplementation(
+          _detail::UniqueAmqpValueHandle{amqpvalue_clone(amqpvalue_get_composite_item_in_place(
+              _detail::AmqpValueFactory::ToImplementation(value), i))}));
 #elif ENABLE_RUST_AMQP
       Azure::Core::Amqp::_detail::AmqpValueImplementation* item;
       if (amqpvalue_get_composite_item_in_place(
