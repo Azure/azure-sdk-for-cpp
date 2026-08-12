@@ -35,10 +35,11 @@ steps:
   # CargoAuthenticate@0 authenticates with SYSTEM_ACCESSTOKEN, which Azure DevOps does
   # not deliver to fork builds. The task still "succeeds", but writes the anonymous
   # identity, and cargo then fails the index fetch with 401 / TF400813 for user
-  # aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa. NuGetAuthenticate@1 uses the SYSTEMVSSCONNECTION
-  # endpoint token, which is delivered to fork builds, and publishes it as
-  # VSS_NUGET_ACCESSTOKEN for later steps. It runs as `public Build Service (azure-sdk)`,
-  # which holds Feed and Upstream Reader on the cargo feed.
+  # aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa. NuGetAuthenticate@1 authenticates with the
+  # build's service connection, whose token Azure DevOps does deliver to fork builds, and
+  # publishes it as VSS_NUGET_ACCESSTOKEN for later steps. It runs as
+  # `public Build Service (azure-sdk)`, which holds Feed and Upstream Reader on the cargo
+  # feed.
   #
   # This is declared here rather than relying on nuget-config.yml because
   # archetype-sdk-client.yml includes this template without it.
