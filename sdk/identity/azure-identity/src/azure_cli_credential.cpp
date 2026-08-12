@@ -630,7 +630,6 @@ ShellProcess::ShellProcess(std::string const& command, OutputPipe& outputPipe)
   // * An array of pointers to non-const C strings (0-terminated).
   // * Strings are in form key=value (PATH uses ':' as separator)
   // * Last element is nullptr.
-  // * First element (at index 0) is path to a program.
   {
     std::vector<decltype(m_envpValues)::size_type> envValuePositions;
     auto const actualPathVarValue = Environment::GetVariable("PATH");
