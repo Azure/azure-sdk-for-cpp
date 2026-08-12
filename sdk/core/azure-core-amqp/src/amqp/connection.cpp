@@ -215,13 +215,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
       }
 
-      std::unique_lock<std::mutex> lock(m_tokenMutex);
+      std::unique_lock<std::mutex> lock(m_tokenState->Mutex);
       // If we have authenticated this audience, we're done and can return success.
       // A cached token is only good while it has enough life left to use. A token
       // that is at or near its expiry is discarded here, so the audience is
       // authenticated again below.
-      auto token = m_tokenStore.find(audienceUrl);
-      if (token != m_tokenStore.end())
+      auto token = m_tokenState->TokenStore.find(audienceUrl);
+      if (token != m_tokenState->TokenStore.end())
       {
         if (IsCachedTokenUsable(token->second, std::chrono::system_clock::now()))
         {
@@ -233,7 +233,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           // Point the refresh thread at a session that is in use now. The
           // session that first authenticated this audience can be gone while
           // another session still uses the token.
-          m_tokenSessions[audienceUrl] = session;
+          m_tokenState->TokenSessions[audienceUrl] = session;
 #endif
           return token->second;
         }
@@ -242,7 +242,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           Log::Stream(Logger::Level::Verbose) << "Cached token for " << audienceUrl
                                               << " is at or near expiry, authenticating again.";
         }
-        m_tokenStore.erase(token);
+        m_tokenState->TokenStore.erase(token);
       }
       // We've not authenticated this audience.
       // Authenticate it with the server
@@ -281,12 +281,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       // Assign, do not emplace. A refreshed token must replace the token that is
       // already in the cache.
-      m_tokenStore[audienceUrl] = accessToken;
+      m_tokenState->TokenStore[audienceUrl] = accessToken;
 #if ENABLE_UAMQP
       // Remember the session that authenticated this audience, so the refresh
       // thread can put a new token on the same session. The pointer is weak, so
       // the refresh thread never keeps a session alive.
-      m_tokenSessions[audienceUrl] = session;
+      m_tokenState->TokenSessions[audienceUrl] = session;
       StartTokenRefresh();
 #endif
       return accessToken;
@@ -308,15 +308,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // token when a caller uses it, which is the behavior the error log describes.
   void ConnectionImpl::StartTokenRefresh()
   {
-    if (m_tokenRefreshStop)
+    if (m_tokenState->Stop)
     {
       return;
     }
     if (!m_tokenRefreshThread.joinable())
     {
-      m_tokenRefreshThread = std::thread([this]() { TokenRefreshThread(); });
+      // The thread co-owns the shared state, so the state outlives this
+      // connection. The raw `this` pointer is good only while the state says
+      // the connection is alive. See TokenRefreshState.
+      m_tokenRefreshThread
+          = std::thread([this, state = m_tokenState]() { TokenRefreshThread(this, state); });
     }
-    m_tokenRefreshCv.notify_all();
+    m_tokenState->Cv.notify_all();
   }
 
   void ConnectionImpl::StopTokenRefresh()
@@ -330,9 +334,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::thread threadToJoin;
     {
-      std::unique_lock<std::mutex> lock(m_tokenMutex);
-      m_tokenRefreshStop = true;
-      m_tokenRefreshCv.notify_all();
+      std::unique_lock<std::mutex> lock(m_tokenState->Mutex);
+      m_tokenState->Stop = true;
+      m_tokenState->Cv.notify_all();
       threadToJoin = std::move(m_tokenRefreshThread);
     }
 
@@ -342,14 +346,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       if (threadToJoin.get_id() == std::this_thread::get_id())
       {
         // The refresh thread is running this call, which means it released the
-        // last reference to this connection. It cannot join itself.
+        // last reference to this connection. It cannot join itself, so detach
+        // it.
         //
-        // This path only happens when the connection is destroyed while it is
-        // still open, and the destructor stops the process on that condition a
-        // moment after this call returns. So the detached thread does not
-        // outlive the connection today. If those asserts ever go away, this
-        // thread comes back to a destroyed mutex, so give it a way to stop
-        // before you relax them.
+        // The detached thread outlives this connection, and that is safe. It
+        // holds a shared_ptr to the state block, so the mutex, the condition
+        // variable, the stop flag, and the token maps all stay alive. Stop is
+        // set above, so the thread comes back from the release, takes the mutex
+        // in the state block, sees Stop, and leaves without touching this
+        // connection.
         threadToJoin.detach();
       }
       else
@@ -359,22 +364,32 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
-  void ConnectionImpl::TokenRefreshThread()
+  // The body of the refresh thread.
+  //
+  // This is a static function, and `connection` is a raw pointer on purpose.
+  // The thread must not own the connection, because a thread that owns the
+  // object it refreshes keeps that object alive forever. The `state` block is
+  // shared instead. The thread uses `connection` only while it knows the
+  // connection is alive, which means until RefreshTokenForAudience reports that
+  // the connection can be gone.
+  void ConnectionImpl::TokenRefreshThread(
+      ConnectionImpl* connection,
+      std::shared_ptr<TokenRefreshState> state)
   {
     // A background thread must not let an exception escape, because that ends
     // the process. Every failure of one refresh is handled inside
     // RefreshTokenForAudience, so this catch is for the unexpected.
     try
     {
-      std::unique_lock<std::mutex> lock(m_tokenMutex);
-      while (!m_tokenRefreshStop)
+      std::unique_lock<std::mutex> lock(state->Mutex);
+      while (!state->Stop)
       {
         auto const now = std::chrono::system_clock::now();
 
         // Idle wake time when no token is close to its expiry.
         auto nextWake = now + IdleTokenRefreshPoll;
         std::vector<std::string> dueAudiences;
-        for (auto const& entry : m_tokenStore)
+        for (auto const& entry : state->TokenStore)
         {
           if (IsTokenRefreshDue(entry.second, now))
           {
@@ -392,11 +407,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         for (auto const& audience : dueAudiences)
         {
-          if (m_tokenRefreshStop)
+          if (state->Stop)
           {
             break;
           }
-          RefreshTokenForAudience(audience, lock);
+          if (connection->RefreshTokenForAudience(*state, audience, lock))
+          {
+            // That call released a session reference, which can have destroyed
+            // this connection. `connection` is not safe to use now, so leave.
+            // The state block stays alive until this thread returns.
+            return;
+          }
         }
 
         if (!dueAudiences.empty())
@@ -407,16 +428,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           nextWake = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
         }
 
-        if (m_tokenStore.empty())
+        if (state->TokenStore.empty())
         {
           // Nothing to refresh. Wait until an audience is authenticated, or
           // until shutdown.
-          m_tokenRefreshCv.wait(
-              lock, [this]() { return m_tokenRefreshStop || !m_tokenStore.empty(); });
+          state->Cv.wait(lock, [&state]() { return state->Stop || !state->TokenStore.empty(); });
         }
         else
         {
-          m_tokenRefreshCv.wait_until(lock, nextWake, [this]() { return m_tokenRefreshStop; });
+          state->Cv.wait_until(lock, nextWake, [&state]() { return state->Stop; });
         }
       }
     }
@@ -440,31 +460,46 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // mutex for the credential call and for the CBS operation, because both go to
   // the network. Holding the mutex there would block every caller that opens a
   // link, and it would stop a shutdown from cancelling this work.
-  void ConnectionImpl::RefreshTokenForAudience(
+  //
+  // This function holds a strong session pointer while the mutex is free, so it
+  // can hold the last reference to the session and, through the session, the
+  // last reference to this connection. ReleaseOutsideLock releases that
+  // pointer, always with the mutex free. The return value tells the caller
+  // whether this connection can be gone.
+  bool ConnectionImpl::RefreshTokenForAudience(
+      TokenRefreshState& state,
       std::string const& audienceUrl,
       std::unique_lock<std::mutex>& lock)
   {
-    std::shared_ptr<SessionImpl> session;
-    auto sessionEntry = m_tokenSessions.find(audienceUrl);
-    if (sessionEntry != m_tokenSessions.end())
+    std::shared_ptr<SessionImpl> promotedSession;
+    auto sessionEntry = state.TokenSessions.find(audienceUrl);
+    if (sessionEntry != state.TokenSessions.end())
     {
-      session = sessionEntry->second.lock();
+      promotedSession = sessionEntry->second.lock();
     }
-    if (!session)
+    if (!promotedSession)
     {
       // The session that authenticated this audience is gone. Drop the entry,
       // and the next link open authenticates the audience again.
-      m_tokenStore.erase(audienceUrl);
-      m_tokenSessions.erase(audienceUrl);
-      return;
+      state.TokenStore.erase(audienceUrl);
+      state.TokenSessions.erase(audienceUrl);
+      return false;
     }
+
+    // The hold owns this reference from here on, on every path out of this
+    // function.
+    ReleaseOutsideLock<SessionImpl> sessionHold{std::move(promotedSession), lock};
 
     // Remember the token that this refresh replaces, so the result does not
     // overwrite a newer token that a caller stored while the mutex was free.
-    auto const previousEntry = m_tokenStore.find(audienceUrl);
-    if (previousEntry == m_tokenStore.end())
+    auto const previousEntry = state.TokenStore.find(audienceUrl);
+    if (previousEntry == state.TokenStore.end())
     {
-      return;
+      // A caller dropped this token while this pass was in flight. There is
+      // nothing to replace. Release the session here, so the flag that this
+      // function returns is read after the release.
+      sessionHold.Release();
+      return state.Stop;
     }
     std::string const previousToken{previousEntry->second.Token};
 
@@ -495,7 +530,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         // again, which keeps the lock order acyclic.
         std::lock_guard<std::mutex> cbsLock(m_cbsMutex);
         PutTokenForAudience(
-            session, tokenType, audienceUrl, accessToken.Token, accessToken.ExpiresOn, context);
+            sessionHold.Get(),
+            tokenType,
+            audienceUrl,
+            accessToken.Token,
+            accessToken.ExpiresOn,
+            context);
       }
       refreshed = true;
     }
@@ -507,17 +547,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       failureMessage = "unknown error";
     }
-    // Release the session before the mutex is taken again. This reference can be
-    // the last one, and a session destructor takes other locks.
-    session.reset();
+    // This is the one point where this thread can destroy the connection. A
+    // session destructor releases the session's reference to the connection, so
+    // this release can run the connection destructor on this thread. That
+    // destructor calls StopTokenRefresh, which sets Stop in the state block and
+    // detaches this thread. Every line after this one uses `state`, which this
+    // thread co-owns, and no member of this connection.
+    sessionHold.Release();
     lock.lock();
 
-    auto currentEntry = m_tokenStore.find(audienceUrl);
-    if (currentEntry == m_tokenStore.end() || currentEntry->second.Token != previousToken)
+    if (state.Stop)
+    {
+      // Either a shutdown is in progress, or the release above destroyed this
+      // connection. Do not touch this connection again.
+      return true;
+    }
+
+    auto currentEntry = state.TokenStore.find(audienceUrl);
+    if (currentEntry == state.TokenStore.end() || currentEntry->second.Token != previousToken)
     {
       // A caller replaced or dropped this token while the mutex was free. That
       // token is newer than this one, so keep it.
-      return;
+      return false;
     }
 
     if (refreshed)
@@ -534,9 +585,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Drop the cache entry, so the next link open authenticates again.
       Log::Stream(Logger::Level::Warning)
           << "Could not refresh the token for audience " << audienceUrl << ": " << failureMessage;
-      m_tokenStore.erase(currentEntry);
-      m_tokenSessions.erase(audienceUrl);
+      state.TokenStore.erase(currentEntry);
+      state.TokenSessions.erase(audienceUrl);
     }
+    return false;
   }
 #endif // ENABLE_UAMQP
 }}}} // namespace Azure::Core::Amqp::_detail

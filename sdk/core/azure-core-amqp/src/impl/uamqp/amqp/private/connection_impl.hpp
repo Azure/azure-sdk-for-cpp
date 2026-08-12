@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../../../amqp/private/token_refresh.hpp"
 #include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
@@ -168,10 +169,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_connectionOpened = false;
     std::atomic<uint32_t> m_openCount{0};
 
-    // mutex protecting the token acquisition process.
-    std::mutex m_tokenMutex;
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
-    std::map<std::string, Credentials::AccessToken> m_tokenStore;
+
+    // The token mutex, the token cache, and the stop protocol for the refresh
+    // thread. The connection and the refresh thread both own this block, so the
+    // thread finds it alive even after the connection is destroyed. See
+    // TokenRefreshState.
+    std::shared_ptr<TokenRefreshState> m_tokenState{std::make_shared<TokenRefreshState>()};
 
     // Serializes the CBS operation itself. uAMQP names the CBS links after the
     // node, so every claims based security object on this connection attaches a
@@ -181,23 +185,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // thread does its work without the token mutex, so this mutex is what keeps
     // the refresh and a caller apart.
     //
-    // Lock order: a caller takes m_tokenMutex and then this mutex. The refresh
-    // thread takes this mutex only while it does not hold m_tokenMutex.
+    // Lock order: a caller takes the token mutex and then this mutex. The
+    // refresh thread takes this mutex only while it does not hold the token
+    // mutex.
     std::mutex m_cbsMutex;
 
-    // The session that authenticated each audience. The pointer is weak, so the
-    // refresh thread never keeps a session alive.
-    std::map<std::string, std::weak_ptr<SessionImpl>> m_tokenSessions;
     // The thread that replaces each cached token before the token expires.
     std::thread m_tokenRefreshThread;
-    std::condition_variable m_tokenRefreshCv;
-    bool m_tokenRefreshStop{false};
     // Cancelled on shutdown, to stop a CBS operation that is in flight.
     Azure::Core::Context m_tokenRefreshContext;
 
     void StartTokenRefresh();
-    void TokenRefreshThread();
-    void RefreshTokenForAudience(
+
+    // The body of the refresh thread. This is a static function on purpose. The
+    // thread can outlive the connection, so it must be able to finish without a
+    // live `this`. It uses `connection` only while the shared state says the
+    // connection is alive.
+    static void TokenRefreshThread(
+        ConnectionImpl* connection,
+        std::shared_ptr<TokenRefreshState> state);
+
+    // Replace the token for one audience. Return true when the caller must stop
+    // at once, because this call can have destroyed the connection.
+    bool RefreshTokenForAudience(
+        TokenRefreshState& state,
         std::string const& audienceUrl,
         std::unique_lock<std::mutex>& lock);
 

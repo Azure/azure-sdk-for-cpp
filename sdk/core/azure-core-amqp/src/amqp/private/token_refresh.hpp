@@ -7,8 +7,94 @@
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
+#include <condition_variable>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <string>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
+
+  class SessionImpl;
+
+  // The state that the connection shares with the token refresh thread.
+  //
+  // The refresh thread promotes a weak session pointer to a strong one, so it
+  // can hold the last reference to a session and, through that session, the
+  // last reference to the connection. When it releases that reference, the
+  // connection destructor runs on the refresh thread. That destructor sets
+  // Stop, signals Cv, and detaches the thread, because a thread cannot join
+  // itself.
+  //
+  // The thread holds a shared_ptr to this block, so the block stays alive after
+  // the connection is gone. The thread comes back from the release, takes
+  // Mutex, sees Stop, and leaves without touching the connection.
+  struct TokenRefreshState final
+  {
+    // Protects every other member of this block.
+    std::mutex Mutex;
+    std::condition_variable Cv;
+    bool Stop{false};
+    // The cached token for each audience.
+    std::map<std::string, Azure::Core::Credentials::AccessToken> TokenStore;
+    // The session that authenticated each audience. The pointer is weak, so the
+    // refresh thread never keeps a session alive.
+    std::map<std::string, std::weak_ptr<SessionImpl>> TokenSessions;
+  };
+
+  // Holds a shared pointer that a thread must not drop while it holds a lock,
+  // and releases it with that lock free.
+  //
+  // The token refresh thread promotes a weak session pointer for the length of
+  // one refresh. A session holds the connection, so that promoted pointer can
+  // be the last reference to both, and the release then runs the connection
+  // destructor on the refresh thread. That destructor takes the token mutex, so
+  // a release under the token mutex would lock a mutex that this thread already
+  // holds, and the mutex is not recursive. The release also runs other
+  // destructors that take other locks.
+  //
+  // Every exit from the scope runs this destructor, so no return path and no
+  // exception leaves the release under the lock.
+  template <typename T> class ReleaseOutsideLock final {
+  public:
+    ReleaseOutsideLock(std::shared_ptr<T> held, std::unique_lock<std::mutex>& lock)
+        : m_held{std::move(held)}, m_lock{lock}
+    {
+    }
+
+    ~ReleaseOutsideLock() { Release(); }
+
+    ReleaseOutsideLock(ReleaseOutsideLock const&) = delete;
+    ReleaseOutsideLock& operator=(ReleaseOutsideLock const&) = delete;
+    ReleaseOutsideLock(ReleaseOutsideLock&&) = delete;
+    ReleaseOutsideLock& operator=(ReleaseOutsideLock&&) = delete;
+
+    std::shared_ptr<T> const& Get() const { return m_held; }
+
+    // Release the pointer with the lock free, then put the lock back in the
+    // state it was in. This is safe to call more than once.
+    void Release()
+    {
+      if (!m_held)
+      {
+        return;
+      }
+      bool const wasLocked = m_lock.owns_lock();
+      if (wasLocked)
+      {
+        m_lock.unlock();
+      }
+      m_held.reset();
+      if (wasLocked)
+      {
+        m_lock.lock();
+      }
+    }
+
+  private:
+    std::shared_ptr<T> m_held;
+    std::unique_lock<std::mutex>& m_lock;
+  };
 
   // The .NET client refreshes a CBS token seven minutes before the token
   // expires. See AmqpConnectionScope.cs in Azure.Messaging.EventHubs. Use the
