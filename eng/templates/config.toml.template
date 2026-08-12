@@ -6,15 +6,21 @@
 # CMake/Corrosion invokes cargo for the azure-core-amqp rust_wrapper crate.
 #
 # CargoAuthenticate@0 parses the [registries] table below and exports the
-# CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_TOKEN / _CREDENTIAL_PROVIDER variables that cargo
-# needs to authenticate against the feed.
+# CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_TOKEN / _CREDENTIAL_PROVIDER variables that
+# cargo needs to authenticate against the feed.
+#
+# The feed is the project-scoped `public` one shared with azure-sdk-for-rust, and the
+# `~force-auth` suffix on the feed name is required. Without it Azure DevOps answers the
+# index anonymously, and cargo fails with "token rejected ... got 401" for the anonymous
+# identity aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa. See
+# https://learn.microsoft.com/azure/devops/artifacts/cargo/cargo-upstream-source.
 #
 # The [source] replacement is what actually redirects index.crates.io and
 # static.crates.io to the feed. Cargo does not honor environment variables for the
 # [source] table, so an on-disk config file is required.
 
 [registries]
-azure-sdk-for-rust = { index = "sparse+https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust/Cargo/index/" }
+azure-sdk-for-rust-public = { index = "sparse+https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-rust-public~force-auth/Cargo/index/" }
 
 [source.crates-io]
-replace-with = "azure-sdk-for-rust"
+replace-with = "azure-sdk-for-rust-public"
