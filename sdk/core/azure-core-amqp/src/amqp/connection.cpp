@@ -592,11 +592,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
-      // Drop the cache entry, so the next link open authenticates again.
       Log::Stream(Logger::Level::Warning)
           << "Could not refresh the token for audience " << audienceUrl << ": " << failureMessage;
-      state.TokenStore.erase(currentEntry);
-      state.TokenSessions.erase(audienceUrl);
+
+      // Keep the token while it still has life. A sender or a receiver that is
+      // already open never authenticates again, because only the Open methods
+      // call AuthenticateAudience. So a token that goes away here never comes
+      // back, and the link dies at the expiry. The thread tries again on its
+      // next pass instead, which is about one attempt each 20 seconds.
+      //
+      // Drop the token when it has no life left. The next link open then
+      // authenticates the audience again.
+      if (ShouldDropTokenAfterFailedRefresh(currentEntry->second, std::chrono::system_clock::now()))
+      {
+        state.TokenStore.erase(currentEntry);
+        state.TokenSessions.erase(audienceUrl);
+      }
     }
     return false;
   }

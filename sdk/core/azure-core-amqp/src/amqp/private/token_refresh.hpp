@@ -146,4 +146,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return token.ExpiresOn <= Azure::DateTime(now + TokenRefreshBuffer);
   }
 
+  // Return true when a refresh that failed must drop the cached token.
+  //
+  // A refresh can fail for a short time, for example when the credential cannot
+  // reach the identity service. The cached token still works until it expires,
+  // so the connection keeps the token and the refresh thread tries again on its
+  // next pass. The thread gets about one attempt each 20 seconds through the
+  // buffer.
+  //
+  // A token with no life left is different. A caller cannot use it, and a token
+  // that reaches the service after the expiry cannot save a link that the
+  // service already dropped. So the connection drops the token, and the next
+  // link open authenticates the audience again.
+  inline bool ShouldDropTokenAfterFailedRefresh(
+      Azure::Core::Credentials::AccessToken const& token,
+      std::chrono::system_clock::time_point now)
+  {
+    return !IsCachedTokenUsable(token, now);
+  }
+
 }}}} // namespace Azure::Core::Amqp::_detail

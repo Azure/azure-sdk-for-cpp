@@ -466,7 +466,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   } // namespace
 
   // L1. The connection must replace the CBS token before that token expires,
-  // and the replacement must reach the service.
+  // and the client must keep working across that replacement.
+  //
+  // This test does not prove that the put reached the service. The token that
+  // the decorator shortens is a real token, and the service accepts it until
+  // its real expiry, which is an hour away. So a failed put stays invisible
+  // here. L2 covers the case that a real client cares about, which is a client
+  // that keeps working past two reported lifetimes.
   TEST_P(ProducerClientTest, TokenRefreshBeforeExpiry_LIVEONLY_)
   {
     auto credential = std::make_shared<CountingTokenCredential>(
@@ -490,24 +496,21 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ASSERT_GT(countAfterRefresh, countAfterFirstSend)
         << "The connection did not replace the CBS token before the token expired.";
 
-    // The count rises when the refresh asks for the token, which is before the
-    // refresh puts that token on the wire. Wait for the put to finish. A put
-    // that fails drops the cached token, and the send below then has to ask for
-    // a new one, which fails this test. A put that takes longer than this wait
-    // to fail stays invisible to the test. The next refresh is about thirty
-    // seconds out, so this wait cannot let another refresh raise the count.
+    // The count rises when the refresh asks the credential for a token, and the
+    // refresh puts that token on the wire after it. Wait for the put to end, so
+    // the send below does not race it. The next refresh is about thirty seconds
+    // out, so this wait cannot let a second refresh raise the count.
     std::this_thread::sleep_for(std::chrono::seconds(5));
     ASSERT_EQ(credential->GetTokenCount(), countAfterRefresh)
         << "A second refresh ran during the wait, so this test cannot judge the first one.";
 
-    // Make sure the replacement reached the service. A refresh that failed makes
-    // the connection drop the cached token, and then this send has to ask the
-    // credential for another token. So a send that does not raise the count
-    // proves that the refreshed token is in the cache and that the service
-    // accepted it.
+    // The client must still work after the refresh, and the send must use the
+    // token in the cache. A sender that is already open never authenticates
+    // again, so this send cannot raise the count for a good refresh or a bad
+    // one. A rise here means the connection lost the cached token.
     ASSERT_NO_THROW(client.Send(MakeTestEvent('2')));
     EXPECT_EQ(credential->GetTokenCount(), countAfterRefresh)
-        << "The send asked for a new token, so the refresh did not reach the service.";
+        << "The send asked for a new token, so the connection lost the refreshed token.";
     client.Close();
   }
 

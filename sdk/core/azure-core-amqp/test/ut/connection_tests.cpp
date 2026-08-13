@@ -118,6 +118,36 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(token, now));
   }
 
+  // A refresh that fails must keep a token that still works. A sender that is
+  // already open never authenticates again, so a token that goes away here
+  // never comes back, and the link dies at the expiry.
+  TEST_F(TestTokenRefresh, AFailedRefreshKeepsATokenThatStillWorks)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::minutes(6)), now));
+    // A token inside the refresh buffer is due, and it still works.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(80)), now));
+  }
+
+  // A token with no life left cannot help a caller, and it cannot save a link
+  // that the service already dropped. The next link open must authenticate the
+  // audience again.
+  TEST_F(TestTokenRefresh, AFailedRefreshDropsATokenWithNoLifeLeft)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(10)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(-30)), now));
+
+    // A default token reports year 1, and the cast must not throw.
+    Azure::Core::Credentials::AccessToken defaultToken;
+    EXPECT_NO_THROW(EXPECT_TRUE(
+        Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(defaultToken, now)));
+  }
+
   // The state that the connection shares with the refresh thread.
   TEST_F(TestTokenRefresh, TheSharedStateStartsEmptyAndRuns)
   {
