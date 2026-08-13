@@ -167,10 +167,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     try
     {
       // If the connection is authenticated, include the token in the message.
+      //
+      // Get the token again for each operation. The token that Open put in
+      // m_accessToken expires, and a management client lives for the life of the
+      // client that owns it. AuthenticateAudience returns the cached token and
+      // only goes to the service near the expiry. Give it the audience that Open
+      // gave it, so both calls use the same cache entry.
+      //
+      // Keep the "$management" test that set m_accessToken. The claims based
+      // security client uses the node name "$cbs", so its token stays empty and
+      // it does not come here. That is necessary: AuthenticateAudience holds the
+      // token mutex across the claims based security put, and that put uses a
+      // claims based security client.
+      //
+      // Do not put the new token in m_accessToken. This function runs on more
+      // than one thread and that member has no lock.
       if (!m_accessToken.Token.empty())
       {
+        auto accessToken{m_session->GetConnection()->AuthenticateAudience(
+            m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context)};
         messageToSend.ApplicationProperties["security_token"]
-            = Models::AmqpValue{m_accessToken.Token};
+            = Models::AmqpValue{accessToken.Token};
       }
       messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
       messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
