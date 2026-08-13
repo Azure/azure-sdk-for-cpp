@@ -12,10 +12,15 @@
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <array>
 #include <atomic>
 #include <chrono>
+#include <cstdint>
+#include <mutex>
 #include <numeric>
+#include <string>
 #include <thread>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -601,8 +606,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   // L5. Calls from many threads must keep working while the refresh thread
   // replaces the token. The refresh thread and the calling threads take the same
   // lock, so this is the test for a deadlock.
+  //
+  // A deadlock stops a thread inside a call, and no call in the client has a
+  // deadline. So this test watches the progress of each thread. A thread that
+  // makes no progress for longer than the refresh deadline fails the test. The
+  // test then leaves that thread where it is, because a thread that waits on a
+  // lock cannot be released. The threads share the client and the state through
+  // a shared pointer, so a thread that stays behind reads no dead object.
   TEST_P(ProducerClientTest, TokenRefreshUnderConcurrentCalls_LIVEONLY_)
   {
+    // Eight threads at one call each 500 ms is about 16 calls a second. The
+    // documented limit for this operation is 50 a second for each consumer
+    // group, so this leaves room for the other tests on the namespace.
+    constexpr int ThreadCount = 8;
+    constexpr std::chrono::milliseconds CallInterval{500};
+    constexpr std::chrono::seconds RunFor{60};
+
+    // Longer than the 60 second deadline of one refresh, so a slow refresh
+    // cannot look like a deadlock.
+    constexpr std::chrono::seconds StallLimit{90};
+
     auto credential = std::make_shared<CountingTokenCredential>(
         MakeInnerCredential(GetTestCredential()), FastRefreshLifetime);
 
@@ -610,34 +633,105 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.Name = "sender-link";
     options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
 
-    Azure::Messaging::EventHubs::ProducerClient client{
-        GetEnv("EVENTHUBS_HOST"), GetEventHubName(), credential, options};
-
-    std::string const eventHubName{GetEventHubName()};
-    std::atomic<bool> failed{false};
-    std::vector<std::thread> threads;
-    for (int i = 0; i < 8; i++)
+    struct ConcurrentCallState final
     {
-      threads.emplace_back([&client, &eventHubName, &failed]() {
+      std::shared_ptr<Azure::Messaging::EventHubs::ProducerClient> Client;
+      std::string EventHubName;
+      std::atomic<int> FinishedThreads{0};
+      std::atomic<int> FailureCount{0};
+      std::mutex FirstFailureMutex;
+      std::string FirstFailure;
+      std::array<std::atomic<std::int64_t>, ThreadCount> LastProgress{};
+
+      void RecordFailure(std::string const& detail)
+      {
+        FailureCount++;
+        std::lock_guard<std::mutex> lock(FirstFailureMutex);
+        if (FirstFailure.empty())
+        {
+          FirstFailure = detail;
+        }
+      }
+    };
+
+    auto state = std::make_shared<ConcurrentCallState>();
+    state->Client = std::make_shared<Azure::Messaging::EventHubs::ProducerClient>(
+        GetEnv("EVENTHUBS_HOST"), GetEventHubName(), credential, options);
+    state->EventHubName = GetEventHubName();
+
+    auto const Now = []() { return std::chrono::steady_clock::now().time_since_epoch().count(); };
+
+    for (int i = 0; i < ThreadCount; i++)
+    {
+      state->LastProgress[i].store(Now());
+    }
+
+    std::vector<std::thread> threads;
+    for (int i = 0; i < ThreadCount; i++)
+    {
+      threads.emplace_back([state, i, Now, CallInterval, RunFor]() {
         auto const start = std::chrono::steady_clock::now();
-        while (std::chrono::steady_clock::now() - start < std::chrono::seconds(60))
+        while (std::chrono::steady_clock::now() - start < RunFor)
         {
           try
           {
-            auto result = client.GetEventHubProperties();
-            if (result.Name != eventHubName)
+            auto result = state->Client->GetEventHubProperties();
+            if (result.Name != state->EventHubName)
             {
-              failed = true;
+              state->RecordFailure("The properties named " + result.Name + ".");
             }
           }
-          catch (std::exception const&)
+          catch (Azure::Messaging::EventHubs::EventHubsException const& e)
           {
-            failed = true;
+            // The service throttles a namespace that gets too many management
+            // calls. That says nothing about the token refresh, so let it pass.
+            auto const status = e.StatusCode.HasValue() ? e.StatusCode.Value() : 0;
+            if (status != 429 && status != 500 && status != 503)
+            {
+              state->RecordFailure(
+                  "EventHubsException: condition " + e.ErrorCondition + ", description "
+                  + e.ErrorDescription + ", status " + std::to_string(status) + ".");
+            }
           }
-          std::this_thread::sleep_for(std::chrono::milliseconds(200));
+          catch (std::exception const& e)
+          {
+            state->RecordFailure(std::string("Exception: ") + e.what());
+          }
+          state->LastProgress[i].store(Now());
+          std::this_thread::sleep_for(CallInterval);
         }
+        state->FinishedThreads++;
       });
     }
+
+    // Wait for the threads, and watch each one for a stall while waiting.
+    int stalledThread = -1;
+    while (state->FinishedThreads.load() < ThreadCount && stalledThread < 0)
+    {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      for (int i = 0; i < ThreadCount; i++)
+      {
+        std::chrono::steady_clock::duration const sinceProgress{
+            Now() - state->LastProgress[i].load()};
+        if (sinceProgress > StallLimit)
+        {
+          stalledThread = i;
+          break;
+        }
+      }
+    }
+
+    if (stalledThread >= 0)
+    {
+      for (auto& t : threads)
+      {
+        t.detach();
+      }
+      FAIL() << "Thread " << stalledThread << " made no call for " << StallLimit.count()
+             << " seconds, so a call is stopped on a lock. The test leaves the threads to run,"
+                " because a thread that waits on a lock cannot be released.";
+    }
+
     for (auto& t : threads)
     {
       if (t.joinable())
@@ -646,9 +740,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
     }
 
-    EXPECT_FALSE(failed.load()) << "A call failed while the refresh thread replaced the token.";
+    std::string firstFailure;
+    {
+      std::lock_guard<std::mutex> lock(state->FirstFailureMutex);
+      firstFailure = state->FirstFailure;
+    }
+    EXPECT_EQ(state->FailureCount.load(), 0)
+        << "A call failed while the refresh thread replaced the token. The first failure was: "
+        << firstFailure;
     EXPECT_GE(credential->GetTokenCount(), 2) << "The refresh thread did not run during the test.";
-    client.Close();
+    state->Client->Close();
   }
 #endif // ENABLE_UAMQP
 
