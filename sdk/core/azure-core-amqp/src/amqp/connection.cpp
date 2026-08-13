@@ -134,7 +134,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   namespace {
     // Put a token for one audience on the wire. Both the first authentication
     // and the proactive refresh use this function, so the two paths stay the
-    // same. The caller holds the token mutex.
+    // same. The caller must hold the CBS mutex, because this function makes a
+    // claims based security object. This function takes no lock of its own. The
+    // token mutex is not necessary here, and the refresh path releases it
+    // before this call.
     void PutTokenForAudience(
         std::shared_ptr<SessionImpl> session,
         CbsTokenType tokenType,
@@ -243,6 +246,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                                               << " is at or near expiry, authenticating again.";
         }
         m_tokenState->TokenStore.erase(token);
+#if ENABLE_UAMQP
+        // Remove the session with the token. The authentication below puts both
+        // of them back. If that authentication throws, the two maps stay in
+        // step. Erase by the key, because the iterator above belongs to the
+        // other map.
+        m_tokenState->TokenSessions.erase(audienceUrl);
+#endif
       }
       // We've not authenticated this audience.
       // Authenticate it with the server
