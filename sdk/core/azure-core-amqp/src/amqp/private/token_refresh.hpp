@@ -8,6 +8,7 @@
 
 #include <chrono>
 #include <condition_variable>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -40,6 +41,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // The session that authenticated each audience. The pointer is weak, so the
     // refresh thread never keeps a session alive.
     std::map<std::string, std::weak_ptr<SessionImpl>> TokenSessions;
+    // Counts the changes to TokenStore. Every write to that map increments this
+    // counter under Mutex. The refresh thread reads the counter before it scans
+    // the map, and it compares the two values after it wakes. A different value
+    // means the map changed, so the thread scans again. The same value means the
+    // wake was spurious, so the thread sleeps again on the same deadline.
+    std::uint64_t Generation{0};
   };
 
   // Holds a shared pointer that a thread must not drop while it holds a lock,
@@ -144,6 +151,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::chrono::system_clock::time_point now)
   {
     return token.ExpiresOn <= Azure::DateTime(now + TokenRefreshBuffer);
+  }
+
+  // Return true when the refresh thread must leave its wait.
+  //
+  // The thread sleeps on a deadline that it computed from TokenStore. A change
+  // to that map makes the deadline wrong, because a new audience can hold a
+  // token that is due now. The caller gives the counter value that it read
+  // before its scan, and a different value means the map changed. The same
+  // value means the wake was spurious, so the thread sleeps again.
+  //
+  // The caller holds Mutex.
+  inline bool ShouldWakeTokenRefresh(TokenRefreshState const& state, std::uint64_t observed)
+  {
+    return state.Stop || state.Generation != observed;
   }
 
   // Return true when a refresh that failed must drop the cached token.

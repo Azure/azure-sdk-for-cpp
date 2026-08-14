@@ -19,11 +19,13 @@
 #include <azure/core/platform.hpp>
 
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <random>
 #include <stdexcept>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -155,6 +157,48 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_FALSE(state.Stop);
     EXPECT_TRUE(state.TokenStore.empty());
     EXPECT_TRUE(state.TokenSessions.empty());
+    EXPECT_EQ(0u, state.Generation);
+  }
+
+  // The refresh thread sleeps on a deadline that it computed from TokenStore. A
+  // new audience makes that deadline wrong, because the new token can be due
+  // now. ShouldWakeTokenRefresh is the test that tells a real change from a
+  // spurious wake, and the thread uses this same function.
+  TEST_F(TestTokenRefresh, ShouldWakeTokenRefreshAnswersEachCaseForTheRefreshThread)
+  {
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    std::unique_lock<std::mutex> lock(state.Mutex);
+
+    auto const observed = state.Generation;
+
+    // A wake with no change to the map. The thread must sleep again.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed));
+
+    // A new audience. The thread must scan again.
+    state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::seconds(40));
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed));
+
+    // A thread that already scanned the new audience sleeps again.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
+
+    // A refresh that replaces the token for the same audience counts as a
+    // change, because the map is the only record of the expiry.
+    state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::hours(1));
+    auto const afterAdd = state.Generation;
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterAdd));
+
+    // A discard counts as a change too.
+    state.TokenStore.erase("amqps://host/audience");
+    auto const afterReplace = state.Generation;
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterReplace));
+    EXPECT_TRUE(state.TokenStore.empty());
+
+    // Shutdown wins over an unchanged counter.
+    state.Stop = true;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
   }
 
   // The refresh thread co-owns the state block, so the block stays alive after

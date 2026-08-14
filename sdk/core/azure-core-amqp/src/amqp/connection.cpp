@@ -258,6 +258,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                                               << " is at or near expiry, authenticating again.";
         }
         m_tokenState->TokenStore.erase(token);
+        ++m_tokenState->Generation;
 #if ENABLE_UAMQP
         // Remove the session with the token. The authentication below puts both
         // of them back. If that authentication throws, the two maps stay in
@@ -304,6 +305,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // Assign, do not emplace. A refreshed token must replace the token that is
       // already in the cache.
       m_tokenState->TokenStore[audienceUrl] = accessToken;
+      ++m_tokenState->Generation;
 #if ENABLE_UAMQP
       // Remember the session that authenticated this audience, so the refresh
       // thread can put a new token on the same session. The pointer is weak, so
@@ -429,8 +431,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     try
     {
       std::unique_lock<std::mutex> lock(state->Mutex);
+
+      // The earliest time at which the next refresh pass may run. A pass that
+      // refreshed a token pushes this time out by MinimumTokenRefreshInterval.
+      // The floor lives outside the loop, because a wake for a new audience
+      // starts a new pass, and that new pass must still obey the floor. See the
+      // deferral below.
+      auto refreshFloor = std::chrono::system_clock::time_point::min();
+
       while (!state->Stop)
       {
+        // Read the counter before the scan, not after it. The refresh below
+        // releases the mutex, and a caller can add an audience in that window.
+        // A read after the scan would take that change as already seen, and the
+        // new audience would wait for the next deadline.
+        auto const observed = state->Generation;
+
         auto const now = std::chrono::system_clock::now();
 
         // Idle wake time when no token is close to its expiry.
@@ -452,6 +468,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           }
         }
 
+        if (!dueAudiences.empty() && now < refreshFloor)
+        {
+          // The last pass refreshed a token, and the floor is still in force.
+          // Do the work at the floor instead of now. This defers the refresh,
+          // it does not skip it, because the pass at the floor scans the map
+          // again and finds the same audiences.
+          dueAudiences.clear();
+          nextWake = (std::min)(nextWake, refreshFloor);
+        }
+
         for (auto const& audience : dueAudiences)
         {
           if (state->Stop)
@@ -471,8 +497,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         {
           // Keep a minimum time between two refresh passes. A token with a
           // lifetime shorter than the refresh buffer is due as soon as it
-          // arrives, and this wait stops the thread from spinning on it.
-          nextWake = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
+          // arrives, and this floor stops the thread from spinning on it. The
+          // floor also survives a wake for a new audience, because a rescan
+          // recomputes nextWake from the map alone.
+          refreshFloor = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
+          nextWake = (std::max)(nextWake, refreshFloor);
         }
 
         if (state->TokenStore.empty())
@@ -483,7 +512,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         else
         {
-          state->Cv.wait_until(lock, nextWake, [&state]() { return state->Stop; });
+          // Wake early when the map changed, because a new audience can hold a
+          // token that is due now, and the deadline above was computed before
+          // that token existed. A wake with the same counter is spurious, so the
+          // wait goes back to sleep on the same deadline.
+          //
+          // This thread bumps the counter with its own refresh, so this wait
+          // returns at once one time after each refresh pass. The next pass
+          // finds the floor in force, defers the work, and then sleeps to the
+          // floor. That costs one extra pass for each refresh, and it cannot
+          // spin, because the deferral does no work and writes nothing to the
+          // map, so it leaves the counter equal to the value it observed.
+          state->Cv.wait_until(lock, nextWake, [&state, observed]() {
+            return ShouldWakeTokenRefresh(*state, observed);
+          });
         }
       }
     }
@@ -530,6 +572,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // and the next link open authenticates the audience again.
       state.TokenStore.erase(audienceUrl);
       state.TokenSessions.erase(audienceUrl);
+      ++state.Generation;
       return false;
     }
 
@@ -621,6 +664,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     if (refreshed)
     {
       currentEntry->second = accessToken;
+      ++state.Generation;
       if (traceEnabled)
       {
         Log::Stream(Logger::Level::Verbose)
@@ -644,6 +688,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         state.TokenStore.erase(currentEntry);
         state.TokenSessions.erase(audienceUrl);
+        ++state.Generation;
       }
     }
     return false;
