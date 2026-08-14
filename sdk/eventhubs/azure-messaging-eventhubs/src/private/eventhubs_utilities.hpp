@@ -164,9 +164,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     ~EventHubsPropertiesClient()
     {
-      if (m_managementClientIsOpen)
+      // A destructor is noexcept, so an exception out of this close terminates the
+      // process. The management link rides a shared connection, and the service detaches
+      // a link that is idle for 30 minutes, so a close that throws is the ordinary case
+      // here, not a rare one. Catch and log it, as the client destructors do.
+      try
       {
-        m_managementClient->Close();
+        if (m_managementClientIsOpen)
+        {
+          m_managementClient->Close();
+        }
+      }
+      catch (std::exception const& ex)
+      {
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Warning)
+            << "Exception in EventHubsPropertiesClient::~EventHubsPropertiesClient(): "
+            << ex.what();
       }
     }
 
@@ -290,10 +304,36 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       {
         if (m_managementClientIsOpen)
         {
-          m_managementClient->Close(context);
+          // The flag drops before the call, because a client whose close threw is not
+          // open, and a second close attempt cannot repair it. The flag used to drop
+          // after the call, so a close that threw left it set, and the destructor then
+          // closed the dead client again and terminated the process.
           m_managementClientIsOpen = false;
+          try
+          {
+            m_managementClient->Close(context);
+          }
+          catch (std::exception const& ex)
+          {
+            Azure::Core::Diagnostics::_internal::Log::Stream(
+                Azure::Core::Diagnostics::Logger::Level::Warning)
+                << "Exception while closing the management client: " << ex.what();
+          }
         }
-        m_session.End(context);
+        // The session ends on the failing path too, so a management close that throws
+        // does not strand it. Each step has its own try block, so one failure does not
+        // hide the other, the same treatment that ProducerClient::InvalidateSender gives
+        // its own closes.
+        try
+        {
+          m_session.End(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Azure::Core::Diagnostics::_internal::Log::Stream(
+              Azure::Core::Diagnostics::Logger::Level::Warning)
+              << "Exception while ending the properties client session: " << ex.what();
+        }
       }
     }
 
