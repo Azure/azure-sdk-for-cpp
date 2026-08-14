@@ -11,6 +11,7 @@
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
+#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
@@ -103,7 +104,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       EventDataBatchOptions const& options,
       Core::Context const& context)
   {
-    EnsureSender(options.PartitionId, context);
+    // No retry loop wraps this call, so a caller that keeps a poisoned stack sees the same
+    // failure for the life of the client. The Send(EventData) overloads come through here
+    // first, which makes this path as important as the retry loop in Send.
+    EnsureSenderOrInvalidate(options.PartitionId, context);
 
     auto messageSender = GetSender(options.PartitionId);
     EventDataBatchOptions optionsToUse{options};
@@ -132,7 +136,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               // rebuilds the session and the connection when they are gone. A cached sender
               // that the service detached can never succeed, so an attempt against it wastes
               // the retry budget.
-              EnsureSender(partitionId, context);
+              //
+              // This call does its own invalidation, so it stays outside the try below. An
+              // attach that failed left no sender for the handlers below to discard, and it
+              // needs the session and the connection discarded instead.
+              EnsureSenderOrInvalidate(partitionId, context);
               try
               {
                 auto result = GetSender(partitionId).Send(message, context);
@@ -308,6 +316,40 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.emplace(partitionId, std::move(sender));
     }
   }
+  void ProducerClient::EnsureSenderOrInvalidate(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
+  {
+    try
+    {
+      EnsureSender(partitionId, context);
+    }
+    catch (Azure::Core::OperationCancelledException const&)
+    {
+      // The caller stopped the attach. The cached stack is not at fault, so keep it.
+      throw;
+    }
+    catch (Azure::Core::Credentials::AuthenticationException const&)
+    {
+      // The credential failed, or the service refused the token. The connection carried
+      // that answer, so the connection works. A new connection presents the same claim and
+      // gets the same refusal, so keep this one. A dead connection reports itself as a
+      // std::runtime_error from the CBS open instead, and the handler below discards it.
+      throw;
+    }
+    catch (std::exception const&)
+    {
+      // A discard of the sender alone changes nothing here, because a failed attach never
+      // cached one. The session and the connection are the objects that carry the fault to
+      // the next attempt, so discard them.
+      if (!context.IsCancelled())
+      {
+        InvalidateSender(partitionId, context);
+      }
+      throw;
+    }
+  }
+
   Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
       std::string const& partitionId)
   {

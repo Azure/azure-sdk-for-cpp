@@ -235,6 +235,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
+    // Call EnsureSender, and discard the cached stack when the attach fails.
+    //
+    // EnsureSession caches the session and the connection before the attach runs, so a
+    // failed attach leaves both of them behind. EnsureSender never caches the sender it
+    // failed to attach, so its guard finds no sender on the next call and it builds a new
+    // sender on that same stack. Every later attach then fails the same way. This wrapper
+    // discards the session and the connection instead, so the next attach starts from a
+    // new connection.
+    void EnsureSenderOrInvalidate(
+        std::string const& partitionId,
+        Azure::Core::Context const& context);
+
     // Discard the sender, the session, and the connection for the specified partition, so
     // that the next call to EnsureSender builds new ones. A failed send can mean a link, a
     // session, or a connection that is gone, and this layer cannot tell which one it is. A
