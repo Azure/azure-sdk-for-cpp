@@ -249,15 +249,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     PartitionClientOptions options{m_partitionOptions};
-    if (m_lastReceivedOffset.HasValue())
-    {
-      // Start after the last event that the caller received. Inclusive stays false, so the
-      // filter becomes "x-opt-offset > 'last'" and the caller gets no duplicate event.
-      Models::StartPosition resumePosition;
-      resumePosition.Offset = m_lastReceivedOffset.Value();
-      resumePosition.Inclusive = false;
-      options.StartPosition = resumePosition;
-    }
+    options.StartPosition
+        = _detail::ResumeStartPosition(m_partitionOptions.StartPosition, m_lastReceivedOffset);
 
     Azure::Core::Amqp::_internal::MessageReceiver receiver{
         CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};

@@ -113,6 +113,30 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     return exception.ErrorCondition != "amqp:link:message-size-exceeded";
   }
 
+  /**
+   * @brief Give the start position that a new receiver must use.
+   *
+   * The caller must not get one event two times. So a rebuild after a delivery starts from
+   * the offset of the last event, and `Inclusive` stays false. The filter then becomes
+   * "x-opt-offset > 'last'". The other anchors stay unset, because a filter permits only one
+   * anchor. Before the first delivery there is no offset to start from, so the original
+   * position stays the same, and a rebuild uses the position that the caller asked for.
+   */
+  inline Models::StartPosition ResumeStartPosition(
+      Models::StartPosition const& originalPosition,
+      Azure::Nullable<std::string> const& lastReceivedOffset)
+  {
+    if (!lastReceivedOffset.HasValue())
+    {
+      return originalPosition;
+    }
+
+    Models::StartPosition resumePosition;
+    resumePosition.Offset = lastReceivedOffset.Value();
+    resumePosition.Inclusive = false;
+    return resumePosition;
+  }
+
   class EventDataBatchFactory final {
   public:
     static EventDataBatch CreateEventDataBatch(EventDataBatchOptions const& options);
