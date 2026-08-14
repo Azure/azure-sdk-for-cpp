@@ -51,6 +51,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       return GetEnv("EVENTHUB_NAME");
     }
+
+    // Send one event to partition 1, so a receiver on that partition has something to read.
+    void SendOneEventToPartitionOne(std::string const& body)
+    {
+      std::unique_ptr<ProducerClient> producer = CreateProducerClient();
+      EventDataBatchOptions batchOptions;
+      batchOptions.PartitionId = "1";
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      ASSERT_TRUE(batch.TryAdd(Models::EventData{body}));
+      ASSERT_NO_THROW(producer->Send(batch));
+      producer->Close();
+    }
   };
 
   TEST_P(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
@@ -352,48 +364,80 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   // the first receiver with the condition amqp:link:stolen. That condition is permanent, so
   // the first receiver must report it at once. A client that attaches again fights the new
   // owner, and it spends its whole rebuild budget on a failure that stays.
+  //
+  // This test needs the uAMQP transport. The last read below goes to a link that the service
+  // detached, and the Rust transport neither returns that read nor honours the deadline on the
+  // context, so the test never ends on that transport. A live run of this test on the Rust
+  // transport was still inside that read after five minutes.
+#if ENABLE_UAMQP
   TEST_P(ConsumerClientTest, StolenReceiverFailsWithoutARebuild_LIVEONLY_)
   {
-    Azure::Messaging::EventHubs::ConsumerClientOptions options;
-    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
-    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    // The two receivers need their own client. CreatePartitionClient gives every partition client
+    // the one link name in ConsumerClientOptions::Name, and the consumer client keeps one session
+    // for each partition id. Two partition clients on the same partition from one consumer client
+    // therefore attach two links with the same name on one session. The service answers the first
+    // attach only, and the second receiver then waits for ever. A second client models the real
+    // case too, because a steal comes from another consumer.
+    Azure::Messaging::EventHubs::ConsumerClientOptions firstClientOptions;
+    firstClientOptions.ApplicationID
+        = testing::UnitTest::GetInstance()->current_test_info()->name();
+    firstClientOptions.Name = "first-receiver";
     // Keep the budget large. A rebuild loop would then take far longer than the bound below,
     // so the elapsed time proves that no rebuild happened.
-    options.RetryOptions.MaxRetries = 10;
-    options.RetryOptions.RetryDelay = std::chrono::seconds(2);
+    firstClientOptions.RetryOptions.MaxRetries = 10;
+    firstClientOptions.RetryOptions.RetryDelay = std::chrono::seconds(2);
+    auto firstConsumer = CreateConsumerClient("", firstClientOptions);
 
-    auto client = CreateConsumerClient("", options);
+    Azure::Messaging::EventHubs::ConsumerClientOptions secondClientOptions;
+    secondClientOptions.ApplicationID
+        = testing::UnitTest::GetInstance()->current_test_info()->name();
+    secondClientOptions.Name = "second-receiver";
+    auto secondConsumer = CreateConsumerClient("", secondClientOptions);
 
     // ReceiveEvents blocks until it holds the count that the caller asked for, so a partition
-    // with no event holds this test for ever. SetUp sends one event to partition 1 in the live
-    // mode, so the partition holds at least one event. Bound each read anyway, because a test
-    // that hangs takes the whole live pass with it. The bound is far above the time that a
-    // read of one event needs, so it fails only on a real stall. The uAMQP transport honours
-    // this deadline. The Rust transport does not cancel a receive yet, so it can still hang.
-    Azure::Core::Context readTimeout{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    // with no event holds this test for ever. Bound each read, because a test that hangs takes
+    // the whole live pass with it. The bound is far above the time that a read of one event
+    // needs, so it fails only on a real stall. The uAMQP transport honours this deadline. The
+    // Rust transport does not cancel a receive yet, so it can still hang.
+    //
+    // Each read gets its own deadline. A deadline is an absolute time, so one context that the
+    // test shares across the three reads gives the later reads less time than the first one, and
+    // it cancels a read once the total elapsed time passes that one deadline.
+    auto readTimeout = []() {
+      return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    };
 
+    // Both receivers start at the latest position, so neither one holds a backlog. A receiver
+    // that starts at the earliest position prefetches the events that the partition already
+    // holds, and ReceiveEvents then answers from that buffer without a read on the link. The last
+    // read below must go to the link, so it must find an empty buffer.
     Azure::Messaging::EventHubs::PartitionClientOptions firstOptions;
-    firstOptions.StartPosition.Earliest = true;
-    firstOptions.StartPosition.Inclusive = true;
+    firstOptions.StartPosition.Latest = true;
     firstOptions.OwnerLevel = 1;
     Azure::Messaging::EventHubs::PartitionClient firstClient
-        = client->CreatePartitionClient("1", firstOptions);
+        = firstConsumer->CreatePartitionClient("1", firstOptions);
 
-    // Make sure that the first receiver works before the steal.
-    EXPECT_NO_THROW(firstClient.ReceiveEvents(1, readTimeout));
+    // Make sure that the first receiver works before the steal. The receiver attaches inside
+    // CreatePartitionClient, so an event that this test sends now lands after that position.
+    SendOneEventToPartitionOne("Before the steal");
+    EXPECT_NO_THROW(firstClient.ReceiveEvents(1, readTimeout()));
 
     Azure::Messaging::EventHubs::PartitionClientOptions secondOptions;
-    secondOptions.StartPosition.Earliest = true;
-    secondOptions.StartPosition.Inclusive = true;
+    secondOptions.StartPosition.Latest = true;
     secondOptions.OwnerLevel = 2;
     Azure::Messaging::EventHubs::PartitionClient secondClient
-        = client->CreatePartitionClient("1", secondOptions);
-    EXPECT_NO_THROW(secondClient.ReceiveEvents(1, readTimeout));
+        = secondConsumer->CreatePartitionClient("1", secondOptions);
 
+    // The service takes the partition from the lower owner level and detaches that link. It does
+    // this after it answers the attach of the new owner, so give it time.
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    // The first receiver holds no event now, and this test sends no event until the read below
+    // ends. So the read must go to the link, and the link is gone.
     auto startTime = std::chrono::steady_clock::now();
     try
     {
-      firstClient.ReceiveEvents(1, readTimeout);
+      firstClient.ReceiveEvents(1, readTimeout());
       FAIL() << "The stolen receiver must throw.";
     }
     catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
@@ -406,7 +450,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       // Ten rebuild attempts with a two second base delay take far more than 30 seconds.
       EXPECT_LT(elapsed, std::chrono::seconds(30));
     }
+
+    // Make sure that the new owner still has the partition.
+    SendOneEventToPartitionOne("After the steal");
+    EXPECT_NO_THROW(secondClient.ReceiveEvents(1, readTimeout()));
   }
+#endif // ENABLE_UAMQP
 
   // The Event Hubs service detaches a link that sends nothing and receives nothing for 30
   // minutes, and it keeps the connection open. Source: the Event Hubs AMQP troubleshooting
