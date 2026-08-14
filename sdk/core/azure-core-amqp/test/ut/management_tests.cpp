@@ -298,6 +298,48 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif
   }
 
+  // A close that fails must leave the management client closed. Before the correction, the client
+  // kept its open flag, and the destructor of the client stopped the process.
+  // See https://github.com/Azure/azure-sdk-for-cpp/issues/7323.
+  TEST_F(TestManagement, ManagementCloseWithCancelledContext)
+  {
+#if !defined(USE_NATIVE_BROKER)
+    MessageTests::MockServiceEndpointOptions managementEndpointOptions;
+    managementEndpointOptions.EnableTrace = true;
+    auto endpoint = std::make_shared<ManagementServiceEndpoint>(managementEndpointOptions);
+    m_mockServer.AddServiceEndpoint(endpoint);
+
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
+
+    {
+      ManagementClientOptions options;
+      options.EnableTrace = 1;
+      ManagementClient management(session.CreateManagementClient("Test", options));
+
+      StartServerListening();
+
+      auto openResult = management.Open();
+      EXPECT_EQ(openResult, ManagementOpenStatus::Ok);
+
+      Azure::Core::Context cancelledContext;
+      cancelledContext.Cancel();
+
+      // The close closes the message sender first. That close waits for the detach on the
+      // cancelled context, so it throws, and the client gives that first exception to the caller.
+      // The client must still go to the closed state, which the destructor below tests.
+      EXPECT_THROW(management.Close(cancelledContext), Azure::Core::OperationCancelledException);
+
+      // The management client is destroyed here. The destructor must not stop the process.
+    }
+
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+#else
+#endif
+  }
+
   TEST_F(TestManagement, ManagementOpenCloseAuthenticated)
   {
 #if !defined(USE_NATIVE_BROKER)

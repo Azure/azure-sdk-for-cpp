@@ -174,12 +174,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
+      // Even if the detach fails, the sender is closed. A sender that failed to detach is not
+      // usable again, and a sender that keeps the open flag stops the process in its destructor.
+      m_senderOpen = false;
+
       if (amqpmessagesender_detach_and_release(
               callContext.GetCallContext(), m_messageSender.release()))
       {
         throw std::runtime_error("Could not close Message Sender: " + callContext.GetError());
       }
-      m_senderOpen = false;
     }
     else
     {

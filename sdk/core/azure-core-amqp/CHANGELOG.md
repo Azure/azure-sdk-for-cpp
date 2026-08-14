@@ -10,6 +10,8 @@
 
 ### Bugs Fixed
 
+- A close that fails now leaves the object closed. `ManagementClient`, `MessageSender`, and `MessageReceiver` kept the open flag when the close threw, and the destructor then stopped the process. [[#7323]](https://github.com/Azure/azure-sdk-for-cpp/issues/7323)
+
 ### Other Changes
 
 ## 1.0.0-beta.12 (2026-05-14)

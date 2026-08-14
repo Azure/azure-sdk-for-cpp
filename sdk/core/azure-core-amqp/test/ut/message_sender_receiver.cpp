@@ -354,6 +354,198 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_NO_THROW(CloseAmqpConnection(connection));
   }
 
+  // A close that fails must leave the message receiver closed. Before the correction, the receiver
+  // kept its open flag, and the destructor of the receiver stopped the process.
+  // See https://github.com/Azure/azure-sdk-for-cpp/issues/7323.
+  TEST_F(TestMessageSendReceive, ReceiverCloseWithCancelledContext)
+  {
+    auto connection{
+        CreateAmqpConnection(testing::UnitTest::GetInstance()->current_test_info()->name(), true)};
+    auto session{CreateAmqpSession(connection, {})};
+
+#if !defined(USE_NATIVE_BROKER)
+    // The mock server must attach the link. Without a service endpoint, the peer never sends the
+    // attach, the receiver stays below the Open state, and the close returns without a look at the
+    // context.
+    class ReceiverLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      ReceiverLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+      virtual ~ReceiverLinkEndpoint() = default;
+
+    private:
+      void MessageReceived(
+          std::string const& linkName,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
+      }
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto receiverEndpoint
+        = std::make_shared<ReceiverLinkEndpoint>("MyTarget", mockServiceEndpointOptions);
+    m_mockServer.AddServiceEndpoint(receiverEndpoint);
+#endif
+
+    StartServerListening();
+    {
+#if ENABLE_UAMQP
+      class ReceiverEvents : public MessageReceiverEvents {
+      public:
+        Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<MessageReceiverState>
+            StateChangeQueue;
+
+      private:
+        void OnMessageReceiverStateChanged(
+            MessageReceiver const& receiver,
+            MessageReceiverState newState,
+            MessageReceiverState oldState) override
+        {
+          GTEST_LOG_(INFO) << "Message receiver state changed: " << oldState << " -> " << newState;
+          (void)receiver;
+          (void)oldState;
+          StateChangeQueue.CompleteOperation(newState);
+        }
+
+        Models::AmqpValue OnMessageReceived(
+            MessageReceiver const&,
+            std::shared_ptr<Models::AmqpMessage> const&) override
+        {
+          return Models::AmqpValue();
+        }
+
+        void OnMessageReceiverDisconnected(
+            MessageReceiver const&,
+            Models::_internal::AmqpError const& error) override
+        {
+          GTEST_LOG_(INFO) << "Message receiver disconnected: " << error;
+        }
+      };
+      ReceiverEvents receiverEvents;
+#endif
+
+      MessageReceiverOptions options;
+      options.Name = "Test Receiver";
+      // The mock server builds its message sender from this target, so the target needs an
+      // address.
+      options.MessageTarget = "MyReceiverTarget";
+      MessageReceiver receiver(session.CreateMessageReceiver(
+          "MyTarget",
+          options
+#if ENABLE_UAMQP
+          ,
+          &receiverEvents
+#endif
+          ));
+
+      EXPECT_NO_THROW(receiver.Open());
+
+#if ENABLE_UAMQP
+      // Wait until the receiver reaches the Open state. The close waits on the context only when
+      // the receiver is in the Open state or in the Closing state.
+      Azure::Core::Context waitContext{Azure::DateTime::clock::now() + std::chrono::seconds(30)};
+      MessageReceiverState currentState{MessageReceiverState::Idle};
+      while (currentState != MessageReceiverState::Open)
+      {
+        auto stateChange = receiverEvents.StateChangeQueue.WaitForResult(waitContext);
+        ASSERT_TRUE(stateChange) << "The message receiver did not reach the Open state.";
+        currentState = std::get<0>(*stateChange);
+      }
+#endif
+
+      Azure::Core::Context cancelledContext;
+      cancelledContext.Cancel();
+
+#if ENABLE_UAMQP
+      // The uAMQP close waits for the detach on the context. The cancelled context makes that wait
+      // fail, so the close throws. The receiver must still go to the closed state, which the
+      // destructor below tests.
+      EXPECT_THROW(receiver.Close(cancelledContext), Azure::Core::OperationCancelledException);
+#else
+      // The Rust transport does not wait on the context during the close, so the close succeeds.
+      EXPECT_NO_THROW(receiver.Close(cancelledContext));
+#endif
+
+      // The message receiver is destroyed here. The destructor must not stop the process.
+    }
+
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+
+  // A close that fails must leave the message sender closed. Before the correction, the sender kept
+  // its open flag, and the destructor of the sender stopped the process. The sender also kept the
+  // async operation on the connection, and the destructor of the connection stopped the process.
+  // See https://github.com/Azure/azure-sdk-for-cpp/issues/7323.
+  TEST_F(TestMessageSendReceive, SenderCloseWithCancelledContext)
+  {
+    auto connection{
+        CreateAmqpConnection(testing::UnitTest::GetInstance()->current_test_info()->name(), true)};
+    auto session{CreateAmqpSession(connection, {})};
+
+#if !defined(USE_NATIVE_BROKER)
+    class SenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      SenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+      virtual ~SenderLinkEndpoint() = default;
+
+    private:
+      void MessageReceived(
+          std::string const& linkName,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
+      }
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint
+        = std::make_shared<SenderLinkEndpoint>("MyTarget", mockServiceEndpointOptions);
+    m_mockServer.AddServiceEndpoint(senderEndpoint);
+#endif
+
+    StartServerListening();
+    {
+      MessageSenderOptions options;
+      options.MessageSource = "MySource";
+
+      MessageSender sender(session.CreateMessageSender("MyTarget", options));
+      EXPECT_FALSE(sender.Open());
+
+      Azure::Core::Context cancelledContext;
+      cancelledContext.Cancel();
+
+#if ENABLE_UAMQP
+      // The uAMQP close waits for the detach on the context. The cancelled context makes that wait
+      // fail, so the close throws. The sender must still go to the closed state, which the
+      // destructor below tests.
+      EXPECT_THROW(sender.Close(cancelledContext), Azure::Core::OperationCancelledException);
+#else
+      // The Rust transport does not wait on the context during the close, so the close succeeds.
+      EXPECT_NO_THROW(sender.Close(cancelledContext));
+#endif
+
+      // The message sender is destroyed here. The destructor must not stop the process.
+    }
+
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+
 #if ENABLE_UAMQP
 #if !defined(USE_NATIVE_BROKER)
   TEST_F(TestMessageSendReceive, TestLocalhostVsTls)

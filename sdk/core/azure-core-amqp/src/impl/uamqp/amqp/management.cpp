@@ -11,6 +11,7 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -280,13 +281,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     SetState(ManagementState::Closing);
+
+    // Close the message sender and the message receiver, even if one of the two closes fails. An
+    // object that stays open stops the process in its own destructor. Keep the first exception and
+    // give it to the caller after both objects are closed.
+    std::exception_ptr firstException;
+
     if (m_messageSender && m_messageSenderOpen)
     {
       if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Sender" << std::endl;
       }
-      m_messageSender->Close(context);
+      try
+      {
+        m_messageSender->Close(context);
+      }
+      catch (...)
+      {
+        firstException = std::current_exception();
+      }
       m_messageSenderOpen = false;
     }
     if (m_messageReceiver && m_messageReceiverOpen)
@@ -295,10 +309,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Receiver" << std::endl;
       }
-      m_messageReceiver->Close(context);
+      try
+      {
+        m_messageReceiver->Close(context);
+      }
+      catch (...)
+      {
+        if (!firstException)
+        {
+          firstException = std::current_exception();
+        }
+      }
       m_messageReceiverOpen = false;
     }
+
+    // The management client is closed, even if a close failed. An object that failed to detach is
+    // not usable again.
     m_isOpen = false;
+
+    if (firstException)
+    {
+      std::rethrow_exception(firstException);
+    }
   }
 
   void ManagementClientImpl::OnMessageSenderStateChanged(
