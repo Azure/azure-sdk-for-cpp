@@ -563,7 +563,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           GetEnv("EVENTHUBS_HOST"), GetEventHubName(), credential, options};
 
       ASSERT_NO_THROW(client.Send(MakeTestEvent('4')));
-      EXPECT_GE(WaitForTokenCount(credential, 2, std::chrono::seconds(90)), 2);
+
+      // Wait for a refresh, and not for a count. The open authenticates the
+      // management audience and the sender audience, so a fixed gate of two
+      // passes on the open alone, before the refresh thread does anything.
+      // Count what the open and the send made, then wait for one more. The
+      // close below must then happen while the refresh thread runs, which is
+      // what this test is for.
+      auto const countAfterFirstSend = credential->GetTokenCount();
+      ASSERT_GT(
+          WaitForTokenCount(credential, countAfterFirstSend + 1, std::chrono::seconds(90)),
+          countAfterFirstSend)
+          << "The refresh thread made no token, so this test never reached the case it covers.";
 
       auto const closeStart = std::chrono::steady_clock::now();
       client.Close();
