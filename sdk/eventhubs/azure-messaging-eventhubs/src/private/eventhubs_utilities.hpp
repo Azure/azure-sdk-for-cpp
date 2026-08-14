@@ -86,6 +86,33 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition);
   };
 
+  /**
+   * @brief Decide whether a receive fault permits a new attach.
+   *
+   * A transient condition means that the service or the network dropped the link, so a new
+   * attach can succeed. An empty condition means that the transport gave no detail, and an
+   * attach attempt is then the only test that we have. Any other condition, for example
+   * `amqp:link:stolen` or `amqp:unauthorized-access`, describes a state that a new attach
+   * cannot correct, so the caller must report the error instead.
+   */
+  inline bool ShouldRebuildReceiver(EventHubsException const& exception)
+  {
+    return exception.IsTransient || exception.ErrorCondition.empty();
+  }
+
+  /**
+   * @brief Decide whether a send fault makes the cached sender unusable.
+   *
+   * The service rejects a transfer that is larger than the negotiated limit, and it keeps the
+   * link attached. So the cached sender stays valid for that one condition. Every other
+   * failure can mean a link, a session, or a connection that is gone, and the caller must
+   * build a new one for its next attempt.
+   */
+  inline bool ShouldInvalidateSender(EventHubsException const& exception)
+  {
+    return exception.ErrorCondition != "amqp:link:message-size-exceeded";
+  }
+
   class EventDataBatchFactory final {
   public:
     static EventDataBatch CreateEventDataBatch(EventDataBatchOptions const& options);
