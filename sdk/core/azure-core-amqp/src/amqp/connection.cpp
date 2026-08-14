@@ -169,7 +169,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       catch (...)
       {
         // Ensure that the claims based security object is closed before we leave this scope.
-        claimsBasedSecurity->Close(context);
+        //
+        // Keep the exception that brought us here. A close that throws in this
+        // handler replaces that exception, and the caller then reads a close
+        // failure in place of the authentication failure that caused it. Issue
+        // #7323 makes a close that fails leave the object closed, so this
+        // handler does not need the exception to keep the object safe.
+        try
+        {
+          claimsBasedSecurity->Close(context);
+        }
+        catch (...)
+        {
+        }
         throw;
       }
     }
