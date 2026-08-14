@@ -3,19 +3,25 @@
 
 #pragma once
 
+#include "../../../../amqp/private/token_refresh.hpp"
 #include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/network/transport.hpp"
 
+#include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/url.hpp>
 
 #include <azure_uamqp_c/connection.h>
 
 #include <chrono>
+#include <condition_variable>
+#include <map>
 #include <memory>
+#include <mutex>
 #include <string>
+#include <thread>
 
 #if defined(_MSC_VER)
 #define _azure_ACQUIRES_LOCK(...) _Acquires_exclusive_lock_(__VA_ARGS__)
@@ -132,6 +138,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audience,
         Azure::Core::Context const& context);
 
+    // Stop the token refresh thread. This is safe to call more than once, and
+    // the connection calls it from Close and from the destructor.
+    void StopTokenRefresh();
+
     using LockType = std::recursive_mutex;
 
     _azure_ACQUIRES_LOCK(m_amqpMutex) std::unique_lock<LockType> Lock()
@@ -159,10 +169,55 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_connectionOpened = false;
     std::atomic<uint32_t> m_openCount{0};
 
-    // mutex protecting the token acquisition process.
-    std::mutex m_tokenMutex;
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
-    std::map<std::string, Credentials::AccessToken> m_tokenStore;
+
+    // The token mutex, the token cache, and the stop protocol for the refresh
+    // thread. The connection and the refresh thread both own this block, so the
+    // thread finds it alive even after the connection is destroyed. See
+    // TokenRefreshState.
+    std::shared_ptr<TokenRefreshState> m_tokenState{std::make_shared<TokenRefreshState>()};
+
+    // Serializes the CBS operation itself. uAMQP names the CBS links after the
+    // node, so every claims based security object on this connection attaches a
+    // link called "$cbs-sender" and one called "$cbs-receiver". AMQP 1.0 section
+    // 2.6.1 requires a link name to be unique for one direction between two
+    // containers, so only one of these objects may exist at a time. The refresh
+    // thread does its work without the token mutex, so this mutex is what keeps
+    // the refresh and a caller apart.
+    //
+    // Lock order: a caller takes the token mutex and then this mutex. The
+    // refresh thread takes this mutex only while it does not hold the token
+    // mutex.
+    std::mutex m_cbsMutex;
+
+    // The thread that replaces each cached token before the token expires.
+    std::thread m_tokenRefreshThread;
+    // Cancelled on shutdown, to stop a CBS operation that is in flight.
+    //
+    // This context is single use by design. StopTokenRefresh cancels it, and a
+    // cancelled Azure::Core::Context never goes back. Cancel writes the minimum
+    // time into the shared state, and every child that WithDeadline makes keeps
+    // the earliest deadline on the chain, so each child is cancelled at birth.
+    // A connection that refreshes again needs a new context object, not this
+    // one. See StartTokenRefresh.
+    Azure::Core::Context m_tokenRefreshContext;
+
+    void StartTokenRefresh();
+
+    // The body of the refresh thread. This is a static function on purpose. The
+    // thread can outlive the connection, so it must be able to finish without a
+    // live `this`. It uses `connection` only while the shared state says the
+    // connection is alive.
+    static void TokenRefreshThread(
+        ConnectionImpl* connection,
+        std::shared_ptr<TokenRefreshState> state);
+
+    // Replace the token for one audience. Return true when the caller must stop
+    // at once, because this call can have destroyed the connection.
+    bool RefreshTokenForAudience(
+        TokenRefreshState& state,
+        std::string const& audienceUrl,
+        std::unique_lock<std::mutex>& lock);
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

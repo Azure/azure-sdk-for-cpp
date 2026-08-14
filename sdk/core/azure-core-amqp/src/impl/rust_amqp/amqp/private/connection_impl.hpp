@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../../../amqp/private/token_refresh.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/network/transport.hpp"
@@ -153,10 +154,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_connectionOpened{false};
     std::atomic<uint32_t> m_openCount{0};
 
-    // mutex protecting the token acquisition process.
-    std::mutex m_tokenMutex;
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
-    std::map<std::string, Credentials::AccessToken> m_tokenStore;
+
+    // The token mutex and the token cache. The Rust stack has no refresh
+    // thread, so nothing else shares this block here.
+    std::shared_ptr<TokenRefreshState> m_tokenState{std::make_shared<TokenRefreshState>()};
 
 #if ENABLE_UAMQP
     ConnectionImpl(

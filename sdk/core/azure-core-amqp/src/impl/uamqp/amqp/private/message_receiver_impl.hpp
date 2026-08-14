@@ -108,5 +108,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     void CreateLink();
     void CreateLink(_internal::LinkEndpoint& endpoint);
     void PopulateLinkProperties();
+
+    /** @brief Release the link and the async operation on the connection, then mark the receiver
+     * as closed.
+     *
+     * Close() calls this on every path, including the paths that throw. A receiver that keeps the
+     * async operation on the connection stops the process in ~ConnectionImpl, and a receiver that
+     * keeps the open flag stops the process in ~MessageReceiverImpl.
+     */
+    void CompleteClose() noexcept;
   };
 }}}} // namespace Azure::Core::Amqp::_detail

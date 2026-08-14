@@ -140,11 +140,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
+    // Even if the detach fails, the management client is closed. A client that failed to detach is
+    // not usable again, and a client that keeps the open flag stops the process in its destructor.
+    m_isOpen = false;
+
     if (amqpmanagement_detach_and_release(callContext.GetCallContext(), m_management.release()))
     {
       throw std::runtime_error("Could not close management client: " + callContext.GetError());
     }
-    m_isOpen = false;
     Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close completed." << std::endl;
   }
 

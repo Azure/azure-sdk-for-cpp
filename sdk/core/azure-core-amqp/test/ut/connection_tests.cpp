@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../../src/amqp/private/token_refresh.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
 #include "azure/core/amqp/internal/message_receiver.hpp"
@@ -17,8 +18,12 @@
 #include <azure/core/context.hpp>
 #include <azure/core/platform.hpp>
 
+#include <chrono>
 #include <functional>
+#include <memory>
+#include <mutex>
 #include <random>
+#include <stdexcept>
 
 #include <gtest/gtest.h>
 
@@ -30,6 +35,303 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     void SetUp() override {}
     void TearDown() override {}
   };
+
+  // Tests for the rules that decide when a cached CBS token is still good, and
+  // when the connection must replace it. These rules are pure functions, so they
+  // run on every platform and need no service.
+  class TestTokenRefresh : public testing::Test {
+  protected:
+    static Azure::Core::Credentials::AccessToken TokenExpiringIn(std::chrono::seconds lifetime)
+    {
+      Azure::Core::Credentials::AccessToken token;
+      token.Token = "TestToken";
+      token.ExpiresOn = std::chrono::system_clock::now() + lifetime;
+      return token;
+    }
+  };
+
+  TEST_F(TestTokenRefresh, CachedTokenIsUsableWhileItHasLifeLeft)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::hours(1)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::minutes(2)), now));
+  }
+
+  TEST_F(TestTokenRefresh, CachedTokenIsNotUsableNearOrAfterExpiry)
+  {
+    auto const now = std::chrono::system_clock::now();
+    // Inside the minimum lifetime that a caller may use.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::seconds(10)), now));
+    // Already expired.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(
+        TokenExpiringIn(std::chrono::seconds(-30)), now));
+  }
+
+  TEST_F(TestTokenRefresh, RefreshIsDueOneBufferBeforeExpiry)
+  {
+    auto const now = std::chrono::system_clock::now();
+    // A normal token has a long life, so no refresh is due yet.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+        TokenExpiringIn(std::chrono::minutes(90)), now));
+    // Inside the buffer, so the refresh thread must replace the token.
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(
+        TokenExpiringIn(std::chrono::minutes(6)), now));
+  }
+
+  // A credential can put any value in ExpiresOn, and the cast from
+  // Azure::DateTime to a system clock time point throws outside the range of
+  // that clock. A default constructed ExpiresOn is year 1. These rules run on
+  // the refresh thread, where an exception would end the process, so they must
+  // not throw for any value.
+  TEST_F(TestTokenRefresh, ExtremeExpiryValuesDoNotThrow)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    // A default constructed token reports year 1.
+    Azure::Core::Credentials::AccessToken defaultToken;
+    EXPECT_NO_THROW({
+      EXPECT_FALSE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(defaultToken, now));
+      EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(defaultToken, now));
+    });
+
+    // A token that reports a year past the range of the system clock.
+    Azure::Core::Credentials::AccessToken farFutureToken;
+    farFutureToken.Token = "TestToken";
+    farFutureToken.ExpiresOn = Azure::DateTime(9999, 12, 31);
+    EXPECT_NO_THROW({
+      EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(farFutureToken, now));
+      EXPECT_FALSE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(farFutureToken, now));
+    });
+  }
+
+  // A token with a lifetime shorter than the buffer is due as soon as it
+  // arrives. The connection must still hand it to a caller, because refusing it
+  // would make every call authenticate again.
+  TEST_F(TestTokenRefresh, ShortLivedTokenIsDueButStillUsable)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const token = TokenExpiringIn(std::chrono::seconds(80));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(token, now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::IsCachedTokenUsable(token, now));
+  }
+
+  // A refresh that fails must keep a token that still works. A sender that is
+  // already open never authenticates again, so a token that goes away here
+  // never comes back, and the link dies at the expiry.
+  TEST_F(TestTokenRefresh, AFailedRefreshKeepsATokenThatStillWorks)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::minutes(6)), now));
+    // A token inside the refresh buffer is due, and it still works.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(80)), now));
+  }
+
+  // A token with no life left cannot help a caller, and it cannot save a link
+  // that the service already dropped. The next link open must authenticate the
+  // audience again.
+  TEST_F(TestTokenRefresh, AFailedRefreshDropsATokenWithNoLifeLeft)
+  {
+    auto const now = std::chrono::system_clock::now();
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(10)), now));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(
+        TokenExpiringIn(std::chrono::seconds(-30)), now));
+
+    // A default token reports year 1, and the cast must not throw.
+    Azure::Core::Credentials::AccessToken defaultToken;
+    EXPECT_NO_THROW(EXPECT_TRUE(
+        Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(defaultToken, now)));
+  }
+
+  // The state that the connection shares with the refresh thread.
+  TEST_F(TestTokenRefresh, TheSharedStateStartsEmptyAndRuns)
+  {
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    EXPECT_FALSE(state.Stop);
+    EXPECT_TRUE(state.TokenStore.empty());
+    EXPECT_TRUE(state.TokenSessions.empty());
+  }
+
+  // The refresh thread co-owns the state block, so the block stays alive after
+  // the connection that made it is gone. That is what lets the thread come back
+  // from a release that destroyed the connection, take the mutex, and read the
+  // stop flag.
+  TEST_F(TestTokenRefresh, TheSharedStateOutlivesTheOwnerThatMadeIt)
+  {
+    std::weak_ptr<Azure::Core::Amqp::_detail::TokenRefreshState> observer;
+    std::shared_ptr<Azure::Core::Amqp::_detail::TokenRefreshState> threadCopy;
+    {
+      auto connectionCopy = std::make_shared<Azure::Core::Amqp::_detail::TokenRefreshState>();
+      observer = connectionCopy;
+      threadCopy = connectionCopy;
+    }
+    ASSERT_FALSE(observer.expired());
+
+    // The owner is gone, so this stands for the connection destructor setting
+    // the stop flag before it detaches the thread.
+    {
+      std::unique_lock<std::mutex> lock(threadCopy->Mutex);
+      threadCopy->Stop = true;
+    }
+    EXPECT_TRUE(threadCopy->Stop);
+
+    threadCopy.reset();
+    EXPECT_TRUE(observer.expired());
+  }
+
+  // Tests for ReleaseOutsideLock, the hold that the refresh thread puts the
+  // promoted session in. The session can be the last reference to the
+  // connection, and the connection destructor takes the token mutex, so the
+  // hold must always drop the pointer with that mutex free.
+  class TestReleaseOutsideLock : public testing::Test {
+  protected:
+    // Records the state of the lock at the moment it is destroyed.
+    class LockObserver final {
+    public:
+      LockObserver(std::unique_lock<std::mutex>& lock, bool& destroyed, bool& lockWasHeld)
+          : m_lock{lock}, m_destroyed{destroyed}, m_lockWasHeld{lockWasHeld}
+      {
+      }
+
+      ~LockObserver()
+      {
+        m_destroyed = true;
+        m_lockWasHeld = m_lock.owns_lock();
+      }
+
+    private:
+      std::unique_lock<std::mutex>& m_lock;
+      bool& m_destroyed;
+      bool& m_lockWasHeld;
+    };
+
+    std::mutex m_mutex;
+    bool m_destroyed{false};
+    bool m_lockWasHeld{true};
+
+    std::shared_ptr<LockObserver> MakeObserver(std::unique_lock<std::mutex>& lock)
+    {
+      return std::make_shared<LockObserver>(lock, m_destroyed, m_lockWasHeld);
+    }
+  };
+
+  TEST_F(TestReleaseOutsideLock, ReleaseDropsThePointerWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      EXPECT_TRUE(lock.owns_lock());
+      EXPECT_FALSE(m_destroyed);
+      hold.Release();
+      EXPECT_TRUE(m_destroyed);
+    }
+    EXPECT_FALSE(m_lockWasHeld);
+    // The lock is back in the state the caller left it in.
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The early return in the refresh path leaves the scope with the lock held
+  // and the session still in the hold. The destructor must give up the lock for
+  // that release too, or it locks a mutex this thread already holds.
+  TEST_F(TestReleaseOutsideLock, TheDestructorAlsoReleasesWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      EXPECT_FALSE(m_destroyed);
+    }
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // An exception on the refresh path must not leave the release under the lock
+  // either.
+  TEST_F(TestReleaseOutsideLock, AnExceptionStillReleasesWithTheLockFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    bool caught{false};
+    try
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      throw std::runtime_error("the refresh failed");
+    }
+    catch (std::runtime_error const&)
+    {
+      caught = true;
+    }
+    EXPECT_TRUE(caught);
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The refresh path releases on the normal path and then leaves the scope, so
+  // the pointer is released once and the second call does nothing.
+  TEST_F(TestReleaseOutsideLock, ASecondReleaseDoesNothing)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+    hold.Release();
+    EXPECT_EQ(nullptr, hold.Get());
+
+    m_destroyed = false;
+    hold.Release();
+    EXPECT_FALSE(m_destroyed);
+    EXPECT_TRUE(lock.owns_lock());
+  }
+
+  // The refresh path gives up the token mutex for the network work. A release
+  // that happens then must leave the lock free, not take it.
+  TEST_F(TestReleaseOutsideLock, AFreeLockStaysFree)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    lock.unlock();
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{MakeObserver(lock), lock};
+      hold.Release();
+    }
+    EXPECT_TRUE(m_destroyed);
+    EXPECT_FALSE(m_lockWasHeld);
+    EXPECT_FALSE(lock.owns_lock());
+  }
+
+  // The hold keeps the pointer usable for the whole refresh, and it does not
+  // destroy an object that another owner still holds.
+  TEST_F(TestReleaseOutsideLock, TheHoldKeepsThePointerAndSharesIt)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    auto observer = MakeObserver(lock);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{observer, lock};
+      EXPECT_EQ(observer.get(), hold.Get().get());
+      hold.Release();
+      // This test still owns the object, so the release did not destroy it.
+      EXPECT_FALSE(m_destroyed);
+    }
+    EXPECT_FALSE(m_destroyed);
+    observer.reset();
+    EXPECT_TRUE(m_destroyed);
+  }
+
+  // An empty hold is what the refresh path never builds, but the class must not
+  // touch the lock for one.
+  TEST_F(TestReleaseOutsideLock, AnEmptyHoldLeavesTheLockAlone)
+  {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    {
+      Azure::Core::Amqp::_detail::ReleaseOutsideLock<LockObserver> hold{nullptr, lock};
+      hold.Release();
+      EXPECT_TRUE(lock.owns_lock());
+    }
+    EXPECT_TRUE(lock.owns_lock());
+    EXPECT_FALSE(m_destroyed);
+  }
 
 #if !defined(AZ_PLATFORM_MAC)
   TEST_F(TestConnections, SimpleConnection)

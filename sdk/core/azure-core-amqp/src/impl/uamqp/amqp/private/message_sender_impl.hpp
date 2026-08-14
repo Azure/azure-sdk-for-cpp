@@ -74,6 +74,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Context const& context);
     void OnLinkDetached(Models::_internal::AmqpError const& error);
 
+    /** @brief Release the link and the async operation on the connection, then mark the sender as
+     * closed.
+     *
+     * Close() calls this on every path, including the paths that throw. A sender that keeps the
+     * async operation on the connection stops the process in ~ConnectionImpl, and a sender that
+     * keeps the open flag stops the process in ~MessageSenderImpl.
+     */
+    void CompleteClose() noexcept;
+
     bool m_senderOpen{false};
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;

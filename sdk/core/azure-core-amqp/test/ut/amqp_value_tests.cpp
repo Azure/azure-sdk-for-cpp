@@ -7,6 +7,7 @@
 #include <azure/core/amqp/internal/common/global_state.hpp>
 
 #include <algorithm>
+#include <array>
 #include <random>
 
 #include <gtest/gtest.h>
@@ -561,6 +562,93 @@ TEST_F(TestValues, TestDescribed)
     AmqpDescribed described2{456, {"StringValue"}};
     EXPECT_NE(described1, described2);
   }
+}
+
+TEST_F(TestValues, ValueTypeOstreamInserter)
+{
+  // Invalid and Unknown are the two types that no AmqpValue can hold, so the other tests never
+  // reach them. The inserter still has to name them, because it reports the type of a value that
+  // the peer sent.
+  {
+    std::stringstream ss;
+    ss << AmqpValueType::Invalid;
+    EXPECT_EQ("Invalid", ss.str());
+  }
+  {
+    std::stringstream ss;
+    ss << AmqpValueType::Unknown;
+    EXPECT_EQ("Unknown", ss.str());
+  }
+}
+
+// AmqpValue is the key type of AmqpMap, so its ordering must work for every value type, and not
+// only for the scalar types.
+TEST_F(TestValues, ValueOrdering)
+{
+  // Values of different types order by the numeric order of AmqpValueType. Null comes before Int.
+  EXPECT_LT(AmqpValue{}, AmqpValue{5});
+  EXPECT_FALSE(AmqpValue{5} < AmqpValue{});
+
+  // Two null values are equal, so neither one is less than the other.
+  EXPECT_FALSE(AmqpValue{} < AmqpValue{});
+
+  {
+    AmqpValue smaller{U'a'};
+    AmqpValue larger{U'b'};
+    EXPECT_LT(smaller, larger);
+    EXPECT_FALSE(larger < smaller);
+  }
+  {
+    AmqpValue earlier{AmqpTimestamp{std::chrono::milliseconds{1000}}.AsAmqpValue()};
+    AmqpValue later{AmqpTimestamp{std::chrono::milliseconds{2000}}.AsAmqpValue()};
+    EXPECT_LT(earlier, later);
+    EXPECT_FALSE(later < earlier);
+  }
+  {
+    std::array<uint8_t, 16> smallerBytes{};
+    std::array<uint8_t, 16> largerBytes{};
+    largerBytes[0] = 1;
+    AmqpValue smaller{Azure::Core::Uuid::CreateFromArray(smallerBytes)};
+    AmqpValue larger{Azure::Core::Uuid::CreateFromArray(largerBytes)};
+    EXPECT_LT(smaller, larger);
+    EXPECT_FALSE(larger < smaller);
+  }
+  {
+    // Described values with the same descriptor order by their value.
+    AmqpDescribed smaller{AmqpSymbol{"descriptor"}, 1};
+    AmqpDescribed larger{AmqpSymbol{"descriptor"}, 2};
+    EXPECT_LT(smaller.AsAmqpValue(), larger.AsAmqpValue());
+    EXPECT_FALSE(larger.AsAmqpValue() < smaller.AsAmqpValue());
+  }
+  {
+    // Composite values order by their fields.
+    AmqpComposite smaller("composite", {1});
+    AmqpComposite larger("composite", {2});
+    EXPECT_LT(smaller.AsAmqpValue(), larger.AsAmqpValue());
+    EXPECT_FALSE(larger.AsAmqpValue() < smaller.AsAmqpValue());
+  }
+}
+
+TEST_F(TestValues, CompositeAndDescribedEquality)
+{
+  // The underlying amqpvalue_are_equal does not handle composite or described values, so
+  // AmqpValue::operator== unwraps them and compares the unwrapped values.
+  {
+    AmqpComposite composite1("composite", {25, 25.0f});
+    AmqpComposite composite2("composite", {25, 25.0f});
+    AmqpComposite composite3("composite", {26, 25.0f});
+    EXPECT_EQ(composite1.AsAmqpValue(), composite2.AsAmqpValue());
+    EXPECT_NE(composite1.AsAmqpValue(), composite3.AsAmqpValue());
+  }
+  {
+    AmqpDescribed described1{AmqpSymbol{"descriptor"}, 25};
+    AmqpDescribed described2{AmqpSymbol{"descriptor"}, 25};
+    AmqpDescribed described3{AmqpSymbol{"descriptor"}, 26};
+    EXPECT_EQ(described1.AsAmqpValue(), described2.AsAmqpValue());
+    EXPECT_NE(described1.AsAmqpValue(), described3.AsAmqpValue());
+  }
+  // Values of different types are never equal, even when they read the same.
+  EXPECT_NE(AmqpValue{5}, AmqpValue{"5"});
 }
 
 class TestValueSerialization : public testing::Test {

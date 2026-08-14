@@ -381,59 +381,78 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     if (m_senderOpen)
     {
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
-      }
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
-          m_link); // This will ensure that the link is cleaned up on the next poll()
-      bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
-          || m_currentState == _internal::MessageSenderState::Open;
-
+      // The teardown must run on every path, because a close that fails leaves the sender
+      // unusable. CompleteClose() does the teardown. The caller gets the exception after the
+      // teardown.
+      try
       {
         if (m_options.EnableTrace)
         {
-          Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+          Log::Stream(Logger::Level::Verbose) << "Closing message sender.";
         }
+        Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
+            m_link); // This will ensure that the link is cleaned up on the next poll()
+        bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
+            || m_currentState == _internal::MessageSenderState::Open;
 
-        auto lock{m_session->GetConnection()->Lock()};
-
-        if (messagesender_close(m_messageSender.get()))
         {
-          throw std::runtime_error("Could not close message sender");
-        }
-      }
-      // The message sender (and it's underlying link) is in the half open state. Wait until the
-      // link has fully closed.
-      if (shouldWaitForClose)
-      {
-        if (m_options.EnableTrace)
-        {
-          Log::Stream(Logger::Level::Verbose)
-              << "Wait for sender detach to complete. Current state: " << m_currentState;
-        }
-
-        auto result = m_closeQueue.WaitForResult(context);
-        if (!result)
-        {
-          throw Azure::Core::OperationCancelledException(
-              "Message sender close operation cancelled.");
-        }
-        if (std::get<0>(*result))
-        {
-          auto rv = std::move(std::get<0>(*result));
-          if (rv)
+          if (m_options.EnableTrace)
           {
-            throw std::runtime_error(
-                "Message sender close operation failed: " + rv.Condition.ToString()
-                + " description: " + rv.Description);
+            Log::Stream(Logger::Level::Verbose) << "Lock for Closing message sender.";
+          }
+
+          auto lock{m_session->GetConnection()->Lock()};
+
+          if (messagesender_close(m_messageSender.get()))
+          {
+            throw std::runtime_error("Could not close message sender");
+          }
+        }
+        // The message sender (and it's underlying link) is in the half open state. Wait until the
+        // link has fully closed.
+        if (shouldWaitForClose)
+        {
+          if (m_options.EnableTrace)
+          {
+            Log::Stream(Logger::Level::Verbose)
+                << "Wait for sender detach to complete. Current state: " << m_currentState;
+          }
+
+          auto result = m_closeQueue.WaitForResult(context);
+          if (!result)
+          {
+            throw Azure::Core::OperationCancelledException(
+                "Message sender close operation cancelled.");
+          }
+          if (std::get<0>(*result))
+          {
+            auto rv = std::move(std::get<0>(*result));
+            if (rv)
+            {
+              throw std::runtime_error(
+                  "Message sender close operation failed: " + rv.Condition.ToString()
+                  + " description: " + rv.Description);
+            }
           }
         }
       }
-
+      catch (...)
       {
-        auto lock{m_session->GetConnection()->Lock()};
+        CompleteClose();
+        throw;
+      }
 
+      CompleteClose();
+    }
+  }
+
+  void MessageSenderImpl::CompleteClose() noexcept
+  {
+    {
+      auto lock{m_session->GetConnection()->Lock()};
+
+      if (m_link)
+      {
         if (m_options.EnableTrace)
 
         {
@@ -446,10 +465,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         // Now that the connection is closed, the link is no longer needed. This will free the link
         m_link.reset();
       }
-      m_session->GetConnection()->EnableAsyncOperation(false);
-
-      m_senderOpen = false;
     }
+    m_session->GetConnection()->EnableAsyncOperation(false);
+
+    m_senderOpen = false;
   }
 
   void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)

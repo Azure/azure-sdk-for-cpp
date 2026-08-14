@@ -5,6 +5,8 @@
 #include <azure/core/amqp/internal/models/message_target.hpp>
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
 
+#include <utility>
+
 #include <gtest/gtest.h>
 
 class TestSourceTarget : public testing::Test {
@@ -269,6 +271,31 @@ TEST_F(TestSourceTarget, TargetThroughValue)
 
   MessageTarget target2(value);
   EXPECT_EQ(target.GetAddress(), target2.GetAddress());
+}
+
+TEST_F(TestSourceTarget, TargetAssignment)
+{
+  {
+    MessageTarget target{"address2"};
+    {
+      MessageTarget other{"address1"};
+      target = other;
+    }
+    // Copy assignment copies the implementation, so the assigned object stays valid after the
+    // original goes out of scope.
+    EXPECT_EQ(AmqpValue{"address1"}, target.GetAddress());
+  }
+  {
+    MessageTarget target{"address1"};
+    MessageTarget moved{std::move(target)};
+    EXPECT_EQ(AmqpValue{"address1"}, moved.GetAddress());
+  }
+  {
+    MessageTarget target{"address2"};
+    MessageTarget other{"address1"};
+    target = std::move(other);
+    EXPECT_EQ(AmqpValue{"address1"}, target.GetAddress());
+  }
 }
 
 MessageSource ReturnsSource() { return MessageSource(); }
@@ -537,3 +564,57 @@ TEST_F(TestSourceTarget, SourceProperties)
     EXPECT_EQ(source.GetAddress(), source2.GetAddress());
   }
 }
+
+TEST_F(TestSourceTarget, SourceAssignment)
+{
+  {
+    MessageSource source{"address2"};
+    {
+      MessageSource other{"address1"};
+      source = other;
+    }
+    // Copy assignment copies the implementation, so the assigned object stays valid after the
+    // original goes out of scope.
+    EXPECT_EQ(AmqpValue{"address1"}, source.GetAddress());
+  }
+  {
+    MessageSource source{"address1"};
+    MessageSource moved{std::move(source)};
+    EXPECT_EQ(AmqpValue{"address1"}, moved.GetAddress());
+  }
+  {
+    MessageSource source{"address2"};
+    MessageSource other{"address1"};
+    source = std::move(other);
+    EXPECT_EQ(AmqpValue{"address1"}, source.GetAddress());
+  }
+}
+
+// uAMQP accepts any value as the default outcome. The Rust stack accepts only the four delivery
+// outcomes that the AMQP spec names, so the round trip and the two error cases below are specific
+// to that stack.
+#if ENABLE_RUST_AMQP
+TEST_F(TestSourceTarget, SourceDefaultOutcome)
+{
+  for (auto const& outcome :
+       {"amqp:accepted:list", "amqp:rejected:list", "amqp:released:list", "amqp:modified:list"})
+  {
+    MessageSourceOptions options;
+    options.DefaultOutcome = AmqpSymbol{outcome};
+    MessageSource source(options);
+    EXPECT_EQ(source.GetDefaultOutcome(), AmqpSymbol{outcome});
+  }
+  {
+    // A default outcome that is a string, and not a symbol, is rejected.
+    MessageSourceOptions options;
+    options.DefaultOutcome = AmqpValue{"amqp:accepted:list"};
+    EXPECT_ANY_THROW(MessageSource source(options));
+  }
+  {
+    // A symbol that names no delivery outcome is rejected.
+    MessageSourceOptions options;
+    options.DefaultOutcome = AmqpSymbol{"amqp:unknown:list"};
+    EXPECT_ANY_THROW(MessageSource source(options));
+  }
+}
+#endif

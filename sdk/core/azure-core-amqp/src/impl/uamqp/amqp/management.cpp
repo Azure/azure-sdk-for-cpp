@@ -11,6 +11,7 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -166,10 +167,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     try
     {
       // If the connection is authenticated, include the token in the message.
+      //
+      // Get the token again for each operation. The token that Open put in
+      // m_accessToken expires, and a management client lives for the life of the
+      // client that owns it. AuthenticateAudience returns the cached token and
+      // only goes to the service near the expiry. Give it the audience that Open
+      // gave it, so both calls use the same cache entry.
+      //
+      // Keep the "$management" test that set m_accessToken. The claims based
+      // security client uses the node name "$cbs", so its token stays empty and
+      // it does not come here. That is necessary: AuthenticateAudience holds the
+      // token mutex across the claims based security put, and that put uses a
+      // claims based security client.
+      //
+      // Do not put the new token in m_accessToken. This function runs on more
+      // than one thread and that member has no lock.
       if (!m_accessToken.Token.empty())
       {
+        auto accessToken{m_session->GetConnection()->AuthenticateAudience(
+            m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context)};
         messageToSend.ApplicationProperties["security_token"]
-            = Models::AmqpValue{m_accessToken.Token};
+            = Models::AmqpValue{accessToken.Token};
       }
       messageToSend.ApplicationProperties.emplace("operation", operationToPerform);
       messageToSend.ApplicationProperties.emplace("type", typeOfOperation);
@@ -280,13 +298,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
 
     SetState(ManagementState::Closing);
+
+    // Close the message sender and the message receiver, even if one of the two closes fails. An
+    // object that stays open stops the process in its own destructor. Keep the first exception and
+    // give it to the caller after both objects are closed.
+    std::exception_ptr firstException;
+
     if (m_messageSender && m_messageSenderOpen)
     {
       if (m_options.EnableTrace)
       {
         Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Sender" << std::endl;
       }
-      m_messageSender->Close(context);
+      try
+      {
+        m_messageSender->Close(context);
+      }
+      catch (...)
+      {
+        firstException = std::current_exception();
+      }
       m_messageSenderOpen = false;
     }
     if (m_messageReceiver && m_messageReceiverOpen)
@@ -295,10 +326,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "ManagementClient::Close Receiver" << std::endl;
       }
-      m_messageReceiver->Close(context);
+      try
+      {
+        m_messageReceiver->Close(context);
+      }
+      catch (...)
+      {
+        if (!firstException)
+        {
+          firstException = std::current_exception();
+        }
+      }
       m_messageReceiverOpen = false;
     }
+
+    // The management client is closed, even if a close failed. An object that failed to detach is
+    // not usable again.
     m_isOpen = false;
+
+    if (firstException)
+    {
+      std::rethrow_exception(firstException);
+    }
   }
 
   void ManagementClientImpl::OnMessageSenderStateChanged(

@@ -148,6 +148,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   ConnectionImpl::~ConnectionImpl()
   {
+    // Stop the refresh thread first. It uses this connection, so it must not be
+    // running while the connection is torn down.
+    StopTokenRefresh();
+
     std::unique_lock<LockType> lock(m_amqpMutex);
     if (m_openCount.load() != 0)
     {
@@ -435,6 +439,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::logic_error("Connection not opened.");
     }
 
+    // Stop the refresh thread before polling stops, because a CBS operation
+    // needs the connection to poll.
+    StopTokenRefresh();
+
     // Stop polling on this connection, we're shutting it down.
     EnableAsyncOperation(false);
 
@@ -462,6 +470,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::logic_error("Connection not opened.");
     }
+
+    // Stop the refresh thread before polling stops, because a CBS operation
+    // needs the connection to poll.
+    StopTokenRefresh();
 
     // Stop polling on this connection, we're shutting it down.
     EnableAsyncOperation(false);
