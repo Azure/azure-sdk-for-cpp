@@ -7,6 +7,7 @@
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
@@ -408,6 +409,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   // This test waits longer than the documented interval, so one run takes over half an hour.
   TEST_P(ConsumerClientTest, ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_)
   {
+    // The live pipeline gives the whole test binary 120 minutes. See LiveTestTimeoutInMinutes in
+    // sdk/eventhubs/ci.yml. The 35 minute wait below takes too much of that budget, so this test
+    // is not part of the standard live pass. The test is correct, and you must ask for it.
+    if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
+            .empty())
+    {
+      GTEST_SKIP() << "Set EVENTHUBS_ENABLE_IDLE_DETACH_TESTS to run this test. The test sleeps "
+                      "for 35 minutes, and the live pipeline gives all of the tests 120 minutes.";
+    }
+
     // The documented idle detach is 30 minutes. Wait past it with a margin.
     constexpr std::chrono::minutes idleWait{35};
 
