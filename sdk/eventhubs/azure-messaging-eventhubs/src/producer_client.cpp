@@ -127,24 +127,56 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto const& partitionId = eventDataBatch.GetPartitionId();
     if (!retryOp.Execute(
             [&]() -> bool {
-              auto result = GetSender(partitionId).Send(message, context);
+              // Build the sender at the start of every attempt. A previous attempt that
+              // failed discarded the old one, so this call rebuilds the link, and it also
+              // rebuilds the session and the connection when they are gone. A cached sender
+              // that the service detached can never succeed, so an attempt against it wastes
+              // the retry budget.
+              EnsureSender(partitionId, context);
+              try
+              {
+                auto result = GetSender(partitionId).Send(message, context);
 #if ENABLE_UAMQP
-              auto sendStatus = std::get<0>(result);
-              if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-              {
-                return true;
-              }
-              // Throw an exception about the error we just received.
-              throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                  CreateEventHubsException(std::get<1>(result));
-#elif ENABLE_RUST_AMQP
-              if (result)
-              {
+                auto sendStatus = std::get<0>(result);
+                if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+                {
+                  return true;
+                }
+                // Throw an exception about the error we just received.
                 throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                    CreateEventHubsException(result);
-              }
-              return true;
+                    CreateEventHubsException(std::get<1>(result));
+#elif ENABLE_RUST_AMQP
+                if (result)
+                {
+                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                      CreateEventHubsException(result);
+                }
+                return true;
 #endif
+              }
+              catch (Azure::Core::OperationCancelledException const&)
+              {
+                // The caller cancelled the context. The link is still good, so keep it.
+                throw;
+              }
+              catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+              {
+                if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
+                {
+                  InvalidateSender(partitionId, context);
+                }
+                throw;
+              }
+              catch (std::exception const&)
+              {
+                // The Rust transport reports a dead sender with a std::runtime_error, so
+                // this handler is the one that starts its rebuild.
+                if (!context.IsCancelled())
+                {
+                  InvalidateSender(partitionId, context);
+                }
+                throw;
+              }
             },
             context))
     {
@@ -279,7 +311,95 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
       std::string const& partitionId)
   {
+    // InvalidateSender erases from this map, so this read takes the lock that protects it.
+    std::unique_lock<std::mutex> lock(m_sendersLock);
     return m_senders.at(partitionId);
+  }
+
+  void ProducerClient::InvalidateSender(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
+  {
+    Log::Stream(Logger::Level::Informational)
+        << "Discard the sender stack for partition '"
+        << (partitionId.empty() ? std::string("<gateway>") : partitionId) << "'." << std::endl;
+
+    // Take each lock in turn, and never hold two at one time. A close on a link that the
+    // service already detached throws the detach error, and that is the usual case here, so
+    // each close runs in its own try block and the teardown continues.
+    {
+      std::unique_lock<std::mutex> lock(m_sendersLock);
+      auto sender = m_senders.find(partitionId);
+      if (sender != m_senders.end())
+      {
+        try
+        {
+          sender->second.Close(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing a faulted message sender: " << ex.what() << std::endl;
+        }
+        m_senders.erase(sender);
+      }
+    }
+
+    {
+      std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
+      auto session = m_sessions.find(partitionId);
+      if (session != m_sessions.end())
+      {
+#if ENABLE_RUST_AMQP
+        try
+        {
+          session->second.End(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while ending a faulted session: " << ex.what() << std::endl;
+        }
+#endif
+        m_sessions.erase(session);
+      }
+
+      auto connection = m_connections.find(partitionId);
+      if (connection != m_connections.end())
+      {
+#if ENABLE_RUST_AMQP
+        try
+        {
+          connection->second.Close(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing a faulted connection: " << ex.what() << std::endl;
+        }
+#endif
+        m_connections.erase(connection);
+      }
+    }
+
+    // The properties client shares the gateway connection, so it dies with that connection.
+    if (partitionId.empty())
+    {
+      std::unique_lock<std::mutex> lock(m_propertiesClientLock);
+      if (m_propertiesClient)
+      {
+        try
+        {
+          m_propertiesClient->Close(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing the properties client: " << ex.what() << std::endl;
+        }
+        m_propertiesClient.reset();
+      }
+    }
   }
 
   Azure::Core::Amqp::_internal::Session ProducerClient::CreateSession(

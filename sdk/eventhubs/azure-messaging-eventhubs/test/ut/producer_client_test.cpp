@@ -767,6 +767,38 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 #endif // ENABLE_UAMQP
 
+  // The Event Hubs service detaches a link that sends nothing and receives nothing for 30
+  // minutes, and it keeps the connection open. Source: the Event Hubs AMQP troubleshooting
+  // document. Before this change, ProducerClient cached one sender for the life of the
+  // client, so the second send below failed and every later send failed with it.
+  //
+  // This test waits longer than the documented interval, so one run takes over half an hour.
+  TEST_P(ProducerClientTest, SendSurvivesAnIdleDetach_LIVEONLY_)
+  {
+    // The documented idle detach is 30 minutes. Wait past it with a margin.
+    constexpr std::chrono::minutes idleWait{35};
+
+    auto client = CreateProducerClient();
+
+    EventDataBatchOptions batchOptions;
+    batchOptions.PartitionId = "1";
+
+    EventDataBatch firstBatch{client->CreateBatch(batchOptions)};
+    EXPECT_TRUE(firstBatch.TryAdd(Models::EventData{"Before the idle period"}));
+    ASSERT_NO_THROW(client->Send(firstBatch));
+
+    GTEST_LOG_(INFO) << "Wait " << idleWait.count()
+                     << " minutes, so that the service detaches the sender link.";
+    std::this_thread::sleep_for(idleWait);
+
+    // The same client, with no restart. Send rebuilds the sender inside its retry loop.
+    EventDataBatch secondBatch{client->CreateBatch(batchOptions)};
+    EXPECT_TRUE(secondBatch.TryAdd(Models::EventData{"After the idle period"}));
+    EXPECT_NO_THROW(client->Send(secondBatch));
+
+    client->Close();
+  }
+
   namespace {
     static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
     {

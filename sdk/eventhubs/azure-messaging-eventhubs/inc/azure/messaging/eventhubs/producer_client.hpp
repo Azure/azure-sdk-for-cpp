@@ -235,6 +235,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
+    // Discard the sender, the session, and the connection for the specified partition, so
+    // that the next call to EnsureSender builds new ones. A failed send can mean a link, a
+    // session, or a connection that is gone, and this layer cannot tell which one it is. A
+    // new link also authenticates its audience again, which gives it a current CBS token.
+    void InvalidateSender(std::string const& partitionId, Azure::Core::Context const& context);
+
     std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
         Azure::Core::Context const& context);
 
