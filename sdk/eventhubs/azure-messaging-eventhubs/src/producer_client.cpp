@@ -566,6 +566,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_propertiesClientLock);
+    // Hold the sessions lock from the ensure call through the lookup below. A teardown of
+    // the gateway stack erases m_connections[""] under this lock, so a lookup outside it
+    // races the erase, and a lookup between the two steps can miss and throw
+    // std::out_of_range. The lock is recursive, so the ensure call can take it again. The
+    // teardown path releases this lock before it takes m_propertiesClientLock, so the two
+    // locks never form a cycle.
+    std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
     EnsureConnection({}, context);
     if (!m_propertiesClient)
     {
