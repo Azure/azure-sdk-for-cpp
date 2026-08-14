@@ -121,12 +121,53 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
     {
+      // Read the peer max message size, and rebuild the stack once when that read fails.
+      //
+      // EnsureSender tests whether the map holds a sender, and nothing else. A sender that
+      // the service detached during an idle period stays in that map, so the call above
+      // returns it and tears nothing down. The peer max message size lives on the attached
+      // link, so this read is the first call that touches the dead link. On uAMQP it throws
+      // "Could not get peer max message size." from link.cpp. A live test that waited past
+      // the 30 minute idle detach failed here, which left the whole producer path broken
+      // after an idle period even with the rebuild inside Send.
+      //
       // The shared lock keeps a teardown away while this call uses the cached sender.
       // Without it, InvalidateSender can free the sender under this call on the Rust
-      // transport. The sender copy stays inside the lock scope.
-      auto& guard = GetPartitionGuard(options.PartitionId);
-      std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
-      optionsToUse.MaxBytes = GetSender(options.PartitionId).GetMaxMessageSize();
+      // transport. The sender copy stays inside the lock scope, and the lock is released
+      // before InvalidateSender, which needs the same lock exclusive.
+      auto readMaxMessageSize = [&](std::uint64_t& observedGeneration) -> std::uint64_t {
+        auto& guard = GetPartitionGuard(options.PartitionId);
+        std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+        observedGeneration = guard.generation.load();
+        return GetSender(options.PartitionId).GetMaxMessageSize();
+      };
+
+      std::uint64_t observedGeneration = 0;
+      try
+      {
+        optionsToUse.MaxBytes = readMaxMessageSize(observedGeneration);
+      }
+      catch (Azure::Core::OperationCancelledException const&)
+      {
+        throw;
+      }
+      catch (std::exception const& ex)
+      {
+        if (context.IsCancelled())
+        {
+          throw;
+        }
+        Log::Stream(Logger::Level::Warning)
+            << "Could not read the maximum message size from the cached sender for partition '"
+            << (options.PartitionId.empty() ? std::string("<gateway>") : options.PartitionId)
+            << "'. Discard the stack and build it again: " << ex.what() << std::endl;
+        InvalidateSender(options.PartitionId, observedGeneration, context);
+        EnsureSenderOrInvalidate(options.PartitionId, context);
+        // One rebuild is enough. A second failure is not a stale link, so it goes to the
+        // caller.
+        std::uint64_t rebuiltGeneration = 0;
+        optionsToUse.MaxBytes = readMaxMessageSize(rebuiltGeneration);
+      }
     }
 
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
