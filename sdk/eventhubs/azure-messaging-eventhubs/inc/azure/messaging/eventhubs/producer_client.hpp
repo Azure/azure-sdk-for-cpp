@@ -12,8 +12,13 @@
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/nullable.hpp>
 
+#include <atomic>
+#include <cstdint>
 #include <iostream>
+#include <mutex>
+#include <shared_mutex>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
@@ -212,13 +217,37 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_propertiesClientLock;
     std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
+    // Protects m_sessions and m_connections. EnsureConnection, CreateSession, and
+    // InvalidateSender all touch m_connections under this lock.
     std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-    // Protects m_senders and m_connection.
+    // Protects m_senders.
     std::mutex m_sendersLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+
+    // One guard for each partition id. A send holds stackLock shared while it uses the
+    // cached sender, so sends to one partition run at the same time. A teardown holds
+    // stackLock exclusive while it removes the cached stack from the maps, so it waits
+    // for the sends in flight and never closes an object that a send still uses. The
+    // generation increases each time the cached stack for the partition changes, in
+    // EnsureSender and in InvalidateSender. A teardown whose caller saw an older
+    // generation is a no-op, so a thread with an old failure cannot remove a stack
+    // that another thread rebuilt after that failure.
+    struct PartitionGuard
+    {
+      std::shared_timed_mutex stackLock;
+      std::atomic<std::uint64_t> generation{0};
+    };
+
+    // Protects m_partitionGuards. Entries live for the life of the client and map
+    // references stay stable across inserts, so a caller can keep the reference that
+    // GetPartitionGuard returns after this lock is gone.
+    std::mutex m_partitionGuardsLock;
+    std::map<std::string, PartitionGuard> m_partitionGuards;
+
+    PartitionGuard& GetPartitionGuard(std::string const& partitionId);
 
     Azure::Core::Amqp::_internal::Connection CreateConnection(
         Azure::Core::Context const& context) const;
@@ -252,7 +281,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // that the next call to EnsureSender builds new ones. A failed send can mean a link, a
     // session, or a connection that is gone, and this layer cannot tell which one it is. A
     // new link also authenticates its audience again, which gives it a current CBS token.
-    void InvalidateSender(std::string const& partitionId, Azure::Core::Context const& context);
+    //
+    // The caller passes the generation it saw when its operation failed. When the cached
+    // stack changed after that, this call does nothing, because the current stack is not
+    // the one that failed. A caller with no generation, such as Close, removes whatever
+    // is present. The removal runs under the partition guard and both map locks, so a
+    // rebuild cannot attach a new sender to the old session in the middle of it. The
+    // network closes run after every lock is released.
+    void InvalidateSender(
+        std::string const& partitionId,
+        Azure::Nullable<std::uint64_t> observedGeneration,
+        Azure::Core::Context const& context);
 
     std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
         Azure::Core::Context const& context);

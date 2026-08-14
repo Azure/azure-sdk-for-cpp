@@ -14,7 +14,10 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <algorithm>
+#include <memory>
 #include <stdexcept>
+#include <vector>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -75,28 +78,35 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_propertiesClient.reset();
       }
     }
-    Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
-    for (auto& sender : m_senders)
+    // Collect the partition ids under the map locks, and then tear each stack down
+    // through the same guarded path that a failed send uses. Each teardown waits for
+    // the sends in flight on its partition, so this close cannot free a sender that a
+    // send still uses. A null generation makes each teardown unconditional.
+    std::vector<std::string> partitionIds;
     {
-      sender.second.Close(context);
+      std::lock_guard<std::mutex> lock(m_sendersLock);
+      for (auto const& sender : m_senders)
+      {
+        partitionIds.push_back(sender.first);
+      }
     }
-    m_senders.clear();
-
-#if ENABLE_RUST_AMQP
-    Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
-    for (auto& session : m_sessions)
     {
-      session.second.End(context);
+      std::lock_guard<std::recursive_mutex> lock(m_sessionsLock);
+      for (auto const& session : m_sessions)
+      {
+        partitionIds.push_back(session.first);
+      }
+      for (auto const& connection : m_connections)
+      {
+        partitionIds.push_back(connection.first);
+      }
     }
-    Log::Stream(Logger::Level::Verbose) << "Closing connections.";
-    for (auto& connection : m_connections)
+    std::sort(partitionIds.begin(), partitionIds.end());
+    partitionIds.erase(std::unique(partitionIds.begin(), partitionIds.end()), partitionIds.end());
+    for (auto const& partitionId : partitionIds)
     {
-      connection.second.Close(context);
+      InvalidateSender(partitionId, {}, context);
     }
-#endif
-    // Remove all the sessions and connections after they've been closed.
-    m_sessions.clear();
-    m_connections.clear();
   }
 
   EventDataBatch ProducerClient::CreateBatch(
@@ -108,11 +118,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // first, which makes this path as important as the retry loop in Send.
     EnsureSenderOrInvalidate(options.PartitionId, context);
 
-    auto messageSender = GetSender(options.PartitionId);
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
     {
-      optionsToUse.MaxBytes = messageSender.GetMaxMessageSize();
+      // The shared lock keeps a teardown away while this call uses the cached sender.
+      // Without it, InvalidateSender can free the sender under this call on the Rust
+      // transport. The sender copy stays inside the lock scope.
+      auto& guard = GetPartitionGuard(options.PartitionId);
+      std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+      optionsToUse.MaxBytes = GetSender(options.PartitionId).GetMaxMessageSize();
     }
 
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
@@ -140,9 +154,26 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               // attach that failed left no sender for the handlers below to discard, and it
               // needs the session and the connection discarded instead.
               EnsureSenderOrInvalidate(partitionId, context);
+              // The generation of the stack that this attempt uses. It feeds the
+              // InvalidateSender calls below, which skip the teardown when the stack
+              // changed after this attempt captured the value. Zero never matches a
+              // partition that ever cached a sender, so a failure before the capture
+              // tears nothing down.
+              std::uint64_t observedGeneration = 0;
+              auto& guard = GetPartitionGuard(partitionId);
               try
               {
-                auto result = GetSender(partitionId).Send(message, context);
+                // The shared lock keeps a teardown away while this attempt uses the
+                // cached sender. Sends that share the partition also hold the lock
+                // shared, so they run at the same time. The sender copy stays inside
+                // the lock scope, so no use of it escapes the guard.
+                std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+                auto sender = GetSender(partitionId);
+                // Read the generation after the sender lookup. A removal cannot run
+                // while this thread holds the shared lock, so this value belongs to
+                // the stack that the lookup returned.
+                observedGeneration = guard.generation.load();
+                auto result = sender.Send(message, context);
 #if ENABLE_UAMQP
                 auto sendStatus = std::get<0>(result);
                 if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
@@ -170,7 +201,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               {
                 if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
                 {
-                  InvalidateSender(partitionId, context);
+                  InvalidateSender(partitionId, observedGeneration, context);
                 }
                 throw;
               }
@@ -180,7 +211,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                 // this handler is the one that starts its rebuild.
                 if (!context.IsCancelled())
                 {
-                  InvalidateSender(partitionId, context);
+                  InvalidateSender(partitionId, observedGeneration, context);
                 }
                 throw;
               }
@@ -313,12 +344,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             CreateEventHubsException(openResult);
       }
       m_senders.emplace(partitionId, std::move(sender));
+      // A new stack is now current. The bump separates it from the stack before it, so
+      // a teardown for a failure on the old stack skips this one. The bump runs under
+      // m_sendersLock, so a lookup that finds this sender also sees the new generation.
+      GetPartitionGuard(partitionId).generation.fetch_add(1);
     }
   }
   void ProducerClient::EnsureSenderOrInvalidate(
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
+    // Capture the generation before the attach. When the attach fails, the handler
+    // below removes the stack that the attach ran on. When another thread replaced
+    // that stack between this capture and the attach, the generation differs, the
+    // teardown skips, and the retry pays one more attach. That direction is safe; a
+    // capture after the throw could remove a stack that another thread just rebuilt.
+    auto const observedGeneration = GetPartitionGuard(partitionId).generation.load();
     try
     {
       EnsureSender(partitionId, context);
@@ -345,7 +386,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // credential failure, which the next call pays.
       if (!context.IsCancelled())
       {
-        InvalidateSender(partitionId, context);
+        InvalidateSender(partitionId, observedGeneration, context);
       }
       throw;
     }
@@ -359,71 +400,117 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return m_senders.at(partitionId);
   }
 
+  ProducerClient::PartitionGuard& ProducerClient::GetPartitionGuard(std::string const& partitionId)
+  {
+    std::lock_guard<std::mutex> lock(m_partitionGuardsLock);
+    return m_partitionGuards[partitionId];
+  }
+
   void ProducerClient::InvalidateSender(
       std::string const& partitionId,
+      Azure::Nullable<std::uint64_t> observedGeneration,
       Azure::Core::Context const& context)
   {
-    Log::Stream(Logger::Level::Informational)
-        << "Discard the sender stack for partition '"
-        << (partitionId.empty() ? std::string("<gateway>") : partitionId) << "'." << std::endl;
+    std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> sender;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Session> session;
+    std::unique_ptr<Azure::Core::Amqp::_internal::Connection> connection;
 
-    // Take each lock in turn, and never hold two at one time. A close on a link that the
-    // service already detached throws the detach error, and that is the usual case here, so
+    {
+      // The exclusive lock waits for the sends in flight on this partition and blocks
+      // new ones. Only map operations run under it, so the block is short. The map
+      // locks nest in the order that EnsureSender uses, and holding both makes the
+      // removal one step: a rebuild cannot attach a new sender to the old session
+      // between the sender removal and the session removal.
+      auto& guard = GetPartitionGuard(partitionId);
+      std::unique_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+      if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
+      {
+        // Another thread already removed the stack that the caller saw fail, and a new
+        // stack can be in place. That stack is not at fault, so keep it.
+        Log::Stream(Logger::Level::Informational)
+            << "Skip the teardown for partition '"
+            << (partitionId.empty() ? std::string("<gateway>") : partitionId)
+            << "': the cached stack changed." << std::endl;
+        return;
+      }
+
+      Log::Stream(Logger::Level::Informational)
+          << "Discard the sender stack for partition '"
+          << (partitionId.empty() ? std::string("<gateway>") : partitionId) << "'." << std::endl;
+
+      std::lock_guard<std::mutex> sendersLock(m_sendersLock);
+      std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
+      auto senderIterator = m_senders.find(partitionId);
+      if (senderIterator != m_senders.end())
+      {
+        sender.reset(
+            new Azure::Core::Amqp::_internal::MessageSender(std::move(senderIterator->second)));
+        m_senders.erase(senderIterator);
+      }
+      auto sessionIterator = m_sessions.find(partitionId);
+      if (sessionIterator != m_sessions.end())
+      {
+        session.reset(
+            new Azure::Core::Amqp::_internal::Session(std::move(sessionIterator->second)));
+        m_sessions.erase(sessionIterator);
+      }
+      auto connectionIterator = m_connections.find(partitionId);
+      if (connectionIterator != m_connections.end())
+      {
+        connection.reset(
+            new Azure::Core::Amqp::_internal::Connection(std::move(connectionIterator->second)));
+        m_connections.erase(connectionIterator);
+      }
+      if (sender || session || connection)
+      {
+        // The cached stack changed, so the old generation is no longer current.
+        guard.generation.fetch_add(1);
+      }
+    }
+
+    // The network closes run outside every lock, so no send waits on them. No other
+    // thread can reach these objects: the maps no longer hold them, and the exclusive
+    // lock above waited for every send in flight. A close on a link that the service
+    // already detached throws the detach error, and that is the usual case here, so
     // each close runs in its own try block and the teardown continues.
+    if (sender)
     {
-      std::unique_lock<std::mutex> lock(m_sendersLock);
-      auto sender = m_senders.find(partitionId);
-      if (sender != m_senders.end())
+      try
       {
-        try
-        {
-          sender->second.Close(context);
-        }
-        catch (std::exception const& ex)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Exception while closing a faulted message sender: " << ex.what() << std::endl;
-        }
-        m_senders.erase(sender);
+        sender->Close(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while closing a faulted message sender: " << ex.what() << std::endl;
       }
     }
-
+#if ENABLE_RUST_AMQP
+    if (session)
     {
-      std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
-      auto session = m_sessions.find(partitionId);
-      if (session != m_sessions.end())
+      try
       {
-#if ENABLE_RUST_AMQP
-        try
-        {
-          session->second.End(context);
-        }
-        catch (std::exception const& ex)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Exception while ending a faulted session: " << ex.what() << std::endl;
-        }
-#endif
-        m_sessions.erase(session);
+        session->End(context);
       }
-
-      auto connection = m_connections.find(partitionId);
-      if (connection != m_connections.end())
+      catch (std::exception const& ex)
       {
-#if ENABLE_RUST_AMQP
-        try
-        {
-          connection->second.Close(context);
-        }
-        catch (std::exception const& ex)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Exception while closing a faulted connection: " << ex.what() << std::endl;
-        }
-#endif
-        m_connections.erase(connection);
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while ending a faulted session: " << ex.what() << std::endl;
       }
     }
+    if (connection)
+    {
+      try
+      {
+        connection->Close(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while closing a faulted connection: " << ex.what() << std::endl;
+      }
+    }
+#endif
 
     // The properties client shares the gateway connection, so it dies with that connection.
     if (partitionId.empty())
