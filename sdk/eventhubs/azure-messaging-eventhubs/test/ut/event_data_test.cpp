@@ -214,7 +214,10 @@ TEST_F(EventDataTest, ReceivedEventData)
                                     .AsAmqpValue()]
         = 54644;
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    ASSERT_FALSE(receivedEventData.Offset); // Offset must be a string value, not a numeric value.
+    // The service can send the offset as an integer. A PartitionClient that rebuilds its
+    // receiver resumes from this value, so the client keeps it as a decimal string.
+    ASSERT_TRUE(receivedEventData.Offset);
+    EXPECT_EQ(receivedEventData.Offset.Value(), "54644");
     EXPECT_FALSE(receivedEventData.SequenceNumber);
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
@@ -247,6 +250,93 @@ TEST_F(EventDataTest, ReceivedEventData)
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
   }
+}
+
+namespace {
+// Build a message that carries one x-opt-offset annotation, and give back the offset that
+// ReceivedEventData reads from it.
+Azure::Nullable<std::string> OffsetFromAnnotation(
+    Azure::Core::Amqp::Models::AmqpValue const& annotationValue)
+{
+  std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
+      std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
+  message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+      Azure::Messaging::EventHubs::_detail::OffsetAnnotation}
+                                  .AsAmqpValue()]
+      = annotationValue;
+  Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+  return receivedEventData.Offset;
+}
+} // namespace
+
+// The Event Hubs service sends the offset as a string or as an integer of any width. A
+// PartitionClient that rebuilds its receiver resumes from this value, so an offset that the
+// client drops causes duplicate events or lost events. Make sure that every integer width
+// gives the same decimal string.
+TEST_F(EventDataTest, OffsetAnnotationAcceptsEveryIntegerWidth)
+{
+  {
+    auto offset{
+        OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint8_t>(12)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "12");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint16_t>(4096)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "4096");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint32_t>(4294967295u)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "4294967295");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{(std::numeric_limits<std::uint64_t>::max)()})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "18446744073709551615");
+  }
+  {
+    auto offset{
+        OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int8_t>(-12)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "-12");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int16_t>(-4096)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "-4096");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int32_t>(-2147483648LL)})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "-2147483648");
+  }
+  {
+    auto offset{OffsetFromAnnotation(
+        Azure::Core::Amqp::Models::AmqpValue{(std::numeric_limits<std::int64_t>::max)()})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "9223372036854775807");
+  }
+  {
+    // A string still passes through as it is.
+    auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"@latest"})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "@latest");
+  }
+}
+
+// A type that cannot be an offset leaves the offset empty, and it must not throw.
+TEST_F(EventDataTest, OffsetAnnotationIgnoresAnUnexpectedType)
+{
+  Azure::Nullable<std::string> offset;
+  EXPECT_NO_THROW(offset = OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{true}));
+  EXPECT_FALSE(offset);
 }
 
 // The Event Hubs service routes on the message annotations only. Make sure that the batch envelope
