@@ -6,12 +6,15 @@
 
 - [[#7250]](https://github.com/Azure/azure-sdk-for-cpp/issues/7250) Restored connection-string authentication for `ProducerClient` and `ConsumerClient`, including support for the Event Hubs emulator.
 - [[#7295]](https://github.com/Azure/azure-sdk-for-cpp/issues/7295) Connection-string authentication now works on the Rust AMQP backend. `ProducerClient` and `ConsumerClient` no longer throw when the caller passes a connection string.
+- [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) `ProducerClient::Send` now builds a new sender on each retry attempt. A failed attempt discards the sender, the session, and the connection for that partition, so the next attempt builds all three again and authenticates with a current token. A send that a link detach ended previously failed for the life of the client.
+- [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) `PartitionClient::ReceiveEvents` now attaches a new receiver after a link fault, and it starts after the last event that it gave the caller. So the caller sees no duplicate event and no lost event. A permanent condition, for example `amqp:link:stolen`, still reaches the caller at once. A call that already holds events gives them back and recovers on the next call.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 - [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) Updated producer retries to honor `EventHubsException::IsTransient`, treat empty AMQP error conditions as transient, stop immediately for unknown and known non-transient failures, preserve bounded retries for AMQP runtime failures, and make backoff cancellable through `Azure::Core::Context`. Retry accounting now always performs the initial attempt and treats `MaxRetries` as additional retry attempts.
+- [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) `ReceivedEventData::Offset` now holds an `x-opt-offset` annotation of any integer width, as a decimal string. The client accepted a string only, and it discarded every other type without a log. An empty offset removes the position that a rebuilt receiver starts from.
 - [[#7257]](https://github.com/Azure/azure-sdk-for-cpp/issues/7257) Fixed the partition key on a batch envelope. `EventDataBatch::ToAmqpMessage` wrote the `x-opt-partition-key` value to the AMQP delivery-annotations section. The Event Hubs service ignores that section. The batch also built the envelope from the message before the code applied the partition key annotation. A batch with a partition key thus spread across all partitions. The partition key now goes in the message-annotations section, on the batch envelope and on each message in the batch. A batch that sets `EventDataBatchOptions::PartitionKey` now lands on one partition.
 
 ### Other Changes
