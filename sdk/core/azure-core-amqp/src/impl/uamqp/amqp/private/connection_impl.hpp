@@ -193,6 +193,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // The thread that replaces each cached token before the token expires.
     std::thread m_tokenRefreshThread;
     // Cancelled on shutdown, to stop a CBS operation that is in flight.
+    //
+    // This context is single use by design. StopTokenRefresh cancels it, and a
+    // cancelled Azure::Core::Context never goes back. Cancel writes the minimum
+    // time into the shared state, and every child that WithDeadline makes keeps
+    // the earliest deadline on the chain, so each child is cancelled at birth.
+    // A connection that refreshes again needs a new context object, not this
+    // one. See StartTokenRefresh.
     Azure::Core::Context m_tokenRefreshContext;
 
     void StartTokenRefresh();

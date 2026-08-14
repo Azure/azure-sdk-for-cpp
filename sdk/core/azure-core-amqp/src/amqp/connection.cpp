@@ -328,8 +328,33 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // A thread that stopped on an error stays joinable, so this function does not
   // start a second one. That is deliberate. The connection then refreshes each
   // token when a caller uses it, which is the behavior the error log describes.
+  //
+  // The refresh runs at most one time for the life of a connection. Read the
+  // note on Stop below before you make it restart.
   void ConnectionImpl::StartTokenRefresh()
   {
+    // Stop is terminal. StopTokenRefresh sets it, and nothing clears it, so
+    // this function does nothing for the rest of the life of this connection.
+    // A caller then authenticates each audience on use, and the near expiry
+    // test in the cache keeps that correct.
+    //
+    // Do not make the refresh restart by clearing this flag. Stop is also the
+    // lifetime guard for a detached thread. StopTokenRefresh detaches when the
+    // refresh thread runs the call itself, and that thread reads Stop before it
+    // touches the raw connection pointer again. A clear on a connection that is
+    // gone gives undefined behavior, not a failed refresh.
+    //
+    // Two more members stay in their stopped state. m_tokenRefreshContext is
+    // cancelled and cannot go back, so every refresh would fail at once. The
+    // thread member is left not joinable, so the test below is not the guard
+    // that stops a second thread.
+    //
+    // A restart needs a new state block and a new context, which is a new
+    // connection. That is what the clients do. A closed connection is dead on
+    // both transports, so nothing here reopens one. Note that the token maps
+    // live through a close, so a closed connection answers from the cache until
+    // a token falls under MinimumTokenLifetimeToUse, and the full
+    // authentication after that fails because the connection no longer polls.
     if (m_tokenState->Stop)
     {
       return;
