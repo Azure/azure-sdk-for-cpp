@@ -201,6 +201,65 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
   }
 
+  // The refresh floor is the earliest time at which a refresh pass may do its
+  // work. A pass that finds due audiences before the floor must defer the work.
+  // The refresh thread uses this same function.
+  TEST_F(TestTokenRefresh, TheRefreshFloorDecidesWhetherAPassDefersItsWork)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    // The first pass of the thread. The floor starts at the smallest time
+    // point, so the first refresh runs at once.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, std::chrono::system_clock::time_point::min()));
+
+    // A floor that already passed. The pass runs.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, now - std::chrono::seconds(1)));
+
+    // A floor that is still in force. The pass defers the work.
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval));
+
+    // The boundary. A floor that is equal to now is spent, so the pass runs.
+    // The test pins this direction on purpose, because the other direction
+    // would defer the pass at the floor and start the wait again.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, now, now));
+
+    // A pass with nothing due has no work to defer. The floor makes no
+    // difference to it.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        false, now, now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        false, now, std::chrono::system_clock::time_point::min()));
+  }
+
+  // A token with a lifetime shorter than the refresh buffer is due on every
+  // scan. The floor must hold that token for the minimum interval and then let
+  // the refresh run. A floor that moved on a deferred pass would stay in the
+  // future, and the token would never get a refresh.
+  TEST_F(TestTokenRefresh, ADeferredPassRunsAtTheFloorForATokenThatIsAlwaysDue)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    // A token that expires inside the refresh buffer is due at once.
+    auto const shortLivedToken = TokenExpiringIn(std::chrono::seconds(80));
+    ASSERT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(shortLivedToken, now));
+
+    // The pass that refreshed this token set the floor one interval ahead.
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    // The thread wakes at once after that refresh, because its own write to the
+    // map changed the counter. This pass defers, and it sleeps to the floor.
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, now, refreshFloor));
+
+    // The pass at the floor sees the same floor, because a deferred pass moves
+    // nothing. The token is still due, and this pass refreshes it.
+    ASSERT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(shortLivedToken, refreshFloor));
+    EXPECT_FALSE(
+        Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, refreshFloor, refreshFloor));
+  }
+
   // The refresh thread co-owns the state block, so the block stays alive after
   // the connection that made it is gone. That is what lets the thread come back
   // from a release that destroyed the connection, take the mutex, and read the

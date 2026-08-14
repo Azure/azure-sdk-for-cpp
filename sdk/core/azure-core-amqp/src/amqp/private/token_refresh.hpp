@@ -167,6 +167,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return state.Stop || state.Generation != observed;
   }
 
+  // Return true when this pass must defer its refresh work to the floor.
+  //
+  // The floor is the earliest time at which a refresh pass may do its work. The
+  // refresh thread holds the floor across passes, and it moves the floor only
+  // on a pass that refreshed a token.
+  //
+  // IsTokenRefreshDue is true for every token that expires inside the refresh
+  // buffer, so a token with a short lifetime is due on each scan. The refresh
+  // thread also wakes on each change to TokenStore, and a connection start
+  // authenticates several audiences in a burst. Each of those scans would start
+  // another CBS operation for the same token, which is a storm of requests
+  // against the service.
+  //
+  // A caller defers the work, and it does not skip the work. The caller drops
+  // the due audiences from this pass and sleeps to the floor. The pass at the
+  // floor scans the map again and finds the same audiences.
+  //
+  // A caller must not move the floor on a deferred pass. A floor that moves on
+  // each deferral stays in the future, so a token that is always due never gets
+  // a refresh.
+  inline bool ShouldDeferTokenRefreshPass(
+      bool hasDueAudiences,
+      std::chrono::system_clock::time_point now,
+      std::chrono::system_clock::time_point refreshFloor)
+  {
+    return hasDueAudiences && now < refreshFloor;
+  }
+
   // Return true when a refresh that failed must drop the cached token.
   //
   // A refresh can fail for a short time, for example when the credential cannot

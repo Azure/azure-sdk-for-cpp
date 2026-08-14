@@ -468,12 +468,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           }
         }
 
-        if (!dueAudiences.empty() && now < refreshFloor)
+        if (ShouldDeferTokenRefreshPass(!dueAudiences.empty(), now, refreshFloor))
         {
           // The last pass refreshed a token, and the floor is still in force.
           // Do the work at the floor instead of now. This defers the refresh,
           // it does not skip it, because the pass at the floor scans the map
           // again and finds the same audiences.
+          // Take the earlier of the two times. The scan gives the deadline of
+          // the next token that comes due, and the deferred work is ready at
+          // the floor, so a sleep to the later time would miss one of them.
           dueAudiences.clear();
           nextWake = (std::min)(nextWake, refreshFloor);
         }
@@ -500,6 +503,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           // arrives, and this floor stops the thread from spinning on it. The
           // floor also survives a wake for a new audience, because a rescan
           // recomputes nextWake from the map alone.
+          //
+          // Take the later of the two times here, which is the opposite of the
+          // deferral above. A pass before the floor can do no refresh work, so
+          // a wake before the floor would only defer again.
           refreshFloor = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
           nextWake = (std::max)(nextWake, refreshFloor);
         }
