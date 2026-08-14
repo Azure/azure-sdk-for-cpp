@@ -364,6 +364,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     auto client = CreateConsumerClient("", options);
 
+    // ReceiveEvents blocks until it holds the count that the caller asked for, so a partition
+    // with no event holds this test for ever. SetUp sends one event to partition 1 in the live
+    // mode, so the partition holds at least one event. Bound each read anyway, because a test
+    // that hangs takes the whole live pass with it. The bound is far above the time that a
+    // read of one event needs, so it fails only on a real stall. The uAMQP transport honours
+    // this deadline. The Rust transport does not cancel a receive yet, so it can still hang.
+    Azure::Core::Context readTimeout{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+
     Azure::Messaging::EventHubs::PartitionClientOptions firstOptions;
     firstOptions.StartPosition.Earliest = true;
     firstOptions.StartPosition.Inclusive = true;
@@ -372,7 +380,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         = client->CreatePartitionClient("1", firstOptions);
 
     // Make sure that the first receiver works before the steal.
-    EXPECT_NO_THROW(firstClient.ReceiveEvents(1));
+    EXPECT_NO_THROW(firstClient.ReceiveEvents(1, readTimeout));
 
     Azure::Messaging::EventHubs::PartitionClientOptions secondOptions;
     secondOptions.StartPosition.Earliest = true;
@@ -380,12 +388,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     secondOptions.OwnerLevel = 2;
     Azure::Messaging::EventHubs::PartitionClient secondClient
         = client->CreatePartitionClient("1", secondOptions);
-    EXPECT_NO_THROW(secondClient.ReceiveEvents(1));
+    EXPECT_NO_THROW(secondClient.ReceiveEvents(1, readTimeout));
 
     auto startTime = std::chrono::steady_clock::now();
     try
     {
-      firstClient.ReceiveEvents(1);
+      firstClient.ReceiveEvents(1, readTimeout);
       FAIL() << "The stolen receiver must throw.";
     }
     catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
