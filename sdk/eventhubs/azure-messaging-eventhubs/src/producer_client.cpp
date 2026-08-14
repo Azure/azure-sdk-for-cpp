@@ -11,7 +11,6 @@
 
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
-#include <azure/core/credentials/credentials.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
@@ -329,19 +328,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // The caller stopped the attach. The cached stack is not at fault, so keep it.
       throw;
     }
-    catch (Azure::Core::Credentials::AuthenticationException const&)
-    {
-      // The credential failed, or the service refused the token. The connection carried
-      // that answer, so the connection works. A new connection presents the same claim and
-      // gets the same refusal, so keep this one. A dead connection reports itself as a
-      // std::runtime_error from the CBS open instead, and the handler below discards it.
-      throw;
-    }
     catch (std::exception const&)
     {
       // A discard of the sender alone changes nothing here, because a failed attach never
       // cached one. The session and the connection are the objects that carry the fault to
       // the next attempt, so discard them.
+      //
+      // An AuthenticationException gets no exemption, although a healthy connection raises
+      // it for a credential that failed. The type is not specific enough to trust. On
+      // uAMQP, PutTokenForAudience raises it for every non-Ok CBS result, and
+      // claim_based_security.cpp maps a transport fault during the put-token round trip to
+      // Error or to InstanceClosed. So the same type covers a service refusal on a healthy
+      // connection and a $cbs link that died mid-operation. An exemption would keep the
+      // stack for the second case, and every later call would then report a misleading
+      // authentication failure. The cost of this choice is one connection rebuild after a
+      // credential failure, which the next call pays.
       if (!context.IsCancelled())
       {
         InvalidateSender(partitionId, context);

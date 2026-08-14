@@ -242,7 +242,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // failed to attach, so its guard finds no sender on the next call and it builds a new
     // sender on that same stack. Every later attach then fails the same way. This wrapper
     // discards the session and the connection instead, so the next attach starts from a
-    // new connection.
+    // new connection. A cancelled context is the one case that keeps the stack, because
+    // the caller stopped the attach.
     void EnsureSenderOrInvalidate(
         std::string const& partitionId,
         Azure::Core::Context const& context);
