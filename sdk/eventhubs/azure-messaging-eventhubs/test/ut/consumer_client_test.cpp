@@ -10,6 +10,10 @@
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <chrono>
+#include <string>
+#include <thread>
+
 #include <gtest/gtest.h>
 
 namespace LocalTest {
@@ -341,6 +345,118 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 #endif
     }
     eventhubNamespace.DeleteEventHub(eventHubName);
+  }
+
+  // A second receiver with a higher owner level takes the partition, and the service detaches
+  // the first receiver with the condition amqp:link:stolen. That condition is permanent, so
+  // the first receiver must report it at once. A client that attaches again fights the new
+  // owner, and it spends its whole rebuild budget on a failure that stays.
+  TEST_P(ConsumerClientTest, StolenReceiverFailsWithoutARebuild_LIVEONLY_)
+  {
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    // Keep the budget large. A rebuild loop would then take far longer than the bound below,
+    // so the elapsed time proves that no rebuild happened.
+    options.RetryOptions.MaxRetries = 10;
+    options.RetryOptions.RetryDelay = std::chrono::seconds(2);
+
+    auto client = CreateConsumerClient("", options);
+
+    Azure::Messaging::EventHubs::PartitionClientOptions firstOptions;
+    firstOptions.StartPosition.Earliest = true;
+    firstOptions.StartPosition.Inclusive = true;
+    firstOptions.OwnerLevel = 1;
+    Azure::Messaging::EventHubs::PartitionClient firstClient
+        = client->CreatePartitionClient("1", firstOptions);
+
+    // Make sure that the first receiver works before the steal.
+    EXPECT_NO_THROW(firstClient.ReceiveEvents(1));
+
+    Azure::Messaging::EventHubs::PartitionClientOptions secondOptions;
+    secondOptions.StartPosition.Earliest = true;
+    secondOptions.StartPosition.Inclusive = true;
+    secondOptions.OwnerLevel = 2;
+    Azure::Messaging::EventHubs::PartitionClient secondClient
+        = client->CreatePartitionClient("1", secondOptions);
+    EXPECT_NO_THROW(secondClient.ReceiveEvents(1));
+
+    auto startTime = std::chrono::steady_clock::now();
+    try
+    {
+      firstClient.ReceiveEvents(1);
+      FAIL() << "The stolen receiver must throw.";
+    }
+    catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+    {
+      auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+          std::chrono::steady_clock::now() - startTime);
+      GTEST_LOG_(INFO) << "The stolen receiver threw after " << elapsed.count()
+                       << " seconds with the condition '" << ex.ErrorCondition << "'.";
+      EXPECT_FALSE(ex.IsTransient);
+      // Ten rebuild attempts with a two second base delay take far more than 30 seconds.
+      EXPECT_LT(elapsed, std::chrono::seconds(30));
+    }
+  }
+
+  // The Event Hubs service detaches a link that sends nothing and receives nothing for 30
+  // minutes, and it keeps the connection open. Source: the Event Hubs AMQP troubleshooting
+  // document. Before this change, PartitionClient threw on that detach and never received
+  // again. It must now attach a new receiver and start after the last event that it gave the
+  // caller, so the caller sees the new events and no duplicate.
+  //
+  // This test waits longer than the documented interval, so one run takes over half an hour.
+  TEST_P(ConsumerClientTest, ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_)
+  {
+    // The documented idle detach is 30 minutes. Wait past it with a margin.
+    constexpr std::chrono::minutes idleWait{35};
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    auto client = CreateConsumerClient("", options);
+
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Latest = true;
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client->CreatePartitionClient("1", partitionOptions);
+
+    auto producer = CreateProducerClient();
+    EventDataBatchOptions batchOptions;
+    batchOptions.PartitionId = "1";
+
+    {
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      EXPECT_TRUE(batch.TryAdd(Models::EventData{"Before the idle period"}));
+      ASSERT_NO_THROW(producer->Send(batch));
+    }
+
+    auto firstEvents = partitionClient.ReceiveEvents(1);
+    ASSERT_EQ(firstEvents.size(), 1ul);
+    ASSERT_TRUE(firstEvents[0]->Offset.HasValue())
+        << "The resume needs the offset of the last event.";
+    std::string lastOffset{firstEvents[0]->Offset.Value()};
+    GTEST_LOG_(INFO) << "The last offset before the idle period is " << lastOffset << ".";
+
+    GTEST_LOG_(INFO) << "Wait " << idleWait.count()
+                     << " minutes, so that the service detaches the receiver link.";
+    std::this_thread::sleep_for(idleWait);
+
+    {
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      EXPECT_TRUE(batch.TryAdd(Models::EventData{"After the idle period"}));
+      ASSERT_NO_THROW(producer->Send(batch));
+    }
+
+    // The same partition client, with no restart. ReceiveEvents attaches a new receiver and
+    // starts after lastOffset.
+    auto secondEvents = partitionClient.ReceiveEvents(1);
+    ASSERT_EQ(secondEvents.size(), 1ul);
+    ASSERT_TRUE(secondEvents[0]->Offset.HasValue());
+    GTEST_LOG_(INFO) << "The first offset after the idle period is "
+                     << secondEvents[0]->Offset.Value() << ".";
+    EXPECT_NE(secondEvents[0]->Offset.Value(), lastOffset)
+        << "The rebuilt receiver gave the caller the same event twice.";
   }
 
   namespace {

@@ -49,18 +49,32 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     bool WasLastAttempt(int32_t attempt) { return attempt >= m_retryOptions.MaxRetries; }
 
     bool ShouldRetry(
-        bool response,
-        int32_t attempt,
-        std::chrono::milliseconds& retryAfter,
-        double jitterFactor = -1);
-
-    bool ShouldRetry(
         Azure::Messaging::EventHubs::EventHubsException const& exception,
         int32_t attempt,
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);
 
   public:
+    /**
+     * @brief Decide whether another attempt is permitted, and give the delay before it.
+     *
+     * @param response Was the last attempt a success?
+     * @param attempt Which attempt is this?
+     * @param retryAfter Receives the delay before the next attempt.
+     * @param jitterFactor Test hook removing the randomness from the delay algorithm.
+     *
+     * @returns true when the caller must wait `retryAfter` and then try again.
+     *
+     * @remarks A caller that runs its own recovery loop uses this method for the backoff
+     * math. Such a caller keeps its own attempt counter, so it can reset that counter after
+     * a success and it does not spend one budget over the life of the client.
+     */
+    bool ShouldRetry(
+        bool response,
+        int32_t attempt,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+
     explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions const& retryOptions)
         : m_retryOptions(retryOptions)
     {

@@ -11,6 +11,9 @@
 #include <azure/core/amqp.hpp>
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
 
+#include <chrono>
+#include <thread>
+
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
@@ -190,22 +193,79 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         CreateMessageReceiver(session, partitionUrl, receiverName, options)};
     messageReceiver.Open(context);
 
-    return PartitionClient(std::move(messageReceiver), std::move(options), std::move(retryOptions));
+    return PartitionClient(
+        std::move(messageReceiver),
+        session,
+        partitionUrl,
+        receiverName,
+        std::move(options),
+        std::move(retryOptions));
   }
 
   /** Creates a new PartitionClient
    *
    * @param messageReceiver Message Receiver for the partition client.
+   * @param session The AMQP session that carries the message receiver.
+   * @param partitionUrl The address of the partition.
+   * @param receiverName The link name of the message receiver.
    * @param options options used to create the PartitionClient.
    * @param retryOptions controls how many times we should retry an operation in response to being
    * throttled or encountering a transient error.
    */
   PartitionClient::PartitionClient(
       Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
+      Azure::Core::Amqp::_internal::Session const& session,
+      std::string partitionUrl,
+      std::string receiverName,
       PartitionClientOptions options,
       Core::Http::Policies::RetryOptions retryOptions)
-      : m_receiver{messageReceiver}, m_partitionOptions{options}, m_retryOptions{retryOptions}
+      : m_receiver{messageReceiver}, m_session{session}, m_partitionUrl{std::move(partitionUrl)},
+        m_receiverName{std::move(receiverName)}, m_partitionOptions{options}, m_retryOptions{
+                                                                                  retryOptions}
   {
+  }
+
+  void PartitionClient::Close(Core::Context const& context) { m_receiver.Close(context); }
+
+  void PartitionClient::RebuildReceiver(Core::Context const& context)
+  {
+    Log::Stream(Logger::Level::Informational)
+        << "Rebuild the message receiver for " << m_partitionUrl << ".";
+
+    try
+    {
+      m_receiver.Close(context);
+    }
+    catch (Azure::Core::OperationCancelledException const&)
+    {
+      throw;
+    }
+    catch (std::exception const& ex)
+    {
+      // A link that the service already detached reports that detach here. That is the
+      // usual case on this path, so the rebuild continues.
+      Log::Stream(Logger::Level::Warning)
+          << "Exception while closing a faulted message receiver: " << ex.what();
+    }
+
+    PartitionClientOptions options{m_partitionOptions};
+    if (m_lastReceivedOffset.HasValue())
+    {
+      // Start after the last event that the caller received. Inclusive stays false, so the
+      // filter becomes "x-opt-offset > 'last'" and the caller gets no duplicate event.
+      Models::StartPosition resumePosition;
+      resumePosition.Offset = m_lastReceivedOffset.Value();
+      resumePosition.Inclusive = false;
+      options.StartPosition = resumePosition;
+    }
+
+    Azure::Core::Amqp::_internal::MessageReceiver receiver{
+        CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
+    receiver.Open(context);
+    m_receiver = std::move(receiver);
+
+    Log::Stream(Logger::Level::Informational)
+        << "The message receiver for " << m_partitionUrl << " is attached again.";
   }
 
   PartitionClient::~PartitionClient()
@@ -236,6 +296,94 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
+    // The rebuild budget belongs to this call, and a received message resets it. The budget
+    // of RetryOperation::Execute never resets, and a consumer that lives for days would
+    // spend it on faults that are hours apart. So this loop keeps its own counter and uses
+    // RetryOperation only for the backoff math.
+    Azure::Core::Http::Policies::RetryOptions retryOptions{m_retryOptions};
+    _detail::RetryOperation retryOperation{retryOptions};
+    int32_t rebuildAttempt = 0;
+
+    // Keep the event, and record the offset that a rebuilt receiver must start after.
+    auto keepMessage
+        = [&](std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage> const& message) {
+            auto eventData = std::make_shared<const Models::ReceivedEventData>(message);
+            if (eventData->Offset.HasValue())
+            {
+              m_lastReceivedOffset = eventData->Offset.Value();
+            }
+            // The link works, so give the next fault a full rebuild budget.
+            rebuildAttempt = 0;
+            messages.push_back(eventData);
+          };
+
+    // Recover from a link fault. Returns true when the receiver works again, so the caller
+    // continues its loop. Returns false when the caller must return the events that it
+    // already holds. Throws when the caller holds no event.
+    auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
+      EventHubsException exception{
+          _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
+
+      for (;;)
+      {
+        std::chrono::milliseconds retryAfter{};
+        if (!_detail::ShouldRebuildReceiver(exception)
+            || !retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter))
+        {
+          if (!messages.empty())
+          {
+            // The caller already holds events that the service will not send again. Give
+            // them back, and keep the error for the next call. That call starts with a new
+            // rebuild budget.
+            Log::Stream(Logger::Level::Warning)
+                << "Cannot rebuild the message receiver now. Return " << messages.size()
+                << " events and keep the error for the next call: " << exception.what();
+            m_pendingError = error;
+            return false;
+          }
+          throw exception;
+        }
+
+        rebuildAttempt++;
+        std::this_thread::sleep_for(retryAfter);
+        context.ThrowIfCancelled();
+
+        try
+        {
+          RebuildReceiver(context);
+          return true;
+        }
+        catch (Azure::Core::OperationCancelledException const&)
+        {
+          throw;
+        }
+        catch (EventHubsException const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          exception = rebuildFailure;
+        }
+        catch (std::exception const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          // The attach gave no AMQP condition, so try again while the budget permits it.
+          EventHubsException translated{rebuildFailure.what()};
+          translated.IsTransient = true;
+          exception = translated;
+        }
+      }
+    };
+
+    // A previous call gave its events back and kept the error that ended it. Recover from
+    // that error first. This call holds no event yet, so recover either works or throws.
+    if (m_pendingError.HasValue())
+    {
+      auto pendingError = m_pendingError.Value();
+      m_pendingError.Reset();
+      recover(pendingError);
+    }
+
     while (messages.size() < maxMessages && !context.IsCancelled())
     {
       std::pair<
@@ -247,11 +395,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       result = m_receiver.TryWaitForIncomingMessage();
       if (result.first)
       {
-        messages.push_back(std::make_shared<Models::ReceivedEventData>(result.first));
+        keepMessage(result.first);
       }
       else if (result.second)
       {
-        throw _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second);
+        if (!recover(result.second))
+        {
+          break;
+        }
       }
       // If we haven't gotten *any* messages, we're done. Otherwise, we'll wait for more.
       else if (!messages.empty())
@@ -265,11 +416,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           Log::Stream(Logger::Level::Verbose)
               << "Received message. Message count now " << messages.size();
-          messages.push_back(std::make_shared<const Models::ReceivedEventData>(result.first));
+          keepMessage(result.first);
         }
-        else
+        else if (!recover(result.second))
         {
-          throw _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second);
+          break;
         }
       }
     }
