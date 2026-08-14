@@ -6,10 +6,12 @@
 // key, and the parameterized fixture takes a token credential only. A namespace that keeps its
 // shared access keys can run the same scenarios through this file.
 //
-// Each test here mirrors one test in the parameterized suites:
+// Each of the first three tests mirrors one test in the parameterized suites:
 //   StolenReceiverFailsWithoutARebuild_LIVEONLY_  -> consumer_client_test.cpp
 //   SendSurvivesAnIdleDetach_LIVEONLY_            -> producer_client_test.cpp
 //   ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_ -> consumer_client_test.cpp
+// PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_ has no mirror. It covers the close of the
+// management link after an idle detach, which used to end the process (#7335).
 //
 // The tests skip themselves when EVENTHUB_CONNECTION_STRING is empty.
 
@@ -301,6 +303,62 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                      << secondEvents[0]->Offset.Value() << ".";
     EXPECT_NE(secondEvents[0]->Offset.Value(), lastOffset)
         << "The rebuilt receiver gave the caller the same event twice.";
+  }
+
+  // GetEventHubProperties opens a management link on the shared gateway connection, and the
+  // client caches that link for its whole life. The service detaches a link that is idle for
+  // 30 minutes, so the wait below is the only way to put the cached link into the state that
+  // the bug needs. Before the fix for #7335, Close on the dead link threw,
+  // EventHubsPropertiesClient::Close left the client marked open, and the destructor then
+  // closed the dead client a second time. A destructor is noexcept, so the second throw
+  // called std::terminate, and the whole process died inside client.Close() below. The test
+  // therefore proves three things: the close after the detach returns instead of ending the
+  // process, it does not throw, and the client builds a new stack for the next read.
+  TEST_F(ReattachConnectionStringTest, PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_)
+  {
+    if (!HasLiveEnvironment())
+    {
+      GTEST_SKIP() << "Set EVENTHUB_CONNECTION_STRING and EVENTHUB_NAME to run this test.";
+    }
+    if (!WantsIdleDetachTests())
+    {
+      GTEST_SKIP() << "Set EVENTHUBS_ENABLE_IDLE_DETACH_TESTS to run this test. The test sleeps "
+                      "for 35 minutes.";
+    }
+
+    // The documented idle detach is 30 minutes. Wait past it with a margin.
+    constexpr std::chrono::minutes idleWait{35};
+
+    ProducerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    ProducerClient client{ConnectionString(), EventHubName(), options};
+
+    // Open the management link before the idle period, so that the link is alive and idle
+    // while the test waits. The test sends nothing, so this link is the only link that the
+    // client holds, and the detach below can only hit it.
+    Models::EventHubProperties before;
+    ASSERT_NO_THROW(before = client.GetEventHubProperties());
+    ASSERT_FALSE(before.PartitionIds.empty());
+    GTEST_LOG_(INFO) << "The event hub '" << before.Name << "' has " << before.PartitionIds.size()
+                     << " partitions.";
+
+    GTEST_LOG_(INFO) << "Wait " << idleWait.count()
+                     << " minutes, so that the service detaches the management link.";
+    std::this_thread::sleep_for(idleWait);
+
+    // The close finds the dead link. It must log that failure and return. Before the fix,
+    // this call never returned: the process ended inside it.
+    EXPECT_NO_THROW(client.Close());
+
+    // Close discarded the properties client and the gateway connection, so this read builds
+    // a new stack. This pins what the client does today, and not a documented contract:
+    // ProducerClient keeps no closed flag, so a call after Close builds the stack again.
+    // A change that makes Close final must change this check with it.
+    Models::EventHubProperties after;
+    EXPECT_NO_THROW(after = client.GetEventHubProperties());
+    EXPECT_EQ(after.PartitionIds.size(), before.PartitionIds.size());
+
+    client.Close();
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

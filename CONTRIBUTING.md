@@ -234,7 +234,7 @@ A few tests take too long to run in a normal pass, so they skip themselves unles
 
 | Variable | Test binary | What it enables |
 | --- | --- | --- |
-| `EVENTHUBS_ENABLE_IDLE_DETACH_TESTS` | `azure-messaging-eventhubs-test` | `SendSurvivesAnIdleDetach_LIVEONLY_` and `ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_`. Each test sleeps 35 minutes, because the Event Hubs service detaches an idle link after 30 minutes and the tests must wait past that time. The live pipeline gives the whole binary 120 minutes through `LiveTestTimeoutInMinutes` in `sdk/eventhubs/ci.yml`, so these two tests cannot run in the standard live pass. |
+| `EVENTHUBS_ENABLE_IDLE_DETACH_TESTS` | `azure-messaging-eventhubs-test` | `SendSurvivesAnIdleDetach_LIVEONLY_`, `ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_`, and `PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_`. Each test sleeps 35 minutes, because the Event Hubs service detaches an idle link after 30 minutes and the tests must wait past that time. The live pipeline gives the whole binary 120 minutes through `LiveTestTimeoutInMinutes` in `sdk/eventhubs/ci.yml`, so these tests cannot run in the standard live pass. |
 
 These tests need the `LIVE` test mode and a real Azure Event Hubs namespace. Run them one at a time with a gtest filter, for example:
 
