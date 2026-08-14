@@ -484,6 +484,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
     auto client = CreateConsumerClient("", options);
 
+    // Bound each read. A resume that regresses to the latest position misses the event that
+    // this test sent before the rebuild, and the read then blocks for ever. Each read gets
+    // its own deadline, because a deadline is an absolute time and this test waits 35
+    // minutes between two of them.
+    auto readTimeout = []() {
+      return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    };
+
     Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Latest = true;
     Azure::Messaging::EventHubs::PartitionClient partitionClient
@@ -499,7 +507,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ASSERT_NO_THROW(producer->Send(batch));
     }
 
-    auto firstEvents = partitionClient.ReceiveEvents(1);
+    auto firstEvents = partitionClient.ReceiveEvents(1, readTimeout());
     ASSERT_EQ(firstEvents.size(), 1ul);
     ASSERT_TRUE(firstEvents[0]->Offset.HasValue())
         << "The resume needs the offset of the last event.";
@@ -518,7 +526,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     // The same partition client, with no restart. ReceiveEvents attaches a new receiver and
     // starts after lastOffset.
-    auto secondEvents = partitionClient.ReceiveEvents(1);
+    auto secondEvents = partitionClient.ReceiveEvents(1, readTimeout());
     ASSERT_EQ(secondEvents.size(), 1ul);
     ASSERT_TRUE(secondEvents[0]->Offset.HasValue());
     GTEST_LOG_(INFO) << "The first offset after the idle period is "

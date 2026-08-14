@@ -275,7 +275,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ASSERT_NO_THROW(producer.Send(batch));
     }
 
-    auto firstEvents = partitionClient.ReceiveEvents(1);
+    auto firstEvents = partitionClient.ReceiveEvents(1, ReadTimeout());
     ASSERT_EQ(firstEvents.size(), 1ul);
     ASSERT_TRUE(firstEvents[0]->Offset.HasValue())
         << "The resume needs the offset of the last event.";
@@ -294,7 +294,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     // The same partition client, with no restart. ReceiveEvents attaches a new receiver and starts
     // after lastOffset.
-    auto secondEvents = partitionClient.ReceiveEvents(1);
+    auto secondEvents = partitionClient.ReceiveEvents(1, ReadTimeout());
     ASSERT_EQ(secondEvents.size(), 1ul);
     ASSERT_TRUE(secondEvents[0]->Offset.HasValue());
     GTEST_LOG_(INFO) << "The first offset after the idle period is "

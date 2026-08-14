@@ -316,6 +316,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
       EventHubsException exception{
           _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
+      // The fault that this loop currently holds, in AMQP form. A failed rebuild attempt
+      // replaces the exception below, so this value must follow it. The next call recovers
+      // from the fault that this loop stops on, and that is the last fault, not the first
+      // one. A stored first fault that permits a rebuild would send the next call through a
+      // whole new budget of attempts, even when the last attempt reported a condition that
+      // no rebuild can correct.
+      Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
 
       for (;;)
       {
@@ -331,7 +338,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             Log::Stream(Logger::Level::Warning)
                 << "Cannot rebuild the message receiver now. Return " << messages.size()
                 << " events and keep the error for the next call: " << exception.what();
-            m_pendingError = error;
+            m_pendingError = currentError;
             return false;
           }
           throw exception;
@@ -355,6 +362,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           Log::Stream(Logger::Level::Warning)
               << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
           exception = rebuildFailure;
+          currentError.Condition
+              = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{exception.ErrorCondition};
+          currentError.Description = exception.ErrorDescription;
         }
         catch (std::exception const& rebuildFailure)
         {
@@ -364,6 +374,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           EventHubsException translated{rebuildFailure.what()};
           translated.IsTransient = true;
           exception = translated;
+          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+          currentError.Description = translated.ErrorDescription;
         }
       }
     };

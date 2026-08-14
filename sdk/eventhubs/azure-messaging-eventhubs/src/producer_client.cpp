@@ -70,14 +70,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";
-    {
-      std::unique_lock<std::mutex> lock(m_propertiesClientLock);
-      if (m_propertiesClient)
-      {
-        m_propertiesClient->Close(context);
-        m_propertiesClient.reset();
-      }
-    }
+    // The properties client is not closed here. It rides the gateway connection, which is
+    // the entry for the empty partition id, so the loop below reaches it through
+    // InvalidateSender(""). GetPropertiesClient calls EnsureConnection({}) before it builds
+    // the client, so a cached properties client always has that connection behind it, and
+    // the loop always covers it. Closing it here instead threw out of the first step of
+    // this method and left every partition stack open, which is the exact failure that this
+    // change is about: after an idle detach the gateway link is dead, so that close throws.
+    //
     // Collect the partition ids under the map locks, and then tear each stack down
     // through the same guarded path that a failed send uses. Each teardown waits for
     // the sends in flight on its partition, so this close cannot free a sender that a
@@ -397,7 +397,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     // InvalidateSender erases from this map, so this read takes the lock that protects it.
     std::unique_lock<std::mutex> lock(m_sendersLock);
-    return m_senders.at(partitionId);
+    auto sender = m_senders.find(partitionId);
+    if (sender == m_senders.end())
+    {
+      // A teardown on another thread removed this stack between the call that cached the
+      // sender and this lookup. std::map::at would throw std::out_of_range here, which
+      // derives from std::logic_error, and RetryOperation::Execute catches only
+      // EventHubsException, OperationCancelledException, and std::runtime_error. So the
+      // container error would pass the retry loop with the budget unspent, and it would
+      // reach the caller as a map error for a race that one more attempt corrects. A
+      // transient exception makes the next attempt build the stack again.
+      EventHubsException missingSender{
+          "The cached message sender for partition '" + partitionId
+          + "' was removed by a teardown on another thread."};
+      missingSender.IsTransient = true;
+      throw missingSender;
+    }
+    return sender->second;
   }
 
   ProducerClient::PartitionGuard& ProducerClient::GetPartitionGuard(std::string const& partitionId)
