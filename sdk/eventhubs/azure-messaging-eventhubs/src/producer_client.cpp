@@ -6,7 +6,9 @@
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
+#include "private/package_version.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
@@ -31,7 +33,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& connectionString,
       std::string const& eventHub,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
-      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub},
+        m_producerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
+                                              options.TracingProvider)}
   {
     auto details
         = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
@@ -50,7 +54,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
         m_targetUrl{_detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub},
-        m_credential{credential}, m_producerClientOptions(options)
+        m_credential{credential},
+        m_producerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
+                                              options.TracingProvider)}
   {
   }
 
@@ -155,75 +161,94 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     auto message = eventDataBatch.ToAmqpMessage();
 
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
-        m_producerClientOptions.RetryOptions);
-    // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
-    // are exhausted, but if the lambda ever returns false directly the batch must not be
-    // silently dropped. See issue #7130.
-    auto const& partitionId = eventDataBatch.GetPartitionId();
-    if (!retryOp.Execute(
-            [&]() -> bool {
-              EnsureSenderOrInvalidate(partitionId, context);
-              std::uint64_t observedGeneration = 0;
-              auto& guard = GetPartitionGuard(partitionId);
-              try
-              {
-                // Keeps a teardown off the sender copy; sends still run together.
-                std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
-                auto sender = GetSender(partitionId);
-                observedGeneration = guard.generation.load();
-                auto result = sender.Send(message, context);
-#if ENABLE_UAMQP
-                auto sendStatus = std::get<0>(result);
-                if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-                {
-                  return true;
-                }
-                // Throw an exception about the error we just received.
-                throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                    CreateEventHubsException(std::get<1>(result));
-#elif ENABLE_RUST_AMQP
-                if (result)
-                {
-                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                      CreateEventHubsException(result);
-                }
-                return true;
-#endif
-              }
-              catch (Azure::Core::OperationCancelledException const&)
-              {
-                throw;
-              }
-              catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
-              {
-                if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
-                {
-                  InvalidateSender(partitionId, observedGeneration, context);
-                }
-                throw;
-              }
-              catch (std::exception const&)
-              {
-                if (!context.IsCancelled())
-                {
-                  InvalidateSender(partitionId, observedGeneration, context);
-                }
-                throw;
-              }
-            },
-            context))
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        eventDataBatch.NumberOfEvents(),
+        context);
+
+    try
     {
-      std::string failureDetail = "ProducerClient::Send failed after exhausting "
-          + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
-          + " retry attempts (partition='"
-          + (partitionId.empty() ? std::string("<gateway>") : partitionId)
-          + "'). The underlying send returned false without throwing; no further "
-            "diagnostic detail is available from this layer.";
-      Azure::Messaging::EventHubs::EventHubsException ex(failureDetail);
-      ex.ErrorCondition = "eventhubs:client:retries-exhausted";
-      ex.IsTransient = true;
-      throw ex;
+      Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
+          m_producerClientOptions.RetryOptions);
+      // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
+      // are exhausted, but if the lambda ever returns false directly the batch must not be
+      // silently dropped. See issue #7130.
+      auto const& partitionId = eventDataBatch.GetPartitionId();
+      if (!retryOp.Execute(
+              [&]() -> bool {
+                EnsureSenderOrInvalidate(partitionId, tracingContext.Context);
+                std::uint64_t observedGeneration = 0;
+                auto& guard = GetPartitionGuard(partitionId);
+                try
+                {
+                  // Keeps a teardown off the sender copy; sends still run together.
+                  std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+                  auto sender = GetSender(partitionId);
+                  observedGeneration = guard.generation.load();
+                  auto result = sender.Send(message, tracingContext.Context);
+#if ENABLE_UAMQP
+                  auto sendStatus = std::get<0>(result);
+                  if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+                  {
+                    return true;
+                  }
+                  // Throw an exception about the error we just received.
+                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                      CreateEventHubsException(std::get<1>(result));
+#elif ENABLE_RUST_AMQP
+                  if (result)
+                  {
+                    throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                        CreateEventHubsException(result);
+                  }
+                  return true;
+#endif
+                }
+                catch (Azure::Core::OperationCancelledException const&)
+                {
+                  throw;
+                }
+                catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+                {
+                  if (!tracingContext.Context.IsCancelled()
+                      && _detail::ShouldInvalidateSender(ex))
+                  {
+                    InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
+                  }
+                  throw;
+                }
+                catch (std::exception const&)
+                {
+                  if (!tracingContext.Context.IsCancelled())
+                  {
+                    InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
+                  }
+                  throw;
+                }
+              },
+              tracingContext.Context))
+      {
+        std::string failureDetail = "ProducerClient::Send failed after exhausting "
+            + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
+            + " retry attempts (partition='"
+            + (partitionId.empty() ? std::string("<gateway>") : partitionId)
+            + "'). The underlying send returned false without throwing; no further "
+              "diagnostic detail is available from this layer.";
+        Azure::Messaging::EventHubs::EventHubsException ex(failureDetail);
+        ex.ErrorCondition = "eventhubs:client:retries-exhausted";
+        ex.IsTransient = true;
+        throw ex;
+      }
+    }
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
     }
   }
 

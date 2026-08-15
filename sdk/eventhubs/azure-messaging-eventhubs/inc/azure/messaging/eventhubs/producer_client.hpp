@@ -12,7 +12,9 @@
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/tracing/tracing.hpp>
 
 #include <atomic>
 #include <cstdint>
@@ -47,6 +49,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /**@brief  The maximum size of the message that can be sent.
      */
     Azure::Nullable<std::uint64_t> MaxMessageSize{};
+
+    /**@brief  The tracer provider used to create distributed tracing spans. When this field is
+     * empty, the client creates no spans.
+     */
+    std::shared_ptr<Azure::Core::Tracing::TracerProvider> TracingProvider;
 
   private:
     // The friend declaration is needed so that ProducerClient could access CppStandardVersion,
@@ -213,6 +220,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::shared_ptr<const Core::Credentials::TokenCredential> m_credential{};
 
     ProducerClientOptions m_producerClientOptions{};
+
+    /// The factory used to create the distributed tracing spans of this client.
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
     std::mutex m_propertiesClientLock;
     std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;

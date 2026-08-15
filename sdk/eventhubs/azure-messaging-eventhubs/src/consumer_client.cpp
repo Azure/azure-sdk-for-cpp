@@ -3,6 +3,7 @@
 
 #include "private/best_effort_cleanup.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -24,7 +25,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
       : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-        m_consumerClientOptions(options)
+        m_consumerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
+                                              options.TracingProvider)}
   {
     auto details
         = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
@@ -43,7 +45,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
-        m_consumerGroup{consumerGroup}, m_credential{credential}, m_consumerClientOptions(options)
+        m_consumerGroup{consumerGroup}, m_credential{credential},
+        m_consumerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
+                                              options.TracingProvider)}
   {
     m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
         + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
@@ -226,6 +230,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_consumerClientOptions.Name,
         options,
         m_consumerClientOptions.RetryOptions,
+        m_tracingFactory,
+        m_eventHub,
+        m_fullyQualifiedNamespace,
         context);
   }
 
