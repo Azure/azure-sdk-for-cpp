@@ -497,6 +497,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::lock_guard<std::mutex> sendersLock(m_sendersLock);
       std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
+      // Test the generation again now that this thread holds the map lock. The stack
+      // lock does not cover EnsureSender, which bumps the generation under the map
+      // lock when it caches a new sender. So a rebuild can finish between the test
+      // above and the lock above, and this teardown would then remove the fresh
+      // stack. That window only opens when the caller saw an empty map, because a
+      // cached sender pins the map until this function removes it. A change here
+      // can only be a new stack: a removal needs the stack lock, and this thread
+      // holds it.
+      if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
+      {
+        Log::Stream(Logger::Level::Informational)
+            << "Skip the teardown for partition '"
+            << (partitionId.empty() ? std::string("<gateway>") : partitionId)
+            << "': another thread cached a new stack." << std::endl;
+        return;
+      }
       auto senderIterator = m_senders.find(partitionId);
       if (senderIterator != m_senders.end())
       {
