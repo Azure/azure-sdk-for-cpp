@@ -60,9 +60,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       }
       else if (key == _detail::OffsetAnnotation)
       {
-        // The service can send the offset as a string or as an integer of any width. A
-        // PartitionClient that rebuilds its receiver resumes from this value, so an offset
-        // that this code drops causes duplicate events or lost events.
+        // The service sends the offset as a string or as an integer of any width.
         switch (item.second.GetType())
         {
           case Azure::Core::Amqp::Models::AmqpValueType::String:

@@ -206,9 +206,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   /** Creates a new PartitionClient
    *
    * @param messageReceiver Message Receiver for the partition client.
-   * @param session The AMQP session that carries the message receiver.
-   * @param partitionUrl The address of the partition.
-   * @param receiverName The link name of the message receiver.
    * @param options options used to create the PartitionClient.
    * @param retryOptions controls how many times we should retry an operation in response to being
    * throttled or encountering a transient error.
@@ -243,8 +240,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     catch (std::exception const& ex)
     {
-      // A link that the service already detached reports that detach here. That is the
-      // usual case on this path, so the rebuild continues.
       Log::Stream(Logger::Level::Warning)
           << "Exception while closing a faulted message receiver: " << ex.what();
     }
@@ -290,15 +285,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
-    // The rebuild budget belongs to this call, and a received message resets it. The budget
-    // of RetryOperation::Execute never resets, and a consumer that lives for days would
-    // spend it on faults that are hours apart. So this loop keeps its own counter and uses
-    // RetryOperation only for the backoff math.
+    // RetryOperation::Execute's budget never resets, so this loop keeps its own counter.
     Azure::Core::Http::Policies::RetryOptions retryOptions{m_retryOptions};
     _detail::RetryOperation retryOperation{retryOptions};
     int32_t rebuildAttempt = 0;
 
-    // Keep the event, and record the offset that a rebuilt receiver must start after.
+    // Keep the event, and record the offset a rebuild must start after.
     auto keepMessage
         = [&](std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage> const& message) {
             auto eventData = std::make_shared<const Models::ReceivedEventData>(message);
@@ -306,28 +298,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             {
               m_lastReceivedOffset = eventData->Offset.Value();
             }
-            // The link works, so give the next fault a full rebuild budget.
             rebuildAttempt = 0;
             messages.push_back(eventData);
           };
 
-    // Recover from a link fault. Returns true when the receiver works again, so the caller
-    // continues its loop. Returns false when the caller must return the events that it
-    // already holds. Throws when the caller holds no event.
+    // True: the receiver works again. False: return the events held. Throws if none are held.
     auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
       EventHubsException exception{
           _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
-      // The fault that this loop currently holds, in AMQP form. A failed rebuild attempt
-      // replaces the exception below, so this value must follow it. The next call recovers
-      // from the fault that this loop stops on, and that is the last fault, not the first
-      // one. A stored first fault that permits a rebuild would send the next call through a
-      // whole new budget of attempts, even when the last attempt reported a condition that
-      // no rebuild can correct.
       Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
-      // The last rebuild failure in its original form, when that form says more than the
-      // EventHubsException above. The loop throws this one when it stops, so the caller
-      // reads the type that the failure came with. A later attempt that fails in another
-      // way clears it, because the last failure governs what the loop reports.
       std::exception_ptr originalFailure{};
 
       for (;;)
@@ -338,9 +317,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           if (!messages.empty())
           {
-            // The caller already holds events that the service will not send again. Give
-            // them back, and keep the error for the next call. That call starts with a new
-            // rebuild budget.
+            // The service will not send these again. The next call gets a new budget.
             Log::Stream(Logger::Level::Warning)
                 << "Cannot rebuild the message receiver now. Return " << messages.size()
                 << " events and keep the error for the next call: " << exception.what();
@@ -381,13 +358,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           Log::Stream(Logger::Level::Warning)
               << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
-          // This type is ambiguous today. On uAMQP, PutTokenForAudience raises it for a
-          // service that refused the claim and also for a `$cbs` link that died during
-          // the operation (issue #7330). An attach attempt is the only test that we
-          // have, so the loop continues while the budget permits it. The translation
-          // does not claim that the failure is transient, and the loop keeps the
-          // original exception, so a genuine credential failure reaches the caller with
-          // its own type when the budget ends.
           exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
           originalFailure = std::current_exception();
           currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
@@ -397,7 +367,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           Log::Stream(Logger::Level::Warning)
               << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
-          // The attach gave no AMQP condition, so try again while the budget permits it.
           EventHubsException translated{rebuildFailure.what()};
           translated.IsTransient = true;
           exception = translated;
@@ -408,8 +377,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     };
 
-    // A previous call gave its events back and kept the error that ended it. Recover from
-    // that error first. This call holds no event yet, so recover either works or throws.
+    // No event is held yet, so this recover either works or throws.
     if (m_pendingError.HasValue())
     {
       auto pendingError = m_pendingError.Value();

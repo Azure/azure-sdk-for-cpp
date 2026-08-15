@@ -767,17 +767,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 #endif // ENABLE_UAMQP
 
-  // The Event Hubs service detaches a link that sends nothing and receives nothing for 30
-  // minutes, and it keeps the connection open. Source: the Event Hubs AMQP troubleshooting
-  // document. Before this change, ProducerClient cached one sender for the life of the
-  // client, so the second send below failed and every later send failed with it.
-  //
-  // This test waits longer than the documented interval, so one run takes over half an hour.
+  // The service detaches a link idle for 30 minutes; ProducerClient used to cache one sender.
   TEST_P(ProducerClientTest, SendSurvivesAnIdleDetach_LIVEONLY_)
   {
-    // The live pipeline gives the whole test binary 120 minutes. See LiveTestTimeoutInMinutes in
-    // sdk/eventhubs/ci.yml. The 35 minute wait below takes too much of that budget, so this test
-    // is not part of the standard live pass. The test is correct, and you must ask for it.
+    // The 120 minute live pipeline budget cannot absorb this 35 minute wait by default.
     if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
             .empty())
     {
@@ -785,7 +778,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                       "for 35 minutes, and the live pipeline gives all of the tests 120 minutes.";
     }
 
-    // The documented idle detach is 30 minutes. Wait past it with a margin.
     constexpr std::chrono::minutes idleWait{35};
 
     auto client = CreateProducerClient();
@@ -801,7 +793,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                      << " minutes, so that the service detaches the sender link.";
     std::this_thread::sleep_for(idleWait);
 
-    // The same client, with no restart. Send rebuilds the sender inside its retry loop.
     EventDataBatch secondBatch{client->CreateBatch(batchOptions)};
     EXPECT_TRUE(secondBatch.TryAdd(Models::EventData{"After the idle period"}));
     EXPECT_NO_THROW(client->Send(secondBatch));

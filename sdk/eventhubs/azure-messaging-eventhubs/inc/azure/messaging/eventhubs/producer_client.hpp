@@ -217,8 +217,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_propertiesClientLock;
     std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
-    // Protects m_sessions and m_connections. EnsureConnection, CreateSession, and
-    // InvalidateSender all touch m_connections under this lock.
+    // Protects m_sessions and m_connections.
     std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
@@ -227,23 +226,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
 
-    // One guard for each partition id. A send holds stackLock shared while it uses the
-    // cached sender, so sends to one partition run at the same time. A teardown holds
-    // stackLock exclusive while it removes the cached stack from the maps, so it waits
-    // for the sends in flight and never closes an object that a send still uses. The
-    // generation increases each time the cached stack for the partition changes, in
-    // EnsureSender and in InvalidateSender. A teardown whose caller saw an older
-    // generation is a no-op, so a thread with an old failure cannot remove a stack
-    // that another thread rebuilt after that failure.
+    // One guard per partition: a send holds stackLock shared, a teardown holds it exclusive.
     struct PartitionGuard
     {
       std::shared_timed_mutex stackLock;
       std::atomic<std::uint64_t> generation{0};
     };
 
-    // Protects m_partitionGuards. Entries live for the life of the client and map
-    // references stay stable across inserts, so a caller can keep the reference that
-    // GetPartitionGuard returns after this lock is gone.
+    // Protects m_partitionGuards. References into the map stay stable across inserts.
     std::mutex m_partitionGuardsLock;
     std::map<std::string, PartitionGuard> m_partitionGuards;
 
@@ -264,30 +254,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
-    // Call EnsureSender, and discard the cached stack when the attach fails.
-    //
-    // EnsureSession caches the session and the connection before the attach runs, so a
-    // failed attach leaves both of them behind. EnsureSender never caches the sender it
-    // failed to attach, so its guard finds no sender on the next call and it builds a new
-    // sender on that same stack. Every later attach then fails the same way. This wrapper
-    // discards the session and the connection instead, so the next attach starts from a
-    // new connection. A cancelled context is the one case that keeps the stack, because
-    // the caller stopped the attach.
+    // Calls EnsureSender, and discards a failed attach unless the context is cancelled.
     void EnsureSenderOrInvalidate(
         std::string const& partitionId,
         Azure::Core::Context const& context);
 
-    // Discard the sender, the session, and the connection for the specified partition, so
-    // that the next call to EnsureSender builds new ones. A failed send can mean a link, a
-    // session, or a connection that is gone, and this layer cannot tell which one it is. A
-    // new link also authenticates its audience again, which gives it a current CBS token.
-    //
-    // The caller passes the generation it saw when its operation failed. When the cached
-    // stack changed after that, this call does nothing, because the current stack is not
-    // the one that failed. A caller with no generation, such as Close, removes whatever
-    // is present. The removal runs under the partition guard and both map locks, so a
-    // rebuild cannot attach a new sender to the old session in the middle of it. The
-    // network closes run after every lock is released.
+    // Discards the sender, session, and connection for the partition. A null generation,
+    // as Close passes, removes whatever is present regardless of generation.
     void InvalidateSender(
         std::string const& partitionId,
         Azure::Nullable<std::uint64_t> observedGeneration,

@@ -214,8 +214,6 @@ TEST_F(EventDataTest, ReceivedEventData)
                                     .AsAmqpValue()]
         = 54644;
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    // The service can send the offset as an integer. A PartitionClient that rebuilds its
-    // receiver resumes from this value, so the client keeps it as a decimal string.
     ASSERT_TRUE(receivedEventData.Offset);
     EXPECT_EQ(receivedEventData.Offset.Value(), "54644");
     EXPECT_FALSE(receivedEventData.SequenceNumber);
@@ -253,8 +251,6 @@ TEST_F(EventDataTest, ReceivedEventData)
 }
 
 namespace {
-// Build a message that carries one x-opt-offset annotation, and give back the offset that
-// ReceivedEventData reads from it.
 Azure::Nullable<std::string> OffsetFromAnnotation(
     Azure::Core::Amqp::Models::AmqpValue const& annotationValue)
 {
@@ -269,10 +265,7 @@ Azure::Nullable<std::string> OffsetFromAnnotation(
 }
 } // namespace
 
-// The Event Hubs service sends the offset as a string or as an integer of any width. A
-// PartitionClient that rebuilds its receiver resumes from this value, so an offset that the
-// client drops causes duplicate events or lost events. Make sure that every integer width
-// gives the same decimal string.
+// The service can send the offset as a string or as an integer of any width.
 TEST_F(EventDataTest, OffsetAnnotationAcceptsEveryIntegerWidth)
 {
   {
@@ -324,14 +317,12 @@ TEST_F(EventDataTest, OffsetAnnotationAcceptsEveryIntegerWidth)
     EXPECT_EQ(offset.Value(), "9223372036854775807");
   }
   {
-    // A string still passes through as it is.
     auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"@latest"})};
     ASSERT_TRUE(offset);
     EXPECT_EQ(offset.Value(), "@latest");
   }
 }
 
-// A type that cannot be an offset leaves the offset empty, and it must not throw.
 TEST_F(EventDataTest, OffsetAnnotationIgnoresAnUnexpectedType)
 {
   Azure::Nullable<std::string> offset;

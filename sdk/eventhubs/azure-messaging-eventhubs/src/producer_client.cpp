@@ -70,18 +70,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";
-    // The properties client is not closed here. It rides the gateway connection, which is
-    // the entry for the empty partition id, so the loop below reaches it through
-    // InvalidateSender(""). GetPropertiesClient calls EnsureConnection({}) before it builds
-    // the client, so a cached properties client always has that connection behind it, and
-    // the loop always covers it. Closing it here instead threw out of the first step of
-    // this method and left every partition stack open, which is the exact failure that this
-    // change is about: after an idle detach the gateway link is dead, so that close throws.
-    //
-    // Collect the partition ids under the map locks, and then tear each stack down
-    // through the same guarded path that a failed send uses. Each teardown waits for
-    // the sends in flight on its partition, so this close cannot free a sender that a
-    // send still uses. A null generation makes each teardown unconditional.
     std::vector<std::string> partitionIds;
     {
       std::lock_guard<std::mutex> lock(m_sendersLock);
@@ -113,28 +101,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       EventDataBatchOptions const& options,
       Core::Context const& context)
   {
-    // No retry loop wraps this call, so a caller that keeps a poisoned stack sees the same
-    // failure for the life of the client. The Send(EventData) overloads come through here
-    // first, which makes this path as important as the retry loop in Send.
+    // No retry loop wraps this call. A poisoned stack would fail here forever.
     EnsureSenderOrInvalidate(options.PartitionId, context);
 
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
     {
-      // Read the peer max message size, and rebuild the stack once when that read fails.
-      //
-      // EnsureSender tests whether the map holds a sender, and nothing else. A sender that
-      // the service detached during an idle period stays in that map, so the call above
-      // returns it and tears nothing down. The peer max message size lives on the attached
-      // link, so this read is the first call that touches the dead link. On uAMQP it throws
-      // "Could not get peer max message size." from link.cpp. A live test that waited past
-      // the 30 minute idle detach failed here, which left the whole producer path broken
-      // after an idle period even with the rebuild inside Send.
-      //
-      // The shared lock keeps a teardown away while this call uses the cached sender.
-      // Without it, InvalidateSender can free the sender under this call on the Rust
-      // transport. The sender copy stays inside the lock scope, and the lock is released
-      // before InvalidateSender, which needs the same lock exclusive.
+      // This read needs the attached link. Rebuild once if the service detached it.
       auto readMaxMessageSize = [&](std::uint64_t& observedGeneration) -> std::uint64_t {
         auto& guard = GetPartitionGuard(options.PartitionId);
         std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
@@ -163,8 +136,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             << "'. Discard the stack and build it again: " << ex.what() << std::endl;
         InvalidateSender(options.PartitionId, observedGeneration, context);
         EnsureSenderOrInvalidate(options.PartitionId, context);
-        // One rebuild is enough. A second failure is not a stale link, so it goes to the
-        // caller.
         std::uint64_t rebuiltGeneration = 0;
         optionsToUse.MaxBytes = readMaxMessageSize(rebuiltGeneration);
       }
@@ -185,34 +156,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto const& partitionId = eventDataBatch.GetPartitionId();
     if (!retryOp.Execute(
             [&]() -> bool {
-              // Build the sender at the start of every attempt. A previous attempt that
-              // failed discarded the old one, so this call rebuilds the link, and it also
-              // rebuilds the session and the connection when they are gone. A cached sender
-              // that the service detached can never succeed, so an attempt against it wastes
-              // the retry budget.
-              //
-              // This call does its own invalidation, so it stays outside the try below. An
-              // attach that failed left no sender for the handlers below to discard, and it
-              // needs the session and the connection discarded instead.
               EnsureSenderOrInvalidate(partitionId, context);
-              // The generation of the stack that this attempt uses. It feeds the
-              // InvalidateSender calls below, which skip the teardown when the stack
-              // changed after this attempt captured the value. Zero never matches a
-              // partition that ever cached a sender, so a failure before the capture
-              // tears nothing down.
               std::uint64_t observedGeneration = 0;
               auto& guard = GetPartitionGuard(partitionId);
               try
               {
-                // The shared lock keeps a teardown away while this attempt uses the
-                // cached sender. Sends that share the partition also hold the lock
-                // shared, so they run at the same time. The sender copy stays inside
-                // the lock scope, so no use of it escapes the guard.
+                // Keeps a teardown off the sender copy; sends still run together.
                 std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
                 auto sender = GetSender(partitionId);
-                // Read the generation after the sender lookup. A removal cannot run
-                // while this thread holds the shared lock, so this value belongs to
-                // the stack that the lookup returned.
                 observedGeneration = guard.generation.load();
                 auto result = sender.Send(message, context);
 #if ENABLE_UAMQP
@@ -235,7 +186,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               }
               catch (Azure::Core::OperationCancelledException const&)
               {
-                // The caller cancelled the context. The link is still good, so keep it.
                 throw;
               }
               catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
@@ -248,8 +198,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               }
               catch (std::exception const&)
               {
-                // The Rust transport reports a dead sender with a std::runtime_error, so
-                // this handler is the one that starts its rebuild.
                 if (!context.IsCancelled())
                 {
                   InvalidateSender(partitionId, observedGeneration, context);
@@ -385,9 +333,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             CreateEventHubsException(openResult);
       }
       m_senders.emplace(partitionId, std::move(sender));
-      // A new stack is now current. The bump separates it from the stack before it, so
-      // a teardown for a failure on the old stack skips this one. The bump runs under
-      // m_sendersLock, so a lookup that finds this sender also sees the new generation.
       GetPartitionGuard(partitionId).generation.fetch_add(1);
     }
   }
@@ -395,11 +340,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
-    // Capture the generation before the attach. When the attach fails, the handler
-    // below removes the stack that the attach ran on. When another thread replaced
-    // that stack between this capture and the attach, the generation differs, the
-    // teardown skips, and the retry pays one more attach. That direction is safe; a
-    // capture after the throw could remove a stack that another thread just rebuilt.
+    // A capture after the throw could remove a stack another thread rebuilt.
     auto const observedGeneration = GetPartitionGuard(partitionId).generation.load();
     try
     {
@@ -407,24 +348,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     catch (Azure::Core::OperationCancelledException const&)
     {
-      // The caller stopped the attach. The cached stack is not at fault, so keep it.
       throw;
     }
     catch (std::exception const&)
     {
-      // A discard of the sender alone changes nothing here, because a failed attach never
-      // cached one. The session and the connection are the objects that carry the fault to
-      // the next attempt, so discard them.
-      //
-      // An AuthenticationException gets no exemption, although a healthy connection raises
-      // it for a credential that failed. The type is not specific enough to trust. On
-      // uAMQP, PutTokenForAudience raises it for every non-Ok CBS result, and
-      // claim_based_security.cpp maps a transport fault during the put-token round trip to
-      // Error or to InstanceClosed. So the same type covers a service refusal on a healthy
-      // connection and a $cbs link that died mid-operation. An exemption would keep the
-      // stack for the second case, and every later call would then report a misleading
-      // authentication failure. The cost of this choice is one connection rebuild after a
-      // credential failure, which the next call pays.
+      // No exemption for AuthenticationException: on uAMQP it can mean a dead $cbs link (#7330).
       if (!context.IsCancelled())
       {
         InvalidateSender(partitionId, observedGeneration, context);
@@ -436,18 +364,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(
       std::string const& partitionId)
   {
-    // InvalidateSender erases from this map, so this read takes the lock that protects it.
     std::unique_lock<std::mutex> lock(m_sendersLock);
     auto sender = m_senders.find(partitionId);
     if (sender == m_senders.end())
     {
-      // A teardown on another thread removed this stack between the call that cached the
-      // sender and this lookup. std::map::at would throw std::out_of_range here, which
-      // derives from std::logic_error, and RetryOperation::Execute catches only
-      // EventHubsException, OperationCancelledException, and std::runtime_error. So the
-      // container error would pass the retry loop with the budget unspent, and it would
-      // reach the caller as a map error for a race that one more attempt corrects. A
-      // transient exception makes the next attempt build the stack again.
+      // A teardown beat us here. std::map::at would throw std::out_of_range, which
+      // RetryOperation::Execute does not catch, so throw an EventHubsException instead.
       EventHubsException missingSender{
           "The cached message sender for partition '" + partitionId
           + "' was removed by a teardown on another thread."};
@@ -473,17 +395,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_ptr<Azure::Core::Amqp::_internal::Connection> connection;
 
     {
-      // The exclusive lock waits for the sends in flight on this partition and blocks
-      // new ones. Only map operations run under it, so the block is short. The map
-      // locks nest in the order that EnsureSender uses, and holding both makes the
-      // removal one step: a rebuild cannot attach a new sender to the old session
-      // between the sender removal and the session removal.
       auto& guard = GetPartitionGuard(partitionId);
       std::unique_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
       if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
       {
-        // Another thread already removed the stack that the caller saw fail, and a new
-        // stack can be in place. That stack is not at fault, so keep it.
         Log::Stream(Logger::Level::Informational)
             << "Skip the teardown for partition '"
             << (partitionId.empty() ? std::string("<gateway>") : partitionId)
@@ -497,14 +412,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::lock_guard<std::mutex> sendersLock(m_sendersLock);
       std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
-      // Test the generation again now that this thread holds the map lock. The stack
-      // lock does not cover EnsureSender, which bumps the generation under the map
-      // lock when it caches a new sender. So a rebuild can finish between the test
-      // above and the lock above, and this teardown would then remove the fresh
-      // stack. That window only opens when the caller saw an empty map, because a
-      // cached sender pins the map until this function removes it. A change here
-      // can only be a new stack: a removal needs the stack lock, and this thread
-      // holds it.
+      // Test again under the map lock: a rebuild can land between the two checks.
       if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
       {
         Log::Stream(Logger::Level::Informational)
@@ -536,16 +444,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       if (sender || session || connection)
       {
-        // The cached stack changed, so the old generation is no longer current.
         guard.generation.fetch_add(1);
       }
     }
 
-    // The network closes run outside every lock, so no send waits on them. No other
-    // thread can reach these objects: the maps no longer hold them, and the exclusive
-    // lock above waited for every send in flight. A close on a link that the service
-    // already detached throws the detach error, and that is the usual case here, so
-    // each close runs in its own try block and the teardown continues.
+    // The network closes run outside every lock, so no send waits on them.
     if (sender)
     {
       try
@@ -623,12 +526,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Context const& context)
   {
     std::lock_guard<std::mutex> lock(m_propertiesClientLock);
-    // Hold the sessions lock from the ensure call through the lookup below. A teardown of
-    // the gateway stack erases m_connections[""] under this lock, so a lookup outside it
-    // races the erase, and a lookup between the two steps can miss and throw
-    // std::out_of_range. The lock is recursive, so the ensure call can take it again. The
-    // teardown path releases this lock before it takes m_propertiesClientLock, so the two
-    // locks never form a cycle.
+    // Hold this across both steps so a teardown cannot erase m_connections[""] here.
     std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
     EnsureConnection({}, context);
     if (!m_propertiesClient)

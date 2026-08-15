@@ -92,24 +92,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
-    /// The AMQP session that carries the message receiver. A rebuilt receiver attaches to
-    /// this same session, and that attach authenticates the audience again, so the new link
-    /// carries a current token.
     Azure::Core::Amqp::_internal::Session m_session;
-
-    /// The address of the partition. A rebuilt receiver uses the same address.
     std::string m_partitionUrl;
-
-    /// The link name of the receiver. A rebuilt receiver uses the same name.
     std::string m_receiverName;
 
-    /// The offset of the last event that the caller received. A rebuilt receiver starts
-    /// after this offset, so the caller sees no duplicate event.
     Azure::Nullable<std::string> m_lastReceivedOffset;
 
-    /// The error that ended the previous call to ReceiveEvents. That call returned the
-    /// events that it already held, so this member keeps the error for the next call. The
-    /// next call recovers from it with a new rebuild budget.
+    /// The error that ended the last ReceiveEvents call. The next call recovers from it.
     Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> m_pendingError;
 
     /// The options used to create the PartitionClient.
@@ -141,13 +130,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions);
 
-    /** @brief Close the faulted receiver and attach a new one.
-     *
-     * The new receiver starts after the last offset that the caller received, so the caller
-     * sees no duplicate event. The method throws when it cannot attach the new receiver.
-     *
-     * @param context A context to control the request lifetime.
-     */
     void RebuildReceiver(Core::Context const& context);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);

@@ -214,11 +214,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // Replace the token for one audience. Return true when the caller must stop
     // at once, because this call can have destroyed the connection.
-    //
-    // A refresh that fails can keep the cached token, and that path writes
-    // nothing to the token map. The generation counter cannot report it, so
-    // this function sets keptTokenAfterFailedRefresh instead. The function only
-    // sets the flag to true, so one flag collects the result across a pass.
+    // keptTokenAfterFailedRefresh is true only when a failed refresh kept its token.
     bool RefreshTokenForAudience(
         TokenRefreshState& state,
         std::string const& audienceUrl,

@@ -55,20 +55,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         double jitterFactor = -1);
 
   public:
-    /**
-     * @brief Decide whether another attempt is permitted, and give the delay before it.
-     *
-     * @param response Was the last attempt a success?
-     * @param attempt Which attempt is this?
-     * @param retryAfter Receives the delay before the next attempt.
-     * @param jitterFactor Test hook removing the randomness from the delay algorithm.
-     *
-     * @returns true when the caller must wait `retryAfter` and then try again.
-     *
-     * @remarks A caller that runs its own recovery loop uses this method for the backoff
-     * math. Such a caller keeps its own attempt counter, so it can reset that counter after
-     * a success and it does not spend one budget over the life of the client.
-     */
+    // A caller with its own recovery loop uses this only for the backoff math.
     bool ShouldRetry(
         bool response,
         int32_t attempt,

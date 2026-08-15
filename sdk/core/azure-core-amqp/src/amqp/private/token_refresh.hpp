@@ -41,11 +41,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // The session that authenticated each audience. The pointer is weak, so the
     // refresh thread never keeps a session alive.
     std::map<std::string, std::weak_ptr<SessionImpl>> TokenSessions;
-    // Counts the changes to TokenStore. Every write to that map increments this
-    // counter under Mutex. The refresh thread reads the counter before it scans
-    // the map, and it compares the two values after it wakes. A different value
-    // means the map changed, so the thread scans again. The same value means the
-    // wake was spurious, so the thread sleeps again on the same deadline.
+    // Every write to TokenStore increments this under Mutex, so a waiter can
+    // tell a real change from a spurious wake.
     std::uint64_t Generation{0};
   };
 
@@ -153,40 +150,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return token.ExpiresOn <= Azure::DateTime(now + TokenRefreshBuffer);
   }
 
-  // Return true when the refresh thread must leave its wait.
-  //
-  // The thread sleeps on a deadline that it computed from TokenStore. A change
-  // to that map makes the deadline wrong, because a new audience can hold a
-  // token that is due now. The caller gives the counter value that it read
-  // before its scan, and a different value means the map changed. The same
-  // value means the wake was spurious, so the thread sleeps again.
-  //
-  // The caller holds Mutex.
+  // True when TokenStore changed since `observed`, or the thread must stop.
   inline bool ShouldWakeTokenRefresh(TokenRefreshState const& state, std::uint64_t observed)
   {
     return state.Stop || state.Generation != observed;
   }
 
-  // Return true when this pass must defer its refresh work to the floor.
-  //
-  // The floor is the earliest time at which a refresh pass may do its work. The
-  // refresh thread holds the floor across passes, and it moves the floor only
-  // on a pass that refreshed a token.
-  //
-  // IsTokenRefreshDue is true for every token that expires inside the refresh
-  // buffer, so a token with a short lifetime is due on each scan. The refresh
-  // thread also wakes on each change to TokenStore, and a connection start
-  // authenticates several audiences in a burst. Each of those scans would start
-  // another CBS operation for the same token, which is a storm of requests
-  // against the service.
-  //
-  // A caller defers the work, and it does not skip the work. The caller drops
-  // the due audiences from this pass and sleeps to the floor. The pass at the
-  // floor scans the map again and finds the same audiences.
-  //
-  // A caller must not move the floor on a deferred pass. A floor that moves on
-  // each deferral stays in the future, so a token that is always due never gets
-  // a refresh.
+  // The floor bounds a token due on every scan; a deferred pass must not move it.
   inline bool ShouldDeferTokenRefreshPass(
       bool hasDueAudiences,
       std::chrono::system_clock::time_point now,
@@ -195,26 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return hasDueAudiences && now < refreshFloor;
   }
 
-  // Return the wake deadline for a pass that did refresh work.
-  //
-  // scanWake is the deadline that the scan computed from the map. refreshFloor
-  // is the floor that this pass has just moved one interval ahead.
-  //
-  // A pass where every refresh succeeded takes the later of the two times. The
-  // refresh wrote to the map and changed the counter, so the wait returns at
-  // once, and the next pass defers its work to the floor. A wake before the
-  // floor can do no work.
-  //
-  // A pass where a refresh failed and kept the token must wake at the floor. A
-  // kept token writes nothing to the map, so the counter does not change, and
-  // the wait sleeps to its full deadline. scanWake starts at the idle poll of
-  // one minute, and the connection keeps a token with more than
-  // MinimumTokenLifetimeToUse of life, so a kept token can expire inside that
-  // sleep. The floor gives the retry the one attempt each
-  // MinimumTokenRefreshInterval that the drop rule below promises.
-  //
-  // The result is never before the floor, so the pass at the wake may do work,
-  // and the thread does at most one working pass in each interval.
+  // A kept token writes nothing, so only the floor brings the thread back before it expires.
   inline std::chrono::system_clock::time_point NextWakeAfterRefreshPass(
       std::chrono::system_clock::time_point scanWake,
       std::chrono::system_clock::time_point refreshFloor,

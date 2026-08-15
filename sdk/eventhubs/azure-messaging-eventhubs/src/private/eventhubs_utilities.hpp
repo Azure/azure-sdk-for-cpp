@@ -86,63 +86,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition);
   };
 
-  /**
-   * @brief Decide whether a receive fault permits a new attach.
-   *
-   * A transient condition means that the service or the network dropped the link, so a new
-   * attach can succeed. An empty condition means that the transport gave no detail, and an
-   * attach attempt is then the only test that we have. Any other condition, for example
-   * `amqp:link:stolen` or `amqp:unauthorized-access`, describes a state that a new attach
-   * cannot correct, so the caller must report the error instead.
-   */
+  // An empty condition means the transport gave no detail, so try another attach.
   inline bool ShouldRebuildReceiver(EventHubsException const& exception)
   {
     return exception.IsTransient || exception.ErrorCondition.empty();
   }
 
-  /**
-   * @brief Translate an authentication failure from a rebuild attempt into the exception
-   * that drives the next reattach decision.
-   *
-   * On the uAMQP transport, PutTokenForAudience raises AuthenticationException for every
-   * claims based security result that is not Ok (issue #7330). So one type covers a
-   * service that refused the claim and a `$cbs` link that died during the operation, and
-   * this layer cannot tell the two apart. An attach attempt is the only test that we
-   * have, so the condition stays empty, and ShouldRebuildReceiver then permits the next
-   * attempt while the budget lasts. The .NET client also retries an authorization
-   * denial. IsTransient stays false, because nothing established that the failure is
-   * transient. The caller must keep the original exception and throw that one when its
-   * loop stops, so a genuine credential failure reaches the application with its own
-   * type.
-   */
+  // On uAMQP this type also covers a non-Ok CBS result (#7330), so the condition stays empty.
   inline EventHubsException TranslateAuthenticationFailure(
       Azure::Core::Credentials::AuthenticationException const& failure)
   {
     return EventHubsException{failure.what()};
   }
 
-  /**
-   * @brief Decide whether a send fault makes the cached sender unusable.
-   *
-   * The service rejects a transfer that is larger than the negotiated limit, and it keeps the
-   * link attached. So the cached sender stays valid for that one condition. Every other
-   * failure can mean a link, a session, or a connection that is gone, and the caller must
-   * build a new one for its next attempt.
-   */
+  // The service keeps the link attached when it rejects an oversized transfer.
   inline bool ShouldInvalidateSender(EventHubsException const& exception)
   {
     return exception.ErrorCondition != "amqp:link:message-size-exceeded";
   }
 
-  /**
-   * @brief Give the start position that a new receiver must use.
-   *
-   * The caller must not get one event two times. So a rebuild after a delivery starts from
-   * the offset of the last event, and `Inclusive` stays false. The filter then becomes
-   * "x-opt-offset > 'last'". The other anchors stay unset, because a filter permits only one
-   * anchor. Before the first delivery there is no offset to start from, so the original
-   * position stays the same, and a rebuild uses the position that the caller asked for.
-   */
+  // Inclusive stays false, so the filter excludes the last event the caller already saw.
   inline Models::StartPosition ResumeStartPosition(
       Models::StartPosition const& originalPosition,
       Azure::Nullable<std::string> const& lastReceivedOffset)
@@ -185,10 +148,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     ~EventHubsPropertiesClient()
     {
-      // A destructor is noexcept, so an exception out of this close terminates the
-      // process. The management link rides a shared connection, and the service detaches
-      // a link that is idle for 30 minutes, so a close that throws is the ordinary case
-      // here, not a rare one. Catch and log it, as the client destructors do.
+      // A destructor is noexcept, and an idle link detach makes a throwing close ordinary.
       try
       {
         if (m_managementClientIsOpen)
@@ -325,10 +285,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       {
         if (m_managementClientIsOpen)
         {
-          // The flag drops before the call, because a client whose close threw is not
-          // open, and a second close attempt cannot repair it. The flag used to drop
-          // after the call, so a close that threw left it set, and the destructor then
-          // closed the dead client again and terminated the process.
+          // Drop the flag first, so a throwing close cannot make the destructor close again.
           m_managementClientIsOpen = false;
           try
           {
@@ -341,10 +298,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
                 << "Exception while closing the management client: " << ex.what();
           }
         }
-        // The session ends on the failing path too, so a management close that throws
-        // does not strand it. Each step has its own try block, so one failure does not
-        // hide the other, the same treatment that ProducerClient::InvalidateSender gives
-        // its own closes.
         try
         {
           m_session.End(context);
