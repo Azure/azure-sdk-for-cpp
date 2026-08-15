@@ -138,6 +138,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::string const& receiverName,
         PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions,
+        Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
+        std::string eventHubName,
+        std::string fullyQualifiedNamespace,
         Azure::Core::Context const& context);
     PartitionClientFactory() = delete;
   };

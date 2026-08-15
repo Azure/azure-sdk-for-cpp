@@ -5,6 +5,7 @@
 
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
 
@@ -188,6 +189,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& receiverName,
       PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions,
+      Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
+      std::string eventHubName,
+      std::string fullyQualifiedNamespace,
       Azure::Core::Context const& context)
   {
     Azure::Core::Amqp::_internal::MessageReceiver messageReceiver{
@@ -200,7 +204,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         partitionUrl,
         receiverName,
         std::move(options),
-        std::move(retryOptions));
+        std::move(retryOptions),
+        std::move(tracingFactory),
+        std::move(eventHubName),
+        std::move(fullyQualifiedNamespace));
   }
 
   /** Creates a new PartitionClient
@@ -209,6 +216,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    * @param options options used to create the PartitionClient.
    * @param retryOptions controls how many times we should retry an operation in response to being
    * throttled or encountering a transient error.
+   * @param tracingFactory factory used to create the distributed tracing spans.
+   * @param eventHubName the name of the Event Hub.
+   * @param fullyQualifiedNamespace the fully qualified namespace of the Event Hub.
    */
   PartitionClient::PartitionClient(
       Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
@@ -216,10 +226,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string partitionUrl,
       std::string receiverName,
       PartitionClientOptions options,
-      Core::Http::Policies::RetryOptions retryOptions)
+      Core::Http::Policies::RetryOptions retryOptions,
+      Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
+      std::string eventHubName,
+      std::string fullyQualifiedNamespace)
       : m_receiver{messageReceiver}, m_session{session}, m_partitionUrl{std::move(partitionUrl)},
-        m_receiverName{std::move(receiverName)}, m_partitionOptions{options}, m_retryOptions{
-                                                                                  retryOptions}
+        m_receiverName{std::move(receiverName)}, m_partitionOptions{options},
+        m_retryOptions{retryOptions},
+        m_tracingFactory{std::move(tracingFactory)}, m_eventHubName{std::move(eventHubName)},
+        m_fullyQualifiedNamespace{std::move(fullyQualifiedNamespace)}
   {
   }
 
@@ -285,155 +300,175 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
-    // RetryOperation::Execute's budget never resets, so this loop keeps its own counter.
-    Azure::Core::Http::Policies::RetryOptions retryOptions{m_retryOptions};
-    _detail::RetryOperation retryOperation{retryOptions};
-    int32_t rebuildAttempt = 0;
+    // The message count is known only when the loop ends, so the span gets it later.
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "PartitionClient.ReceiveEvents",
+        Azure::Core::Tracing::_internal::SpanKind::Client,
+        "receive",
+        m_eventHubName,
+        m_fullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        context);
 
-    // Keep the event, and record the offset a rebuild must start after.
-    auto keepMessage
-        = [&](std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage> const& message) {
-            auto eventData = std::make_shared<const Models::ReceivedEventData>(message);
-            if (eventData->Offset.HasValue())
+    try
+    {
+      // RetryOperation::Execute's budget never resets, so this loop keeps its own counter.
+      Azure::Core::Http::Policies::RetryOptions retryOptions{m_retryOptions};
+      _detail::RetryOperation retryOperation{retryOptions};
+      int32_t rebuildAttempt = 0;
+
+      // Keep the event, and record the offset a rebuild must start after.
+      auto keepMessage
+          = [&](std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage> const& message) {
+              auto eventData = std::make_shared<const Models::ReceivedEventData>(message);
+              if (eventData->Offset.HasValue())
+              {
+                m_lastReceivedOffset = eventData->Offset.Value();
+              }
+              rebuildAttempt = 0;
+              messages.push_back(eventData);
+            };
+
+      // True: the receiver works again. False: return the events held. Throws if none are held.
+      auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
+        EventHubsException exception{
+            _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
+        // currentError tracks the last rebuild fault, not the first. m_pendingError takes
+        // this value below, so the next call recovers from the fault that stopped this
+        // loop, not from an earlier one that a later attempt already showed can be fixed.
+        Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
+        // Preserves a rebuild failure whose original type carries more than the
+        // translated EventHubsException above, such as an AuthenticationException. The
+        // loop throws this one when it stops, so the caller sees the original type.
+        std::exception_ptr originalFailure{};
+
+        for (;;)
+        {
+          std::chrono::milliseconds retryAfter{};
+          if (!_detail::ShouldRebuildReceiver(exception)
+              || !retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter))
+          {
+            if (!messages.empty())
             {
-              m_lastReceivedOffset = eventData->Offset.Value();
+              // The service will not send these again. The next call gets a new budget.
+              Log::Stream(Logger::Level::Warning)
+                  << "Cannot rebuild the message receiver now. Return " << messages.size()
+                  << " events and keep the error for the next call: " << exception.what();
+              m_pendingError = currentError;
+              return false;
             }
-            rebuildAttempt = 0;
-            messages.push_back(eventData);
-          };
+            if (originalFailure)
+            {
+              std::rethrow_exception(originalFailure);
+            }
+            throw exception;
+          }
 
-    // True: the receiver works again. False: return the events held. Throws if none are held.
-    auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
-      EventHubsException exception{
-          _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
-      // currentError tracks the last rebuild fault, not the first. m_pendingError takes
-      // this value below, so the next call recovers from the fault that stopped this
-      // loop, not from an earlier one that a later attempt already showed can be fixed.
-      Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
-      // Preserves a rebuild failure whose original type carries more than the
-      // translated EventHubsException above, such as an AuthenticationException. The
-      // loop throws this one when it stops, so the caller sees the original type.
-      std::exception_ptr originalFailure{};
+          rebuildAttempt++;
+          std::this_thread::sleep_for(retryAfter);
+          tracingContext.Context.ThrowIfCancelled();
 
-      for (;;)
-      {
-        std::chrono::milliseconds retryAfter{};
-        if (!_detail::ShouldRebuildReceiver(exception)
-            || !retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter))
-        {
-          if (!messages.empty())
+          try
           {
-            // The service will not send these again. The next call gets a new budget.
+            RebuildReceiver(tracingContext.Context);
+            return true;
+          }
+          catch (Azure::Core::OperationCancelledException const&)
+          {
+            throw;
+          }
+          catch (EventHubsException const& rebuildFailure)
+          {
             Log::Stream(Logger::Level::Warning)
-                << "Cannot rebuild the message receiver now. Return " << messages.size()
-                << " events and keep the error for the next call: " << exception.what();
-            m_pendingError = currentError;
-            return false;
+                << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+            exception = rebuildFailure;
+            originalFailure = nullptr;
+            currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{
+                exception.ErrorCondition};
+            currentError.Description = exception.ErrorDescription;
           }
-          if (originalFailure)
+          catch (Azure::Core::Credentials::AuthenticationException const& rebuildFailure)
           {
-            std::rethrow_exception(originalFailure);
+            Log::Stream(Logger::Level::Warning)
+                << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+            exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
+            originalFailure = std::current_exception();
+            currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+            currentError.Description = exception.ErrorDescription;
           }
-          throw exception;
+          catch (std::exception const& rebuildFailure)
+          {
+            Log::Stream(Logger::Level::Warning)
+                << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+            EventHubsException translated{rebuildFailure.what()};
+            translated.IsTransient = true;
+            exception = translated;
+            originalFailure = nullptr;
+            currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+            currentError.Description = translated.ErrorDescription;
+          }
         }
+      };
 
-        rebuildAttempt++;
-        std::this_thread::sleep_for(retryAfter);
-        context.ThrowIfCancelled();
-
-        try
-        {
-          RebuildReceiver(context);
-          return true;
-        }
-        catch (Azure::Core::OperationCancelledException const&)
-        {
-          throw;
-        }
-        catch (EventHubsException const& rebuildFailure)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
-          exception = rebuildFailure;
-          originalFailure = nullptr;
-          currentError.Condition
-              = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{exception.ErrorCondition};
-          currentError.Description = exception.ErrorDescription;
-        }
-        catch (Azure::Core::Credentials::AuthenticationException const& rebuildFailure)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
-          exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
-          originalFailure = std::current_exception();
-          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
-          currentError.Description = exception.ErrorDescription;
-        }
-        catch (std::exception const& rebuildFailure)
-        {
-          Log::Stream(Logger::Level::Warning)
-              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
-          EventHubsException translated{rebuildFailure.what()};
-          translated.IsTransient = true;
-          exception = translated;
-          originalFailure = nullptr;
-          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
-          currentError.Description = translated.ErrorDescription;
-        }
-      }
-    };
-
-    // No event is held yet, so this recover either works or throws.
-    if (m_pendingError.HasValue())
-    {
-      auto pendingError = m_pendingError.Value();
-      m_pendingError.Reset();
-      recover(pendingError);
-    }
-
-    while (messages.size() < maxMessages && !context.IsCancelled())
-    {
-      std::pair<
-          std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
-          Azure::Core::Amqp::Models::_internal::AmqpError>
-          result;
-
-      // TryPeekForIncomingMessage will return two empty values if there is no data available.
-      result = m_receiver.TryWaitForIncomingMessage();
-      if (result.first)
+      // No event is held yet, so this recover either works or throws.
+      if (m_pendingError.HasValue())
       {
-        keepMessage(result.first);
+        auto pendingError = m_pendingError.Value();
+        m_pendingError.Reset();
+        recover(pendingError);
       }
-      else if (result.second)
+
+      while (messages.size() < maxMessages && !tracingContext.Context.IsCancelled())
       {
-        if (!recover(result.second))
-        {
-          break;
-        }
-      }
-      // If we haven't gotten *any* messages, we're done. Otherwise, we'll wait for more.
-      else if (!messages.empty())
-      {
-        break;
-      }
-      else
-      {
-        result = m_receiver.WaitForIncomingMessage(context);
+        std::pair<
+            std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
+            Azure::Core::Amqp::Models::_internal::AmqpError>
+            result;
+
+        // TryPeekForIncomingMessage will return two empty values if there is no data available.
+        result = m_receiver.TryWaitForIncomingMessage();
         if (result.first)
         {
-          Log::Stream(Logger::Level::Verbose)
-              << "Received message. Message count now " << messages.size();
           keepMessage(result.first);
         }
-        else if (!recover(result.second))
+        else if (result.second)
+        {
+          if (!recover(result.second))
+          {
+            break;
+          }
+        }
+        // If we haven't gotten *any* messages, we're done. Otherwise, we'll wait for more.
+        else if (!messages.empty())
         {
           break;
         }
+        else
+        {
+          result = m_receiver.WaitForIncomingMessage(tracingContext.Context);
+          if (result.first)
+          {
+            Log::Stream(Logger::Level::Verbose)
+                << "Received message. Message count now " << messages.size();
+            keepMessage(result.first);
+          }
+          else if (!recover(result.second))
+          {
+            break;
+          }
+        }
       }
-    }
-    Log::Stream(Logger::Level::Verbose)
-        << "Receive Events. Return " << messages.size() << " messages.";
+      Log::Stream(Logger::Level::Verbose)
+          << "Receive Events. Return " << messages.size() << " messages.";
 
-    return messages;
+      _detail::SetMessageCount(tracingContext.Span, messages.size());
+      return messages;
+    }
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
   }
 }}} // namespace Azure::Messaging::EventHubs
