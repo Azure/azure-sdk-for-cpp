@@ -306,14 +306,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 
   // GetEventHubProperties opens a management link on the shared gateway connection, and the
-  // client caches that link for its whole life. The service detaches a link that is idle for
-  // 30 minutes, so the wait below is the only way to put the cached link into the state that
-  // the bug needs. Before the fix for #7335, Close on the dead link threw,
-  // EventHubsPropertiesClient::Close left the client marked open, and the destructor then
-  // closed the dead client a second time. A destructor is noexcept, so the second throw
-  // called std::terminate, and the whole process died inside client.Close() below. The test
-  // therefore proves three things: the close after the detach returns instead of ending the
-  // process, it does not throw, and the client builds a new stack for the next read.
+  // client caches that link for its whole life. This test opens that link, leaves it idle
+  // past the 30 minute service detach, and then closes and uses the client again.
+  //
+  // Read what this test does and does not prove before you rely on it. It proves that a
+  // producer which reads the properties, then idles past the detach, closes without a throw
+  // and reads the properties again. That covers the gateway and management path across an
+  // idle period, which the send and receive idle tests do not touch.
+  //
+  // It does not prove the crash in #7335. That crash needs ManagementClient::Close to throw,
+  // which leaves the client marked open for the destructor to close a second time. This test
+  // was written for that crash and it was run against the code before the fix, where it
+  // passed. So the uAMQP close of a link that the service already detached does not throw,
+  // and the crash needs some other fault to reach it. The fix stands as a guard, because a
+  // destructor is noexcept and ManagementClientImpl::Close does rethrow its first exception
+  // (impl/uamqp/amqp/management.cpp), but no test covers that path today.
+  //
+  // Do not add a claim here that this test covers #7335 without a run that fails against the
+  // code before commit 55e0de54c.
   TEST_F(ReattachConnectionStringTest, PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_)
   {
     if (!HasLiveEnvironment())
