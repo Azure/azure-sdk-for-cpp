@@ -101,6 +101,27 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
   }
 
   /**
+   * @brief Translate an authentication failure from a rebuild attempt into the exception
+   * that drives the next reattach decision.
+   *
+   * On the uAMQP transport, PutTokenForAudience raises AuthenticationException for every
+   * claims based security result that is not Ok (issue #7330). So one type covers a
+   * service that refused the claim and a `$cbs` link that died during the operation, and
+   * this layer cannot tell the two apart. An attach attempt is the only test that we
+   * have, so the condition stays empty, and ShouldRebuildReceiver then permits the next
+   * attempt while the budget lasts. The .NET client also retries an authorization
+   * denial. IsTransient stays false, because nothing established that the failure is
+   * transient. The caller must keep the original exception and throw that one when its
+   * loop stops, so a genuine credential failure reaches the application with its own
+   * type.
+   */
+  inline EventHubsException TranslateAuthenticationFailure(
+      Azure::Core::Credentials::AuthenticationException const& failure)
+  {
+    return EventHubsException{failure.what()};
+  }
+
+  /**
    * @brief Decide whether a send fault makes the cached sender unusable.
    *
    * The service rejects a transfer that is larger than the negotiated limit, and it keeps the

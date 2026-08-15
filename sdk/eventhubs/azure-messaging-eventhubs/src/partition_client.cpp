@@ -12,6 +12,7 @@
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
 
 #include <chrono>
+#include <exception>
 #include <thread>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -323,6 +324,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // whole new budget of attempts, even when the last attempt reported a condition that
       // no rebuild can correct.
       Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
+      // The last rebuild failure in its original form, when that form says more than the
+      // EventHubsException above. The loop throws this one when it stops, so the caller
+      // reads the type that the failure came with. A later attempt that fails in another
+      // way clears it, because the last failure governs what the loop reports.
+      std::exception_ptr originalFailure{};
 
       for (;;)
       {
@@ -340,6 +346,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                 << " events and keep the error for the next call: " << exception.what();
             m_pendingError = currentError;
             return false;
+          }
+          if (originalFailure)
+          {
+            std::rethrow_exception(originalFailure);
           }
           throw exception;
         }
@@ -362,8 +372,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           Log::Stream(Logger::Level::Warning)
               << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
           exception = rebuildFailure;
+          originalFailure = nullptr;
           currentError.Condition
               = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{exception.ErrorCondition};
+          currentError.Description = exception.ErrorDescription;
+        }
+        catch (Azure::Core::Credentials::AuthenticationException const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          // This type is ambiguous today. On uAMQP, PutTokenForAudience raises it for a
+          // service that refused the claim and also for a `$cbs` link that died during
+          // the operation (issue #7330). An attach attempt is the only test that we
+          // have, so the loop continues while the budget permits it. The translation
+          // does not claim that the failure is transient, and the loop keeps the
+          // original exception, so a genuine credential failure reaches the caller with
+          // its own type when the budget ends.
+          exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
+          originalFailure = std::current_exception();
+          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
           currentError.Description = exception.ErrorDescription;
         }
         catch (std::exception const& rebuildFailure)
@@ -374,6 +401,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           EventHubsException translated{rebuildFailure.what()};
           translated.IsTransient = true;
           exception = translated;
+          originalFailure = nullptr;
           currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
           currentError.Description = translated.ErrorDescription;
         }

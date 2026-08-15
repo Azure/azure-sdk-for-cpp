@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Tests for the three decisions that drive link reattach. ShouldRebuildReceiver decides
-// whether a receive fault permits a new attach. ShouldInvalidateSender decides whether a
-// send fault makes the cached sender unusable. ResumeStartPosition decides where a new
-// receiver starts.
+// Tests for the decisions that drive link reattach. ShouldRebuildReceiver decides
+// whether a receive fault permits a new attach. TranslateAuthenticationFailure turns an
+// authentication failure into the exception that feeds that decision.
+// ShouldInvalidateSender decides whether a send fault makes the cached sender unusable.
+// ResumeStartPosition decides where a new receiver starts.
 
 #include "../src/private/eventhubs_utilities.hpp"
 #include "azure/messaging/eventhubs.hpp"
@@ -100,6 +101,23 @@ TEST_F(ReattachPolicyTest, DoNotRebuildTheReceiverOnAPermanentCondition)
       EventHubsDetail::ShouldRebuildReceiver(ExceptionFor("amqp:unauthorized-access", false)));
   EXPECT_FALSE(EventHubsDetail::ShouldRebuildReceiver(ExceptionFor("amqp:link:stolen", false)));
   EXPECT_FALSE(EventHubsDetail::ShouldRebuildReceiver(ExceptionFor("amqp:not-allowed", false)));
+}
+
+// On uAMQP, PutTokenForAudience raises AuthenticationException for every CBS result that
+// is not Ok (issue #7330). So the type covers a refused claim and a dead `$cbs` link, and
+// the client cannot tell the two apart. The translation must permit the next attach
+// attempt, and it must not claim that the failure is transient, because nothing
+// established that.
+TEST_F(ReattachPolicyTest, TranslateAnAuthenticationFailureIntoAnotherAttempt)
+{
+  Azure::Core::Credentials::AuthenticationException failure{"put-token failed"};
+
+  EventHubsException translated{EventHubsDetail::TranslateAuthenticationFailure(failure)};
+
+  EXPECT_TRUE(EventHubsDetail::ShouldRebuildReceiver(translated));
+  EXPECT_FALSE(translated.IsTransient);
+  EXPECT_TRUE(translated.ErrorCondition.empty());
+  EXPECT_EQ("put-token failed", translated.ErrorDescription);
 }
 
 // The service rejects a transfer that is too large, and it keeps the link attached. So the
