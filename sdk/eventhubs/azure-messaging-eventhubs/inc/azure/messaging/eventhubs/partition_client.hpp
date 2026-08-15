@@ -11,6 +11,8 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <atomic>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class PartitionClientFactory;
@@ -61,12 +63,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// Create a PartitionClient from another PartitionClient
     PartitionClient(PartitionClient const& other) = delete;
     /// Create a PartitionClient moving from another PartitionClient
-    PartitionClient(PartitionClient&& other) = default;
+    PartitionClient(PartitionClient&& other);
 
     /// Assign a PartitionClient to another PartitionClient
     PartitionClient& operator=(PartitionClient const& other) = delete;
     /// Move a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient&& other) = default;
+    PartitionClient& operator=(PartitionClient&& other);
 
     /** Destroy this partition client.
      */
@@ -78,12 +80,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param context A context to control the request lifetime.
      * @return A vector of received events.
      *
+     * @throws EventHubsException with IsTransient false when Close already ran.
      */
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> ReceiveEvents(
         uint32_t maxMessages,
         Core::Context const& context = {});
 
     /** @brief Closes the connection to the Event Hub service.
+     *
+     * After Close, a call to ReceiveEvents throws a non-transient EventHubsException. A
+     * second call to Close does nothing.
      */
     void Close(Core::Context const& context);
 
@@ -122,6 +128,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * response to being throttled or encountering a transient error.
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
+
+    /// True after Close ran. A closed client rejects ReceiveEvents, and the recover loop
+    /// stops instead of attaching a new receiver on the still open session.
+    std::atomic<bool> m_closed{false};
 
     /** Creates a new PartitionClient
      *

@@ -180,6 +180,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 #endif
 
+    // Build the error that a closed client reports. Close ended the client on purpose, so the
+    // error is not transient and has no AMQP condition.
+    EventHubsException CreateClientClosedException()
+    {
+      EventHubsException exception{
+          "The PartitionClient was closed by a call to Close and can no longer receive events."};
+      exception.IsTransient = false;
+      return exception;
+    }
+
   } // namespace
 
   PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
@@ -226,7 +236,41 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
   }
 
-  void PartitionClient::Close(Core::Context const& context) { m_receiver.Close(context); }
+  PartitionClient::PartitionClient(PartitionClient&& other)
+      : m_receiver{std::move(other.m_receiver)}, m_session{std::move(other.m_session)},
+        m_partitionUrl{std::move(other.m_partitionUrl)},
+        m_receiverName{std::move(other.m_receiverName)},
+        m_lastReceivedOffset{std::move(other.m_lastReceivedOffset)},
+        m_pendingError{std::move(other.m_pendingError)},
+        m_partitionOptions{std::move(other.m_partitionOptions)},
+        m_retryOptions{std::move(other.m_retryOptions)}, m_closed{other.m_closed.load()}
+  {
+  }
+
+  PartitionClient& PartitionClient::operator=(PartitionClient&& other)
+  {
+    if (this != &other)
+    {
+      m_receiver = std::move(other.m_receiver);
+      m_session = std::move(other.m_session);
+      m_partitionUrl = std::move(other.m_partitionUrl);
+      m_receiverName = std::move(other.m_receiverName);
+      m_lastReceivedOffset = std::move(other.m_lastReceivedOffset);
+      m_pendingError = std::move(other.m_pendingError);
+      m_partitionOptions = std::move(other.m_partitionOptions);
+      m_retryOptions = std::move(other.m_retryOptions);
+      m_closed.store(other.m_closed.load());
+    }
+    return *this;
+  }
+
+  void PartitionClient::Close(Core::Context const& context)
+  {
+    // Mark the client closed before the receiver close, so a later ReceiveEvents does not read
+    // the local close as a link fault.
+    m_closed = true;
+    m_receiver.Close(context);
+  }
 
   void PartitionClient::RebuildReceiver(Core::Context const& context)
   {
@@ -288,6 +332,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       uint32_t maxMessages,
       Core::Context const& context)
   {
+    if (m_closed)
+    {
+      throw CreateClientClosedException();
+    }
+
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
 
     // The rebuild budget belongs to this call, and a received message resets it. The budget
@@ -357,6 +406,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         rebuildAttempt++;
         std::this_thread::sleep_for(retryAfter);
         context.ThrowIfCancelled();
+
+        // Close ran during this call. A closed client must not attach a new receiver on the
+        // still open session.
+        if (m_closed)
+        {
+          if (!messages.empty())
+          {
+            // The caller already holds events, so give them back. Do not keep a pending
+            // error: the next call sees m_closed and throws.
+            Log::Stream(Logger::Level::Warning)
+                << "The client is closed. Return " << messages.size() << " events.";
+            return false;
+          }
+          throw CreateClientClosedException();
+        }
 
         try
         {

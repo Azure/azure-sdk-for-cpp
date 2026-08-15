@@ -14,6 +14,8 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <type_traits>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -64,6 +66,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       producer->Close();
     }
   };
+
+  // ConsumerClient::CreatePartitionClient returns a PartitionClient by value, and the tests and
+  // the samples move that value. A member that holds state across a close must keep the move
+  // available, so a hand written move is needed as soon as a member is not movable by default.
+  // These checks fail at compile time, and not at run time, so they hold for every transport.
+  static_assert(
+      std::is_move_constructible<Azure::Messaging::EventHubs::PartitionClient>::value,
+      "PartitionClient must stay move constructible");
+  static_assert(
+      std::is_move_assignable<Azure::Messaging::EventHubs::PartitionClient>::value,
+      "PartitionClient must stay move assignable");
+  static_assert(
+      !std::is_copy_constructible<Azure::Messaging::EventHubs::PartitionClient>::value,
+      "PartitionClient copy stays deleted");
+  static_assert(
+      !std::is_copy_assignable<Azure::Messaging::EventHubs::PartitionClient>::value,
+      "PartitionClient copy stays deleted");
 
   TEST_P(ConsumerClientTest, ConnectToPartition_LIVEONLY_)
   {
@@ -533,6 +552,75 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                      << secondEvents[0]->Offset.Value() << ".";
     EXPECT_NE(secondEvents[0]->Offset.Value(), lastOffset)
         << "The rebuilt receiver gave the caller the same event twice.";
+  }
+
+  // PartitionClient::Close must end the client. A read after the close must throw at once, and
+  // the client must not attach a new receiver. Before this change, Close set no state on the
+  // client, so the next ReceiveEvents read the local close as a link fault. It then rebuilt the
+  // receiver on the session, which the close left open, and it gave the caller events (#7334).
+  //
+  // Close is idempotent today, and the two close calls below pin that behaviour.
+  //
+  // This test needs no transport guard. The read below finds a closed client, so it throws
+  // before it goes to the link, and neither transport can hang in it.
+  TEST_P(ConsumerClientTest, ReceiveAfterCloseThrowsWithoutARebuild_LIVEONLY_)
+  {
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID
+        = std::string(testing::UnitTest::GetInstance()->current_test_info()->name())
+        + " Application";
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    auto client = CreateConsumerClient("", options);
+
+    // Bound each read. A read that does go to the link holds this test until the deadline, and
+    // a test that hangs takes the whole live pass with it. Each read gets its own deadline,
+    // because a deadline is an absolute time.
+    auto readTimeout = []() {
+      return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    };
+
+    // SetUp sends one event to partition 1 in live mode, so a receiver that starts at the
+    // earliest position has something to read. A read that gives back an event therefore
+    // proves the rebuild.
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Earliest = true;
+    partitionOptions.StartPosition.Inclusive = true;
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client->CreatePartitionClient("1", partitionOptions);
+
+    // Close takes a context and it has no default value for it.
+    EXPECT_NO_THROW(partitionClient.Close({}));
+    // A second close must do nothing and it must not throw.
+    EXPECT_NO_THROW(partitionClient.Close({}));
+
+    try
+    {
+      auto events = partitionClient.ReceiveEvents(1, readTimeout());
+      FAIL() << "ReceiveEvents after Close returned " << events.size()
+             << " events instead of throwing.";
+    }
+    catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+    {
+      // The local close is not a transient fault, and it carries no AMQP error condition,
+      // because no peer sent one.
+      EXPECT_FALSE(ex.IsTransient);
+      EXPECT_TRUE(ex.ErrorCondition.empty());
+    }
+
+    // A move must carry the closed state with it. A caller that moves a closed client must not
+    // get a working client back.
+    Azure::Messaging::EventHubs::PartitionClient movedClient{std::move(partitionClient)};
+    try
+    {
+      auto events = movedClient.ReceiveEvents(1, readTimeout());
+      FAIL() << "ReceiveEvents on a moved closed client returned " << events.size()
+             << " events instead of throwing.";
+    }
+    catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+    {
+      EXPECT_FALSE(ex.IsTransient);
+      EXPECT_TRUE(ex.ErrorCondition.empty());
+    }
   }
 
   namespace {
