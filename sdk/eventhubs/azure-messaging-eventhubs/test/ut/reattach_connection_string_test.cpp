@@ -1,9 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-// Link reattach tests for a namespace that keeps its shared access keys, since the standard
-// live resource sets disableLocalAuth. Each test skips itself when the connection string
-// is empty.
+// Link reattach tests for a namespace that keeps its shared access keys. The standard live
+// resource sets disableLocalAuth, so it has no shared access key, and the parameterized
+// fixture takes a token credential only. The first three tests mirror the reattach tests in
+// consumer_client_test.cpp and producer_client_test.cpp. PropertiesCloseSurvivesAnIdleDetach
+// has no mirror; it covers the management link close after an idle detach (issue #7335).
+// Each test skips itself when the connection string is empty.
 
 #include "eventhubs_test_base.hpp"
 
@@ -63,6 +66,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
                   .empty();
     }
 
+    // Give each read its own deadline. A deadline is an absolute time, so a context shared
+    // across several reads would starve the later ones.
     static Azure::Core::Context ReadTimeout()
     {
       return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
@@ -89,10 +94,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       GTEST_SKIP() << "Set EVENTHUB_CONNECTION_STRING and EVENTHUB_NAME to run this test.";
     }
 
+    // Each receiver needs its own client. One client keeps one session for each partition
+    // id and reuses one link name, so two partition clients on the same partition would
+    // attach duplicate link names and the service would never answer the second one.
     ConsumerClientOptions firstClientOptions;
     firstClientOptions.ApplicationID
         = testing::UnitTest::GetInstance()->current_test_info()->name();
     firstClientOptions.Name = "first-receiver";
+    // Keep the rebuild budget large. A rebuild loop then takes far longer than the bound
+    // below, so the elapsed time check proves that no rebuild happened.
     firstClientOptions.RetryOptions.MaxRetries = 10;
     firstClientOptions.RetryOptions.RetryDelay = std::chrono::seconds(2);
     ConsumerClient firstConsumer{
@@ -105,7 +115,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     ConsumerClient secondConsumer{
         ConnectionString(), EventHubName(), ConsumerGroup(), secondClientOptions};
 
-    // Start both at the latest position; an earliest-position receiver prefetches the backlog.
+    // Start both at the latest position. A receiver that starts at the earliest position
+    // prefetches the backlog, and the last read below would then answer from that buffer
+    // instead of going to the link.
     PartitionClientOptions firstOptions;
     firstOptions.StartPosition.Latest = true;
     firstOptions.OwnerLevel = 1;
@@ -250,8 +262,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         << "The rebuilt receiver gave the caller the same event twice.";
   }
 
-  // This test does not prove the crash in issue #7335. That needs ManagementClient::Close to
-  // throw, and this test passed against the code before the fix.
+  // This test proves that a producer can read properties, idle past the detach, close
+  // without a throw, and read properties again. It does NOT prove the crash in issue #7335:
+  // that needs ManagementClient::Close to throw, and this test passed against the code
+  // before the fix. Do not claim it covers #7335 without a run that fails on the old code.
   TEST_F(ReattachConnectionStringTest, PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_)
   {
     if (!HasLiveEnvironment())

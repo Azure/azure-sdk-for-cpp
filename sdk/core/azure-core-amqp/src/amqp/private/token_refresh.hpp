@@ -156,7 +156,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return state.Stop || state.Generation != observed;
   }
 
-  // The floor bounds a token due on every scan; a deferred pass must not move it.
+  // A token shorter than the refresh buffer is due on every scan, and a
+  // connection start authenticates several audiences in a burst, so without
+  // this floor the thread storms the service with CBS requests. A caller
+  // defers the work, not skips it, and never moves the floor on a deferred
+  // pass, or an always-due token would never refresh.
   inline bool ShouldDeferTokenRefreshPass(
       bool hasDueAudiences,
       std::chrono::system_clock::time_point now,
@@ -165,7 +169,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return hasDueAudiences && now < refreshFloor;
   }
 
-  // A kept token writes nothing, so only the floor brings the thread back before it expires.
+  // A pass where every refresh succeeded takes the later of the two times,
+  // because that refresh already moved the floor out and changed the map. A
+  // pass that kept a token after a failed refresh must wake at the floor
+  // instead. A kept token writes nothing to the map, so the generation
+  // counter cannot end the wait, and the idle poll is long enough that a
+  // short-lived kept token would expire inside that sleep.
   inline std::chrono::system_clock::time_point NextWakeAfterRefreshPass(
       std::chrono::system_clock::time_point scanWake,
       std::chrono::system_clock::time_point refreshFloor,

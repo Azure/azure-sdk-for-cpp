@@ -770,7 +770,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   // The service detaches a link idle for 30 minutes; ProducerClient used to cache one sender.
   TEST_P(ProducerClientTest, SendSurvivesAnIdleDetach_LIVEONLY_)
   {
-    // The 120 minute live pipeline budget cannot absorb this 35 minute wait by default.
+    // The 120 minute live pipeline budget (LiveTestTimeoutInMinutes in sdk/eventhubs/ci.yml)
+    // cannot absorb this 35 minute wait by default, so the test stays out of the standard
+    // live pass until asked for.
     if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
             .empty())
     {

@@ -306,7 +306,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
       EventHubsException exception{
           _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
+      // currentError tracks the last rebuild fault, not the first. m_pendingError takes
+      // this value below, so the next call recovers from the fault that stopped this
+      // loop, not from an earlier one that a later attempt already showed can be fixed.
       Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
+      // Preserves a rebuild failure whose original type carries more than the
+      // translated EventHubsException above, such as an AuthenticationException. The
+      // loop throws this one when it stops, so the caller sees the original type.
       std::exception_ptr originalFailure{};
 
       for (;;)

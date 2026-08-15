@@ -432,6 +432,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       std::unique_lock<std::mutex> lock(state->Mutex);
 
+      // The earliest time the next refresh pass may run. This lives outside
+      // the loop, because a wake for a new audience starts a new pass, and
+      // that new pass must still obey the floor.
       auto refreshFloor = std::chrono::system_clock::time_point::min();
 
       while (!state->Stop)
@@ -464,6 +467,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         if (ShouldDeferTokenRefreshPass(!dueAudiences.empty(), now, refreshFloor))
         {
           dueAudiences.clear();
+          // Take the earlier of the scan deadline and the floor. The scan
+          // deadline can belong to a token that is not the deferred one, and
+          // a wait to the later time would miss it.
           nextWake = (std::min)(nextWake, refreshFloor);
         }
 
@@ -501,6 +507,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         else
         {
+          // This thread's own refresh bumps the counter, so this wait
+          // returns at once, one time, per pass. That cannot spin: the next
+          // pass finds the floor still in force, defers its work, and writes
+          // nothing to the map, leaving the counter equal to what it observed.
           state->Cv.wait_until(lock, nextWake, [&state, observed]() {
             return ShouldWakeTokenRefresh(*state, observed);
           });

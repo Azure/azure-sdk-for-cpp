@@ -92,10 +92,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
+    /// The AMQP session that carries the receiver. A rebuild reattaches to this session.
     Azure::Core::Amqp::_internal::Session m_session;
+    /// The address of the partition. A rebuild reuses this address.
     std::string m_partitionUrl;
+    /// The link name of the receiver. A rebuild reuses this name.
     std::string m_receiverName;
 
+    /// The offset of the last event received. A rebuild starts just after it.
     Azure::Nullable<std::string> m_lastReceivedOffset;
 
     /// The error that ended the last ReceiveEvents call. The next call recovers from it.
@@ -130,6 +134,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions);
 
+    /// Closes the faulted receiver and attaches a new one starting after the last offset.
     void RebuildReceiver(Core::Context const& context);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);

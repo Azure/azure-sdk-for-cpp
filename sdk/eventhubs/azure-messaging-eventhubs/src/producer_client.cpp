@@ -70,6 +70,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close producer client.";
+    // Do not close the properties client here directly. It rides the gateway connection
+    // for the empty partition id, so the loop below reaches it through
+    // InvalidateSender(""). Closing it first threw when the gateway link was already
+    // dead from an idle detach, and left every other partition stack open.
     std::vector<std::string> partitionIds;
     {
       std::lock_guard<std::mutex> lock(m_sendersLock);
@@ -107,7 +111,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
     {
-      // This read needs the attached link. Rebuild once if the service detached it.
+      // EnsureSender only checks whether the map holds a sender; a link the service
+      // detached during an idle period stays cached. Reading the peer max message size
+      // is the first call that touches that dead link, and a live test that waited past
+      // the 30 minute idle detach failed exactly here. Rebuild once and read again.
       auto readMaxMessageSize = [&](std::uint64_t& observedGeneration) -> std::uint64_t {
         auto& guard = GetPartitionGuard(options.PartitionId);
         std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
@@ -368,8 +375,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     auto sender = m_senders.find(partitionId);
     if (sender == m_senders.end())
     {
-      // A teardown beat us here. std::map::at would throw std::out_of_range, which
-      // RetryOperation::Execute does not catch, so throw an EventHubsException instead.
+      // A teardown on another thread removed this stack between the call that cached the
+      // sender and this lookup. std::map::at would throw std::out_of_range here, and
+      // RetryOperation::Execute does not catch that type, so the error would reach the
+      // caller unspent. Throw a transient EventHubsException instead, so the next
+      // attempt builds the stack again.
       EventHubsException missingSender{
           "The cached message sender for partition '" + partitionId
           + "' was removed by a teardown on another thread."};
@@ -412,7 +422,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::lock_guard<std::mutex> sendersLock(m_sendersLock);
       std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
-      // Test again under the map lock: a rebuild can land between the two checks.
+      // Test again under the map lock. EnsureSender bumps the generation under that
+      // lock, not under stackLock, so a rebuild can finish between the check above and
+      // here and cache a fresh stack. This second check catches that window and keeps
+      // the fresh stack instead of tearing it down.
       if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
       {
         Log::Stream(Logger::Level::Informational)

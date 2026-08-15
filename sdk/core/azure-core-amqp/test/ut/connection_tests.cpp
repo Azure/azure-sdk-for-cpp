@@ -160,6 +160,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(0u, state.Generation);
   }
 
+  // The tests below cover the predicates that the refresh thread polls: when a change to
+  // the token store must wake it, and when the refresh floor must defer its work.
   // A change to TokenStore must move the sleep deadline of the refresh thread.
   TEST_F(TestTokenRefresh, ShouldWakeTokenRefreshAnswersEachCaseForTheRefreshThread)
   {

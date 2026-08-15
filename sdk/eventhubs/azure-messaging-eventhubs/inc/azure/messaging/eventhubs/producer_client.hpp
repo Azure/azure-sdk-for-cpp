@@ -226,7 +226,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
 
-    // One guard per partition: a send holds stackLock shared, a teardown holds it exclusive.
+    // One guard per partition. A send holds stackLock shared while it uses the cached
+    // sender, so sends to one partition run together. A teardown holds stackLock
+    // exclusive, so it waits for sends in flight and never closes an object a send
+    // still uses. The generation increases each time the stack changes, so a teardown
+    // that saw an old generation is a no-op and cannot remove a stack another thread
+    // rebuilt.
     struct PartitionGuard
     {
       std::shared_timed_mutex stackLock;

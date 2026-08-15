@@ -423,8 +423,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
   TEST_P(ConsumerClientTest, ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_)
   {
-    // The live pipeline caps the whole binary at 120 minutes, so this 35 minute wait runs
-    // only when explicitly enabled.
+    // The live pipeline caps the whole binary at 120 minutes (LiveTestTimeoutInMinutes in
+    // sdk/eventhubs/ci.yml), so this 35 minute wait runs only when explicitly enabled and
+    // stays out of the standard live pass.
     if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
             .empty())
     {
