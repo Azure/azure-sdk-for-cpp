@@ -6,10 +6,11 @@
 // key, and the parameterized fixture takes a token credential only. A namespace that keeps its
 // shared access keys can run the same scenarios through this file.
 //
-// Each of the first three tests mirrors one test in the parameterized suites:
+// Four of the tests below mirror one test each in the parameterized suites:
 //   StolenReceiverFailsWithoutARebuild_LIVEONLY_  -> consumer_client_test.cpp
 //   SendSurvivesAnIdleDetach_LIVEONLY_            -> producer_client_test.cpp
 //   ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_ -> consumer_client_test.cpp
+//   ReceiveAfterCloseThrowsWithoutARebuild_LIVEONLY_ -> consumer_client_test.cpp
 // PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_ has no mirror. It covers the close of the
 // management link after an idle detach, which used to end the process (#7335).
 //
@@ -23,6 +24,7 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -369,6 +371,69 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(after.PartitionIds.size(), before.PartitionIds.size());
 
     client.Close();
+  }
+
+  // PartitionClient::Close must end the client. A read after the close must throw at once, and
+  // the client must not attach a new receiver. Before this change, Close set no state on the
+  // client, so the next ReceiveEvents read the local close as a link fault. It then rebuilt the
+  // receiver on the session, which the close left open, and it gave the caller events (#7334).
+  //
+  // Close is idempotent today, and the two close calls below pin that behaviour.
+  TEST_F(ReattachConnectionStringTest, ReceiveAfterCloseThrowsWithoutARebuild_LIVEONLY_)
+  {
+    if (!HasLiveEnvironment())
+    {
+      GTEST_SKIP() << "Set EVENTHUB_CONNECTION_STRING and EVENTHUB_NAME to run this test.";
+    }
+
+    // Put at least one event on the partition. A receiver that starts at the earliest position
+    // then has something to read, so a read that gives back an event proves the rebuild.
+    SendOneEvent("Before the close");
+
+    ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    ConsumerClient consumer{ConnectionString(), EventHubName(), ConsumerGroup(), options};
+
+    PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Earliest = true;
+    partitionOptions.StartPosition.Inclusive = true;
+    PartitionClient partitionClient
+        = consumer.CreatePartitionClient(PartitionId(), partitionOptions);
+
+    // Close takes a context and it has no default value for it.
+    EXPECT_NO_THROW(partitionClient.Close({}));
+    // A second close must do nothing and it must not throw.
+    EXPECT_NO_THROW(partitionClient.Close({}));
+
+    try
+    {
+      auto events = partitionClient.ReceiveEvents(1, ReadTimeout());
+      FAIL() << "ReceiveEvents after Close returned " << events.size()
+             << " events instead of throwing.";
+    }
+    catch (EventHubsException const& ex)
+    {
+      // The local close is not a transient fault, and it carries no AMQP error condition,
+      // because no peer sent one.
+      EXPECT_FALSE(ex.IsTransient);
+      EXPECT_TRUE(ex.ErrorCondition.empty());
+    }
+
+    // A move must carry the closed state with it. A caller that moves a closed client must not
+    // get a working client back.
+    PartitionClient movedClient{std::move(partitionClient)};
+    try
+    {
+      auto events = movedClient.ReceiveEvents(1, ReadTimeout());
+      FAIL() << "ReceiveEvents on a moved closed client returned " << events.size()
+             << " events instead of throwing.";
+    }
+    catch (EventHubsException const& ex)
+    {
+      EXPECT_FALSE(ex.IsTransient);
+      EXPECT_TRUE(ex.ErrorCondition.empty());
+    }
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test
