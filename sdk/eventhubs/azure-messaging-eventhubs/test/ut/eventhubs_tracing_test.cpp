@@ -96,8 +96,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         }
       }
 
-      void AddAttributes(Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd)
-          override
+      void AddAttributes(
+          Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd) override
       {
         auto const& attributes = static_cast<TestAttributeSet const&>(attributeToAdd);
         for (auto const& attribute : attributes.GetAttributes())
@@ -118,9 +118,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       void AddEvent(std::string const& eventName) override { m_events.push_back(eventName); }
       void AddEvent(std::exception const& ex) override { m_events.push_back(ex.what()); }
-      void SetStatus(
-          Azure::Core::Tracing::_internal::SpanStatus const& status,
-          std::string const&) override
+      void SetStatus(Azure::Core::Tracing::_internal::SpanStatus const& status, std::string const&)
+          override
       {
         m_statuses.push_back(status);
       }
