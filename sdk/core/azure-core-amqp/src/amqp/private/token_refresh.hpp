@@ -195,6 +195,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return hasDueAudiences && now < refreshFloor;
   }
 
+  // Return the wake deadline for a pass that did refresh work.
+  //
+  // scanWake is the deadline that the scan computed from the map. refreshFloor
+  // is the floor that this pass has just moved one interval ahead.
+  //
+  // A pass where every refresh succeeded takes the later of the two times. The
+  // refresh wrote to the map and changed the counter, so the wait returns at
+  // once, and the next pass defers its work to the floor. A wake before the
+  // floor can do no work.
+  //
+  // A pass where a refresh failed and kept the token must wake at the floor. A
+  // kept token writes nothing to the map, so the counter does not change, and
+  // the wait sleeps to its full deadline. scanWake starts at the idle poll of
+  // one minute, and the connection keeps a token with more than
+  // MinimumTokenLifetimeToUse of life, so a kept token can expire inside that
+  // sleep. The floor gives the retry the one attempt each
+  // MinimumTokenRefreshInterval that the drop rule below promises.
+  //
+  // The result is never before the floor, so the pass at the wake may do work,
+  // and the thread does at most one working pass in each interval.
+  inline std::chrono::system_clock::time_point NextWakeAfterRefreshPass(
+      std::chrono::system_clock::time_point scanWake,
+      std::chrono::system_clock::time_point refreshFloor,
+      bool keptTokenAfterFailedRefresh)
+  {
+    if (keptTokenAfterFailedRefresh)
+    {
+      return refreshFloor;
+    }
+    return (std::max)(scanWake, refreshFloor);
+  }
+
   // Return true when a refresh that failed must drop the cached token.
   //
   // A refresh can fail for a short time, for example when the credential cannot

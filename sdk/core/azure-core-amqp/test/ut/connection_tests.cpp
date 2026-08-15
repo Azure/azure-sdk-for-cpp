@@ -260,6 +260,65 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, refreshFloor, refreshFloor));
   }
 
+  // A refresh that fails can keep the cached token. That path writes nothing
+  // to the map, so the generation counter does not change, and the wait sleeps
+  // to its full deadline. The pass must put that deadline at the refresh floor.
+  // A deadline at the idle poll would let a kept token with 31 to 60 seconds of
+  // life expire inside the sleep, and the link would detach.
+  TEST_F(TestTokenRefresh, AFailedPassRetriesTheKeptTokenAtTheFloor)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const scanWake = now + Azure::Core::Amqp::_detail::IdleTokenRefreshPoll;
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    // Model the failed pass. The token still works, so the connection keeps it.
+    auto const keptToken = TokenExpiringIn(std::chrono::seconds(40));
+    ASSERT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(keptToken, now));
+
+    // The pass wrote nothing, so the counter cannot end the wait early. The
+    // deadline is the only thing that brings the thread back.
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
+
+    // The kept token expires before the idle poll. A sleep to scanWake is too
+    // long.
+    ASSERT_TRUE(keptToken.ExpiresOn <= Azure::DateTime(scanWake));
+
+    // The pass wakes at the floor instead, and the token is still alive there.
+    auto const wake = Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(
+        scanWake, refreshFloor, /* keptTokenAfterFailedRefresh */ true);
+    EXPECT_EQ(refreshFloor, wake);
+    EXPECT_TRUE(keptToken.ExpiresOn > Azure::DateTime(wake));
+
+    // The wake is not before the floor, so the pass at the wake does its work
+    // and does not defer. The thread does at most one working pass in each
+    // interval, so the retry cannot spin.
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, wake, refreshFloor));
+  }
+
+  // A pass where every refresh succeeded takes the later of the scan deadline
+  // and the floor. The refresh changed the counter, so the wait returns at
+  // once, and the deferral already sleeps that pass to the floor. A wake before
+  // the floor can do no work.
+  TEST_F(TestTokenRefresh, ASuccessfulPassKeepsTheLaterOfScanWakeAndFloor)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    // The idle poll is after the floor, so the idle poll wins.
+    auto const idleWake = now + Azure::Core::Amqp::_detail::IdleTokenRefreshPoll;
+    EXPECT_EQ(
+        idleWake,
+        Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(idleWake, refreshFloor, false));
+
+    // A token that comes due before the floor cannot pull the wake before the
+    // floor, because a pass there would only defer.
+    auto const earlyWake = now + std::chrono::seconds(5);
+    EXPECT_EQ(
+        refreshFloor,
+        Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(earlyWake, refreshFloor, false));
+  }
+
   // The refresh thread co-owns the state block, so the block stays alive after
   // the connection that made it is gone. That is what lets the thread come back
   // from a release that destroyed the connection, take the mutex, and read the

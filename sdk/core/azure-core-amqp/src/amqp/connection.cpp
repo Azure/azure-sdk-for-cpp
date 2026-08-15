@@ -481,13 +481,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           nextWake = (std::min)(nextWake, refreshFloor);
         }
 
+        // A failed refresh that keeps its token writes nothing to the map, so
+        // the generation counter cannot report it. The refresh calls report it
+        // through this flag instead.
+        bool keptTokenAfterFailedRefresh = false;
         for (auto const& audience : dueAudiences)
         {
           if (state->Stop)
           {
             break;
           }
-          if (connection->RefreshTokenForAudience(*state, audience, lock))
+          if (connection->RefreshTokenForAudience(
+                  *state, audience, lock, keptTokenAfterFailedRefresh))
           {
             // That call released a session reference, which can have destroyed
             // this connection. `connection` is not safe to use now, so leave.
@@ -504,11 +509,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           // floor also survives a wake for a new audience, because a rescan
           // recomputes nextWake from the map alone.
           //
-          // Take the later of the two times here, which is the opposite of the
-          // deferral above. A pass before the floor can do no refresh work, so
-          // a wake before the floor would only defer again.
+          // A pass where every refresh succeeded sleeps to the later of the two
+          // times. A pass that failed and kept a token sleeps to the floor, so
+          // the retry comes before that token can expire. See
+          // NextWakeAfterRefreshPass.
           refreshFloor = std::chrono::system_clock::now() + MinimumTokenRefreshInterval;
-          nextWake = (std::max)(nextWake, refreshFloor);
+          nextWake = NextWakeAfterRefreshPass(nextWake, refreshFloor, keptTokenAfterFailedRefresh);
         }
 
         if (state->TokenStore.empty())
@@ -562,10 +568,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   // last reference to this connection. ReleaseOutsideLock releases that
   // pointer, always with the mutex free. The return value tells the caller
   // whether this connection can be gone.
+  //
+  // keptTokenAfterFailedRefresh reports the one outcome that the generation
+  // counter cannot: a refresh that failed and kept the cached token. This
+  // function only sets the flag to true. It never clears the flag, so one flag
+  // collects the outcome across all the refresh calls of one pass.
   bool ConnectionImpl::RefreshTokenForAudience(
       TokenRefreshState& state,
       std::string const& audienceUrl,
-      std::unique_lock<std::mutex>& lock)
+      std::unique_lock<std::mutex>& lock,
+      bool& keptTokenAfterFailedRefresh)
   {
     std::shared_ptr<SessionImpl> promotedSession;
     auto sessionEntry = state.TokenSessions.find(audienceUrl);
@@ -696,6 +708,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         state.TokenStore.erase(currentEntry);
         state.TokenSessions.erase(audienceUrl);
         ++state.Generation;
+      }
+      else
+      {
+        // The kept token changed nothing in the map, so the caller cannot see
+        // this outcome through the generation counter. Tell the caller, so its
+        // next pass wakes at the refresh floor and not at the idle poll.
+        keptTokenAfterFailedRefresh = true;
       }
     }
     return false;
