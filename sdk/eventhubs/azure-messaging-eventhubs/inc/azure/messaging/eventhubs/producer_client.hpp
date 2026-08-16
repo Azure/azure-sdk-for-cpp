@@ -281,6 +281,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Nullable<std::uint64_t> observedGeneration,
         Azure::Core::Context const& context);
 
+    // Sends a batch inside the span that a public Send overload started. This method never
+    // starts a span, so one logical send makes one span.
+    void SendBatchInSpan(
+        EventDataBatch const& eventDataBatch,
+        Azure::Core::Tracing::_internal::TracingContextFactory::TracingContext& tracingContext);
+
     std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
         Azure::Core::Context const& context);
 

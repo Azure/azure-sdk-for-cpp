@@ -157,6 +157,85 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
   }
 
+  void ProducerClient::SendBatchInSpan(
+      EventDataBatch const& eventDataBatch,
+      Azure::Core::Tracing::_internal::TracingContextFactory::TracingContext& tracingContext)
+  {
+    // The conversion stays inside the span scope, because an empty batch fails here.
+    auto message = eventDataBatch.ToAmqpMessage();
+
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
+        m_producerClientOptions.RetryOptions);
+    // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
+    // are exhausted, but if the lambda ever returns false directly the batch must not be
+    // silently dropped. See issue #7130.
+    auto const& partitionId = eventDataBatch.GetPartitionId();
+    if (!retryOp.Execute(
+            [&]() -> bool {
+              EnsureSenderOrInvalidate(partitionId, tracingContext.Context);
+              std::uint64_t observedGeneration = 0;
+              auto& guard = GetPartitionGuard(partitionId);
+              try
+              {
+                // Keeps a teardown off the sender copy; sends still run together.
+                std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+                auto sender = GetSender(partitionId);
+                observedGeneration = guard.generation.load();
+                auto result = sender.Send(message, tracingContext.Context);
+#if ENABLE_UAMQP
+                auto sendStatus = std::get<0>(result);
+                if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+                {
+                  return true;
+                }
+                // Throw an exception about the error we just received.
+                throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                    CreateEventHubsException(std::get<1>(result));
+#elif ENABLE_RUST_AMQP
+                if (result)
+                {
+                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                      CreateEventHubsException(result);
+                }
+                return true;
+#endif
+              }
+              catch (Azure::Core::OperationCancelledException const&)
+              {
+                throw;
+              }
+              catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+              {
+                if (!tracingContext.Context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
+                {
+                  InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
+                }
+                throw;
+              }
+              catch (std::exception const&)
+              {
+                if (!tracingContext.Context.IsCancelled())
+                {
+                  InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
+                }
+                throw;
+              }
+            },
+            tracingContext.Context))
+    {
+      std::string failureDetail = "ProducerClient::Send failed after exhausting "
+          + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
+          + " retry attempts (partition='"
+          + (partitionId.empty() ? std::string("<gateway>") : partitionId)
+          + "'). The underlying send returned false without throwing; no further "
+            "diagnostic detail is available from this layer.";
+      Azure::Messaging::EventHubs::EventHubsException ex(failureDetail);
+      ex.ErrorCondition = "eventhubs:client:retries-exhausted";
+      ex.IsTransient = true;
+      throw ex;
+    }
+  }
+
   void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
   {
     auto tracingContext = _detail::StartSpan(
@@ -171,80 +250,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     try
     {
-      // The conversion stays inside the span scope, because an empty batch fails here.
-      auto message = eventDataBatch.ToAmqpMessage();
-
-      Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
-          m_producerClientOptions.RetryOptions);
-      // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
-      // are exhausted, but if the lambda ever returns false directly the batch must not be
-      // silently dropped. See issue #7130.
-      auto const& partitionId = eventDataBatch.GetPartitionId();
-      if (!retryOp.Execute(
-              [&]() -> bool {
-                EnsureSenderOrInvalidate(partitionId, tracingContext.Context);
-                std::uint64_t observedGeneration = 0;
-                auto& guard = GetPartitionGuard(partitionId);
-                try
-                {
-                  // Keeps a teardown off the sender copy; sends still run together.
-                  std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
-                  auto sender = GetSender(partitionId);
-                  observedGeneration = guard.generation.load();
-                  auto result = sender.Send(message, tracingContext.Context);
-#if ENABLE_UAMQP
-                  auto sendStatus = std::get<0>(result);
-                  if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-                  {
-                    return true;
-                  }
-                  // Throw an exception about the error we just received.
-                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                      CreateEventHubsException(std::get<1>(result));
-#elif ENABLE_RUST_AMQP
-                  if (result)
-                  {
-                    throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                        CreateEventHubsException(result);
-                  }
-                  return true;
-#endif
-                }
-                catch (Azure::Core::OperationCancelledException const&)
-                {
-                  throw;
-                }
-                catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
-                {
-                  if (!tracingContext.Context.IsCancelled()
-                      && _detail::ShouldInvalidateSender(ex))
-                  {
-                    InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
-                  }
-                  throw;
-                }
-                catch (std::exception const&)
-                {
-                  if (!tracingContext.Context.IsCancelled())
-                  {
-                    InvalidateSender(partitionId, observedGeneration, tracingContext.Context);
-                  }
-                  throw;
-                }
-              },
-              tracingContext.Context))
-      {
-        std::string failureDetail = "ProducerClient::Send failed after exhausting "
-            + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
-            + " retry attempts (partition='"
-            + (partitionId.empty() ? std::string("<gateway>") : partitionId)
-            + "'). The underlying send returned false without throwing; no further "
-              "diagnostic detail is available from this layer.";
-        Azure::Messaging::EventHubs::EventHubsException ex(failureDetail);
-        ex.ErrorCondition = "eventhubs:client:retries-exhausted";
-        ex.IsTransient = true;
-        throw ex;
-      }
+      SendBatchInSpan(eventDataBatch, tracingContext);
     }
     catch (std::exception const& ex)
     {
@@ -255,27 +261,65 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
-    if (!batch.TryAdd(eventData))
+    // The batch creation opens the AMQP link, so it must run inside the span.
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        size_t{1},
+        context);
+
+    try
     {
-      throw std::runtime_error("Could not add message to batch.");
+      auto batch = CreateBatch(EventDataBatchOptions{}, tracingContext.Context);
+      if (!batch.TryAdd(eventData))
+      {
+        throw std::runtime_error("Could not add message to batch.");
+      }
+      SendBatchInSpan(batch, tracingContext);
     }
-    Send(batch, context);
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
   }
 
   void ProducerClient::Send(
       std::vector<Models::EventData> const& eventData,
       Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
-    for (const auto& data : eventData)
+    // The batch creation opens the AMQP link, so it must run inside the span.
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        eventData.size(),
+        context);
+
+    try
     {
-      if (!batch.TryAdd(data))
+      auto batch = CreateBatch(EventDataBatchOptions{}, tracingContext.Context);
+      for (const auto& data : eventData)
       {
-        throw std::runtime_error("Could not add message to batch.");
+        if (!batch.TryAdd(data))
+        {
+          throw std::runtime_error("Could not add message to batch.");
+        }
       }
+      SendBatchInSpan(batch, tracingContext);
     }
-    Send(batch, context);
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
   }
 
   Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection(
