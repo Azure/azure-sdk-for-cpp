@@ -38,6 +38,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     // The az.namespace attribute comes from the tracing context factory.
     auto tracingContext = tracingFactory.CreateTracingContext(spanName, createOptions, context);
+    // A factory with no tracer drops every attribute, so skip the string temporaries.
+    if (!tracingFactory.HasTracer())
+    {
+      return tracingContext;
+    }
     tracingContext.Span.AddAttribute("messaging.system", "eventhubs");
     tracingContext.Span.AddAttribute("messaging.destination.name", eventHubName);
     tracingContext.Span.AddAttribute("messaging.operation", operationName);
