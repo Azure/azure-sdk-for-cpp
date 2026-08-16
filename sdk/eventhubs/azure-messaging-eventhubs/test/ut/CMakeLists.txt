@@ -27,6 +27,7 @@ add_executable (
     eventhubs_admin_client.hpp
     eventhubs_test_base.hpp
     eventhubs_tracing_test.cpp
+    eventhubs_tracing_test_doubles.hpp
     processor_load_balancer_test.cpp
     processor_test.cpp
     producer_client_test.cpp
