@@ -198,6 +198,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return batch;
     }
 
+    EventDataBatch CreateEmptyTestBatch()
+    {
+      EventDataBatchOptions batchOptions;
+      batchOptions.MaxBytes = static_cast<std::uint64_t>((std::numeric_limits<uint16_t>::max)());
+      return _detail::EventDataBatchFactory::CreateEventDataBatch(batchOptions);
+    }
+
     std::map<std::string, std::string> ExpectedSendAttributes()
     {
       return std::map<std::string, std::string>{
@@ -318,6 +325,33 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
     EXPECT_EQ(ExpectedSendAttributes(), span->GetAttributes());
+
+    ASSERT_EQ(1u, span->GetEvents().size());
+    EXPECT_FALSE(span->GetEvents()[0].empty());
+
+    ASSERT_FALSE(span->GetStatuses().empty());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanStatus::Error, span->GetStatuses().back());
+  }
+
+  // An empty batch fails in the conversion to an AMQP message. That failure must land in the
+  // send span like every other send failure.
+  TEST(EventHubsTracingTest, SendSpanRecordsEmptyBatchFailure)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    ProducerClientOptions options;
+    options.TracingProvider = provider;
+
+    ProducerClient client{TestConnectionString, TestEventHubName, options};
+    EventDataBatch batch{CreateEmptyTestBatch()};
+
+    EXPECT_THROW(client.Send(batch, Azure::Core::Context{}), std::runtime_error);
+
+    auto span = SingleSpan(provider);
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("ProducerClient.Send", span->GetName());
+
+    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
+    EXPECT_EQ("0", span->GetAttributes().at("messaging.batch.message_count"));
 
     ASSERT_EQ(1u, span->GetEvents().size());
     EXPECT_FALSE(span->GetEvents()[0].empty());
