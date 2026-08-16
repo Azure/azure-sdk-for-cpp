@@ -252,6 +252,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::shared_ptr<TestSpan> SingleSpan(std::shared_ptr<TestTracingProvider> const& provider)
     {
       EXPECT_EQ(1u, provider->GetTracers().size());
+      if (provider->GetTracers().size() != 1u)
+      {
+        return nullptr;
+      }
       auto const& tracer = provider->GetTracers().front();
       EXPECT_EQ(1u, tracer->GetSpans().size());
       if (tracer->GetSpans().size() != 1u)
