@@ -159,8 +159,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
   {
-    auto message = eventDataBatch.ToAmqpMessage();
-
     auto tracingContext = _detail::StartSpan(
         m_tracingFactory,
         "ProducerClient.Send",
@@ -173,6 +171,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     try
     {
+      // The conversion stays inside the span scope, because an empty batch fails here.
+      auto message = eventDataBatch.ToAmqpMessage();
+
       Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
           m_producerClientOptions.RetryOptions);
       // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
