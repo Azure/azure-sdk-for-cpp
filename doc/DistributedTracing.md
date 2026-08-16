@@ -102,6 +102,13 @@ clientOptions.Telemetry.ApplicationId = "MyApplication";
 ServiceClient myServiceClient(clientOptions);
 ```
 
+Some clients do not derive their options from `Azure::Core::_internal::ClientOptions`, so those options have no `Telemetry` field. These clients declare a `TracingProvider` field at the top level of their own options structure. The Event Hubs clients work this way:
+
+```cpp
+Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+producerOptions.TracingProvider = provider;
+```
+
 ## Distributed Tracing Service Integration
 
 There are two steps needed to integrate Distributed Tracing with a Service Client.

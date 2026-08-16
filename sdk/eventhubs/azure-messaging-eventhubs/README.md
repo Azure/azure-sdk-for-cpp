@@ -246,6 +246,64 @@ Azure::Messaging::EventHubs::PartitionClient partitionClient
 auto events = partitionClient.ReceiveEvents(1);
 ```
 
+## Distributed tracing
+
+The `ProducerClient` and the `PartitionClient` create distributed tracing spans through the Azure Core tracing API. This package does not depend on opentelemetry-cpp. The application creates the OpenTelemetry tracer provider and links the `azure-core-tracing-opentelemetry` package.
+
+To get the spans, set the `TracingProvider` field on the client options. The Event Hubs options structs declare this field at the top level:
+
+```cpp
+#include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
+#include <azure/messaging/eventhubs.hpp>
+
+// Your Event Hubs namespace connection string is available in the Azure portal.
+std::string connectionString = "<connection_string>";
+std::string eventHubName = "<event_hub_name>";
+
+// Use the opentelemetry-cpp tracer provider of the application.
+opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider
+    = opentelemetry::trace::Provider::GetTracerProvider();
+
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> provider
+    = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider);
+
+Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+producerOptions.TracingProvider = provider;
+Azure::Messaging::EventHubs::ProducerClient producer(
+    connectionString, eventHubName, producerOptions);
+
+Azure::Messaging::EventHubs::ConsumerClientOptions consumerOptions;
+consumerOptions.TracingProvider = provider;
+Azure::Messaging::EventHubs::ConsumerClient consumer(
+    connectionString,
+    eventHubName,
+    Azure::Messaging::EventHubs::DefaultConsumerGroup,
+    consumerOptions);
+```
+
+The clients create these spans:
+
+| Span name | Span kind | Notes |
+|---|---|---|
+| `ProducerClient.Send` | Producer | One span for each `Send` call. The span covers all the retry attempts. The overloads that take events also create the batch inside the span. |
+| `PartitionClient.ReceiveEvents` | Client | One span for each `ReceiveEvents` call. |
+
+Both spans have these attributes. The names follow the OpenTelemetry semantic conventions version 1.17.0, which is the schema of the `azure-core-tracing-opentelemetry` package:
+
+| Attribute | Value |
+|---|---|
+| `az.namespace` | `Microsoft.EventHub` |
+| `messaging.system` | `eventhubs` |
+| `messaging.destination.name` | The Event Hub name. |
+| `messaging.operation` | `publish` on a send span, `receive` on a receive span. |
+| `messaging.batch.message_count` | The number of events in the operation. A receive span gets this attribute when the call is successful. |
+| `net.peer.name` | The fully qualified namespace. |
+
+The instrumentation scope is `azure-messaging-eventhubs-cpp` with the package version.
+
+When the application does not set `TracingProvider`, the client creates no spans and records nothing. There is no global fallback provider.
+
+For the OpenTelemetry provider setup, see [Distributed Tracing in the C++ SDK][distributed_tracing].
 
 # Troubleshooting
 
@@ -296,6 +354,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [producer_client]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-messaging-eventhubs/latest/class_azure_1_1_messaging_1_1_event_hubs_1_1_producer_client.html
 
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs
+[distributed_tracing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/DistributedTracing.md
 [azure_identity_pkg]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-identity/latest/index.html
 [default_azure_credential]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-identity/latest/index.html#defaultazurecredential
 
