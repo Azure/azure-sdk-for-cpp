@@ -29,7 +29,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       Azure::Nullable<size_t> messageCount,
       Azure::Core::Context const& context);
 
-  // Adds the message count attribute to a span.
-  void SetMessageCount(Azure::Core::Tracing::_internal::ServiceSpan& span, size_t messageCount);
+  // Adds the message count attribute to a span. The factory supplies the attribute set that
+  // carries the count as an unsigned integer.
+  void SetMessageCount(
+      Azure::Core::Tracing::_internal::TracingContextFactory const& tracingFactory,
+      Azure::Core::Tracing::_internal::ServiceSpan& span,
+      size_t messageCount);
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail

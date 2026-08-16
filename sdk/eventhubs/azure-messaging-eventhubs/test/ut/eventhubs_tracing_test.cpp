@@ -424,7 +424,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(
         span->GetAttributes().end(), span->GetAttributes().find("messaging.batch.message_count"));
 
-    _detail::SetMessageCount(tracingContext.Span, 3);
+    _detail::SetMessageCount(factory, tracingContext.Span, 3);
     ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
     EXPECT_EQ("3", span->GetAttributes().at("messaging.batch.message_count"));
   }
@@ -449,7 +449,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto span = SingleSpan(provider);
     ASSERT_NE(nullptr, span);
 
-    _detail::SetMessageCount(tracingContext.Span, 3);
+    _detail::SetMessageCount(factory, tracingContext.Span, 3);
 
     ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
     EXPECT_EQ("3", span->GetAttributes().at("messaging.batch.message_count"));
@@ -499,7 +499,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Nullable<size_t>{},
         Azure::Core::Context{});
 
-    _detail::SetMessageCount(tracingContext.Span, 3);
+    _detail::SetMessageCount(factory, tracingContext.Span, 3);
     SUCCEED();
   }
 
