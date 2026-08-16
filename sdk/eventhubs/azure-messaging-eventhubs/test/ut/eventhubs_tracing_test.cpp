@@ -35,8 +35,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     constexpr const char* TestEventHubName = "unit-test-eh";
     constexpr const char* TestFullyQualifiedNamespace = "fake.example.com";
 
+    // The type tag of the overload that delivered an attribute. A string "3" and a uint64 3 both
+    // stringify to "3", so the value alone cannot show the type on the wire.
+    constexpr const char* AttributeTypeBool = "bool";
+    constexpr const char* AttributeTypeInt32 = "int32";
+    constexpr const char* AttributeTypeInt64 = "int64";
+    constexpr const char* AttributeTypeUInt64 = "uint64";
+    constexpr const char* AttributeTypeDouble = "double";
+    constexpr const char* AttributeTypeCString = "cstring";
+    constexpr const char* AttributeTypeString = "string";
+
     class TestAttributeSet final : public Azure::Core::Tracing::_internal::AttributeSet {
       std::map<std::string, std::string> m_attributes;
+      std::map<std::string, std::string> m_attributeTypes;
 
     public:
       TestAttributeSet() : Azure::Core::Tracing::_internal::AttributeSet() {}
@@ -44,41 +55,65 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       void AddAttribute(std::string const& key, bool value) override
       {
         m_attributes[key] = std::to_string(value);
+        m_attributeTypes[key] = AttributeTypeBool;
       }
       void AddAttribute(std::string const& key, int32_t value) override
       {
         m_attributes[key] = std::to_string(value);
+        m_attributeTypes[key] = AttributeTypeInt32;
       }
       void AddAttribute(std::string const& key, int64_t value) override
       {
         m_attributes[key] = std::to_string(value);
+        m_attributeTypes[key] = AttributeTypeInt64;
       }
       void AddAttribute(std::string const& key, uint64_t value) override
       {
         m_attributes[key] = std::to_string(value);
+        m_attributeTypes[key] = AttributeTypeUInt64;
       }
       void AddAttribute(std::string const& key, double value) override
       {
         m_attributes[key] = std::to_string(value);
+        m_attributeTypes[key] = AttributeTypeDouble;
       }
       void AddAttribute(std::string const& key, const char* value) override
       {
         m_attributes[key] = std::string(value);
+        m_attributeTypes[key] = AttributeTypeCString;
       }
       void AddAttribute(std::string const& key, std::string const& value) override
       {
         m_attributes[key] = value;
+        m_attributeTypes[key] = AttributeTypeString;
       }
 
       std::map<std::string, std::string> const& GetAttributes() const { return m_attributes; }
+      std::map<std::string, std::string> const& GetAttributeTypes() const
+      {
+        return m_attributeTypes;
+      }
     };
 
     class TestSpan final : public Azure::Core::Tracing::_internal::Span {
       std::string m_spanName;
       Azure::Core::Tracing::_internal::SpanKind m_kind;
       std::map<std::string, std::string> m_attributes;
+      std::map<std::string, std::string> m_attributeTypes;
       std::vector<std::string> m_events;
       std::vector<Azure::Core::Tracing::_internal::SpanStatus> m_statuses;
+
+      void Merge(TestAttributeSet const& attributes)
+      {
+        for (auto const& attribute : attributes.GetAttributes())
+        {
+          m_attributes[attribute.first] = attribute.second;
+        }
+        for (auto const& attributeType : attributes.GetAttributeTypes())
+        {
+          m_attributeTypes[attributeType.first] = attributeType.second;
+        }
+      }
 
     public:
       TestSpan(
@@ -88,27 +123,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       {
         if (options.Attributes)
         {
-          auto const* attributes = static_cast<TestAttributeSet const*>(options.Attributes.get());
-          for (auto const& attribute : attributes->GetAttributes())
-          {
-            m_attributes[attribute.first] = attribute.second;
-          }
+          Merge(*static_cast<TestAttributeSet const*>(options.Attributes.get()));
         }
       }
 
       void AddAttributes(
           Azure::Core::Tracing::_internal::AttributeSet const& attributeToAdd) override
       {
-        auto const& attributes = static_cast<TestAttributeSet const&>(attributeToAdd);
-        for (auto const& attribute : attributes.GetAttributes())
-        {
-          m_attributes[attribute.first] = attribute.second;
-        }
+        Merge(static_cast<TestAttributeSet const&>(attributeToAdd));
       }
       void AddAttribute(std::string const& attributeName, std::string const& attributeValue)
           override
       {
         m_attributes[attributeName] = attributeValue;
+        m_attributeTypes[attributeName] = AttributeTypeString;
       }
       void AddEvent(
           std::string const& eventName,
@@ -129,6 +157,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::string const& GetName() const { return m_spanName; }
       Azure::Core::Tracing::_internal::SpanKind GetKind() const { return m_kind; }
       std::map<std::string, std::string> const& GetAttributes() const { return m_attributes; }
+      std::map<std::string, std::string> const& GetAttributeTypes() const
+      {
+        return m_attributeTypes;
+      }
       std::vector<std::string> const& GetEvents() const { return m_events; }
       std::vector<Azure::Core::Tracing::_internal::SpanStatus> const& GetStatuses() const
       {
@@ -395,6 +427,80 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     _detail::SetMessageCount(tracingContext.Span, 3);
     ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
     EXPECT_EQ("3", span->GetAttributes().at("messaging.batch.message_count"));
+  }
+
+  // The OpenTelemetry semantic conventions define messaging.batch.message_count as an int, so
+  // the count must reach the span through a numeric overload.
+  TEST(EventHubsTracingTest, ReceiveSpanMessageCountIsUnsignedInteger)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    auto factory = _detail::CreateTracingContextFactory(provider);
+
+    auto tracingContext = _detail::StartSpan(
+        factory,
+        "PartitionClient.ReceiveEvents",
+        Azure::Core::Tracing::_internal::SpanKind::Client,
+        "receive",
+        TestEventHubName,
+        TestFullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        Azure::Core::Context{});
+
+    auto span = SingleSpan(provider);
+    ASSERT_NE(nullptr, span);
+
+    _detail::SetMessageCount(tracingContext.Span, 3);
+
+    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
+    EXPECT_EQ("3", span->GetAttributes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
+    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+  }
+
+  TEST(EventHubsTracingTest, SendSpanMessageCountIsUnsignedInteger)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    ProducerClientOptions options;
+    options.TracingProvider = provider;
+
+    ProducerClient client{TestConnectionString, TestEventHubName, options};
+    EventDataBatch batch{CreateTestBatch()};
+
+    Azure::Core::Context cancelledContext;
+    cancelledContext.Cancel();
+    EXPECT_THROW(client.Send(batch, cancelledContext), Azure::Core::OperationCancelledException);
+
+    auto span = SingleSpan(provider);
+    ASSERT_NE(nullptr, span);
+
+    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
+    EXPECT_EQ("2", span->GetAttributes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
+    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+  }
+
+  // Characterization test. A factory with no tracer returns a null attribute set, and that
+  // pointer is not null safe. The message count path must stay quiet in that case.
+  TEST(EventHubsTracingTest, SetMessageCountWithoutTracerIsSafe)
+  {
+    auto factory = _detail::CreateTracingContextFactory(nullptr);
+    ASSERT_FALSE(factory.HasTracer());
+    EXPECT_EQ(nullptr, factory.CreateAttributeSet());
+
+    auto tracingContext = _detail::StartSpan(
+        factory,
+        "PartitionClient.ReceiveEvents",
+        Azure::Core::Tracing::_internal::SpanKind::Client,
+        "receive",
+        TestEventHubName,
+        TestFullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        Azure::Core::Context{});
+
+    _detail::SetMessageCount(tracingContext.Span, 3);
+    SUCCEED();
   }
 
   // Characterization test. The producer must behave the same way when the caller supplies no
