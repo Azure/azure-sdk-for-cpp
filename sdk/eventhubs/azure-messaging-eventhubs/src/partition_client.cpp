@@ -462,7 +462,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Log::Stream(Logger::Level::Verbose)
           << "Receive Events. Return " << messages.size() << " messages.";
 
-      _detail::SetMessageCount(tracingContext.Span, messages.size());
+      _detail::SetMessageCount(m_tracingFactory, tracingContext.Span, messages.size());
       return messages;
     }
     catch (std::exception const& ex)

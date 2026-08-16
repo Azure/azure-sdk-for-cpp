@@ -7,6 +7,8 @@
 
 #include <azure/core/internal/client_options.hpp>
 
+#include <cstdint>
+
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
 
   Azure::Core::Tracing::_internal::TracingContextFactory CreateTracingContextFactory(
@@ -44,15 +46,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         fullyQualifiedNamespace);
     if (messageCount.HasValue())
     {
-      SetMessageCount(tracingContext.Span, messageCount.Value());
+      SetMessageCount(tracingFactory, tracingContext.Span, messageCount.Value());
     }
     return tracingContext;
   }
 
-  void SetMessageCount(Azure::Core::Tracing::_internal::ServiceSpan& span, size_t messageCount)
+  void SetMessageCount(
+      Azure::Core::Tracing::_internal::TracingContextFactory const& tracingFactory,
+      Azure::Core::Tracing::_internal::ServiceSpan& span,
+      size_t messageCount)
   {
-    // ServiceSpan has only a string AddAttribute overload, so the count goes in as text.
-    span.AddAttribute("messaging.batch.message_count", std::to_string(messageCount));
+    // A factory with no tracer returns a null attribute set, and that pointer is not null safe.
+    auto attributeSet = tracingFactory.CreateAttributeSet();
+    if (!attributeSet)
+    {
+      return;
+    }
+    attributeSet->AddAttribute(
+        "messaging.batch.message_count", static_cast<uint64_t>(messageCount));
+    span.AddAttributes(*attributeSet);
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail
