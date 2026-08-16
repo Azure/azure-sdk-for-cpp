@@ -196,6 +196,91 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanStatus::Error, span->GetStatuses().back());
   }
 
+  // The convenience overloads build the batch first, and that opens the AMQP link. A bad host
+  // fails there, before any batch exists, so the span must start before the batch.
+  TEST(EventHubsTracingTest, SendEventSpanRecordsCreateBatchFailure)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    ProducerClientOptions options;
+    options.TracingProvider = provider;
+
+    ProducerClient client{TestConnectionString, TestEventHubName, options};
+
+    EXPECT_THROW(
+        client.Send(Models::EventData{"Single message."}, Azure::Core::Context{}),
+        std::runtime_error);
+
+    auto span = SingleSpan(provider);
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("ProducerClient.Send", span->GetName());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
+
+    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
+    EXPECT_EQ("1", span->GetAttributes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
+    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetEvents().size());
+    EXPECT_FALSE(span->GetEvents()[0].empty());
+
+    ASSERT_FALSE(span->GetStatuses().empty());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanStatus::Error, span->GetStatuses().back());
+  }
+
+  TEST(EventHubsTracingTest, SendEventVectorSpanRecordsCreateBatchFailure)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    ProducerClientOptions options;
+    options.TracingProvider = provider;
+
+    ProducerClient client{TestConnectionString, TestEventHubName, options};
+
+    std::vector<Models::EventData> const eventData{
+        Models::EventData{"First message."},
+        Models::EventData{"Second message."},
+        Models::EventData{"Third message."},
+    };
+
+    EXPECT_THROW(client.Send(eventData, Azure::Core::Context{}), std::runtime_error);
+
+    auto span = SingleSpan(provider);
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("ProducerClient.Send", span->GetName());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
+
+    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
+    EXPECT_EQ("3", span->GetAttributes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
+    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+
+    ASSERT_EQ(1u, span->GetEvents().size());
+    EXPECT_FALSE(span->GetEvents()[0].empty());
+
+    ASSERT_FALSE(span->GetStatuses().empty());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanStatus::Error, span->GetStatuses().back());
+  }
+
+  // Characterization test. The convenience overloads must behave the same way when the caller
+  // supplies no tracing provider.
+  TEST(EventHubsTracingTest, SendEventWithoutProviderIsUnchanged)
+  {
+    ProducerClientOptions options;
+    ProducerClient client{TestConnectionString, TestEventHubName, options};
+
+    EXPECT_THROW(
+        client.Send(Models::EventData{"Single message."}, Azure::Core::Context{}),
+        std::runtime_error);
+
+    std::vector<Models::EventData> const eventData{
+        Models::EventData{"First message."},
+        Models::EventData{"Second message."},
+        Models::EventData{"Third message."},
+    };
+    EXPECT_THROW(client.Send(eventData, Azure::Core::Context{}), std::runtime_error);
+  }
+
   TEST(EventHubsTracingTest, ReceiveSpanShapeFromSharedHelper)
   {
     auto provider = std::make_shared<TestTracingProvider>();
