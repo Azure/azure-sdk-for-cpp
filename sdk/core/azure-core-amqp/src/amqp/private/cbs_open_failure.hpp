@@ -7,6 +7,7 @@
 
 #include <azure/core/datetime.hpp>
 
+#include <chrono>
 #include <exception>
 #include <sstream>
 #include <string>
@@ -76,17 +77,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     return ss.str();
   }
 
+  // The connection summary and the elapsed time are what separate a client
+  // fault from a service fault. A dead connection state, or an open that ends
+  // in about no time, says the failure never reached the service. A repeated
+  // instance number says the client did not build a new connection.
   inline std::string FormatCbsOpenFailureLog(
       CbsOpenResult result,
       std::string const& audienceUrl,
       CbsTokenType tokenType,
       Azure::DateTime const& expiresOn,
-      CbsOpenCaller caller)
+      CbsOpenCaller caller,
+      std::string const& connectionSummary,
+      std::chrono::milliseconds elapsed)
   {
     std::stringstream ss;
     ss << DescribeCbsOpenFailure(result, audienceUrl, caller)
        << " Token type: " << CbsTokenTypeName(tokenType)
-       << ", token expires: " << FormatTokenExpiry(expiresOn) << ".";
+       << ", token expires: " << FormatTokenExpiry(expiresOn)
+       << ". Connection: " << (connectionSummary.empty() ? "unknown" : connectionSummary)
+       << ". The open failed after " << elapsed.count() << " ms.";
     return ss.str();
   }
 

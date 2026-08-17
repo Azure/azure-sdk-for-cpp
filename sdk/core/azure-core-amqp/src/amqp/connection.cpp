@@ -150,11 +150,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Context const& context)
     {
       auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
+      auto const openStart = std::chrono::steady_clock::now();
       auto cbsOpenStatus = claimsBasedSecurity->Open(context);
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
-        Log::Stream(Logger::Level::Warning)
-            << FormatCbsOpenFailureLog(cbsOpenStatus, audienceUrl, tokenType, expiresOn, caller);
+        auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::steady_clock::now() - openStart);
+        auto const connection = session->GetConnection();
+        Log::Stream(Logger::Level::Warning) << FormatCbsOpenFailureLog(
+            cbsOpenStatus,
+            audienceUrl,
+            tokenType,
+            expiresOn,
+            caller,
+            connection ? connection->GetDiagnosticSummary() : std::string{},
+            elapsed);
         throw std::runtime_error(DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
       }
 

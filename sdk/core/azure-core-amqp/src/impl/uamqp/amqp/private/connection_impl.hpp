@@ -16,6 +16,7 @@
 
 #include <azure_uamqp_c/connection.h>
 
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <map>
@@ -117,6 +118,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetHost() const { return m_hostName; }
     uint16_t GetPort() const { return m_port; }
 
+    // A short identity and liveness summary for a diagnostic log line. The
+    // instance number tells a reader whether a failure that repeats used the
+    // same connection or a new one, which a host name cannot show.
+    std::string GetDiagnosticSummary() const;
+
     uint32_t GetMaxFrameSize() const;
     uint16_t GetMaxChannel() const;
     std::chrono::milliseconds GetIdleTimeout() const;
@@ -164,8 +170,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_newSessionQueue;
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionEndpointEvents* m_endpointEvents{};
-    _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
+    // The uAMQP polling thread writes this state while another thread can read
+    // it for a log line, so it is atomic.
+    std::atomic<_internal::ConnectionState> m_connectionState{_internal::ConnectionState::Start};
     PendingOperationRegistry m_pendingOperations;
+
+    static std::atomic<uint64_t> s_nextInstanceId;
+    uint64_t const m_instanceId{s_nextInstanceId++};
 
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;

@@ -102,6 +102,16 @@ void EnsureGlobalStateInitialized()
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  std::atomic<uint64_t> ConnectionImpl::s_nextInstanceId{1};
+
+  std::string ConnectionImpl::GetDiagnosticSummary() const
+  {
+    std::stringstream summary;
+    summary << "instance " << m_instanceId << ", host " << m_hostName << ":" << m_port << ", state "
+            << m_connectionState.load();
+    return summary.str();
+  }
+
   // Create a connection with an existing networking Transport.
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,

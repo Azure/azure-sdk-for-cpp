@@ -111,6 +111,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::string GetHost() const { return m_hostUrl.GetHost(); }
     uint16_t GetPort() const { return m_hostUrl.GetPort(); }
 
+    // A short identity and liveness summary for a diagnostic log line. The
+    // instance number tells a reader whether a failure that repeats used the
+    // same connection or a new one, which a host name cannot show. The Rust
+    // stack keeps no connection state, so this reports open or not open.
+    std::string GetDiagnosticSummary() const;
+
     uint32_t GetMaxFrameSize() const;
     uint16_t GetMaxChannel() const;
     std::chrono::milliseconds GetIdleTimeout() const;
@@ -153,6 +159,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     bool m_connectionOpened{false};
     std::atomic<uint32_t> m_openCount{0};
+
+    static std::atomic<uint64_t> s_nextInstanceId;
+    uint64_t const m_instanceId{s_nextInstanceId++};
 
     std::shared_ptr<const Credentials::TokenCredential> m_credential{};
 
