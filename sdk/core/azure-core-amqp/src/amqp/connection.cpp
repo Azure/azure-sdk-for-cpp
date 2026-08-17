@@ -12,6 +12,7 @@
 #include "private/token_refresh.hpp"
 #include "session_impl.hpp"
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
@@ -508,11 +509,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         else
         {
           // This thread's own refresh bumps the counter, so this wait
-          // returns at once, one time, per pass. That cannot spin: the next
-          // pass finds the floor still in force, defers its work, and writes
-          // nothing to the map, leaving the counter equal to what it observed.
-          state->Cv.wait_until(lock, nextWake, [&state, observed]() {
-            return ShouldWakeTokenRefresh(*state, observed);
+          // returns at once, one time, per pass. That cannot spin, because the
+          // next pass finds the floor still in force, defers its work, and
+          // writes nothing to the map, leaving the counter equal to what it
+          // observed.
+          state->Cv.wait_until(lock, nextWake, [&state, &lock, observed]() {
+            return ShouldWakeTokenRefresh(*state, observed, lock);
           });
         }
       }
@@ -549,6 +551,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::unique_lock<std::mutex>& lock,
       bool& keptTokenAfterFailedRefresh)
   {
+    AZURE_ASSERT(lock.owns_lock() && lock.mutex() == &state.Mutex);
     std::shared_ptr<SessionImpl> promotedSession;
     auto sessionEntry = state.TokenSessions.find(audienceUrl);
     if (sessionEntry != state.TokenSessions.end())

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/datetime.hpp>
 
@@ -151,8 +152,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   // True when TokenStore changed since `observed`, or the thread must stop.
-  inline bool ShouldWakeTokenRefresh(TokenRefreshState const& state, std::uint64_t observed)
+  // std::mutex cannot report its holder, so the caller passes the lock it holds
+  // and the assert reads the precondition from that object.
+  inline bool ShouldWakeTokenRefresh(
+      TokenRefreshState const& state,
+      std::uint64_t observed,
+      std::unique_lock<std::mutex> const& lock)
   {
+    AZURE_ASSERT(lock.owns_lock() && lock.mutex() == &state.Mutex);
     return state.Stop || state.Generation != observed;
   }
 

@@ -170,28 +170,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     auto const observed = state.Generation;
 
-    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed, lock));
 
     state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::seconds(40));
     ++state.Generation;
-    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed, lock));
 
-    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
 
-    // A replacement counts: the map is the only record of the expiry.
+    // A replacement counts, because the map is the only record of the expiry.
     state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::hours(1));
     auto const afterAdd = state.Generation;
     ++state.Generation;
-    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterAdd));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterAdd, lock));
 
     state.TokenStore.erase("amqps://host/audience");
     auto const afterReplace = state.Generation;
     ++state.Generation;
-    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterReplace));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterReplace, lock));
     EXPECT_TRUE(state.TokenStore.empty());
 
     state.Stop = true;
-    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
   }
 
   TEST_F(TestTokenRefresh, TheRefreshFloorDecidesWhetherAPassDefersItsWork)
@@ -243,7 +243,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     ASSERT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(keptToken, now));
 
     Azure::Core::Amqp::_detail::TokenRefreshState state;
-    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation));
+    std::unique_lock<std::mutex> lock(state.Mutex);
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
 
     ASSERT_TRUE(keptToken.ExpiresOn <= Azure::DateTime(scanWake));
 
