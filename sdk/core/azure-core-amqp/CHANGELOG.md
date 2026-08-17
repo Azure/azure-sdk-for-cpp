@@ -5,6 +5,7 @@
 ### Features Added
 
 - The Rust AMQP backend now generates SAS tokens from a shared access key. It sends CBS put-token requests with the `servicebus.windows.net:sastoken` token type.
+- Added support for the AMQP Decimal types (AmqpDecimal128, AmqpDecimal64, and AmqpDecimal32).
 
 ### Breaking Changes
 

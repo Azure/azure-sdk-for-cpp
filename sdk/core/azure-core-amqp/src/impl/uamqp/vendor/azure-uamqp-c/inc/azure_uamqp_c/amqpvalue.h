@@ -52,6 +52,12 @@ extern "C" {
     MOCKABLE_FUNCTION(, int, amqpvalue_get_float, AMQP_VALUE, value, float*, float_value);
     MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_double, double, double_value);
     MOCKABLE_FUNCTION(, int, amqpvalue_get_double, AMQP_VALUE, value, double*, double_value);
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_decimal128, const uint8_t*, decimal_value);
+    MOCKABLE_FUNCTION(, int, amqpvalue_get_decimal128, AMQP_VALUE, value, uint8_t*, decimal_value);
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_decimal64, const uint8_t*, decimal_value);
+    MOCKABLE_FUNCTION(, int, amqpvalue_get_decimal64, AMQP_VALUE, value, uint8_t*, decimal_value);
+    MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_decimal32, const uint8_t*, decimal_value);
+    MOCKABLE_FUNCTION(, int, amqpvalue_get_decimal32, AMQP_VALUE, value, uint8_t*, decimal_value);
     MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_char, uint32_t, char_value);
     MOCKABLE_FUNCTION(, int, amqpvalue_get_char, AMQP_VALUE, value, uint32_t*, char_value);
     MOCKABLE_FUNCTION(, AMQP_VALUE, amqpvalue_create_timestamp, int64_t, timestamp_value);

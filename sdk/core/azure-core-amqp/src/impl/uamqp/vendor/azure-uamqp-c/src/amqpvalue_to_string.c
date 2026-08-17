@@ -288,6 +288,151 @@ char* amqpvalue_to_string(AMQP_VALUE amqp_value)
             }
             break;
         }
+        case AMQP_TYPE_DECIMAL128:
+        {
+            // amqpvalue_get_decimal128 fills in the decimal128_value array with the 16 bytes of the
+            // decimal128 value.
+            uint8_t decimal128_value[16];
+            if (amqpvalue_get_decimal128(amqp_value, decimal128_value) != 0)
+            {
+                LogError("Failure getting decimal128 value");
+                free(result);
+                result = NULL;
+            }
+            else
+            {
+                if (string_concat(&result, "<") != 0)
+                {
+                    LogError("Failure building amqp value string");
+                    free(result);
+                    result = NULL;
+                }
+                else
+                {
+                    uint64_t i;
+
+                    for (i = 0; i < sizeof(decimal128_value); i++)
+                    {
+                        char str_value[4];
+                        if ((snprintf(
+                         str_value,
+                         sizeof(str_value),
+                         "%s%02X",
+                         (i > 0) ? " " : "",
+                         decimal128_value[i])
+                     < 0)
+                                || (string_concat(&result, str_value) != 0))
+                        {
+                            break;
+                        }
+                    }
+
+                    if ((i < sizeof(decimal128_value)) || (string_concat(&result, ">") != 0))
+                    {
+                        LogError("Failure building amqp value string");
+                        free(result);
+                        result = NULL;
+                    }
+                }
+            }
+            break;
+        }
+        case AMQP_TYPE_DECIMAL64:
+        {
+            uint8_t decimal64_value[8];
+            if (amqpvalue_get_decimal64(amqp_value, decimal64_value) != 0)
+            {
+                LogError("Failure getting decimal64 value");
+                free(result);
+                result = NULL;
+            }
+            else
+            {
+                if (string_concat(&result, "<") != 0)
+                {
+                    LogError("Failure building amqp value string");
+                    free(result);
+                    result = NULL;
+                }
+                else
+                {
+                    uint64_t i;
+
+                    // decimal64 is 8 bytes, so we will print each byte in hex format
+                    for (i = 0; i < sizeof(decimal64_value); i++)
+                    {
+                        char str_value[4];
+                        if ((snprintf(
+                         str_value,
+                         sizeof(str_value),
+                         "%s%02X",
+                         (i > 0) ? " " : "",
+                         decimal64_value[i])
+                     < 0)
+                                || (string_concat(&result, str_value) != 0))
+                        {
+                            break;
+                        }
+                    }
+
+                    if ((i < sizeof(decimal64_value)) || (string_concat(&result, ">") != 0))
+                    {
+                        LogError("Failure building amqp value string");
+                        free(result);
+                        result = NULL;
+                    }
+                }
+            }
+                 break;
+            }
+            case AMQP_TYPE_DECIMAL32:
+            {
+                uint8_t decimal32_value[4];
+                if (amqpvalue_get_decimal32(amqp_value, decimal32_value) != 0)
+            {
+                LogError("Failure getting decimal32 value");
+                free(result);
+                result = NULL;
+            }
+            else
+            {
+                if (string_concat(&result, "<") != 0)
+                {
+                    LogError("Failure building amqp value string");
+                    free(result);
+                    result = NULL;
+                }
+                else
+                {
+                    uint64_t i;
+
+                    // decimal32 is 4 bytes, so we will print each byte in hex format
+                    for (i = 0; i < sizeof(decimal32_value); i++)
+                    {
+                        char str_value[4];
+                        if ((snprintf(
+                         str_value,
+                         sizeof(str_value),
+                         "%s%02X",
+                         (i > 0) ? " " : "",
+                         decimal32_value[i])
+                     < 0)
+                                || (string_concat(&result, str_value) != 0))
+                        {
+                            break;
+                        }
+                    }
+
+                    if ((i < sizeof(decimal32_value)) || (string_concat(&result, ">") != 0))
+                    {
+                        LogError("Failure building amqp value string");
+                        free(result);
+                        result = NULL;
+                    }
+                }
+            }
+            break;
+        }
         case AMQP_TYPE_CHAR:
         {
             uint32_t char_code;

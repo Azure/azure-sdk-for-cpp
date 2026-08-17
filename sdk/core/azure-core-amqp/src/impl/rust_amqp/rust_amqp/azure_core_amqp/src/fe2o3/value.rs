@@ -180,6 +180,9 @@ impl From<AmqpValue> for fe2o3_amqp_types::primitives::Value {
             AmqpValue::Long(l) => fe2o3_amqp_types::primitives::Value::Long(l),
             AmqpValue::Float(f) => fe2o3_amqp_types::primitives::Value::Float(f.into()),
             AmqpValue::Double(d) => fe2o3_amqp_types::primitives::Value::Double(d.into()),
+            AmqpValue::Decimal128(d) => fe2o3_amqp_types::primitives::Value::Decimal128(d.into()),
+            AmqpValue::Decimal32(d) => fe2o3_amqp_types::primitives::Value::Decimal32(d.into()),
+            AmqpValue::Decimal64(d) => fe2o3_amqp_types::primitives::Value::Decimal64(d.into()),
             AmqpValue::Char(c) => fe2o3_amqp_types::primitives::Value::Char(c),
             AmqpValue::TimeStamp(t) => fe2o3_amqp_types::primitives::Value::Timestamp(t.into()),
             AmqpValue::Uuid(u) => fe2o3_amqp_types::primitives::Value::Uuid(u.into()),
@@ -234,6 +237,15 @@ impl From<fe2o3_amqp_types::primitives::Value> for AmqpValue {
             fe2o3_amqp_types::primitives::Value::Long(l) => AmqpValue::Long(l),
             fe2o3_amqp_types::primitives::Value::Float(f) => AmqpValue::Float(f.into()),
             fe2o3_amqp_types::primitives::Value::Double(d) => AmqpValue::Double(d.into()),
+            fe2o3_amqp_types::primitives::Value::Decimal128(d) => {
+                AmqpValue::Decimal128(d.into_inner())
+            }
+            fe2o3_amqp_types::primitives::Value::Decimal32(d) => {
+                AmqpValue::Decimal32(d.into_inner())
+            }
+            fe2o3_amqp_types::primitives::Value::Decimal64(d) => {
+                AmqpValue::Decimal64(d.into_inner())
+            }
             fe2o3_amqp_types::primitives::Value::Char(c) => AmqpValue::Char(c),
             fe2o3_amqp_types::primitives::Value::Timestamp(t) => AmqpValue::TimeStamp(t.into()),
             fe2o3_amqp_types::primitives::Value::Uuid(u) => AmqpValue::Uuid(u.into()),
@@ -271,9 +283,6 @@ impl From<fe2o3_amqp_types::primitives::Value> for AmqpValue {
                 };
                 AmqpValue::Described(Box::new(AmqpDescribed { descriptor, value }))
             }
-            fe2o3_amqp_types::primitives::Value::Decimal128(_) => todo!(),
-            fe2o3_amqp_types::primitives::Value::Decimal32(_) => todo!(),
-            fe2o3_amqp_types::primitives::Value::Decimal64(_) => todo!(),
         }
     }
 }
@@ -334,6 +343,15 @@ impl PartialEq<AmqpValue> for fe2o3_amqp_types::primitives::Value {
             AmqpValue::Float(f) => self == &fe2o3_amqp_types::primitives::Value::Float((*f).into()),
             AmqpValue::Double(d) => {
                 self == &fe2o3_amqp_types::primitives::Value::Double((*d).into())
+            }
+            AmqpValue::Decimal128(d) => {
+                self == &fe2o3_amqp_types::primitives::Value::Decimal128((*d).into())
+            }
+            AmqpValue::Decimal32(d) => {
+                self == &fe2o3_amqp_types::primitives::Value::Decimal32((*d).into())
+            }
+            AmqpValue::Decimal64(d) => {
+                self == &fe2o3_amqp_types::primitives::Value::Decimal64((*d).into())
             }
             AmqpValue::Char(c) => self == &fe2o3_amqp_types::primitives::Value::Char(*c),
             AmqpValue::TimeStamp(t) => {
@@ -781,27 +799,30 @@ mod tests {
             assert_eq!(amqp, fe2o3_2);
         }
 
-        // {
-        //     let fe2o3 = fe2o3_amqp_types::primitives::Value::Decimal128(Decimal128::from(1));
-        //     let amqp: AmqpValue = fe2o3.into();
-        //     let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
+        {
+            let fe2o3 = fe2o3_amqp_types::primitives::Value::Decimal128(
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].into(),
+            );
+            let amqp: AmqpValue = fe2o3.clone().into();
+            let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
 
-        //     assert_eq!(fe2o3, fe2o3_2);
-        // }
+            assert_eq!(fe2o3, fe2o3_2);
+        }
 
-        // {
-        //     let fe2o3 = fe2o3_amqp_types::primitives::Value::Decimal32(Decimal32::from(1));
-        //     let amqp: AmqpValue = fe2o3.into();
-        //     let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
+        {
+            let fe2o3 = fe2o3_amqp_types::primitives::Value::Decimal32([1, 2, 3, 4].into());
+            let amqp: AmqpValue = fe2o3.clone().into();
+            let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
 
-        //     assert_eq!(fe2o3, fe2o3_2);
-        // }
+            assert_eq!(fe2o3, fe2o3_2);
+        }
 
-        // {
-        //     let fe2o3 = fe2o3_amqp_types::primitives::Value::Decimal64(Decimal64::from(1));
-        //     let amqp: AmqpValue = fe2o3.into();
-        //     let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
-        //     assert_eq!(fe2o3, fe2o3_2);
-        // }
+        {
+            let fe2o3 =
+                fe2o3_amqp_types::primitives::Value::Decimal64([1, 2, 3, 4, 5, 6, 7, 8].into());
+            let amqp: AmqpValue = fe2o3.clone().into();
+            let fe2o3_2: fe2o3_amqp_types::primitives::Value = amqp.into();
+            assert_eq!(fe2o3, fe2o3_2);
+        }
     }
 }
