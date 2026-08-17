@@ -88,8 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ("myhub", credential.GetEntityPath());
   }
 
-  // The comparison must keep its empty-argument guard. An empty entity path argument
-  // means the caller wants the connection string value, and it is not a mismatch.
+  // An empty argument is not a mismatch, so the guard must survive.
   TEST_F(ConnectionStringTest, ServiceBusSasEntityPathArgumentEmpty)
   {
     Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
@@ -97,7 +96,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ("myhub", credential.GetEntityPath());
   }
 
-  // A connection string without an EntityPath element keeps an empty entity path.
   TEST_F(ConnectionStringTest, ServiceBusSasEntityPathAbsentFromConnectionString)
   {
     Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
@@ -105,8 +103,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ("", credential.GetEntityPath());
   }
 
-  // A case conversion must stay on ASCII bytes. These two bytes differ in case in
-  // Latin-1, so a locale-dependent conversion could make them match.
+  // The two bytes are a Latin-1 case pair, so a locale-dependent fold would match them.
   TEST_F(ConnectionStringTest, ServiceBusSasEntityPathNonAsciiMismatch)
   {
     std::string const connectionString
