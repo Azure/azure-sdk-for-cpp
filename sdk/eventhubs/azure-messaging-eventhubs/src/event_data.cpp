@@ -60,35 +60,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       }
       else if (key == _detail::OffsetAnnotation)
       {
-        // The service sends the offset as a string or as an integer of any width.
+        // The service always sends the offset as a string. Every other Event Hubs
+        // client reads a string only, so a different type is a service contract
+        // break and the offset stays empty.
         switch (item.second.GetType())
         {
           case Azure::Core::Amqp::Models::AmqpValueType::String:
             Offset = static_cast<std::string>(item.second);
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Ubyte:
-            Offset = std::to_string(static_cast<std::uint8_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Ushort:
-            Offset = std::to_string(static_cast<std::uint16_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Uint:
-            Offset = std::to_string(static_cast<std::uint32_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Ulong:
-            Offset = std::to_string(static_cast<std::uint64_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Byte:
-            Offset = std::to_string(static_cast<std::int8_t>(static_cast<char>(item.second)));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Short:
-            Offset = std::to_string(static_cast<std::int16_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Int:
-            Offset = std::to_string(static_cast<std::int32_t>(item.second));
-            break;
-          case Azure::Core::Amqp::Models::AmqpValueType::Long:
-            Offset = std::to_string(static_cast<std::int64_t>(item.second));
             break;
           default:
             Log::Stream(Logger::Level::Warning)

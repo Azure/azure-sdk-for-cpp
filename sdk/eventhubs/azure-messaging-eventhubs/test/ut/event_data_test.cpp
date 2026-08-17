@@ -214,8 +214,7 @@ TEST_F(EventDataTest, ReceivedEventData)
                                     .AsAmqpValue()]
         = 54644;
     Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
-    ASSERT_TRUE(receivedEventData.Offset);
-    EXPECT_EQ(receivedEventData.Offset.Value(), "54644");
+    ASSERT_FALSE(receivedEventData.Offset); // Offset must be a string value, not a numeric value.
     EXPECT_FALSE(receivedEventData.SequenceNumber);
     EXPECT_FALSE(receivedEventData.EnqueuedTime);
     EXPECT_FALSE(receivedEventData.PartitionKey);
@@ -265,62 +264,30 @@ Azure::Nullable<std::string> OffsetFromAnnotation(
 }
 } // namespace
 
-// The service can send the offset as a string or as an integer of any width.
-TEST_F(EventDataTest, OffsetAnnotationAcceptsEveryIntegerWidth)
+// The service always sends the offset as a string, and every other Event Hubs client reads a
+// string only. An integer of any width is a service contract break, so the offset stays empty.
+TEST_F(EventDataTest, OffsetAnnotationAcceptsAStringOnly)
 {
   {
-    auto offset{
-        OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint8_t>(12)})};
+    auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"54644"})};
     ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "12");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint16_t>(4096)})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "4096");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::uint32_t>(4294967295u)})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "4294967295");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{(std::numeric_limits<std::uint64_t>::max)()})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "18446744073709551615");
-  }
-  {
-    auto offset{
-        OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int8_t>(-12)})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "-12");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int16_t>(-4096)})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "-4096");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{static_cast<std::int32_t>(-2147483648LL)})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "-2147483648");
-  }
-  {
-    auto offset{OffsetFromAnnotation(
-        Azure::Core::Amqp::Models::AmqpValue{(std::numeric_limits<std::int64_t>::max)()})};
-    ASSERT_TRUE(offset);
-    EXPECT_EQ(offset.Value(), "9223372036854775807");
+    EXPECT_EQ(offset.Value(), "54644");
   }
   {
     auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"@latest"})};
     ASSERT_TRUE(offset);
     EXPECT_EQ(offset.Value(), "@latest");
   }
+
+  using Azure::Core::Amqp::Models::AmqpValue;
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint8_t>(12)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint16_t>(4096)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint32_t>(4294967295u)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{(std::numeric_limits<std::uint64_t>::max)()}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int8_t>(-12)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int16_t>(-4096)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int32_t>(-2147483648LL)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{(std::numeric_limits<std::int64_t>::max)()}));
 }
 
 TEST_F(EventDataTest, OffsetAnnotationIgnoresAnUnexpectedType)
