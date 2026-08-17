@@ -531,11 +531,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             MessageSenderFactory::CreateFromInternal(shared_from_this()), error);
       }
 
-      if (m_options.EnableTrace)
-      {
-        // Log that an error occurred.
-        Log::Stream(Logger::Level::Warning) << "Message sender link detached: " << error;
-      }
+      // The condition that the service sent is the only record of why the link
+      // ended, and the next send reports a stale cached error instead. The
+      // receiver writes this line for every detach, so the sender does too.
+      Log::Stream(Logger::Level::Warning)
+          << "Message sender link detached. Node: " << m_options.Name
+          << ", condition: " << error.Condition.ToString()
+          << ", description: " << error.Description;
 
       // Cache the error we received in the OnDetach notification so we can return it to the user
       // on the next send which fails.
