@@ -767,6 +767,41 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   }
 #endif // ENABLE_UAMQP
 
+  // The service detaches a link idle for 30 minutes; ProducerClient used to cache one sender.
+  TEST_P(ProducerClientTest, SendSurvivesAnIdleDetach_LIVEONLY_)
+  {
+    // The 120 minute live pipeline budget (LiveTestTimeoutInMinutes in sdk/eventhubs/ci.yml)
+    // cannot absorb this 35 minute wait by default, so the test stays out of the standard
+    // live pass until asked for.
+    if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
+            .empty())
+    {
+      GTEST_SKIP() << "Set EVENTHUBS_ENABLE_IDLE_DETACH_TESTS to run this test. The test sleeps "
+                      "for 35 minutes, and the live pipeline gives all of the tests 120 minutes.";
+    }
+
+    constexpr std::chrono::minutes idleWait{35};
+
+    auto client = CreateProducerClient();
+
+    EventDataBatchOptions batchOptions;
+    batchOptions.PartitionId = "1";
+
+    EventDataBatch firstBatch{client->CreateBatch(batchOptions)};
+    EXPECT_TRUE(firstBatch.TryAdd(Models::EventData{"Before the idle period"}));
+    ASSERT_NO_THROW(client->Send(firstBatch));
+
+    GTEST_LOG_(INFO) << "Wait " << idleWait.count()
+                     << " minutes, so that the service detaches the sender link.";
+    std::this_thread::sleep_for(idleWait);
+
+    EventDataBatch secondBatch{client->CreateBatch(batchOptions)};
+    EXPECT_TRUE(secondBatch.TryAdd(Models::EventData{"After the idle period"}));
+    EXPECT_NO_THROW(client->Send(secondBatch));
+
+    client->Close();
+  }
+
   namespace {
     static std::string GetSuffix(const testing::TestParamInfo<AuthType>& info)
     {

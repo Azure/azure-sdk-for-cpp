@@ -3,11 +3,13 @@
 
 #pragma once
 
+#include <azure/core/azure_assert.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/datetime.hpp>
 
 #include <chrono>
 #include <condition_variable>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -40,6 +42,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // The session that authenticated each audience. The pointer is weak, so the
     // refresh thread never keeps a session alive.
     std::map<std::string, std::weak_ptr<SessionImpl>> TokenSessions;
+    // Every write to TokenStore increments this under Mutex, so a waiter can
+    // tell a real change from a spurious wake.
+    std::uint64_t Generation{0};
   };
 
   // Holds a shared pointer that a thread must not drop while it holds a lock,
@@ -144,6 +149,49 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       std::chrono::system_clock::time_point now)
   {
     return token.ExpiresOn <= Azure::DateTime(now + TokenRefreshBuffer);
+  }
+
+  // True when TokenStore changed since `observed`, or the thread must stop.
+  // std::mutex cannot report its holder, so the caller passes the lock it holds
+  // and the assert reads the precondition from that object.
+  inline bool ShouldWakeTokenRefresh(
+      TokenRefreshState const& state,
+      std::uint64_t observed,
+      std::unique_lock<std::mutex> const& lock)
+  {
+    AZURE_ASSERT(lock.owns_lock() && lock.mutex() == &state.Mutex);
+    return state.Stop || state.Generation != observed;
+  }
+
+  // A token shorter than the refresh buffer is due on every scan, and a
+  // connection start authenticates several audiences in a burst, so without
+  // this floor the thread storms the service with CBS requests. A caller
+  // defers the work, not skips it, and never moves the floor on a deferred
+  // pass, or an always-due token would never refresh.
+  inline bool ShouldDeferTokenRefreshPass(
+      bool hasDueAudiences,
+      std::chrono::system_clock::time_point now,
+      std::chrono::system_clock::time_point refreshFloor)
+  {
+    return hasDueAudiences && now < refreshFloor;
+  }
+
+  // A pass where every refresh succeeded takes the later of the two times,
+  // because that refresh already moved the floor out and changed the map. A
+  // pass that kept a token after a failed refresh must wake at the floor
+  // instead. A kept token writes nothing to the map, so the generation
+  // counter cannot end the wait, and the idle poll is long enough that a
+  // short-lived kept token would expire inside that sleep.
+  inline std::chrono::system_clock::time_point NextWakeAfterRefreshPass(
+      std::chrono::system_clock::time_point scanWake,
+      std::chrono::system_clock::time_point refreshFloor,
+      bool keptTokenAfterFailedRefresh)
+  {
+    if (keptTokenAfterFailedRefresh)
+    {
+      return refreshFloor;
+    }
+    return (std::max)(scanWake, refreshFloor);
   }
 
   // Return true when a refresh that failed must drop the cached token.

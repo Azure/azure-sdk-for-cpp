@@ -249,6 +249,54 @@ TEST_F(EventDataTest, ReceivedEventData)
   }
 }
 
+namespace {
+Azure::Nullable<std::string> OffsetFromAnnotation(
+    Azure::Core::Amqp::Models::AmqpValue const& annotationValue)
+{
+  std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> message{
+      std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>()};
+  message->MessageAnnotations[Azure::Core::Amqp::Models::AmqpSymbol{
+      Azure::Messaging::EventHubs::_detail::OffsetAnnotation}
+                                  .AsAmqpValue()]
+      = annotationValue;
+  Azure::Messaging::EventHubs::Models::ReceivedEventData receivedEventData(message);
+  return receivedEventData.Offset;
+}
+} // namespace
+
+// The service always sends the offset as a string, and every other Event Hubs client reads a
+// string only. An integer of any width is a service contract break, so the offset stays empty.
+TEST_F(EventDataTest, OffsetAnnotationAcceptsAStringOnly)
+{
+  {
+    auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"54644"})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "54644");
+  }
+  {
+    auto offset{OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{"@latest"})};
+    ASSERT_TRUE(offset);
+    EXPECT_EQ(offset.Value(), "@latest");
+  }
+
+  using Azure::Core::Amqp::Models::AmqpValue;
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint8_t>(12)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint16_t>(4096)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::uint32_t>(4294967295u)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{(std::numeric_limits<std::uint64_t>::max)()}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int8_t>(-12)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int16_t>(-4096)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{static_cast<std::int32_t>(-2147483648LL)}));
+  EXPECT_FALSE(OffsetFromAnnotation(AmqpValue{(std::numeric_limits<std::int64_t>::max)()}));
+}
+
+TEST_F(EventDataTest, OffsetAnnotationIgnoresAnUnexpectedType)
+{
+  Azure::Nullable<std::string> offset;
+  EXPECT_NO_THROW(offset = OffsetFromAnnotation(Azure::Core::Amqp::Models::AmqpValue{true}));
+  EXPECT_FALSE(offset);
+}
+
 // The Event Hubs service routes on the message annotations only. Make sure that the batch envelope
 // and every message in the batch carry the partition key there, and that the delivery annotations
 // stay empty.

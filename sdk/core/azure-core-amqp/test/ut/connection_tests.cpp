@@ -19,11 +19,13 @@
 #include <azure/core/platform.hpp>
 
 #include <chrono>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <random>
 #include <stdexcept>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -155,6 +157,119 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_FALSE(state.Stop);
     EXPECT_TRUE(state.TokenStore.empty());
     EXPECT_TRUE(state.TokenSessions.empty());
+    EXPECT_EQ(0u, state.Generation);
+  }
+
+  // The tests below cover the predicates that the refresh thread polls: when a change to
+  // the token store must wake it, and when the refresh floor must defer its work.
+  // A change to TokenStore must move the sleep deadline of the refresh thread.
+  TEST_F(TestTokenRefresh, ShouldWakeTokenRefreshAnswersEachCaseForTheRefreshThread)
+  {
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    std::unique_lock<std::mutex> lock(state.Mutex);
+
+    auto const observed = state.Generation;
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed, lock));
+
+    state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::seconds(40));
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, observed, lock));
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
+
+    // A replacement counts, because the map is the only record of the expiry.
+    state.TokenStore["amqps://host/audience"] = TokenExpiringIn(std::chrono::hours(1));
+    auto const afterAdd = state.Generation;
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterAdd, lock));
+
+    state.TokenStore.erase("amqps://host/audience");
+    auto const afterReplace = state.Generation;
+    ++state.Generation;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, afterReplace, lock));
+    EXPECT_TRUE(state.TokenStore.empty());
+
+    state.Stop = true;
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
+  }
+
+  TEST_F(TestTokenRefresh, TheRefreshFloorDecidesWhetherAPassDefersItsWork)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, std::chrono::system_clock::time_point::min()));
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, now - std::chrono::seconds(1)));
+
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        true, now, now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval));
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, now, now));
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        false, now, now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval));
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(
+        false, now, std::chrono::system_clock::time_point::min()));
+  }
+
+  // A token due on every scan must still get a refresh once the deferred pass reaches the floor.
+  TEST_F(TestTokenRefresh, ADeferredPassRunsAtTheFloorForATokenThatIsAlwaysDue)
+  {
+    auto const now = std::chrono::system_clock::now();
+
+    auto const shortLivedToken = TokenExpiringIn(std::chrono::seconds(80));
+    ASSERT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(shortLivedToken, now));
+
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    EXPECT_TRUE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, now, refreshFloor));
+
+    ASSERT_TRUE(Azure::Core::Amqp::_detail::IsTokenRefreshDue(shortLivedToken, refreshFloor));
+    EXPECT_FALSE(
+        Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, refreshFloor, refreshFloor));
+  }
+
+  // A kept token writes nothing to the map, so a short-lived token could expire inside the sleep.
+  TEST_F(TestTokenRefresh, AFailedPassRetriesTheKeptTokenAtTheFloor)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const scanWake = now + Azure::Core::Amqp::_detail::IdleTokenRefreshPoll;
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    auto const keptToken = TokenExpiringIn(std::chrono::seconds(40));
+    ASSERT_FALSE(Azure::Core::Amqp::_detail::ShouldDropTokenAfterFailedRefresh(keptToken, now));
+
+    Azure::Core::Amqp::_detail::TokenRefreshState state;
+    std::unique_lock<std::mutex> lock(state.Mutex);
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldWakeTokenRefresh(state, state.Generation, lock));
+
+    ASSERT_TRUE(keptToken.ExpiresOn <= Azure::DateTime(scanWake));
+
+    auto const wake = Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(
+        scanWake, refreshFloor, /* keptTokenAfterFailedRefresh */ true);
+    EXPECT_EQ(refreshFloor, wake);
+    EXPECT_TRUE(keptToken.ExpiresOn > Azure::DateTime(wake));
+
+    EXPECT_FALSE(Azure::Core::Amqp::_detail::ShouldDeferTokenRefreshPass(true, wake, refreshFloor));
+  }
+
+  TEST_F(TestTokenRefresh, ASuccessfulPassKeepsTheLaterOfScanWakeAndFloor)
+  {
+    auto const now = std::chrono::system_clock::now();
+    auto const refreshFloor = now + Azure::Core::Amqp::_detail::MinimumTokenRefreshInterval;
+
+    auto const idleWake = now + Azure::Core::Amqp::_detail::IdleTokenRefreshPoll;
+    EXPECT_EQ(
+        idleWake,
+        Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(idleWake, refreshFloor, false));
+
+    auto const earlyWake = now + std::chrono::seconds(5);
+    EXPECT_EQ(
+        refreshFloor,
+        Azure::Core::Amqp::_detail::NextWakeAfterRefreshPass(earlyWake, refreshFloor, false));
   }
 
   // The refresh thread co-owns the state block, so the block stays alive after

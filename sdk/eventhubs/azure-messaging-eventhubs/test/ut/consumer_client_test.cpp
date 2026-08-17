@@ -7,8 +7,13 @@
 #include "eventhubs_test_base.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/internal/environment.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
+
+#include <chrono>
+#include <string>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -45,6 +50,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         return "eh1";
       }
       return GetEnv("EVENTHUB_NAME");
+    }
+
+    void SendOneEventToPartitionOne(std::string const& body)
+    {
+      std::unique_ptr<ProducerClient> producer = CreateProducerClient();
+      EventDataBatchOptions batchOptions;
+      batchOptions.PartitionId = "1";
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      ASSERT_TRUE(batch.TryAdd(Models::EventData{body}));
+      ASSERT_NO_THROW(producer->Send(batch));
+      producer->Close();
     }
   };
 
@@ -341,6 +357,133 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 #endif
     }
     eventhubNamespace.DeleteEventHub(eventHubName);
+  }
+
+  // uAMQP only. The Rust transport never returns the last read below.
+#if ENABLE_UAMQP
+  TEST_P(ConsumerClientTest, StolenReceiverFailsWithoutARebuild_LIVEONLY_)
+  {
+    Azure::Messaging::EventHubs::ConsumerClientOptions firstClientOptions;
+    firstClientOptions.ApplicationID
+        = testing::UnitTest::GetInstance()->current_test_info()->name();
+    firstClientOptions.Name = "first-receiver";
+    firstClientOptions.RetryOptions.MaxRetries = 10;
+    firstClientOptions.RetryOptions.RetryDelay = std::chrono::seconds(2);
+    auto firstConsumer = CreateConsumerClient("", firstClientOptions);
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions secondClientOptions;
+    secondClientOptions.ApplicationID
+        = testing::UnitTest::GetInstance()->current_test_info()->name();
+    secondClientOptions.Name = "second-receiver";
+    auto secondConsumer = CreateConsumerClient("", secondClientOptions);
+
+    // Each read needs its own deadline, because a deadline is an absolute time.
+    auto readTimeout = []() {
+      return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    };
+
+    // Start both at the latest position; an earliest-position receiver prefetches the backlog.
+    Azure::Messaging::EventHubs::PartitionClientOptions firstOptions;
+    firstOptions.StartPosition.Latest = true;
+    firstOptions.OwnerLevel = 1;
+    Azure::Messaging::EventHubs::PartitionClient firstClient
+        = firstConsumer->CreatePartitionClient("1", firstOptions);
+
+    SendOneEventToPartitionOne("Before the steal");
+    EXPECT_NO_THROW(firstClient.ReceiveEvents(1, readTimeout()));
+
+    Azure::Messaging::EventHubs::PartitionClientOptions secondOptions;
+    secondOptions.StartPosition.Latest = true;
+    secondOptions.OwnerLevel = 2;
+    Azure::Messaging::EventHubs::PartitionClient secondClient
+        = secondConsumer->CreatePartitionClient("1", secondOptions);
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    auto startTime = std::chrono::steady_clock::now();
+    try
+    {
+      firstClient.ReceiveEvents(1, readTimeout());
+      FAIL() << "The stolen receiver must throw.";
+    }
+    catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+    {
+      auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+          std::chrono::steady_clock::now() - startTime);
+      GTEST_LOG_(INFO) << "The stolen receiver threw after " << elapsed.count()
+                       << " seconds with the condition '" << ex.ErrorCondition << "'.";
+      EXPECT_FALSE(ex.IsTransient);
+      EXPECT_LT(elapsed, std::chrono::seconds(30));
+    }
+
+    SendOneEventToPartitionOne("After the steal");
+    EXPECT_NO_THROW(secondClient.ReceiveEvents(1, readTimeout()));
+  }
+#endif // ENABLE_UAMQP
+
+  TEST_P(ConsumerClientTest, ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_)
+  {
+    // The live pipeline caps the whole binary at 120 minutes (LiveTestTimeoutInMinutes in
+    // sdk/eventhubs/ci.yml), so this 35 minute wait runs only when explicitly enabled and
+    // stays out of the standard live pass.
+    if (Azure::Core::_internal::Environment::GetVariable("EVENTHUBS_ENABLE_IDLE_DETACH_TESTS")
+            .empty())
+    {
+      GTEST_SKIP() << "Set EVENTHUBS_ENABLE_IDLE_DETACH_TESTS to run this test. The test sleeps "
+                      "for 35 minutes, and the live pipeline gives all of the tests 120 minutes.";
+    }
+
+    constexpr std::chrono::minutes idleWait{35};
+
+    Azure::Messaging::EventHubs::ConsumerClientOptions options;
+    options.ApplicationID = testing::UnitTest::GetInstance()->current_test_info()->name();
+    options.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    auto client = CreateConsumerClient("", options);
+
+    // A resume that regressed to the latest position would block here for ever.
+    auto readTimeout = []() {
+      return Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(60)};
+    };
+
+    Azure::Messaging::EventHubs::PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Latest = true;
+    Azure::Messaging::EventHubs::PartitionClient partitionClient
+        = client->CreatePartitionClient("1", partitionOptions);
+
+    auto producer = CreateProducerClient();
+    EventDataBatchOptions batchOptions;
+    batchOptions.PartitionId = "1";
+
+    {
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      EXPECT_TRUE(batch.TryAdd(Models::EventData{"Before the idle period"}));
+      ASSERT_NO_THROW(producer->Send(batch));
+    }
+
+    auto firstEvents = partitionClient.ReceiveEvents(1, readTimeout());
+    ASSERT_EQ(firstEvents.size(), 1ul);
+    ASSERT_TRUE(firstEvents[0]->Offset.HasValue())
+        << "The resume needs the offset of the last event.";
+    std::string lastOffset{firstEvents[0]->Offset.Value()};
+    GTEST_LOG_(INFO) << "The last offset before the idle period is " << lastOffset << ".";
+
+    GTEST_LOG_(INFO) << "Wait " << idleWait.count()
+                     << " minutes, so that the service detaches the receiver link.";
+    std::this_thread::sleep_for(idleWait);
+
+    {
+      EventDataBatch batch{producer->CreateBatch(batchOptions)};
+      EXPECT_TRUE(batch.TryAdd(Models::EventData{"After the idle period"}));
+      ASSERT_NO_THROW(producer->Send(batch));
+    }
+
+    auto secondEvents = partitionClient.ReceiveEvents(1, readTimeout());
+    ASSERT_EQ(secondEvents.size(), 1ul);
+    ASSERT_TRUE(secondEvents[0]->Offset.HasValue());
+    GTEST_LOG_(INFO) << "The first offset after the idle period is "
+                     << secondEvents[0]->Offset.Value() << ".";
+    EXPECT_NE(secondEvents[0]->Offset.Value(), lastOffset)
+        << "The rebuilt receiver gave the caller the same event twice.";
   }
 
   namespace {

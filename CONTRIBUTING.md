@@ -228,6 +228,20 @@ Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is
 
 Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuration for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
+###### Tests that you must ask for
+
+A few tests take too long to run in a normal pass, so they skip themselves unless you set an environment variable. Set the variable to any value to run them.
+
+| Variable | Test binary | What it enables |
+| --- | --- | --- |
+| `EVENTHUBS_ENABLE_IDLE_DETACH_TESTS` | `azure-messaging-eventhubs-test` | `SendSurvivesAnIdleDetach_LIVEONLY_`, `ReceiveSurvivesAnIdleDetachAndResumes_LIVEONLY_`, and `PropertiesCloseSurvivesAnIdleDetach_LIVEONLY_`. Each test sleeps 35 minutes, because the Event Hubs service detaches an idle link after 30 minutes and the tests must wait past that time. The live pipeline gives the whole binary 120 minutes through `LiveTestTimeoutInMinutes` in `sdk/eventhubs/ci.yml`, so these tests cannot run in the standard live pass. |
+
+These tests need the `LIVE` test mode and a real Azure Event Hubs namespace. Run them one at a time with a gtest filter, for example:
+
+```sh
+EVENTHUBS_ENABLE_IDLE_DETACH_TESTS=1 ./azure-messaging-eventhubs-test --gtest_filter=*SendSurvivesAnIdleDetach*
+```
+
 ##### Test-Proxy 
 
 Recording and playing back tests depends on an external tool called "test-proxy" (see doc/TestProxy.md)

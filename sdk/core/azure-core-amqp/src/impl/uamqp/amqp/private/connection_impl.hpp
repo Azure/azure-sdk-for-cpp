@@ -214,10 +214,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     // Replace the token for one audience. Return true when the caller must stop
     // at once, because this call can have destroyed the connection.
+    // keptTokenAfterFailedRefresh is true only when a failed refresh kept its token.
     bool RefreshTokenForAudience(
         TokenRefreshState& state,
         std::string const& audienceUrl,
-        std::unique_lock<std::mutex>& lock);
+        std::unique_lock<std::mutex>& lock,
+        bool& keptTokenAfterFailedRefresh);
 
     ConnectionImpl(
         _internal::ConnectionEvents* eventHandler,

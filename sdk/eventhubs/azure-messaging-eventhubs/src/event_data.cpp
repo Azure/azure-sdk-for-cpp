@@ -9,7 +9,9 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
+#include <cstdint>
 #include <iostream>
+#include <string>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -58,12 +60,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Models {
       }
       else if (key == _detail::OffsetAnnotation)
       {
+        // The service always sends the offset as a string. Every other Event Hubs
+        // client reads a string only, so a different type is a service contract
+        // break and the offset stays empty.
         switch (item.second.GetType())
         {
           case Azure::Core::Amqp::Models::AmqpValueType::String:
             Offset = static_cast<std::string>(item.second);
             break;
           default:
+            Log::Stream(Logger::Level::Warning)
+                << "Unexpected type for the " << _detail::OffsetAnnotation
+                << " annotation: " << item.second.GetType() << ". The offset stays empty."
+                << std::endl;
             break;
         }
       }

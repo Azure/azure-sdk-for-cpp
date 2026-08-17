@@ -85,12 +85,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     /** @brief Closes the connection to the Event Hub service.
      */
-    void Close(Core::Context const& context) { m_receiver.Close(context); }
+    void Close(Core::Context const& context);
 
   private:
     friend class _detail::PartitionClientFactory;
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
+
+    /// The AMQP session that carries the receiver. A rebuild reattaches to this session.
+    Azure::Core::Amqp::_internal::Session m_session;
+    /// The address of the partition. A rebuild reuses this address.
+    std::string m_partitionUrl;
+    /// The link name of the receiver. A rebuild reuses this name.
+    std::string m_receiverName;
+
+    /// The offset of the last event received. A rebuild starts just after it.
+    Azure::Nullable<std::string> m_lastReceivedOffset;
+
+    /// The error that ended the last ReceiveEvents call. The next call recovers from it.
+    Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> m_pendingError;
 
     /// The options used to create the PartitionClient.
     PartitionClientOptions m_partitionOptions;
@@ -106,14 +119,23 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** Creates a new PartitionClient
      *
      * @param messageReceiver Message Receiver for the partition client.
+     * @param session The AMQP session that carries the message receiver.
+     * @param partitionUrl The address of the partition.
+     * @param receiverName The link name of the message receiver.
      * @param options options used to create the PartitionClient.
      * @param retryOptions controls how many times we should retry an operation in response to being
      * throttled or encountering a transient error.
      */
     PartitionClient(
         Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
+        Azure::Core::Amqp::_internal::Session const& session,
+        std::string partitionUrl,
+        std::string receiverName,
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions);
+
+    /// Closes the faulted receiver and attaches a new one starting after the last offset.
+    void RebuildReceiver(Core::Context const& context);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);
   };

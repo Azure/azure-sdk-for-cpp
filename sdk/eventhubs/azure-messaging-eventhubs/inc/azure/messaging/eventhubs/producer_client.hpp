@@ -12,8 +12,13 @@
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/nullable.hpp>
 
+#include <atomic>
+#include <cstdint>
 #include <iostream>
+#include <mutex>
+#include <shared_mutex>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
@@ -212,13 +217,32 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::mutex m_propertiesClientLock;
     std::shared_ptr<_detail::EventHubsPropertiesClient> m_propertiesClient;
 
+    // Protects m_sessions and m_connections.
     std::recursive_mutex m_sessionsLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Session> m_sessions{};
 
-    // Protects m_senders and m_connection.
+    // Protects m_senders.
     std::mutex m_sendersLock;
     std::map<std::string, Azure::Core::Amqp::_internal::Connection> m_connections{};
     std::map<std::string, Azure::Core::Amqp::_internal::MessageSender> m_senders{};
+
+    // One guard per partition. A send holds stackLock shared while it uses the cached
+    // sender, so sends to one partition run together. A teardown holds stackLock
+    // exclusive, so it waits for sends in flight and never closes an object a send
+    // still uses. The generation increases each time the stack changes, so a teardown
+    // that saw an old generation is a no-op and cannot remove a stack another thread
+    // rebuilt.
+    struct PartitionGuard
+    {
+      std::shared_timed_mutex stackLock;
+      std::atomic<std::uint64_t> generation{0};
+    };
+
+    // Protects m_partitionGuards. References into the map stay stable across inserts.
+    std::mutex m_partitionGuardsLock;
+    std::map<std::string, PartitionGuard> m_partitionGuards;
+
+    PartitionGuard& GetPartitionGuard(std::string const& partitionId);
 
     Azure::Core::Amqp::_internal::Connection CreateConnection(
         Azure::Core::Context const& context) const;
@@ -234,6 +258,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
+
+    // Calls EnsureSender, and discards a failed attach unless the context is cancelled.
+    void EnsureSenderOrInvalidate(
+        std::string const& partitionId,
+        Azure::Core::Context const& context);
+
+    // Discards the sender, session, and connection for the partition. A null generation,
+    // as Close passes, removes whatever is present regardless of generation.
+    void InvalidateSender(
+        std::string const& partitionId,
+        Azure::Nullable<std::uint64_t> observedGeneration,
+        Azure::Core::Context const& context);
 
     std::shared_ptr<_detail::EventHubsPropertiesClient> GetPropertiesClient(
         Azure::Core::Context const& context);

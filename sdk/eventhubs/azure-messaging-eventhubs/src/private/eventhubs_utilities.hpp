@@ -86,6 +86,44 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Amqp::Models::_internal::AmqpErrorCondition const& condition);
   };
 
+  // A condition such as amqp:link:stolen describes a state a new attach cannot fix.
+  inline bool ShouldRebuildReceiver(EventHubsException const& exception)
+  {
+    return exception.IsTransient || exception.ErrorCondition.empty();
+  }
+
+  // On uAMQP this type also covers a dead $cbs link (#7330), so keep the condition empty
+  // and let the rebuild budget decide whether another attach is worth trying.
+  inline EventHubsException TranslateAuthenticationFailure(
+      Azure::Core::Credentials::AuthenticationException const& failure)
+  {
+    return EventHubsException{failure.what()};
+  }
+
+  // The service keeps the link attached when it rejects an oversized transfer. Every
+  // other failure can mean a dead link, session, or connection.
+  inline bool ShouldInvalidateSender(EventHubsException const& exception)
+  {
+    return exception.ErrorCondition != "amqp:link:message-size-exceeded";
+  }
+
+  // A rebuild starts after the last delivered offset, so the caller sees no duplicate
+  // event. Before the first delivery there is no offset yet, so keep the original position.
+  inline Models::StartPosition ResumeStartPosition(
+      Models::StartPosition const& originalPosition,
+      Azure::Nullable<std::string> const& lastReceivedOffset)
+  {
+    if (!lastReceivedOffset.HasValue())
+    {
+      return originalPosition;
+    }
+
+    Models::StartPosition resumePosition;
+    resumePosition.Offset = lastReceivedOffset.Value();
+    resumePosition.Inclusive = false;
+    return resumePosition;
+  }
+
   class EventDataBatchFactory final {
   public:
     static EventDataBatch CreateEventDataBatch(EventDataBatchOptions const& options);
@@ -113,9 +151,21 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     ~EventHubsPropertiesClient()
     {
-      if (m_managementClientIsOpen)
+      // A destructor is noexcept, so an exception here terminates the process. An idle
+      // link detach after 30 minutes makes a throwing close the ordinary case here.
+      try
       {
-        m_managementClient->Close();
+        if (m_managementClientIsOpen)
+        {
+          m_managementClient->Close();
+        }
+      }
+      catch (std::exception const& ex)
+      {
+        Azure::Core::Diagnostics::_internal::Log::Stream(
+            Azure::Core::Diagnostics::Logger::Level::Warning)
+            << "Exception in EventHubsPropertiesClient::~EventHubsPropertiesClient(): "
+            << ex.what();
       }
     }
 
@@ -239,10 +289,30 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       {
         if (m_managementClientIsOpen)
         {
-          m_managementClient->Close(context);
+          // Drop the flag first, so a throwing close cannot make the destructor close again.
           m_managementClientIsOpen = false;
+          try
+          {
+            m_managementClient->Close(context);
+          }
+          catch (std::exception const& ex)
+          {
+            Azure::Core::Diagnostics::_internal::Log::Stream(
+                Azure::Core::Diagnostics::Logger::Level::Warning)
+                << "Exception while closing the management client: " << ex.what();
+          }
         }
-        m_session.End(context);
+        // Its own try block, so a failed management close does not strand the session.
+        try
+        {
+          m_session.End(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Azure::Core::Diagnostics::_internal::Log::Stream(
+              Azure::Core::Diagnostics::Logger::Level::Warning)
+              << "Exception while ending the properties client session: " << ex.what();
+        }
       }
     }
 
