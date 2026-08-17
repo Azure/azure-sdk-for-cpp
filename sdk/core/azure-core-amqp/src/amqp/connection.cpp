@@ -9,6 +9,7 @@
 #include "azure/core/amqp/models/amqp_value.hpp"
 #include "claims_based_security_impl.hpp"
 #include "connection_impl.hpp"
+#include "private/cbs_open_failure.hpp"
 #include "private/token_refresh.hpp"
 #include "session_impl.hpp"
 
@@ -145,13 +146,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         std::string const& audienceUrl,
         std::string const& token,
         Azure::DateTime const& expiresOn,
+        CbsOpenCaller caller,
         Azure::Core::Context const& context)
     {
       auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
       auto cbsOpenStatus = claimsBasedSecurity->Open(context);
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
-        throw std::runtime_error("Could not open Claims Based Security object.");
+        Log::Stream(Logger::Level::Warning)
+            << FormatCbsOpenFailureLog(cbsOpenStatus, audienceUrl, tokenType, expiresOn, caller);
+        throw std::runtime_error(DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
       }
 
       try
@@ -294,6 +298,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             audienceUrl,
             accessToken.Token,
             accessToken.ExpiresOn,
+            CbsOpenCaller::Authenticate,
             context);
       }
 
@@ -617,6 +622,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             audienceUrl,
             accessToken.Token,
             accessToken.ExpiresOn,
+            CbsOpenCaller::Refresh,
             context);
       }
       refreshed = true;

@@ -22,6 +22,23 @@
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  inline char const* ManagementOpenStatusName(_internal::ManagementOpenStatus status)
+  {
+    switch (status)
+    {
+      case _internal::ManagementOpenStatus::Invalid:
+        return "Invalid";
+      case _internal::ManagementOpenStatus::Ok:
+        return "Ok";
+      case _internal::ManagementOpenStatus::Error:
+        return "Error";
+      case _internal::ManagementOpenStatus::Cancelled:
+        return "Cancelled";
+      default:
+        return "Unknown";
+    }
+  }
+
   class ManagementClientFactory final {
   public:
     static Azure::Core::Amqp::_internal::ManagementClient CreateFromInternal(

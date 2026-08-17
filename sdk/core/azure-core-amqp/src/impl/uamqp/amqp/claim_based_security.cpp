@@ -36,6 +36,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           = std::make_shared<ManagementClientImpl>(m_session, "$cbs", managementOptions, this);
 
       auto rv{m_management->Open(context)};
+      if (rv != ManagementOpenStatus::Ok)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "ClaimsBasedSecurityImpl::Open: the $cbs management client did not open. Status: "
+            << ManagementOpenStatusName(rv) << ".";
+      }
       switch (rv)
       {
         case ManagementOpenStatus::Invalid:
@@ -52,6 +58,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     else
     {
+      Log::Stream(Logger::Level::Warning)
+          << "ClaimsBasedSecurityImpl::Open: this claims based security object is already open. "
+             "Open was called a second time on the same object.";
       return CbsOpenResult::Error;
     }
   }

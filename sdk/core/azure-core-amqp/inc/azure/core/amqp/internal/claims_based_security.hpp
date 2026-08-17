@@ -41,7 +41,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   /** @brief Implementation of AMQP 1.0 Claims-based Security (CBS) protocol.
    *
    * This class allows AMQP clients to implement the CBS protocol for authentication and
-   * authorization: https://docs.oasis-open.org/amqp/amqp-cbs/v1.0/csd01/amqp-cbs-v1.0-csd01.html
+   * authorization. It sends a `put-token` request to the `$cbs` node and reads the `status-code`
+   * and the `status-description` fields of the reply.
    *
    * The ServiceBus and EventHubs services use this protocol to authenticate and authorize clients.
    * See [ServiceBus Claims-based
