@@ -7,19 +7,7 @@ cmake_minimum_required (VERSION 3.13)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # Disable Rust based APIs in C++ SDK.
-#
-# EXPERIMENT. DO NOT MERGE. The default below reads OFF in main.
-#
-# No pipeline sets this option, so each pipeline gets the Rust AMQP stack, and
-# CI has not compiled the uAMQP stack since 2025-03-11, when #6442 forced the
-# Rust stack on. This branch turns the option on by default, so the pipelines
-# build uAMQP and run its tests. The purpose is to measure what that time did to
-# the uAMQP build on gcc, on clang, and on MSVC, with WARNINGS_AS_ERRORS on.
-#
-# This option is the supported switch, so the UWP jobs stay correct: the block
-# below that tests BUILD_WINDOWS_UWP sets DISABLE_AMQP when this option is on,
-# because uAMQP does not build for UWP.
-set(DISABLE_RUST_IN_BUILD ON CACHE BOOL "Disable Rust based APIs in package")
+set(DISABLE_RUST_IN_BUILD OFF CACHE BOOL "Disable Rust based APIs in package")
 set(DISABLE_AMQP OFF CACHE BOOL "Disable AMQP based functionality")
 set(DISABLE_AZURE_CORE_OPENTELEMETRY OFF CACHE BOOL "Disable OpenTelemetry based functionality")
 
