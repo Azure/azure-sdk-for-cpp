@@ -61,6 +61,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  // Close whatever the failed open left open. A close that throws here must not
+  // replace the status that the caller is about to return, so each one is
+  // separate and neither escapes.
+  void ManagementClientImpl::CloseSenderAndReceiverAfterFailedOpen() noexcept
+  {
+    if (m_messageSenderOpen)
+    {
+      try
+      {
+        m_messageSender->Close({});
+      }
+      catch (std::exception const&)
+      {
+      }
+      m_messageSenderOpen = false;
+    }
+    if (m_messageReceiverOpen)
+    {
+      try
+      {
+        m_messageReceiver->Close({});
+      }
+      catch (std::exception const&)
+      {
+      }
+      m_messageReceiverOpen = false;
+    }
+  }
+
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
     std::unique_lock<std::mutex> lock(m_openCloseLock);
@@ -118,16 +147,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_messageReceiver->Open(context);
         m_messageReceiverOpen = true;
       }
+      // Both handlers below swallow the exception and return, so the outer
+      // catch that closes these objects never runs for them. A sender that
+      // stays open stops the process in its own destructor, so close it here.
       catch (Azure::Core::OperationCancelledException const& e)
       {
         Log::Stream(Logger::Level::Warning)
             << "Operation cancelled opening message sender and receiver." << e.what();
+        CloseSenderAndReceiverAfterFailedOpen();
         return _internal::ManagementOpenStatus::Cancelled;
       }
       catch (std::runtime_error const& e)
       {
         Log::Stream(Logger::Level::Warning)
             << "Exception thrown opening message sender and receiver." << e.what();
+        CloseSenderAndReceiverAfterFailedOpen();
         return _internal::ManagementOpenStatus::Error;
       }
 

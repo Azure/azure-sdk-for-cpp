@@ -178,6 +178,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     static std::atomic<uint64_t> s_nextInstanceId;
     uint64_t const m_instanceId{s_nextInstanceId++};
 
+    // uAMQP parses the error out of a CLOSE performative and gives it to this
+    // subscription alone. Without it, the reason the service ended the
+    // connection reaches no log, and the client sees only the failures that
+    // follow.
+    ON_CONNECTION_CLOSED_EVENT_SUBSCRIPTION_HANDLE m_closeReceivedSubscription{};
+
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;
     bool m_isClosing = false;
@@ -249,5 +255,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     // Note: We cannot take ownership of this instance tag.
     static bool OnNewEndpointFn(void* context, ENDPOINT_HANDLE endpoint);
     static void OnIOErrorFn(void* context);
+    static void OnConnectionCloseReceivedFn(void* context, ERROR_HANDLE error);
   };
 }}}} // namespace Azure::Core::Amqp::_detail

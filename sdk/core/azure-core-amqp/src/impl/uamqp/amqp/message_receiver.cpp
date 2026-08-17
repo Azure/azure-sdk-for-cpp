@@ -166,6 +166,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageReceiverImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
   {
+    // Log before the open test, for the same reason as the message sender. A
+    // detach during the open leaves m_receiverOpen false, and the condition
+    // that the service sent then reaches no log at all.
+    Log::Stream(Logger::Level::Warning)
+        << "Message receiver link detached. Node: " << m_options.Name
+        << ", open: " << (m_receiverOpen ? "yes" : "no")
+        << ", condition: " << error.Condition.ToString() << ", description: " << error.Description;
+
     if (m_receiverOpen)
     {
       if (m_eventHandler)
@@ -173,11 +181,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_eventHandler->OnMessageReceiverDisconnected(
             MessageReceiverFactory::CreateFromInternal(shared_from_this()), error);
       }
-
-      // Log that an error occurred.
-      Log::Stream(Logger::Level::Warning)
-          << "Message receiver link detached: " + error.Condition.ToString() << ": "
-          << error.Description;
 
       // Cache the error we received in the OnDetach notification so we can return it to the
       // user on the next receive which fails.
