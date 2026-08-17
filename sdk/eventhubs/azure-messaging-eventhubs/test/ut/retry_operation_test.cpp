@@ -638,16 +638,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
 
     EXPECT_FALSE(retryOp.Execute([]() { return false; }, context));
 
-    // Match a lower-case fragment, so a change of capitalisation does not break
-    // this test.
+    // Match the word only, not the whole sentence, so a change to the text
+    // around it does not break this test.
     auto const exhausted = LocalTest::LinesContaining(
-        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Informational), "xhaust");
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Informational), "exhausted");
     ASSERT_EQ(static_cast<std::size_t>(1), exhausted.size());
     EXPECT_NE(std::string::npos, exhausted[0].find("7")) << exhausted[0];
     EXPECT_NE(std::string::npos, exhausted[0].find("8")) << exhausted[0];
 
     auto const warnings = LocalTest::LinesContaining(
-        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning), "xhaust");
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning), "exhausted");
     EXPECT_TRUE(warnings.empty());
   }
 
