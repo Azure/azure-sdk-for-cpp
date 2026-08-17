@@ -64,7 +64,8 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
       if (Log::ShouldWrite(Logger::Level::Warning))
       {
         Log::Stream(Logger::Level::Warning)
-            << "Exception thrown. " << e.ErrorCondition << " - " << e.ErrorDescription << std::endl;
+            << "Exception thrown on attempt " << (retryCount + 1) << ". " << e.ErrorCondition
+            << " - " << e.ErrorDescription << std::endl;
       }
       if (!ShouldRetry(e, retryCount, retryAfter))
       {
@@ -80,7 +81,8 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
       context.ThrowIfCancelled();
       if (Log::ShouldWrite(Logger::Level::Warning))
       {
-        Log::Write(Logger::Level::Warning, std::string("Runtime error while trying: ") + e.what());
+        Log::Stream(Logger::Level::Warning)
+            << "Runtime error on attempt " << (retryCount + 1) << ": " << e.what();
       }
       if (!ShouldRetry(false, retryCount, retryAfter))
       {
@@ -112,9 +114,9 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
 
   if (WasLastAttempt(attempt))
   {
-    Log::Write(
-        Logger::Level::Informational,
-        std::string("Retry attempts exhausted. Operation will not be retried."));
+    Log::Stream(Logger::Level::Informational)
+        << "Retry attempts exhausted at attempt " << (attempt + 1) << ". MaxRetries is "
+        << m_retryOptions.MaxRetries << ". Operation will not be retried.";
     return false;
   }
 
