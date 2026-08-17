@@ -165,13 +165,13 @@ A namespace connection string does not contain an `EntityPath`. Pass the Event H
 Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>
 ```
 
-An Event Hub connection string contains an `EntityPath`. The Event Hub argument can be empty or must match that value:
+An Event Hub connection string contains an `EntityPath`. The Event Hub argument can be empty, or it must match that value. The match ignores ASCII letter case:
 
 ```text
 Endpoint=sb://<namespace>.servicebus.windows.net/;SharedAccessKeyName=<key-name>;SharedAccessKey=<key>;EntityPath=<event-hub-name>
 ```
 
-A different Event Hub argument throws `std::invalid_argument`.
+An Event Hub argument that differs by more than ASCII letter case throws `std::invalid_argument`. When the two names differ only by case, the client uses the connection string spelling. The comparison folds ASCII A-Z only. It is not the culture-aware `InvariantCultureIgnoreCase` comparison that .NET uses.
 
 Samples: [create_consumer.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_consumer.cpp) and [create_producer.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/samples/basic-operations/create_producer.cpp).
 

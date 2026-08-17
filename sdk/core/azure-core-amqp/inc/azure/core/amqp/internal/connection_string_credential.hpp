@@ -6,6 +6,7 @@
 #include "network/sasl_transport.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/strings.hpp>
 
 #include <chrono>
 #include <memory>
@@ -68,8 +69,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
      * @param entityPath The name of the entity to connect to.
      *
      * @remark If the connectionString contains an EntityPath element, and the entityPath
-     * parameter is provided, this constructor will throw an exception if the two values do
-     * not match.
+     * parameter is provided, this constructor throws when the two values differ by more than
+     * ASCII letter case. The comparison folds ASCII A-Z only. It is not the culture-aware
+     * comparison that .NET uses. GetEntityPath() returns the connection string spelling.
      *
      */
     ServiceBusSasConnectionStringCredential(
@@ -78,13 +80,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         : TokenCredential("ServiceBusSasConnectionStringCredential"),
           m_connectionParser(connectionString)
     {
-      // If we weren't able to determine the entity path from the ConnectionStringCredential
-      // constructor, use the entity path passed in by the user.
-      if (m_connectionParser.GetEntityPath().empty())
-      {
-        m_entityPath = entityPath;
-      }
-      else if (!entityPath.empty() && m_connectionParser.GetEntityPath() != entityPath)
+      if (!m_connectionParser.GetEntityPath().empty() && !entityPath.empty()
+          && !Azure::Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              m_connectionParser.GetEntityPath(), entityPath))
       {
         // If the user provided an entity path, but it doesn't match the one in the connection
         // string, throw.
@@ -177,7 +175,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   private:
     ConnectionStringParser m_connectionParser;
-    std::string m_entityPath;
 
     ///** @brief Generate an SAS token with the specified expiration time for this connection
     /// string

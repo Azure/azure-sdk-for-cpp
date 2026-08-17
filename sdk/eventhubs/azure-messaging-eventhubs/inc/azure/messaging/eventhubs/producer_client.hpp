@@ -111,10 +111,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param options Additional options for creating the client.
      *
      * @remark When the connection string contains an EntityPath value, eventHub must be empty or
-     * match that value.
+     * match that value. The match ignores ASCII letter case.
      *
-     * @throw std::invalid_argument When eventHub conflicts with the connection string EntityPath,
-     * or when neither value supplies an Event Hub name.
+     * @throw std::invalid_argument When eventHub differs from the connection string EntityPath by
+     * more than ASCII letter case, or when neither value supplies an Event Hub name.
      */
     ProducerClient(
         std::string const& connectionString,
