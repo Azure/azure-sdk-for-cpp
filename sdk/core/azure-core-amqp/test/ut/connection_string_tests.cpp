@@ -5,6 +5,8 @@
 
 #include <azure/core/platform.hpp>
 
+#include <stdexcept>
+#include <string>
 #include <utility>
 
 #include <gtest/gtest.h>
@@ -18,6 +20,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
   // EventHubs connection strings look like:
   // Endpoint=sb://{NAMESPACE}.servicebus.windows.net/{EVENT_HUB_NAME};EntityPath={EVENT_HUB_NAME};SharedAccessKeyName={ACCESS_KEY_NAME};SharedAccessKey={ACCESS_KEY}
+
+  // cspell: disable
+  constexpr const char* ConnectionStringWithLowercaseEntityPath
+      = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=Key;"
+        "SharedAccessKey=Value;EntityPath=myhub";
+  // cspell: enable
 
   TEST_F(ConnectionStringTest, SaslPlainConnectionGood)
   {
@@ -71,6 +79,45 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Foo;EntityPath=otherPath",
           "otherPath");
     }());
+  }
+
+  TEST_F(ConnectionStringTest, ServiceBusSasEntityPathCaseInsensitive)
+  {
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
+        ConnectionStringWithLowercaseEntityPath, "MyHub");
+    EXPECT_EQ("myhub", credential.GetEntityPath());
+  }
+
+  // The comparison must keep its empty-argument guard. An empty entity path argument
+  // means the caller wants the connection string value, and it is not a mismatch.
+  TEST_F(ConnectionStringTest, ServiceBusSasEntityPathArgumentEmpty)
+  {
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
+        ConnectionStringWithLowercaseEntityPath, "");
+    EXPECT_EQ("myhub", credential.GetEntityPath());
+  }
+
+  // A connection string without an EntityPath element keeps an empty entity path.
+  TEST_F(ConnectionStringTest, ServiceBusSasEntityPathAbsentFromConnectionString)
+  {
+    Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
+        "Endpoint=Bar;SharedAccessKeyName=Eek;SharedAccessKey=Bar", "entityPath");
+    EXPECT_EQ("", credential.GetEntityPath());
+  }
+
+  // A case conversion must stay on ASCII bytes. These two bytes differ in case in
+  // Latin-1, so a locale-dependent conversion could make them match.
+  TEST_F(ConnectionStringTest, ServiceBusSasEntityPathNonAsciiMismatch)
+  {
+    std::string const connectionString
+        = std::string(ConnectionStringWithLowercaseEntityPath) + static_cast<char>(0xC9);
+    std::string const entityPath = std::string("myhub") + static_cast<char>(0xE9);
+    EXPECT_THROW(
+        {
+          Azure::Core::Amqp::_internal::ServiceBusSasConnectionStringCredential credential(
+              connectionString, entityPath);
+        },
+        std::invalid_argument);
   }
 
   // The uAMQP backend builds its tokens with SASToken_Create and URL_EncodeString from
