@@ -857,16 +857,36 @@ static void indicate_all_messages_as_error(MESSAGE_SENDER_INSTANCE* message_send
     for (i = 0; i < message_sender->message_count; i++)
     {
         MESSAGE_WITH_CALLBACK* message_with_callback = GET_ASYNC_OPERATION_CONTEXT(MESSAGE_WITH_CALLBACK, message_sender->messages[i]);
-        if (message_with_callback->on_message_send_complete != NULL)
+        bool can_destroy_message = true;
+
+        if (message_with_callback->transfer_async_operation != NULL)
         {
-            message_with_callback->on_message_send_complete(message_with_callback->context, MESSAGE_SEND_ERROR, NULL);
+            if (link_transfer_async_cancel(message_sender->link, message_with_callback->transfer_async_operation) != 0)
+            {
+                LogError("Cannot cancel pending message transfer");
+                // Retain the callback state because the delivery still owns a pointer to it.
+                message_with_callback->on_message_send_complete = NULL;
+                can_destroy_message = false;
+            }
+            else
+            {
+                message_with_callback->transfer_async_operation = NULL;
+            }
         }
 
-        if (message_with_callback->message != NULL)
+        if (can_destroy_message)
         {
-            message_destroy(message_with_callback->message);
+            if (message_with_callback->on_message_send_complete != NULL)
+            {
+                message_with_callback->on_message_send_complete(message_with_callback->context, MESSAGE_SEND_ERROR, NULL);
+            }
+
+            if (message_with_callback->message != NULL)
+            {
+                message_destroy(message_with_callback->message);
+            }
+            async_operation_destroy(message_sender->messages[i]);
         }
-        async_operation_destroy(message_sender->messages[i]);
     }
 
     if (message_sender->messages != NULL)

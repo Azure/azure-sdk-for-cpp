@@ -373,18 +373,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         m_session->GetConnection()->EnableAsyncOperation(false);
         // Clean up from changes made earlier in the open, since the open was not successful.
-        auto lock{m_session->GetConnection()->Lock()};
-        m_link->UnsubscribeFromDetachEvent();
-
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
             m_link); // This will ensure that the link is cleaned up on the next poll()
-        messagesender_close(m_messageSender.get());
-        m_link.reset();
-        m_messageSender.reset();
+        {
+          auto lock{m_session->GetConnection()->Lock()};
+          m_link->UnsubscribeFromDetachEvent();
+
+          messagesender_close(m_messageSender.get());
+          m_link.reset();
+          m_messageSender.reset();
+        }
         if (!result)
         {
-          throw Azure::Core::OperationCancelledException(
-              "Message sender open operation cancelled.");
+          if (context.IsCancelled())
+          {
+            throw Azure::Core::OperationCancelledException(
+                "Message sender open operation cancelled.");
+          }
+          rv
+              = {Models::_internal::AmqpErrorCondition::TimeoutError,
+                 "Message sender open operation timed out.",
+                 {}};
         }
         else
         {
@@ -451,20 +460,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           Context const closeContext{
               _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
           auto result = m_closeQueue.WaitForResult(closeContext);
+          Models::_internal::AmqpError rv;
           if (!result)
           {
-            throw Azure::Core::OperationCancelledException(
-                "Message sender close operation cancelled.");
-          }
-          if (std::get<0>(*result))
-          {
-            auto rv = std::move(std::get<0>(*result));
-            if (rv)
+            if (context.IsCancelled())
             {
-              throw std::runtime_error(
-                  "Message sender close operation failed: " + rv.Condition.ToString()
-                  + " description: " + rv.Description);
+              throw Azure::Core::OperationCancelledException(
+                  "Message sender close operation cancelled.");
             }
+
+            rv
+                = {Models::_internal::AmqpErrorCondition::TimeoutError,
+                   "Message sender close operation timed out.",
+                   {}};
+          }
+          else
+          {
+            rv = std::move(std::get<0>(*result));
+          }
+          if (rv)
+          {
+            throw std::runtime_error(
+                "Message sender close operation failed: " + rv.Condition.ToString()
+                + " description: " + rv.Description);
           }
         }
       }

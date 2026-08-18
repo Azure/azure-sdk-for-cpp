@@ -853,6 +853,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 #endif // !defined(USE_NATIVE_BROKER)
 
+#if ENABLE_UAMQP
 #if !defined(USE_NATIVE_BROKER)
   TEST_F(TestMessageSendReceive, SenderCloseWhileUnsettledSendIgnoresLateDisposition)
   {
@@ -957,10 +958,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       });
 
       EXPECT_EQ(closeStarted.wait_for(std::chrono::seconds(5)), std::future_status::ready);
-      EXPECT_EQ(sendFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
 
       senderEndpoint->ReleaseSettlement();
 
+      EXPECT_EQ(sendFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
       EXPECT_EQ(closeFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
       sendWorker.join();
       closeWorker.join();
@@ -973,6 +974,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     CloseAmqpConnection(connection);
   }
 #endif // !defined(USE_NATIVE_BROKER)
+#endif // ENABLE_UAMQP
 
   TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
