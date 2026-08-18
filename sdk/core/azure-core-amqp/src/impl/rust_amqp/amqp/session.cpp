@@ -134,6 +134,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
             ->GetRuntimeContext(),
         context};
+    callContext.SetTeardownTimeoutMilliseconds();
 
     if (!m_isBegun)
     {
@@ -163,6 +164,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
             ->GetRuntimeContext(),
         context};
+    callContext.SetTeardownTimeoutMilliseconds();
 
     if (!m_isBegun)
     {

@@ -9,6 +9,9 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
+#include <cstdint>
+#include <map>
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
@@ -83,15 +86,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      */
     void CompleteClose() noexcept;
 
+    // The completion state of one send. A send that gave up leaves the uAMQP operation in flight,
+    // because uAMQP can call the completion handler two times after a cancel. Each send owns its
+    // own state, so a late result completes only the send that started it.
+    struct SendOperation final
+    {
+      Azure::Core::Amqp::Common::_internal::
+          AsyncOperationQueue<_internal::MessageSendStatus, Models::_internal::AmqpError>
+              Queue;
+    };
+
     bool m_senderOpen{false};
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;
     Models::_internal::AmqpError m_savedMessageError;
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
-        Azure::Core::Amqp::_internal::MessageSendStatus,
-        Models::_internal::AmqpError>
-        m_sendCompleteQueue;
+
+    // Every send that waits now. The connection lock guards the map and the id.
+    std::map<std::uint64_t, std::shared_ptr<SendOperation>> m_pendingSends;
+    std::uint64_t m_nextSendId{0};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_openQueue;

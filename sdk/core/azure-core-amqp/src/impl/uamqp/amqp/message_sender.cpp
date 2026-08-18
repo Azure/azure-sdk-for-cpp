@@ -4,6 +4,7 @@
 // Enable declaration of strerror_s.
 #define __STDC_WANT_LIB_EXT1__ 1
 
+#include "../../../amqp/private/operation_timeout.hpp"
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
@@ -19,6 +20,7 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
+#include <chrono>
 #include <memory>
 
 using namespace Azure::Core::Diagnostics;
@@ -267,11 +269,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         else
         {
-          sender->m_sendCompleteQueue.CompleteOperation(
-              _internal::MessageSendStatus::Error,
-              {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
-               "Message Sender unexpectedly entered the Error State.",
-               {}});
+          // The polling thread holds the connection lock here, so it reads the pending sends
+          // without a lock of its own. uAMQP drains every in-flight send before it reports the
+          // error state (indicate_all_messages_as_error runs before set_message_sender_state),
+          // so this map is empty today. The loop keeps the wake correct if that order changes,
+          // because sends to one partition run together.
+          for (auto const& pendingSend : sender->m_pendingSends)
+          {
+            pendingSend.second->Queue.CompleteOperation(
+                _internal::MessageSendStatus::Error,
+                {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
+                 "Message Sender unexpectedly entered the Error State.",
+                 {}});
+          }
         }
       }
 
@@ -306,6 +316,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Message sender is already open.");
     }
+
+    // A connection that goes to Error or End stops the poll, so nothing else ends this
+    // attach. Register under the connection lock, so the polling thread cannot deliver
+    // the failure between the open and the wait.
+    PendingOperationRegistry::Registration registration;
     {
       auto lock{m_session->GetConnection()->Lock()};
       if (m_link == nullptr)
@@ -338,10 +353,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->EnableAsyncOperation(true);
       // Enable async on the link as well.
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+
+      registration = m_session->GetConnection()->GetPendingOperations().Register(
+          [this](Models::_internal::AmqpError const& error) {
+            m_openQueue.CompleteOperation(error);
+          });
     }
     if (!halfOpen)
     {
-      auto result = m_openQueue.WaitForResult(context);
+      // A caller that gave no deadline must not wait forever for an attach.
+      Context const openContext{
+          _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+      auto result = m_openQueue.WaitForResult(openContext);
       if (!result || std::get<0>(*result))
       {
         if (m_options.EnableTrace)
@@ -418,7 +441,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                 << "Wait for sender detach to complete. Current state: " << m_currentState;
           }
 
-          auto result = m_closeQueue.WaitForResult(context);
+          // A connection that is gone never delivers the detach. The empty
+          // error keeps this close on its normal return path.
+          auto registration = m_session->GetConnection()->GetPendingOperations().Register(
+              [this](Models::_internal::AmqpError const&) {
+                m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
+              });
+
+          Context const closeContext{
+              _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+          auto result = m_closeQueue.WaitForResult(closeContext);
           if (!result)
           {
             throw Azure::Core::OperationCancelledException(
@@ -563,12 +595,24 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage const& message,
       Context const& context)
   {
+    // A caller that gave no deadline must not wait forever when the transport
+    // stops answering.
+    Context const sendContext{
+        _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+
+    // The uAMQP operation of a send that gave up stays in flight. This state keeps the late result
+    // of that send away from the send that comes next.
+    auto sendOperation{std::make_shared<SendOperation>()};
+    std::weak_ptr<MessageSenderImpl> weakSelf{shared_from_this()};
+
+    PendingOperationRegistry::Registration registration;
+    std::uint64_t sendId{0};
     {
       auto lock{m_session->GetConnection()->Lock()};
 
       QueueSendInternal(
           message,
-          [this](
+          [weakSelf, sendOperation](
               Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
               Models::AmqpValue deliveryStatus) {
             Models::_internal::AmqpError error;
@@ -581,7 +625,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             {
               if (deliveryStatus.IsNull())
               {
-                error = m_savedMessageError;
+                // A sender that is gone leaves the error empty.
+                if (auto self{weakSelf.lock()})
+                {
+                  error = self->m_savedMessageError;
+                }
               }
               else
               {
@@ -610,24 +658,57 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             {
               // If we successfully sent the message, then whatever saved error should be cleared,
               // it's no longer valid.
-              m_savedMessageError = Models::_internal::AmqpError();
+              if (auto self{weakSelf.lock()})
+              {
+                self->m_savedMessageError = Models::_internal::AmqpError();
+              }
             }
-            m_sendCompleteQueue.CompleteOperation(sendResult, error);
+            sendOperation->Queue.CompleteOperation(sendResult, error);
           },
           context);
+
+      // Register under the connection lock, so the polling thread cannot
+      // deliver the close between the queue and this call. That thread also
+      // writes m_savedMessageError, so the waiter reads it without a lock and
+      // prefers the error of the link over the error of the connection.
+      registration = m_session->GetConnection()->GetPendingOperations().Register(
+          [this, sendOperation](Models::_internal::AmqpError const& error) {
+            sendOperation->Queue.CompleteOperation(
+                _internal::MessageSendStatus::Error,
+                m_savedMessageError ? m_savedMessageError : error);
+          });
+
+      // Add this send last, because nothing between here and the erase throws.
+      sendId = m_nextSendId++;
+      m_pendingSends.emplace(sendId, sendOperation);
     }
-    auto result = m_sendCompleteQueue.WaitForResult(context);
+    auto result = sendOperation->Queue.WaitForResult(sendContext);
+    {
+      auto lock{m_session->GetConnection()->Lock()};
+      m_pendingSends.erase(sendId);
+    }
     if (result)
     {
       return std::move(*result);
     }
-    else
+    else if (context.IsCancelled())
     {
       Models::_internal::AmqpError error{
           Models::_internal::AmqpErrorCondition::OperationCancelled,
           "Message send operation cancelled.",
           {}};
       return std::make_tuple(_internal::MessageSendStatus::Cancelled, error);
+    }
+    else
+    {
+      // Only the deadline that this call added expired. The Event Hubs retry
+      // policy treats a timeout as transient and a cancel as final, so these
+      // two paths must not share a condition.
+      Models::_internal::AmqpError error{
+          Models::_internal::AmqpErrorCondition::TimeoutError,
+          "Message send operation timed out.",
+          {}};
+      return std::make_tuple(_internal::MessageSendStatus::Timeout, error);
     }
   }
 

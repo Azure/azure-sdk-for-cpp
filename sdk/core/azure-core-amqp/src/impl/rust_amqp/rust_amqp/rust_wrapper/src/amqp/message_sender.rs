@@ -103,22 +103,25 @@ pub unsafe extern "C" fn amqpmessagesender_attach(
     let options = &*options;
     let call_context = call_context_from_ptr_mut(call_context);
     trace!("Starting to attach sender");
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(sender.inner.attach(
-            session.get_session(),
-            name.into(),
-            target.get().clone(),
-            Some(options.inner.clone()),
-        ));
+    let result = call_context.block_on_with_timeout(sender.inner.attach(
+        session.get_session(),
+        name.into(),
+        target.get().clone(),
+        Some(options.inner.clone()),
+    ));
     trace!("Attached sender");
-    if let Err(err) = result {
-        error!("Failed to attach sender: {:?}", err);
-        call_context.set_error(Box::new(err));
-        -1
-    } else {
-        0
+    match result {
+        Err(elapsed) => {
+            error!("Timed out attaching sender: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            -1
+        }
+        Ok(Err(err)) => {
+            error!("Failed to attach sender: {:?}", err);
+            call_context.set_error(Box::new(err));
+            -1
+        }
+        Ok(Ok(_)) => 0,
     }
 }
 
@@ -136,17 +139,20 @@ pub unsafe extern "C" fn amqpmessagesender_detach_and_release(
 
     trace!("Closing sender");
     let sender = Box::from_raw(sender);
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(sender.inner.detach());
+    let result = call_context.block_on_with_timeout(sender.inner.detach());
     trace!("Closed sender");
-    if let Err(err) = result {
-        error!("Failed to detach sender: {:?}", err);
-        call_context.set_error(Box::new(err));
-        -1
-    } else {
-        0
+    match result {
+        Err(elapsed) => {
+            error!("Timed out detaching sender: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            -1
+        }
+        Ok(Err(err)) => {
+            error!("Failed to detach sender: {:?}", err);
+            call_context.set_error(Box::new(err));
+            -1
+        }
+        Ok(Ok(_)) => 0,
     }
 }
 
@@ -179,16 +185,21 @@ pub unsafe extern "C" fn amqpmessagesender_send(
         send_options = Some(options_to_set);
     }
 
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(sender.inner.send(message.get().clone(), send_options));
-    if let Err(err) = result {
-        error!("Failed to send message: {:?}", err);
-        call_context.set_error(Box::new(err));
-        return -1;
+    let result =
+        call_context.block_on_with_timeout(sender.inner.send(message.get().clone(), send_options));
+    match result {
+        Err(elapsed) => {
+            error!("Timed out sending message: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            -1
+        }
+        Ok(Err(err)) => {
+            error!("Failed to send message: {:?}", err);
+            call_context.set_error(Box::new(err));
+            -1
+        }
+        Ok(Ok(_)) => 0,
     }
-    0
 }
 
 /// # Safety

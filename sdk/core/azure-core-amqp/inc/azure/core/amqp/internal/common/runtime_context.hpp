@@ -3,11 +3,15 @@
 
 #pragma once
 #if ENABLE_RUST_AMQP
+#include "../src/amqp/private/operation_timeout.hpp"
 #include "../src/amqp/private/unique_handle.hpp"
 #include "rust_amqp_wrapper.h"
 
 #include <azure/core/context.hpp>
+#include <azure/core/datetime.hpp>
 
+#include <chrono>
+#include <cstdint>
 #include <memory>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -87,6 +91,61 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     Azure::Core::Amqp::_detail::RustCallContext* GetCallContext() const
     {
       return m_callContext.get();
+    }
+
+    /** The bound for this call, in milliseconds.
+     *
+     * A caller that gave no deadline gets the default bound, because the Rust
+     * runtime blocks the calling thread until the operation completes.
+     */
+    std::uint64_t GetTimeoutMilliseconds() const
+    {
+      if (!Azure::Core::Amqp::_detail::ContextHasDeadline(m_context))
+      {
+        auto const defaultTimeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+            Azure::Core::Amqp::_detail::DefaultOperationTimeout);
+        return static_cast<std::uint64_t>(defaultTimeout.count());
+      }
+      // Compare before the cast. The subtraction is signed, and a negative
+      // value that becomes unsigned is a bound of about 584 million years.
+      auto const now = Azure::DateTime{std::chrono::system_clock::now()};
+      auto const deadline = m_context.GetDeadline();
+      if (deadline <= now)
+      {
+        return 0;
+      }
+      return static_cast<std::uint64_t>(
+          std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now).count());
+    }
+
+    /** Give the Rust call this bound, in milliseconds. */
+    void SetTimeoutMilliseconds(std::uint64_t timeoutMilliseconds)
+    {
+      Azure::Core::Amqp::RustInterop::_detail::call_context_set_timeout_ms(
+          GetCallContext(), timeoutMilliseconds);
+    }
+
+    std::uint64_t GetTeardownTimeoutMilliseconds() const
+    {
+      auto const remaining = GetTimeoutMilliseconds();
+      if (remaining != 0)
+      {
+        return remaining;
+      }
+      auto const defaultTimeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+          Azure::Core::Amqp::_detail::DefaultOperationTimeout);
+      return static_cast<std::uint64_t>(defaultTimeout.count());
+    }
+
+    /** Give the Rust call the bound for a teardown, in milliseconds.
+     *
+     * A cancelled caller must not stop a close, because an object that stays
+     * open stops the process in its destructor. So a deadline that already
+     * passed gives the default bound.
+     */
+    void SetTeardownTimeoutMilliseconds()
+    {
+      SetTimeoutMilliseconds(GetTeardownTimeoutMilliseconds());
     }
 
     std::string GetError() const

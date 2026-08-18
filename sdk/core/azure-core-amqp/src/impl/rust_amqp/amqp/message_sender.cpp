@@ -88,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
 
     UniqueSenderOptions senderOptions{amqpmessagesenderoptions_create()};
 
@@ -173,6 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+      callContext.SetTeardownTimeoutMilliseconds();
 
       // Even if the detach fails, the sender is closed. A sender that failed to detach is not
       // usable again, and a sender that keeps the open flag stops the process in its destructor.
@@ -198,6 +200,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+      callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
 
       RustAmqpSendOptions sendOptions{};
 

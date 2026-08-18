@@ -69,6 +69,11 @@ target_include_directories (
       PRIVATE 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../src>)
 
+# The default ctest timeout is 10000000 seconds, so a test that hangs holds the
+# pipeline until the job itself times out.
+set(AZURE_EVENTHUBS_CTEST_TIMEOUT "1200" CACHE STRING
+    "Per-test ctest timeout in seconds for the Event Hubs tests.")
+
 if (NOT DISABLE_TEST_DISCOVERY)
   # gtest_add_tests will scan the test from azure-messaging-eventhubs-test and call add_test
   # for each test to ctest. This enables `ctest -r` to run specific tests directly.
@@ -76,5 +81,6 @@ if (NOT DISABLE_TEST_DISCOVERY)
     TEST_PREFIX azure-messaging-eventhubs.
     NO_PRETTY_TYPES
     NO_PRETTY_VALUES
+    PROPERTIES TIMEOUT ${AZURE_EVENTHUBS_CTEST_TIMEOUT}
     DISCOVERY_TIMEOUT 600)
 endif()
