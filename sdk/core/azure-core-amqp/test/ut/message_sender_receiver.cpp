@@ -27,8 +27,12 @@
 #include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
 
+#include <chrono>
+#include <exception>
 #include <functional>
+#include <future>
 #include <random>
+#include <thread>
 
 #include <gtest/gtest.h>
 
@@ -841,6 +845,127 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::this_thread::sleep_for(std::chrono::seconds(6));
 
       sender.Close();
+    }
+    StopServerListening();
+
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+#endif // !defined(USE_NATIVE_BROKER)
+
+#if !defined(USE_NATIVE_BROKER)
+  TEST_F(TestMessageSendReceive, SenderCloseWhileUnsettledSendIgnoresLateDisposition)
+  {
+    class DelayedSenderLinkEndpoint final : public MessageTests::MockServiceEndpoint {
+    public:
+      DelayedSenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options),
+            m_transferReceived{m_transferReceivedPromise.get_future()},
+            m_settlementReleased{m_settlementReleasedPromise.get_future()}
+      {
+      }
+
+      std::future_status WaitForTransfer(std::chrono::milliseconds timeout)
+      {
+        return m_transferReceived.wait_for(timeout);
+      }
+
+      void ReleaseSettlement() { m_settlementReleasedPromise.set_value(); }
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        m_transferReceivedPromise.set_value();
+        m_settlementReleased.wait();
+        return MockServiceEndpoint::OnMessageReceived(receiver, message);
+      }
+
+    private:
+      void MessageReceived(
+          std::string const&,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const&) override
+      {
+      }
+
+      std::promise<void> m_transferReceivedPromise;
+      std::future<void> m_transferReceived;
+      std::promise<void> m_settlementReleasedPromise;
+      std::future<void> m_settlementReleased;
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint = std::make_shared<DelayedSenderLinkEndpoint>(
+        "localhost/ingress", mockServiceEndpointOptions);
+    m_mockServer.AddServiceEndpoint(senderEndpoint);
+
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
+
+    StartServerListening();
+
+    {
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
+      EXPECT_FALSE(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
+
+      std::promise<void> sendFinishedPromise;
+      auto sendFinished = sendFinishedPromise.get_future();
+      std::exception_ptr sendException;
+      std::thread sendWorker([&]() {
+        try
+        {
+          (void)sender.Send(message);
+        }
+        catch (...)
+        {
+          sendException = std::current_exception();
+        }
+        sendFinishedPromise.set_value();
+      });
+
+      EXPECT_EQ(
+          senderEndpoint->WaitForTransfer(std::chrono::seconds(5)), std::future_status::ready);
+
+      std::promise<void> closeStartedPromise;
+      auto closeStarted = closeStartedPromise.get_future();
+      std::promise<void> closeFinishedPromise;
+      auto closeFinished = closeFinishedPromise.get_future();
+      std::exception_ptr closeException;
+      std::thread closeWorker([&]() {
+        closeStartedPromise.set_value();
+        try
+        {
+          sender.Close(
+              Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)});
+        }
+        catch (...)
+        {
+          closeException = std::current_exception();
+        }
+        closeFinishedPromise.set_value();
+      });
+
+      EXPECT_EQ(closeStarted.wait_for(std::chrono::seconds(5)), std::future_status::ready);
+      EXPECT_EQ(sendFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
+
+      senderEndpoint->ReleaseSettlement();
+
+      EXPECT_EQ(closeFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
+      sendWorker.join();
+      closeWorker.join();
+      EXPECT_EQ(sendException, nullptr);
+      EXPECT_EQ(closeException, nullptr);
     }
     StopServerListening();
 
