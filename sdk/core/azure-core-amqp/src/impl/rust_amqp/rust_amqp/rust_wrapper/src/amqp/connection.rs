@@ -171,20 +171,21 @@ pub unsafe extern "C" fn amqpconnection_close_with_error(
                 )
             })
             .collect();
-        let result =
-            call_context
-                .runtime_context()
-                .runtime()
-                .block_on(connection.inner.close_with_error(
-                    condition.to_str().unwrap().into(),
-                    Some(description.to_str().unwrap().into()),
-                    Some(info.clone()),
-                ));
+        let result = call_context.block_on_with_timeout(connection.inner.close_with_error(
+            condition.to_str().unwrap().into(),
+            Some(description.to_str().unwrap().into()),
+            Some(info.clone()),
+        ));
         match result {
-            Ok(_) => 0,
-            Err(err) => {
+            Ok(Ok(_)) => 0,
+            Ok(Err(err)) => {
                 error!("Failed to close connection with error: {:?}", err);
                 call_context.set_error(err.into());
+                1
+            }
+            Err(elapsed) => {
+                error!("Timed out closing connection with error: {:?}", elapsed);
+                call_context.set_error(Box::new(elapsed));
                 1
             }
         }
