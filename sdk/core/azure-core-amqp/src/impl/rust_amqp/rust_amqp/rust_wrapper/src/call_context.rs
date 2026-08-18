@@ -87,3 +87,24 @@ fn test_call_context_set_error() {
         assert_ne!(error, std::ptr::null_mut());
     }
 }
+
+#[test]
+fn test_call_context_block_on_with_timeout() {
+    let runtime_context = Box::into_raw(Box::new(RuntimeContext::new().unwrap()));
+    let mut call_context = RustCallContext::new(runtime_context);
+    call_context.timeout = std::time::Duration::from_millis(100);
+
+    let start = std::time::Instant::now();
+    let never = call_context.block_on_with_timeout(std::future::pending::<()>());
+    let elapsed = start.elapsed();
+    assert!(never.is_err());
+    assert!(elapsed < std::time::Duration::from_secs(5));
+
+    let seven = call_context.block_on_with_timeout(async { 7 });
+    assert!(seven.is_ok());
+    assert_eq!(seven.unwrap(), 7);
+
+    unsafe {
+        drop(Box::from_raw(runtime_context));
+    }
+}
