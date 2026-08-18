@@ -313,9 +313,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       partitionOptions.StartPosition.SequenceNumber = sequenceNumberBeforeSend[partitionId];
       auto receiver = consumer->CreatePartitionClient(partitionId, partitionOptions);
 
-      // ReceiveEvents returns as soon as the receiver queue is empty, so one call can return fewer
-      // events than the batch holds. Read until this partition holds the whole batch, or until the
-      // partition stays quiet, or until the time runs out.
+      // ReceiveEvents waits for the first event and then returns when the receiver queue is empty,
+      // so pass the deadline to stop a read on a partition that holds none of this batch. Read
+      // until this partition holds the whole batch, or until the partition stays quiet, or until
+      // the time runs out.
       std::vector<std::shared_ptr<const Azure::Messaging::EventHubs::Models::ReceivedEventData>>
           eventsOnPartition;
       auto const deadline = std::chrono::system_clock::now() + std::chrono::seconds(60);
@@ -323,7 +324,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       while (eventsOnPartition.size() < eventCount && quietReads < 6
              && std::chrono::system_clock::now() < deadline)
       {
-        auto batchOfEvents = receiver.ReceiveEvents(eventCount);
+        std::vector<std::shared_ptr<const Azure::Messaging::EventHubs::Models::ReceivedEventData>>
+            batchOfEvents;
+        try
+        {
+          batchOfEvents = receiver.ReceiveEvents(eventCount, Azure::Core::Context{deadline});
+        }
+        catch (Azure::Core::OperationCancelledException const&)
+        {
+          break;
+        }
         if (batchOfEvents.empty())
         {
           quietReads++;
