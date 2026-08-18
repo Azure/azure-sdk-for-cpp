@@ -103,22 +103,25 @@ pub unsafe extern "C" fn amqpmessagesender_attach(
     let options = &*options;
     let call_context = call_context_from_ptr_mut(call_context);
     trace!("Starting to attach sender");
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(sender.inner.attach(
-            session.get_session(),
-            name.into(),
-            target.get().clone(),
-            Some(options.inner.clone()),
-        ));
+    let result = call_context.block_on_with_timeout(sender.inner.attach(
+        session.get_session(),
+        name.into(),
+        target.get().clone(),
+        Some(options.inner.clone()),
+    ));
     trace!("Attached sender");
-    if let Err(err) = result {
-        error!("Failed to attach sender: {:?}", err);
-        call_context.set_error(Box::new(err));
-        -1
-    } else {
-        0
+    match result {
+        Err(elapsed) => {
+            error!("Timed out attaching sender: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            -1
+        }
+        Ok(Err(err)) => {
+            error!("Failed to attach sender: {:?}", err);
+            call_context.set_error(Box::new(err));
+            -1
+        }
+        Ok(Ok(_)) => 0,
     }
 }
 

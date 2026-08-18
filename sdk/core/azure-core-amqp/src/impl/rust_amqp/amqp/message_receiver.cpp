@@ -174,6 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
 
     if (amqpmessagereceiver_attach(
             callContext.GetCallContext(),
@@ -195,6 +196,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
+      callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
 
       // Even if the detach fails, we still want to consider the receiver closed.
       m_receiverOpen = false;

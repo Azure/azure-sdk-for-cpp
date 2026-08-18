@@ -88,6 +88,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), {});
+    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
 
     UniqueSenderOptions senderOptions{amqpmessagesenderoptions_create()};
 

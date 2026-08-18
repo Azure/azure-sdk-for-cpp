@@ -94,19 +94,24 @@ unsafe extern "C" fn amqpmessagereceiver_attach(
     let call_context = call_context_from_ptr_mut(call_context);
 
     trace!("Starting to attach receiver");
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(receiver.inner.attach(
-            session.get_session(),
-            source.get().clone(),
-            Some(options.inner.clone()),
-        ));
+    let result = call_context.block_on_with_timeout(receiver.inner.attach(
+        session.get_session(),
+        source.get().clone(),
+        Some(options.inner.clone()),
+    ));
     trace!("Attached receiver");
-    if let Err(err) = result {
-        error!("Failed to attach receiver: {:?}", err);
-        call_context.set_error(Box::new(err));
-        return -1;
+    match result {
+        Err(elapsed) => {
+            error!("Timed out attaching receiver: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            return -1;
+        }
+        Ok(Err(err)) => {
+            error!("Failed to attach receiver: {:?}", err);
+            call_context.set_error(Box::new(err));
+            return -1;
+        }
+        Ok(Ok(_)) => {}
     }
 
     if receiver.message_channel.get().is_some() {
@@ -210,17 +215,20 @@ unsafe extern "C" fn amqpmessagereceiver_detach_and_release(
     }
     trace!("Detaching receiver");
     let receiver_to_detach = receiver_to_detach.unwrap();
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(receiver_to_detach.detach());
+    let result = call_context.block_on_with_timeout(receiver_to_detach.detach());
     trace!("Detached receiver");
-    if let Err(err) = result {
-        error!("Failed to detach receiver: {:?}", err);
-        call_context.set_error(Box::new(err));
-        -1
-    } else {
-        0
+    match result {
+        Err(elapsed) => {
+            error!("Timed out detaching receiver: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
+            -1
+        }
+        Ok(Err(err)) => {
+            error!("Failed to detach receiver: {:?}", err);
+            call_context.set_error(Box::new(err));
+            -1
+        }
+        Ok(Ok(_)) => 0,
     }
 }
 

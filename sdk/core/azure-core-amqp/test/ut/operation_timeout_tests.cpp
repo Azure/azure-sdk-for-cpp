@@ -187,6 +187,59 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(error.Description, thirdSeen.Description);
   }
 
+  // The Event Hubs recover path closes the old sender after the connection is
+  // gone. That close registers after the wake, so it must not wait.
+  TEST_F(TestPendingOperations, ARegistrationAfterTheWakeGetsTheLatchedError)
+  {
+    _detail::PendingOperationRegistry registry;
+
+    Models::_internal::AmqpError error;
+    error.Condition = Models::_internal::AmqpErrorCondition::ConnectionForced;
+    error.Description = "The service closed the idle connection.";
+    registry.WakeAll(error);
+
+    int calls = 0;
+    Models::_internal::AmqpError seen;
+    auto late = registry.Register([&calls, &seen](Models::_internal::AmqpError const& woken) {
+      ++calls;
+      seen = woken;
+    });
+
+    EXPECT_EQ(1, calls);
+    EXPECT_EQ(std::string("amqp:connection:forced"), seen.Condition.ToString());
+    EXPECT_EQ(error.Description, seen.Description);
+    EXPECT_EQ(static_cast<std::size_t>(1), registry.PendingCount());
+
+    registry.WakeAll(error);
+    EXPECT_EQ(1, calls);
+  }
+
+  // A connection goes to Error and then to End, so the state callback wakes the
+  // registry two times. A waiter that runs two times pushes a second result
+  // into a queue that nobody reads.
+  TEST_F(TestPendingOperations, ASecondWakeDoesNotCallAWaiterAgain)
+  {
+    _detail::PendingOperationRegistry registry;
+
+    int firstCalls = 0;
+    int secondCalls = 0;
+    auto first
+        = registry.Register([&firstCalls](Models::_internal::AmqpError const&) { ++firstCalls; });
+    auto second
+        = registry.Register([&secondCalls](Models::_internal::AmqpError const&) { ++secondCalls; });
+
+    Models::_internal::AmqpError error;
+    error.Condition = Models::_internal::AmqpErrorCondition::ConnectionForced;
+    error.Description = "The connection closed while the operation was in flight.";
+
+    registry.WakeAll(error);
+    registry.WakeAll(error);
+
+    EXPECT_EQ(1, firstCalls);
+    EXPECT_EQ(1, secondCalls);
+    EXPECT_EQ(static_cast<std::size_t>(2), registry.PendingCount());
+  }
+
   TEST_F(TestPendingOperations, AWaiterBlockedOnTheQueueWakesWithTheConnectionError)
   {
     _detail::PendingOperationRegistry registry;
