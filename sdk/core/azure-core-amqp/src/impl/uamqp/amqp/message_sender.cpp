@@ -316,6 +316,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Message sender is already open.");
     }
+
+    // A connection that goes to Error or End stops the poll, so nothing else ends this
+    // attach. Register under the connection lock, so the polling thread cannot deliver
+    // the failure between the open and the wait.
+    PendingOperationRegistry::Registration registration;
     {
       auto lock{m_session->GetConnection()->Lock()};
       if (m_link == nullptr)
@@ -348,10 +353,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_session->GetConnection()->EnableAsyncOperation(true);
       // Enable async on the link as well.
       Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+
+      registration = m_session->GetConnection()->GetPendingOperations().Register(
+          [this](Models::_internal::AmqpError const& error) {
+            m_openQueue.CompleteOperation(error);
+          });
     }
     if (!halfOpen)
     {
-      auto result = m_openQueue.WaitForResult(context);
+      // A caller that gave no deadline must not wait forever for an attach.
+      Context const openContext{
+          _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+      auto result = m_openQueue.WaitForResult(openContext);
       if (!result || std::get<0>(*result))
       {
         if (m_options.EnableTrace)
