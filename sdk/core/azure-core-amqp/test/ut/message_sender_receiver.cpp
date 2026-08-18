@@ -959,9 +959,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       EXPECT_EQ(closeStarted.wait_for(std::chrono::seconds(5)), std::future_status::ready);
 
+      EXPECT_EQ(sendFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
       senderEndpoint->ReleaseSettlement();
 
-      EXPECT_EQ(sendFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
       EXPECT_EQ(closeFinished.wait_for(std::chrono::seconds(5)), std::future_status::ready);
       sendWorker.join();
       closeWorker.join();
