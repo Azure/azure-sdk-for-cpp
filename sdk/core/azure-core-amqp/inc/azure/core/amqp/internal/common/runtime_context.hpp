@@ -125,6 +125,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
           GetCallContext(), timeoutMilliseconds);
     }
 
+    std::uint64_t GetTeardownTimeoutMilliseconds() const
+    {
+      auto const remaining = GetTimeoutMilliseconds();
+      if (remaining != 0)
+      {
+        return remaining;
+      }
+      auto const defaultTimeout = std::chrono::duration_cast<std::chrono::milliseconds>(
+          Azure::Core::Amqp::_detail::DefaultOperationTimeout);
+      return static_cast<std::uint64_t>(defaultTimeout.count());
+    }
+
+    /** Give the Rust call the bound for a teardown, in milliseconds.
+     *
+     * A cancelled caller must not stop a close, because an object that stays
+     * open stops the process in its destructor. So a deadline that already
+     * passed gives the default bound.
+     */
+    void SetTeardownTimeoutMilliseconds()
+    {
+      SetTimeoutMilliseconds(GetTeardownTimeoutMilliseconds());
+    }
+
     std::string GetError() const
     {
       auto err = call_context_get_error(GetCallContext());

@@ -174,7 +174,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       Common::_detail::CallContext callContext(
           Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
-      callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
+      callContext.SetTeardownTimeoutMilliseconds();
 
       // Even if the detach fails, the sender is closed. A sender that failed to detach is not
       // usable again, and a sender that keeps the open flag stops the process in its destructor.

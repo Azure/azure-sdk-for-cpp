@@ -314,6 +314,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     Common::_detail::CallContext callContext(nullptr, cancelled);
     EXPECT_EQ(static_cast<std::uint64_t>(0), callContext.GetTimeoutMilliseconds());
   }
+
+  TEST_F(TestRustCallContext, ACancelledCallerGetsTheDefaultTeardownBound)
+  {
+    Azure::Core::Context cancelled;
+    cancelled.Cancel();
+
+    Common::_detail::CallContext callContext(nullptr, cancelled);
+    EXPECT_EQ(static_cast<std::uint64_t>(60000), callContext.GetTeardownTimeoutMilliseconds());
+    EXPECT_NO_THROW(callContext.SetTeardownTimeoutMilliseconds());
+  }
+
+  TEST_F(TestRustCallContext, ACallerDeadlineWithTimeLeftStaysTheTeardownBound)
+  {
+    auto const caller = Azure::Core::Context{}.WithDeadline(
+        Azure::DateTime(std::chrono::system_clock::now() + std::chrono::seconds(5)));
+
+    Common::_detail::CallContext callContext(nullptr, caller);
+    auto const timeout = callContext.GetTeardownTimeoutMilliseconds();
+    EXPECT_GT(timeout, static_cast<std::uint64_t>(3000));
+    EXPECT_LE(timeout, static_cast<std::uint64_t>(5000));
+    EXPECT_NO_THROW(callContext.SetTeardownTimeoutMilliseconds());
+  }
 #endif // ENABLE_RUST_AMQP
 
 }}}} // namespace Azure::Core::Amqp::Tests
