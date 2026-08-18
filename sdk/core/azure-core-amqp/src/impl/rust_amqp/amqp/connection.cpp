@@ -230,11 +230,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         throw std::runtime_error("Cannot close an unopened connection.");
       }
+      // Even if the close fails, the connection is closed. A connection that keeps the open flag
+      // stops the process in its destructor.
+      m_connectionOpened = false;
+
       if (amqpconnection_close(callContext.GetCallContext(), m_connection.get()))
       {
         throw std::runtime_error("Could not close connection: " + callContext.GetError());
       }
-      m_connectionOpened = false;
       m_connection.reset();
     }
     else
@@ -260,6 +263,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::logic_error("Connection not opened.");
     }
+    // A close that fails still ends the connection. See the other Close overload.
+    m_connectionOpened = false;
+
     if (amqpconnection_close_with_error(
             callContext.GetCallContext(),
             m_connection.get(),
@@ -269,7 +275,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Could not close connection: " + callContext.GetError());
     }
-    m_connectionOpened = false;
   }
 
   uint32_t ConnectionImpl::GetMaxFrameSize() const
