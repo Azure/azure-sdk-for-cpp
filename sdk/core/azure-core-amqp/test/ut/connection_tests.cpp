@@ -527,6 +527,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_NE(std::string::npos, jwtText.find("2035")) << jwtText;
   }
 
+  TEST_F(TestCbsOpenFailureText, TheLogTextUsesUnknownForAnUnsupportedExpiry)
+  {
+    Azure::DateTime const expiresOn
+        = Azure::DateTime(9999, 12, 31, 23, 59, 59) + std::chrono::seconds(1);
+    std::string text;
+
+    EXPECT_NO_THROW({
+      text = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+          Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+          Audience(),
+          Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+          expiresOn,
+          Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+          "instance 7, host contoso.servicebus.windows.net:5671, state End",
+          std::chrono::milliseconds(0));
+    });
+    EXPECT_NE(std::string::npos, text.find("token expires: unknown")) << text;
+  }
+
   // These two fields are what let a reader separate a client fault from a
   // service fault, so they are pinned on their own.
   TEST_F(TestCbsOpenFailureText, TheLogTextAddsTheConnectionAndTheElapsedTime)
