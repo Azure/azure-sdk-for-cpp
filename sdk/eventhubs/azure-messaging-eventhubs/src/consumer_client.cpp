@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "private/best_effort_cleanup.hpp"
 #include "private/eventhubs_constants.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
@@ -65,44 +66,61 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ConsumerClient::Close(Azure::Core::Context const& context)
   {
-    Log::Stream(Logger::Level::Verbose) << "Close producer client.";
+    Log::Stream(Logger::Level::Verbose) << "Close consumer client.";
     {
       std::unique_lock<std::mutex> lock(m_propertiesClientLock);
       if (m_propertiesClient)
       {
-        m_propertiesClient->Close(context);
+        try
+        {
+          m_propertiesClient->Close(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing the consumer properties client: " << ex.what();
+        }
         m_propertiesClient.reset();
       }
     }
-    Log::Stream(Logger::Level::Verbose) << "Closing message senders.";
+    Log::Stream(Logger::Level::Verbose) << "Closing message receivers.";
     // Tear down the sessions and then the connections, in that order.
-    for (auto& receiver : m_receivers)
-    {
-      receiver.second.Close(context);
-    }
+    _detail::ForEachBestEffort(
+        m_receivers.begin(),
+        m_receivers.end(),
+        [&context](decltype(m_receivers)::value_type& receiver) { receiver.second.Close(context); },
+        [](decltype(m_receivers)::value_type& receiver, std::exception const& ex) {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing the message receiver for partition " << receiver.first
+              << ": " << ex.what();
+        });
 
 #if ENABLE_RUST_AMQP
     Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
-    for (auto& session : m_sessions)
-    {
-      session.second.End(context);
-    }
+    _detail::ForEachBestEffort(
+        m_sessions.begin(),
+        m_sessions.end(),
+        [&context](decltype(m_sessions)::value_type& session) { session.second.End(context); },
+        [](decltype(m_sessions)::value_type& session, std::exception const& ex) {
+          Log::Stream(Logger::Level::Warning) << "Exception while ending the session for partition "
+                                              << session.first << ": " << ex.what();
+        });
     Log::Stream(Logger::Level::Verbose) << "Closing connections.";
-    for (auto& connection : m_connections)
-    {
-      connection.second.Close(context);
-    }
+    _detail::ForEachBestEffort(
+        m_connections.begin(),
+        m_connections.end(),
+        [&context](decltype(m_connections)::value_type& connection) {
+          connection.second.Close(context);
+        },
+        [](decltype(m_connections)::value_type& connection, std::exception const& ex) {
+          Log::Stream(Logger::Level::Warning)
+              << "Exception while closing the connection for partition " << connection.first << ": "
+              << ex.what();
+        });
 #endif
 
-    while (!m_sessions.empty())
-    {
-      m_sessions.erase(m_sessions.begin());
-    }
-
-    while (!m_connections.empty())
-    {
-      m_connections.erase(m_connections.begin());
-    };
+    m_sessions.clear();
+    m_connections.clear();
     m_receivers.clear();
   }
 

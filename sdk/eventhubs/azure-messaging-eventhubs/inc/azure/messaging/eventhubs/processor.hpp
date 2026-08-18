@@ -16,6 +16,7 @@
 
 #ifdef _azure_TESTING_BUILD_AMQP
 namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+  class ProcessorCloseTest_ContinuesAfterAPartitionCloseThrows_Test;
   class ProcessorTest_LoadBalancing_Test;
 }}}} // namespace Azure::Messaging::EventHubs::Test
 #endif
@@ -83,6 +84,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class Processor final {
 #ifdef _azure_TESTING_BUILD_AMQP
+    friend class Test::ProcessorCloseTest_ContinuesAfterAPartitionCloseThrows_Test;
     friend class Test::ProcessorTest_LoadBalancing_Test;
 #endif
 
@@ -147,28 +149,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /** @brief Closes the processor and cancels any current operations.
      *
      */
-    void Close(Core::Context const& context = {})
-    {
-      if (m_isRunning)
-      {
-        throw std::runtime_error("cannot close a processor that is running");
-      }
-
-      // Drain the partition clients queue.
-      for (;;)
-      {
-        auto client = m_nextPartitionClients.TryRemove();
-        if (client)
-        {
-          client->Close(context);
-        }
-        else
-        {
-          break;
-        }
-      }
-      (void)context;
-    }
+    void Close(Core::Context const& context = {});
 
   private:
     /** Representation of Go channel construct.

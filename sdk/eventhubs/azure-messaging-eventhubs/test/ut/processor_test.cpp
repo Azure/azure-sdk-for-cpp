@@ -74,6 +74,34 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     };
   } // namespace
 
+  TEST(ProcessorCloseTest, ContinuesAfterAPartitionCloseThrows)
+  {
+    auto consumerClient = std::make_shared<ConsumerClient>(
+        "example.servicebus.windows.net",
+        "event-hub",
+        std::shared_ptr<const Core::Credentials::TokenCredential>{},
+        DefaultConsumerGroup);
+    auto checkpointStore = std::make_shared<TestCheckpointStore>();
+    Processor processor{consumerClient, checkpointStore};
+
+    int closeAttempts = 0;
+    for (int partition = 0; partition < 3; ++partition)
+    {
+      auto partitionClient = std::shared_ptr<ProcessorPartitionClient>(new ProcessorPartitionClient(
+          std::to_string(partition),
+          checkpointStore,
+          consumerClient->GetDetails(),
+          [&closeAttempts]() {
+            ++closeAttempts;
+            throw std::runtime_error("lost connection");
+          }));
+      ASSERT_TRUE(processor.m_nextPartitionClients.Insert(std::move(partitionClient)));
+    }
+
+    EXPECT_NO_THROW(processor.Close());
+    EXPECT_EQ(closeAttempts, 3);
+  }
+
   class ProcessorTest : public EventHubsTestBaseParameterized {
   protected:
     static void SetUpTestSuite() { EventHubsTestBase::SetUpTestSuite(); }
