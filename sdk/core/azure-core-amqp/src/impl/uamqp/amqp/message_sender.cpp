@@ -267,15 +267,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               "Message Sender entered the Error State.",
               {}});
         }
-        else if (sender->m_currentSend)
+        else
         {
-          // The polling thread holds the connection lock here, so it reads the current send
-          // without a lock of its own. A null state means that no caller waits.
-          sender->m_currentSend->Queue.CompleteOperation(
-              _internal::MessageSendStatus::Error,
-              {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
-               "Message Sender unexpectedly entered the Error State.",
-               {}});
+          // The polling thread holds the connection lock here, so it reads the pending sends
+          // without a lock of its own. Sends to one partition run together, so the error wakes
+          // every send that waits. An empty map means that no caller waits.
+          for (auto const& pendingSend : sender->m_pendingSends)
+          {
+            pendingSend.second->Queue.CompleteOperation(
+                _internal::MessageSendStatus::Error,
+                {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
+                 "Message Sender unexpectedly entered the Error State.",
+                 {}});
+          }
         }
       }
 
@@ -587,10 +591,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::weak_ptr<MessageSenderImpl> weakSelf{shared_from_this()};
 
     PendingOperationRegistry::Registration registration;
+    std::uint64_t sendId{0};
     {
       auto lock{m_session->GetConnection()->Lock()};
-
-      m_currentSend = sendOperation;
 
       QueueSendInternal(
           message,
@@ -659,11 +662,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                 _internal::MessageSendStatus::Error,
                 m_savedMessageError ? m_savedMessageError : error);
           });
+
+      // Add this send last, because nothing between here and the erase throws.
+      sendId = m_nextSendId++;
+      m_pendingSends.emplace(sendId, sendOperation);
     }
     auto result = sendOperation->Queue.WaitForResult(sendContext);
     {
       auto lock{m_session->GetConnection()->Lock()};
-      m_currentSend.reset();
+      m_pendingSends.erase(sendId);
     }
     if (result)
     {

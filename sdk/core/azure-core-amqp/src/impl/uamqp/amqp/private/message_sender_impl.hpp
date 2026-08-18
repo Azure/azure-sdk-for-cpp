@@ -9,6 +9,9 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
+#include <cstdint>
+#include <map>
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   template <> struct UniqueHandleHelper<MESSAGE_SENDER_INSTANCE_TAG>
   {
@@ -99,8 +102,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::MessageSenderEvents* m_events;
     Models::_internal::AmqpError m_savedMessageError;
 
-    // The send that waits now. The connection lock guards it.
-    std::shared_ptr<SendOperation> m_currentSend;
+    // Every send that waits now. The connection lock guards the map and the id.
+    std::map<std::uint64_t, std::shared_ptr<SendOperation>> m_pendingSends;
+    std::uint64_t m_nextSendId{0};
 
     Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<Models::_internal::AmqpError>
         m_openQueue;
