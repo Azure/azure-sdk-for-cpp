@@ -59,8 +59,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     else
     {
       Log::Stream(Logger::Level::Warning)
-          << "ClaimsBasedSecurityImpl::Open: this claims based security object is already open. "
-             "Open was called a second time on the same object.";
+          << "ClaimsBasedSecurityImpl::Open: Open was called a second time on the same object. "
+             "This object cannot be opened more than once.";
       return CbsOpenResult::Error;
     }
   }
