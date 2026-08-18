@@ -270,8 +270,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         else
         {
           // The polling thread holds the connection lock here, so it reads the pending sends
-          // without a lock of its own. Sends to one partition run together, so the error wakes
-          // every send that waits. An empty map means that no caller waits.
+          // without a lock of its own. uAMQP drains every in-flight send before it reports the
+          // error state (indicate_all_messages_as_error runs before set_message_sender_state),
+          // so this map is empty today. The loop keeps the wake correct if that order changes,
+          // because sends to one partition run together.
           for (auto const& pendingSend : sender->m_pendingSends)
           {
             pendingSend.second->Queue.CompleteOperation(
