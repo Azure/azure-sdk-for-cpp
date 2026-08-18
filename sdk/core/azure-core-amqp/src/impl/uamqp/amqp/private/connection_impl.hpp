@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "../../../../amqp/private/pending_operations.hpp"
 #include "../../../../amqp/private/token_refresh.hpp"
 #include "../../../../amqp/private/unique_handle.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
@@ -149,6 +150,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return std::unique_lock<LockType>(m_amqpMutex);
     }
 
+    // The operations that wait on this connection.
+    PendingOperationRegistry& GetPendingOperations() { return m_pendingOperations; }
+
   private:
     std::shared_ptr<Network::_detail::TransportImpl> m_transport;
     UniqueAmqpConnection m_connection{};
@@ -161,6 +165,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ConnectionEvents* m_eventHandler{};
     _internal::ConnectionEndpointEvents* m_endpointEvents{};
     _internal::ConnectionState m_connectionState = _internal::ConnectionState::Start;
+    PendingOperationRegistry m_pendingOperations;
 
     LockType m_amqpMutex;
     bool m_enableAsyncOperation = false;

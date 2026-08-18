@@ -323,6 +323,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             ConnectionStateFromCONNECTION_STATE(oldState));
       }
     }
+    connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
     if (newState == CONNECTION_STATE_ERROR || newState == CONNECTION_STATE_END)
     {
       // When the connection transitions into the error or end state, it is no longer pollable.
@@ -332,7 +333,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             << "Connection " << connection->m_containerId << " state changed to " << newState;
       }
     }
-    connection->SetState(ConnectionStateFromCONNECTION_STATE(newState));
+    // Nothing polls the connection after this point, so every operation that
+    // waits on it must come back with an error instead of waiting forever.
+    if (_detail::ConnectionStateEndsPendingOperations(connection->m_connectionState))
+    {
+      connection->m_pendingOperations.WakeAll(Models::_internal::AmqpError{
+          Models::_internal::AmqpErrorCondition::ConnectionForced,
+          "The connection closed while the operation was in flight.",
+          {}});
+    }
   }
 
   bool ConnectionImpl::OnNewEndpointFn(void* context, ENDPOINT_HANDLE newEndpoint)

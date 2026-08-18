@@ -78,10 +78,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
 
+    // A receive is a long poll that the caller bounds. Only a caller deadline
+    // ends this wait, because a default bound would end an idle receive.
+    if (Azure::Core::Amqp::_detail::ContextHasDeadline(context))
+    {
+      callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
+    }
+
     {
 
       auto message = Models::_detail::AmqpMessageFactory::FromImplementation(
           amqpmessagereceiver_receive_message_wait(callContext.GetCallContext(), m_receiver.get()));
+
+      if (!message)
+      {
+        context.ThrowIfCancelled();
+      }
 
       return std::make_pair(message, Models::_internal::AmqpError{});
     }

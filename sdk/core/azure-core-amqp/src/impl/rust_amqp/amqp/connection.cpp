@@ -221,6 +221,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
             ->GetRuntimeContext(),
         context};
+    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (m_connection)
@@ -252,6 +253,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()
             ->GetRuntimeContext(),
         context};
+    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
     Log::Stream(Logger::Level::Verbose)
         << "ConnectionImpl::Close: " << this << " ID: " << m_containerId;
     if (!m_connection)

@@ -4,6 +4,7 @@
 // Enable declaration of strerror_s.
 #define __STDC_WANT_LIB_EXT1__ 1
 
+#include "../../../amqp/private/operation_timeout.hpp"
 #include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/message_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
@@ -19,6 +20,7 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
+#include <chrono>
 #include <memory>
 
 using namespace Azure::Core::Diagnostics;
@@ -418,7 +420,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
                 << "Wait for sender detach to complete. Current state: " << m_currentState;
           }
 
-          auto result = m_closeQueue.WaitForResult(context);
+          // A connection that is gone never delivers the detach. The empty
+          // error keeps this close on its normal return path.
+          auto registration = m_session->GetConnection()->GetPendingOperations().Register(
+              [this](Models::_internal::AmqpError const&) {
+                m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
+              });
+
+          Context const closeContext{
+              _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+          auto result = m_closeQueue.WaitForResult(closeContext);
           if (!result)
           {
             throw Azure::Core::OperationCancelledException(
@@ -563,6 +574,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Models::AmqpMessage const& message,
       Context const& context)
   {
+    // A caller that gave no deadline must not wait forever when the transport
+    // stops answering.
+    Context const sendContext{
+        _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+
+    PendingOperationRegistry::Registration registration;
     {
       auto lock{m_session->GetConnection()->Lock()};
 
@@ -615,19 +632,41 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             m_sendCompleteQueue.CompleteOperation(sendResult, error);
           },
           context);
+
+      // Register under the connection lock, so the polling thread cannot
+      // deliver the close between the queue and this call. That thread also
+      // writes m_savedMessageError, so the waiter reads it without a lock and
+      // prefers the error of the link over the error of the connection.
+      registration = m_session->GetConnection()->GetPendingOperations().Register(
+          [this](Models::_internal::AmqpError const& error) {
+            m_sendCompleteQueue.CompleteOperation(
+                _internal::MessageSendStatus::Error,
+                m_savedMessageError ? m_savedMessageError : error);
+          });
     }
-    auto result = m_sendCompleteQueue.WaitForResult(context);
+    auto result = m_sendCompleteQueue.WaitForResult(sendContext);
     if (result)
     {
       return std::move(*result);
     }
-    else
+    else if (context.IsCancelled())
     {
       Models::_internal::AmqpError error{
           Models::_internal::AmqpErrorCondition::OperationCancelled,
           "Message send operation cancelled.",
           {}};
       return std::make_tuple(_internal::MessageSendStatus::Cancelled, error);
+    }
+    else
+    {
+      // Only the deadline that this call added expired. The Event Hubs retry
+      // policy treats a timeout as transient and a cancel as final, so these
+      // two paths must not share a condition.
+      Models::_internal::AmqpError error{
+          Models::_internal::AmqpErrorCondition::TimeoutError,
+          "Message send operation timed out.",
+          {}};
+      return std::make_tuple(_internal::MessageSendStatus::Timeout, error);
     }
   }
 

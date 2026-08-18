@@ -281,7 +281,14 @@ unsafe extern "C" fn amqpmessagereceiver_receive_message_wait(
         return ptr::null_mut();
     }
 
-    let output = receiver.message_channel.get().unwrap().recv();
+    // This channel is not a future, so the bound comes from recv_timeout.
+    let channel = receiver.message_channel.get().unwrap();
+    let output = match call_context.timeout() {
+        Some(duration) => channel.recv_timeout(duration),
+        None => channel
+            .recv()
+            .map_err(|_| std::sync::mpsc::RecvTimeoutError::Disconnected),
+    };
     match output {
         Err(err) => {
             trace!("Failed to receive message: {:?}", err);

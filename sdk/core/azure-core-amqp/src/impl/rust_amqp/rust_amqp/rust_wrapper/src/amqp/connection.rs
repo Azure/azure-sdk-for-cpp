@@ -126,15 +126,17 @@ pub unsafe extern "C" fn amqpconnection_close(
 ) -> i32 {
     let connection = &*connection;
     let runtime_context = call_context_from_ptr_mut(ctx);
-    let result = runtime_context
-        .runtime_context()
-        .runtime()
-        .block_on(connection.inner.close());
+    let result = runtime_context.block_on_with_timeout(connection.inner.close());
     match result {
-        Ok(_) => 0,
-        Err(err) => {
+        Ok(Ok(_)) => 0,
+        Ok(Err(err)) => {
             error!("Failed to close connection: {:?}", err);
             runtime_context.set_error(err.into());
+            1
+        }
+        Err(elapsed) => {
+            error!("Timed out closing connection: {:?}", elapsed);
+            runtime_context.set_error(Box::new(elapsed));
             1
         }
     }

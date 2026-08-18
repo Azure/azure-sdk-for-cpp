@@ -100,15 +100,17 @@ pub unsafe extern "C" fn amqpsession_end(
 ) -> i32 {
     let session = &*session;
     let call_context = call_context_from_ptr_mut(call_context);
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(session.inner.end());
+    let result = call_context.block_on_with_timeout(session.inner.end());
     match result {
-        Ok(_) => 0,
-        Err(err) => {
+        Ok(Ok(_)) => 0,
+        Ok(Err(err)) => {
             error!("Failed to end session: {:?}", err);
             call_context.set_error(err.into());
+            1
+        }
+        Err(elapsed) => {
+            error!("Timed out ending session: {:?}", elapsed);
+            call_context.set_error(Box::new(elapsed));
             1
         }
     }

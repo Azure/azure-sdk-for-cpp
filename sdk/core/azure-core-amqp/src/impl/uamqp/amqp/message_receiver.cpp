@@ -6,6 +6,7 @@
 
 #include "azure/core/amqp/internal/message_receiver.hpp"
 
+#include "../../../amqp/private/operation_timeout.hpp"
 #include "../../../models/private/message_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
 #include "azure/core/amqp/internal/link.hpp"
@@ -19,6 +20,7 @@
 
 #include <azure_uamqp_c/message_receiver.h>
 
+#include <chrono>
 #include <memory>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -193,6 +195,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
     }
+
+    // This wait keeps the caller's context, because a receive is a long poll
+    // that the caller bounds. The polling thread writes m_savedMessageError,
+    // so the waiter reads it without a lock.
+    auto registration = m_session->GetConnection()->GetPendingOperations().Register(
+        [this](Models::_internal::AmqpError const& error) {
+          m_messageQueue.CompleteOperation(
+              nullptr, m_savedMessageError ? m_savedMessageError : error);
+        });
 
     auto result = m_messageQueue.WaitForResult(context);
     if (result)
@@ -493,9 +504,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
         if (shouldWaitForClose)
         {
+          // A connection that is gone never delivers the detach. The empty
+          // error keeps this close on its normal return path.
+          auto registration = m_session->GetConnection()->GetPendingOperations().Register(
+              [this](Models::_internal::AmqpError const&) {
+                m_closeQueue.CompleteOperation(Models::_internal::AmqpError{});
+              });
+
           // At this point, the underlying link is in the "half closed" state.
           // We need to wait for the link to be fully closed before we can destroy it.
-          auto closeResult = m_closeQueue.WaitForResult(context);
+          Context const closeContext{
+              _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
+          auto closeResult = m_closeQueue.WaitForResult(closeContext);
           if (!closeResult)
           {
             throw Azure::Core::OperationCancelledException(
