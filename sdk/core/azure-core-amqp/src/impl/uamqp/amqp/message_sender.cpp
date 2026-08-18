@@ -267,9 +267,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
               "Message Sender entered the Error State.",
               {}});
         }
-        else
+        else if (sender->m_currentSend)
         {
-          sender->m_sendCompleteQueue.CompleteOperation(
+          // The polling thread holds the connection lock here, so it reads the current send
+          // without a lock of its own. A null state means that no caller waits.
+          sender->m_currentSend->Queue.CompleteOperation(
               _internal::MessageSendStatus::Error,
               {Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::InternalError,
                "Message Sender unexpectedly entered the Error State.",
@@ -579,13 +581,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Context const sendContext{
         _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
 
+    // The uAMQP operation of a send that gave up stays in flight. This state keeps the late result
+    // of that send away from the send that comes next.
+    auto sendOperation{std::make_shared<SendOperation>()};
+    std::weak_ptr<MessageSenderImpl> weakSelf{shared_from_this()};
+
     PendingOperationRegistry::Registration registration;
     {
       auto lock{m_session->GetConnection()->Lock()};
 
+      m_currentSend = sendOperation;
+
       QueueSendInternal(
           message,
-          [this](
+          [weakSelf, sendOperation](
               Azure::Core::Amqp::_internal::MessageSendStatus sendResult,
               Models::AmqpValue deliveryStatus) {
             Models::_internal::AmqpError error;
@@ -598,7 +607,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             {
               if (deliveryStatus.IsNull())
               {
-                error = m_savedMessageError;
+                // A sender that is gone leaves the error empty.
+                if (auto self{weakSelf.lock()})
+                {
+                  error = self->m_savedMessageError;
+                }
               }
               else
               {
@@ -627,9 +640,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             {
               // If we successfully sent the message, then whatever saved error should be cleared,
               // it's no longer valid.
-              m_savedMessageError = Models::_internal::AmqpError();
+              if (auto self{weakSelf.lock()})
+              {
+                self->m_savedMessageError = Models::_internal::AmqpError();
+              }
             }
-            m_sendCompleteQueue.CompleteOperation(sendResult, error);
+            sendOperation->Queue.CompleteOperation(sendResult, error);
           },
           context);
 
@@ -638,13 +654,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // writes m_savedMessageError, so the waiter reads it without a lock and
       // prefers the error of the link over the error of the connection.
       registration = m_session->GetConnection()->GetPendingOperations().Register(
-          [this](Models::_internal::AmqpError const& error) {
-            m_sendCompleteQueue.CompleteOperation(
+          [this, sendOperation](Models::_internal::AmqpError const& error) {
+            sendOperation->Queue.CompleteOperation(
                 _internal::MessageSendStatus::Error,
                 m_savedMessageError ? m_savedMessageError : error);
           });
     }
-    auto result = m_sendCompleteQueue.WaitForResult(sendContext);
+    auto result = sendOperation->Queue.WaitForResult(sendContext);
+    {
+      auto lock{m_session->GetConnection()->Lock()};
+      m_currentSend.reset();
+    }
     if (result)
     {
       return std::move(*result);

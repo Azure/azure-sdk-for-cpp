@@ -761,6 +761,94 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 
 #if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
+  TEST_F(TestMessageSendReceive, SenderLateSettlementDoesNotCompleteNextSend)
+  {
+    // This endpoint settles each message after the send that carried it gave up.
+    class SlowSenderLinkEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      SlowSenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+      virtual ~SlowSenderLinkEndpoint() = default;
+
+      Azure::Core::Amqp::Models::AmqpValue OnMessageReceived(
+          Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        std::this_thread::sleep_for(
+            m_messagesReceived++ == 0 ? std::chrono::seconds(2) : std::chrono::seconds(5));
+        return MockServiceEndpoint::OnMessageReceived(receiver, message);
+      }
+
+    private:
+      void MessageReceived(
+          std::string const& linkName,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const& message) override
+      {
+        GTEST_LOG_(INFO) << "Message received on link " << linkName << ": " << *message;
+      }
+
+      int m_messagesReceived{0};
+    };
+
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    mockServiceEndpointOptions.EnableTrace = true;
+    auto senderEndpoint
+        = std::make_shared<SlowSenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions);
+    m_mockServer.AddServiceEndpoint(senderEndpoint);
+
+    auto connection{CreateAmqpConnection()};
+    auto session{CreateAmqpSession(connection)};
+
+    StartServerListening();
+
+    {
+      MessageSenderOptions options;
+      options.Name = "sender-link";
+      options.MessageSource = "ingress";
+      // An unsettled send waits for the disposition of the server.
+      options.SettleMode = SenderSettleMode::Unsettled;
+      options.MaxMessageSize = 65536;
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
+      EXPECT_FALSE(sender.Open());
+
+      Azure::Core::Amqp::Models::AmqpMessage message;
+      message.SetBody(Azure::Core::Amqp::Models::AmqpValue{"Hello"});
+
+      auto firstResult = sender.Send(
+          message,
+          Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::milliseconds(500)});
+      EXPECT_EQ(std::get<0>(firstResult), MessageSendStatus::Cancelled);
+
+      // The server settles the first message here, after the first send gave up.
+      std::this_thread::sleep_for(std::chrono::seconds(3));
+
+      auto secondSendStart = std::chrono::steady_clock::now();
+      auto secondResult = sender.Send(
+          message,
+          Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::milliseconds(500)});
+      auto secondSendTime = std::chrono::steady_clock::now() - secondSendStart;
+
+      EXPECT_EQ(std::get<0>(secondResult), MessageSendStatus::Cancelled);
+      EXPECT_GE(secondSendTime, std::chrono::milliseconds(400));
+
+      // Let the second message settle, so the close finds no operation in flight.
+      std::this_thread::sleep_for(std::chrono::seconds(6));
+
+      sender.Close();
+    }
+    StopServerListening();
+
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+#endif // !defined(USE_NATIVE_BROKER)
+
   TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
 #if !defined(USE_NATIVE_BROKER)
