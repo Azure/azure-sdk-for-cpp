@@ -196,15 +196,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       throw std::runtime_error("Cannot call WaitForIncomingMessage when using an event handler.");
     }
 
-    // This wait keeps the caller's context, because a receive is a long poll
-    // that the caller bounds. The polling thread writes m_savedMessageError,
-    // so the waiter reads it without a lock.
-    auto registration = m_session->GetConnection()->GetPendingOperations().Register(
-        [this](Models::_internal::AmqpError const& error) {
-          m_messageQueue.CompleteOperation(
-              nullptr, m_savedMessageError ? m_savedMessageError : error);
-        });
+    // Register under the connection lock, so the polling thread cannot deliver
+    // the detach between this call and the wait. That thread also writes
+    // m_savedMessageError, so the waiter reads it under the same lock. The lock
+    // ends before the wait, because a wait that holds it stops the poll.
+    PendingOperationRegistry::Registration registration;
+    {
+      auto lock{m_session->GetConnection()->Lock()};
+      registration = m_session->GetConnection()->GetPendingOperations().Register(
+          [this](Models::_internal::AmqpError const& error) {
+            m_messageQueue.CompleteOperation(
+                nullptr, m_savedMessageError ? m_savedMessageError : error);
+          });
+    }
 
+    // This wait keeps the caller's context, because the caller bounds the poll.
     auto result = m_messageQueue.WaitForResult(context);
     if (result)
     {
