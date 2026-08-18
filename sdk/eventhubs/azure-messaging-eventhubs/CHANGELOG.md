@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0-beta.14 (Unreleased)
+## 1.0.0-beta.14 (2026-08-18)
 
 ### Features Added
 
@@ -8,8 +8,6 @@
 - [[#7295]](https://github.com/Azure/azure-sdk-for-cpp/issues/7295) Connection-string authentication now works on the Rust AMQP backend. `ProducerClient` and `ConsumerClient` no longer throw when the caller passes a connection string.
 - [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) `ProducerClient::Send` now builds a new sender on each retry attempt. A failed attempt discards the sender, the session, and the connection for that partition, so the next attempt builds all three again and authenticates with a current token. A send that a link detach ended previously failed for the life of the client.
 - [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254) `PartitionClient::ReceiveEvents` now attaches a new receiver after a link fault, and it starts after the last event that it gave the caller. So the caller sees no duplicate event and no lost event. A permanent condition, for example `amqp:link:stolen`, still reaches the caller at once. A call that already holds events gives them back and recovers on the next call.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
