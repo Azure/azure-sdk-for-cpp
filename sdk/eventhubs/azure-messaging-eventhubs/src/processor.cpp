@@ -5,12 +5,14 @@
 
 #include "azure/messaging/eventhubs/models/management_models.hpp"
 #include "azure/messaging/eventhubs/models/partition_client_models.hpp"
+#include "private/best_effort_cleanup.hpp"
 #include "private/processor_load_balancer.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <iomanip>
+#include <vector>
 
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
@@ -81,6 +83,38 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       m_processorThread.join();
     }
+  }
+
+  void Processor::Close(Core::Context const& context)
+  {
+    if (m_isRunning)
+    {
+      throw std::runtime_error("cannot close a processor that is running");
+    }
+
+    std::vector<std::shared_ptr<ProcessorPartitionClient>> clients;
+    for (;;)
+    {
+      auto client = m_nextPartitionClients.TryRemove();
+      if (!client)
+      {
+        break;
+      }
+      clients.emplace_back(std::move(client));
+    }
+
+    // A connection can disappear before its receiver detaches. Do not leave the other partition
+    // clients open because one teardown reports the lost connection.
+    _detail::ForEachBestEffort(
+        clients.begin(),
+        clients.end(),
+        [&context](std::shared_ptr<ProcessorPartitionClient> const& client) {
+          client->Close(context);
+        },
+        [](std::shared_ptr<ProcessorPartitionClient> const& client, std::exception const& ex) {
+          Log::Stream(Logger::Level::Warning) << "Exception while closing processor partition "
+                                              << client->PartitionId() << ": " << ex.what();
+        });
   }
 
   void Processor::Run(Core::Context const& context) { RunInternal(context, true); }

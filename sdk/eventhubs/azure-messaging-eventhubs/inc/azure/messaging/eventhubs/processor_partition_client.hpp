@@ -4,6 +4,12 @@
 #include "checkpoint_store.hpp"
 #include "consumer_client.hpp"
 
+#ifdef _azure_TESTING_BUILD_AMQP
+namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
+  class ProcessorCloseTest_ContinuesAfterAPartitionCloseThrows_Test;
+}}}} // namespace Azure::Messaging::EventHubs::Test
+#endif
+
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   /**@brief  ProcessorPartitionClient allows you to receive events, similar to a [PartitionClient],
@@ -16,6 +22,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
    */
   class ProcessorPartitionClient final {
     friend class Processor;
+#ifdef _azure_TESTING_BUILD_AMQP
+    friend class Test::ProcessorCloseTest_ContinuesAfterAPartitionCloseThrows_Test;
+#endif
 
   public:
     /// Copy a ProcessorPartitionClient to another ProcessorPartitionClient.
