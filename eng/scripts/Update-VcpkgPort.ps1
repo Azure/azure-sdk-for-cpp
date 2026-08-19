@@ -126,6 +126,8 @@ if ($temporaryCommitCreated) {
 
 # Only perform the final commit if this is not a test release
 if (!$DailyRelease) { 
+    $finalCommitCreated = $false
+
     # Grab content needed for commit message and place in a temporary file
     $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
     $commitMessageFile = New-TemporaryFile
@@ -161,13 +163,15 @@ if (!$DailyRelease) {
             Write-Error "Failed to create the vcpkg port commit"
             exit 1
         }
+
+        $finalCommitCreated = $true
     }
     else {
         Write-Host "The vcpkg working tree is clean; skipping the final commit."
     }
 
-    # Set $(HasChanges) to $true so that the push and PR submission steps run.
-    Write-Host "##vso[task.setvariable variable=HasChanges]$true"
+    # Set $(HasChanges) so that the push and PR submission steps run when needed.
+    Write-Host "##vso[task.setvariable variable=HasChanges]$finalCommitCreated"
 }
 
 
