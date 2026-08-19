@@ -273,6 +273,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       auto const firstOpenWarnings
           = logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning);
+
+      bool foundConnectionIoError = false;
+      bool foundManagementSenderFailure = false;
+      for (auto const& line : firstOpenWarnings)
+      {
+        if (line.find("Connection I/O error.") != std::string::npos
+            && line.find("instance ") != std::string::npos
+            && line.find("host localhost:") != std::string::npos
+            && line.find(", state ") != std::string::npos)
+        {
+          foundConnectionIoError = true;
+        }
+        if (line.find("ManagementClientImpl::Open: Message sender open failed.")
+                != std::string::npos
+            && line.find("Node: $cbs.") != std::string::npos)
+        {
+          foundManagementSenderFailure = true;
+        }
+      }
+      EXPECT_TRUE(foundConnectionIoError);
+      EXPECT_TRUE(foundManagementSenderFailure);
+
       logCapture.Clear();
 
       // The second open takes the branch that refuses to open the object again.

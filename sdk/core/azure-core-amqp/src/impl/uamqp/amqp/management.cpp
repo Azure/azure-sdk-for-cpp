@@ -140,7 +140,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         if (senderResult)
         {
           Log::Stream(Logger::Level::Warning)
-              << "ManagementClientImpl::Open: Message sender open failed: " << senderResult;
+              << "ManagementClientImpl::Open: Message sender open failed. Node: "
+              << m_options.ManagementNodeName << ". Error: " << senderResult << ".";
           return _internal::ManagementOpenStatus::Error;
         }
         m_messageSenderOpen = true;

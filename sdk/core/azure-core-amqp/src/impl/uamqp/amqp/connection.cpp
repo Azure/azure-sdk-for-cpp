@@ -388,6 +388,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
     if (!cn->m_isClosing)
     {
+      // uAMQP gives this callback no error payload. The connection summary
+      // still distinguishes a local transport failure from a service CLOSE
+      // performative, which is reported by OnConnectionCloseReceivedFn.
+      Log::Stream(Logger::Level::Warning) << "Connection I/O error. " << cn->GetDiagnosticSummary()
+                                          << ". The transport provided no error details.";
       if (cn->m_eventHandler)
       {
         return cn->m_eventHandler->OnIOError(
