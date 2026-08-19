@@ -70,14 +70,27 @@ git status
 
 # Temporarily commit changes to generate git tree objects required by 
 # "vcpkg x-add-version <port-name>"
-Write-Host "git add -A"
-git add -A
-Write-Host "git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'"
-"git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'" | Invoke-Expression -Verbose | Write-Host
-
-if ($LASTEXITCODE -ne 0) { 
-    Write-Error "Failed to run bootstrap-vcpkg.bat"
+$temporaryCommitCreated = $false
+$pendingChanges = git status --porcelain
+if ($LASTEXITCODE -ne 0) {
+    Write-Error "Failed to inspect the vcpkg working tree"
     exit 1
+}
+
+if ($pendingChanges) {
+    Write-Host "git add -A"
+    git add -A
+    Write-Host "git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'"
+    "git $GitCommitParameters commit -m 'Temporary commit to reset after x-add-version'" | Invoke-Expression -Verbose | Write-Host
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to create the temporary vcpkg port commit"
+        exit 1
+    }
+    $temporaryCommitCreated = $true
+}
+else {
+    Write-Host "The vcpkg working tree is clean; skipping the temporary commit."
 }
 
 $addVersionAdditionalParameters = ''
@@ -100,9 +113,16 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# Reset to undo previous commit and put changes in the working directory.
-Write-Host "git reset HEAD^"
-git reset HEAD^
+# Reset to undo the temporary commit and put changes in the working directory.
+if ($temporaryCommitCreated) {
+    Write-Host "git reset HEAD^"
+    git reset HEAD^
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to reset the temporary vcpkg port commit"
+        exit 1
+    }
+}
 
 # Only perform the final commit if this is not a test release
 if (!$DailyRelease) { 
@@ -119,19 +139,34 @@ if (!$DailyRelease) {
     Write-Host "Commit Message:"
     Write-host (Get-Content $commitMessageFile -Raw)
 
-    Write-Host "git add -A"
-    git add -A
+    $pendingChanges = git status --porcelain
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to inspect the vcpkg working tree"
+        exit 1
+    }
 
-    # Final commit using commit message from the temporary file. Using the file
-    # enables the commit message to be formatted properly without having to write
-    # code to escape certain characters that might appear in the changelog file.
-    Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
-    "git $GitCommitParameters commit --file $commitMessageFile" `
-        | Invoke-Expression -Verbose `
-        | Write-Host
+    if ($pendingChanges) {
+        Write-Host "git add -A"
+        git add -A
 
-    # Set $(HasChanges) to $true so that create-pull-request.yml completes the 
-    # push and PR submission steps
+        # Final commit using commit message from the temporary file. Using the file
+        # enables the commit message to be formatted properly without having to write
+        # code to escape certain characters that might appear in the changelog file.
+        Write-Host "git $GitCommitParameters commit --file $commitMessageFile"
+        "git $GitCommitParameters commit --file $commitMessageFile" `
+            | Invoke-Expression -Verbose `
+            | Write-Host
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Error "Failed to create the vcpkg port commit"
+            exit 1
+        }
+    }
+    else {
+        Write-Host "The vcpkg working tree is clean; skipping the final commit."
+    }
+
+    # Set $(HasChanges) to $true so that the push and PR submission steps run.
     Write-Host "##vso[task.setvariable variable=HasChanges]$true"
 }
 

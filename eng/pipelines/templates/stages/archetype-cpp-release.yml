@@ -260,18 +260,51 @@ stages:
 
                 # SkipCheckingForChanges is true to skip the commit step
                 # (which is already done by Update-VcpkgPort.ps1)
-                - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
+                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
                   parameters:
-                    RepoOwner: $(VcpkgPrRepoOwner)
-                    RepoName: $(VcpkgPrRepoName)
+                    TokenOwners:
+                      - azure-sdk
+                      - Microsoft
+
+                - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+                  parameters:
+                    BaseRepoBranch: $(PrBranchName)
+                    BaseRepoOwner: azure-sdk
+                    TargetRepoOwner: $(VcpkgPrRepoOwner)
+                    TargetRepoName: $(VcpkgPrRepoName)
                     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
-                    PrBranchName: $(PrBranchName)
-                    PRTitle: $(PrTitle)
-                    PRBody: Update vcpkg ports for Azure SDK release. This release may contain multiple ports.
                     SkipCheckingForChanges: true
-                    BaseBranchName: $(DefaultBranch)
-                    OpenAsDraft: ${{ parameters.TestPipeline }}
-                    CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                    AuthToken: $(GH_TOKEN_azure-sdk)
+
+                # Pass the target-repository token through the environment so
+                # Azure Pipelines resolves it before PowerShell parses the script.
+                - task: PowerShell@2
+                  displayName: Create pull request
+                  condition: and(succeeded(), eq(variables['HasChanges'], 'true'))
+                  env:
+                    GH_TOKEN_Microsoft: $(GH_TOKEN_Microsoft)
+                  inputs:
+                    pwsh: true
+                    targetType: inline
+                    workingDirectory: $(Pipeline.Workspace)/vcpkg
+                    script: |
+                      if ([string]::IsNullOrWhiteSpace($env:GH_TOKEN_Microsoft) -or
+                          $env:GH_TOKEN_Microsoft -match '^\$\([^)]+\)$') {
+                        throw "GH_TOKEN_Microsoft is empty or contains an unresolved pipeline variable."
+                      }
+
+                      & "$(Build.SourcesDirectory)/eng/common/scripts/Submit-PullRequest.ps1" `
+                        -RepoOwner "$(VcpkgPrRepoOwner)" `
+                        -RepoName "$(VcpkgPrRepoName)" `
+                        -BaseBranch "$(DefaultBranch)" `
+                        -PROwner "azure-sdk" `
+                        -PRBranch "$(PrBranchName)" `
+                        -AuthToken $env:GH_TOKEN_Microsoft `
+                        -PRTitle "$(PrTitle)" `
+                        -PRBody "Update vcpkg ports for Azure SDK release. This release may contain multiple ports." `
+                        -MaintainerCanModify $false `
+                        -CloseAfterOpenForTesting $${{ parameters.TestPipeline }} `
+                        -OpenAsDraft $${{ parameters.TestPipeline }}
 
                 - task: AzureCLI@2
                   displayName: Authenticate to OpenSource API
