@@ -262,8 +262,8 @@ stages:
                 # (which is already done by Update-VcpkgPort.ps1)
                 - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
                   parameters:
-                    RepoOwner: $(VcpkgPrRepoOwner)
-                    RepoName: $(VcpkgPrRepoName)
+                    RepoOwner: ${{ variables.VcpkgPrRepoOwner }}
+                    RepoName: ${{ variables.VcpkgPrRepoName }}
                     WorkingDirectory: $(Pipeline.Workspace)/vcpkg
                     PrBranchName: $(PrBranchName)
                     PRTitle: $(PrTitle)
