@@ -505,7 +505,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_detail::CbsTokenType::Sas,
         expiresOn,
         Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
-        "instance 7, host contoso.servicebus.windows.net:5671, state End",
+        "instance 7, host example.servicebus.windows.net:5671, state End",
         std::chrono::milliseconds(0));
     EXPECT_NE(std::string::npos, sasText.find("Sas")) << sasText;
     // Look for the year only. A change to the date format must not break this
@@ -521,7 +521,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
         expiresOn,
         Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
-        "instance 7, host contoso.servicebus.windows.net:5671, state End",
+        "instance 7, host example.servicebus.windows.net:5671, state End",
         std::chrono::milliseconds(0));
     EXPECT_NE(std::string::npos, jwtText.find("Jwt")) << jwtText;
     EXPECT_NE(std::string::npos, jwtText.find("2035")) << jwtText;
@@ -540,7 +540,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
           expiresOn,
           Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
-          "instance 7, host contoso.servicebus.windows.net:5671, state End",
+          "instance 7, host example.servicebus.windows.net:5671, state End",
           std::chrono::milliseconds(0));
     });
     EXPECT_NE(std::string::npos, text.find("token expires: unknown")) << text;
@@ -558,7 +558,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
         expiresOn,
         Azure::Core::Amqp::_detail::CbsOpenCaller::Authenticate,
-        "instance 7, host contoso.servicebus.windows.net:5671, state End",
+        "instance 7, host example.servicebus.windows.net:5671, state End",
         std::chrono::milliseconds(0));
     EXPECT_NE(std::string::npos, deadConnection.find("instance 7")) << deadConnection;
     EXPECT_NE(std::string::npos, deadConnection.find("state End")) << deadConnection;
@@ -572,7 +572,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
         expiresOn,
         Azure::Core::Amqp::_detail::CbsOpenCaller::Authenticate,
-        "instance 8, host contoso.servicebus.windows.net:5671, state Opened",
+        "instance 8, host example.servicebus.windows.net:5671, state Opened",
         std::chrono::milliseconds(412));
     EXPECT_NE(std::string::npos, refused.find("412 ms")) << refused;
     EXPECT_NE(std::string::npos, refused.find("instance 8")) << refused;
