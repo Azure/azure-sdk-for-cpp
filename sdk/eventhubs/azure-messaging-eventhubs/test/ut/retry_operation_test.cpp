@@ -7,17 +7,22 @@
 
 #include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
 #include <atomic>
 #include <chrono>
+#include <cstddef>
 #include <exception>
 #include <functional>
 #include <future>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -40,6 +45,66 @@ Azure::Messaging::EventHubs::EventHubsException MakeEventHubsException(
   error.Description = message;
   return Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::CreateEventHubsException(
       error);
+}
+
+// Collects the log lines that the code under test writes. The destructor
+// removes the listener before the vector goes away, because a background thread
+// can write to the log while this object is destroyed.
+class LogCapture final {
+public:
+  LogCapture()
+  {
+    Azure::Core::Diagnostics::Logger::SetListener(
+        [this](Azure::Core::Diagnostics::Logger::Level level, std::string const& message) {
+          std::lock_guard<std::mutex> guard(m_mutex);
+          m_lines.emplace_back(level, message);
+        });
+    Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
+  }
+
+  ~LogCapture() { Azure::Core::Diagnostics::Logger::SetListener(nullptr); }
+
+  LogCapture(LogCapture const&) = delete;
+  LogCapture& operator=(LogCapture const&) = delete;
+
+  std::vector<std::string> Lines(Azure::Core::Diagnostics::Logger::Level level)
+  {
+    std::lock_guard<std::mutex> guard(m_mutex);
+    std::vector<std::string> result;
+    for (auto const& line : m_lines)
+    {
+      if (line.first == level)
+      {
+        result.push_back(line.second);
+      }
+    }
+    return result;
+  }
+
+  void Clear()
+  {
+    std::lock_guard<std::mutex> guard(m_mutex);
+    m_lines.clear();
+  }
+
+private:
+  std::mutex m_mutex;
+  std::vector<std::pair<Azure::Core::Diagnostics::Logger::Level, std::string>> m_lines;
+};
+
+std::vector<std::string> LinesContaining(
+    std::vector<std::string> const& lines,
+    std::string const& fragment)
+{
+  std::vector<std::string> result;
+  for (auto const& line : lines)
+  {
+    if (line.find(fragment) != std::string::npos)
+    {
+      result.push_back(line);
+    }
+  }
+  return result;
 }
 } // namespace LocalTest
 
@@ -509,6 +574,81 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _interna
     EXPECT_EQ(1, callCount.load());
     ASSERT_TRUE(workerException != nullptr);
     EXPECT_THROW(std::rethrow_exception(workerException), Azure::Core::OperationCancelledException);
+  }
+
+  // Every attempt writes the same warning, so an operator who reads the log
+  // cannot tell attempt 1 from attempt 4. The warning must name the attempt.
+  // The message "boom" holds no digit, so a digit in the line comes from the
+  // attempt number.
+  TEST_F(RetryOperationTest, RuntimeErrorWarningNamesTheAttempt)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(3);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    LocalTest::LogCapture logCapture;
+
+    auto alwaysThrows = []() -> bool { throw std::runtime_error("boom"); };
+
+    EXPECT_THROW(retryOp.Execute(alwaysThrows, context), std::runtime_error);
+
+    auto const warnings = LocalTest::LinesContaining(
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning), "boom");
+    ASSERT_EQ(static_cast<std::size_t>(opts.MaxRetries + 1), warnings.size());
+    for (std::size_t i = 0; i < warnings.size(); ++i)
+    {
+      // The attempt number is 1-based, so the first attempt renders "1".
+      EXPECT_NE(std::string::npos, warnings[i].find(std::to_string(i + 1))) << warnings[i];
+    }
+  }
+
+  // The Event Hubs exception branch writes its own warning, and it has the same
+  // problem. The condition "com.microsoft:timeout" holds no digit.
+  TEST_F(RetryOperationTest, EventHubsExceptionWarningNamesTheAttempt)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(3);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    LocalTest::LogCapture logCapture;
+
+    auto alwaysThrows = []() -> bool {
+      throw LocalTest::MakeEventHubsException(
+          Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::TimeoutError, "boom");
+    };
+
+    EXPECT_THROW(
+        retryOp.Execute(alwaysThrows, context), Azure::Messaging::EventHubs::EventHubsException);
+
+    auto const warnings = LocalTest::LinesContaining(
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning), "boom");
+    ASSERT_EQ(static_cast<std::size_t>(opts.MaxRetries + 1), warnings.size());
+    for (std::size_t i = 0; i < warnings.size(); ++i)
+    {
+      EXPECT_NE(std::string::npos, warnings[i].find(std::to_string(i + 1))) << warnings[i];
+    }
+  }
+
+  // The line that says the retries are gone must say how many attempts ran and
+  // what the limit was. 7 is not a count that appears for another reason here.
+  TEST_F(RetryOperationTest, RetriesExhaustedNamesTheAttemptAndTheMaxRetries)
+  {
+    auto opts = LocalTest::MakeFastRetryOptions(7);
+    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(opts);
+    Azure::Core::Context context;
+    LocalTest::LogCapture logCapture;
+
+    EXPECT_FALSE(retryOp.Execute([]() { return false; }, context));
+
+    // Match the word only, not the whole sentence, so a change to the text
+    // around it does not break this test.
+    auto const exhausted = LocalTest::LinesContaining(
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Informational), "exhausted");
+    ASSERT_EQ(static_cast<std::size_t>(1), exhausted.size());
+    EXPECT_NE(std::string::npos, exhausted[0].find("7")) << exhausted[0];
+    EXPECT_NE(std::string::npos, exhausted[0].find("8")) << exhausted[0];
+
+    auto const warnings = LocalTest::LinesContaining(
+        logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning), "exhausted");
+    EXPECT_TRUE(warnings.empty());
   }
 
   TEST_F(RetryOperationTest, ConstructorCopiesRetryOptions)

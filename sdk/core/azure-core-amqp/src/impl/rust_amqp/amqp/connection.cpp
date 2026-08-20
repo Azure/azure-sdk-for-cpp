@@ -52,6 +52,16 @@ void EnsureGlobalStateInitialized()
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  std::atomic<uint64_t> ConnectionImpl::s_nextInstanceId{1};
+
+  std::string ConnectionImpl::GetDiagnosticSummary() const
+  {
+    std::stringstream summary;
+    summary << "instance " << m_instanceId << ", host " << m_hostUrl.GetHost() << ":"
+            << m_hostUrl.GetPort() << ", state " << (m_connectionOpened ? "Open" : "NotOpen");
+    return summary.str();
+  }
+
   // Create a connection with a request URI and options.
   ConnectionImpl::ConnectionImpl(
       std::string const& hostName,

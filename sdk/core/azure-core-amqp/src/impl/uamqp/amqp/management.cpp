@@ -20,6 +20,27 @@
 using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 
+namespace {
+// Return the text of the exception that the caller handles now. Call this only
+// from inside a catch handler. A bare throw with no exception in flight ends
+// the process.
+std::string CurrentExceptionText()
+{
+  try
+  {
+    throw;
+  }
+  catch (std::exception const& e)
+  {
+    return e.what();
+  }
+  catch (...)
+  {
+    return "unknown exception";
+  }
+}
+} // namespace
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   ManagementClientImpl::ManagementClientImpl(
       std::shared_ptr<SessionImpl> session,
@@ -37,6 +58,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       AZURE_ASSERT_MSG(!m_isOpen, "Management being destroyed while open.");
       Azure::Core::_internal::AzureNoReturnPath("Management is being destroyed while open.");
+    }
+  }
+
+  // Close whatever the failed open left open. A close that throws here must not
+  // replace the status that the caller is about to return, so each one is
+  // separate and neither escapes.
+  void ManagementClientImpl::CloseSenderAndReceiverAfterFailedOpen() noexcept
+  {
+    if (m_messageSenderOpen)
+    {
+      try
+      {
+        m_messageSender->Close({});
+      }
+      catch (std::exception const&)
+      {
+      }
+      m_messageSenderOpen = false;
+    }
+    if (m_messageReceiverOpen)
+    {
+      try
+      {
+        m_messageReceiver->Close({});
+      }
+      catch (std::exception const&)
+      {
+      }
+      m_messageReceiverOpen = false;
     }
   }
 
@@ -89,24 +139,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         auto senderResult{m_messageSender->Open(false, context)};
         if (senderResult)
         {
-          Log::Stream(Logger::Level::Error)
-              << "ManagementClientImpl::Open: Message sender open failed: " << senderResult;
+          Log::Stream(Logger::Level::Warning)
+              << "ManagementClientImpl::Open: Message sender open failed. Node: "
+              << m_options.ManagementNodeName << ". Error: " << senderResult << ".";
           return _internal::ManagementOpenStatus::Error;
         }
         m_messageSenderOpen = true;
         m_messageReceiver->Open(context);
         m_messageReceiverOpen = true;
       }
+      // Both handlers below swallow the exception and return, so the outer
+      // catch that closes these objects never runs for them. A sender that
+      // stays open stops the process in its own destructor, so close it here.
       catch (Azure::Core::OperationCancelledException const& e)
       {
         Log::Stream(Logger::Level::Warning)
             << "Operation cancelled opening message sender and receiver." << e.what();
+        CloseSenderAndReceiverAfterFailedOpen();
         return _internal::ManagementOpenStatus::Cancelled;
       }
       catch (std::runtime_error const& e)
       {
         Log::Stream(Logger::Level::Warning)
             << "Exception thrown opening message sender and receiver." << e.what();
+        CloseSenderAndReceiverAfterFailedOpen();
         return _internal::ManagementOpenStatus::Error;
       }
 
@@ -118,7 +174,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ManagementOpenStatus rv = std::get<0>(*result);
         if (rv != _internal::ManagementOpenStatus::Ok)
         {
-          Log::Stream(Logger::Level::Warning) << "Management operation failed to open.";
+          Log::Stream(Logger::Level::Warning)
+              << "Management operation failed to open. Node: " << m_options.ManagementNodeName
+              << ". Status: " << ManagementOpenStatusName(rv) << ".";
           m_messageSender->Close(context);
           m_messageSenderOpen = false;
           m_messageReceiver->Close(context);
@@ -141,7 +199,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     catch (...)
     {
-      Log::Stream(Logger::Level::Warning) << "Exception thrown during management open.";
+      Log::Stream(Logger::Level::Warning)
+          << "Exception thrown during management open. " << CurrentExceptionText();
       // If an exception is thrown, ensure that the message sender and receiver are closed.
       if (m_messageSenderOpen)
       {
@@ -396,8 +455,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageSenderState::Idle:
           case _internal::MessageSenderState::Closing:
           case _internal::MessageSenderState::Error:
-            Log::Stream(Logger::Level::Warning) << "Message Sender Changed State to " << newState
-                                                << " while management client is opening";
+            Log::Stream(Logger::Level::Warning)
+                << "Message Sender Changed State to " << newState
+                << " while management client is opening"
+                << ". Node: " << m_options.ManagementNodeName << ".";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
             break;
@@ -519,8 +580,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           case _internal::MessageReceiverState::Idle:
           case _internal::MessageReceiverState::Closing:
           case _internal::MessageReceiverState::Error:
-            Log::Stream(Logger::Level::Warning) << "Message Receiver Changed State to " << newState
-                                                << " while management client is opening";
+            Log::Stream(Logger::Level::Warning)
+                << "Message Receiver Changed State to " << newState
+                << " while management client is opening"
+                << ". Node: " << m_options.ManagementNodeName << ".";
             SetState(ManagementState::Closing);
             m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
             break;

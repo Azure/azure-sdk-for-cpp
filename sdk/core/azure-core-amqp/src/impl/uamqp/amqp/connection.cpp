@@ -5,6 +5,7 @@
 
 #include "azure/core/amqp/internal/connection.hpp"
 
+#include "../../../models/private/error_impl.hpp"
 #include "../../../models/private/value_impl.hpp"
 #include "../network/private/transport_impl.hpp"
 #include "azure/core/amqp/internal/common/global_state.hpp"
@@ -102,6 +103,16 @@ void EnsureGlobalStateInitialized()
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
+  std::atomic<uint64_t> ConnectionImpl::s_nextInstanceId{1};
+
+  std::string ConnectionImpl::GetDiagnosticSummary() const
+  {
+    std::stringstream summary;
+    summary << "instance " << m_instanceId << ", host " << m_hostName << ":" << m_port << ", state "
+            << m_connectionState.load();
+    return summary.str();
+  }
+
   // Create a connection with an existing networking Transport.
   ConnectionImpl::ConnectionImpl(
       std::shared_ptr<Network::_detail::TransportImpl> transport,
@@ -170,6 +181,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       m_eventHandler = nullptr;
     }
 
+    // Unsubscribe before the handle goes away, so no callback can reach this
+    // object while it is being destroyed.
+    if (m_closeReceivedSubscription)
+    {
+      connection_unsubscribe_on_connection_close_received(m_closeReceivedSubscription);
+      m_closeReceivedSubscription = nullptr;
+    }
+
     m_connection.reset();
     lock.unlock();
   }
@@ -192,6 +211,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         this,
         OnIOErrorFn,
         this));
+    m_closeReceivedSubscription = connection_subscribe_on_connection_close_received(
+        m_connection.get(), OnConnectionCloseReceivedFn, this);
+    if (m_closeReceivedSubscription == nullptr)
+    {
+      Log::Stream(Logger::Level::Warning)
+          << "Could not subscribe to the connection close event. A close that the service sends "
+             "will not name its reason.";
+    }
     if (m_options.EnableTrace)
     {
       connection_set_trace(m_connection.get(), m_options.EnableTrace);
@@ -361,11 +388,38 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ConnectionImpl* cn = static_cast<ConnectionImpl*>(context);
     if (!cn->m_isClosing)
     {
+      // uAMQP gives this callback no error payload. The connection summary
+      // still distinguishes a local transport failure from a service CLOSE
+      // performative, which is reported by OnConnectionCloseReceivedFn.
+      Log::Stream(Logger::Level::Warning) << "Connection I/O error. " << cn->GetDiagnosticSummary()
+                                          << ". The transport provided no error details.";
       if (cn->m_eventHandler)
       {
         return cn->m_eventHandler->OnIOError(
             ConnectionFactory::CreateFromInternal(cn->shared_from_this()));
       }
+    }
+  }
+
+  // uAMQP has already moved the connection to the End state and closed the
+  // socket when it calls this. The error came from the CLOSE performative, and
+  // it is the only statement the service makes about why it ended the
+  // connection. A close that carries no error gives a null handle here.
+  void ConnectionImpl::OnConnectionCloseReceivedFn(void* context, ERROR_HANDLE error)
+  {
+    ConnectionImpl* connection = static_cast<ConnectionImpl*>(context);
+
+    Log::Stream logLine(Logger::Level::Warning);
+    logLine << "The service closed the connection. " << connection->GetDiagnosticSummary();
+    if (error)
+    {
+      auto const amqpError{Models::_detail::AmqpErrorFactory::FromImplementation(error)};
+      logLine << ", condition: " << amqpError.Condition.ToString()
+              << ", description: " << amqpError.Description;
+    }
+    else
+    {
+      logLine << ", and the close carried no error information.";
     }
   }
 

@@ -523,18 +523,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
   {
+    // Log before the open test. A detach that arrives while the sender is still
+    // opening leaves m_senderOpen false, and the open then fails with a generic
+    // error that does not name the condition. The $cbs sender takes that path
+    // when the service rejects its attach.
+    Log::Stream(Logger::Level::Warning)
+        << "Message sender link detached. Node: " << m_options.Name
+        << ", open: " << (m_senderOpen ? "yes" : "no")
+        << ", condition: " << error.Condition.ToString() << ", description: " << error.Description;
+
     if (m_senderOpen)
     {
       if (m_events)
       {
         m_events->OnMessageSenderDisconnected(
             MessageSenderFactory::CreateFromInternal(shared_from_this()), error);
-      }
-
-      if (m_options.EnableTrace)
-      {
-        // Log that an error occurred.
-        Log::Stream(Logger::Level::Warning) << "Message sender link detached: " << error;
       }
 
       // Cache the error we received in the OnDetach notification so we can return it to the user

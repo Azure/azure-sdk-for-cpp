@@ -7,8 +7,19 @@
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/amqp/internal/session.hpp>
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/url.hpp>
+
+#include <chrono>
+#include <cstddef>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -29,6 +40,64 @@
 #elif ENABLE_RUST_AMQP
 #define ENABLE_RUST_CANCEL 0
 #endif
+
+#if !defined(AZ_PLATFORM_MAC)
+#if ENABLE_UAMQP
+namespace {
+// Collects the log lines that the code under test writes. The destructor
+// removes the listener before the vector goes away, because the AMQP polling
+// thread and the token refresh thread can write to the log while this object is
+// destroyed.
+class LogCapture final {
+public:
+  LogCapture()
+  {
+    Azure::Core::Diagnostics::Logger::SetListener(
+        [this](Azure::Core::Diagnostics::Logger::Level level, std::string const& message) {
+          std::lock_guard<std::mutex> guard(m_mutex);
+          m_lines.emplace_back(level, message);
+        });
+    Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
+  }
+
+  ~LogCapture() { Azure::Core::Diagnostics::Logger::SetListener(nullptr); }
+
+  LogCapture(LogCapture const&) = delete;
+  LogCapture& operator=(LogCapture const&) = delete;
+
+  std::vector<std::string> Lines(Azure::Core::Diagnostics::Logger::Level level)
+  {
+    std::lock_guard<std::mutex> guard(m_mutex);
+    std::vector<std::string> result;
+    for (auto const& line : m_lines)
+    {
+      if (line.first == level)
+      {
+        result.push_back(line.second);
+      }
+    }
+    return result;
+  }
+
+  void Clear()
+  {
+    std::lock_guard<std::mutex> guard(m_mutex);
+    m_lines.clear();
+  }
+
+private:
+  std::mutex m_mutex;
+  std::vector<std::pair<Azure::Core::Diagnostics::Logger::Level, std::string>> m_lines;
+};
+
+Azure::Core::Diagnostics::Logger::Level const AllLogLevels[]{
+    Azure::Core::Diagnostics::Logger::Level::Verbose,
+    Azure::Core::Diagnostics::Logger::Level::Informational,
+    Azure::Core::Diagnostics::Logger::Level::Warning,
+    Azure::Core::Diagnostics::Logger::Level::Error};
+} // namespace
+#endif // ENABLE_UAMQP
+#endif // !defined(AZ_PLATFORM_MAC)
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   using namespace Azure::Core::Amqp::_internal;
@@ -196,7 +265,133 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ClaimsBasedSecurity cbs(session);
       GTEST_LOG_(INFO) << "Expected failure for Open because no listener.";
 
+      // Build the capture after the connection and the session, so its
+      // destructor removes the listener before those objects go away.
+      LogCapture logCapture;
+
       EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
+
+      auto const firstOpenWarnings
+          = logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning);
+
+      bool foundConnectionIoError = false;
+      bool foundManagementSenderFailure = false;
+      for (auto const& line : firstOpenWarnings)
+      {
+        if (line.find("Connection I/O error.") != std::string::npos
+            && line.find("instance ") != std::string::npos
+            && line.find("host localhost:") != std::string::npos
+            && line.find(", state ") != std::string::npos)
+        {
+          foundConnectionIoError = true;
+        }
+        if (line.find("ManagementClientImpl::Open: Message sender open failed.")
+                != std::string::npos
+            && line.find("Node: $cbs.") != std::string::npos)
+        {
+          foundManagementSenderFailure = true;
+        }
+      }
+      EXPECT_TRUE(foundConnectionIoError);
+      EXPECT_TRUE(foundManagementSenderFailure);
+
+      logCapture.Clear();
+
+      // The second open takes the branch that refuses to open the object again.
+      // That branch does no network work, so it must give the reader a line of
+      // its own, and that line must differ from the line the failed connection
+      // wrote.
+      EXPECT_EQ(CbsOpenResult::Error, cbs.Open());
+
+      auto const secondOpenWarnings
+          = logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning);
+      ASSERT_EQ(static_cast<std::size_t>(1), secondOpenWarnings.size());
+      for (auto const& firstOpenWarning : firstOpenWarnings)
+      {
+        EXPECT_NE(firstOpenWarning, secondOpenWarnings[0]);
+      }
+    }
+  }
+
+  // A CBS open that fails while the connection authenticates an audience must
+  // name the result, the audience, and the function that asked for the token.
+  // The token itself must stay out of the exception and out of the log.
+  TEST_F(TestCbs, AuthenticationFailureNamesTheCbsOpenFailure)
+  {
+    class SentinelTokenCredential final : public Azure::Core::Credentials::TokenCredential {
+      Azure::Core::Credentials::AccessToken GetToken(
+          Azure::Core::Credentials::TokenRequestContext const& requestContext,
+          Azure::Core::Context const& context) const override
+      {
+        Azure::Core::Credentials::AccessToken rv;
+        rv.Token = "SENTINEL-TOKEN-MUST-NOT-BE-LOGGED";
+        rv.ExpiresOn = std::chrono::system_clock::now() + std::chrono::hours(1);
+        (void)requestContext;
+        (void)context;
+        return rv;
+      }
+
+    public:
+      SentinelTokenCredential() : Azure::Core::Credentials::TokenCredential("Testing") {}
+    };
+
+    std::string const sentinel{"SENTINEL-TOKEN-MUST-NOT-BE-LOGGED"};
+    auto credential = std::make_shared<SentinelTokenCredential>();
+
+    ConnectionOptions options;
+    // Trace is off, so every line that the capture holds comes from the failure
+    // path and not from the AMQP trace.
+    options.EnableTrace = false;
+    // Pick a port separate from the one that the listener is normally at, so the
+    // CBS open fails.
+    options.Port = GetPort() + 10;
+
+    {
+      Connection connection("localhost", credential, options);
+      Session session{connection.CreateSession()};
+      MessageSenderOptions senderOptions;
+      MessageSender sender{session.CreateMessageSender("testEntity", senderOptions, nullptr)};
+
+      // Build the capture after the connection, so its destructor removes the
+      // listener before the connection and its polling thread go away.
+      LogCapture logCapture;
+
+      bool caught = false;
+      try
+      {
+        auto const openError = sender.Open();
+        FAIL() << "Expected the open to throw because there is no listener. "
+               << openError.Description;
+      }
+      catch (std::runtime_error const& e)
+      {
+        caught = true;
+        std::string const what{e.what()};
+        EXPECT_NE(std::string::npos, what.find("Error")) << what;
+        EXPECT_NE(std::string::npos, what.find("testEntity")) << what;
+        EXPECT_NE(std::string::npos, what.find("ConnectionImpl::AuthenticateAudience")) << what;
+        EXPECT_EQ(std::string::npos, what.find(sentinel)) << what;
+      }
+      EXPECT_TRUE(caught);
+
+      std::size_t warningsThatNameTheFailure = 0;
+      for (auto const& line : logCapture.Lines(Azure::Core::Diagnostics::Logger::Level::Warning))
+      {
+        if (line.find("testEntity") != std::string::npos
+            && line.find("ConnectionImpl::AuthenticateAudience") != std::string::npos)
+        {
+          ++warningsThatNameTheFailure;
+        }
+      }
+      EXPECT_LT(static_cast<std::size_t>(0), warningsThatNameTheFailure);
+
+      for (auto const& level : AllLogLevels)
+      {
+        for (auto const& line : logCapture.Lines(level))
+        {
+          EXPECT_EQ(std::string::npos, line.find(sentinel)) << line;
+        }
+      }
     }
   }
 #endif

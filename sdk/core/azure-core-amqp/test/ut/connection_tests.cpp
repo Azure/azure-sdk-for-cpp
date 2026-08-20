@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../../src/amqp/private/cbs_open_failure.hpp"
 #include "../../src/amqp/private/token_refresh.hpp"
 #include "azure/core/amqp/internal/common/async_operation_queue.hpp"
 #include "azure/core/amqp/internal/connection.hpp"
@@ -16,6 +17,7 @@
 #include "mock_amqp_server.hpp"
 
 #include <azure/core/context.hpp>
+#include <azure/core/datetime.hpp>
 #include <azure/core/platform.hpp>
 
 #include <chrono>
@@ -25,6 +27,7 @@
 #include <mutex>
 #include <random>
 #include <stdexcept>
+#include <string>
 #include <thread>
 
 #include <gtest/gtest.h>
@@ -446,6 +449,145 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
     EXPECT_TRUE(lock.owns_lock());
     EXPECT_FALSE(m_destroyed);
+  }
+
+  // A CBS open that fails gives the caller one sentence. That sentence must name
+  // the result, the audience, and the function that asked for the token, because
+  // the two callers fail for different reasons. The text builders are pure
+  // functions, so they run on every platform and need no service.
+  class TestCbsOpenFailureText : public testing::Test {
+  protected:
+    static std::string const& Audience()
+    {
+      static std::string const audience{"amqps://example.servicebus.windows.net/eh1"};
+      return audience;
+    }
+  };
+
+  TEST_F(TestCbsOpenFailureText, TheFailureTextNamesTheResultTheAudienceAndTheCaller)
+  {
+    struct
+    {
+      Azure::Core::Amqp::_detail::CbsOpenResult Result;
+      std::string EnumeratorName;
+    } const testCases[]{
+        {Azure::Core::Amqp::_detail::CbsOpenResult::Invalid, "Invalid"},
+        {Azure::Core::Amqp::_detail::CbsOpenResult::Error, "Error"},
+        {Azure::Core::Amqp::_detail::CbsOpenResult::Cancelled, "Cancelled"},
+    };
+
+    for (auto const& testCase : testCases)
+    {
+      auto const text = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+          testCase.Result, Audience(), Azure::Core::Amqp::_detail::CbsOpenCaller::Authenticate);
+      EXPECT_NE(std::string::npos, text.find(testCase.EnumeratorName)) << text;
+      EXPECT_NE(std::string::npos, text.find(Audience())) << text;
+      EXPECT_NE(std::string::npos, text.find("ConnectionImpl::AuthenticateAudience")) << text;
+    }
+
+    auto const refreshText = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh);
+    EXPECT_NE(std::string::npos, refreshText.find("ConnectionImpl::RefreshTokenForAudience"))
+        << refreshText;
+    EXPECT_EQ(std::string::npos, refreshText.find("ConnectionImpl::AuthenticateAudience"))
+        << refreshText;
+  }
+
+  TEST_F(TestCbsOpenFailureText, TheLogTextAddsTheTokenTypeAndTheExpiry)
+  {
+    Azure::DateTime const expiresOn(2035, 1, 2, 3, 4, 5);
+
+    auto const sasText = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Sas,
+        expiresOn,
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+        "instance 7, host example.servicebus.windows.net:5671, state End",
+        std::chrono::milliseconds(0));
+    EXPECT_NE(std::string::npos, sasText.find("Sas")) << sasText;
+    // Look for the year only. A change to the date format must not break this
+    // test.
+    EXPECT_NE(std::string::npos, sasText.find("2035")) << sasText;
+    EXPECT_NE(std::string::npos, sasText.find(Audience())) << sasText;
+    EXPECT_NE(std::string::npos, sasText.find("ConnectionImpl::RefreshTokenForAudience"))
+        << sasText;
+
+    auto const jwtText = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+        expiresOn,
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+        "instance 7, host example.servicebus.windows.net:5671, state End",
+        std::chrono::milliseconds(0));
+    EXPECT_NE(std::string::npos, jwtText.find("Jwt")) << jwtText;
+    EXPECT_NE(std::string::npos, jwtText.find("2035")) << jwtText;
+  }
+
+  TEST_F(TestCbsOpenFailureText, TheLogTextUsesUnknownForAnUnsupportedExpiry)
+  {
+    Azure::DateTime const expiresOn
+        = Azure::DateTime(9999, 12, 31, 23, 59, 59) + std::chrono::seconds(1);
+    std::string text;
+
+    EXPECT_NO_THROW({
+      text = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+          Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+          Audience(),
+          Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+          expiresOn,
+          Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+          "instance 7, host example.servicebus.windows.net:5671, state End",
+          std::chrono::milliseconds(0));
+    });
+    EXPECT_NE(std::string::npos, text.find("token expires: unknown")) << text;
+  }
+
+  // These two fields are what let a reader separate a client fault from a
+  // service fault, so they are pinned on their own.
+  TEST_F(TestCbsOpenFailureText, TheLogTextAddsTheConnectionAndTheElapsedTime)
+  {
+    Azure::DateTime const expiresOn(2035, 1, 2, 3, 4, 5);
+
+    auto const deadConnection = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+        expiresOn,
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Authenticate,
+        "instance 7, host example.servicebus.windows.net:5671, state End",
+        std::chrono::milliseconds(0));
+    EXPECT_NE(std::string::npos, deadConnection.find("instance 7")) << deadConnection;
+    EXPECT_NE(std::string::npos, deadConnection.find("state End")) << deadConnection;
+    EXPECT_NE(std::string::npos, deadConnection.find("0 ms")) << deadConnection;
+
+    // A round trip to the service takes real time, so the elapsed value is how
+    // a reader tells a local failure from a refused one.
+    auto const refused = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+        expiresOn,
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Authenticate,
+        "instance 8, host example.servicebus.windows.net:5671, state Opened",
+        std::chrono::milliseconds(412));
+    EXPECT_NE(std::string::npos, refused.find("412 ms")) << refused;
+    EXPECT_NE(std::string::npos, refused.find("instance 8")) << refused;
+
+    // An unreachable connection must not produce an empty field.
+    auto const noConnection = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Cancelled,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+        expiresOn,
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+        std::string{},
+        std::chrono::milliseconds(60000));
+    EXPECT_NE(std::string::npos, noConnection.find("unknown")) << noConnection;
+    EXPECT_NE(std::string::npos, noConnection.find("60000 ms")) << noConnection;
   }
 
 #if !defined(AZ_PLATFORM_MAC)
