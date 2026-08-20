@@ -1489,6 +1489,59 @@ static bool remove_pending_delivery_condition_function(const void* item, const v
     return result;
 }
 
+int link_transfer_async_cancel(LINK_HANDLE link, ASYNC_OPERATION_HANDLE link_transfer_operation)
+{
+    int result;
+
+    if ((link == NULL) || (link_transfer_operation == NULL))
+    {
+        LogError("Invalid arguments: link = %p, link_transfer_operation = %p", link, link_transfer_operation);
+        result = MU_FAILURE;
+    }
+    else if (link->pending_deliveries == NULL)
+    {
+        LogError("Link has no pending deliveries");
+        result = MU_FAILURE;
+    }
+    else
+    {
+        LIST_ITEM_HANDLE pending_delivery = singlylinkedlist_get_head_item(link->pending_deliveries);
+
+        result = MU_FAILURE;
+        while (pending_delivery != NULL)
+        {
+            if ((ASYNC_OPERATION_HANDLE)singlylinkedlist_item_get_value(pending_delivery) == link_transfer_operation)
+            {
+                DELIVERY_INSTANCE* delivery_instance
+                    = GET_ASYNC_OPERATION_CONTEXT(DELIVERY_INSTANCE, link_transfer_operation);
+                if ((delivery_instance == NULL) || (delivery_instance->link != link))
+                {
+                    LogError("Pending delivery does not belong to link");
+                }
+                else if (singlylinkedlist_remove(link->pending_deliveries, pending_delivery) != 0)
+                {
+                    LogError("Cannot remove pending delivery");
+                }
+                else
+                {
+                    async_operation_destroy(link_transfer_operation);
+                    result = 0;
+                }
+                break;
+            }
+
+            pending_delivery = singlylinkedlist_get_next_item(pending_delivery);
+        }
+
+        if (pending_delivery == NULL)
+        {
+            LogError("Pending delivery was not found");
+        }
+    }
+
+    return result;
+}
+
 static void link_transfer_cancel_handler(ASYNC_OPERATION_HANDLE link_transfer_operation)
 {
     DELIVERY_INSTANCE* pending_delivery = GET_ASYNC_OPERATION_CONTEXT(DELIVERY_INSTANCE, link_transfer_operation);

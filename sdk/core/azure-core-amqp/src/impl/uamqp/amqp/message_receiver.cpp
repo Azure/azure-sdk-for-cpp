@@ -522,10 +522,29 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           Context const closeContext{
               _detail::ContextWithOperationDeadline(context, std::chrono::system_clock::now())};
           auto closeResult = m_closeQueue.WaitForResult(closeContext);
+          Models::_internal::AmqpError rv;
           if (!closeResult)
           {
-            throw Azure::Core::OperationCancelledException(
-                "MessageReceiver close operation was cancelled.");
+            if (context.IsCancelled())
+            {
+              throw Azure::Core::OperationCancelledException(
+                  "MessageReceiver close operation was cancelled.");
+            }
+
+            rv
+                = {Models::_internal::AmqpErrorCondition::TimeoutError,
+                   "Message receiver close operation timed out.",
+                   {}};
+          }
+          else
+          {
+            rv = std::move(std::get<0>(*closeResult));
+          }
+          if (rv)
+          {
+            throw std::runtime_error(
+                "Message receiver close operation failed: " + rv.Condition.ToString()
+                + " description: " + rv.Description);
           }
         }
       }
