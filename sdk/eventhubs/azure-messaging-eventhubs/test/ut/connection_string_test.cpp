@@ -39,6 +39,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   {
     ProducerClient client(ConnectionStringNoEntityPath, "eventhub1");
     EXPECT_EQ("eventhub1", client.GetEventHubName());
+    ProducerClient mixedCase(ConnectionStringNoEntityPath, "EventHub1");
+    EXPECT_EQ("EventHub1", mixedCase.GetEventHubName());
   }
 
   TEST(ConnectionStringClientTest, ProducerUsesEntityPathWhenEventHubIsEmpty)
@@ -50,6 +52,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ConnectionStringClientTest, ProducerAcceptsMatchingEntityPath)
   {
     ProducerClient client(ConnectionStringWithEntityPath, "eventhub1");
+    EXPECT_EQ("eventhub1", client.GetEventHubName());
+  }
+
+  TEST(ConnectionStringClientTest, ProducerAcceptsCaseInsensitiveEntityPath)
+  {
+    ProducerClient client(ConnectionStringWithEntityPath, "EventHub1");
     EXPECT_EQ("eventhub1", client.GetEventHubName());
   }
 
@@ -84,6 +92,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
   TEST(ConnectionStringClientTest, ConsumerAcceptsMatchingEntityPath)
   {
     ConsumerClient client(ConnectionStringWithEntityPath, "eventhub1");
+    EXPECT_EQ("eventhub1", client.GetEventHubName());
+  }
+
+  TEST(ConnectionStringClientTest, ConsumerAcceptsCaseInsensitiveEntityPath)
+  {
+    ConsumerClient client(ConnectionStringWithEntityPath, "EventHub1");
     EXPECT_EQ("eventhub1", client.GetEventHubName());
   }
 
