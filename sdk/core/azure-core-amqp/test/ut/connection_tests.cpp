@@ -495,6 +495,48 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         << refreshText;
   }
 
+  // A caller must be able to tell CbsOpenResult::Error from Cancelled and Invalid, because only
+  // Error may be retried. Reading that out of the message text would break silently on a reword,
+  // so the result rides on the exception type instead.
+  TEST_F(TestCbsOpenFailureText, TheOpenFailureCarriesTheResultAndStaysARuntimeError)
+  {
+    using Azure::Core::Amqp::_detail::CbsOpenCaller;
+    using Azure::Core::Amqp::_detail::CbsOpenFailedException;
+    using Azure::Core::Amqp::_detail::CbsOpenResult;
+
+    // Existing handlers keep working: it is still a std::runtime_error and still carries the same
+    // text, so no caller that does not know the new type has to change.
+    auto const text
+        = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+            CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate);
+    try
+    {
+      throw CbsOpenFailedException(CbsOpenResult::Error, text);
+    }
+    catch (std::runtime_error const& e)
+    {
+      EXPECT_EQ(text, std::string{e.what()});
+      auto const* typed = dynamic_cast<CbsOpenFailedException const*>(&e);
+      ASSERT_NE(nullptr, typed);
+      EXPECT_EQ(CbsOpenResult::Error, typed->Result);
+    }
+
+    // Every failure value survives the throw, so a caller can branch on it.
+    CbsOpenResult const failures[]{
+        CbsOpenResult::Invalid, CbsOpenResult::Error, CbsOpenResult::Cancelled};
+    for (auto const failure : failures)
+    {
+      try
+      {
+        throw CbsOpenFailedException(failure, "The $cbs management client did not open.");
+      }
+      catch (CbsOpenFailedException const& e)
+      {
+        EXPECT_EQ(failure, e.Result);
+      }
+    }
+  }
+
   TEST_F(TestCbsOpenFailureText, TheLogTextAddsTheTokenTypeAndTheExpiry)
   {
     Azure::DateTime const expiresOn(2035, 1, 2, 3, 4, 5);

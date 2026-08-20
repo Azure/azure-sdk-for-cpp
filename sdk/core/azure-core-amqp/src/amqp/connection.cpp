@@ -165,7 +165,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             caller,
             connection ? connection->GetDiagnosticSummary() : std::string{},
             elapsed);
-        throw std::runtime_error(DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
+        throw CbsOpenFailedException(
+            cbsOpenStatus, DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
       }
 
       try
