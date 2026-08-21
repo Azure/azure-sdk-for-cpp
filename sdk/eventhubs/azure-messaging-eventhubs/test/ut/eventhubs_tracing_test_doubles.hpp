@@ -81,6 +81,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::map<std::string, std::string> m_attributeTypes;
     std::vector<std::string> m_events;
     std::vector<Azure::Core::Tracing::_internal::SpanStatus> m_statuses;
+    bool m_hasParent;
 
     void Merge(TestAttributeSet const& attributes)
     {
@@ -98,7 +99,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     TestSpan(
         std::string const& spanName,
         Azure::Core::Tracing::_internal::CreateSpanOptions const& options)
-        : Azure::Core::Tracing::_internal::Span(), m_spanName(spanName), m_kind(options.Kind)
+        : Azure::Core::Tracing::_internal::Span(), m_spanName(spanName), m_kind(options.Kind),
+          m_hasParent(options.ParentSpan != nullptr)
     {
       if (options.Attributes)
       {
@@ -133,6 +135,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     std::string const& GetName() const { return m_spanName; }
     Azure::Core::Tracing::_internal::SpanKind GetKind() const { return m_kind; }
+    bool HasParent() const { return m_hasParent; }
     std::map<std::string, std::string> const& GetAttributes() const { return m_attributes; }
     std::map<std::string, std::string> const& GetAttributeTypes() const { return m_attributeTypes; }
     std::vector<std::string> const& GetEvents() const { return m_events; }
@@ -208,6 +211,29 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return nullptr;
     }
     return tracer->GetSpans().front();
+  }
+
+  inline std::shared_ptr<TestSpan> FindSpan(
+      std::shared_ptr<TestTracingProvider> const& provider,
+      std::string const& spanName)
+  {
+    EXPECT_EQ(1u, provider->GetTracers().size());
+    if (provider->GetTracers().size() != 1u)
+    {
+      return nullptr;
+    }
+
+    std::shared_ptr<TestSpan> match;
+    for (auto const& span : provider->GetTracers().front()->GetSpans())
+    {
+      if (span->GetName() == spanName)
+      {
+        EXPECT_EQ(nullptr, match) << "More than one span named " << spanName;
+        match = span;
+      }
+    }
+    EXPECT_NE(nullptr, match) << "No span named " << spanName;
+    return match;
   }
 
 }}}} // namespace Azure::Messaging::EventHubs::Test

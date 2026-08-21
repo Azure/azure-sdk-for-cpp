@@ -115,7 +115,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     auto events = partitionClient.ReceiveEvents(1);
     ASSERT_FALSE(events.empty());
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "PartitionClient.ReceiveEvents");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("PartitionClient.ReceiveEvents", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Client, span->GetKind());
@@ -127,6 +127,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("eventhubs", attributes.at("messaging.system"));
     ASSERT_EQ(1u, attributes.count("az.namespace"));
     EXPECT_EQ("Microsoft.EventHub", attributes.at("az.namespace"));
+    ASSERT_EQ(1u, attributes.count("messaging.source.name"));
+    EXPECT_EQ(GetEventHubName(), attributes.at("messaging.source.name"));
 
     ASSERT_EQ(1u, attributes.count("messaging.batch.message_count"));
     EXPECT_EQ(std::to_string(events.size()), attributes.at("messaging.batch.message_count"));

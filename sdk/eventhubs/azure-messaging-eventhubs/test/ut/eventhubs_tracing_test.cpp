@@ -131,7 +131,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     cancelledContext.Cancel();
     EXPECT_THROW(client.Send(batch, cancelledContext), Azure::Core::OperationCancelledException);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
@@ -156,7 +156,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     EXPECT_THROW(client.Send(batch, Azure::Core::Context{}), std::runtime_error);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
@@ -182,7 +182,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     EXPECT_THROW(client.Send(batch, Azure::Core::Context{}), std::runtime_error);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
 
@@ -210,16 +210,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         client.Send(Models::EventData{"Single message."}, Azure::Core::Context{}),
         std::runtime_error);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
 
-    ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
-    EXPECT_EQ("1", span->GetAttributes().at("messaging.batch.message_count"));
-
-    ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
-    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+    EXPECT_EQ(
+        span->GetAttributes().end(), span->GetAttributes().find("messaging.batch.message_count"));
 
     ASSERT_EQ(1u, span->GetEvents().size());
     EXPECT_FALSE(span->GetEvents()[0].empty());
@@ -244,7 +241,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     EXPECT_THROW(client.Send(eventData, Azure::Core::Context{}), std::runtime_error);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
@@ -294,9 +291,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         TestEventHubName,
         TestFullyQualifiedNamespace,
         Azure::Nullable<size_t>{},
-        Azure::Core::Context{});
+        Azure::Core::Context{},
+        _detail::MessagingEntityKind::Source);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "PartitionClient.ReceiveEvents");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("PartitionClient.ReceiveEvents", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Client, span->GetKind());
@@ -304,7 +302,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     std::map<std::string, std::string> const expectedAttributes{
         {"az.namespace", "Microsoft.EventHub"},
         {"messaging.system", "eventhubs"},
-        {"messaging.destination.name", TestEventHubName},
+        {"messaging.source.name", TestEventHubName},
         {"messaging.operation", "receive"},
         {"net.peer.name", TestFullyQualifiedNamespace},
     };
@@ -335,7 +333,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         Azure::Nullable<size_t>{},
         Azure::Core::Context{});
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "PartitionClient.ReceiveEvents");
     ASSERT_NE(nullptr, span);
 
     _detail::SetMessageCount(factory, tracingContext.Span, 3);
@@ -360,7 +358,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     cancelledContext.Cancel();
     EXPECT_THROW(client.Send(batch, cancelledContext), Azure::Core::OperationCancelledException);
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
 
     ASSERT_EQ(1u, span->GetAttributes().count("messaging.batch.message_count"));
@@ -368,6 +366,100 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     ASSERT_EQ(1u, span->GetAttributeTypes().count("messaging.batch.message_count"));
     EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("messaging.batch.message_count"));
+  }
+
+  TEST(EventHubsTracingTest, AmqpSpanIdentifiesComponentAndAttempt)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+    auto factory = _detail::CreateTracingContextFactory(provider);
+    auto operationContext = _detail::StartSpan(
+        factory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        TestEventHubName,
+        TestFullyQualifiedNamespace,
+        size_t{2},
+        Azure::Core::Context{});
+
+    _detail::AmqpDiagnosticsContext diagnosticsContext{
+        "producer:test-client", "2", "link", "sender-link", 3};
+    auto amqpContext = _detail::StartAmqpSpan(
+        factory,
+        "ProducerClient.AmqpSend",
+        "publish",
+        TestEventHubName,
+        TestFullyQualifiedNamespace,
+        size_t{2},
+        diagnosticsContext,
+        std::uint64_t{4},
+        operationContext.Context);
+
+    auto span = FindSpan(provider, "ProducerClient.AmqpSend");
+    ASSERT_NE(nullptr, span);
+    EXPECT_TRUE(span->HasParent());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Client, span->GetKind());
+    EXPECT_EQ("producer:test-client", span->GetAttributes().at("az.eventhubs.client.id"));
+    EXPECT_EQ("2", span->GetAttributes().at("az.eventhubs.partition.id"));
+    EXPECT_EQ("link", span->GetAttributes().at("az.eventhubs.amqp.component.type"));
+    EXPECT_EQ("sender-link", span->GetAttributes().at("az.eventhubs.amqp.component.name"));
+    EXPECT_EQ(
+        "producer:test-client/partition/2/generation/3/link",
+        span->GetAttributes().at("az.eventhubs.amqp.component.id"));
+    EXPECT_EQ("3", span->GetAttributes().at("az.eventhubs.amqp.component.generation"));
+    EXPECT_EQ("4", span->GetAttributes().at("az.eventhubs.retry.attempt"));
+    EXPECT_EQ(
+        AttributeTypeUInt64,
+        span->GetAttributeTypes().at("az.eventhubs.amqp.component.generation"));
+    EXPECT_EQ(AttributeTypeUInt64, span->GetAttributeTypes().at("az.eventhubs.retry.attempt"));
+  }
+
+  TEST(EventHubsTracingTest, LifecycleLogIdentifiesGatewayComponent)
+  {
+    _detail::AmqpDiagnosticsContext diagnosticsContext{
+        "producer:test-client", "", "connection", "connection-1", 7};
+
+    EXPECT_EQ(
+        "Event Hubs AMQP lifecycle: event='create_failed' client.id='producer:test-client' "
+        "partition.id='<gateway>' component.type='connection' component.name='connection-1' "
+        "component.id='producer:test-client/partition/<gateway>/generation/7/connection' "
+        "component.generation=7 detail='socket closed'",
+        _detail::FormatAmqpLifecycleEvent(diagnosticsContext, "create_failed", "socket closed"));
+  }
+
+  TEST(EventHubsTracingTest, LifecycleLogEscapesQuotedAndMultilineValues)
+  {
+    _detail::AmqpDiagnosticsContext diagnosticsContext{
+        "producer:client's", "2", "link", "sender\\link", 1};
+
+    EXPECT_NE(
+        std::string::npos,
+        _detail::FormatAmqpLifecycleEvent(
+            diagnosticsContext, "failed", "can't send\nconnection closed")
+            .find("client.id='producer:client\\'s'"));
+    EXPECT_NE(
+        std::string::npos,
+        _detail::FormatAmqpLifecycleEvent(
+            diagnosticsContext, "failed", "can't send\nconnection closed")
+            .find("detail='can\\'t send\\nconnection closed'"));
+  }
+
+  TEST(EventHubsTracingTest, ClientIdentifiersAreUniqueWithTheSameConfiguredName)
+  {
+    auto const first = _detail::CreateClientIdentifier("producer", "orders");
+    auto const second = _detail::CreateClientIdentifier("producer", "orders");
+
+    EXPECT_NE(first, second);
+    EXPECT_EQ(0u, first.find("producer:orders:"));
+    EXPECT_EQ(0u, second.find("producer:orders:"));
+  }
+
+  TEST(EventHubsTracingTest, FailureComponentTypeUsesAmqpErrorScope)
+  {
+    EXPECT_EQ("connection", _detail::GetAmqpFailureComponentType("amqp:connection:forced"));
+    EXPECT_EQ("session", _detail::GetAmqpFailureComponentType("amqp:session:window-violation"));
+    EXPECT_EQ("link", _detail::GetAmqpFailureComponentType("amqp:link:detach-forced"));
+    EXPECT_EQ("link", _detail::GetAmqpFailureComponentType("amqp:unauthorized-access"));
   }
 
   // Characterization test. A factory with no tracer returns a null attribute set, and that

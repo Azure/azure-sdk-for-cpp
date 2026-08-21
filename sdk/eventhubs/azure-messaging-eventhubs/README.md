@@ -281,23 +281,47 @@ Azure::Messaging::EventHubs::ConsumerClient consumer(
     consumerOptions);
 ```
 
-The clients create these spans:
+The clients create these operation spans:
 
 | Span name | Span kind | Notes |
 |---|---|---|
 | `ProducerClient.Send` | Producer | One span for each `Send` call. The span covers all the retry attempts. The overloads that take events also create the batch inside the span. |
 | `PartitionClient.ReceiveEvents` | Client | One span for each `ReceiveEvents` call. |
 
-Both spans have these attributes. The names follow the OpenTelemetry semantic conventions version 1.17.0, which is the schema of the `azure-core-tracing-opentelemetry` package:
+The clients also create child spans around calls into the AMQP transport:
+
+| Span name | What its duration measures |
+|---|---|
+| `ProducerClient.AmqpLink.Open` | Connection, session, and sender-link establishment that occurs while attaching the sender. A retry can create another span. |
+| `ProducerClient.AmqpSend` | The synchronous AMQP send through the service disposition. The `az.eventhubs.retry.attempt` attribute identifies the attempt. |
+| `PartitionClient.AmqpLink.Open` | Receiver-link attachment or reattachment. On uAMQP, an initial attachment also includes lazy connection and session establishment. |
+| `PartitionClient.AmqpReceive` | Time blocked in the AMQP transport waiting for a message or transport error. More than one can occur during one `ReceiveEvents` call. |
+
+The operation span duration is total SDK latency as observed by the caller. Subtracting the non-overlapping child-span durations from the operation duration gives the time spent in SDK work, retry delay, and locally queued message processing. The AMQP child duration is the client-observed service round-trip boundary; it does not isolate processing time inside the Event Hubs service. A receive can complete from AMQP prefetch, so `PartitionClient.AmqpReceive` can be shorter than a network round trip.
+
+The spans have these attributes. The names follow the OpenTelemetry semantic conventions version 1.17.0, which is the schema of the `azure-core-tracing-opentelemetry` package:
 
 | Attribute | Value |
 |---|---|
 | `az.namespace` | `Microsoft.EventHub` |
 | `messaging.system` | `eventhubs` |
-| `messaging.destination.name` | The Event Hub name. |
+| `messaging.destination.name` | The Event Hub name on send spans. |
+| `messaging.source.name` | The Event Hub name on receive spans. |
 | `messaging.operation` | `publish` on a send span, `receive` on a receive span. |
 | `messaging.batch.message_count` | The number of events in the operation. A receive span gets this attribute when the call is successful. |
 | `net.peer.name` | The fully qualified namespace. |
+
+AMQP child spans also have these Event Hubs diagnostic attributes:
+
+| Attribute | Value |
+|---|---|
+| `az.eventhubs.client.id` | A unique ID for the producer or consumer. It includes the configured client name when one exists and a generated UUID. |
+| `az.eventhubs.partition.id` | The partition ID, or `<gateway>` for the producer gateway link. |
+| `az.eventhubs.amqp.component.type` | `link`. |
+| `az.eventhubs.amqp.component.name` | The AMQP link name. |
+| `az.eventhubs.amqp.component.id` | A unique ID composed from the client, partition, component generation, and type. |
+| `az.eventhubs.amqp.component.generation` | Starts at 1 and increases when the component is recreated. |
+| `az.eventhubs.retry.attempt` | The one-based retry or rebuild attempt, when applicable. |
 
 The instrumentation scope is `azure-messaging-eventhubs-cpp` with the package version.
 
@@ -309,8 +333,15 @@ For the OpenTelemetry provider setup, see [Distributed Tracing in the C++ SDK][d
 
 ## Logging
 
-The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to 
-enable diagnostics.
+The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to enable diagnostics.
+
+AMQP lifecycle records start with `Event Hubs AMQP lifecycle:` and contain queryable `key='value'` fields. `client.id`, `partition.id`, `component.type`, `component.name`, `component.id`, and `component.generation` identify the exact connection, session, or link. The `event` field records creation, attachment, failure, discard, close, and recreation. Failure records use the warning level; successful recreations use the informational level; initial creation and normal close records use the verbose level.
+
+Failure records use the AMQP error-condition namespace to attribute `amqp:connection:*` and `amqp:session:*` failures to the connection or session. Other failures are attributed to the link operation where the client observed them.
+
+The producer gives every rebuilt connection, session, and link the same component generation. A receiver reattachment increases the link generation while keeping its owning connection and session. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
+
+Azure Core does not currently expose a provider-neutral metrics API to service libraries. Applications can derive failure and recreation counters from lifecycle records, and latency histograms from the operation and AMQP child span durations.
 
 
 ## Contributing

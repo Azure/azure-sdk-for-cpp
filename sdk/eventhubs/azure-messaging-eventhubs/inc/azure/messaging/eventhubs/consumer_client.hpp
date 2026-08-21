@@ -245,6 +245,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// @brief The options used to configure the consumer client.
     ConsumerClientOptions m_consumerClientOptions;
 
+    /// Correlates this client and its AMQP components across lifecycle logs and spans.
+    std::string m_clientIdentifier;
+
     /// @brief The factory used to create the distributed tracing spans of this client.
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 

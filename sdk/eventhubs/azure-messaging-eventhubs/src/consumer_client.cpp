@@ -3,6 +3,7 @@
 
 #include "private/best_effort_cleanup.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_diagnostics.hpp"
 #include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/package_version.hpp"
@@ -17,6 +18,28 @@ using namespace Azure::Core::Diagnostics;
 using namespace Azure::Messaging::EventHubs::Models;
 using namespace Azure::Core::Amqp::_internal;
 
+namespace {
+Azure::Messaging::EventHubs::_detail::AmqpDiagnosticsContext CreateDiagnosticsContext(
+    std::string const& clientId,
+    std::string const& partitionId,
+    std::string componentType,
+    std::string componentName)
+{
+  return Azure::Messaging::EventHubs::_detail::AmqpDiagnosticsContext{
+      clientId, partitionId, std::move(componentType), std::move(componentName), 1};
+}
+
+std::string CreateConnectionName(
+    std::string const& clientId,
+    std::string const& applicationId,
+    std::string const& partitionId)
+{
+  return clientId + (applicationId.empty() ? std::string{} : "/application/" + applicationId)
+      + "/partition/" + (partitionId.empty() ? std::string("<gateway>") : partitionId)
+      + "/generation/1";
+}
+} // namespace
+
 namespace Azure { namespace Messaging { namespace EventHubs {
 
   ConsumerClient::ConsumerClient(
@@ -25,8 +48,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
       : m_connectionString{connectionString}, m_eventHub{eventHub}, m_consumerGroup{consumerGroup},
-        m_consumerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
-                                              options.TracingProvider)}
+        m_consumerClientOptions(options),
+        m_clientIdentifier{_detail::CreateClientIdentifier("consumer", options.Name)},
+        m_tracingFactory{_detail::CreateTracingContextFactory(options.TracingProvider)}
   {
     auto details
         = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
@@ -36,6 +60,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_targetPort = details.Port;
     m_hostUrl = details.ServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
         + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
+    if (m_consumerClientOptions.Name.empty())
+    {
+      m_consumerClientOptions.Name = m_clientIdentifier;
+    }
   }
 
   ConsumerClient::ConsumerClient(
@@ -45,12 +73,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& consumerGroup,
       ConsumerClientOptions const& options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
-        m_consumerGroup{consumerGroup}, m_credential{credential},
-        m_consumerClientOptions(options), m_tracingFactory{_detail::CreateTracingContextFactory(
-                                              options.TracingProvider)}
+        m_consumerGroup{consumerGroup}, m_credential{credential}, m_consumerClientOptions(options),
+        m_clientIdentifier{_detail::CreateClientIdentifier("consumer", options.Name)},
+        m_tracingFactory{_detail::CreateTracingContextFactory(options.TracingProvider)}
   {
     m_hostUrl = _detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub
         + _detail::EventHubsConsumerGroupsPath + m_consumerGroup;
+    if (m_consumerClientOptions.Name.empty())
+    {
+      m_consumerClientOptions.Name = m_clientIdentifier;
+    }
   }
 
   ConsumerClient::~ConsumerClient()
@@ -133,8 +165,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Context const& context) const
   {
     ConnectionOptions connectOptions;
-    connectOptions.ContainerId
-        = "Consumer for " + m_consumerClientOptions.ApplicationID + " on " + partitionId;
+    connectOptions.ContainerId = CreateConnectionName(
+        m_clientIdentifier, m_consumerClientOptions.ApplicationID, partitionId);
     connectOptions.EnableTrace = _detail::EnableAmqpTrace;
     connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
     connectOptions.Port = m_targetPort;
@@ -162,7 +194,24 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
-      m_connections.emplace(partitionId, CreateConnection(partitionId, context));
+      auto diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier,
+          partitionId,
+          "connection",
+          CreateConnectionName(
+              m_clientIdentifier, m_consumerClientOptions.ApplicationID, partitionId));
+      _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "creating");
+      try
+      {
+        m_connections.emplace(partitionId, CreateConnection(partitionId, context));
+        _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "created");
+      }
+      catch (std::exception const& ex)
+      {
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning, diagnosticsContext, "create_failed", ex.what());
+        throw;
+      }
     }
   }
 
@@ -190,7 +239,20 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      m_sessions.emplace(partitionId, CreateSession(partitionId, context));
+      auto diagnosticsContext
+          = CreateDiagnosticsContext(m_clientIdentifier, partitionId, "session", partitionId);
+      _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "creating");
+      try
+      {
+        m_sessions.emplace(partitionId, CreateSession(partitionId, context));
+        _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "created");
+      }
+      catch (std::exception const& ex)
+      {
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning, diagnosticsContext, "create_failed", ex.what());
+        throw;
+      }
     }
   }
 
@@ -228,6 +290,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         GetSession(partitionId),
         hostUrl,
         m_consumerClientOptions.Name,
+        m_clientIdentifier,
+        partitionId,
         options,
         m_consumerClientOptions.RetryOptions,
         m_tracingFactory,

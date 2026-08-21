@@ -221,6 +221,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     ProducerClientOptions m_producerClientOptions{};
 
+    /// Correlates this client and its AMQP components across lifecycle logs and spans.
+    std::string m_clientIdentifier;
+
     /// The factory used to create the distributed tracing spans of this client.
     Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
 
@@ -246,6 +249,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       std::shared_timed_mutex stackLock;
       std::atomic<std::uint64_t> generation{0};
+      std::atomic<std::uint64_t> nextStackId{0};
+      std::atomic<std::uint64_t> activeStackId{0};
     };
 
     // Protects m_partitionGuards. References into the map stay stable across inserts.
@@ -255,6 +260,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     PartitionGuard& GetPartitionGuard(std::string const& partitionId);
 
     Azure::Core::Amqp::_internal::Connection CreateConnection(
+        std::string const& partitionId,
+        std::uint64_t stackId,
         Azure::Core::Context const& context) const;
     Azure::Core::Amqp::_internal::Session CreateSession(
         std::string const& partitionId,
@@ -285,7 +292,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     void InvalidateSender(
         std::string const& partitionId,
         Azure::Nullable<std::uint64_t> observedGeneration,
-        Azure::Core::Context const& context);
+        Azure::Core::Context const& context,
+        Azure::Nullable<std::string> failureReason = {});
 
     // Sends a batch inside the span that a public Send overload started. This method never
     // starts a span, so one logical send makes one span.

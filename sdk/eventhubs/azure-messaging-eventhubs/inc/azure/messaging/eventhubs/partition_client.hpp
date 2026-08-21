@@ -12,6 +12,8 @@
 #include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <cstdint>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class PartitionClientFactory;
@@ -100,6 +102,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The link name of the receiver. A rebuild reuses this name.
     std::string m_receiverName;
 
+    /// Identifies the owning consumer and partition in lifecycle logs and spans.
+    std::string m_clientIdentifier;
+    std::string m_partitionId;
+
+    /// Increases after each successful receiver reattach.
+    std::uint64_t m_receiverGeneration{1};
+
     /// The offset of the last event received. A rebuild starts just after it.
     Azure::Nullable<std::string> m_lastReceivedOffset;
 
@@ -132,6 +141,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * @param session The AMQP session that carries the message receiver.
      * @param partitionUrl The address of the partition.
      * @param receiverName The link name of the message receiver.
+     * @param clientIdentifier identifies the owning consumer in lifecycle logs and spans.
+     * @param partitionId identifies the partition in lifecycle logs and spans.
      * @param options options used to create the PartitionClient.
      * @param retryOptions controls how many times we should retry an operation in response to being
      * throttled or encountering a transient error.
@@ -144,6 +155,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Azure::Core::Amqp::_internal::Session const& session,
         std::string partitionUrl,
         std::string receiverName,
+        std::string clientIdentifier,
+        std::string partitionId,
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions,
         Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
@@ -151,7 +164,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string fullyQualifiedNamespace);
 
     /// Closes the faulted receiver and attaches a new one starting after the last offset.
-    void RebuildReceiver(Core::Context const& context);
+    void RebuildReceiver(std::uint64_t retryAttempt, Core::Context const& context);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);
   };

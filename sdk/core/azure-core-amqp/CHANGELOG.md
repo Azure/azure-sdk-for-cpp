@@ -34,6 +34,8 @@
 
 ### Other Changes
 
+- uAMQP connection and link failure logs now include the connection container ID or link name. Transitions to an error state use the warning log level.
+
 ## 1.0.0-beta.12 (2026-05-14)
 
 ### Features Added

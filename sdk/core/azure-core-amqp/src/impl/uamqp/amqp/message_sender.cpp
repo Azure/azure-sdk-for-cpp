@@ -248,8 +248,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       sender->m_currentState = MessageSenderStateFromLowLevel(newState);
       if (sender->m_options.EnableTrace)
       {
-        Log::Stream(Logger::Level::Verbose)
-            << "Message sender state changed from " << oldState << " to " << newState << ".";
+        Log::Stream(
+            newState == MESSAGE_SENDER_STATE_ERROR ? Logger::Level::Warning
+                                                   : Logger::Level::Verbose)
+            << "Message sender link '" << sender->m_options.Name << "' state changed from "
+            << oldState << " to " << newState << ".";
       }
       if (sender->m_events)
       {
