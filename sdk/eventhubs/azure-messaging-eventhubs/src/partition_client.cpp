@@ -5,6 +5,7 @@
 
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_diagnostics.hpp"
 #include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
 #include "private/retry_operation.hpp"
@@ -14,6 +15,7 @@
 
 #include <chrono>
 #include <exception>
+#include <sstream>
 #include <thread>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -36,6 +38,42 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     FilterDescription SelectorFilter{"apache.org:selector-filter:string", 0x0000468c00000004};
+
+    _detail::AmqpDiagnosticsContext CreateDiagnosticsContext(
+        std::string const& clientId,
+        std::string const& partitionId,
+        std::string const& receiverName,
+        std::uint64_t stackId)
+    {
+      return _detail::AmqpDiagnosticsContext{clientId, partitionId, "link", receiverName, stackId};
+    }
+
+    _detail::AmqpDiagnosticsContext CreateFailureDiagnosticsContext(
+        std::string const& clientId,
+        std::string const& partitionId,
+        std::string const& receiverName,
+        std::uint64_t receiverGeneration,
+        std::string const& errorCondition)
+    {
+      auto const componentType = _detail::GetAmqpFailureComponentType(errorCondition);
+      if (componentType == "session")
+      {
+        return _detail::AmqpDiagnosticsContext{
+            clientId, partitionId, componentType, partitionId, 1};
+      }
+      if (componentType == "connection")
+      {
+        return _detail::AmqpDiagnosticsContext{clientId, partitionId, componentType, {}, 1};
+      }
+      return CreateDiagnosticsContext(clientId, partitionId, receiverName, receiverGeneration);
+    }
+
+    std::string FormatAmqpError(Azure::Core::Amqp::Models::_internal::AmqpError const& error)
+    {
+      std::ostringstream message;
+      message << error;
+      return message.str();
+    }
 
     std::string GetStartExpression(Models::StartPosition const& startPosition)
     {
@@ -187,6 +225,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::_internal::Session const& session,
       std::string const& partitionUrl,
       std::string const& receiverName,
+      std::string clientIdentifier,
+      std::string partitionId,
       PartitionClientOptions options,
       Azure::Core::Http::Policies::RetryOptions retryOptions,
       Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
@@ -194,20 +234,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string fullyQualifiedNamespace,
       Azure::Core::Context const& context)
   {
-    Azure::Core::Amqp::_internal::MessageReceiver messageReceiver{
-        CreateMessageReceiver(session, partitionUrl, receiverName, options)};
-    messageReceiver.Open(context);
+    auto diagnosticsContext
+        = CreateDiagnosticsContext(clientIdentifier, partitionId, receiverName, 1);
+    LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "attaching");
+    auto amqpTracingContext = StartAmqpSpan(
+        tracingFactory,
+        "PartitionClient.AmqpLink.Open",
+        "receive",
+        eventHubName,
+        fullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        diagnosticsContext,
+        Azure::Nullable<std::uint64_t>{},
+        context,
+        MessagingEntityKind::Source);
+    try
+    {
+      Azure::Core::Amqp::_internal::MessageReceiver messageReceiver{
+          CreateMessageReceiver(session, partitionUrl, receiverName, options)};
+      messageReceiver.Open(amqpTracingContext.Context);
+      LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "attached");
 
-    return PartitionClient(
-        std::move(messageReceiver),
-        session,
-        partitionUrl,
-        receiverName,
-        std::move(options),
-        std::move(retryOptions),
-        std::move(tracingFactory),
-        std::move(eventHubName),
-        std::move(fullyQualifiedNamespace));
+      return PartitionClient(
+          std::move(messageReceiver),
+          session,
+          partitionUrl,
+          receiverName,
+          std::move(clientIdentifier),
+          std::move(partitionId),
+          std::move(options),
+          std::move(retryOptions),
+          std::move(tracingFactory),
+          std::move(eventHubName),
+          std::move(fullyQualifiedNamespace));
+    }
+    catch (std::exception const& ex)
+    {
+      amqpTracingContext.Span.AddEvent(ex);
+      LogAmqpLifecycle(Logger::Level::Warning, diagnosticsContext, "attach_failed", ex.what());
+      throw;
+    }
   }
 
   /** Creates a new PartitionClient
@@ -225,25 +291,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Amqp::_internal::Session const& session,
       std::string partitionUrl,
       std::string receiverName,
+      std::string clientIdentifier,
+      std::string partitionId,
       PartitionClientOptions options,
       Core::Http::Policies::RetryOptions retryOptions,
       Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
       std::string eventHubName,
       std::string fullyQualifiedNamespace)
       : m_receiver{messageReceiver}, m_session{session}, m_partitionUrl{std::move(partitionUrl)},
-        m_receiverName{std::move(receiverName)}, m_partitionOptions{options},
-        m_retryOptions{retryOptions},
-        m_tracingFactory{std::move(tracingFactory)}, m_eventHubName{std::move(eventHubName)},
-        m_fullyQualifiedNamespace{std::move(fullyQualifiedNamespace)}
+        m_receiverName{std::move(receiverName)}, m_clientIdentifier{std::move(clientIdentifier)},
+        m_partitionId{std::move(partitionId)}, m_partitionOptions{options},
+        m_retryOptions{retryOptions}, m_tracingFactory{std::move(tracingFactory)},
+        m_eventHubName{std::move(eventHubName)}, m_fullyQualifiedNamespace{
+                                                     std::move(fullyQualifiedNamespace)}
   {
   }
 
-  void PartitionClient::Close(Core::Context const& context) { m_receiver.Close(context); }
-
-  void PartitionClient::RebuildReceiver(Core::Context const& context)
+  void PartitionClient::Close(Core::Context const& context)
   {
-    Log::Stream(Logger::Level::Informational)
-        << "Rebuild the message receiver for " << m_partitionUrl << ".";
+    auto diagnosticsContext = CreateDiagnosticsContext(
+        m_clientIdentifier, m_partitionId, m_receiverName, m_receiverGeneration);
+    _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "closing");
+    try
+    {
+      m_receiver.Close(context);
+      _detail::LogAmqpLifecycle(Logger::Level::Verbose, diagnosticsContext, "closed");
+    }
+    catch (std::exception const& ex)
+    {
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Warning, diagnosticsContext, "close_failed", ex.what());
+      throw;
+    }
+  }
+
+  void PartitionClient::RebuildReceiver(std::uint64_t retryAttempt, Core::Context const& context)
+  {
+    auto const rebuiltGeneration = m_receiverGeneration + 1;
+    auto diagnosticsContext = CreateDiagnosticsContext(
+        m_clientIdentifier, m_partitionId, m_receiverName, rebuiltGeneration);
+    _detail::LogAmqpLifecycle(Logger::Level::Informational, diagnosticsContext, "reattaching");
 
     try
     {
@@ -255,21 +342,41 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     catch (std::exception const& ex)
     {
-      Log::Stream(Logger::Level::Warning)
-          << "Exception while closing a faulted message receiver: " << ex.what();
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Warning, diagnosticsContext, "close_failed", ex.what());
     }
 
     PartitionClientOptions options{m_partitionOptions};
     options.StartPosition
         = _detail::ResumeStartPosition(m_partitionOptions.StartPosition, m_lastReceivedOffset);
 
-    Azure::Core::Amqp::_internal::MessageReceiver receiver{
-        CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
-    receiver.Open(context);
-    m_receiver = std::move(receiver);
-
-    Log::Stream(Logger::Level::Informational)
-        << "The message receiver for " << m_partitionUrl << " is attached again.";
+    auto amqpTracingContext = _detail::StartAmqpSpan(
+        m_tracingFactory,
+        "PartitionClient.AmqpLink.Open",
+        "receive",
+        m_eventHubName,
+        m_fullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        diagnosticsContext,
+        retryAttempt,
+        context,
+        _detail::MessagingEntityKind::Source);
+    try
+    {
+      Azure::Core::Amqp::_internal::MessageReceiver receiver{
+          CreateMessageReceiver(m_session, m_partitionUrl, m_receiverName, options)};
+      receiver.Open(amqpTracingContext.Context);
+      m_receiver = std::move(receiver);
+      m_receiverGeneration = rebuiltGeneration;
+      _detail::LogAmqpLifecycle(Logger::Level::Informational, diagnosticsContext, "reattached");
+    }
+    catch (std::exception const& ex)
+    {
+      amqpTracingContext.Span.AddEvent(ex);
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Warning, diagnosticsContext, "reattach_failed", ex.what());
+      throw;
+    }
   }
 
   PartitionClient::~PartitionClient()
@@ -282,8 +389,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     catch (std::exception const& ex)
     {
-      Log::Stream(Logger::Level::Warning)
-          << "Exception in PartitionClient::~PartitionClient(): " << ex.what();
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Warning,
+          CreateDiagnosticsContext(
+              m_clientIdentifier, m_partitionId, m_receiverName, m_receiverGeneration),
+          "close_failed",
+          ex.what());
     }
   }
 
@@ -309,7 +420,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_eventHubName,
         m_fullyQualifiedNamespace,
         Azure::Nullable<size_t>{},
-        context);
+        context,
+        _detail::MessagingEntityKind::Source);
 
     try
     {
@@ -332,6 +444,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       // True: the receiver works again. False: return the events held. Throws if none are held.
       auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning,
+            CreateFailureDiagnosticsContext(
+                m_clientIdentifier,
+                m_partitionId,
+                m_receiverName,
+                m_receiverGeneration,
+                error.Condition.ToString()),
+            "failed",
+            FormatAmqpError(error));
         EventHubsException exception{
             _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
         // currentError tracks the last rebuild fault, not the first. m_pendingError takes
@@ -371,7 +493,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
           try
           {
-            RebuildReceiver(tracingContext.Context);
+            RebuildReceiver(static_cast<std::uint64_t>(rebuildAttempt), tracingContext.Context);
             return true;
           }
           catch (Azure::Core::OperationCancelledException const&)
@@ -446,7 +568,34 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         }
         else
         {
-          result = m_receiver.WaitForIncomingMessage(tracingContext.Context);
+          auto diagnosticsContext = CreateDiagnosticsContext(
+              m_clientIdentifier, m_partitionId, m_receiverName, m_receiverGeneration);
+          auto amqpTracingContext = _detail::StartAmqpSpan(
+              m_tracingFactory,
+              "PartitionClient.AmqpReceive",
+              "receive",
+              m_eventHubName,
+              m_fullyQualifiedNamespace,
+              Azure::Nullable<size_t>{},
+              diagnosticsContext,
+              Azure::Nullable<std::uint64_t>{},
+              tracingContext.Context,
+              _detail::MessagingEntityKind::Source);
+          try
+          {
+            result = m_receiver.WaitForIncomingMessage(amqpTracingContext.Context);
+            if (result.second)
+            {
+              EventHubsException receiveFailure{
+                  _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second)};
+              amqpTracingContext.Span.AddEvent(receiveFailure);
+            }
+          }
+          catch (std::exception const& ex)
+          {
+            amqpTracingContext.Span.AddEvent(ex);
+            throw;
+          }
           if (result.first)
           {
             Log::Stream(Logger::Level::Verbose)

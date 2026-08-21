@@ -348,8 +348,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     if (receiver->m_options.EnableTrace)
     {
-      Log::Stream(Logger::Level::Verbose)
-          << "Message receiver state change " << oldState << " -> " << newState;
+      Log::Stream(
+          newState == MESSAGE_RECEIVER_STATE_ERROR ? Logger::Level::Warning
+                                                   : Logger::Level::Verbose)
+          << "Message receiver link '" << receiver->m_options.Name << "' state change " << oldState
+          << " -> " << newState;
     }
     // If the message receiver isn't open, or if it's in the process of being destroyed, ignore
     // this notification.

@@ -31,7 +31,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       std::string const& eventHubName,
       std::string const& fullyQualifiedNamespace,
       Azure::Nullable<size_t> messageCount,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context,
+      MessagingEntityKind entityKind)
   {
     Azure::Core::Tracing::_internal::CreateSpanOptions createOptions;
     createOptions.Kind = spanKind;
@@ -44,7 +45,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       return tracingContext;
     }
     tracingContext.Span.AddAttribute("messaging.system", "eventhubs");
-    tracingContext.Span.AddAttribute("messaging.destination.name", eventHubName);
+    tracingContext.Span.AddAttribute(
+        entityKind == MessagingEntityKind::Source ? "messaging.source.name"
+                                                  : "messaging.destination.name",
+        eventHubName);
     tracingContext.Span.AddAttribute("messaging.operation", operationName);
     tracingContext.Span.AddAttribute(
         Azure::Core::Tracing::_internal::TracingAttributes::NetPeerName.ToString(),
@@ -53,6 +57,58 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     {
       SetMessageCount(tracingFactory, tracingContext.Span, messageCount.Value());
     }
+    return tracingContext;
+  }
+
+  Azure::Core::Tracing::_internal::TracingContextFactory::TracingContext StartAmqpSpan(
+      Azure::Core::Tracing::_internal::TracingContextFactory const& tracingFactory,
+      std::string const& spanName,
+      std::string const& operationName,
+      std::string const& eventHubName,
+      std::string const& fullyQualifiedNamespace,
+      Azure::Nullable<size_t> messageCount,
+      AmqpDiagnosticsContext const& diagnosticsContext,
+      Azure::Nullable<std::uint64_t> retryAttempt,
+      Azure::Core::Context const& context,
+      MessagingEntityKind entityKind)
+  {
+    auto tracingContext = StartSpan(
+        tracingFactory,
+        spanName,
+        Azure::Core::Tracing::_internal::SpanKind::Client,
+        operationName,
+        eventHubName,
+        fullyQualifiedNamespace,
+        messageCount,
+        context,
+        entityKind);
+    if (!tracingFactory.HasTracer())
+    {
+      return tracingContext;
+    }
+
+    auto attributes = tracingFactory.CreateAttributeSet();
+    if (!attributes)
+    {
+      return tracingContext;
+    }
+    attributes->AddAttribute("az.eventhubs.client.id", diagnosticsContext.ClientId);
+    attributes->AddAttribute(
+        "az.eventhubs.partition.id",
+        diagnosticsContext.PartitionId.empty() ? "<gateway>" : diagnosticsContext.PartitionId);
+    attributes->AddAttribute("az.eventhubs.amqp.component.type", diagnosticsContext.ComponentType);
+    attributes->AddAttribute(
+        "az.eventhubs.amqp.component.name",
+        diagnosticsContext.ComponentName.empty() ? "<unnamed>" : diagnosticsContext.ComponentName);
+    attributes->AddAttribute(
+        "az.eventhubs.amqp.component.id", GetAmqpComponentIdentifier(diagnosticsContext));
+    attributes->AddAttribute(
+        "az.eventhubs.amqp.component.generation", diagnosticsContext.ComponentGeneration);
+    if (retryAttempt.HasValue())
+    {
+      attributes->AddAttribute("az.eventhubs.retry.attempt", retryAttempt.Value());
+    }
+    tracingContext.Span.AddAttributes(*attributes);
     return tracingContext;
   }
 

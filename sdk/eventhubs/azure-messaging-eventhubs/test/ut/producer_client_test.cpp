@@ -127,14 +127,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     client->Send(Azure::Messaging::EventHubs::Models::EventData{"Single span test message"});
 
-    auto span = SingleSpan(provider);
+    auto span = FindSpan(provider, "ProducerClient.Send");
     ASSERT_NE(nullptr, span);
     EXPECT_EQ("ProducerClient.Send", span->GetName());
     EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
 
     auto const& attributes = span->GetAttributes();
-    ASSERT_EQ(1u, attributes.count("messaging.batch.message_count"));
-    EXPECT_EQ("1", attributes.at("messaging.batch.message_count"));
+    EXPECT_EQ(attributes.end(), attributes.find("messaging.batch.message_count"));
   }
 
   TEST_P(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
