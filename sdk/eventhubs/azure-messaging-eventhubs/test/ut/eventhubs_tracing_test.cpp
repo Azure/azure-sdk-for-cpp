@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#include "../src/private/eventhubs_diagnostics.hpp"
 #include "../src/private/eventhubs_tracing.hpp"
 #include "../src/private/eventhubs_utilities.hpp"
 #include "../src/private/package_version.hpp"
@@ -442,6 +443,47 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         _detail::FormatAmqpLifecycleEvent(
             diagnosticsContext, "failed", "can't send\nconnection closed")
             .find("detail='can\\'t send\\nconnection closed'"));
+  }
+
+  TEST(EventHubsTracingTest, CloseAmqpComponentLogsClosedAfterSuccessfulClose)
+  {
+    _detail::AmqpDiagnosticsContext diagnosticsContext{
+        "producer:test-client", "2", "link", "sender-link", 7};
+    std::vector<std::string> events;
+    auto log = [&events](
+                   Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const&,
+                   std::string const& eventName,
+                   std::string const&) { events.push_back(eventName); };
+
+    _detail::CloseAmqpComponent(
+        diagnosticsContext, false, {}, [&events]() { events.push_back("close"); }, log);
+
+    EXPECT_EQ((std::vector<std::string>{"closing", "close", "closed"}), events);
+  }
+
+  TEST(EventHubsTracingTest, CloseAmqpComponentLogsFailureWithoutClosed)
+  {
+    _detail::AmqpDiagnosticsContext diagnosticsContext{
+        "producer:test-client", "2", "link", "sender-link", 7};
+    std::vector<std::string> events;
+    auto log = [&events](
+                   Azure::Core::Diagnostics::Logger::Level,
+                   _detail::AmqpDiagnosticsContext const&,
+                   std::string const& eventName,
+                   std::string const&) { events.push_back(eventName); };
+
+    _detail::CloseAmqpComponent(
+        diagnosticsContext,
+        false,
+        {},
+        [&events]() {
+          events.push_back("close");
+          throw std::runtime_error("socket closed");
+        },
+        log);
+
+    EXPECT_EQ((std::vector<std::string>{"closing", "close", "close_failed"}), events);
   }
 
   TEST(EventHubsTracingTest, ClientIdentifiersAreUniqueWithTheSameConfiguredName)

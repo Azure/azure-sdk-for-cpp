@@ -7,6 +7,7 @@
 #include <azure/core/diagnostics/logger.hpp>
 
 #include <cstdint>
+#include <exception>
 #include <string>
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
@@ -45,5 +46,35 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       AmqpDiagnosticsContext const& diagnosticsContext,
       std::string const& eventName,
       std::string const& detail = {});
+
+  template <typename CloseFunction, typename LogFunction>
+  void CloseAmqpComponent(
+      AmqpDiagnosticsContext const& diagnosticsContext,
+      bool discarded,
+      std::string const& detail,
+      CloseFunction close,
+      LogFunction log)
+  {
+    log(discarded ? Azure::Core::Diagnostics::Logger::Level::Informational
+                  : Azure::Core::Diagnostics::Logger::Level::Verbose,
+        diagnosticsContext,
+        discarded ? "discarded" : "closing",
+        detail);
+    try
+    {
+      close();
+      if (!discarded)
+      {
+        log(Azure::Core::Diagnostics::Logger::Level::Verbose, diagnosticsContext, "closed", {});
+      }
+    }
+    catch (std::exception const& ex)
+    {
+      log(Azure::Core::Diagnostics::Logger::Level::Warning,
+          diagnosticsContext,
+          "close_failed",
+          ex.what());
+    }
+  }
 
 }}}} // namespace Azure::Messaging::EventHubs::_detail

@@ -755,98 +755,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     }
 
-    auto const eventName = failureReason.HasValue() ? "discarded" : "closed";
+    // The network closes and their lifecycle logs run outside every lock, so no send waits on them.
     auto const detail = failureReason.HasValue() ? failureReason.Value() : std::string{};
     if (sender)
     {
-      _detail::LogAmqpLifecycle(
-          failureReason.HasValue() ? Logger::Level::Informational : Logger::Level::Verbose,
-          CreateDiagnosticsContext(
-              m_clientIdentifier, partitionId, "link", m_producerClientOptions.Name, stackId),
-          eventName,
-          detail);
-    }
-    if (session)
-    {
-      _detail::LogAmqpLifecycle(
-          failureReason.HasValue() ? Logger::Level::Informational : Logger::Level::Verbose,
-          CreateDiagnosticsContext(
-              m_clientIdentifier, partitionId, "session", partitionId, stackId),
-          eventName,
-          detail);
-    }
-    if (connection)
-    {
-      _detail::LogAmqpLifecycle(
-          failureReason.HasValue() ? Logger::Level::Informational : Logger::Level::Verbose,
-          CreateDiagnosticsContext(
-              m_clientIdentifier,
-              partitionId,
-              "connection",
-              CreateConnectionName(
-                  m_clientIdentifier, m_producerClientOptions.ApplicationID, partitionId, stackId),
-              stackId),
-          eventName,
-          detail);
-    }
-
-    // The network closes run outside every lock, so no send waits on them.
-    if (sender)
-    {
-      try
-      {
-        sender->Close(context);
-      }
-      catch (std::exception const& ex)
-      {
-        _detail::LogAmqpLifecycle(
-            Logger::Level::Warning,
-            CreateDiagnosticsContext(
-                m_clientIdentifier, partitionId, "link", m_producerClientOptions.Name, stackId),
-            "close_failed",
-            ex.what());
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "link", m_producerClientOptions.Name, stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&sender, &context]() { sender->Close(context); },
+          _detail::LogAmqpLifecycle);
     }
 #if ENABLE_RUST_AMQP
     if (session)
     {
-      try
-      {
-        session->End(context);
-      }
-      catch (std::exception const& ex)
-      {
-        _detail::LogAmqpLifecycle(
-            Logger::Level::Warning,
-            CreateDiagnosticsContext(
-                m_clientIdentifier, partitionId, "session", partitionId, stackId),
-            "close_failed",
-            ex.what());
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "session", partitionId, stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&session, &context]() { session->End(context); },
+          _detail::LogAmqpLifecycle);
     }
     if (connection)
     {
-      try
-      {
-        connection->Close(context);
-      }
-      catch (std::exception const& ex)
-      {
-        _detail::LogAmqpLifecycle(
-            Logger::Level::Warning,
-            CreateDiagnosticsContext(
-                m_clientIdentifier,
-                partitionId,
-                "connection",
-                CreateConnectionName(
-                    m_clientIdentifier,
-                    m_producerClientOptions.ApplicationID,
-                    partitionId,
-                    stackId),
-                stackId),
-            "close_failed",
-            ex.what());
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier,
+          partitionId,
+          "connection",
+          CreateConnectionName(
+              m_clientIdentifier, m_producerClientOptions.ApplicationID, partitionId, stackId),
+          stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&connection, &context]() { connection->Close(context); },
+          _detail::LogAmqpLifecycle);
     }
 #endif
 
