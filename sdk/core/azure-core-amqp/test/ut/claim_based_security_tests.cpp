@@ -371,6 +371,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         EXPECT_NE(std::string::npos, what.find("testEntity")) << what;
         EXPECT_NE(std::string::npos, what.find("ConnectionImpl::AuthenticateAudience")) << what;
         EXPECT_EQ(std::string::npos, what.find(sentinel)) << what;
+
+        // The failed open must arrive as the typed exception, so a caller can read the result
+        // without matching this text. Catching the base type above is the other half of the
+        // contract: an existing handler still sees it.
+        auto const* typed
+            = dynamic_cast<Azure::Core::Amqp::_detail::CbsOpenFailedException const*>(&e);
+        ASSERT_NE(nullptr, typed);
+        EXPECT_EQ(Azure::Core::Amqp::_detail::CbsOpenResult::Error, typed->Result);
       }
       EXPECT_TRUE(caught);
 
