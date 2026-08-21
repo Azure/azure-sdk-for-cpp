@@ -49,11 +49,10 @@
 # ServiceOwners:                                                   @Azure/azure-sdk-write-attestation
 
 # PRLabel: %EngSys
-/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @weshaggard
+/sdk/template/                                                     @danieljurek @LarryOsterman @RickWinter @antkmsft
 
-# AzureSdkOwners:                                                  @danieljurek
 # ServiceLabel: %EngSys
-# ServiceOwners:                                                   @danieljurek @LarryOsterman @RickWinter @weshaggard
+# ServiceOwners:                                                   @danieljurek @antkmsft @LarryOsterman @RickWinter
 
 # PRLabel: %Event Hubs
 /sdk/eventhubs/                                                    @axisc @hmlam @sjkwak @j7nw4r @meetamitbhatia @SwayGom @sagar0207
@@ -88,7 +87,7 @@
 # Eng Sys
 ###########
 
-/eng/                    @danieljurek @mikeharder @benbp
+/eng/                    @danieljurek @mikeharder @benbp @antkmsft
 /eng/common/             @Azure/azure-sdk-eng
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
