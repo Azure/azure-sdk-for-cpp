@@ -92,16 +92,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     {
       return tracingContext;
     }
+    // The OpenTelemetry attribute set keeps non-owning string views until AddAttributes runs.
+    // Keep computed values alive through that call.
+    auto const partitionId = diagnosticsContext.PartitionId.empty()
+        ? std::string{"<gateway>"}
+        : diagnosticsContext.PartitionId;
+    auto const componentName = diagnosticsContext.ComponentName.empty()
+        ? std::string{"<unnamed>"}
+        : diagnosticsContext.ComponentName;
+    auto const componentId = GetAmqpComponentIdentifier(diagnosticsContext);
     attributes->AddAttribute("az.eventhubs.client.id", diagnosticsContext.ClientId);
-    attributes->AddAttribute(
-        "az.eventhubs.partition.id",
-        diagnosticsContext.PartitionId.empty() ? "<gateway>" : diagnosticsContext.PartitionId);
+    attributes->AddAttribute("az.eventhubs.partition.id", partitionId);
     attributes->AddAttribute("az.eventhubs.amqp.component.type", diagnosticsContext.ComponentType);
-    attributes->AddAttribute(
-        "az.eventhubs.amqp.component.name",
-        diagnosticsContext.ComponentName.empty() ? "<unnamed>" : diagnosticsContext.ComponentName);
-    attributes->AddAttribute(
-        "az.eventhubs.amqp.component.id", GetAmqpComponentIdentifier(diagnosticsContext));
+    attributes->AddAttribute("az.eventhubs.amqp.component.name", componentName);
+    attributes->AddAttribute("az.eventhubs.amqp.component.id", componentId);
     attributes->AddAttribute(
         "az.eventhubs.amqp.component.generation", diagnosticsContext.ComponentGeneration);
     if (retryAttempt.HasValue())
