@@ -506,9 +506,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     // Existing handlers keep working: it is still a std::runtime_error and still carries the same
     // text, so no caller that does not know the new type has to change.
-    auto const text
-        = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
-            CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate);
+    auto const text = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+        CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate);
     try
     {
       throw CbsOpenFailedException(CbsOpenResult::Error, text);

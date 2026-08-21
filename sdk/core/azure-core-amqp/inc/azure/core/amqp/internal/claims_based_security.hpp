@@ -37,7 +37,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
    *
    * The three failures need different handling and cannot be told apart from the message text:
    * `Error` reached the transport and may be treated as transient, while `Cancelled` is the
-   * caller's own cancellation or deadline and `Invalid` is a state error - retrying either is wrong.
+   * caller's own cancellation or deadline and `Invalid` is a state error - retrying either is
+   * wrong.
    *
    * Derives from `std::runtime_error` with the same message, so existing handlers keep working.
    */
