@@ -356,8 +356,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // When the connection transitions into the error or end state, it is no longer pollable.
       if (connection->m_options.EnableTrace)
       {
-        Log::Stream(Logger::Level::Verbose)
-            << "Connection " << connection->m_containerId << " state changed to " << newState;
+        Log::Stream(
+            newState == CONNECTION_STATE_ERROR ? Logger::Level::Warning : Logger::Level::Verbose)
+            << "AMQP connection '" << connection->m_containerId << "' state changed to "
+            << newState;
       }
     }
     // Nothing polls the connection after this point, so every operation that

@@ -9,7 +9,10 @@
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/nullable.hpp>
+
+#include <cstdint>
 
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
@@ -99,6 +102,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// The link name of the receiver. A rebuild reuses this name.
     std::string m_receiverName;
 
+    /// Identifies the owning consumer and partition in lifecycle logs and spans.
+    std::string m_clientIdentifier;
+    std::string m_partitionId;
+
+    /// Increases after each successful receiver reattach.
+    std::uint64_t m_receiverGeneration{1};
+
     /// The offset of the last event received. A rebuild starts just after it.
     Azure::Nullable<std::string> m_lastReceivedOffset;
 
@@ -116,26 +126,45 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
 
+    /// The factory used to create the distributed tracing spans of this client.
+    Azure::Core::Tracing::_internal::TracingContextFactory m_tracingFactory;
+
+    /// The name of the Event Hub.
+    std::string m_eventHubName;
+
+    /// The fully qualified namespace of the Event Hub.
+    std::string m_fullyQualifiedNamespace;
+
     /** Creates a new PartitionClient
      *
      * @param messageReceiver Message Receiver for the partition client.
      * @param session The AMQP session that carries the message receiver.
      * @param partitionUrl The address of the partition.
      * @param receiverName The link name of the message receiver.
+     * @param clientIdentifier identifies the owning consumer in lifecycle logs and spans.
+     * @param partitionId identifies the partition in lifecycle logs and spans.
      * @param options options used to create the PartitionClient.
      * @param retryOptions controls how many times we should retry an operation in response to being
      * throttled or encountering a transient error.
+     * @param tracingFactory factory used to create the distributed tracing spans.
+     * @param eventHubName the name of the Event Hub.
+     * @param fullyQualifiedNamespace the fully qualified namespace of the Event Hub.
      */
     PartitionClient(
         Azure::Core::Amqp::_internal::MessageReceiver const& messageReceiver,
         Azure::Core::Amqp::_internal::Session const& session,
         std::string partitionUrl,
         std::string receiverName,
+        std::string clientIdentifier,
+        std::string partitionId,
         PartitionClientOptions options,
-        Core::Http::Policies::RetryOptions retryOptions);
+        Core::Http::Policies::RetryOptions retryOptions,
+        Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
+        std::string eventHubName,
+        std::string fullyQualifiedNamespace);
 
     /// Closes the faulted receiver and attaches a new one starting after the last offset.
-    void RebuildReceiver(Core::Context const& context);
+    void RebuildReceiver(std::uint64_t retryAttempt, Core::Context const& context);
 
     std::string GetStartExpression(Models::StartPosition const& startPosition);
   };

@@ -246,13 +246,102 @@ Azure::Messaging::EventHubs::PartitionClient partitionClient
 auto events = partitionClient.ReceiveEvents(1);
 ```
 
+## Distributed tracing
+
+The `ProducerClient` and the `PartitionClient` create distributed tracing spans through the Azure Core tracing API. This package does not depend on opentelemetry-cpp. The application creates the OpenTelemetry tracer provider and links the `azure-core-tracing-opentelemetry` package.
+
+To get the spans, set the `TracingProvider` field on the client options. The Event Hubs options structs declare this field at the top level:
+
+```cpp
+#include <azure/core/tracing/opentelemetry/opentelemetry.hpp>
+#include <azure/messaging/eventhubs.hpp>
+
+// Your Event Hubs namespace connection string is available in the Azure portal.
+std::string connectionString = "<connection_string>";
+std::string eventHubName = "<event_hub_name>";
+
+// Use the opentelemetry-cpp tracer provider of the application.
+opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider> tracerProvider
+    = opentelemetry::trace::Provider::GetTracerProvider();
+
+std::shared_ptr<Azure::Core::Tracing::TracerProvider> provider
+    = Azure::Core::Tracing::OpenTelemetry::OpenTelemetryProvider::Create(tracerProvider);
+
+Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+producerOptions.TracingProvider = provider;
+Azure::Messaging::EventHubs::ProducerClient producer(
+    connectionString, eventHubName, producerOptions);
+
+Azure::Messaging::EventHubs::ConsumerClientOptions consumerOptions;
+consumerOptions.TracingProvider = provider;
+Azure::Messaging::EventHubs::ConsumerClient consumer(
+    connectionString,
+    eventHubName,
+    Azure::Messaging::EventHubs::DefaultConsumerGroup,
+    consumerOptions);
+```
+
+The clients create these operation spans:
+
+| Span name | Span kind | Notes |
+|---|---|---|
+| `ProducerClient.Send` | Producer | One span for each `Send` call. The span covers all the retry attempts. The overloads that take events also create the batch inside the span. Batch and vector `ProducerClient.Send` operation spans receive the `messaging.batch.message_count` attribute. Single-event sends do not. |
+| `PartitionClient.ReceiveEvents` | Client | One span for each `ReceiveEvents` call. |
+
+The clients also create child spans around calls into the AMQP transport:
+
+| Span name | What its duration measures |
+|---|---|
+| `ProducerClient.AmqpLink.Open` | Sender-link attachment or reattachment. On uAMQP, an initial attachment can also include lazy connection and session establishment. A retry can create another span. |
+| `ProducerClient.AmqpSend` | The synchronous AMQP send through the service disposition. Every child span receives the internal batch count, including a single-event send. The `az.eventhubs.retry.attempt` attribute identifies the attempt. |
+| `PartitionClient.AmqpLink.Open` | Receiver-link attachment or reattachment. On uAMQP, an initial attachment also includes lazy connection and session establishment. |
+| `PartitionClient.AmqpReceive` | Time blocked in the AMQP transport waiting for a message or transport error. More than one can occur during one `ReceiveEvents` call. |
+
+The operation span duration is total SDK latency as observed by the caller. Subtracting the non-overlapping child-span durations from the operation duration gives the time spent in SDK work, retry delay, and locally queued message processing. The AMQP child duration is the client-observed service round-trip boundary; it does not isolate processing time inside the Event Hubs service. A receive can complete from AMQP prefetch, so `PartitionClient.AmqpReceive` can be shorter than a network round trip.
+
+The spans have these attributes. The names follow the OpenTelemetry semantic conventions version 1.17.0, which is the schema of the `azure-core-tracing-opentelemetry` package:
+
+| Attribute | Value |
+|---|---|
+| `az.namespace` | `Microsoft.EventHub` |
+| `messaging.system` | `eventhubs` |
+| `messaging.destination.name` | The Event Hub name on send spans. |
+| `messaging.source.name` | The Event Hub name on receive spans. |
+| `messaging.operation` | `publish` on a send span, `receive` on a receive span. |
+| `messaging.batch.message_count` | The number of events in the operation. Batch and vector `ProducerClient.Send` spans receive this attribute. Every `ProducerClient.AmqpSend` child span receives the internal batch count. A `PartitionClient.ReceiveEvents` span gets this attribute when the call is successful. |
+| `net.peer.name` | The fully qualified namespace. |
+
+AMQP child spans also have these Event Hubs diagnostic attributes:
+
+| Attribute | Value |
+|---|---|
+| `az.eventhubs.client.id` | A unique ID for the producer or consumer. It includes the configured client name when one exists and a generated UUID. |
+| `az.eventhubs.partition.id` | The partition ID, or `<gateway>` for the producer gateway link. |
+| `az.eventhubs.amqp.component.type` | `link`. |
+| `az.eventhubs.amqp.component.name` | The AMQP link name. |
+| `az.eventhubs.amqp.component.id` | A unique ID composed from the client, partition, component generation, and type. |
+| `az.eventhubs.amqp.component.generation` | Starts at 1 and increases when the component is recreated. |
+| `az.eventhubs.retry.attempt` | The one-based retry or rebuild attempt, when applicable. |
+
+The instrumentation scope is `azure-messaging-eventhubs-cpp` with the package version.
+
+When the application does not set `TracingProvider`, the client creates no spans and records nothing. There is no global fallback provider.
+
+For the OpenTelemetry provider setup, see [Distributed Tracing in the C++ SDK][distributed_tracing].
 
 # Troubleshooting
 
 ## Logging
 
-The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to 
-enable diagnostics.
+The EventHubs SDK client uses the [Azure SDK log message](https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/core/azure-core#sdk-log-messages) functionality to enable diagnostics.
+
+AMQP lifecycle records start with `Event Hubs AMQP lifecycle:` and contain queryable `key='value'` fields. `client.id`, `partition.id`, `component.type`, `component.name`, `component.id`, and `component.generation` identify the exact connection, session, or link. The `event` field records creation, attachment, failure, discard, close, and recreation. Failure records use the warning level; successful recreations use the informational level; initial creation and normal close records use the verbose level.
+
+Failure records use the AMQP error-condition namespace to attribute `amqp:connection:*` and `amqp:session:*` failures to the connection or session. Other failures are attributed to the link operation where the client observed them.
+
+The producer gives every rebuilt connection, session, and link the same component generation. A receiver reattachment increases the link generation while keeping its owning connection and session. Low-level uAMQP connection and link failure records include the same connection container ID or link name, so they can be correlated with the Event Hubs lifecycle records.
+
+Azure Core does not currently expose a provider-neutral metrics API to service libraries. Applications can derive failure and recreation counters from lifecycle records, and latency histograms from the operation and AMQP child span durations.
 
 
 ## Contributing
@@ -296,6 +385,7 @@ Azure SDK for C++ is licensed under the [MIT](https://github.com/Azure/azure-sdk
 [producer_client]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-messaging-eventhubs/latest/class_azure_1_1_messaging_1_1_event_hubs_1_1_producer_client.html
 
 [source]: https://github.com/Azure/azure-sdk-for-cpp/tree/main/sdk/eventhubs
+[distributed_tracing]: https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/DistributedTracing.md
 [azure_identity_pkg]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-identity/latest/index.html
 [default_azure_credential]: https://azuresdkdocs.z19.web.core.windows.net/cpp/azure-identity/latest/index.html#defaultazurecredential
 

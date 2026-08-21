@@ -4,10 +4,12 @@
 // cspell: words
 
 #include "eventhubs_test_base.hpp"
+#include "eventhubs_tracing_test_doubles.hpp"
 
 #include <azure/core/amqp/internal/connection_string_credential.hpp>
 #include <azure/core/context.hpp>
 #include <azure/core/internal/environment.hpp>
+#include <azure/core/internal/tracing/service_tracing.hpp>
 #include <azure/core/uuid.hpp>
 #include <azure/identity.hpp>
 #include <azure/messaging/eventhubs.hpp>
@@ -16,6 +18,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <memory>
 #include <mutex>
 #include <numeric>
 #include <string>
@@ -105,6 +108,32 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     // Send using a vector of implicit EventData constructor with a binary buffer.
     client->Send({{12, 13, 14, 15}, {16, 17, 18, 19}});
+  }
+
+  // The send success path needs a live AMQP link. It shows a second span when the convenience
+  // overload starts one span and then calls the batch overload.
+  TEST_P(ProducerClientTest, SendEventSpan_LIVEONLY_)
+  {
+    auto provider = std::make_shared<TestTracingProvider>();
+
+    Azure::Messaging::EventHubs::ProducerClientOptions producerOptions;
+    producerOptions.Name = testing::UnitTest::GetInstance()->current_test_case()->name();
+    producerOptions.ApplicationID
+        = std::string(testing::UnitTest::GetInstance()->current_test_info()->name())
+        + " Application";
+    producerOptions.TracingProvider = provider;
+
+    auto client{CreateProducerClient("", producerOptions)};
+
+    client->Send(Azure::Messaging::EventHubs::Models::EventData{"Single span test message"});
+
+    auto span = FindSpan(provider, "ProducerClient.Send");
+    ASSERT_NE(nullptr, span);
+    EXPECT_EQ("ProducerClient.Send", span->GetName());
+    EXPECT_EQ(Azure::Core::Tracing::_internal::SpanKind::Producer, span->GetKind());
+
+    auto const& attributes = span->GetAttributes();
+    EXPECT_EQ(attributes.end(), attributes.find("messaging.batch.message_count"));
   }
 
   TEST_P(ProducerClientTest, GetEventHubProperties_LIVEONLY_)
