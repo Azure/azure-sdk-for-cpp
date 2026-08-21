@@ -80,7 +80,8 @@ void ApplyBearerToken(
     Azure::Core::Http::Request& request,
     Azure::Core::Credentials::AccessToken const& token)
 {
-  request.SetHeader("authorization", "Bearer " + token.Token);
+  request.SetHeader(
+      "authorization", (token.TokenType.empty() ? "Bearer" : token.TokenType) + " " + token.Token);
 }
 } // namespace
 
