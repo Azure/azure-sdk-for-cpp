@@ -570,31 +570,33 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           auto diagnosticsContext = CreateDiagnosticsContext(
               m_clientIdentifier, m_partitionId, m_receiverName, m_receiverGeneration);
-          auto amqpTracingContext = _detail::StartAmqpSpan(
-              m_tracingFactory,
-              "PartitionClient.AmqpReceive",
-              "receive",
-              m_eventHubName,
-              m_fullyQualifiedNamespace,
-              Azure::Nullable<size_t>{},
-              diagnosticsContext,
-              Azure::Nullable<std::uint64_t>{},
-              tracingContext.Context,
-              _detail::MessagingEntityKind::Source);
-          try
           {
-            result = m_receiver.WaitForIncomingMessage(amqpTracingContext.Context);
-            if (result.second)
+            auto amqpTracingContext = _detail::StartAmqpSpan(
+                m_tracingFactory,
+                "PartitionClient.AmqpReceive",
+                "receive",
+                m_eventHubName,
+                m_fullyQualifiedNamespace,
+                Azure::Nullable<size_t>{},
+                diagnosticsContext,
+                Azure::Nullable<std::uint64_t>{},
+                tracingContext.Context,
+                _detail::MessagingEntityKind::Source);
+            try
             {
-              EventHubsException receiveFailure{
-                  _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second)};
-              amqpTracingContext.Span.AddEvent(receiveFailure);
+              result = m_receiver.WaitForIncomingMessage(amqpTracingContext.Context);
+              if (result.second)
+              {
+                EventHubsException receiveFailure{
+                    _detail::EventHubsExceptionFactory::CreateEventHubsException(result.second)};
+                amqpTracingContext.Span.AddEvent(receiveFailure);
+              }
             }
-          }
-          catch (std::exception const& ex)
-          {
-            amqpTracingContext.Span.AddEvent(ex);
-            throw;
+            catch (std::exception const& ex)
+            {
+              amqpTracingContext.Span.AddEvent(ex);
+              throw;
+            }
           }
           if (result.first)
           {
