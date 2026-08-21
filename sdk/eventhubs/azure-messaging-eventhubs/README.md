@@ -285,7 +285,7 @@ The clients create these operation spans:
 
 | Span name | Span kind | Notes |
 |---|---|---|
-| `ProducerClient.Send` | Producer | One span for each `Send` call. The span covers all the retry attempts. The overloads that take events also create the batch inside the span. |
+| `ProducerClient.Send` | Producer | One span for each `Send` call. The span covers all the retry attempts. The overloads that take events also create the batch inside the span. Batch and vector `ProducerClient.Send` operation spans receive the `messaging.batch.message_count` attribute. Single-event sends do not. |
 | `PartitionClient.ReceiveEvents` | Client | One span for each `ReceiveEvents` call. |
 
 The clients also create child spans around calls into the AMQP transport:
@@ -293,7 +293,7 @@ The clients also create child spans around calls into the AMQP transport:
 | Span name | What its duration measures |
 |---|---|
 | `ProducerClient.AmqpLink.Open` | Sender-link attachment or reattachment. On uAMQP, an initial attachment can also include lazy connection and session establishment. A retry can create another span. |
-| `ProducerClient.AmqpSend` | The synchronous AMQP send through the service disposition. The `az.eventhubs.retry.attempt` attribute identifies the attempt. |
+| `ProducerClient.AmqpSend` | The synchronous AMQP send through the service disposition. Every child span receives the internal batch count, including a single-event send. The `az.eventhubs.retry.attempt` attribute identifies the attempt. |
 | `PartitionClient.AmqpLink.Open` | Receiver-link attachment or reattachment. On uAMQP, an initial attachment also includes lazy connection and session establishment. |
 | `PartitionClient.AmqpReceive` | Time blocked in the AMQP transport waiting for a message or transport error. More than one can occur during one `ReceiveEvents` call. |
 
@@ -308,7 +308,7 @@ The spans have these attributes. The names follow the OpenTelemetry semantic con
 | `messaging.destination.name` | The Event Hub name on send spans. |
 | `messaging.source.name` | The Event Hub name on receive spans. |
 | `messaging.operation` | `publish` on a send span, `receive` on a receive span. |
-| `messaging.batch.message_count` | The number of events in the operation. A receive span gets this attribute when the call is successful. |
+| `messaging.batch.message_count` | The number of events in the operation. Batch and vector `ProducerClient.Send` spans receive this attribute. Every `ProducerClient.AmqpSend` child span receives the internal batch count. A `PartitionClient.ReceiveEvents` span gets this attribute when the call is successful. |
 | `net.peer.name` | The fully qualified namespace. |
 
 AMQP child spans also have these Event Hubs diagnostic attributes:
