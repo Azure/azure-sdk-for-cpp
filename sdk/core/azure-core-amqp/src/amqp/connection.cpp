@@ -151,7 +151,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
       auto const openStart = std::chrono::steady_clock::now();
-      auto cbsOpenStatus = claimsBasedSecurity->Open(context);
+      CbsOpenResult cbsOpenStatus{CbsOpenResult::Invalid};
+      try
+      {
+        cbsOpenStatus = claimsBasedSecurity->Open(context);
+      }
+      catch (Azure::Core::OperationCancelledException const&)
+      {
+        // The caller's own cancellation. It is not an open result, so it reaches the caller
+        // unchanged.
+        throw;
+      }
+      catch (std::runtime_error const& ex)
+      {
+        // The Rust backend reports every open failure by throwing and returns Ok otherwise, so it
+        // never yields a non-Ok result. Classify the throw here, so the exception carries the same
+        // contract on both backends. A cancelled context is the one case a caller must not retry,
+        // and it is the only distinction available at this point.
+        cbsOpenStatus = context.IsCancelled() ? CbsOpenResult::Cancelled : CbsOpenResult::Error;
+        Log::Stream(Logger::Level::Warning)
+            << "The claims based security open threw: " << ex.what();
+      }
       if (cbsOpenStatus != CbsOpenResult::Ok)
       {
         auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -165,7 +185,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             caller,
             connection ? connection->GetDiagnosticSummary() : std::string{},
             elapsed);
-        throw std::runtime_error(DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
+        throw CbsOpenFailedException(
+            cbsOpenStatus, DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
       }
 
       try

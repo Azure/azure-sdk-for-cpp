@@ -7,6 +7,9 @@
 
 #include <azure/core/context.hpp>
 
+#include <stdexcept>
+#include <string>
+
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl;
 
@@ -29,6 +32,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     Cancelled,
   };
   std::ostream& operator<<(std::ostream& os, CbsOpenResult operationResult);
+
+  /** @brief Thrown when the $cbs management client could not be opened.
+   *
+   * The three failures need different handling and cannot be told apart from the message text:
+   * `Error` reached the transport and may be treated as transient, while `Cancelled` is the
+   * caller's own cancellation or deadline and `Invalid` is a state error - retrying either is
+   * wrong.
+   *
+   * Derives from `std::runtime_error` with the same message, so existing handlers keep working.
+   */
+  class CbsOpenFailedException final : public std::runtime_error {
+  public:
+    CbsOpenFailedException(CbsOpenResult result, std::string const& what)
+        : std::runtime_error(what), Result(result)
+    {
+    }
+
+    /** @brief The result reported by the failed open. */
+    CbsOpenResult Result;
+  };
 
   enum class CbsTokenType
   {

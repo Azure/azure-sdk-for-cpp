@@ -10,6 +10,7 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/claims_based_security.hpp>
 #include <azure/core/amqp/internal/message_sender.hpp>
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
@@ -105,8 +106,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       EventDataBatchOptions const& options,
       Core::Context const& context)
   {
-    // No retry loop wraps this call. A poisoned stack would fail here forever.
-    EnsureSenderOrInvalidate(options.PartitionId, context);
+    EstablishSenderWithRetry(options.PartitionId, context);
 
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
@@ -142,7 +142,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             << (options.PartitionId.empty() ? std::string("<gateway>") : options.PartitionId)
             << "'. Discard the stack and build it again: " << ex.what() << std::endl;
         InvalidateSender(options.PartitionId, observedGeneration, context);
-        EnsureSenderOrInvalidate(options.PartitionId, context);
+        EstablishSenderWithRetry(options.PartitionId, context);
         std::uint64_t rebuiltGeneration = 0;
         optionsToUse.MaxBytes = readMaxMessageSize(rebuiltGeneration);
       }
@@ -365,6 +365,43 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         InvalidateSender(partitionId, observedGeneration, context);
       }
       throw;
+    }
+  }
+
+  // Establishing the stack resolves the host, opens the socket, negotiates TLS and runs the CBS
+  // handshake, so it is the step most exposed to a transient transport failure. `Send` runs under
+  // `RetryOperation`; the batch path did not, so a burst after an idle period lost every event
+  // whose stack failed to build.
+  //
+  // Retry once, only for CbsOpenResult::Error - see CbsOpenFailedException. The bound is one
+  // attempt because uAMQP logs the transport reason but returns no value carrying it, so `Error`
+  // cannot separate a transient failure from a permanent one; do not make this a loop.
+  // `EnsureSenderOrInvalidate` invalidates before it rethrows, so the retry builds a new
+  // connection rather than reusing a socket a failed open may have left non-closed.
+  void ProducerClient::EstablishSenderWithRetry(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
+  {
+    try
+    {
+      EnsureSenderOrInvalidate(partitionId, context);
+    }
+    catch (Azure::Core::Amqp::_detail::CbsOpenFailedException const& cbsFailure)
+    {
+      // Anything that is not a retryable CBS open failure is never caught here, so it propagates
+      // untouched.
+      if (cbsFailure.Result != Azure::Core::Amqp::_detail::CbsOpenResult::Error
+          || context.IsCancelled())
+      {
+        throw;
+      }
+
+      Log::Stream(Logger::Level::Warning)
+          << "Could not establish the message sender for partition '"
+          << (partitionId.empty() ? std::string("<gateway>") : partitionId)
+          << "'. Building the stack again for one final attempt: " << cbsFailure.what()
+          << std::endl;
+      EnsureSenderOrInvalidate(partitionId, context);
     }
   }
 
