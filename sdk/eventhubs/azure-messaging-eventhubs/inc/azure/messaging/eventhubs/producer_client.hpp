@@ -264,6 +264,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string const& partitionId,
         Azure::Core::Context const& context);
 
+    // Calls EnsureSenderOrInvalidate, and makes one further attempt when the claims based
+    // security open reported CbsOpenResult::Error.
+    void EstablishSenderWithRetry(
+        std::string const& partitionId,
+        Azure::Core::Context const& context);
+
     // Discards the sender, session, and connection for the partition. A null generation,
     // as Close passes, removes whatever is present regardless of generation.
     void InvalidateSender(
