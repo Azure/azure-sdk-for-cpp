@@ -292,7 +292,7 @@ The clients also create child spans around calls into the AMQP transport:
 
 | Span name | What its duration measures |
 |---|---|
-| `ProducerClient.AmqpLink.Open` | Connection, session, and sender-link establishment that occurs while attaching the sender. A retry can create another span. |
+| `ProducerClient.AmqpLink.Open` | Sender-link attachment or reattachment. On uAMQP, an initial attachment can also include lazy connection and session establishment. A retry can create another span. |
 | `ProducerClient.AmqpSend` | The synchronous AMQP send through the service disposition. The `az.eventhubs.retry.attempt` attribute identifies the attempt. |
 | `PartitionClient.AmqpLink.Open` | Receiver-link attachment or reattachment. On uAMQP, an initial attachment also includes lazy connection and session establishment. |
 | `PartitionClient.AmqpReceive` | Time blocked in the AMQP transport waiting for a message or transport error. More than one can occur during one `ReceiveEvents` call. |
