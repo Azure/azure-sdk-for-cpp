@@ -31,6 +31,7 @@ add_executable(azure-core-amqp-tests
   claim_based_security_tests.cpp
   connection_string_tests.cpp
   connection_tests.cpp
+  global_state_tests.cpp
   management_tests.cpp
   message_sender_receiver.cpp
   message_source_target.cpp
