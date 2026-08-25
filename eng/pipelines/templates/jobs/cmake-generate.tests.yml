@@ -75,6 +75,8 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
+  - template: /eng/common/pipelines/templates/steps/enable-long-path-support.yml
+
   - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
