@@ -98,30 +98,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     globalState->AddPollable(removedPollableTwo);
     blockedPollable->WaitForPollStart();
 
-    auto removeBlocked = std::async(
-        std::launch::async, [globalState, blockedPollable]() {
-          globalState->RemovePollable(blockedPollable);
-        });
+    auto removeBlocked = std::async(std::launch::async, [globalState, blockedPollable]() {
+      globalState->RemovePollable(blockedPollable);
+    });
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    auto removeOne = std::async(
-        std::launch::async, [globalState, removedPollableOne]() {
-          globalState->RemovePollable(removedPollableOne);
-        });
-    auto removeTwo = std::async(
-        std::launch::async, [globalState, removedPollableTwo]() {
-          globalState->RemovePollable(removedPollableTwo);
-        });
+    auto removeOne = std::async(std::launch::async, [globalState, removedPollableOne]() {
+      globalState->RemovePollable(removedPollableOne);
+    });
+    auto removeTwo = std::async(std::launch::async, [globalState, removedPollableTwo]() {
+      globalState->RemovePollable(removedPollableTwo);
+    });
 
     auto addedPollableOne = std::make_shared<GatedPollable>(false);
     auto addedPollableTwo = std::make_shared<GatedPollable>(false);
-    auto addOne = std::async(
-        std::launch::async, [globalState, addedPollableOne]() {
-          globalState->AddPollable(addedPollableOne);
-        });
-    auto addTwo = std::async(
-        std::launch::async, [globalState, addedPollableTwo]() {
-          globalState->AddPollable(addedPollableTwo);
-        });
+    auto addOne = std::async(std::launch::async, [globalState, addedPollableOne]() {
+      globalState->AddPollable(addedPollableOne);
+    });
+    auto addTwo = std::async(std::launch::async, [globalState, addedPollableTwo]() {
+      globalState->AddPollable(addedPollableTwo);
+    });
 
     bool const addsCompletedBeforePollRelease
         = addOne.wait_for(std::chrono::milliseconds(200)) == std::future_status::ready
@@ -151,9 +146,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     pollable->WaitForPollStart();
 
     auto remove = std::async(
-        std::launch::async, [globalState, pollable]() {
-          globalState->RemovePollable(pollable);
-        });
+        std::launch::async, [globalState, pollable]() { globalState->RemovePollable(pollable); });
     bool const removeCompletedBeforePollRelease
         = remove.wait_for(std::chrono::milliseconds(200)) == std::future_status::ready;
 
@@ -165,9 +158,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
     globalState->AddPollable(pollable);
     bool const pollRanAfterAdd = WaitUntil(
-        [pollable, pollCountAfterRemove]() {
-          return pollable->PollCount() > pollCountAfterRemove;
-        },
+        [pollable, pollCountAfterRemove]() { return pollable->PollCount() > pollCountAfterRemove; },
         std::chrono::milliseconds(500));
     globalState->RemovePollable(pollable);
     globalState->AssertIdle();
