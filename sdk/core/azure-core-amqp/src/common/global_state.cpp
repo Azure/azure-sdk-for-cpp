@@ -107,30 +107,34 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     xlogging_set_log_function(AmqpLogFunction);
 
     m_pollingThread = std::thread([this]() {
-      do
+      while (true)
       {
+        std::list<std::shared_ptr<Pollable>> capturedList;
+        uint64_t pollingGeneration;
         {
-          std::list<std::shared_ptr<Pollable>> capturedList;
+          std::unique_lock<std::mutex> lock{m_pollablesMutex};
+          m_pollingCondition.wait(lock, [this]() { return m_stopped || !m_pollables.empty(); });
+          if (m_stopped)
           {
-            std::unique_lock<std::mutex> lock{m_pollablesMutex};
-            // If there are no pollables, there's no point in doing any work.
-            if (m_pollables.empty())
-            {
-              continue;
-            }
-            capturedList = m_pollables;
-            m_activelyPolling = true;
+            break;
           }
-
-          for (auto const& pollable : capturedList)
-          {
-            pollable->Poll();
-          }
+          capturedList = m_pollables;
+          pollingGeneration = ++m_pollingGeneration;
         }
-        m_activelyPolling = false;
-        //        std::this_thread::yield();
+
+        for (auto const& pollable : capturedList)
+        {
+          pollable->Poll();
+        }
+        capturedList.clear();
+
+        {
+          std::lock_guard<std::mutex> lock{m_pollablesMutex};
+          m_completedGeneration = pollingGeneration;
+        }
+        m_pollingCondition.notify_all();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      } while (!m_stopped);
+      }
     });
 #endif
   }
@@ -138,7 +142,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
   GlobalStateHolder::~GlobalStateHolder()
   {
 #if ENABLE_UAMQP
-    m_stopped = true;
+    {
+      std::lock_guard<std::mutex> lock{m_pollablesMutex};
+      m_stopped = true;
+    }
+    m_pollingCondition.notify_all();
     if (m_pollingThread.joinable())
     {
       m_pollingThread.join();
@@ -156,50 +164,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
    *
    * @param pollable The pollable object to add.
    *
-   * @note Note that you *cannot* hold any connection or link locks when calling AddPollable. This
-   * is because the the AddPollable function attempts to lock the pollable and the RemovePollable
-   * function blocks until any pollables have completed while holding the pollable lock.
-   *
-   * This can result in a deadlock because the polling thread is also going to acquire the
-   * connection lock resulting in a deadlock.
+   * @note Do not hold a connection or link lock when calling AddPollable or RemovePollable. The
+   * polling thread acquires those locks while it polls an item, and RemovePollable waits for the
+   * active polling generation to complete.
    *
    */
   void GlobalStateHolder::AddPollable(std::shared_ptr<Pollable> pollable)
   {
-    std::lock_guard<std::mutex> lock(m_pollablesMutex);
+    std::lock_guard<std::mutex> lock{m_pollablesMutex};
     if (std::find(m_pollables.begin(), m_pollables.end(), pollable) == m_pollables.end())
     {
       m_pollables.push_back(pollable);
     }
+    m_pollingCondition.notify_one();
   }
 
   void GlobalStateHolder::RemovePollable(std::shared_ptr<Pollable> pollable)
   {
-    // There is a bit of a complicated lock-free dance happening here.
-    // The m_pollables list is accessed by the polling thread, and the list is modified by the user
-    // thread. To ensure integrity of the list, the polling thread takes the lock, copies the
-    // pollable from the list, releases the lock and then iterates over the pollables at the
-    // snapshot.
-    //
-    // Because the pollable is a shared_ptr, the user thread can remove a pollable while the
-    // background thread is polling.
-    //
-    // But we want to make sure that the thread has finished polling (and thus has removed the copy
-    // of the pollables list). For that, we have the m_activelyPolling variable. It is set under the
-    // pollables lock, and cleared after the polling thread has finished polling (outside the lock).
-    //
-    // This means that we can spin on the m_activelyPolling variable *under* the pollables lock safe
-    // in the knowledge that IF the variable is set to true, it means that we acquired the
-    // pollablesMutex during the interval when the captured list is being interated over. And that
-    // the m_activelyPolling variable will only be cleared AFTER the captured list is freed.
-    //
-
-    std::lock_guard<std::mutex> lock(m_pollablesMutex);
+    std::unique_lock<std::mutex> lock{m_pollablesMutex};
     m_pollables.remove(pollable);
-    // Spin until m_activelyPolling is false, this ensures that the polling thread is not using the
-    // capturedList copy of m_pollables.
-    while (m_activelyPolling.load())
-      ;
+    auto const pollingGeneration = m_pollingGeneration;
+    m_pollingCondition.wait(
+        lock, [this, pollingGeneration]() { return m_completedGeneration >= pollingGeneration; });
   }
 #endif
 
