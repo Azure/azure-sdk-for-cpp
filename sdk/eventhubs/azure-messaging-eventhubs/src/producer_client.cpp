@@ -16,6 +16,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <algorithm>
+#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -24,7 +25,25 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+std::mutex ProducerSessionSnapshotHookLock;
+std::function<void()> ProducerSessionSnapshotHook;
+
+void InvokeProducerSessionSnapshotHook()
+{
+  std::function<void()> hook;
+  {
+    std::lock_guard<std::mutex> lock(ProducerSessionSnapshotHookLock);
+    hook = std::move(ProducerSessionSnapshotHook);
+  }
+  if (hook)
+  {
+    hook();
+  }
 }
+#endif
+} // namespace
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
@@ -38,6 +57,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     _detail::RetryOperation Ordinary;
     _detail::RetryOperation::AuthenticationRecoveryState Authentication;
   };
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+  namespace _detail {
+    void SetProducerSessionSnapshotHook(std::function<void()> hook)
+    {
+      std::lock_guard<std::mutex> lock(ProducerSessionSnapshotHookLock);
+      ProducerSessionSnapshotHook = std::move(hook);
+    }
+  } // namespace _detail
+#endif
 
   ProducerClient::ProducerClient(
       std::string const& connectionString,
@@ -390,6 +419,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
 #if ENABLE_UAMQP
     auto& guard = GetPartitionGuard(partitionId);
+    std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
     auto const observedGeneration = guard.generation.load();
     {
       std::lock_guard<std::mutex> lock(m_sendersLock);
@@ -400,6 +430,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     EnsureSession(partitionId, context);
+    auto session = GetSession(partitionId);
+    stackLock.unlock();
+
+#if defined(_azure_EVENTHUBS_TEST_HOOKS)
+    InvokeProducerSessionSnapshotHook();
+#endif
 
     std::string targetUrl{m_targetUrl};
     if (!partitionId.empty())
@@ -413,7 +449,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
 
     // Copy the session before opening the sender. No client map lock may span network work.
-    auto sender = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions);
+    auto sender = session.CreateMessageSender(targetUrl, senderOptions);
     auto openResult{sender.Open(context)};
     if (openResult)
     {
