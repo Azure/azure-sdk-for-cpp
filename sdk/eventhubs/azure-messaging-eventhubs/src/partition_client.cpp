@@ -188,6 +188,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
 #if ENABLE_UAMQP
   namespace _detail {
+    enum class PendingFailureKind
+    {
+      None,
+      Ordinary,
+      Authentication,
+      Permanent,
+    };
+
     struct ReceiverStack final
     {
       ReceiverStack(
@@ -244,6 +252,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Core::Http::Policies::RetryOptions RetryOptions;
       Azure::Nullable<std::string> LastReceivedOffset;
       Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> PendingError;
+      std::exception_ptr PendingFailure;
+      PendingFailureKind PendingKind{PendingFailureKind::None};
     };
   } // namespace _detail
 
@@ -613,6 +623,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     _detail::RetryOperation retryOperation{retryOptions};
     int32_t rebuildAttempt = 0;
+    _detail::RetryOperation::AuthenticationRecoveryState authenticationState;
 
     // Keep the event, and record the offset a rebuild must start after.
     auto keepMessage
@@ -628,17 +639,32 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           };
 
     // True: the receiver works again. False: return the events held. Throws if none are held.
-    auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
-      EventHubsException exception{
-          _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
-      Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
-      std::exception_ptr originalFailure{};
+    auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const* error,
+                       bool authenticationFailure,
+                       std::exception_ptr initialFailure) -> bool {
+      EventHubsException exception = error
+          ? _detail::EventHubsExceptionFactory::CreateEventHubsException(*error)
+          : EventHubsException{"Authentication failure."};
+      Azure::Core::Amqp::Models::_internal::AmqpError currentError;
+      if (error)
+      {
+        currentError = *error;
+      }
+      std::exception_ptr originalFailure{std::move(initialFailure)};
+      bool permanentFailure = false;
 
       for (;;)
       {
         std::chrono::milliseconds retryAfter{};
-        if (!_detail::ShouldRebuildReceiver(exception)
-            || !retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter))
+        bool shouldRetry = false;
+        if (!permanentFailure)
+        {
+          shouldRetry = authenticationFailure
+              ? retryOperation.ShouldRetryAuthentication(authenticationState, retryAfter)
+              : _detail::ShouldRebuildReceiver(exception)
+                  && retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter);
+        }
+        if (!shouldRetry)
         {
           if (!messages.empty())
           {
@@ -647,7 +673,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                 << "Cannot rebuild the message receiver now. Return " << messages.size()
                 << " events and keep the error for the next call: " << exception.what();
             std::lock_guard<std::mutex> lock(state->Lock);
-            state->PendingError = currentError;
+            if (error || !currentError.Condition.ToString().empty()
+                || !currentError.Description.empty())
+            {
+              state->PendingError = currentError;
+            }
+            else
+            {
+              state->PendingError.Reset();
+            }
+            state->PendingFailure
+                = originalFailure ? originalFailure : std::make_exception_ptr(exception);
+            state->PendingKind = permanentFailure
+                ? _detail::PendingFailureKind::Permanent
+                : (authenticationFailure ? _detail::PendingFailureKind::Authentication
+                                         : _detail::PendingFailureKind::Ordinary);
             return false;
           }
           if (originalFailure)
@@ -657,9 +697,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           throw exception;
         }
 
-        rebuildAttempt++;
-        std::this_thread::sleep_for(retryAfter);
-        context.ThrowIfCancelled();
+        if (!authenticationFailure)
+        {
+          rebuildAttempt++;
+          std::this_thread::sleep_for(retryAfter);
+          context.ThrowIfCancelled();
+        }
+        else
+        {
+          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, context);
+        }
 
         try
         {
@@ -680,6 +727,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           currentError.Condition
               = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{exception.ErrorCondition};
           currentError.Description = exception.ErrorDescription;
+          authenticationFailure = false;
+          permanentFailure = false;
+        }
+        catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Authentication recovery failed: " << rebuildFailure.what();
+          exception = EventHubsException{"Authentication failure."};
+          currentError = Azure::Core::Amqp::Models::_internal::AmqpError{};
+          originalFailure = rebuildFailure.GetOriginal();
+          authenticationFailure = true;
+          permanentFailure = false;
         }
         catch (Azure::Core::Credentials::AuthenticationException const& rebuildFailure)
         {
@@ -687,8 +746,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
           exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
           originalFailure = std::current_exception();
-          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
-          currentError.Description = exception.ErrorDescription;
+          currentError = Azure::Core::Amqp::Models::_internal::AmqpError{};
+          permanentFailure = true;
         }
         catch (std::exception const& rebuildFailure)
         {
@@ -698,25 +757,40 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           translated.IsTransient = true;
           exception = translated;
           originalFailure = nullptr;
-          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+          currentError = Azure::Core::Amqp::Models::_internal::AmqpError{};
           currentError.Description = translated.ErrorDescription;
+          authenticationFailure = false;
+          permanentFailure = false;
         }
       }
     };
 
     // No event is held yet, so this recover either works or throws.
     Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> pendingError;
+    std::exception_ptr pendingFailure;
+    _detail::PendingFailureKind pendingKind = _detail::PendingFailureKind::None;
     {
       std::lock_guard<std::mutex> lock(state->Lock);
+      pendingKind = state->PendingKind;
+      pendingFailure = state->PendingFailure;
+      state->PendingKind = _detail::PendingFailureKind::None;
+      state->PendingFailure = nullptr;
       if (state->PendingError.HasValue())
       {
         pendingError = state->PendingError.Value();
         state->PendingError.Reset();
       }
     }
-    if (pendingError.HasValue())
+    if (pendingKind == _detail::PendingFailureKind::Permanent)
     {
-      recover(pendingError.Value());
+      std::rethrow_exception(pendingFailure);
+    }
+    if (pendingKind != _detail::PendingFailureKind::None)
+    {
+      recover(
+          pendingError.HasValue() ? &pendingError.Value() : nullptr,
+          pendingKind == _detail::PendingFailureKind::Authentication,
+          std::move(pendingFailure));
     }
 
     while (messages.size() < maxMessages && !context.IsCancelled())
@@ -734,7 +808,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       else if (result.second)
       {
-        if (!recover(result.second))
+        bool const authenticationFailure = result.second.Condition
+            == Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::UnauthorizedAccess;
+        if (!recover(&result.second, authenticationFailure, nullptr))
         {
           break;
         }
@@ -753,7 +829,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               << "Received message. Message count now " << messages.size();
           keepMessage(result.first);
         }
-        else if (!recover(result.second))
+        else if (!recover(
+                     &result.second,
+                     result.second.Condition
+                         == Azure::Core::Amqp::Models::_internal::AmqpErrorCondition::
+                             UnauthorizedAccess,
+                     nullptr))
         {
           break;
         }
