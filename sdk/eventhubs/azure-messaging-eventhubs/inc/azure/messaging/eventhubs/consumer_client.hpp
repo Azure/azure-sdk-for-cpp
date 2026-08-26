@@ -15,6 +15,9 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
+
+#include <memory>
+#include <vector>
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class EventHubsPropertiesClient;
@@ -199,6 +202,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+#if ENABLE_UAMQP
+    std::mutex m_partitionClientStatesLock;
+    std::vector<std::shared_ptr<_detail::PartitionClientState>> m_partitionClientStates;
+#endif
+
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 

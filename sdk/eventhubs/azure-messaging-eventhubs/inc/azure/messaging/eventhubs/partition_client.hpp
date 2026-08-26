@@ -11,10 +11,15 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <memory>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class PartitionClientFactory;
-  }
+    struct PartitionClientState;
+  } // namespace _detail
+
+  class ConsumerClient;
   /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
    * function.
    */
@@ -89,6 +94,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   private:
     friend class _detail::PartitionClientFactory;
+    friend class ConsumerClient;
+
+#if ENABLE_UAMQP
+    std::shared_ptr<_detail::PartitionClientState> m_state;
+    explicit PartitionClient(std::shared_ptr<_detail::PartitionClientState> state);
+    std::shared_ptr<_detail::PartitionClientState> GetState() const { return m_state; }
+#endif
+
+#if ENABLE_RUST_AMQP
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
@@ -115,7 +129,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * response to being throttled or encountering a transient error.
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
+#endif
 
+#if ENABLE_RUST_AMQP
     /** Creates a new PartitionClient
      *
      * @param messageReceiver Message Receiver for the partition client.
@@ -133,10 +149,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string receiverName,
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions);
+#endif
 
+#if ENABLE_RUST_AMQP || ENABLE_UAMQP
     /// Closes the faulted receiver and attaches a new one starting after the last offset.
     void RebuildReceiver(Core::Context const& context);
+#endif
 
+#if ENABLE_RUST_AMQP
     std::string GetStartExpression(Models::StartPosition const& startPosition);
+#endif
   };
 }}} // namespace Azure::Messaging::EventHubs

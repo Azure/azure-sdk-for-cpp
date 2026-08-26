@@ -83,6 +83,21 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         m_propertiesClient.reset();
       }
     }
+#if ENABLE_UAMQP
+    std::vector<std::shared_ptr<_detail::PartitionClientState>> partitionClientStates;
+    {
+      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
+      partitionClientStates = m_partitionClientStates;
+    }
+    for (auto const& state : partitionClientStates)
+    {
+      _detail::ClosePartitionClientState(state, context);
+    }
+    {
+      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
+      m_partitionClientStates.clear();
+    }
+#endif
     Log::Stream(Logger::Level::Verbose) << "Closing message receivers.";
     // Tear down the sessions and then the connections, in that order.
     _detail::ForEachBestEffort(
@@ -218,6 +233,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string suffix = !partitionId.empty() ? "/Partitions/" + partitionId : "";
     std::string hostUrl = m_hostUrl + suffix;
 
+#if ENABLE_UAMQP
+    auto partition = _detail::PartitionClientFactory::CreatePartitionClient(
+        m_fullyQualifiedNamespace,
+        m_credential,
+        m_targetPort,
+        m_consumerClientOptions.ApplicationID,
+        m_consumerClientOptions.CppStandardVersion,
+        "Consumer for " + m_consumerClientOptions.ApplicationID + " on " + partitionId,
+        std::move(hostUrl),
+        m_consumerClientOptions.Name,
+        options,
+        m_consumerClientOptions.RetryOptions,
+        context);
+    {
+      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
+      m_partitionClientStates.push_back(partition.GetState());
+    }
+    return partition;
+#elif ENABLE_RUST_AMQP
     EnsureSession(partitionId, context);
 
     return _detail::PartitionClientFactory::CreatePartitionClient(
@@ -227,6 +261,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         options,
         m_consumerClientOptions.RetryOptions,
         context);
+#endif
   }
 
   Models::EventHubProperties ConsumerClient::GetEventHubProperties(Core::Context const& context)

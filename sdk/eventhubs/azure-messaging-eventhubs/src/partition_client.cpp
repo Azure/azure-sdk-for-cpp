@@ -9,10 +9,14 @@
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
+#include <azure/core/amqp/internal/claims_based_security.hpp>
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
 
 #include <chrono>
 #include <exception>
+#include <limits>
+#include <memory>
+#include <mutex>
 #include <thread>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -182,6 +186,260 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   } // namespace
 
+#if ENABLE_UAMQP
+  namespace _detail {
+    struct ReceiverStack final
+    {
+      ReceiverStack(
+          Azure::Core::Amqp::_internal::Connection connection,
+          Azure::Core::Amqp::_internal::Session session,
+          Azure::Core::Amqp::_internal::MessageReceiver receiver)
+          : Connection{std::move(connection)}, Session{std::move(session)}, Receiver{
+                                                                                std::move(receiver)}
+      {
+      }
+
+      Azure::Core::Amqp::_internal::Connection Connection;
+      Azure::Core::Amqp::_internal::Session Session;
+      Azure::Core::Amqp::_internal::MessageReceiver Receiver;
+    };
+
+    struct PartitionClientState final
+    {
+      PartitionClientState(
+          std::string fullyQualifiedNamespace,
+          std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
+          std::uint16_t targetPort,
+          std::string applicationId,
+          long cppStandardVersion,
+          std::string containerId,
+          std::string partitionUrl,
+          std::string receiverName,
+          PartitionClientOptions options,
+          Azure::Core::Http::Policies::RetryOptions retryOptions)
+          : FullyQualifiedNamespace{std::move(fullyQualifiedNamespace)},
+            Credential{std::move(credential)}, TargetPort{targetPort},
+            ApplicationId{std::move(applicationId)}, CppStandardVersion{cppStandardVersion},
+            ContainerId{std::move(containerId)}, PartitionUrl{std::move(partitionUrl)},
+            ReceiverName{std::move(receiverName)}, Options{std::move(options)},
+            RetryOptions{std::move(retryOptions)}
+      {
+      }
+
+      std::mutex Lock;
+      std::mutex ReceiveLock;
+      std::shared_ptr<ReceiverStack> Stack;
+      std::uint64_t Generation{0};
+      bool Closed{false};
+
+      std::string FullyQualifiedNamespace;
+      std::shared_ptr<const Azure::Core::Credentials::TokenCredential> Credential;
+      std::uint16_t TargetPort;
+      std::string ApplicationId;
+      long CppStandardVersion;
+      std::string ContainerId;
+      std::string PartitionUrl;
+      std::string ReceiverName;
+      PartitionClientOptions Options;
+      Azure::Core::Http::Policies::RetryOptions RetryOptions;
+      Azure::Nullable<std::string> LastReceivedOffset;
+      Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> PendingError;
+    };
+  } // namespace _detail
+
+  namespace {
+    void CloseReceiverStack(
+        std::shared_ptr<_detail::ReceiverStack> const& stack,
+        Azure::Core::Context const& context)
+    {
+      if (!stack)
+      {
+        return;
+      }
+
+      try
+      {
+        stack->Receiver.Close(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while closing a message receiver: " << ex.what();
+      }
+      try
+      {
+        stack->Session.End(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while ending a receiver session: " << ex.what();
+      }
+      // The uAMQP connection closes when the final stack object is destroyed. Connection::Close
+      // is intentionally private for this backend.
+    }
+
+    std::shared_ptr<_detail::ReceiverStack> CreateReceiverStack(
+        _detail::PartitionClientState const& state,
+        PartitionClientOptions const& options,
+        Azure::Core::Context const& context)
+    {
+      Azure::Core::Amqp::_internal::ConnectionOptions connectionOptions;
+      connectionOptions.ContainerId = state.ContainerId;
+      connectionOptions.EnableTrace = _detail::EnableAmqpTrace;
+      connectionOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
+      connectionOptions.Port = state.TargetPort;
+      _detail::EventHubsUtilities::SetUserAgent(
+          connectionOptions, state.ApplicationId, state.CppStandardVersion);
+
+      Azure::Core::Amqp::_internal::Connection connection{
+          state.FullyQualifiedNamespace, state.Credential, connectionOptions};
+
+      Azure::Core::Amqp::_internal::SessionOptions sessionOptions;
+      sessionOptions.InitialIncomingWindowSize
+          = static_cast<std::uint32_t>((std::numeric_limits<std::int32_t>::max)());
+      Azure::Core::Amqp::_internal::Session session{connection.CreateSession(sessionOptions)};
+      auto receiver
+          = CreateMessageReceiver(session, state.PartitionUrl, state.ReceiverName, options);
+      auto stack = std::make_shared<_detail::ReceiverStack>(
+          std::move(connection), std::move(session), std::move(receiver));
+      try
+      {
+        stack->Receiver.Open(context);
+      }
+      catch (...)
+      {
+        CloseReceiverStack(stack, context);
+        throw;
+      }
+      return stack;
+    }
+
+    class ReceiveLease final {
+    public:
+      explicit ReceiveLease(std::shared_ptr<_detail::PartitionClientState> state)
+          : m_state{std::move(state)}, m_receiveLock{m_state->ReceiveLock}
+      {
+        std::lock_guard<std::mutex> lock(m_state->Lock);
+        if (m_state->Closed)
+        {
+          throw Azure::Core::OperationCancelledException("Partition client is closed.");
+        }
+        if (!m_state->Stack)
+        {
+          throw std::runtime_error("Partition client has no receiver stack.");
+        }
+        m_stack = m_state->Stack;
+      }
+
+      ~ReceiveLease() = default;
+
+      std::shared_ptr<_detail::ReceiverStack> GetStack() const { return m_stack; }
+
+      void RefreshStack()
+      {
+        std::lock_guard<std::mutex> lock(m_state->Lock);
+        if (m_state->Closed || !m_state->Stack)
+        {
+          throw Azure::Core::OperationCancelledException("Partition client is closed.");
+        }
+        m_stack = m_state->Stack;
+      }
+
+    private:
+      std::shared_ptr<_detail::PartitionClientState> m_state;
+      std::unique_lock<std::mutex> m_receiveLock;
+      std::shared_ptr<_detail::ReceiverStack> m_stack;
+    };
+  } // namespace
+#endif
+
+#if ENABLE_UAMQP
+  void _detail::ClosePartitionClientState(
+      std::shared_ptr<_detail::PartitionClientState> const& state,
+      Azure::Core::Context const& context)
+  {
+    if (!state)
+    {
+      return;
+    }
+
+    std::shared_ptr<_detail::ReceiverStack> stackToClose;
+    {
+      std::lock_guard<std::mutex> lock(state->Lock);
+      if (!state->Closed)
+      {
+        state->Closed = true;
+        ++state->Generation;
+        stackToClose = std::move(state->Stack);
+      }
+    }
+    CloseReceiverStack(stackToClose, context);
+  }
+#endif
+
+#if ENABLE_UAMQP
+  PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
+      std::string fullyQualifiedNamespace,
+      std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
+      std::uint16_t targetPort,
+      std::string applicationId,
+      long cppStandardVersion,
+      std::string containerId,
+      std::string partitionUrl,
+      std::string receiverName,
+      PartitionClientOptions options,
+      Azure::Core::Http::Policies::RetryOptions retryOptions,
+      Azure::Core::Context const& context)
+  {
+    auto state = std::make_shared<_detail::PartitionClientState>(
+        std::move(fullyQualifiedNamespace),
+        std::move(credential),
+        targetPort,
+        std::move(applicationId),
+        cppStandardVersion,
+        std::move(containerId),
+        std::move(partitionUrl),
+        std::move(receiverName),
+        std::move(options),
+        std::move(retryOptions));
+
+    _detail::RetryOperation retryOperation{state->RetryOptions};
+    _detail::RetryOperation::AuthenticationRecoveryState authenticationState;
+    for (;;)
+    {
+      std::shared_ptr<_detail::ReceiverStack> candidate;
+      try
+      {
+        if (!retryOperation.Execute(
+                [&]() -> bool {
+                  candidate = CreateReceiverStack(*state, state->Options, context);
+                  return true;
+                },
+                context))
+        {
+          throw std::runtime_error("Could not create the message receiver.");
+        }
+
+        {
+          std::lock_guard<std::mutex> lock(state->Lock);
+          state->Stack = std::move(candidate);
+          state->Generation++;
+        }
+        return PartitionClient{std::move(state)};
+      }
+      catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const& failure)
+      {
+        std::chrono::milliseconds retryAfter{};
+        if (!retryOperation.ShouldRetryAuthentication(authenticationState, retryAfter))
+        {
+          failure.RethrowOriginal();
+        }
+        _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, context);
+      }
+    }
+  }
+#elif ENABLE_RUST_AMQP
   PartitionClient _detail::PartitionClientFactory::CreatePartitionClient(
       Azure::Core::Amqp::_internal::Session const& session,
       std::string const& partitionUrl,
@@ -202,7 +460,68 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::move(options),
         std::move(retryOptions));
   }
+#endif
 
+#if ENABLE_UAMQP
+  PartitionClient::PartitionClient(std::shared_ptr<_detail::PartitionClientState> state)
+      : m_state{std::move(state)}
+  {
+  }
+
+  void PartitionClient::Close(Core::Context const& context)
+  {
+    _detail::ClosePartitionClientState(m_state, context);
+  }
+
+  void PartitionClient::RebuildReceiver(Core::Context const& context)
+  {
+    auto state = m_state;
+    PartitionClientOptions options;
+    std::uint64_t expectedGeneration;
+    std::shared_ptr<_detail::ReceiverStack> oldStack;
+    {
+      std::lock_guard<std::mutex> lock(state->Lock);
+      if (state->Closed)
+      {
+        throw Azure::Core::OperationCancelledException("Partition client is closed.");
+      }
+      oldStack = std::move(state->Stack);
+      expectedGeneration = ++state->Generation;
+      options = state->Options;
+      options.StartPosition
+          = _detail::ResumeStartPosition(state->Options.StartPosition, state->LastReceivedOffset);
+    }
+
+    Log::Stream(Logger::Level::Informational)
+        << "Rebuild the message receiver for " << state->PartitionUrl << ".";
+    CloseReceiverStack(oldStack, context);
+    auto candidate = CreateReceiverStack(*state, options, context);
+
+    bool installed = false;
+    {
+      std::lock_guard<std::mutex> lock(state->Lock);
+      if (state->Closed || state->Generation != expectedGeneration)
+      {
+        // Close the candidate after releasing the state lock.
+      }
+      else
+      {
+        installed = true;
+        state->Stack = std::move(candidate);
+        ++state->Generation;
+      }
+    }
+
+    if (!installed)
+    {
+      CloseReceiverStack(candidate, context);
+      throw Azure::Core::OperationCancelledException("Partition client was closed.");
+    }
+
+    Log::Stream(Logger::Level::Informational)
+        << "The message receiver for " << state->PartitionUrl << " is attached again.";
+  }
+#elif ENABLE_RUST_AMQP
   /** Creates a new PartitionClient
    *
    * @param messageReceiver Message Receiver for the partition client.
@@ -256,6 +575,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     Log::Stream(Logger::Level::Informational)
         << "The message receiver for " << m_partitionUrl << " is attached again.";
   }
+#endif
 
   PartitionClient::~PartitionClient()
   {
@@ -263,7 +583,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       Log::Stream(Logger::Level::Verbose) << "~PartitionClient() "
                                           << "Close Receiver.";
+#if ENABLE_UAMQP
+      _detail::ClosePartitionClientState(m_state, {});
+#elif ENABLE_RUST_AMQP
       m_receiver.Close();
+#endif
     }
     catch (std::exception const& ex)
     {
@@ -272,6 +596,175 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
   }
 
+#if ENABLE_UAMQP
+  std::vector<std::shared_ptr<const Models::ReceivedEventData>> PartitionClient::ReceiveEvents(
+      uint32_t maxMessages,
+      Core::Context const& context)
+  {
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
+    auto state = m_state;
+    ReceiveLease lease{state};
+
+    // RetryOperation::Execute's budget never resets, so this loop keeps its own counter.
+    Azure::Core::Http::Policies::RetryOptions retryOptions;
+    {
+      std::lock_guard<std::mutex> lock(state->Lock);
+      retryOptions = state->RetryOptions;
+    }
+    _detail::RetryOperation retryOperation{retryOptions};
+    int32_t rebuildAttempt = 0;
+
+    // Keep the event, and record the offset a rebuild must start after.
+    auto keepMessage
+        = [&](std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage> const& message) {
+            auto eventData = std::make_shared<const Models::ReceivedEventData>(message);
+            if (eventData->Offset.HasValue())
+            {
+              std::lock_guard<std::mutex> lock(state->Lock);
+              state->LastReceivedOffset = eventData->Offset.Value();
+            }
+            rebuildAttempt = 0;
+            messages.push_back(eventData);
+          };
+
+    // True: the receiver works again. False: return the events held. Throws if none are held.
+    auto recover = [&](Azure::Core::Amqp::Models::_internal::AmqpError const& error) -> bool {
+      EventHubsException exception{
+          _detail::EventHubsExceptionFactory::CreateEventHubsException(error)};
+      Azure::Core::Amqp::Models::_internal::AmqpError currentError{error};
+      std::exception_ptr originalFailure{};
+
+      for (;;)
+      {
+        std::chrono::milliseconds retryAfter{};
+        if (!_detail::ShouldRebuildReceiver(exception)
+            || !retryOperation.ShouldRetry(false, rebuildAttempt, retryAfter))
+        {
+          if (!messages.empty())
+          {
+            // The service will not send these again. The next call gets a new budget.
+            Log::Stream(Logger::Level::Warning)
+                << "Cannot rebuild the message receiver now. Return " << messages.size()
+                << " events and keep the error for the next call: " << exception.what();
+            std::lock_guard<std::mutex> lock(state->Lock);
+            state->PendingError = currentError;
+            return false;
+          }
+          if (originalFailure)
+          {
+            std::rethrow_exception(originalFailure);
+          }
+          throw exception;
+        }
+
+        rebuildAttempt++;
+        std::this_thread::sleep_for(retryAfter);
+        context.ThrowIfCancelled();
+
+        try
+        {
+          RebuildReceiver(context);
+          lease.RefreshStack();
+          return true;
+        }
+        catch (Azure::Core::OperationCancelledException const&)
+        {
+          throw;
+        }
+        catch (EventHubsException const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          exception = rebuildFailure;
+          originalFailure = nullptr;
+          currentError.Condition
+              = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{exception.ErrorCondition};
+          currentError.Description = exception.ErrorDescription;
+        }
+        catch (Azure::Core::Credentials::AuthenticationException const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          exception = _detail::TranslateAuthenticationFailure(rebuildFailure);
+          originalFailure = std::current_exception();
+          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+          currentError.Description = exception.ErrorDescription;
+        }
+        catch (std::exception const& rebuildFailure)
+        {
+          Log::Stream(Logger::Level::Warning)
+              << "Rebuild attempt " << rebuildAttempt << " failed: " << rebuildFailure.what();
+          EventHubsException translated{rebuildFailure.what()};
+          translated.IsTransient = true;
+          exception = translated;
+          originalFailure = nullptr;
+          currentError.Condition = Azure::Core::Amqp::Models::_internal::AmqpErrorCondition{};
+          currentError.Description = translated.ErrorDescription;
+        }
+      }
+    };
+
+    // No event is held yet, so this recover either works or throws.
+    Azure::Nullable<Azure::Core::Amqp::Models::_internal::AmqpError> pendingError;
+    {
+      std::lock_guard<std::mutex> lock(state->Lock);
+      if (state->PendingError.HasValue())
+      {
+        pendingError = state->PendingError.Value();
+        state->PendingError.Reset();
+      }
+    }
+    if (pendingError.HasValue())
+    {
+      recover(pendingError.Value());
+    }
+
+    while (messages.size() < maxMessages && !context.IsCancelled())
+    {
+      std::pair<
+          std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
+          Azure::Core::Amqp::Models::_internal::AmqpError>
+          result;
+
+      // TryWaitForIncomingMessage returns two empty values if there is no data available.
+      result = lease.GetStack()->Receiver.TryWaitForIncomingMessage();
+      if (result.first)
+      {
+        keepMessage(result.first);
+      }
+      else if (result.second)
+      {
+        if (!recover(result.second))
+        {
+          break;
+        }
+      }
+      // If no messages have arrived, wait for one. Otherwise return the messages already held.
+      else if (!messages.empty())
+      {
+        break;
+      }
+      else
+      {
+        result = lease.GetStack()->Receiver.WaitForIncomingMessage(context);
+        if (result.first)
+        {
+          Log::Stream(Logger::Level::Verbose)
+              << "Received message. Message count now " << messages.size();
+          keepMessage(result.first);
+        }
+        else if (!recover(result.second))
+        {
+          break;
+        }
+      }
+    }
+    Log::Stream(Logger::Level::Verbose)
+        << "Receive Events. Return " << messages.size() << " messages.";
+
+    return messages;
+  }
+#elif ENABLE_RUST_AMQP
   /** Receive events from the partition.
    *
    * @param maxMessages The maximum number of messages to receive.
@@ -436,4 +929,5 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     return messages;
   }
+#endif
 }}} // namespace Azure::Messaging::EventHubs
