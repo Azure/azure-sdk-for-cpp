@@ -18,6 +18,7 @@ SetUpTestProxy("sdk/eventhubs")
 add_executable (
   azure-messaging-eventhubs-test
     azure_messaging_eventhubs_test.cpp
+    auth_recovery_test.cpp
     checkpoint_store_test.cpp
     connection_string_test.cpp
     consumer_client_test.cpp
@@ -36,7 +37,7 @@ add_executable (
     test_checkpoint_store.hpp
 )
 
-target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS)
+target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS _azure_TESTING_BUILD)
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)

@@ -17,6 +17,7 @@
 #include <azure/core/amqp/internal/session.hpp>
 
 #include <memory>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -57,14 +58,25 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
                                 public Azure::Core::Amqp::_internal::MessageSenderEvents {
     public:
       MockServiceEndpoint(std::string const& name, MockServiceEndpointOptions const& options)
-          : m_listenerContext{options.ListenerContext},
-            m_enableTrace{options.EnableTrace}, m_name{name}
+          : m_listenerContext{options.ListenerContext}, m_enableTrace{options.EnableTrace},
+            m_name{name}
       {
       }
 
+      virtual ~MockServiceEndpoint() = default;
+
       const std::string& GetName() const { return m_name; }
 
-      bool OnLinkAttached(
+      void DetachLink(
+          Azure::Core::Amqp::_internal::Session const& session,
+          Azure::Core::Amqp::_internal::LinkEndpoint const& linkEndpoint,
+          bool closeLink,
+          Models::_internal::AmqpError const& error) const
+      {
+        session.SendDetach(linkEndpoint, closeLink, error);
+      }
+
+      virtual bool OnLinkAttached(
           Azure::Core::Amqp::_internal::Session const& session,
           std::string const& linkName,
           Azure::Core::Amqp::_internal::LinkEndpoint& linkEndpoint,
@@ -544,24 +556,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     public:
       AmqpServerMock(
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
-          : m_connectionId{"Mock Server for " + name}, m_testPort{FindAvailableSocket()}
+          : AmqpServerMock(FindAvailableSocket(), std::move(name), true)
       {
-        // Every server mock has CBS endpoint support
-        MockServiceEndpointOptions options;
-        options.EnableTrace = m_enableTrace;
-        options.ListenerContext = m_listenerContext;
-        AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
       }
       AmqpServerMock(
           uint16_t listeningPort,
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
+          : AmqpServerMock(listeningPort, std::move(name), true)
+      {
+      }
+
+      AmqpServerMock(uint16_t listeningPort, std::string name, bool addCbsEndpoint)
           : m_connectionId{"Mock Server for " + name}, m_testPort{listeningPort}
       {
-        // Every server mock has CBS endpoint support
-        MockServiceEndpointOptions options;
-        options.EnableTrace = m_enableTrace;
-        options.ListenerContext = m_listenerContext;
-        AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
+        if (addCbsEndpoint)
+        {
+          // Every server mock has CBS endpoint support
+          MockServiceEndpointOptions options;
+          options.EnableTrace = m_enableTrace;
+          options.ListenerContext = m_listenerContext;
+          AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
+        }
       }
 
       virtual ~AmqpServerMock()
@@ -579,6 +594,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
       uint16_t GetPort() const { return m_testPort; }
+      std::size_t GetConnectionCount() const { return m_connections.size(); }
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
       void StartListening()
