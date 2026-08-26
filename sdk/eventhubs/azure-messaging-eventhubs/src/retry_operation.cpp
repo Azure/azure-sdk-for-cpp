@@ -15,7 +15,9 @@
 namespace {
 constexpr std::chrono::milliseconds CancellationCheckInterval{100};
 
-void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Context const& context)
+void WaitForRetryDelayImpl(
+    std::chrono::milliseconds retryAfter,
+    Azure::Core::Context const& context)
 {
   auto const deadline = std::chrono::steady_clock::now() + retryAfter;
   while (true)
@@ -83,6 +85,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
       throw;
     }
 #endif
+#if ENABLE_UAMQP
     catch (Azure::Core::Amqp::_detail::CbsOpenFailedException const& e)
     {
       context.ThrowIfCancelled();
@@ -95,6 +98,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
         throw;
       }
     }
+#endif
     catch (std::runtime_error const& e)
     {
       context.ThrowIfCancelled();
@@ -110,7 +114,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     }
 
     ++retryCount;
-    WaitForRetryDelay(retryAfter, context);
+    WaitForRetryDelayImpl(retryAfter, context);
   }
 }
 
@@ -133,7 +137,7 @@ void Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForAuthentication
     std::chrono::milliseconds retryAfter,
     Azure::Core::Context const& context)
 {
-  WaitForRetryDelay(retryAfter, context);
+  WaitForRetryDelayImpl(retryAfter, context);
 }
 
 bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(

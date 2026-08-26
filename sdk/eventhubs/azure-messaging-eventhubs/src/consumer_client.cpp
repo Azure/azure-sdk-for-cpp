@@ -67,6 +67,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ConsumerClient::Close(Azure::Core::Context const& context)
   {
     Log::Stream(Logger::Level::Verbose) << "Close consumer client.";
+#if ENABLE_UAMQP
+    std::vector<std::shared_ptr<_detail::PartitionClientState>> partitionClientStates;
+    {
+      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
+      if (m_partitionClientStatesClosing)
+      {
+        return;
+      }
+      m_partitionClientStatesClosing = true;
+      partitionClientStates = std::move(m_partitionClientStates);
+    }
+#endif
     {
       std::unique_lock<std::mutex> lock(m_propertiesClientLock);
       if (m_propertiesClient)
@@ -84,18 +96,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
     }
 #if ENABLE_UAMQP
-    std::vector<std::shared_ptr<_detail::PartitionClientState>> partitionClientStates;
-    {
-      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
-      partitionClientStates = m_partitionClientStates;
-    }
     for (auto const& state : partitionClientStates)
     {
       _detail::ClosePartitionClientState(state, context);
-    }
-    {
-      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
-      m_partitionClientStates.clear();
     }
 #endif
     Log::Stream(Logger::Level::Verbose) << "Closing message receivers.";
@@ -246,9 +249,22 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         options,
         m_consumerClientOptions.RetryOptions,
         context);
+    bool closeLatePartition = false;
     {
       std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
-      m_partitionClientStates.push_back(partition.GetState());
+      if (m_partitionClientStatesClosing)
+      {
+        closeLatePartition = true;
+      }
+      else
+      {
+        m_partitionClientStates.push_back(partition.GetState());
+      }
+    }
+    if (closeLatePartition)
+    {
+      _detail::ClosePartitionClientState(partition.GetState(), context);
+      throw Azure::Core::OperationCancelledException("Consumer client is closed.");
     }
     return partition;
 #elif ENABLE_RUST_AMQP

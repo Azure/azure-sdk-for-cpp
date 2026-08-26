@@ -387,6 +387,86 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
+#if ENABLE_UAMQP
+    auto& guard = GetPartitionGuard(partitionId);
+    auto const observedGeneration = guard.generation.load();
+    {
+      std::lock_guard<std::mutex> lock(m_sendersLock);
+      if (m_senders.find(partitionId) != m_senders.end())
+      {
+        return;
+      }
+    }
+
+    EnsureSession(partitionId, context);
+
+    std::string targetUrl{m_targetUrl};
+    if (!partitionId.empty())
+    {
+      targetUrl += "/Partitions/" + partitionId;
+    }
+
+    Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+    senderOptions.Name = m_producerClientOptions.Name;
+    senderOptions.EnableTrace = _detail::EnableAmqpTrace;
+    senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
+
+    // Copy the session before opening the sender. No client map lock may span network work.
+    auto sender = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions);
+    auto openResult{sender.Open(context)};
+    if (openResult)
+    {
+      Azure::Core::Diagnostics::_internal::Log::Stream(
+          Azure::Core::Diagnostics::Logger::Level::Error)
+          << "Failed to create message sender: " << openResult;
+      throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+          CreateEventHubsException(openResult);
+    }
+
+    bool discardCandidate = false;
+    bool staleWithoutSender = false;
+    {
+      // Keep the partition stack lock before the sender map lock. Invalidation uses the same
+      // order, so a candidate cannot be installed after its stack was removed.
+      std::unique_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+      std::lock_guard<std::mutex> sendersLock(m_sendersLock);
+      if (guard.generation.load() != observedGeneration)
+      {
+        discardCandidate = true;
+        staleWithoutSender = m_senders.find(partitionId) == m_senders.end();
+      }
+      else if (m_senders.find(partitionId) != m_senders.end())
+      {
+        discardCandidate = true;
+      }
+      else
+      {
+        m_senders.emplace(partitionId, std::move(sender));
+        guard.generation.fetch_add(1);
+        return;
+      }
+    }
+
+    if (discardCandidate)
+    {
+      try
+      {
+        sender.Close(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while closing a discarded message sender: " << ex.what();
+      }
+    }
+    if (staleWithoutSender)
+    {
+      EventHubsException staleStack{
+          "The message sender stack changed while the sender was being established."};
+      staleStack.IsTransient = true;
+      throw staleStack;
+    }
+#else
     std::unique_lock<std::mutex> lock(m_sendersLock);
     if (m_senders.find(partitionId) == m_senders.end())
     {
@@ -417,6 +497,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.emplace(partitionId, std::move(sender));
       GetPartitionGuard(partitionId).generation.fetch_add(1);
     }
+#endif
   }
   void ProducerClient::EnsureSenderOrInvalidate(
       std::string const& partitionId,

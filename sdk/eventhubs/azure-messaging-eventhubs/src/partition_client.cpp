@@ -13,6 +13,7 @@
 #include <azure/core/amqp/internal/models/messaging_values.hpp>
 
 #include <chrono>
+#include <condition_variable>
 #include <exception>
 #include <limits>
 #include <memory>
@@ -236,9 +237,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
       std::mutex Lock;
       std::mutex ReceiveLock;
+      std::condition_variable ReceiveCondition;
       std::shared_ptr<ReceiverStack> Stack;
       std::uint64_t Generation{0};
       bool Closed{false};
+      bool ActiveReceive{false};
+      Azure::Core::Context ActiveReceiveContext;
 
       std::string FullyQualifiedNamespace;
       std::shared_ptr<const Azure::Core::Credentials::TokenCredential> Credential;
@@ -327,29 +331,41 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
     class ReceiveLease final {
     public:
-      explicit ReceiveLease(std::shared_ptr<_detail::PartitionClientState> state)
-          : m_state{std::move(state)}, m_receiveLock{m_state->ReceiveLock}
+      ReceiveLease(
+          std::shared_ptr<_detail::PartitionClientState> state,
+          Azure::Core::Context const& parentContext)
+          : m_state{std::move(state)}, m_receiveLock{m_state->ReceiveLock},
+            m_childContext{parentContext.WithDeadline(parentContext.GetDeadline())}
       {
         std::lock_guard<std::mutex> lock(m_state->Lock);
         if (m_state->Closed)
         {
           throw Azure::Core::OperationCancelledException("Partition client is closed.");
         }
-        if (!m_state->Stack)
-        {
-          throw std::runtime_error("Partition client has no receiver stack.");
-        }
+        m_state->ActiveReceive = true;
+        m_state->ActiveReceiveContext = m_childContext;
         m_stack = m_state->Stack;
       }
 
-      ~ReceiveLease() = default;
+      ~ReceiveLease()
+      {
+        // Release the snapshot before notifying close callers that the backend call has ended.
+        m_stack.reset();
+        {
+          std::lock_guard<std::mutex> lock(m_state->Lock);
+          m_state->ActiveReceive = false;
+          m_state->ActiveReceiveContext = Azure::Core::Context{};
+        }
+        m_state->ReceiveCondition.notify_all();
+      }
 
       std::shared_ptr<_detail::ReceiverStack> GetStack() const { return m_stack; }
+      Azure::Core::Context const& GetContext() const { return m_childContext; }
 
       void RefreshStack()
       {
         std::lock_guard<std::mutex> lock(m_state->Lock);
-        if (m_state->Closed || !m_state->Stack)
+        if (m_state->Closed)
         {
           throw Azure::Core::OperationCancelledException("Partition client is closed.");
         }
@@ -359,6 +375,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     private:
       std::shared_ptr<_detail::PartitionClientState> m_state;
       std::unique_lock<std::mutex> m_receiveLock;
+      Azure::Core::Context m_childContext;
       std::shared_ptr<_detail::ReceiverStack> m_stack;
     };
   } // namespace
@@ -375,6 +392,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
     std::shared_ptr<_detail::ReceiverStack> stackToClose;
+    Azure::Core::Context activeReceiveContext;
+    bool activeReceive = false;
     {
       std::lock_guard<std::mutex> lock(state->Lock);
       if (!state->Closed)
@@ -383,6 +402,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         ++state->Generation;
         stackToClose = std::move(state->Stack);
       }
+      activeReceive = state->ActiveReceive;
+      if (activeReceive)
+      {
+        activeReceiveContext = state->ActiveReceiveContext;
+      }
+    }
+    if (activeReceive)
+    {
+      activeReceiveContext.Cancel();
+      std::unique_lock<std::mutex> lock(state->Lock);
+      state->ReceiveCondition.wait(lock, [&state] { return !state->ActiveReceive; });
     }
     CloseReceiverStack(stackToClose, context);
   }
@@ -613,7 +643,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   {
     std::vector<std::shared_ptr<const Models::ReceivedEventData>> messages;
     auto state = m_state;
-    ReceiveLease lease{state};
+    ReceiveLease lease{state, context};
 
     // RetryOperation::Execute's budget never resets, so this loop keeps its own counter.
     Azure::Core::Http::Policies::RetryOptions retryOptions;
@@ -700,17 +730,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         if (!authenticationFailure)
         {
           rebuildAttempt++;
-          std::this_thread::sleep_for(retryAfter);
-          context.ThrowIfCancelled();
+          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, lease.GetContext());
         }
         else
         {
-          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, context);
+          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, lease.GetContext());
         }
 
         try
         {
-          RebuildReceiver(context);
+          RebuildReceiver(lease.GetContext());
           lease.RefreshStack();
           return true;
         }
@@ -793,7 +822,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           std::move(pendingFailure));
     }
 
-    while (messages.size() < maxMessages && !context.IsCancelled())
+    while (messages.size() < maxMessages && !lease.GetContext().IsCancelled())
     {
       std::pair<
           std::shared_ptr<const Azure::Core::Amqp::Models::AmqpMessage>,
@@ -801,7 +830,17 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           result;
 
       // TryWaitForIncomingMessage returns two empty values if there is no data available.
-      result = lease.GetStack()->Receiver.TryWaitForIncomingMessage();
+      auto stack = lease.GetStack();
+      if (!stack)
+      {
+        std::lock_guard<std::mutex> lock(state->Lock);
+        if (state->Closed)
+        {
+          throw Azure::Core::OperationCancelledException("Partition client is closed.");
+        }
+        throw std::runtime_error("Partition client has no receiver stack.");
+      }
+      result = stack->Receiver.TryWaitForIncomingMessage();
       if (result.first)
       {
         keepMessage(result.first);
@@ -822,7 +861,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       else
       {
-        result = lease.GetStack()->Receiver.WaitForIncomingMessage(context);
+        result = stack->Receiver.WaitForIncomingMessage(lease.GetContext());
         if (result.first)
         {
           Log::Stream(Logger::Level::Verbose)
