@@ -127,7 +127,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::atomic<int> TransferFailures{0};
       std::atomic<int> TransferAttempts{0};
       std::atomic<int> AcceptedTransfers{0};
-      std::atomic<int> ReceiverOpenFailures{0};
       std::atomic<int> DeliveryLinks{0};
       std::atomic<int> DeliveryNumber{0};
       bool DeliverEvents{false};
@@ -214,10 +213,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       EventHubEndpoint(
           std::string name,
           MockServiceEndpointOptions const& options,
-          std::shared_ptr<EventScript> script,
-          bool rejectInitialReceiverOpen = false)
-          : MockServiceEndpoint(std::move(name), options), m_script{std::move(script)},
-            m_rejectInitialReceiverOpen{rejectInitialReceiverOpen}
+          std::shared_ptr<EventScript> script)
+          : MockServiceEndpoint(std::move(name), options), m_script{std::move(script)}
       {
       }
 
@@ -240,15 +237,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::Core::Amqp::Models::_internal::MessageSource const& source,
           Azure::Core::Amqp::Models::_internal::MessageTarget const& target) override
       {
-        if (m_rejectInitialReceiverOpen && role == SessionRole::Sender
-            && Consume(m_script->ReceiverOpenFailures))
-        {
-          AmqpError error;
-          error.Condition = AmqpErrorCondition::UnauthorizedAccess;
-          error.Description = "stale receiver open";
-          DetachLink(session, linkEndpoint, true, error);
-          return false;
-        }
         auto const attached = MockServiceEndpoint::OnLinkAttached(
             session, linkName, linkEndpoint, role, source, target);
         if (attached && role == SessionRole::Receiver && m_script->DeliverEvents)
@@ -315,7 +303,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
 
       std::shared_ptr<EventScript> m_script;
-      bool m_rejectInitialReceiverOpen{false};
       std::vector<std::thread> m_deliveryWorkers;
     };
 
@@ -325,32 +312,27 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           int openFailures = 0,
           int putTokenFailures = 0,
           int transferFailures = 0,
-          bool deliverEvents = false,
-          int receiverOpenFailures = 0)
+          bool deliverEvents = false)
           : m_port{Azure::Core::Amqp::Tests::FindAvailableSocket()},
             m_server{m_port, testing::UnitTest::GetInstance()->current_test_info()->name(), false},
-            m_cbsScript{std::make_shared<CbsScript>()},
-            m_eventScript{std::make_shared<EventScript>()}
+            m_cbsScript{std::make_shared<CbsScript>()}, m_eventScript{
+                                                            std::make_shared<EventScript>()}
       {
         m_cbsScript->OpenFailures = openFailures;
         m_cbsScript->PutTokenFailures = putTokenFailures;
         m_eventScript->TransferFailures = transferFailures;
-        m_eventScript->ReceiverOpenFailures = receiverOpenFailures;
         m_eventScript->DeliverEvents = deliverEvents;
 
         MockServiceEndpointOptions endpointOptions;
         endpointOptions.ListenerContext = m_server.GetListenerContext();
         m_server.AddServiceEndpoint(
             std::make_shared<ScriptedCbsEndpoint>(endpointOptions, m_cbsScript));
-        m_server.AddServiceEndpoint(
-            std::make_shared<EventHubEndpoint>(
-                ProducerPartitionEndpoint(), endpointOptions, m_eventScript));
-        m_server.AddServiceEndpoint(
-            std::make_shared<EventHubEndpoint>(
-                ProducerGatewayEndpoint(), endpointOptions, m_eventScript));
-        m_server.AddServiceEndpoint(
-            std::make_shared<EventHubEndpoint>(
-                ConsumerPartitionEndpoint(), endpointOptions, m_eventScript, true));
+        m_server.AddServiceEndpoint(std::make_shared<EventHubEndpoint>(
+            ProducerPartitionEndpoint(), endpointOptions, m_eventScript));
+        m_server.AddServiceEndpoint(std::make_shared<EventHubEndpoint>(
+            ProducerGatewayEndpoint(), endpointOptions, m_eventScript));
+        m_server.AddServiceEndpoint(std::make_shared<EventHubEndpoint>(
+            ConsumerPartitionEndpoint(), endpointOptions, m_eventScript));
       }
 
       ~AuthRecoveryServer() { Stop(); }
@@ -380,6 +362,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       int TransferAttempts() const { return m_eventScript->TransferAttempts.load(); }
       int AcceptedTransfers() const { return m_eventScript->AcceptedTransfers.load(); }
       int DeliveryLinks() const { return m_eventScript->DeliveryLinks.load(); }
+
+      void SetPutTokenFailures(int failures) { m_cbsScript->PutTokenFailures = failures; }
 
       std::string ConnectionString() const
       {
@@ -501,33 +485,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_FALSE(failure.IsTransient);
   }
 
-  TEST_F(AuthRecoveryTest, ConsumerCreatePartitionClientRecoversPutTokenAndReceiverOpen)
+  TEST_F(AuthRecoveryTest, ConsumerCreatePartitionClientRecoversPutToken)
   {
-    {
-      AuthRecoveryServer server(0, 1);
-      server.Start();
+    AuthRecoveryServer server(0, 1);
+    server.Start();
 
-      ConsumerClientOptions options;
-      options.RetryOptions = FastRetryOptions();
-      ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
+    ConsumerClientOptions options;
+    options.RetryOptions = FastRetryOptions();
+    ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
 
-      auto partition = consumer.CreatePartitionClient("0");
-      EXPECT_TRUE(partition.ReceiveEvents(0).empty());
-      EXPECT_EQ(2U, server.ConnectionCount());
-      EXPECT_EQ(2, server.PutTokenAttempts());
-    }
-    {
-      AuthRecoveryServer server(0, 0, 0, false, 1);
-      server.Start();
-
-      ConsumerClientOptions options;
-      options.RetryOptions = FastRetryOptions();
-      ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
-
-      auto partition = consumer.CreatePartitionClient("0");
-      EXPECT_TRUE(partition.ReceiveEvents(0).empty());
-      EXPECT_EQ(2U, server.ConnectionCount());
-    }
+    auto partition = consumer.CreatePartitionClient("0");
+    EXPECT_TRUE(partition.ReceiveEvents(0).empty());
+    EXPECT_EQ(2U, server.ConnectionCount());
+    EXPECT_EQ(2, server.PutTokenAttempts());
   }
 
   TEST_F(AuthRecoveryTest, ReceiverReceiveRecoversUnauthorizedAndResumesWithoutDuplicate)
@@ -550,6 +520,42 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("11", events[1]->Offset.Value());
     EXPECT_EQ(2U, server.ConnectionCount());
     EXPECT_EQ(2, server.DeliveryLinks());
+  }
+
+  TEST_F(AuthRecoveryTest, ReceiverPartialDeliveryPreservesPendingAuthenticationFailure)
+  {
+    AuthRecoveryServer server(0, 0, 0, true);
+    server.Start();
+
+    ConsumerClientOptions options;
+    options.RetryOptions = FastRetryOptions();
+    ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
+    PartitionClientOptions partitionOptions;
+    partitionOptions.StartPosition.Earliest = true;
+    auto partition = consumer.CreatePartitionClient("0", partitionOptions);
+
+    server.SetPutTokenFailures(2);
+    auto events = partition.ReceiveEvents(2);
+
+    ASSERT_EQ(1U, events.size());
+    ASSERT_TRUE(events[0]->Offset.HasValue());
+    EXPECT_EQ("10", events[0]->Offset.Value());
+    EXPECT_EQ(2U, server.ConnectionCount());
+    EXPECT_EQ(2, server.PutTokenAttempts());
+
+    try
+    {
+      partition.ReceiveEvents(1);
+      ADD_FAILURE() << "Expected the pending authentication failure.";
+    }
+    catch (Azure::Core::Credentials::AuthenticationException const& exception)
+    {
+      EXPECT_EQ(
+          "Could not authenticate client. Error Status: 401 reason: CBS PutToken failed",
+          exception.what());
+    }
+    EXPECT_EQ(3U, server.ConnectionCount());
+    EXPECT_EQ(3, server.PutTokenAttempts());
   }
 
   TEST_F(AuthRecoveryTest, CbsOpenErrorUsesOrdinaryBudgetAndLeavesAuthBudgetAvailable)
