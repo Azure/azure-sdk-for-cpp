@@ -6,6 +6,8 @@
 #include <azure/core/azure_assert.hpp>
 
 #include <atomic>
+#include <condition_variable>
+#include <cstdint>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -49,8 +51,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
 #if ENABLE_UAMQP
     std::list<std::shared_ptr<Pollable>> m_pollables;
     std::mutex m_pollablesMutex;
+    std::condition_variable m_pollingCondition;
+    uint64_t m_pollingGeneration{0};
+    uint64_t m_completedGeneration{0};
     std::thread m_pollingThread;
-    std::atomic<bool> m_activelyPolling;
     bool m_stopped{false};
 #elif ENABLE_RUST_AMQP
     RustRuntimeContext m_runtimeContext;
