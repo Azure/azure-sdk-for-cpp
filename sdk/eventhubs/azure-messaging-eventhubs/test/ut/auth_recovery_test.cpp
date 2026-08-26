@@ -15,6 +15,8 @@
 #include <atomic>
 #include <chrono>
 #include <cstdint>
+#include <exception>
+#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -23,6 +25,10 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+
+namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
+  void SetProducerSessionSnapshotHook(std::function<void()> hook);
+}}}} // namespace Azure::Messaging::EventHubs::_detail
 
 #if defined(AZ_PLATFORM_POSIX)
 #include <unistd.h>
@@ -456,6 +462,72 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(2U, server.ConnectionCount());
     EXPECT_EQ(2, server.TransferAttempts());
     EXPECT_EQ(1, server.AcceptedTransfers());
+  }
+
+  TEST_F(AuthRecoveryTest, ProducerCloseAtSessionSnapshotPreservesRetryContract)
+  {
+    AuthRecoveryServer server;
+    server.Start();
+
+    ProducerClientOptions options;
+    options.RetryOptions = FastRetryOptions();
+    ProducerClient producer(server.ConnectionString(), "", options);
+
+    std::atomic<bool> hookCalled{false};
+    std::exception_ptr closeFailure;
+    _detail::SetProducerSessionSnapshotHook([&]() {
+      hookCalled = true;
+      std::thread closeThread([&]() {
+        try
+        {
+          producer.Close();
+        }
+        catch (...)
+        {
+          closeFailure = std::current_exception();
+        }
+      });
+      closeThread.join();
+    });
+
+    std::exception_ptr operationFailure;
+    try
+    {
+      producer.CreateBatch(BatchOptions());
+    }
+    catch (...)
+    {
+      operationFailure = std::current_exception();
+    }
+    _detail::SetProducerSessionSnapshotHook({});
+
+    ASSERT_TRUE(hookCalled.load());
+    if (closeFailure)
+    {
+      std::rethrow_exception(closeFailure);
+    }
+    if (operationFailure)
+    {
+      try
+      {
+        std::rethrow_exception(operationFailure);
+      }
+      catch (std::out_of_range const&)
+      {
+        ADD_FAILURE() << "Producer session invalidation escaped as std::out_of_range.";
+      }
+      catch (EventHubsException const& exception)
+      {
+        ADD_FAILURE() << "Producer retry escaped as EventHubsException: " << exception.what();
+      }
+      catch (std::exception const& exception)
+      {
+        ADD_FAILURE() << "Producer retry escaped as an unexpected exception: " << exception.what();
+      }
+    }
+
+    EXPECT_FALSE(operationFailure);
+    EXPECT_EQ(2U, server.ConnectionCount());
   }
 
   TEST_F(AuthRecoveryTest, ProducerConvenienceSendSharesOneRecoveryBudgetAcrossBatchAndTransfer)

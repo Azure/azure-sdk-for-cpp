@@ -45,6 +45,7 @@ target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDIN
 
 if (NOT USE_RUST_AMQP)
   target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_TESTING_BUILD)
+  target_compile_definitions(azure-messaging-eventhubs PRIVATE _azure_EVENTHUBS_TEST_HOOKS)
 endif()
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
