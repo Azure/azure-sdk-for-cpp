@@ -188,9 +188,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // are exhausted, but if the lambda ever returns false directly the batch must not be
     // silently dropped. See issue #7130.
     auto const& partitionId = eventDataBatch.GetPartitionId();
-    bool transferAttempt = false;
+    bool transferUnauthorized = false;
     auto send = [&]() -> bool {
-      transferAttempt = false;
+      transferUnauthorized = false;
       EnsureSenderOrInvalidate(partitionId, context);
       std::uint64_t observedGeneration = 0;
       auto& guard = GetPartitionGuard(partitionId);
@@ -200,7 +200,6 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
         auto sender = GetSender(partitionId);
         observedGeneration = guard.generation.load();
-        transferAttempt = true;
         auto result = sender.Send(message, context);
 #if ENABLE_UAMQP
         auto sendStatus = std::get<0>(result);
@@ -209,8 +208,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           return true;
         }
         // Throw an exception about the error we just received.
-        throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+        auto transferException = Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
             CreateEventHubsException(std::get<1>(result));
+        transferUnauthorized = _detail::IsUnauthorizedAccess(transferException);
+        throw transferException;
 #elif ENABLE_RUST_AMQP
         if (result)
         {
@@ -278,7 +279,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
       {
-        if (!transferAttempt || !_detail::IsUnauthorizedAccess(ex))
+        if (!transferUnauthorized || !_detail::IsUnauthorizedAccess(ex))
         {
           throw;
         }
