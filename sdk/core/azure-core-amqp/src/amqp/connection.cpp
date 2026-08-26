@@ -195,9 +195,14 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             = claimsBasedSecurity->PutToken(tokenType, audienceUrl, token, expiresOn, context);
         if (std::get<0>(result) != CbsOperationResult::Ok)
         {
-          throw Azure::Core::Credentials::AuthenticationException(
+          auto failure = Azure::Core::Credentials::AuthenticationException(
               "Could not authenticate client. Error Status: " + std::to_string(std::get<1>(result))
               + " reason: " + std::get<2>(result));
+#if ENABLE_UAMQP
+          throw CbsPutTokenFailedException(std::make_exception_ptr(failure), failure.what());
+#else
+          throw failure;
+#endif
         }
         Log::Stream(Logger::Level::Verbose) << "Close CBS object";
         claimsBasedSecurity->Close(context);

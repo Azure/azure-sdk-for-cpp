@@ -7,8 +7,10 @@
 
 #include <azure/core/context.hpp>
 
+#include <exception>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   class ClaimsBasedSecurityImpl;
@@ -52,6 +54,23 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     /** @brief The result reported by the failed open. */
     CbsOpenResult Result;
   };
+
+#if ENABLE_UAMQP
+  /** @brief Identifies a failed uAMQP CBS put-token operation. */
+  class CbsPutTokenFailedException final : public std::runtime_error {
+  public:
+    CbsPutTokenFailedException(std::exception_ptr original, std::string const& what)
+        : std::runtime_error(what), m_original{std::move(original)}
+    {
+    }
+
+    std::exception_ptr GetOriginal() const { return m_original; }
+    [[noreturn]] void RethrowOriginal() const { std::rethrow_exception(m_original); }
+
+  private:
+    std::exception_ptr m_original;
+  };
+#endif
 
   enum class CbsTokenType
   {
