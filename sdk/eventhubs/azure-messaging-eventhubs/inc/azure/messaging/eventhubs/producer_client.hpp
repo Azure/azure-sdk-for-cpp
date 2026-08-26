@@ -195,6 +195,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
 
   private:
+    struct ProducerCallState;
+
     /// The connection string for the Event Hubs namespace
     std::string m_connectionString;
 
@@ -259,6 +261,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
+    EventDataBatch CreateBatch(
+        EventDataBatchOptions const& options,
+        Azure::Core::Context const& context,
+        ProducerCallState& callState);
+
+    void Send(
+        EventDataBatch const& eventDataBatch,
+        Core::Context const& context,
+        ProducerCallState& callState);
+
     // Calls EnsureSender, and discards a failed attach unless the context is cancelled.
     void EnsureSenderOrInvalidate(
         std::string const& partitionId,
@@ -268,7 +280,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // security open reported CbsOpenResult::Error.
     void EstablishSenderWithRetry(
         std::string const& partitionId,
-        Azure::Core::Context const& context);
+        Azure::Core::Context const& context,
+        ProducerCallState& callState);
 
     // Discards the sender, session, and connection for the partition. A null generation,
     // as Close passes, removes whatever is present regardless of generation.

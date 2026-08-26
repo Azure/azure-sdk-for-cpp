@@ -107,6 +107,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     return exception.ErrorCondition != "amqp:link:message-size-exceeded";
   }
 
+  inline bool IsUnauthorizedAccess(EventHubsException const& exception)
+  {
+    return exception.ErrorCondition == "amqp:unauthorized-access";
+  }
+
   // A rebuild starts after the last delivered offset, so the caller sees no duplicate
   // event. Before the first delivery there is no offset yet, so keep the original position.
   inline Models::StartPosition ResumeStartPosition(

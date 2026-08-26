@@ -77,6 +77,12 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     {
       throw;
     }
+#if ENABLE_UAMQP
+    catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const&)
+    {
+      throw;
+    }
+#endif
     catch (Azure::Core::Amqp::_detail::CbsOpenFailedException const& e)
     {
       context.ThrowIfCancelled();
