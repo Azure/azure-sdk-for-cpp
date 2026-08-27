@@ -114,6 +114,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         });
 
 #if ENABLE_RUST_AMQP
+    static_cast<void>(m_partitionClientStatesClosing);
     Log::Stream(Logger::Level::Verbose) << "Closing sessions.";
     _detail::ForEachBestEffort(
         m_sessions.begin(),
