@@ -310,7 +310,7 @@ jobs:
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@10
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@9
           displayName: Check line coverage
           inputs:
             checkCoverage: true
