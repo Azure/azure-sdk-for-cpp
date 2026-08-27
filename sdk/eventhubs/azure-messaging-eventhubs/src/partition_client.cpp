@@ -567,6 +567,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         << "Rebuild the message receiver for " << state->PartitionUrl << ".";
     CloseReceiverStack(oldStack, context);
     auto candidate = CreateReceiverStack(*state, options, context);
+    auto candidateReceiver = candidate->Receiver;
+    auto candidateSession = candidate->Session;
 
     bool installed = false;
     {
@@ -588,6 +590,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       CloseReceiverStack(candidate, context);
       throw Azure::Core::OperationCancelledException("Partition client was closed.");
     }
+
+    // Drop the copies of the old stack, or its connection stays open until the client dies.
+    m_receiver = std::move(candidateReceiver);
+    m_session = std::move(candidateSession);
 
     Log::Stream(Logger::Level::Informational)
         << "The message receiver for " << state->PartitionUrl << " is attached again.";
