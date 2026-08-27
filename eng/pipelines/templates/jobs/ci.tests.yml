@@ -318,6 +318,9 @@ jobs:
             coverageType: line
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
+            PSGer.Cover.MaxWaitTime: 180000
+            PSGer.Cover.PollInterval: 5000
+            PSGer.Cover.StableDataCount: 10
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
         # Disabling branch coverage check until newer tasks can support it see issue https://github.com/microsoft/azure-pipelines-tasks/issues/19669 tracking that request.
