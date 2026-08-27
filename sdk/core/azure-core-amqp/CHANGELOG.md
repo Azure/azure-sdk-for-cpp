@@ -13,6 +13,11 @@
 
 - The uAMQP message sender now encodes delivery annotations, message annotations, and the footer as described sections, so a uAMQP receiver can decode a message that carries them. Before, the sender wrote the bare maps, and the receiving link failed with "Error decoding message" and went to the error state. [[#7376]](https://github.com/Azure/azure-sdk-for-cpp/issues/7376)
 - On the uAMQP transport, `MessageSender::Open` and `MessageReceiver::Open` now throw `_detail::CbsPutTokenFailedException` when the service rejects the CBS put-token. The type derives from `std::runtime_error` and carries the original `AuthenticationException`, which `RethrowOriginal()` throws again. The Event Hubs clients use the type to tell a rejected put-token from a credential failure. `ManagementClient::Open` and `ManagementClient::ExecuteOperation` still throw `AuthenticationException`. [[#7376]](https://github.com/Azure/azure-sdk-for-cpp/issues/7376)
+- uAMQP pollable registration and removal no longer block each other while a poll is in flight. The
+  polling registry now waits on completion notifications, and sender, receiver, and link setup and
+  teardown do not hold connection locks across registry operations. The polling thread now sleeps
+  when no pollable is registered. It spun on one core after a process closed its last connection.
+  [[#7370]](https://github.com/Azure/azure-sdk-for-cpp/issues/7370)
 - uAMQP now tears down unsettled sends without leaving late dispositions with freed callback state. Sender Open cleanup no longer deadlocks with link polling. Sender Open, sender Close, and receiver Close report caller cancellation separately from synthetic timeout. [[#7350]](https://github.com/Azure/azure-sdk-for-cpp/issues/7350)
 - A close that fails now leaves the object closed. `ManagementClient`, `MessageSender`, and `MessageReceiver` kept the open flag when the close threw, and the destructor then stopped the process. [[#7323]](https://github.com/Azure/azure-sdk-for-cpp/issues/7323)
 - The connection no longer returns a cached CBS token that is at or near its expiry. It authenticates the audience again instead. [[#7254]](https://github.com/Azure/azure-sdk-for-cpp/issues/7254)

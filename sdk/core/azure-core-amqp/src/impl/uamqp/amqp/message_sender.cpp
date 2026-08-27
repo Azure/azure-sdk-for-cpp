@@ -345,20 +345,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error(
             "Could not open message sender. errno=" + std::to_string(err) + ", \"" + buf + "\".");
       }
-      // Mark the connection as async so that we can use the async APIs.
-      if (m_options.EnableTrace)
-      {
-        Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
-      }
-      m_session->GetConnection()->EnableAsyncOperation(true);
-      // Enable async on the link as well.
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
-
       registration = m_session->GetConnection()->GetPendingOperations().Register(
           [this](Models::_internal::AmqpError const& error) {
             m_openQueue.CompleteOperation(error);
           });
     }
+    // Mark the connection as async so that we can use the async APIs.
+    if (m_options.EnableTrace)
+    {
+      Log::Stream(Logger::Level::Verbose) << "Opening message sender. Enable async operation.";
+    }
+    m_session->GetConnection()->EnableAsyncOperation(true);
+    // Enable async on the link as well.
+    Common::_detail::GlobalStateHolder::GlobalStateInstance()->AddPollable(m_link);
+
     if (!halfOpen)
     {
       // A caller that gave no deadline must not wait forever for an attach.

@@ -444,19 +444,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         Log::Stream(Logger::Level::Verbose) << "Opening message receiver. Start async";
       }
-
-      // Mark the connection as async so that we can use the async APIs.
-      m_session->GetConnection()->EnableAsyncOperation(true);
     }
+
+    // Mark the connection as async so that we can use the async APIs.
+    m_session->GetConnection()->EnableAsyncOperation(true);
 
     // And add the link to the list of pollable items.
     //
-    // Note that you *cannot* hold any connection or link locks when calling AddPollable. This is
-    // because the the AddPollable function attempts to lock the pollable and the RemovePollable
-    // function blocks until any pollables have completed while holding the pollable lock.
-    //
-    // This can result in a deadlock because the polling thread is also going to acquire the
-    // connection lock resulting in a deadlock.
+    // Do not hold a connection or link lock while registering the link. The polling thread acquires
+    // those locks while it polls an item.
     // If we're not deferring link polling, enable the async operation on the connection.
     if (!m_deferLinkPolling)
     {
