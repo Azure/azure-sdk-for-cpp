@@ -72,7 +72,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);
 
-    static void WaitForAuthenticationRecovery(
+    static void WaitForRetryDelay(
         std::chrono::milliseconds retryAfter,
         Azure::Core::Context const& context);
 

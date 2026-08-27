@@ -303,7 +303,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           failure.RethrowOriginal();
         }
-        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForAuthenticationRecovery(
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
             retryAfter, context);
       }
       catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
@@ -318,7 +318,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           throw;
         }
-        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForAuthenticationRecovery(
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
             retryAfter, context);
       }
     }
@@ -580,10 +580,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       try
       {
-        if (!callState.Ordinary.Execute(establish, context))
-        {
-          return;
-        }
+        static_cast<void>(callState.Ordinary.Execute(establish, context));
         return;
       }
       catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const& failure)
@@ -593,7 +590,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           failure.RethrowOriginal();
         }
-        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForAuthenticationRecovery(
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
             retryAfter, context);
       }
     }

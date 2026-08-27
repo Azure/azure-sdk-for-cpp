@@ -505,7 +505,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         {
           failure.RethrowOriginal();
         }
-        _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, context);
+        _detail::RetryOperation::WaitForRetryDelay(retryAfter, context);
       }
     }
   }
@@ -789,12 +789,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         if (!authenticationFailure)
         {
           rebuildAttempt++;
-          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, lease.GetContext());
         }
-        else
-        {
-          _detail::RetryOperation::WaitForAuthenticationRecovery(retryAfter, lease.GetContext());
-        }
+        _detail::RetryOperation::WaitForRetryDelay(retryAfter, lease.GetContext());
 
         try
         {

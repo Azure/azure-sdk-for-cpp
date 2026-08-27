@@ -133,7 +133,7 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetryAuthentica
   return true;
 }
 
-void Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForAuthenticationRecovery(
+void Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
     std::chrono::milliseconds retryAfter,
     Azure::Core::Context const& context)
 {
