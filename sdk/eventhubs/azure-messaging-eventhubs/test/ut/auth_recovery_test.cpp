@@ -963,6 +963,34 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
   }
 
+  // The properties path has no authentication recovery, so a rejected put-token must reach
+  // the caller as the public AuthenticationException on both clients.
+  TEST_F(AuthRecoveryTest, PropertiesCallSurfacesPutTokenRejectionAsAuthenticationException)
+  {
+    {
+      AuthRecoveryServer server(0, 1);
+      server.Start();
+      ProducerClientOptions options;
+      options.RetryOptions = FastRetryOptions(0);
+      ProducerClient producer(server.ConnectionString(), "", options);
+      EXPECT_THROW(
+          producer.GetEventHubProperties(), Azure::Core::Credentials::AuthenticationException);
+      EXPECT_EQ(1U, server.ConnectionCount());
+      EXPECT_EQ(1, server.PutTokenAttempts());
+    }
+    {
+      AuthRecoveryServer server(0, 1);
+      server.Start();
+      ConsumerClientOptions options;
+      options.RetryOptions = FastRetryOptions(0);
+      ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
+      EXPECT_THROW(
+          consumer.GetEventHubProperties(), Azure::Core::Credentials::AuthenticationException);
+      EXPECT_EQ(1U, server.ConnectionCount());
+      EXPECT_EQ(1, server.PutTokenAttempts());
+    }
+  }
+
   TEST_F(AuthRecoveryTest, CredentialAuthenticationExceptionIsPermanent)
   {
     AuthRecoveryServer server;
