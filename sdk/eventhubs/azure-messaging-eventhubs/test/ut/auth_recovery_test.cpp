@@ -28,6 +28,7 @@
 
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   void SetProducerSessionSnapshotHook(std::function<void()> hook);
+  void SetPartitionClientStateCloseHook(std::function<void()> hook);
 }}}} // namespace Azure::Messaging::EventHubs::_detail
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -570,6 +571,113 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(partition.ReceiveEvents(0).empty());
     EXPECT_EQ(2U, server.ConnectionCount());
     EXPECT_EQ(2, server.PutTokenAttempts());
+  }
+
+  TEST_F(AuthRecoveryTest, PartitionMoveAssignmentClosesActiveReceive)
+  {
+    AuthRecoveryServer server;
+    server.Start();
+
+    ConsumerClientOptions destinationOptions;
+    destinationOptions.Name = "destination";
+    destinationOptions.RetryOptions = FastRetryOptions();
+    ConsumerClient destinationConsumer(
+        server.ConnectionString(), "", DefaultConsumerGroup, destinationOptions);
+
+    ConsumerClientOptions sourceOptions;
+    sourceOptions.Name = "source";
+    sourceOptions.RetryOptions = FastRetryOptions();
+    ConsumerClient sourceConsumer(
+        server.ConnectionString(), "", DefaultConsumerGroup, sourceOptions);
+
+    auto destination = destinationConsumer.CreatePartitionClient("0");
+    auto source = sourceConsumer.CreatePartitionClient("0");
+
+    Azure::Core::Context receiveContext{Azure::DateTime::clock::now() + std::chrono::seconds(5)};
+    std::atomic<bool> receiveStarted{false};
+    std::atomic<bool> receiveComplete{false};
+    std::exception_ptr receiveFailure;
+    std::thread receiveThread([&]() {
+      receiveStarted = true;
+      try
+      {
+        destination.ReceiveEvents(1, receiveContext);
+      }
+      catch (...)
+      {
+        receiveFailure = std::current_exception();
+      }
+      receiveComplete = true;
+    });
+
+    auto cleanup = [&]() {
+      _detail::SetPartitionClientStateCloseHook({});
+      receiveContext.Cancel();
+      if (receiveThread.joinable())
+      {
+        receiveThread.join();
+      }
+    };
+
+    auto const startDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    while (!receiveStarted.load() && std::chrono::steady_clock::now() < startDeadline)
+    {
+      std::this_thread::yield();
+    }
+    if (!receiveStarted.load())
+    {
+      cleanup();
+      ADD_FAILURE() << "The destination receive did not start.";
+      return;
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    if (receiveComplete.load())
+    {
+      cleanup();
+      ADD_FAILURE() << "The destination receive did not block.";
+      return;
+    }
+
+    std::atomic<int> closeHookCalls{0};
+    _detail::SetPartitionClientStateCloseHook([&]() { ++closeHookCalls; });
+    auto const moveStart = std::chrono::steady_clock::now();
+    std::exception_ptr moveFailure;
+    try
+    {
+      destination = std::move(source);
+    }
+    catch (...)
+    {
+      moveFailure = std::current_exception();
+    }
+    auto const moveElapsed = std::chrono::steady_clock::now() - moveStart;
+    auto const receiveDeadline = std::chrono::steady_clock::now() + std::chrono::seconds(1);
+    while (!receiveComplete.load() && std::chrono::steady_clock::now() < receiveDeadline)
+    {
+      std::this_thread::yield();
+    }
+    auto const receiveExited = receiveComplete.load();
+    cleanup();
+
+    ASSERT_FALSE(moveFailure);
+    EXPECT_EQ(1, closeHookCalls.load());
+    EXPECT_TRUE(receiveExited);
+    EXPECT_LT(moveElapsed, std::chrono::seconds(1));
+    if (receiveFailure)
+    {
+      try
+      {
+        std::rethrow_exception(receiveFailure);
+      }
+      catch (Azure::Core::OperationCancelledException const&)
+      {
+      }
+      catch (std::exception const& exception)
+      {
+        ADD_FAILURE() << "The destination receive failed unexpectedly: " << exception.what();
+      }
+    }
   }
 
   TEST_F(AuthRecoveryTest, ReceiverReceiveRecoversUnauthorizedAndResumesWithoutDuplicate)

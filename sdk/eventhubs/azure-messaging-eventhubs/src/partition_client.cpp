@@ -15,6 +15,7 @@
 #include <chrono>
 #include <condition_variable>
 #include <exception>
+#include <functional>
 #include <limits>
 #include <memory>
 #include <mutex>
@@ -381,6 +382,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   } // namespace
 #endif
 
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+  namespace {
+    std::mutex PartitionClientStateCloseHookLock;
+    std::function<void()> PartitionClientStateCloseHook;
+  } // namespace
+#endif
+
 #if ENABLE_UAMQP
   void _detail::ClosePartitionClientState(
       std::shared_ptr<_detail::PartitionClientState> const& state,
@@ -390,6 +398,18 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       return;
     }
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+    std::function<void()> closeHook;
+    {
+      std::lock_guard<std::mutex> lock(PartitionClientStateCloseHookLock);
+      closeHook = std::move(PartitionClientStateCloseHook);
+    }
+    if (closeHook)
+    {
+      closeHook();
+    }
+#endif
 
     std::shared_ptr<_detail::ReceiverStack> stackToClose;
     Azure::Core::Context activeReceiveContext;
@@ -416,6 +436,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
     CloseReceiverStack(stackToClose, context);
   }
+#endif
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+  namespace _detail {
+    void SetPartitionClientStateCloseHook(std::function<void()> hook)
+    {
+      std::lock_guard<std::mutex> lock(PartitionClientStateCloseHookLock);
+      PartitionClientStateCloseHook = std::move(hook);
+    }
+  } // namespace _detail
 #endif
 
 #if ENABLE_UAMQP
@@ -504,7 +534,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
 #if ENABLE_UAMQP
   PartitionClient::PartitionClient(std::shared_ptr<_detail::PartitionClientState> state)
-      : m_state{std::move(state)}
+      : m_state{std::move(state)},
+        m_receiver{m_state->Stack->Receiver}, m_session{m_state->Stack->Session}
   {
   }
 
@@ -616,6 +647,28 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         << "The message receiver for " << m_partitionUrl << " is attached again.";
   }
 #endif
+
+  PartitionClient& PartitionClient::operator=(PartitionClient&& other)
+  {
+    if (this == &other)
+    {
+      return *this;
+    }
+
+#if ENABLE_UAMQP
+    _detail::ClosePartitionClientState(m_state, {});
+#endif
+    m_state = std::move(other.m_state);
+    m_receiver = std::move(other.m_receiver);
+    m_session = std::move(other.m_session);
+    m_partitionUrl = std::move(other.m_partitionUrl);
+    m_receiverName = std::move(other.m_receiverName);
+    m_lastReceivedOffset = std::move(other.m_lastReceivedOffset);
+    m_pendingError = std::move(other.m_pendingError);
+    m_partitionOptions = std::move(other.m_partitionOptions);
+    m_retryOptions = std::move(other.m_retryOptions);
+    return *this;
+  }
 
   PartitionClient::~PartitionClient()
   {
