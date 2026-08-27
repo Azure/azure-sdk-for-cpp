@@ -22,7 +22,10 @@
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class EventHubsPropertiesClient;
-  }
+#if defined(_azure_BUILDING_TESTS)
+    class ConsumerClientTestAccess;
+#endif
+  } // namespace _detail
 
   class ConsumerClient;
 
@@ -203,8 +206,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         Core::Context const& context = {});
 
   private:
+#if defined(_azure_BUILDING_TESTS)
+    friend class _detail::ConsumerClientTestAccess;
+#endif
     std::mutex m_partitionClientStatesLock;
-    std::vector<std::shared_ptr<_detail::PartitionClientState>> m_partitionClientStates;
+    std::vector<std::weak_ptr<_detail::PartitionClientState>> m_partitionClientStates;
     bool m_partitionClientStatesClosing{false};
 
     /// The connection string for the Event Hubs namespace

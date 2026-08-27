@@ -29,6 +29,21 @@
 namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail {
   void SetProducerSessionSnapshotHook(std::function<void()> hook);
   void SetPartitionClientStateCloseHook(std::function<void()> hook);
+
+  class ConsumerClientTestAccess final {
+  public:
+    static std::size_t PartitionClientStateCount(ConsumerClient& consumer)
+    {
+      std::lock_guard<std::mutex> lock(consumer.m_partitionClientStatesLock);
+      return consumer.m_partitionClientStates.size();
+    }
+
+    static bool PartitionClientStateExpired(ConsumerClient& consumer, std::size_t index)
+    {
+      std::lock_guard<std::mutex> lock(consumer.m_partitionClientStatesLock);
+      return consumer.m_partitionClientStates.at(index).expired();
+    }
+  };
 }}}} // namespace Azure::Messaging::EventHubs::_detail
 
 #if defined(AZ_PLATFORM_POSIX)
@@ -571,6 +586,46 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_TRUE(partition.ReceiveEvents(0).empty());
     EXPECT_EQ(2U, server.ConnectionCount());
     EXPECT_EQ(2, server.PutTokenAttempts());
+  }
+
+  TEST_F(AuthRecoveryTest, ConsumerPartitionRegistryExpiresPrunesAndClosesStates)
+  {
+    AuthRecoveryServer server;
+    server.Start();
+
+    ConsumerClientOptions options;
+    options.RetryOptions = FastRetryOptions();
+    ConsumerClient consumer(server.ConnectionString(), "", DefaultConsumerGroup, options);
+
+    {
+      auto context = Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)};
+      auto partition = consumer.CreatePartitionClient("0", {}, context);
+      EXPECT_EQ(1U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
+      EXPECT_FALSE(_detail::ConsumerClientTestAccess::PartitionClientStateExpired(consumer, 0));
+    }
+
+    EXPECT_EQ(1U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
+    EXPECT_TRUE(_detail::ConsumerClientTestAccess::PartitionClientStateExpired(consumer, 0));
+
+    auto context = Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)};
+    auto partition = consumer.CreatePartitionClient("0", {}, context);
+    EXPECT_EQ(1U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
+
+    std::atomic<int> closeHookCalls{0};
+    _detail::SetPartitionClientStateCloseHook([&]() { ++closeHookCalls; });
+    try
+    {
+      consumer.Close(Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)});
+    }
+    catch (...)
+    {
+      _detail::SetPartitionClientStateCloseHook({});
+      throw;
+    }
+    _detail::SetPartitionClientStateCloseHook({});
+
+    EXPECT_EQ(1, closeHookCalls.load());
+    EXPECT_EQ(0U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
   }
 
   TEST_F(AuthRecoveryTest, PartitionMoveAssignmentClosesActiveReceive)

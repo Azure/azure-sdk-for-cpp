@@ -9,6 +9,7 @@
 #include <azure/core/amqp/internal/message_receiver.hpp>
 #include <azure/messaging/eventhubs.hpp>
 
+#include <algorithm>
 #include <stdexcept>
 
 using namespace Azure::Core::Diagnostics::_internal;
@@ -76,7 +77,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         return;
       }
       m_partitionClientStatesClosing = true;
-      partitionClientStates = std::move(m_partitionClientStates);
+      partitionClientStates.reserve(m_partitionClientStates.size());
+      for (auto const& weakState : m_partitionClientStates)
+      {
+        if (auto state = weakState.lock())
+        {
+          partitionClientStates.push_back(std::move(state));
+        }
+      }
+      m_partitionClientStates.clear();
     }
 #endif
     {
@@ -259,6 +268,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       }
       else
       {
+        m_partitionClientStates.erase(
+            std::remove_if(
+                m_partitionClientStates.begin(),
+                m_partitionClientStates.end(),
+                [](std::weak_ptr<_detail::PartitionClientState> const& state) {
+                  return state.expired();
+                }),
+            m_partitionClientStates.end());
         m_partitionClientStates.push_back(partition.GetState());
       }
     }
