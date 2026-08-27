@@ -86,6 +86,8 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     }
 #endif
 #if ENABLE_UAMQP
+    // Only CbsOpenResult::Error can be transient. uAMQP gives no value that separates a
+    // transient open failure from a permanent one, so MaxRetries is the only bound.
     catch (Azure::Core::Amqp::_detail::CbsOpenFailedException const& e)
     {
       context.ThrowIfCancelled();
