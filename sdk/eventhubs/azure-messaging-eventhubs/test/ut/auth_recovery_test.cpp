@@ -18,6 +18,7 @@
 #include <exception>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -151,8 +152,36 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       std::atomic<int> AcceptedTransfers{0};
       std::atomic<int> DeliveryLinks{0};
       std::atomic<int> DeliveryNumber{0};
+      std::atomic<int> DetachesSent{0};
       bool DeliverEvents{false};
+      std::mutex FilterLock;
+      std::vector<std::string> ReceiverFilters;
     };
+
+    std::string SelectorFilter(Azure::Core::Amqp::Models::_internal::MessageSource const& source)
+    {
+      auto filter = source.GetFilter();
+      auto const selector = filter.find(AmqpSymbol{"apache.org:selector-filter:string"});
+      if (selector == filter.end())
+      {
+        return {};
+      }
+      return static_cast<std::string>(selector->second.AsDescribed().GetValue());
+    }
+
+    template <typename Predicate> bool WaitUntil(Predicate predicate)
+    {
+      auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(10);
+      while (!predicate())
+      {
+        if (std::chrono::steady_clock::now() >= deadline)
+        {
+          return false;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
+      return true;
+    }
 
     bool Consume(std::atomic<int>& count)
     {
@@ -259,13 +288,21 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           Azure::Core::Amqp::Models::_internal::MessageSource const& source,
           Azure::Core::Amqp::Models::_internal::MessageTarget const& target) override
       {
+        // The base call hands the endpoint to the new link, which owns it from then on. A
+        // worker that detaches later needs the raw handle, because the wrapper is emptied.
+        auto* const endpointHandle = linkEndpoint.Get();
+        if (role == SessionRole::Receiver)
+        {
+          std::lock_guard<std::mutex> lock(m_script->FilterLock);
+          m_script->ReceiverFilters.push_back(SelectorFilter(source));
+        }
         auto const attached = MockServiceEndpoint::OnLinkAttached(
             session, linkName, linkEndpoint, role, source, target);
         if (attached && role == SessionRole::Receiver && m_script->DeliverEvents)
         {
           ++m_script->DeliveryLinks;
-          m_deliveryWorkers.emplace_back([this, session, &linkEndpoint, linkName]() {
-            Deliver(session, linkEndpoint, linkName);
+          m_deliveryWorkers.emplace_back([this, session, endpointHandle, linkName]() {
+            Deliver(session, endpointHandle, linkName);
           });
         }
         return attached;
@@ -290,7 +327,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       void Deliver(
           Session const& session,
-          Azure::Core::Amqp::_internal::LinkEndpoint& linkEndpoint,
+          LINK_ENDPOINT_INSTANCE_TAG* endpointHandle,
           std::string const& linkName)
       {
         while (!GetListenerContext().IsCancelled() && !HasMessageSender(linkName))
@@ -320,7 +357,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
           AmqpError error;
           error.Condition = AmqpErrorCondition::UnauthorizedAccess;
           error.Description = "stale receive";
-          DetachLink(session, linkEndpoint, true, error);
+          auto endpoint
+              = Azure::Core::Amqp::_detail::LinkEndpointFactory::CreateLinkEndpoint(endpointHandle);
+          DetachLink(session, endpoint, true, error);
+          ++m_script->DetachesSent;
         }
       }
 
@@ -384,6 +424,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       int TransferAttempts() const { return m_eventScript->TransferAttempts.load(); }
       int AcceptedTransfers() const { return m_eventScript->AcceptedTransfers.load(); }
       int DeliveryLinks() const { return m_eventScript->DeliveryLinks.load(); }
+      int DetachesSent() const { return m_eventScript->DetachesSent.load(); }
+      std::vector<std::string> ReceiverFilters() const
+      {
+        std::lock_guard<std::mutex> lock(m_eventScript->FilterLock);
+        return m_eventScript->ReceiverFilters;
+      }
+
+      // The mock sends the first event and the unauthorized detach as soon as the receiver
+      // attaches. A receive that starts after both frames arrived sees the event first and
+      // then the error in one call, which is the partial delivery the tests need.
+      bool WaitForFirstDetach() const
+      {
+        if (!WaitUntil([this]() { return DetachesSent() >= 1; }))
+        {
+          return false;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        return true;
+      }
 
       void SetPutTokenFailures(int failures) { m_cbsScript->PutTokenFailures = failures; }
 
@@ -396,18 +455,18 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
       std::string ProducerPartitionEndpoint() const
       {
-        return "amqp://localhost:" + std::to_string(m_port) + "/eh/Partitions/0";
+        return "amqp://127.0.0.1:" + std::to_string(m_port) + "/eh/Partitions/0";
       }
 
       std::string ProducerGatewayEndpoint() const
       {
-        return "amqp://localhost:" + std::to_string(m_port) + "/eh";
+        return "amqp://127.0.0.1:" + std::to_string(m_port) + "/eh";
       }
 
       std::string ConsumerPartitionEndpoint() const
       {
-        return "amqp://localhost:" + std::to_string(m_port)
-            + "/eh/ConsumerGroups/$Default/Partitions/0";
+        // The consumer client builds its partition URL without the port.
+        return "amqp://127.0.0.1/eh/ConsumerGroups/$Default/Partitions/0";
       }
 
     private:
@@ -746,8 +805,17 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Earliest = true;
     auto partition = consumer.CreatePartitionClient("0", partitionOptions);
+    ASSERT_TRUE(server.WaitForFirstDetach());
 
-    auto events = partition.ReceiveEvents(2);
+    // A receive returns as soon as it holds an event and the queue is empty, so the second
+    // event can arrive in a later call.
+    std::vector<std::shared_ptr<const Models::ReceivedEventData>> events;
+    Azure::Core::Context receiveContext{Azure::DateTime::clock::now() + std::chrono::seconds(10)};
+    while (events.size() < 2)
+    {
+      auto batch = partition.ReceiveEvents(2, receiveContext);
+      events.insert(events.end(), batch.begin(), batch.end());
+    }
     ASSERT_EQ(2U, events.size());
     ASSERT_TRUE(events[0]->Offset.HasValue());
     ASSERT_TRUE(events[1]->Offset.HasValue());
@@ -755,6 +823,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ("11", events[1]->Offset.Value());
     EXPECT_EQ(2U, server.ConnectionCount());
     EXPECT_EQ(2, server.DeliveryLinks());
+
+    auto const filters = server.ReceiverFilters();
+    ASSERT_EQ(2U, filters.size());
+    EXPECT_EQ("amqp.annotation.x-opt-offset > '-1'", filters[0]);
+    EXPECT_EQ("amqp.annotation.x-opt-offset >'10'", filters[1]);
   }
 
   TEST_F(AuthRecoveryTest, ReceiverPartialDeliveryPreservesPendingAuthenticationFailure)
@@ -768,6 +841,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     PartitionClientOptions partitionOptions;
     partitionOptions.StartPosition.Earliest = true;
     auto partition = consumer.CreatePartitionClient("0", partitionOptions);
+    ASSERT_TRUE(server.WaitForFirstDetach());
 
     server.SetPutTokenFailures(2);
     auto events = partition.ReceiveEvents(2);
@@ -785,7 +859,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
     catch (Azure::Core::Credentials::AuthenticationException const& exception)
     {
-      EXPECT_EQ(
+      EXPECT_STREQ(
           "Could not authenticate client. Error Status: 401 reason: CBS PutToken failed",
           exception.what());
     }
@@ -848,7 +922,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       }
       catch (Azure::Core::Credentials::AuthenticationException const& exception)
       {
-        EXPECT_EQ(
+        EXPECT_STREQ(
             "Could not authenticate client. Error Status: 401 reason: CBS PutToken failed",
             exception.what());
       }
