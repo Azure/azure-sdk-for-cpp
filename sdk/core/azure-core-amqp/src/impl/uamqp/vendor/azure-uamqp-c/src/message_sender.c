@@ -241,8 +241,11 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
         size_t body_data_count = 0;
         size_t body_sequence_count = 0;
         AMQP_VALUE msg_annotations = NULL;
+        AMQP_VALUE msg_annotations_value = NULL;
         AMQP_VALUE footer = NULL;
+        AMQP_VALUE footer_value = NULL;
         AMQP_VALUE delivery_annotations = NULL;
+        AMQP_VALUE delivery_annotations_value = NULL;
         bool is_error = false;
 
         // message header
@@ -275,14 +278,23 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
             (message_get_message_annotations(message, &msg_annotations) == 0) &&
             (msg_annotations != NULL))
         {
-            if (amqpvalue_get_encoded_size(msg_annotations, &encoded_size) != 0)
+            msg_annotations_value = amqpvalue_create_message_annotations(msg_annotations);
+            if (msg_annotations_value == NULL)
             {
-                LogError("Cannot obtain message annotations encoded size");
+                LogError("Cannot create message annotations AMQP value");
                 is_error = true;
             }
             else
             {
-                total_encoded_size += encoded_size;
+                if (amqpvalue_get_encoded_size(msg_annotations_value, &encoded_size) != 0)
+                {
+                    LogError("Cannot obtain message annotations encoded size");
+                    is_error = true;
+                }
+                else
+                {
+                    total_encoded_size += encoded_size;
+                }
             }
         }
 
@@ -341,14 +353,23 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
             (message_get_footer(message, &footer) == 0) &&
             (footer != NULL))
         {
-            if (amqpvalue_get_encoded_size(footer, &encoded_size) != 0)
+            footer_value = amqpvalue_create_footer(footer);
+            if (footer_value == NULL)
             {
-                LogError("Cannot obtain footer encoded size");
+                LogError("Cannot create footer AMQP value");
                 is_error = true;
             }
             else
             {
-                total_encoded_size += encoded_size;
+                if (amqpvalue_get_encoded_size(footer_value, &encoded_size) != 0)
+                {
+                    LogError("Cannot obtain footer encoded size");
+                    is_error = true;
+                }
+                else
+                {
+                    total_encoded_size += encoded_size;
+                }
             }
         }
 
@@ -357,14 +378,23 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
             (message_get_delivery_annotations(message, &delivery_annotations) == 0) &&
             (delivery_annotations != NULL))
         {
-            if (amqpvalue_get_encoded_size(delivery_annotations, &encoded_size) != 0)
+            delivery_annotations_value = amqpvalue_create_delivery_annotations(delivery_annotations);
+            if (delivery_annotations_value == NULL)
             {
-                LogError("Cannot obtain delivery annotations encoded size");
+                LogError("Cannot create delivery annotations AMQP value");
                 is_error = true;
             }
             else
             {
-                total_encoded_size += encoded_size;
+                if (amqpvalue_get_encoded_size(delivery_annotations_value, &encoded_size) != 0)
+                {
+                    LogError("Cannot obtain delivery annotations encoded size");
+                    is_error = true;
+                }
+                else
+                {
+                    total_encoded_size += encoded_size;
+                }
             }
         }
 
@@ -554,13 +584,13 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
 
                 if ((result == SEND_ONE_MESSAGE_OK) && (msg_annotations != NULL))
                 {
-                    if (amqpvalue_encode(msg_annotations, encode_bytes, &payload) != 0)
+                    if (amqpvalue_encode(msg_annotations_value, encode_bytes, &payload) != 0)
                     {
                         LogError("Cannot encode message annotations value");
                         result = SEND_ONE_MESSAGE_ERROR;
                     }
 
-                    log_message_chunk(message_sender, "Message Annotations:", msg_annotations);
+                    log_message_chunk(message_sender, "Message Annotations:", msg_annotations_value);
                 }
 
                 if ((result == SEND_ONE_MESSAGE_OK) && (properties != NULL))
@@ -587,24 +617,24 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
 
                 if ((result == SEND_ONE_MESSAGE_OK) && (footer != NULL))
                 {
-                    if (amqpvalue_encode(footer, encode_bytes, &payload) != 0)
+                    if (amqpvalue_encode(footer_value, encode_bytes, &payload) != 0)
                     {
                         LogError("Cannot encode footer value");
                         result = SEND_ONE_MESSAGE_ERROR;
                     }
 
-                    log_message_chunk(message_sender, "Footer:", footer);
+                    log_message_chunk(message_sender, "Footer:", footer_value);
                 }
 
                 if ((result == SEND_ONE_MESSAGE_OK) && (delivery_annotations != NULL))
                 {
-                    if (amqpvalue_encode(delivery_annotations, encode_bytes, &payload) != 0)
+                    if (amqpvalue_encode(delivery_annotations_value, encode_bytes, &payload) != 0)
                     {
                         LogError("Cannot encode delivery annotations value");
                         result = SEND_ONE_MESSAGE_ERROR;
                     }
 
-                    log_message_chunk(message_sender, "Delivery annotations:", delivery_annotations);
+                    log_message_chunk(message_sender, "Delivery annotations:", delivery_annotations_value);
                 }
 
                 if (result == SEND_ONE_MESSAGE_OK)
@@ -764,6 +794,11 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
             annotations_destroy(msg_annotations);
         }
 
+        if (msg_annotations_value != NULL)
+        {
+            amqpvalue_destroy(msg_annotations_value);
+        }
+
         if (application_properties != NULL)
         {
             amqpvalue_destroy(application_properties);
@@ -789,9 +824,19 @@ static SEND_ONE_MESSAGE_RESULT send_one_message(MESSAGE_SENDER_INSTANCE* message
             annotations_destroy(footer);
         }
 
+        if (footer_value != NULL)
+        {
+            amqpvalue_destroy(footer_value);
+        }
+
         if (delivery_annotations != NULL)
         {
             annotations_destroy(delivery_annotations);
+        }
+
+        if (delivery_annotations_value != NULL)
+        {
+            amqpvalue_destroy(delivery_annotations_value);
         }
     }
 
