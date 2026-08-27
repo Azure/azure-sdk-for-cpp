@@ -16,6 +16,7 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 
+#include <atomic>
 #include <memory>
 #include <utility>
 
@@ -594,7 +595,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
       uint16_t GetPort() const { return m_testPort; }
-      std::size_t GetConnectionCount() const { return m_connections.size(); }
+      std::size_t GetConnectionCount() const { return m_connectionCount.load(); }
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
       void StartListening()
@@ -701,6 +702,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         auto newConnection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
             amqpTransport, options, this, this);
         m_connections.push_back(newConnection);
+        m_connectionCount.fetch_add(1);
         newConnection->Listen();
       }
 
@@ -784,6 +786,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // The set of incoming connections, used when tearing down the mock server.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Connection>> m_connections;
+      std::atomic<std::size_t> m_connectionCount{0};
 
       // The set of sessions.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;
