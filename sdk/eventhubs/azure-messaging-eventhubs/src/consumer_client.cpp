@@ -247,6 +247,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::string hostUrl = m_hostUrl + suffix;
 
 #if ENABLE_UAMQP
+    {
+      std::lock_guard<std::mutex> lock(m_partitionClientStatesLock);
+      if (m_partitionClientStatesClosing)
+      {
+        throw Azure::Core::OperationCancelledException("Consumer client is closed.");
+      }
+    }
     auto partition = _detail::PartitionClientFactory::CreatePartitionClient(
         m_fullyQualifiedNamespace,
         m_credential,
