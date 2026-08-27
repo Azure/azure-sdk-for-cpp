@@ -183,6 +183,23 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       return true;
     }
 
+    // Clears a test hook when the scope ends, so a failed assertion cannot leave it armed for
+    // the next test.
+    class HookGuard final {
+    public:
+      HookGuard(void (*setter)(std::function<void()>), std::function<void()> hook)
+          : m_setter{setter}
+      {
+        m_setter(std::move(hook));
+      }
+      ~HookGuard() { m_setter({}); }
+      HookGuard(HookGuard const&) = delete;
+      HookGuard& operator=(HookGuard const&) = delete;
+
+    private:
+      void (*m_setter)(std::function<void()>);
+    };
+
     bool Consume(std::atomic<int>& count)
     {
       auto current = count.load();
@@ -550,20 +567,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     std::atomic<bool> hookCalled{false};
     std::exception_ptr closeFailure;
-    _detail::SetProducerSessionSnapshotHook([&]() {
-      hookCalled = true;
-      std::thread closeThread([&]() {
-        try
-        {
-          producer.Close();
-        }
-        catch (...)
-        {
-          closeFailure = std::current_exception();
-        }
-      });
-      closeThread.join();
-    });
+    HookGuard snapshotHook{_detail::SetProducerSessionSnapshotHook, [&]() {
+                             hookCalled = true;
+                             std::thread closeThread([&]() {
+                               try
+                               {
+                                 producer.Close();
+                               }
+                               catch (...)
+                               {
+                                 closeFailure = std::current_exception();
+                               }
+                             });
+                             closeThread.join();
+                           }};
 
     std::exception_ptr operationFailure;
     try
@@ -574,7 +591,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     {
       operationFailure = std::current_exception();
     }
-    _detail::SetProducerSessionSnapshotHook({});
 
     ASSERT_TRUE(hookCalled.load());
     if (closeFailure)
@@ -671,17 +687,8 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     EXPECT_EQ(1U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
 
     std::atomic<int> closeHookCalls{0};
-    _detail::SetPartitionClientStateCloseHook([&]() { ++closeHookCalls; });
-    try
-    {
-      consumer.Close(Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)});
-    }
-    catch (...)
-    {
-      _detail::SetPartitionClientStateCloseHook({});
-      throw;
-    }
-    _detail::SetPartitionClientStateCloseHook({});
+    HookGuard closeHook{_detail::SetPartitionClientStateCloseHook, [&]() { ++closeHookCalls; }};
+    consumer.Close(Azure::Core::Context{Azure::DateTime::clock::now() + std::chrono::seconds(5)});
 
     EXPECT_EQ(1, closeHookCalls.load());
     EXPECT_EQ(0U, _detail::ConsumerClientTestAccess::PartitionClientStateCount(consumer));
@@ -725,7 +732,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     });
 
     auto cleanup = [&]() {
-      _detail::SetPartitionClientStateCloseHook({});
       receiveContext.Cancel();
       if (receiveThread.joinable())
       {
@@ -754,7 +760,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
     }
 
     std::atomic<int> closeHookCalls{0};
-    _detail::SetPartitionClientStateCloseHook([&]() { ++closeHookCalls; });
+    HookGuard closeHook{_detail::SetPartitionClientStateCloseHook, [&]() { ++closeHookCalls; }};
     auto const moveStart = std::chrono::steady_clock::now();
     std::exception_ptr moveFailure;
     try
