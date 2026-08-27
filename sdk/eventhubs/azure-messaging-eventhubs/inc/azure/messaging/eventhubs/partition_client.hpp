@@ -96,13 +96,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     friend class _detail::PartitionClientFactory;
     friend class ConsumerClient;
 
-#if ENABLE_UAMQP
     std::shared_ptr<_detail::PartitionClientState> m_state;
-    explicit PartitionClient(std::shared_ptr<_detail::PartitionClientState> state);
-    std::shared_ptr<_detail::PartitionClientState> GetState() const { return m_state; }
-#endif
 
-#if ENABLE_RUST_AMQP
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
@@ -129,6 +124,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      * response to being throttled or encountering a transient error.
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
+
+#if ENABLE_UAMQP
+    explicit PartitionClient(std::shared_ptr<_detail::PartitionClientState> state);
+    std::shared_ptr<_detail::PartitionClientState> GetState() const { return m_state; }
 #endif
 
 #if ENABLE_RUST_AMQP
