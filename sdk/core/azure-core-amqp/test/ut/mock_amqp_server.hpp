@@ -16,7 +16,11 @@
 #include <azure/core/amqp/internal/network/socket_listener.hpp>
 #include <azure/core/amqp/internal/session.hpp>
 
+#include <atomic>
+#include <chrono>
 #include <memory>
+#include <thread>
+#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -62,9 +66,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
       }
 
+      virtual ~MockServiceEndpoint() = default;
+
       const std::string& GetName() const { return m_name; }
 
-      bool OnLinkAttached(
+      void DetachLink(
+          Azure::Core::Amqp::_internal::Session const& session,
+          Azure::Core::Amqp::_internal::LinkEndpoint const& linkEndpoint,
+          bool closeLink,
+          Models::_internal::AmqpError const& error) const
+      {
+        session.SendDetach(linkEndpoint, closeLink, error);
+      }
+
+      virtual bool OnLinkAttached(
           Azure::Core::Amqp::_internal::Session const& session,
           std::string const& linkName,
           Azure::Core::Amqp::_internal::LinkEndpoint& linkEndpoint,
@@ -81,6 +96,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         if (role == Azure::Core::Amqp::_internal::SessionRole::Receiver)
         {
           GTEST_LOG_(INFO) << "Role is receiver, create sender.";
+          WaitForStaleLink(linkName, m_sender);
           if (!HasMessageSender(linkName))
           {
             GTEST_LOG_(INFO) << "No sender found, create new sender for " << linkName;
@@ -89,6 +105,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             senderOptions.Name = linkName;
             senderOptions.MessageSource = source;
             senderOptions.InitialDeliveryCount = 0;
+            // The server side has no credential. An authentication step would still read the
+            // target address, and an Event Hubs consumer attaches without one.
+            senderOptions.AuthenticationRequired = false;
             m_sender[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageSender>(
                 session.CreateMessageSender(linkEndpoint, target, senderOptions, this));
             // NOTE: The linkEndpoint needs to be attached before this function returns in order to
@@ -110,6 +129,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         else if (role == Azure::Core::Amqp::_internal::SessionRole::Sender)
         {
           GTEST_LOG_(INFO) << "Role is sender, create receiver.";
+          WaitForStaleLink(linkName, m_receiver);
           if (!HasMessageReceiver(linkName))
           {
             GTEST_LOG_(INFO) << "No receiver found, create new receiver for " << linkName;
@@ -118,6 +138,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             receiverOptions.Name = linkName;
             receiverOptions.MessageTarget = target;
             receiverOptions.InitialDeliveryCount = 0;
+            // The server side has no credential. An authentication step would still read the
+            // source address, and an Event Hubs producer attaches without one.
+            receiverOptions.AuthenticationRequired = false;
             m_receiver[linkName] = std::make_unique<Azure::Core::Amqp::_internal::MessageReceiver>(
                 session.CreateMessageReceiver(linkEndpoint, source, receiverOptions, this));
 
@@ -188,6 +211,35 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
     protected:
+      template <typename T>
+      static std::unique_ptr<T> TakeLink(
+          std::string const& linkName,
+          std::map<std::string, std::unique_ptr<T>>& links)
+      {
+        auto link = links.find(linkName);
+        if (link == links.end())
+        {
+          return nullptr;
+        }
+        std::unique_ptr<T> taken{std::move(link->second)};
+        links.erase(link);
+        return taken;
+      }
+
+      // A client that reconnects attaches the same link names. The message loop removes the
+      // old link a moment after the old connection ends, so a new attach waits for that.
+      template <typename T>
+      static void WaitForStaleLink(
+          std::string const& linkName,
+          std::map<std::string, std::unique_ptr<T>> const& links)
+      {
+        auto const deadline = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+        while (links.find(linkName) != links.end() && std::chrono::steady_clock::now() < deadline)
+        {
+          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+      }
+
       bool HasMessageSender(std::string const& linkName = {}) const
       {
         if (linkName.empty())
@@ -315,10 +367,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             std::string senderName = std::get<0>(*senderDisconnected);
             GTEST_LOG_(INFO) << "Sender disconnected: " << senderName;
-            std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> sender{
-                m_sender[senderName].release()};
-            m_sender.erase(senderName);
-            sender->Close(m_listenerContext);
+            auto sender = TakeLink(senderName, m_sender);
+            if (sender)
+            {
+              sender->Close(m_listenerContext);
+            }
           }
 
           auto receiverDisconnected = m_messageReceiverDisconnectedQueue.TryWaitForResult();
@@ -326,10 +379,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             std::string receiverName = std::get<0>(*receiverDisconnected);
             GTEST_LOG_(INFO) << "Receiver disconnected: " << receiverName;
-            std::unique_ptr<Azure::Core::Amqp::_internal::MessageReceiver> receiver{
-                m_receiver[receiverName].release()};
-            m_receiver.erase(receiverName);
-            receiver->Close(m_listenerContext);
+            auto receiver = TakeLink(receiverName, m_receiver);
+            if (receiver)
+            {
+              receiver->Close(m_listenerContext);
+            }
           }
 
           auto receiverPollingEnable = m_receiverPollingEnableQueue.TryWaitForResult();
@@ -337,28 +391,41 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
           {
             std::string receiverName = std::get<0>(*receiverPollingEnable);
             GTEST_LOG_(INFO) << "Enable link polling for receiver: " << receiverName;
-            m_receiver[receiverName]->EnableLinkPolling();
+            if (HasMessageReceiver(receiverName))
+            {
+              GetMessageReceiver(receiverName).EnableLinkPolling();
+            }
           }
 
+          // A client that recovers closes its connection and attaches the same links on a new
+          // one. The loop stays alive for that second attach until StopProcessing cancels it.
           if (m_receiver.empty() && m_sender.empty())
           {
-            GTEST_LOG_(INFO) << "No more links, exiting message loop.";
-            break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
           }
-
-          std::this_thread::yield();
+          else
+          {
+            std::this_thread::yield();
+          }
         }
       }
 
       // Inherited via MessageReceiverEvents
       void OnMessageReceiverStateChanged(
-          Azure::Core::Amqp::_internal::MessageReceiver const&,
+          Azure::Core::Amqp::_internal::MessageReceiver const& receiver,
           Azure::Core::Amqp::_internal::MessageReceiverState newState,
           Azure::Core::Amqp::_internal::MessageReceiverState oldState) override
       {
         GTEST_LOG_(INFO) << "MockServiceEndpoint(" << m_name
                          << "): Message Receiver State changed.Old state : " << oldState
                          << " New state: " << newState;
+        // A client that drops its connection raises no disconnect event for the link. The
+        // Idle state is the one signal, so it removes the link too.
+        if (newState == Azure::Core::Amqp::_internal::MessageReceiverState::Idle
+            && oldState != Azure::Core::Amqp::_internal::MessageReceiverState::Idle)
+        {
+          m_messageReceiverDisconnectedQueue.CompleteOperation(receiver.GetLinkName());
+        }
       }
 
       virtual void OnMessageReceiverDisconnected(
@@ -371,13 +438,18 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // Inherited via MessageSenderEvents
       void OnMessageSenderStateChanged(
-          Azure::Core::Amqp::_internal::MessageSender const&,
+          Azure::Core::Amqp::_internal::MessageSender const& sender,
           Azure::Core::Amqp::_internal::MessageSenderState newState,
           Azure::Core::Amqp::_internal::MessageSenderState oldState) override
       {
         GTEST_LOG_(INFO) << "MockServiceEndpoint(" << m_name
                          << ") Message Sender State changed.Old state : " << oldState
                          << " New state: " << newState;
+        if (newState == Azure::Core::Amqp::_internal::MessageSenderState::Idle
+            && oldState != Azure::Core::Amqp::_internal::MessageSenderState::Idle)
+        {
+          m_messageSenderDisconnectedQueue.CompleteOperation(sender.GetLinkName());
+        }
       }
 
       void OnMessageSenderDisconnected(
@@ -544,24 +616,27 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     public:
       AmqpServerMock(
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
-          : m_connectionId{"Mock Server for " + name}, m_testPort{FindAvailableSocket()}
+          : AmqpServerMock(FindAvailableSocket(), std::move(name), true)
       {
-        // Every server mock has CBS endpoint support
-        MockServiceEndpointOptions options;
-        options.EnableTrace = m_enableTrace;
-        options.ListenerContext = m_listenerContext;
-        AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
       }
       AmqpServerMock(
           uint16_t listeningPort,
           std::string name = testing::UnitTest::GetInstance()->current_test_info()->name())
+          : AmqpServerMock(listeningPort, std::move(name), true)
+      {
+      }
+
+      AmqpServerMock(uint16_t listeningPort, std::string name, bool addCbsEndpoint)
           : m_connectionId{"Mock Server for " + name}, m_testPort{listeningPort}
       {
-        // Every server mock has CBS endpoint support
-        MockServiceEndpointOptions options;
-        options.EnableTrace = m_enableTrace;
-        options.ListenerContext = m_listenerContext;
-        AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
+        if (addCbsEndpoint)
+        {
+          // Every server mock has CBS endpoint support
+          MockServiceEndpointOptions options;
+          options.EnableTrace = m_enableTrace;
+          options.ListenerContext = m_listenerContext;
+          AddServiceEndpoint(std::make_shared<AmqpClaimBasedSecurity>(options));
+        }
       }
 
       virtual ~AmqpServerMock()
@@ -579,6 +654,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       }
 
       uint16_t GetPort() const { return m_testPort; }
+      std::size_t GetConnectionCount() const { return m_connectionCount.load(); }
       Azure::Core::Context& GetListenerContext() { return m_listenerContext; }
 
       void StartListening()
@@ -685,6 +761,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         auto newConnection = std::make_shared<Azure::Core::Amqp::_internal::Connection>(
             amqpTransport, options, this, this);
         m_connections.push_back(newConnection);
+        m_connectionCount.fetch_add(1);
         newConnection->Listen();
       }
 
@@ -696,12 +773,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
         GTEST_LOG_(INFO) << "Connection State changed. Connection: " << m_connectionId
                          << " Old state : " << oldState << " New state: " << newState;
-        if (newState == Azure::Core::Amqp::_internal::ConnectionState::End
-            || newState == Azure::Core::Amqp::_internal::ConnectionState::Error)
-        {
-          // If the connection is closed, then we should close the connection.
-          m_listenerContext.Cancel();
-        }
+        // The listener context is shared with every service endpoint, so a cancel here would
+        // stop the server after the first client connection ends. StopListening cancels it.
       }
       virtual bool OnNewEndpoint(
           Azure::Core::Amqp::_internal::Connection const& connection,
@@ -768,6 +841,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 
       // The set of incoming connections, used when tearing down the mock server.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Connection>> m_connections;
+      std::atomic<std::size_t> m_connectionCount{0};
 
       // The set of sessions.
       std::list<std::shared_ptr<Azure::Core::Amqp::_internal::Session>> m_sessions;

@@ -11,10 +11,15 @@
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/nullable.hpp>
 
+#include <memory>
+
 namespace Azure { namespace Messaging { namespace EventHubs {
   namespace _detail {
     class PartitionClientFactory;
-  }
+    struct PartitionClientState;
+  } // namespace _detail
+
+  class ConsumerClient;
   /**brief PartitionClientOptions provides options for the ConsumerClient::CreatePartitionClient
    * function.
    */
@@ -66,7 +71,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     /// Assign a PartitionClient to another PartitionClient
     PartitionClient& operator=(PartitionClient const& other) = delete;
     /// Move a PartitionClient to another PartitionClient
-    PartitionClient& operator=(PartitionClient&& other) = default;
+    PartitionClient& operator=(PartitionClient&& other);
 
     /** Destroy this partition client.
      */
@@ -89,6 +94,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   private:
     friend class _detail::PartitionClientFactory;
+    friend class ConsumerClient;
+
+    std::shared_ptr<_detail::PartitionClientState> m_state;
+
     /// The message receiver used to receive events from the partition.
     Azure::Core::Amqp::_internal::MessageReceiver m_receiver;
 
@@ -116,6 +125,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
      */
     Azure::Core::Http::Policies::RetryOptions m_retryOptions{};
 
+#if ENABLE_UAMQP
+    explicit PartitionClient(std::shared_ptr<_detail::PartitionClientState> state);
+    std::shared_ptr<_detail::PartitionClientState> GetState() const { return m_state; }
+#endif
+
+#if ENABLE_RUST_AMQP
     /** Creates a new PartitionClient
      *
      * @param messageReceiver Message Receiver for the partition client.
@@ -133,10 +148,15 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         std::string receiverName,
         PartitionClientOptions options,
         Core::Http::Policies::RetryOptions retryOptions);
+#endif
 
+#if ENABLE_RUST_AMQP || ENABLE_UAMQP
     /// Closes the faulted receiver and attaches a new one starting after the last offset.
     void RebuildReceiver(Core::Context const& context);
+#endif
 
+#if ENABLE_RUST_AMQP
     std::string GetStartExpression(Models::StartPosition const& startPosition);
+#endif
   };
 }}} // namespace Azure::Messaging::EventHubs

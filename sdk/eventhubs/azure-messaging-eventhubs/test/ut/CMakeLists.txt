@@ -15,8 +15,7 @@ include(TestProxyPrep)
 SetUpTestProxy("sdk/eventhubs")
 
 ################## Unit Tests ##########################
-add_executable (
-  azure-messaging-eventhubs-test
+set(EVENTHUBS_TEST_SOURCES
     azure_messaging_eventhubs_test.cpp
     checkpoint_store_test.cpp
     connection_string_test.cpp
@@ -36,7 +35,18 @@ add_executable (
     test_checkpoint_store.hpp
 )
 
+if (NOT USE_RUST_AMQP)
+  list(APPEND EVENTHUBS_TEST_SOURCES auth_recovery_test.cpp)
+endif()
+
+add_executable (azure-messaging-eventhubs-test ${EVENTHUBS_TEST_SOURCES})
+
 target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS)
+
+if (NOT USE_RUST_AMQP)
+  target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_TESTING_BUILD)
+  target_compile_definitions(azure-messaging-eventhubs PRIVATE _azure_EVENTHUBS_TEST_HOOKS)
+endif()
 
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-test)
 create_map_file(azure-messaging-eventhubs-test azure-messaging-eventhubs-test.map)

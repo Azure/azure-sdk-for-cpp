@@ -3,6 +3,7 @@
 
 #include "azure/core/amqp/internal/management.hpp"
 
+#include "azure/core/amqp/internal/claims_based_security.hpp"
 #include "azure/core/amqp/internal/models/messaging_values.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
 #include "private/connection_impl.hpp"
@@ -90,6 +91,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  // The put-token marker is for the Event Hubs retry loops. Management callers keep
+  // the AuthenticationException contract.
+  Credentials::AccessToken ManagementClientImpl::AuthenticateManagementAudience(
+      Context const& context)
+  {
+    try
+    {
+      return m_session->GetConnection()->AuthenticateAudience(
+          m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+    }
+    catch (CbsPutTokenFailedException const& failure)
+    {
+      failure.RethrowOriginal();
+    }
+  }
+
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
     std::unique_lock<std::mutex> lock(m_openCloseLock);
@@ -107,8 +124,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
        */
       if (m_options.ManagementNodeName == "$management")
       {
-        m_accessToken = m_session->GetConnection()->AuthenticateAudience(
-            m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context);
+        m_accessToken = AuthenticateManagementAudience(context);
       }
       {
         _internal::MessageSenderOptions messageSenderOptions;
@@ -243,8 +259,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // than one thread and that member has no lock.
       if (!m_accessToken.Token.empty())
       {
-        auto accessToken{m_session->GetConnection()->AuthenticateAudience(
-            m_session, m_managementEntityPath + "/" + m_options.ManagementNodeName, context)};
+        auto accessToken{AuthenticateManagementAudience(context)};
         messageToSend.ApplicationProperties["security_token"]
             = Models::AmqpValue{accessToken.Token};
       }

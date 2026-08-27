@@ -16,6 +16,7 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <algorithm>
+#include <functional>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -24,9 +25,48 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+std::mutex ProducerSessionSnapshotHookLock;
+std::function<void()> ProducerSessionSnapshotHook;
+
+void InvokeProducerSessionSnapshotHook()
+{
+  std::function<void()> hook;
+  {
+    std::lock_guard<std::mutex> lock(ProducerSessionSnapshotHookLock);
+    hook = std::move(ProducerSessionSnapshotHook);
+  }
+  if (hook)
+  {
+    hook();
+  }
 }
+#endif
+} // namespace
 
 namespace Azure { namespace Messaging { namespace EventHubs {
+
+  struct ProducerClient::ProducerCallState final
+  {
+    explicit ProducerCallState(Azure::Core::Http::Policies::RetryOptions const& retryOptions)
+        : Ordinary{retryOptions}
+    {
+    }
+
+    _detail::RetryOperation Ordinary;
+    _detail::RetryOperation::AuthenticationRecoveryState Authentication;
+  };
+
+#if ENABLE_UAMQP && defined(_azure_EVENTHUBS_TEST_HOOKS)
+  namespace _detail {
+    void SetProducerSessionSnapshotHook(std::function<void()> hook)
+    {
+      std::lock_guard<std::mutex> lock(ProducerSessionSnapshotHookLock);
+      ProducerSessionSnapshotHook = std::move(hook);
+    }
+  } // namespace _detail
+#endif
 
   ProducerClient::ProducerClient(
       std::string const& connectionString,
@@ -106,7 +146,16 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       EventDataBatchOptions const& options,
       Core::Context const& context)
   {
-    EstablishSenderWithRetry(options.PartitionId, context);
+    ProducerCallState callState{m_producerClientOptions.RetryOptions};
+    return CreateBatch(options, context, callState);
+  }
+
+  EventDataBatch ProducerClient::CreateBatch(
+      EventDataBatchOptions const& options,
+      Core::Context const& context,
+      ProducerCallState& callState)
+  {
+    EstablishSenderWithRetry(options.PartitionId, context, callState);
 
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
@@ -142,7 +191,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             << (options.PartitionId.empty() ? std::string("<gateway>") : options.PartitionId)
             << "'. Discard the stack and build it again: " << ex.what() << std::endl;
         InvalidateSender(options.PartitionId, observedGeneration, context);
-        EstablishSenderWithRetry(options.PartitionId, context);
+        EstablishSenderWithRetry(options.PartitionId, context, callState);
         std::uint64_t rebuiltGeneration = 0;
         optionsToUse.MaxBytes = readMaxMessageSize(rebuiltGeneration);
       }
@@ -153,67 +202,77 @@ namespace Azure { namespace Messaging { namespace EventHubs {
 
   void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
   {
+    ProducerCallState callState{m_producerClientOptions.RetryOptions};
+    Send(eventDataBatch, context, callState);
+  }
+
+  void ProducerClient::Send(
+      EventDataBatch const& eventDataBatch,
+      Core::Context const& context,
+      ProducerCallState& callState)
+  {
     auto message = eventDataBatch.ToAmqpMessage();
 
-    Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
-        m_producerClientOptions.RetryOptions);
     // Defense in depth: RetryOperation::Execute rethrows the last exception when retries
     // are exhausted, but if the lambda ever returns false directly the batch must not be
     // silently dropped. See issue #7130.
     auto const& partitionId = eventDataBatch.GetPartitionId();
-    if (!retryOp.Execute(
-            [&]() -> bool {
-              EnsureSenderOrInvalidate(partitionId, context);
-              std::uint64_t observedGeneration = 0;
-              auto& guard = GetPartitionGuard(partitionId);
-              try
-              {
-                // Keeps a teardown off the sender copy; sends still run together.
-                std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
-                auto sender = GetSender(partitionId);
-                observedGeneration = guard.generation.load();
-                auto result = sender.Send(message, context);
+    bool transferUnauthorized = false;
+    auto send = [&]() -> bool {
+      transferUnauthorized = false;
+      EnsureSenderOrInvalidate(partitionId, context);
+      std::uint64_t observedGeneration = 0;
+      auto& guard = GetPartitionGuard(partitionId);
+      try
+      {
+        // Keeps a teardown off the sender copy; sends still run together.
+        std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+        auto sender = GetSender(partitionId);
+        observedGeneration = guard.generation.load();
+        auto result = sender.Send(message, context);
 #if ENABLE_UAMQP
-                auto sendStatus = std::get<0>(result);
-                if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-                {
-                  return true;
-                }
-                // Throw an exception about the error we just received.
-                throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                    CreateEventHubsException(std::get<1>(result));
+        auto sendStatus = std::get<0>(result);
+        if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+        {
+          return true;
+        }
+        // Throw an exception about the error we just received.
+        auto transferException = Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+            CreateEventHubsException(std::get<1>(result));
+        transferUnauthorized = _detail::IsUnauthorizedAccess(transferException);
+        throw transferException;
 #elif ENABLE_RUST_AMQP
-                if (result)
-                {
-                  throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                      CreateEventHubsException(result);
-                }
-                return true;
+        if (result)
+        {
+          throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+              CreateEventHubsException(result);
+        }
+        return true;
 #endif
-              }
-              catch (Azure::Core::OperationCancelledException const&)
-              {
-                throw;
-              }
-              catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
-              {
-                if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
-                {
-                  InvalidateSender(partitionId, observedGeneration, context);
-                }
-                throw;
-              }
-              catch (std::exception const&)
-              {
-                if (!context.IsCancelled())
-                {
-                  InvalidateSender(partitionId, observedGeneration, context);
-                }
-                throw;
-              }
-            },
-            context))
-    {
+      }
+      catch (Azure::Core::OperationCancelledException const&)
+      {
+        throw;
+      }
+      catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+      {
+        if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
+        {
+          InvalidateSender(partitionId, observedGeneration, context);
+        }
+        throw;
+      }
+      catch (std::exception const&)
+      {
+        if (!context.IsCancelled())
+        {
+          InvalidateSender(partitionId, observedGeneration, context);
+        }
+        throw;
+      }
+    };
+
+    auto throwRetriesExhausted = [&]() {
       std::string failureDetail = "ProducerClient::Send failed after exhausting "
           + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
           + " retry attempts (partition='"
@@ -224,24 +283,70 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       ex.ErrorCondition = "eventhubs:client:retries-exhausted";
       ex.IsTransient = true;
       throw ex;
+    };
+
+#if ENABLE_UAMQP
+    while (true)
+    {
+      try
+      {
+        if (!callState.Ordinary.Execute(send, context))
+        {
+          throwRetriesExhausted();
+        }
+        return;
+      }
+      catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const& failure)
+      {
+        std::chrono::milliseconds retryAfter{};
+        if (!callState.Ordinary.ShouldRetryAuthentication(callState.Authentication, retryAfter))
+        {
+          failure.RethrowOriginal();
+        }
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
+            retryAfter, context);
+      }
+      catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
+      {
+        if (!transferUnauthorized || !_detail::IsUnauthorizedAccess(ex))
+        {
+          throw;
+        }
+
+        std::chrono::milliseconds retryAfter{};
+        if (!callState.Ordinary.ShouldRetryAuthentication(callState.Authentication, retryAfter))
+        {
+          throw;
+        }
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
+            retryAfter, context);
+      }
     }
+#else
+    if (!callState.Ordinary.Execute(send, context))
+    {
+      throwRetriesExhausted();
+    }
+#endif
   }
 
   void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
+    ProducerCallState callState{m_producerClientOptions.RetryOptions};
+    auto batch = CreateBatch(EventDataBatchOptions{}, context, callState);
     if (!batch.TryAdd(eventData))
     {
       throw std::runtime_error("Could not add message to batch.");
     }
-    Send(batch, context);
+    Send(batch, context, callState);
   }
 
   void ProducerClient::Send(
       std::vector<Models::EventData> const& eventData,
       Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
+    ProducerCallState callState{m_producerClientOptions.RetryOptions};
+    auto batch = CreateBatch(EventDataBatchOptions{}, context, callState);
     for (const auto& data : eventData)
     {
       if (!batch.TryAdd(data))
@@ -249,7 +354,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         throw std::runtime_error("Could not add message to batch.");
       }
     }
-    Send(batch, context);
+    Send(batch, context, callState);
   }
 
   Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection(
@@ -312,6 +417,93 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
+#if ENABLE_UAMQP
+    auto& guard = GetPartitionGuard(partitionId);
+    std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+    auto const observedGeneration = guard.generation.load();
+    {
+      std::lock_guard<std::mutex> lock(m_sendersLock);
+      if (m_senders.find(partitionId) != m_senders.end())
+      {
+        return;
+      }
+    }
+
+    EnsureSession(partitionId, context);
+    auto session = GetSession(partitionId);
+    stackLock.unlock();
+
+#if defined(_azure_EVENTHUBS_TEST_HOOKS)
+    InvokeProducerSessionSnapshotHook();
+#endif
+
+    std::string targetUrl{m_targetUrl};
+    if (!partitionId.empty())
+    {
+      targetUrl += "/Partitions/" + partitionId;
+    }
+
+    Azure::Core::Amqp::_internal::MessageSenderOptions senderOptions;
+    senderOptions.Name = m_producerClientOptions.Name;
+    senderOptions.EnableTrace = _detail::EnableAmqpTrace;
+    senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
+
+    // Copy the session before opening the sender. No client map lock may span network work.
+    auto sender = session.CreateMessageSender(targetUrl, senderOptions);
+    auto openResult{sender.Open(context)};
+    if (openResult)
+    {
+      Azure::Core::Diagnostics::_internal::Log::Stream(
+          Azure::Core::Diagnostics::Logger::Level::Error)
+          << "Failed to create message sender: " << openResult;
+      throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+          CreateEventHubsException(openResult);
+    }
+
+    bool discardCandidate = false;
+    bool staleWithoutSender = false;
+    {
+      // Keep the partition stack lock before the sender map lock. Invalidation uses the same
+      // order, so a candidate cannot be installed after its stack was removed.
+      std::unique_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+      std::lock_guard<std::mutex> sendersLock(m_sendersLock);
+      if (guard.generation.load() != observedGeneration)
+      {
+        discardCandidate = true;
+        staleWithoutSender = m_senders.find(partitionId) == m_senders.end();
+      }
+      else if (m_senders.find(partitionId) != m_senders.end())
+      {
+        discardCandidate = true;
+      }
+      else
+      {
+        m_senders.emplace(partitionId, std::move(sender));
+        guard.generation.fetch_add(1);
+        return;
+      }
+    }
+
+    if (discardCandidate)
+    {
+      try
+      {
+        sender.Close(context);
+      }
+      catch (std::exception const& ex)
+      {
+        Log::Stream(Logger::Level::Warning)
+            << "Exception while closing a discarded message sender: " << ex.what();
+      }
+    }
+    if (staleWithoutSender)
+    {
+      EventHubsException staleStack{
+          "The message sender stack changed while the sender was being established."};
+      staleStack.IsTransient = true;
+      throw staleStack;
+    }
+#else
     std::unique_lock<std::mutex> lock(m_sendersLock);
     if (m_senders.find(partitionId) == m_senders.end())
     {
@@ -342,6 +534,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       m_senders.emplace(partitionId, std::move(sender));
       GetPartitionGuard(partitionId).generation.fetch_add(1);
     }
+#endif
   }
   void ProducerClient::EnsureSenderOrInvalidate(
       std::string const& partitionId,
@@ -369,19 +562,40 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   }
 
   // Establishing the stack resolves the host, opens the socket, negotiates TLS and runs the CBS
-  // handshake, so it is the step most exposed to a transient transport failure. `Send` runs under
-  // `RetryOperation`; the batch path did not, so a burst after an idle period lost every event
-  // whose stack failed to build.
-  //
-  // Retry once, only for CbsOpenResult::Error - see CbsOpenFailedException. The bound is one
-  // attempt because uAMQP logs the transport reason but returns no value carrying it, so `Error`
-  // cannot separate a transient failure from a permanent one; do not make this a loop.
-  // `EnsureSenderOrInvalidate` invalidates before it rethrows, so the retry builds a new
-  // connection rather than reusing a socket a failed open may have left non-closed.
+  // handshake, so it is the step most exposed to a transient transport failure. Keep ordinary
+  // transport retries separate from the one-shot authentication recovery. A failed sender stack
+  // is invalidated before either retry builds a new connection.
   void ProducerClient::EstablishSenderWithRetry(
       std::string const& partitionId,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context,
+      ProducerCallState& callState)
   {
+#if ENABLE_UAMQP
+    auto establish = [&]() -> bool {
+      EnsureSenderOrInvalidate(partitionId, context);
+      return true;
+    };
+
+    while (true)
+    {
+      try
+      {
+        static_cast<void>(callState.Ordinary.Execute(establish, context));
+        return;
+      }
+      catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const& failure)
+      {
+        std::chrono::milliseconds retryAfter{};
+        if (!callState.Ordinary.ShouldRetryAuthentication(callState.Authentication, retryAfter))
+        {
+          failure.RethrowOriginal();
+        }
+        Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
+            retryAfter, context);
+      }
+    }
+#else
+    (void)callState;
     try
     {
       EnsureSenderOrInvalidate(partitionId, context);
@@ -403,6 +617,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
           << std::endl;
       EnsureSenderOrInvalidate(partitionId, context);
     }
+#endif
   }
 
   Azure::Core::Amqp::_internal::MessageSender ProducerClient::GetSender(

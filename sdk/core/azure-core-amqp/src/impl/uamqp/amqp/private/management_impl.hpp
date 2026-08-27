@@ -109,6 +109,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     bool m_sendCompleted{false};
 
     void CloseSenderAndReceiverAfterFailedOpen() noexcept;
+    Azure::Core::Credentials::AccessToken AuthenticateManagementAudience(Context const& context);
     void SetState(ManagementState newState);
     // Reflect the error state to the OnError callback and return a delivery rejected status.
     Models::AmqpValue IndicateError(

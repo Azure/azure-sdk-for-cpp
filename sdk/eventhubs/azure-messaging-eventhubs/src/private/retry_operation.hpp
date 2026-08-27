@@ -55,12 +55,26 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         double jitterFactor = -1);
 
   public:
+    struct AuthenticationRecoveryState final
+    {
+      bool Used{false};
+    };
+
     // A caller with its own recovery loop uses this only for the backoff math.
     bool ShouldRetry(
         bool response,
         int32_t attempt,
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);
+
+    bool ShouldRetryAuthentication(
+        AuthenticationRecoveryState& state,
+        std::chrono::milliseconds& retryAfter,
+        double jitterFactor = -1);
+
+    static void WaitForRetryDelay(
+        std::chrono::milliseconds retryAfter,
+        Azure::Core::Context const& context);
 
     explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions const& retryOptions)
         : m_retryOptions(retryOptions)

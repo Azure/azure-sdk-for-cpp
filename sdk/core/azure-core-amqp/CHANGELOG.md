@@ -11,6 +11,8 @@
 
 ### Bugs Fixed
 
+- The uAMQP message sender now encodes delivery annotations, message annotations, and the footer as described sections, so a uAMQP receiver can decode a message that carries them. Before, the sender wrote the bare maps, and the receiving link failed with "Error decoding message" and went to the error state. [[#7376]](https://github.com/Azure/azure-sdk-for-cpp/issues/7376)
+- On the uAMQP transport, `MessageSender::Open` and `MessageReceiver::Open` now throw `_detail::CbsPutTokenFailedException` when the service rejects the CBS put-token. The type derives from `std::runtime_error` and carries the original `AuthenticationException`, which `RethrowOriginal()` throws again. The Event Hubs clients use the type to tell a rejected put-token from a credential failure. `ManagementClient::Open` and `ManagementClient::ExecuteOperation` still throw `AuthenticationException`. [[#7376]](https://github.com/Azure/azure-sdk-for-cpp/issues/7376)
 - uAMQP pollable registration and removal no longer block each other while a poll is in flight. The
   polling registry now waits on completion notifications, and sender, receiver, and link setup and
   teardown do not hold connection locks across registry operations. The polling thread now sleeps

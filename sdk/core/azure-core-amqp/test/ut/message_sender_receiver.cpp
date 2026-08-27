@@ -1565,5 +1565,92 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     CloseAmqpConnection(connection);
   }
 
+#if !defined(USE_NATIVE_BROKER)
+  // A message that carries these three sections must decode on the receiving link.
+  TEST_F(TestMessageSendReceive, ReceiverDecodesAnnotationsAndFooter)
+  {
+    std::string brokerEndpoint = GetBrokerEndpoint() + "/annotations";
+
+    class AnnotatingEndpoint : public MessageTests::MockServiceEndpoint {
+    public:
+      AnnotatingEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+      virtual ~AnnotatingEndpoint() = default;
+
+      void SendOnce(Azure::Core::Amqp::Models::AmqpMessage message)
+      {
+        m_message = std::move(message);
+        m_shouldSend = true;
+      }
+
+    private:
+      mutable bool m_shouldSend{false};
+      Azure::Core::Amqp::Models::AmqpMessage m_message;
+
+      void Poll() const override
+      {
+        if (m_shouldSend && HasMessageSender())
+        {
+          m_shouldSend = false;
+          EXPECT_EQ(MessageSendStatus::Ok, std::get<0>(GetMessageSender().Send(m_message)));
+        }
+      }
+
+      void MessageReceived(
+          std::string const&,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const&) override
+      {
+      }
+    };
+    auto serviceEndpoint = std::make_shared<AnnotatingEndpoint>(
+        brokerEndpoint, MessageTests::MockServiceEndpointOptions{});
+    m_mockServer.AddServiceEndpoint(serviceEndpoint);
+
+    auto connection{CreateAmqpConnection({})};
+    auto session{CreateAmqpSession(connection)};
+    StartServerListening();
+
+    MessageReceiverOptions receiverOptions;
+    receiverOptions.Name = "annotations-receiver";
+    receiverOptions.MessageTarget = "egress";
+    receiverOptions.SettleMode = Azure::Core::Amqp::_internal::ReceiverSettleMode::First;
+    receiverOptions.MaxLinkCredit = 10;
+    MessageReceiver receiver(session.CreateMessageReceiver(brokerEndpoint, receiverOptions));
+    receiver.Open();
+
+    Azure::Core::Amqp::Models::AmqpMessage sent;
+    sent.DeliveryAnnotations[Models::AmqpSymbol{"x-opt-delivery"}] = Models::AmqpValue{"delivery"};
+    sent.MessageAnnotations[Models::AmqpSymbol{"x-opt-offset"}] = Models::AmqpValue{"10"};
+    sent.MessageAnnotations[Models::AmqpSymbol{"x-opt-partition-key"}]
+        = Models::AmqpValue{"partition"};
+    sent.Footer[Models::AmqpSymbol{"x-opt-footer"}] = Models::AmqpValue{"footer"};
+    sent.SetBody(Models::AmqpValue{"annotated body"});
+    serviceEndpoint->SendOnce(sent);
+
+    Azure::Core::Context receiveContext{Azure::DateTime::clock::now() + std::chrono::seconds(10)};
+    auto received = receiver.WaitForIncomingMessage(receiveContext);
+    if (received.first)
+    {
+      EXPECT_TRUE(sent.DeliveryAnnotations == received.first->DeliveryAnnotations);
+      EXPECT_TRUE(sent.MessageAnnotations == received.first->MessageAnnotations);
+      EXPECT_TRUE(sent.Footer == received.first->Footer);
+      EXPECT_EQ("annotated body", static_cast<std::string>(received.first->GetBodyAsAmqpValue()));
+    }
+    else
+    {
+      ADD_FAILURE() << "The receiver returned no message: " << received.second;
+    }
+
+    receiver.Close();
+    StopServerListening();
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+  }
+#endif
+
 #endif // !defined(AZ_PLATFORM_MAC)
 }}}} // namespace Azure::Core::Amqp::Tests

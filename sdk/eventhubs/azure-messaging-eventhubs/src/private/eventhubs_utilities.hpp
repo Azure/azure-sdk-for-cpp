@@ -107,6 +107,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     return exception.ErrorCondition != "amqp:link:message-size-exceeded";
   }
 
+  inline bool IsUnauthorizedAccess(EventHubsException const& exception)
+  {
+    return exception.ErrorCondition == "amqp:unauthorized-access";
+  }
+
   // A rebuild starts after the last delivered offset, so the caller sees no duplicate
   // event. Before the first delivery there is no offset yet, so keep the original position.
   inline Models::StartPosition ResumeStartPosition(
@@ -132,6 +137,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
   class PartitionClientFactory final {
   public:
+#if ENABLE_UAMQP
+    static PartitionClient CreatePartitionClient(
+        std::string fullyQualifiedNamespace,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
+        std::uint16_t targetPort,
+        std::string applicationId,
+        long cppStandardVersion,
+        std::string containerId,
+        std::string partitionUrl,
+        std::string receiverName,
+        PartitionClientOptions options,
+        Azure::Core::Http::Policies::RetryOptions retryOptions,
+        Azure::Core::Context const& context);
+#elif ENABLE_RUST_AMQP
     static PartitionClient CreatePartitionClient(
         Azure::Core::Amqp::_internal::Session const& session,
         std::string const& partitionUrl,
@@ -139,8 +158,15 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions,
         Azure::Core::Context const& context);
+#endif
     PartitionClientFactory() = delete;
   };
+
+#if ENABLE_UAMQP
+  void ClosePartitionClientState(
+      std::shared_ptr<PartitionClientState> const& state,
+      Azure::Core::Context const& context);
+#endif
 
   class EventHubsPropertiesClient {
   public:

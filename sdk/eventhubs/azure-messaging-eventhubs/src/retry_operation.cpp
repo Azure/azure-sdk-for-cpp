@@ -4,6 +4,7 @@
 
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 
+#include <azure/core/amqp/internal/claims_based_security.hpp>
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <algorithm>
@@ -14,7 +15,9 @@
 namespace {
 constexpr std::chrono::milliseconds CancellationCheckInterval{100};
 
-void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Context const& context)
+void WaitForRetryDelayImpl(
+    std::chrono::milliseconds retryAfter,
+    Azure::Core::Context const& context)
 {
   auto const deadline = std::chrono::steady_clock::now() + retryAfter;
   while (true)
@@ -76,6 +79,28 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     {
       throw;
     }
+#if ENABLE_UAMQP
+    catch (Azure::Core::Amqp::_detail::CbsPutTokenFailedException const&)
+    {
+      throw;
+    }
+#endif
+#if ENABLE_UAMQP
+    // Only CbsOpenResult::Error can be transient. uAMQP gives no value that separates a
+    // transient open failure from a permanent one, so MaxRetries is the only bound.
+    catch (Azure::Core::Amqp::_detail::CbsOpenFailedException const& e)
+    {
+      context.ThrowIfCancelled();
+      if (e.Result != Azure::Core::Amqp::_detail::CbsOpenResult::Error)
+      {
+        throw;
+      }
+      if (!ShouldRetry(false, retryCount, retryAfter))
+      {
+        throw;
+      }
+    }
+#endif
     catch (std::runtime_error const& e)
     {
       context.ThrowIfCancelled();
@@ -91,8 +116,30 @@ bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     }
 
     ++retryCount;
-    WaitForRetryDelay(retryAfter, context);
+    WaitForRetryDelayImpl(retryAfter, context);
   }
+}
+
+bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetryAuthentication(
+    AuthenticationRecoveryState& state,
+    std::chrono::milliseconds& retryAfter,
+    double jitterFactor)
+{
+  if (state.Used || m_retryOptions.MaxRetries <= 0)
+  {
+    return false;
+  }
+
+  state.Used = true;
+  retryAfter = CalculateExponentialDelay(1, jitterFactor);
+  return true;
+}
+
+void Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
+    std::chrono::milliseconds retryAfter,
+    Azure::Core::Context const& context)
+{
+  WaitForRetryDelayImpl(retryAfter, context);
 }
 
 bool Azure::Messaging::EventHubs::_detail::RetryOperation::ShouldRetry(
