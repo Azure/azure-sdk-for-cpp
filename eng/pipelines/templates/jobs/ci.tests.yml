@@ -315,7 +315,7 @@ jobs:
           inputs:
             checkCoverage: true
             coverageFailOption: fixed
-            coverageType: line
+            coverageType: lines
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
