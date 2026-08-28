@@ -152,6 +152,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto claimsBasedSecurity = std::make_shared<ClaimsBasedSecurityImpl>(session);
       auto const openStart = std::chrono::steady_clock::now();
       CbsOpenResult cbsOpenStatus{CbsOpenResult::Invalid};
+      // The reason the layer below reported. `CbsOpenResult::Error` covers every transport, TLS
+      // and link failure, so the status alone does not say what went wrong. Issue: a caller that
+      // saw only the status could not separate a refused socket from a rejected handshake.
+      std::string openFailureDetail;
       try
       {
         cbsOpenStatus = claimsBasedSecurity->Open(context);
@@ -169,6 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         // contract on both backends. A cancelled context is the one case a caller must not retry,
         // and it is the only distinction available at this point.
         cbsOpenStatus = context.IsCancelled() ? CbsOpenResult::Cancelled : CbsOpenResult::Error;
+        openFailureDetail = ex.what();
         Log::Stream(Logger::Level::Warning)
             << "The claims based security open threw: " << ex.what();
       }
@@ -177,6 +182,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         auto const elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - openStart);
         auto const connection = session->GetConnection();
+        if (openFailureDetail.empty())
+        {
+          openFailureDetail = claimsBasedSecurity->GetOpenFailureDetail();
+        }
         Log::Stream(Logger::Level::Warning) << FormatCbsOpenFailureLog(
             cbsOpenStatus,
             audienceUrl,
@@ -184,9 +193,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             expiresOn,
             caller,
             connection ? connection->GetDiagnosticSummary() : std::string{},
-            elapsed);
+            elapsed,
+            openFailureDetail);
         throw CbsOpenFailedException(
-            cbsOpenStatus, DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller));
+            cbsOpenStatus,
+            DescribeCbsOpenFailure(cbsOpenStatus, audienceUrl, caller, openFailureDetail));
       }
 
       try

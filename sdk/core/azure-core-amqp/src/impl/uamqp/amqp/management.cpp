@@ -90,6 +90,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
   }
 
+  std::string ManagementClientImpl::GetOpenFailureDetail() const
+  {
+    std::lock_guard<std::mutex> lock(m_openCloseLock);
+    return m_openFailureDetail;
+  }
+
   _internal::ManagementOpenStatus ManagementClientImpl::Open(Context const& context)
   {
     std::unique_lock<std::mutex> lock(m_openCloseLock);
@@ -97,6 +103,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     {
       throw std::runtime_error("Management object is already open.");
     }
+
+    // A retry reuses this object, so a reason left by an earlier attempt must not be read as the
+    // reason for this one.
+    m_openFailureDetail.clear();
 
     try
     {
@@ -139,6 +149,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         auto senderResult{m_messageSender->Open(false, context)};
         if (senderResult)
         {
+          std::stringstream detail;
+          detail << "the message sender for node '" << m_options.ManagementNodeName
+                 << "' did not open: " << senderResult;
+          m_openFailureDetail = detail.str();
           Log::Stream(Logger::Level::Warning)
               << "ManagementClientImpl::Open: Message sender open failed. Node: "
               << m_options.ManagementNodeName << ". Error: " << senderResult << ".";
@@ -153,6 +167,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       // stays open stops the process in its own destructor, so close it here.
       catch (Azure::Core::OperationCancelledException const& e)
       {
+        // m_messageSenderOpen is set only after the sender open returned, and the receiver open
+        // is the next statement, so it names which of the two threw.
+        m_openFailureDetail = std::string("the message ")
+            + (m_messageSenderOpen ? "receiver" : "sender") + " open was cancelled: " + e.what();
         Log::Stream(Logger::Level::Warning)
             << "Operation cancelled opening message sender and receiver." << e.what();
         CloseSenderAndReceiverAfterFailedOpen();
@@ -160,6 +178,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       }
       catch (std::runtime_error const& e)
       {
+        // This is the reason a reader needs. It names the transport, TLS or link failure that
+        // made the open fail, and the status alone cannot carry it.
+        m_openFailureDetail = std::string("the message ")
+            + (m_messageSenderOpen ? "receiver" : "sender") + " open threw: " + e.what();
         Log::Stream(Logger::Level::Warning)
             << "Exception thrown opening message sender and receiver." << e.what();
         CloseSenderAndReceiverAfterFailedOpen();
@@ -174,9 +196,21 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         _internal::ManagementOpenStatus rv = std::get<0>(*result);
         if (rv != _internal::ManagementOpenStatus::Ok)
         {
+          // The handler that completed the queue knows which link failed and what state it
+          // entered. Fall back to the status only when it gave nothing.
+          auto queuedDetail = std::get<1>(*result);
+          if (queuedDetail.empty())
+          {
+            std::stringstream detail;
+            detail << "the open completed with status " << ManagementOpenStatusName(rv)
+                   << " for node '" << m_options.ManagementNodeName << "'";
+            queuedDetail = detail.str();
+          }
+          m_openFailureDetail = queuedDetail;
           Log::Stream(Logger::Level::Warning)
               << "Management operation failed to open. Node: " << m_options.ManagementNodeName
-              << ". Status: " << ManagementOpenStatusName(rv) << ".";
+              << ". Status: " << ManagementOpenStatusName(rv) << ". Reason: " << queuedDetail
+              << ".";
           m_messageSender->Close(context);
           m_messageSenderOpen = false;
           m_messageReceiver->Close(context);
@@ -191,6 +225,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
       // If result is null, then it means that the context was cancelled. Close the things we opened
       // earlier (if any) and return the error.
+      m_openFailureDetail = "the caller's context was cancelled while the open was in flight";
       m_messageSender->Close({});
       m_messageSenderOpen = false;
       m_messageReceiver->Close({});
@@ -199,8 +234,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     catch (...)
     {
+      // This handler rethrows, so the caller reads the reason from the exception itself. The
+      // reason is recorded anyway so both paths out of Open leave it set.
+      auto const exceptionText = CurrentExceptionText();
+      m_openFailureDetail = "the management open threw: " + exceptionText;
       Log::Stream(Logger::Level::Warning)
-          << "Exception thrown during management open. " << CurrentExceptionText();
+          << "Exception thrown during management open. " << exceptionText;
       // If an exception is thrown, ensure that the message sender and receiver are closed.
       if (m_messageSenderOpen)
       {
@@ -446,7 +485,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             if (m_messageReceiverOpen)
             {
               SetState(ManagementState::Open);
-              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok);
+              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok, {});
             }
             break;
             // If the message sender is transitioning to an error or state other than open,
@@ -454,14 +493,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           default:
           case _internal::MessageSenderState::Idle:
           case _internal::MessageSenderState::Closing:
-          case _internal::MessageSenderState::Error:
+          case _internal::MessageSenderState::Error: {
             Log::Stream(Logger::Level::Warning)
                 << "Message Sender Changed State to " << newState
                 << " while management client is opening"
                 << ". Node: " << m_options.ManagementNodeName << ".";
             SetState(ManagementState::Closing);
-            m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
+            std::stringstream detail;
+            detail << "the message sender for node '" << m_options.ManagementNodeName
+                   << "' moved to " << newState << " while the management client was opening";
+            m_openCompleteQueue.CompleteOperation(
+                _internal::ManagementOpenStatus::Error, detail.str());
             break;
+          }
         }
         break;
       case ManagementState::Open:
@@ -571,7 +615,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             if (m_messageSenderOpen)
             {
               SetState(ManagementState::Open);
-              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok);
+              m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Ok, {});
             }
             break;
             // If the message receiver is transitioning to an error or state other than open,
@@ -579,14 +623,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           default:
           case _internal::MessageReceiverState::Idle:
           case _internal::MessageReceiverState::Closing:
-          case _internal::MessageReceiverState::Error:
+          case _internal::MessageReceiverState::Error: {
             Log::Stream(Logger::Level::Warning)
                 << "Message Receiver Changed State to " << newState
                 << " while management client is opening"
                 << ". Node: " << m_options.ManagementNodeName << ".";
             SetState(ManagementState::Closing);
-            m_openCompleteQueue.CompleteOperation(_internal::ManagementOpenStatus::Error);
+            std::stringstream detail;
+            detail << "the message receiver for node '" << m_options.ManagementNodeName
+                   << "' moved to " << newState << " while the management client was opening";
+            m_openCompleteQueue.CompleteOperation(
+                _internal::ManagementOpenStatus::Error, detail.str());
             break;
+          }
         }
         break;
       case ManagementState::Open:

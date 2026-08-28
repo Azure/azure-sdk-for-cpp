@@ -38,6 +38,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
     _azure_NODISCARD CbsOpenResult Open(Context const& context);
+
+    /** @brief The reason the last `Open` failed, or an empty string when it did not fail. */
+    std::string GetOpenFailureDetail() const;
+
     void Close(Context const& context);
     _azure_NODISCARD std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
