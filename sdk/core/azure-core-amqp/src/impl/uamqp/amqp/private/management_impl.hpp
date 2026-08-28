@@ -86,6 +86,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Models::AmqpMessage messageToSend,
         Context const& context);
 
+#if _azure_TESTING_BUILD
+    /** @brief The number of requests still waiting for a response.
+     *
+     * `ExecuteOperation` creates one queue for each request and removes it on the way out. A test
+     * uses this to assert that an operation that failed or was cancelled left nothing behind.
+     */
+    std::size_t GetPendingOperationCount()
+    {
+      std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+      return m_messageQueues.size();
+    }
+#endif
+
   private:
     enum class ManagementState
     {
