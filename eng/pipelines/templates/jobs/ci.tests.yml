@@ -304,18 +304,18 @@ jobs:
           displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: PublishCodeCoverageResults@2
+        - task: PublishCodeCoverageResults@1
           inputs:
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@10
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@9
           displayName: Check line coverage
           inputs:
             checkCoverage: true
             coverageFailOption: fixed
-            coverageType: line
+            coverageType: lines
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
             treat0of0as100: true
