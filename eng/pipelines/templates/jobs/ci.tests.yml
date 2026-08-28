@@ -304,13 +304,13 @@ jobs:
           displayName: Generate Code Coverage Data
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: PublishCodeCoverageResults@1
+        - task: PublishCodeCoverageResults@2
           inputs:
             summaryFileLocation: '$(Build.SourcesDirectory)/**/Cobertura.xml'
           displayName: Publish Code Coverage to DevOps
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'))
 
-        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@9
+        - task: mspremier.BuildQualityChecks.QualityChecks-task.BuildQualityChecks@10
           displayName: Check line coverage
           inputs:
             checkCoverage: true
@@ -318,9 +318,7 @@ jobs:
             coverageType: line
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
-            PSGer.Cover.MaxWaitTime: 180000
-            PSGer.Cover.PollInterval: 5000
-            PSGer.Cover.StableDataCount: 10
+            treat0of0as100: true
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
         # Disabling branch coverage check until newer tasks can support it see issue https://github.com/microsoft/azure-pipelines-tasks/issues/19669 tracking that request.
