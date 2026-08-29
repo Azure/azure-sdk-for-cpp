@@ -269,6 +269,26 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_sendCompleted = false;
       }
 
+      // Every exit from this function has to remove the queue for this request. The two returns
+      // below did that inline, but the cancellation throw did not, and neither did the rethrow in
+      // the handler at the end, so a cancelled operation left its queue in the map for the life of
+      // the client. A client that lives as long as the connection therefore grew one entry for
+      // every cancelled operation. The guard below removes the queue on every path.
+      //
+      // The identifier is held by reference. Copying it would allocate, and an allocation that
+      // throws here would leave the entry that was just inserted with no guard to remove it.
+      // `requestId` is declared above the guard, so it outlives it.
+      struct QueueRemover final
+      {
+        ManagementClientImpl* Client;
+        std::string const& RequestId;
+        ~QueueRemover()
+        {
+          std::unique_lock<std::recursive_mutex> lock(Client->m_messageQueuesLock);
+          Client->m_messageQueues.erase(RequestId);
+        }
+      } const queueRemover{this, requestId};
+
       auto sendResult = m_messageSender->Send(messageToSend, context);
       if (std::get<0>(sendResult) != _internal::MessageSendStatus::Ok)
       {
@@ -298,15 +318,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         rv.StatusCode = 500;
         rv.Error = sendError;
         rv.Message = nullptr;
-        {
-          std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
-          // Remove the queue from the map, we don't need it anymore.
-          m_messageQueues.erase(requestId);
-        }
         return rv;
       }
 
-      auto result = m_messageQueues.at(requestId)->WaitForResult(context);
+      // Take the queue under the lock, then wait on it without the lock. `ExecuteOperation` runs
+      // on more than one thread and it is where entries are inserted and removed, so reading the
+      // map here without the lock races with another caller's insert or erase. The lock cannot be
+      // held across the wait, because the receive path takes it to find the queue it has to
+      // complete. Only this call removes this request's queue, and it does so after the wait, so
+      // the pointer stays valid for the wait.
+      ManagementOperationQueue* operationQueue = nullptr;
+      {
+        std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
+        operationQueue = m_messageQueues.at(requestId).get();
+      }
+
+      auto result = operationQueue->WaitForResult(context);
       if (result)
       {
         _internal::ManagementOperationResult rv;
@@ -314,12 +341,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         rv.StatusCode = std::get<1>(*result);
         rv.Error = std::get<2>(*result);
         rv.Message = std::get<3>(*result);
-
-        {
-          std::unique_lock<std::recursive_mutex> lock(m_messageQueuesLock);
-          // Remove the queue from the map, we don't need it anymore.
-          m_messageQueues.erase(requestId);
-        }
         return rv;
       }
       else
