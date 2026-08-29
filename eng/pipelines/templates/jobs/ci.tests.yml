@@ -318,6 +318,20 @@ jobs:
             coverageType: lines
             # Minimum baseline for line coverage
             coverageThreshold: ${{ parameters.LineCoverageTarget }}
+
+            # When BuildQualityChecks is unreliable (Issues like https://github.com/MicrosoftPremier/VstsExtensions/issues/270), it reports 0/0 coverage,
+            # while the Code Coverage tab shows the correct numbers, and so do logs from PublishCodeCoverageResults.
+            # BuildQualityChecks did work for us for several years, and started to fail intermittently in August 2026.
+            # There has been issues logged for BuildQualityChecks, which are not addressed for a long time. We did not find a better workaround.
+            # We could just disable the check, but we want to keep it enabled for the times it works correctly.
+            # Therefore, given that when BuildQualityChecks fails intermittently, it reports 0/0 coverage, we treat it as 100% to avoid failing the job.
+            # At least, this way we know that if it fails, we can trust the failure, and luckily it does not happen too often - mostly on reruns,
+            # so we should maintain the coverage enforcement most of the time, and even if something slips through, it won't be for long,
+            # plus if a developer is really interested in the coverage (before release), they can read logs from PublishCodeCoverageResults or look at the
+            # Code Coverage tab to make sure the coverage is sufficient, or re-run the CI until this task succeeds with correct coverage, but at least they
+            # will never be blocked by intermittent failures. The only other option we have for now is to disable this check completely, so
+            # treat0of0as100=true is supposed to be better than that.
+            treat0of0as100: true
           condition: and(succeededOrFailed(), eq(variables['CODE_COVERAGE'], 'enabled'), eq(variables['Skip.LineCoverageEnforcement'], ''))
 
         # Disabling branch coverage check until newer tasks can support it see issue https://github.com/microsoft/azure-pipelines-tasks/issues/19669 tracking that request.
