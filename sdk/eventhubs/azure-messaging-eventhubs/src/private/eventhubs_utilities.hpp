@@ -136,8 +136,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Azure::Core::Amqp::_internal::Session const& session,
         std::string const& partitionUrl,
         std::string const& receiverName,
+        std::string clientIdentifier,
+        std::string partitionId,
         PartitionClientOptions options,
         Azure::Core::Http::Policies::RetryOptions retryOptions,
+        Azure::Core::Tracing::_internal::TracingContextFactory tracingFactory,
+        std::string eventHubName,
+        std::string fullyQualifiedNamespace,
         Azure::Core::Context const& context);
     PartitionClientFactory() = delete;
   };

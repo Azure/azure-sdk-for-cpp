@@ -6,7 +6,10 @@
 #include "azure/messaging/eventhubs/event_data_batch.hpp"
 #include "azure/messaging/eventhubs/eventhubs_exception.hpp"
 #include "private/eventhubs_constants.hpp"
+#include "private/eventhubs_diagnostics.hpp"
+#include "private/eventhubs_tracing.hpp"
 #include "private/eventhubs_utilities.hpp"
+#include "private/package_version.hpp"
 #include "private/retry_operation.hpp"
 
 #include <azure/core/amqp.hpp>
@@ -24,7 +27,52 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
+
+Azure::Messaging::EventHubs::_detail::AmqpDiagnosticsContext CreateDiagnosticsContext(
+    std::string const& clientId,
+    std::string const& partitionId,
+    std::string componentType,
+    std::string componentName,
+    std::uint64_t stackId)
+{
+  return Azure::Messaging::EventHubs::_detail::AmqpDiagnosticsContext{
+      clientId, partitionId, std::move(componentType), std::move(componentName), stackId};
 }
+
+std::string CreateConnectionName(
+    std::string const& clientId,
+    std::string const& applicationId,
+    std::string const& partitionId,
+    std::uint64_t stackId)
+{
+  return clientId + (applicationId.empty() ? std::string{} : "/application/" + applicationId)
+      + "/partition/" + (partitionId.empty() ? std::string("<gateway>") : partitionId)
+      + "/generation/" + std::to_string(stackId);
+}
+
+Azure::Messaging::EventHubs::_detail::AmqpDiagnosticsContext CreateFailureDiagnosticsContext(
+    std::string const& clientId,
+    std::string const& partitionId,
+    std::string const& linkName,
+    std::string const& applicationId,
+    std::uint64_t stackId,
+    std::string const& errorCondition)
+{
+  auto const componentType
+      = Azure::Messaging::EventHubs::_detail::GetAmqpFailureComponentType(errorCondition);
+  auto componentName = linkName;
+  if (componentType == "connection")
+  {
+    componentName = CreateConnectionName(clientId, applicationId, partitionId, stackId);
+  }
+  else if (componentType == "session")
+  {
+    componentName = partitionId;
+  }
+  return CreateDiagnosticsContext(
+      clientId, partitionId, componentType, std::move(componentName), stackId);
+}
+} // namespace
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
@@ -32,7 +80,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       std::string const& connectionString,
       std::string const& eventHub,
       Azure::Messaging::EventHubs::ProducerClientOptions options)
-      : m_connectionString{connectionString}, m_eventHub{eventHub}, m_producerClientOptions(options)
+      : m_connectionString{connectionString}, m_eventHub{eventHub},
+        m_producerClientOptions(options),
+        m_clientIdentifier{_detail::CreateClientIdentifier("producer", options.Name)},
+        m_tracingFactory{_detail::CreateTracingContextFactory(options.TracingProvider)}
   {
     auto details
         = _detail::EventHubsUtilities::CreateConnectionStringDetails(connectionString, eventHub);
@@ -42,6 +93,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     m_targetPort = details.Port;
     m_targetUrl = details.ServiceScheme + m_fullyQualifiedNamespace + ":"
         + std::to_string(m_targetPort) + "/" + m_eventHub;
+    if (m_producerClientOptions.Name.empty())
+    {
+      m_producerClientOptions.Name = m_clientIdentifier;
+    }
   }
 
   ProducerClient::ProducerClient(
@@ -51,8 +106,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       Azure::Messaging::EventHubs::ProducerClientOptions options)
       : m_fullyQualifiedNamespace{fullyQualifiedNamespace}, m_eventHub{eventHub},
         m_targetUrl{_detail::EventHubsServiceScheme + m_fullyQualifiedNamespace + "/" + m_eventHub},
-        m_credential{credential}, m_producerClientOptions(options)
+        m_credential{credential}, m_producerClientOptions(options),
+        m_clientIdentifier{_detail::CreateClientIdentifier("producer", options.Name)},
+        m_tracingFactory{_detail::CreateTracingContextFactory(options.TracingProvider)}
   {
+    if (m_producerClientOptions.Name.empty())
+    {
+      m_producerClientOptions.Name = m_clientIdentifier;
+    }
   }
 
   ProducerClient::~ProducerClient()
@@ -141,7 +202,7 @@ namespace Azure { namespace Messaging { namespace EventHubs {
             << "Could not read the maximum message size from the cached sender for partition '"
             << (options.PartitionId.empty() ? std::string("<gateway>") : options.PartitionId)
             << "'. Discard the stack and build it again: " << ex.what() << std::endl;
-        InvalidateSender(options.PartitionId, observedGeneration, context);
+        InvalidateSender(options.PartitionId, observedGeneration, context, std::string{ex.what()});
         EstablishSenderWithRetry(options.PartitionId, context);
         std::uint64_t rebuiltGeneration = 0;
         optionsToUse.MaxBytes = readMaxMessageSize(rebuiltGeneration);
@@ -151,8 +212,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     return _detail::EventDataBatchFactory::CreateEventDataBatch(optionsToUse);
   }
 
-  void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
+  void ProducerClient::SendBatchInSpan(
+      EventDataBatch const& eventDataBatch,
+      Azure::Core::Tracing::_internal::TracingContextFactory::TracingContext& tracingContext)
   {
+    // The conversion stays inside the span scope, because an empty batch fails here.
     auto message = eventDataBatch.ToAmqpMessage();
 
     Azure::Messaging::EventHubs::_detail::RetryOperation retryOp(
@@ -161,10 +225,13 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // are exhausted, but if the lambda ever returns false directly the batch must not be
     // silently dropped. See issue #7130.
     auto const& partitionId = eventDataBatch.GetPartitionId();
+    std::uint64_t retryAttempt = 0;
     if (!retryOp.Execute(
             [&]() -> bool {
-              EnsureSenderOrInvalidate(partitionId, context);
+              auto const currentAttempt = ++retryAttempt;
+              EnsureSenderOrInvalidate(partitionId, tracingContext.Context);
               std::uint64_t observedGeneration = 0;
+              std::uint64_t observedStackId = 0;
               auto& guard = GetPartitionGuard(partitionId);
               try
               {
@@ -172,24 +239,49 @@ namespace Azure { namespace Messaging { namespace EventHubs {
                 std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
                 auto sender = GetSender(partitionId);
                 observedGeneration = guard.generation.load();
-                auto result = sender.Send(message, context);
+                observedStackId = guard.activeStackId.load();
+                auto diagnosticsContext = CreateDiagnosticsContext(
+                    m_clientIdentifier,
+                    partitionId,
+                    "link",
+                    m_producerClientOptions.Name,
+                    observedStackId);
+                auto amqpTracingContext = _detail::StartAmqpSpan(
+                    m_tracingFactory,
+                    "ProducerClient.AmqpSend",
+                    "publish",
+                    m_eventHub,
+                    m_fullyQualifiedNamespace,
+                    eventDataBatch.NumberOfEvents(),
+                    diagnosticsContext,
+                    currentAttempt,
+                    tracingContext.Context);
+                try
+                {
+                  auto result = sender.Send(message, amqpTracingContext.Context);
 #if ENABLE_UAMQP
-                auto sendStatus = std::get<0>(result);
-                if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
-                {
-                  return true;
-                }
-                // Throw an exception about the error we just received.
-                throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                    CreateEventHubsException(std::get<1>(result));
-#elif ENABLE_RUST_AMQP
-                if (result)
-                {
+                  auto sendStatus = std::get<0>(result);
+                  if (sendStatus == Azure::Core::Amqp::_internal::MessageSendStatus::Ok)
+                  {
+                    return true;
+                  }
+                  // Throw an exception about the error we just received.
                   throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-                      CreateEventHubsException(result);
-                }
-                return true;
+                      CreateEventHubsException(std::get<1>(result));
+#elif ENABLE_RUST_AMQP
+                  if (result)
+                  {
+                    throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+                        CreateEventHubsException(result);
+                  }
+                  return true;
 #endif
+                }
+                catch (std::exception const& ex)
+                {
+                  amqpTracingContext.Span.AddEvent(ex);
+                  throw;
+                }
               }
               catch (Azure::Core::OperationCancelledException const&)
               {
@@ -197,22 +289,51 @@ namespace Azure { namespace Messaging { namespace EventHubs {
               }
               catch (Azure::Messaging::EventHubs::EventHubsException const& ex)
               {
-                if (!context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
+                if (!tracingContext.Context.IsCancelled() && _detail::ShouldInvalidateSender(ex))
                 {
-                  InvalidateSender(partitionId, observedGeneration, context);
+                  _detail::LogAmqpLifecycle(
+                      Logger::Level::Warning,
+                      CreateFailureDiagnosticsContext(
+                          m_clientIdentifier,
+                          partitionId,
+                          m_producerClientOptions.Name,
+                          m_producerClientOptions.ApplicationID,
+                          observedStackId,
+                          ex.ErrorCondition),
+                      "failed",
+                      ex.what());
+                  InvalidateSender(
+                      partitionId,
+                      observedGeneration,
+                      tracingContext.Context,
+                      std::string{ex.what()});
                 }
                 throw;
               }
-              catch (std::exception const&)
+              catch (std::exception const& ex)
               {
-                if (!context.IsCancelled())
+                if (!tracingContext.Context.IsCancelled())
                 {
-                  InvalidateSender(partitionId, observedGeneration, context);
+                  _detail::LogAmqpLifecycle(
+                      Logger::Level::Warning,
+                      CreateDiagnosticsContext(
+                          m_clientIdentifier,
+                          partitionId,
+                          "link",
+                          m_producerClientOptions.Name,
+                          observedStackId),
+                      "failed",
+                      ex.what());
+                  InvalidateSender(
+                      partitionId,
+                      observedGeneration,
+                      tracingContext.Context,
+                      std::string{ex.what()});
                 }
                 throw;
               }
             },
-            context))
+            tracingContext.Context))
     {
       std::string failureDetail = "ProducerClient::Send failed after exhausting "
           + std::to_string(m_producerClientOptions.RetryOptions.MaxRetries)
@@ -227,36 +348,100 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     }
   }
 
+  void ProducerClient::Send(EventDataBatch const& eventDataBatch, Core::Context const& context)
+  {
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        eventDataBatch.NumberOfEvents(),
+        context);
+
+    try
+    {
+      SendBatchInSpan(eventDataBatch, tracingContext);
+    }
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
+  }
+
   void ProducerClient::Send(Models::EventData const& eventData, Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
-    if (!batch.TryAdd(eventData))
+    // The batch creation opens the AMQP link, so it must run inside the span.
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        Azure::Nullable<size_t>{},
+        context);
+
+    try
     {
-      throw std::runtime_error("Could not add message to batch.");
+      auto batch = CreateBatch(EventDataBatchOptions{}, tracingContext.Context);
+      if (!batch.TryAdd(eventData))
+      {
+        throw std::runtime_error("Could not add message to batch.");
+      }
+      SendBatchInSpan(batch, tracingContext);
     }
-    Send(batch, context);
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
   }
 
   void ProducerClient::Send(
       std::vector<Models::EventData> const& eventData,
       Core::Context const& context)
   {
-    auto batch = CreateBatch(EventDataBatchOptions{}, context);
-    for (const auto& data : eventData)
+    // The batch creation opens the AMQP link, so it must run inside the span.
+    auto tracingContext = _detail::StartSpan(
+        m_tracingFactory,
+        "ProducerClient.Send",
+        Azure::Core::Tracing::_internal::SpanKind::Producer,
+        "publish",
+        m_eventHub,
+        m_fullyQualifiedNamespace,
+        eventData.size(),
+        context);
+
+    try
     {
-      if (!batch.TryAdd(data))
+      auto batch = CreateBatch(EventDataBatchOptions{}, tracingContext.Context);
+      for (const auto& data : eventData)
       {
-        throw std::runtime_error("Could not add message to batch.");
+        if (!batch.TryAdd(data))
+        {
+          throw std::runtime_error("Could not add message to batch.");
+        }
       }
+      SendBatchInSpan(batch, tracingContext);
     }
-    Send(batch, context);
+    catch (std::exception const& ex)
+    {
+      tracingContext.Span.AddEvent(ex);
+      throw;
+    }
   }
 
   Azure::Core::Amqp::_internal::Connection ProducerClient::CreateConnection(
+      std::string const& partitionId,
+      std::uint64_t stackId,
       Azure::Core::Context const& context) const
   {
     Azure::Core::Amqp::_internal::ConnectionOptions connectOptions;
-    connectOptions.ContainerId = m_producerClientOptions.ApplicationID;
+    connectOptions.ContainerId = CreateConnectionName(
+        m_clientIdentifier, m_producerClientOptions.ApplicationID, partitionId, stackId);
     connectOptions.EnableTrace = _detail::EnableAmqpTrace;
     connectOptions.AuthenticationScopes = {"https://eventhubs.azure.net/.default"};
     connectOptions.Port = m_targetPort;
@@ -283,7 +468,33 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_connections.find(partitionId) == m_connections.end())
     {
-      m_connections.emplace(partitionId, CreateConnection(context));
+      auto& guard = GetPartitionGuard(partitionId);
+      auto const stackId = guard.nextStackId.fetch_add(1) + 1;
+      guard.activeStackId = stackId;
+      auto diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier,
+          partitionId,
+          "connection",
+          CreateConnectionName(
+              m_clientIdentifier, m_producerClientOptions.ApplicationID, partitionId, stackId),
+          stackId);
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Verbose, diagnosticsContext, stackId == 1 ? "creating" : "recreating");
+      try
+      {
+        m_connections.emplace(partitionId, CreateConnection(partitionId, stackId, context));
+        _detail::LogAmqpLifecycle(
+            stackId == 1 ? Logger::Level::Verbose : Logger::Level::Informational,
+            diagnosticsContext,
+            stackId == 1 ? "created" : "recreated");
+      }
+      catch (std::exception const& ex)
+      {
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning, diagnosticsContext, "create_failed", ex.what());
+        guard.activeStackId = 0;
+        throw;
+      }
     }
   }
 
@@ -298,7 +509,25 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     std::unique_lock<std::recursive_mutex> lock(m_sessionsLock);
     if (m_sessions.find(partitionId) == m_sessions.end())
     {
-      m_sessions.emplace(partitionId, CreateSession(partitionId, context));
+      auto const stackId = GetPartitionGuard(partitionId).activeStackId.load();
+      auto diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "session", partitionId, stackId);
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Verbose, diagnosticsContext, stackId == 1 ? "creating" : "recreating");
+      try
+      {
+        m_sessions.emplace(partitionId, CreateSession(partitionId, context));
+        _detail::LogAmqpLifecycle(
+            stackId == 1 ? Logger::Level::Verbose : Logger::Level::Informational,
+            diagnosticsContext,
+            stackId == 1 ? "created" : "recreated");
+      }
+      catch (std::exception const& ex)
+      {
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning, diagnosticsContext, "create_failed", ex.what());
+        throw;
+      }
     }
   }
 
@@ -328,19 +557,45 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       senderOptions.EnableTrace = _detail::EnableAmqpTrace;
       senderOptions.MaxMessageSize = m_producerClientOptions.MaxMessageSize;
 
-      Azure::Core::Amqp::_internal::MessageSender sender
-          = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions);
-      auto openResult{sender.Open(context)};
-      if (openResult)
+      auto const stackId = GetPartitionGuard(partitionId).activeStackId.load();
+      auto diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "link", senderOptions.Name, stackId);
+      _detail::LogAmqpLifecycle(
+          Logger::Level::Verbose, diagnosticsContext, stackId == 1 ? "attaching" : "reattaching");
+      auto amqpTracingContext = _detail::StartAmqpSpan(
+          m_tracingFactory,
+          "ProducerClient.AmqpLink.Open",
+          "publish",
+          m_eventHub,
+          m_fullyQualifiedNamespace,
+          Azure::Nullable<size_t>{},
+          diagnosticsContext,
+          Azure::Nullable<std::uint64_t>{},
+          context);
+      try
       {
-        Azure::Core::Diagnostics::_internal::Log::Stream(
-            Azure::Core::Diagnostics::Logger::Level::Error)
-            << "Failed to create message sender: " << openResult;
-        throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
-            CreateEventHubsException(openResult);
+        Azure::Core::Amqp::_internal::MessageSender sender
+            = GetSession(partitionId).CreateMessageSender(targetUrl, senderOptions);
+        auto openResult{sender.Open(amqpTracingContext.Context)};
+        if (openResult)
+        {
+          throw Azure::Messaging::EventHubs::_detail::EventHubsExceptionFactory::
+              CreateEventHubsException(openResult);
+        }
+        m_senders.emplace(partitionId, std::move(sender));
+        GetPartitionGuard(partitionId).generation.fetch_add(1);
+        _detail::LogAmqpLifecycle(
+            stackId == 1 ? Logger::Level::Verbose : Logger::Level::Informational,
+            diagnosticsContext,
+            stackId == 1 ? "attached" : "reattached");
       }
-      m_senders.emplace(partitionId, std::move(sender));
-      GetPartitionGuard(partitionId).generation.fetch_add(1);
+      catch (std::exception const& ex)
+      {
+        amqpTracingContext.Span.AddEvent(ex);
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Warning, diagnosticsContext, "attach_failed", ex.what());
+        throw;
+      }
     }
   }
   void ProducerClient::EnsureSenderOrInvalidate(
@@ -357,12 +612,12 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     {
       throw;
     }
-    catch (std::exception const&)
+    catch (std::exception const& ex)
     {
       // No exemption for AuthenticationException: on uAMQP it can mean a dead $cbs link (#7330).
       if (!context.IsCancelled())
       {
-        InvalidateSender(partitionId, observedGeneration, context);
+        InvalidateSender(partitionId, observedGeneration, context, std::string{ex.what()});
       }
       throw;
     }
@@ -435,27 +690,27 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   void ProducerClient::InvalidateSender(
       std::string const& partitionId,
       Azure::Nullable<std::uint64_t> observedGeneration,
-      Azure::Core::Context const& context)
+      Azure::Core::Context const& context,
+      Azure::Nullable<std::string> failureReason)
   {
     std::unique_ptr<Azure::Core::Amqp::_internal::MessageSender> sender;
     std::unique_ptr<Azure::Core::Amqp::_internal::Session> session;
     std::unique_ptr<Azure::Core::Amqp::_internal::Connection> connection;
+    std::uint64_t stackId = 0;
 
     {
       auto& guard = GetPartitionGuard(partitionId);
       std::unique_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
+      stackId = guard.activeStackId.load();
       if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
       {
-        Log::Stream(Logger::Level::Informational)
-            << "Skip the teardown for partition '"
-            << (partitionId.empty() ? std::string("<gateway>") : partitionId)
-            << "': the cached stack changed." << std::endl;
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Informational,
+            CreateDiagnosticsContext(m_clientIdentifier, partitionId, "stack", {}, stackId),
+            "teardown_skipped",
+            "the cached stack changed");
         return;
       }
-
-      Log::Stream(Logger::Level::Informational)
-          << "Discard the sender stack for partition '"
-          << (partitionId.empty() ? std::string("<gateway>") : partitionId) << "'." << std::endl;
 
       std::lock_guard<std::mutex> sendersLock(m_sendersLock);
       std::lock_guard<std::recursive_mutex> sessionsLock(m_sessionsLock);
@@ -465,10 +720,11 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       // the fresh stack instead of tearing it down.
       if (observedGeneration.HasValue() && guard.generation.load() != observedGeneration.Value())
       {
-        Log::Stream(Logger::Level::Informational)
-            << "Skip the teardown for partition '"
-            << (partitionId.empty() ? std::string("<gateway>") : partitionId)
-            << "': another thread cached a new stack." << std::endl;
+        _detail::LogAmqpLifecycle(
+            Logger::Level::Informational,
+            CreateDiagnosticsContext(m_clientIdentifier, partitionId, "stack", {}, stackId),
+            "teardown_skipped",
+            "another thread cached a new stack");
         return;
       }
       auto senderIterator = m_senders.find(partitionId);
@@ -495,46 +751,50 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       if (sender || session || connection)
       {
         guard.generation.fetch_add(1);
+        guard.activeStackId = 0;
       }
     }
 
-    // The network closes run outside every lock, so no send waits on them.
+    // The network closes and their lifecycle logs run outside every lock, so no send waits on them.
+    auto const detail = failureReason.HasValue() ? failureReason.Value() : std::string{};
     if (sender)
     {
-      try
-      {
-        sender->Close(context);
-      }
-      catch (std::exception const& ex)
-      {
-        Log::Stream(Logger::Level::Warning)
-            << "Exception while closing a faulted message sender: " << ex.what() << std::endl;
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "link", m_producerClientOptions.Name, stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&sender, &context]() { sender->Close(context); },
+          _detail::LogAmqpLifecycle);
     }
 #if ENABLE_RUST_AMQP
     if (session)
     {
-      try
-      {
-        session->End(context);
-      }
-      catch (std::exception const& ex)
-      {
-        Log::Stream(Logger::Level::Warning)
-            << "Exception while ending a faulted session: " << ex.what() << std::endl;
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier, partitionId, "session", partitionId, stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&session, &context]() { session->End(context); },
+          _detail::LogAmqpLifecycle);
     }
     if (connection)
     {
-      try
-      {
-        connection->Close(context);
-      }
-      catch (std::exception const& ex)
-      {
-        Log::Stream(Logger::Level::Warning)
-            << "Exception while closing a faulted connection: " << ex.what() << std::endl;
-      }
+      auto const diagnosticsContext = CreateDiagnosticsContext(
+          m_clientIdentifier,
+          partitionId,
+          "connection",
+          CreateConnectionName(
+              m_clientIdentifier, m_producerClientOptions.ApplicationID, partitionId, stackId),
+          stackId);
+      _detail::CloseAmqpComponent(
+          diagnosticsContext,
+          failureReason.HasValue(),
+          detail,
+          [&connection, &context]() { connection->Close(context); },
+          _detail::LogAmqpLifecycle);
     }
 #endif
 
