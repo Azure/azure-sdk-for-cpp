@@ -97,6 +97,7 @@ add_executable (
     transport_policy_options.cpp
     url_test.cpp
     uuid_test.cpp
+    win_http_transport_test.cpp
 )
 
 target_compile_definitions(azure-core-test PRIVATE _azure_BUILDING_TESTS)
