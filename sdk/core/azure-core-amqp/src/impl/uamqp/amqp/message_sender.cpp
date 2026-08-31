@@ -298,8 +298,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       {
         sender->OnLinkAttached();
       }
-      else if (
-          oldState == MESSAGE_SENDER_STATE_OPEN || oldState == MESSAGE_SENDER_STATE_CLOSING)
+      else if (oldState == MESSAGE_SENDER_STATE_OPEN || oldState == MESSAGE_SENDER_STATE_CLOSING)
       {
         // The link was usable and is not any longer. A connection or session failure takes it down
         // through on_session_state_changed, which never raises the detach event, so this is the
@@ -482,9 +481,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
             m_link); // This will ensure that the link is cleaned up on the next poll()
         // A peer that has already detached the link will never answer with a DETACH of its own,
         // so waiting for one can only burn the deadline. The teardown below still runs.
-        bool shouldWaitForClose
-            = (m_currentState == _internal::MessageSenderState::Closing
-               || m_currentState == _internal::MessageSenderState::Open)
+        bool shouldWaitForClose = (m_currentState == _internal::MessageSenderState::Closing
+                                   || m_currentState == _internal::MessageSenderState::Open)
             && !m_linkDetached.load(std::memory_order_acquire);
 
         {

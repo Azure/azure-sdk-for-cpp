@@ -1064,8 +1064,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
   }
 
   // CreateBatch reads the negotiated maximum message size on every call. That read used to go to
-  // the link, so it threw once the peer was gone. The value is fixed when the peer's ATTACH arrives,
-  // so a stored copy stays correct after the link goes.
+  // the link, so it threw once the peer was gone. The value is fixed when the peer's ATTACH
+  // arrives, so a stored copy stays correct after the link goes.
   TEST_F(TestMessageSendReceive, SenderKeepsTheMaxMessageSizeAfterThePeerGoesAway)
   {
     MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};

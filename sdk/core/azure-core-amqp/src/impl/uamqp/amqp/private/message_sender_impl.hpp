@@ -67,10 +67,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
      * Never throws, so a caller can test a cached sender rather than discovering a dead link from
      * a call that fails.
      */
-    bool IsLinkDetached() const noexcept
-    {
-      return m_linkDetached.load(std::memory_order_acquire);
-    }
+    bool IsLinkDetached() const noexcept { return m_linkDetached.load(std::memory_order_acquire); }
 
     std::string GetLinkName() const;
 
