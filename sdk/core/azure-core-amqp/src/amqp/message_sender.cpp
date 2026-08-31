@@ -75,6 +75,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
 
   std::uint64_t MessageSender::GetMaxMessageSize() const { return m_impl->GetMaxMessageSize(); }
 #if ENABLE_UAMQP
+  bool MessageSender::IsLinkDetached() const noexcept { return m_impl->IsLinkDetached(); }
   std::string MessageSender::GetLinkName() const { return m_impl->GetLinkName(); }
 #endif
   MessageSender::~MessageSender() noexcept {}

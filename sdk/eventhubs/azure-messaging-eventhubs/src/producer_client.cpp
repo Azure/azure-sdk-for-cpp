@@ -16,7 +16,10 @@
 #include <azure/core/internal/diagnostics/log.hpp>
 
 #include <algorithm>
+#include <chrono>
+#include <cstdint>
 #include <memory>
+#include <random>
 #include <stdexcept>
 #include <vector>
 
@@ -24,7 +27,21 @@ using namespace Azure::Core::Diagnostics::_internal;
 using namespace Azure::Core::Diagnostics;
 namespace {
 const std::string DefaultAuthScope = "https://eventhubs.azure.net/.default";
+
+// Spreads producers that failed together. Not a backoff, so the window is small and starts at
+// zero, and a producer that failed on its own pays almost nothing.
+constexpr std::chrono::milliseconds CbsRetryJitterWindow{100};
+
+std::chrono::milliseconds NextCbsRetryJitter()
+{
+  // Seeded per thread, and not from std::rand: on the Microsoft CRT every thread starts that
+  // generator from the same seed, so all producers would draw the same value and retry together.
+  static thread_local std::mt19937 engine{std::random_device{}()};
+  std::uniform_int_distribution<std::chrono::milliseconds::rep> distribution{
+      0, CbsRetryJitterWindow.count()};
+  return std::chrono::milliseconds{distribution(engine)};
 }
+} // namespace
 
 namespace Azure { namespace Messaging { namespace EventHubs {
 
@@ -111,10 +128,8 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     EventDataBatchOptions optionsToUse{options};
     if (!options.MaxBytes.HasValue())
     {
-      // EnsureSender only checks whether the map holds a sender; a link the service
-      // detached during an idle period stays cached. Reading the peer max message size
-      // is the first call that touches that dead link, and a live test that waited past
-      // the 30 minute idle detach failed exactly here. Rebuild once and read again.
+      // The sender stores the size when its link attaches, so this read no longer touches the link.
+      // The recovery below stays for a sender that never attached and so has nothing stored.
       auto readMaxMessageSize = [&](std::uint64_t& observedGeneration) -> std::uint64_t {
         auto& guard = GetPartitionGuard(options.PartitionId);
         std::shared_lock<std::shared_timed_mutex> stackLock(guard.stackLock);
@@ -343,10 +358,46 @@ namespace Azure { namespace Messaging { namespace EventHubs {
       GetPartitionGuard(partitionId).generation.fetch_add(1);
     }
   }
+  void ProducerClient::DiscardDetachedSender(
+      std::string const& partitionId,
+      Azure::Core::Context const& context)
+  {
+#if ENABLE_UAMQP
+    // Read the generation before taking m_sendersLock. InvalidateSender takes the partition guard
+    // first and the sender map second, so acquiring them the other way round here would invert
+    // that order.
+    auto const observedGeneration = GetPartitionGuard(partitionId).generation.load();
+
+    {
+      std::unique_lock<std::mutex> lock(m_sendersLock);
+      auto sender = m_senders.find(partitionId);
+      if (sender == m_senders.end() || !sender->second.IsLinkDetached())
+      {
+        return;
+      }
+    }
+
+    Log::Stream(Logger::Level::Informational)
+        << "The peer detached the link for partition '"
+        << (partitionId.empty() ? std::string("<gateway>") : partitionId)
+        << "'. Discard the cached stack before using it." << std::endl;
+    InvalidateSender(partitionId, observedGeneration, context);
+#else
+    // The Rust backend reports a detached link through its own send path, so there is nothing
+    // to test here.
+    (void)partitionId;
+    (void)context;
+#endif
+  }
+
   void ProducerClient::EnsureSenderOrInvalidate(
       std::string const& partitionId,
       Azure::Core::Context const& context)
   {
+    // Holding a sender in the map is not the same as holding a usable one. Test for that here, so
+    // the next call to the sender is not what discovers it.
+    DiscardDetachedSender(partitionId, context);
+
     // A capture after the throw could remove a stack another thread rebuilt.
     auto const observedGeneration = GetPartitionGuard(partitionId).generation.load();
     try
@@ -378,6 +429,9 @@ namespace Azure { namespace Messaging { namespace EventHubs {
   // cannot separate a transient failure from a permanent one; do not make this a loop.
   // `EnsureSenderOrInvalidate` invalidates before it rethrows, so the retry builds a new
   // connection rather than reusing a socket a failed open may have left non-closed.
+  //
+  // The retry waits a short random interval first, so producers that failed together do not go
+  // back into the same failure on the same instant.
   void ProducerClient::EstablishSenderWithRetry(
       std::string const& partitionId,
       Azure::Core::Context const& context)
@@ -396,11 +450,14 @@ namespace Azure { namespace Messaging { namespace EventHubs {
         throw;
       }
 
+      auto const retryAfter = NextCbsRetryJitter();
       Log::Stream(Logger::Level::Warning)
           << "Could not establish the message sender for partition '"
           << (partitionId.empty() ? std::string("<gateway>") : partitionId)
-          << "'. Building the stack again for one final attempt: " << cbsFailure.what()
-          << std::endl;
+          << "'. Building the stack again for one final attempt in " << retryAfter.count()
+          << " ms: " << cbsFailure.what() << std::endl;
+
+      _detail::RetryOperation::WaitForRetryDelay(retryAfter, context);
       EnsureSenderOrInvalidate(partitionId, context);
     }
   }

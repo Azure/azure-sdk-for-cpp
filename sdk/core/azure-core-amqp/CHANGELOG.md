@@ -11,6 +11,15 @@
 
 ### Bugs Fixed
 
+- `MessageSender` now stores the negotiated maximum message size when its link attaches, and
+  `GetMaxMessageSize` returns that stored value instead of reading the link. The value is fixed when
+  the peer's ATTACH arrives and cannot change for the life of a link, but the read failed once the
+  link was no longer attached, so callers were discovering a dead link from an exception thrown by a
+  getter. The value is read again on each attach, so an entity whose maximum was reconfigured
+  between links stays correct. `MessageSender::IsLinkDetached` reports the same fact without
+  throwing, and a close no longer waits for a DETACH from a peer that has already detached. The
+  teardown still runs on every path. This change applies to the uAMQP transport.
+  [[#7389]](https://github.com/Azure/azure-sdk-for-cpp/issues/7389)
 - uAMQP pollable registration and removal no longer block each other while a poll is in flight. The
   polling registry now waits on completion notifications, and sender, receiver, and link setup and
   teardown do not hold connection locks across registry operations. The polling thread now sleeps
