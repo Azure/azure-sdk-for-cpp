@@ -194,19 +194,57 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::uint64_t MessageSenderImpl::GetMaxMessageSize() const
   {
+    // The peer fixes this value in its ATTACH and never changes it, so a stored copy stays correct.
+    // Reading the link instead fails once the peer is gone, which made a getter the way callers
+    // discovered a dead link.
+    if (m_maxMessageSizeCached.load(std::memory_order_acquire))
+    {
+      return m_maxMessageSize.load(std::memory_order_relaxed);
+    }
+
     if (!m_senderOpen)
     {
       throw std::runtime_error("Message sender is not open.");
     }
+    return CaptureMaxMessageSize();
+  }
+
+  std::uint64_t MessageSenderImpl::CaptureMaxMessageSize() const
+  {
     // Get the max message size from the link (which is the max frame size for the link
     // endpoint) and the peer (which is the max frame size for the other end of the connection).
     //
     auto linkSize{m_link->GetMaxMessageSize()};
     auto peerSize{m_link->GetPeerMaxMessageSize()};
 
-    // Return the smaller of the two values
-    return (std::min)(linkSize, peerSize);
+    // Store the smaller of the two values
+    auto const maxMessageSize{(std::min)(linkSize, peerSize)};
+    m_maxMessageSize.store(maxMessageSize, std::memory_order_relaxed);
+    m_maxMessageSizeCached.store(true, std::memory_order_release);
+    return maxMessageSize;
   }
+
+  void MessageSenderImpl::OnLinkAttached() noexcept
+  {
+    m_linkDetached.store(false, std::memory_order_release);
+
+    // uAMQP calls this from its polling thread, so an exception must not unwind into C code.
+    // Failing here is not fatal: the getter still reads the link on demand.
+    try
+    {
+      if (m_link)
+      {
+        CaptureMaxMessageSize();
+      }
+    }
+    catch (std::exception const& ex)
+    {
+      Log::Stream(Logger::Level::Warning)
+          << "Could not read the maximum message size when the link attached: " << ex.what()
+          << " It will be read on demand instead.";
+    }
+  }
+
   _internal::MessageSenderState MessageSenderStateFromLowLevel(MESSAGE_SENDER_STATE lowLevel)
   {
     switch (lowLevel)
@@ -251,6 +289,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Log::Stream(Logger::Level::Verbose)
             << "Message sender state changed from " << oldState << " to " << newState << ".";
       }
+
+      // Capture the size while the link is attached, before anything observes the new state. Every
+      // transition into Open, not just the first, so a reconfigured entity stays correct.
+      if (newState == MESSAGE_SENDER_STATE_OPEN)
+      {
+        sender->OnLinkAttached();
+      }
+      else if (
+          oldState == MESSAGE_SENDER_STATE_OPEN || oldState == MESSAGE_SENDER_STATE_CLOSING)
+      {
+        // The link was usable and is not any longer. A connection or session failure takes it down
+        // through on_session_state_changed, which never raises the detach event, so this is the
+        // only notification for that path. A DETACH performative also ends up here.
+        sender->m_linkDetached.store(true, std::memory_order_release);
+      }
+
       if (sender->m_events)
       {
         sender->m_events->OnMessageSenderStateChanged(
@@ -424,8 +478,12 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         }
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->RemovePollable(
             m_link); // This will ensure that the link is cleaned up on the next poll()
-        bool shouldWaitForClose = m_currentState == _internal::MessageSenderState::Closing
-            || m_currentState == _internal::MessageSenderState::Open;
+        // A peer that has already detached the link will never answer with a DETACH of its own,
+        // so waiting for one can only burn the deadline. The teardown below still runs.
+        bool shouldWaitForClose
+            = (m_currentState == _internal::MessageSenderState::Closing
+               || m_currentState == _internal::MessageSenderState::Open)
+            && !m_linkDetached.load(std::memory_order_acquire);
 
         {
           if (m_options.EnableTrace)
@@ -523,6 +581,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   void MessageSenderImpl::OnLinkDetached(Models::_internal::AmqpError const& error)
   {
+    // Record this first. The peer has taken the link away, so callers need a test for that rather
+    // than an exception thrown by an unrelated getter.
+    m_linkDetached.store(true, std::memory_order_release);
+
     // Log before the open test. A detach that arrives while the sender is still
     // opening leaves m_senderOpen false, and the open then fails with a generic
     // error that does not name the condition. The $cbs sender takes that path
