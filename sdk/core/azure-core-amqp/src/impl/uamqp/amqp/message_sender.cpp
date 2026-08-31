@@ -194,18 +194,20 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   std::uint64_t MessageSenderImpl::GetMaxMessageSize() const
   {
+    // A closed sender has nothing to report, and that contract predates the stored value.
+    if (!m_senderOpen)
+    {
+      throw std::runtime_error("Message sender is not open.");
+    }
+
     // The peer fixes this value in its ATTACH and never changes it, so a stored copy stays correct.
     // Reading the link instead fails once the peer is gone, which made a getter the way callers
-    // discovered a dead link.
+    // discovered a dead link. A peer detach leaves the sender open, so this path still serves it.
     if (m_maxMessageSizeCached.load(std::memory_order_acquire))
     {
       return m_maxMessageSize.load(std::memory_order_relaxed);
     }
 
-    if (!m_senderOpen)
-    {
-      throw std::runtime_error("Message sender is not open.");
-    }
     return CaptureMaxMessageSize();
   }
 
