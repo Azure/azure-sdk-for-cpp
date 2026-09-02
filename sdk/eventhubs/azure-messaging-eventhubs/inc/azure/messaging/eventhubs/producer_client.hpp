@@ -259,6 +259,10 @@ namespace Azure { namespace Messaging { namespace EventHubs {
     // Ensure that a message sender for the specified partition has been created.
     void EnsureSender(std::string const& partitionId, Azure::Core::Context const& context);
 
+    // Discards the cached stack when the peer has taken its link away. Presence in the sender map
+    // is not liveness.
+    void DiscardDetachedSender(std::string const& partitionId, Azure::Core::Context const& context);
+
     // Calls EnsureSender, and discards a failed attach unless the context is cancelled.
     void EnsureSenderOrInvalidate(
         std::string const& partitionId,

@@ -976,6 +976,148 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
 #endif // !defined(USE_NATIVE_BROKER)
 #endif // ENABLE_UAMQP
 
+#if ENABLE_UAMQP
+#if !defined(USE_NATIVE_BROKER)
+  namespace {
+    // A service endpoint that accepts a sender link and ignores what arrives on it.
+    class QuietSenderLinkEndpoint final : public MessageTests::MockServiceEndpoint {
+    public:
+      QuietSenderLinkEndpoint(
+          std::string const& name,
+          MessageTests::MockServiceEndpointOptions const& options)
+          : MockServiceEndpoint(name, options)
+      {
+      }
+
+      virtual ~QuietSenderLinkEndpoint() = default;
+
+    private:
+      void MessageReceived(
+          std::string const&,
+          std::shared_ptr<Azure::Core::Amqp::Models::AmqpMessage> const&) override
+      {
+      }
+    };
+
+    bool WaitForLinkDetached(MessageSender const& sender, std::chrono::seconds timeout)
+    {
+      auto const deadline = std::chrono::system_clock::now() + timeout;
+      while (!sender.IsLinkDetached() && std::chrono::system_clock::now() < deadline)
+      {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      }
+      return sender.IsLinkDetached();
+    }
+  } // namespace
+
+  // A sender whose peer has gone away must say so, rather than leaving a caller to discover it from
+  // a call that throws. The connection is closed while the link is still up, because uAMQP reaches
+  // the link that way through on_session_state_changed and never raises the link detach event.
+  TEST_F(TestMessageSendReceive, SenderReportsTheLinkGoneWhenTheConnectionClosesWithoutADetach)
+  {
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    m_mockServer.AddServiceEndpoint(
+        std::make_shared<QuietSenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions));
+
+    auto connection{CreateAmqpConnection({})};
+    auto session{CreateAmqpSession(connection)};
+
+    StartServerListening();
+
+    {
+      MessageSenderOptions options;
+      options.SettleMode = SenderSettleMode::Settled;
+      options.MaxMessageSize = 65536;
+      options.MessageSource = "ingress";
+      options.Name = "sender-link";
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
+      EXPECT_FALSE(sender.Open());
+
+      // An attached link is not detached.
+      EXPECT_FALSE(sender.IsLinkDetached());
+
+      // Take the connection away, leaving the link attached. No DETACH is sent.
+      m_mockServer.CloseConnectionsWithoutDetachingLinks();
+
+      EXPECT_TRUE(WaitForLinkDetached(sender, std::chrono::seconds(30)))
+          << "The sender never observed the connection going away, so a caller holding it has no "
+             "way to tell that it is unusable, and the first call that touches the link is what "
+             "reports the failure.";
+
+      // A sender whose peer is gone must still close. The network close can report a failure, but
+      // the teardown has to run, because the destructor stops the process on a sender that is
+      // still open.
+      try
+      {
+        sender.Close();
+      }
+      catch (std::exception const& ex)
+      {
+        GTEST_LOG_(INFO) << "Close of a detached sender reported: " << ex.what();
+      }
+      // The sender is destroyed here. Reaching the end of the test is the assertion.
+    }
+
+    StopServerListening();
+    EXPECT_NO_THROW(EndAmqpSession(session));
+    EXPECT_NO_THROW(CloseAmqpConnection(connection));
+  }
+
+  // CreateBatch reads the negotiated maximum message size on every call. That read used to go to
+  // the link, so it threw once the peer was gone. The value is fixed when the peer's ATTACH
+  // arrives, so a stored copy stays correct after the link goes.
+  TEST_F(TestMessageSendReceive, SenderKeepsTheMaxMessageSizeAfterThePeerGoesAway)
+  {
+    MessageTests::MockServiceEndpointOptions mockServiceEndpointOptions{};
+    m_mockServer.AddServiceEndpoint(
+        std::make_shared<QuietSenderLinkEndpoint>("localhost/ingress", mockServiceEndpointOptions));
+
+    auto connection{CreateAmqpConnection({})};
+    auto session{CreateAmqpSession(connection)};
+
+    StartServerListening();
+
+    {
+      MessageSenderOptions options;
+      options.SettleMode = SenderSettleMode::Settled;
+      options.MaxMessageSize = 65536;
+      options.MessageSource = "ingress";
+      options.Name = "sender-link";
+      MessageSender sender(session.CreateMessageSender("localhost/ingress", options));
+      EXPECT_FALSE(sender.Open());
+
+      std::uint64_t sizeWhileAttached{};
+      ASSERT_NO_THROW(sizeWhileAttached = sender.GetMaxMessageSize());
+
+      // Take the connection away, leaving the link attached, which is the shape seen in production.
+      m_mockServer.CloseConnectionsWithoutDetachingLinks();
+
+      ASSERT_TRUE(WaitForLinkDetached(sender, std::chrono::seconds(30)))
+          << "The peer never went away, so this test would not prove anything.";
+      // Without the stored value this read reaches the link, finds it is no longer attached, and
+      // throws "Could not get peer max message size."
+      std::uint64_t sizeAfterThePeerLeft{};
+      EXPECT_NO_THROW(sizeAfterThePeerLeft = sender.GetMaxMessageSize())
+          << "Reading the maximum message size must not depend on a live link.";
+      EXPECT_EQ(sizeWhileAttached, sizeAfterThePeerLeft);
+
+      try
+      {
+        sender.Close();
+      }
+      catch (std::exception const& ex)
+      {
+        GTEST_LOG_(INFO) << "Close of a detached sender reported: " << ex.what();
+      }
+    }
+
+    StopServerListening();
+    EXPECT_NO_THROW(EndAmqpSession(session));
+    EXPECT_NO_THROW(CloseAmqpConnection(connection));
+  }
+#endif // !defined(USE_NATIVE_BROKER)
+#endif // ENABLE_UAMQP
+
   TEST_F(TestMessageSendReceive, AuthenticatedSender)
   {
 #if !defined(USE_NATIVE_BROKER)
