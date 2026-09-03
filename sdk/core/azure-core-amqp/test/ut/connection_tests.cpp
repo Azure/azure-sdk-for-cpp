@@ -12,6 +12,7 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/amqp/rtti.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/url.hpp"
 #include "mock_amqp_server.hpp"
@@ -515,9 +516,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     catch (std::runtime_error const& e)
     {
       EXPECT_EQ(text, std::string{e.what()});
+#if defined(AZ_CORE_AMQP_RTTI)
       auto const* typed = dynamic_cast<CbsOpenFailedException const*>(&e);
       ASSERT_NE(nullptr, typed);
       EXPECT_EQ(CbsOpenResult::Error, typed->Result);
+#else
+      EXPECT_EQ(CbsOpenResult::Error, static_cast<CbsOpenFailedException const&>(e).Result);
+#endif
     }
 
     // Every failure value survives the throw, so a caller can branch on it.
