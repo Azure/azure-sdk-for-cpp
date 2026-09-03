@@ -521,8 +521,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       ASSERT_NE(nullptr, typed);
       EXPECT_EQ(CbsOpenResult::Error, typed->Result);
 #else
-      EXPECT_EQ(
-          CbsOpenResult::Error, static_cast<CbsOpenFailedException const&>(e).Result);
+      EXPECT_EQ(CbsOpenResult::Error, static_cast<CbsOpenFailedException const&>(e).Result);
 #endif
     }
 
