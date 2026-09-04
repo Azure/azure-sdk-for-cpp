@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-#cspell: words tpmattestation
+#cspell: words tpmattestation plutonattestation
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-security-attestation-test LANGUAGES CXX)
@@ -35,6 +35,7 @@ add_executable (
      policygetset_test.cpp
      token_test.cpp
      tpmattestation_test.cpp
+     plutonattestation_test.cpp
 )
 
 target_compile_definitions(azure-security-attestation-test PRIVATE _azure_BUILDING_TESTS)

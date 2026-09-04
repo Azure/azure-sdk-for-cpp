@@ -247,7 +247,30 @@ namespace Azure { namespace Security { namespace Attestation {
         AttestTpmOptions const& options = AttestTpmOptions{},
         Azure::Core::Context const& context = Azure::Core::Context{}) const;
 
+    /**
+     * @brief Sends Pluton-based attestation data to the service.
+     * Pluton attestation is not currently supported for the default API version and can only be
+     * accessed via 2026-03-11-preview.
+     *
+     * @param dataToAttest - Attestation request data.
+     * @param options - Options to the attestation request.
+     * @param context - Context for the operation.
+     *
+     * @return Response<PlutonAttestationResult> - The result of the attestation operation
+     */
+    Response<Models::PlutonAttestationResult> AttestPluton(
+        std::vector<uint8_t> const& dataToAttest,
+        AttestPlutonOptions const& options = AttestPlutonOptions{},
+        Azure::Core::Context const& context = Azure::Core::Context{}) const;
+
   private:
+    template <typename ResultT>
+    Response<ResultT> AttestBackend(
+        std::vector<uint8_t> const& dataToAttest,
+        std::string const& tracingName,
+        std::string const& attestPath,
+        Azure::Core::Context const& context) const;
+
     Azure::Core::Url m_endpoint;
     std::string m_apiVersion;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
