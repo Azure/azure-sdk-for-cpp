@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed CR/LF injection through request targets and header values in Blob Batch subrequests.
+
 ### Other Changes
 
 ## 12.19.0-beta.1 (2026-07-29)
