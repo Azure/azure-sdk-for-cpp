@@ -50,6 +50,15 @@ namespace Azure { namespace Storage { namespace Blobs {
     static Core::Context::Key s_subrequestKey;
     static Core::Context::Key s_subresponseKey;
 
+    void ValidateBatchSubrequestField(const std::string& field, const char* fieldName)
+    {
+      if (field.find_first_of("\r\n") != std::string::npos)
+      {
+        throw std::invalid_argument(
+            std::string("Invalid CR/LF in batch subrequest ") + fieldName + ".");
+      }
+    }
+
     struct Parser final
     {
       explicit Parser(const std::string& str)
@@ -186,10 +195,14 @@ namespace Azure { namespace Storage { namespace Blobs {
 
         if (subrequestText)
         {
-          std::string requestText = request.GetMethod().ToString() + " /"
-              + request.GetUrl().GetRelativeUrl() + " HTTP/1.1" + LineEnding;
+          const auto relativeUrl = request.GetUrl().GetRelativeUrl();
+          ValidateBatchSubrequestField(relativeUrl, "request target");
+          std::string requestText
+              = request.GetMethod().ToString() + " /" + relativeUrl + " HTTP/1.1" + LineEnding;
           for (const auto& header : request.GetHeaders())
           {
+            ValidateBatchSubrequestField(header.first, "header name");
+            ValidateBatchSubrequestField(header.second, "header value");
             requestText += header.first + ": " + header.second + LineEnding;
           }
           requestText += LineEnding;
