@@ -4,6 +4,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <vector>
