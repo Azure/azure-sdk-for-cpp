@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Added a missing `<cstdint>` include, fixing the build with GCC 13 and later.
+
 ### Other Changes
 
 ## 12.15.0-beta.1 (2026-07-29)
