@@ -1282,8 +1282,8 @@ namespace Azure { namespace Core { namespace Http {
         WinHttpTransport const* parent,
         Azure::Core::Http::Policies::TransportOptions const& transportOptions)
         : WinHttpTransportImpl(
-              parent,
-              WinHttpTransportOptionsFromTransportOptions(transportOptions))
+            parent,
+            WinHttpTransportOptionsFromTransportOptions(transportOptions))
     {
     }
 

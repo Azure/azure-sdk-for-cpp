@@ -204,7 +204,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     ~WinHttpRequest();
     void MarkRequestHandleForClosing();
-    std::shared_lock<std::shared_timed_mutex>s GetRequestHandleSharedLock();
+    std::shared_lock<std::shared_timed_mutex> GetRequestHandleSharedLock();
     bool IsRequestHandleMarkedForClosing();
     void CloseRequestHandle();
     void UnregisterCallback();
