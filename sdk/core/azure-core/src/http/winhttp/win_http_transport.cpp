@@ -1562,7 +1562,7 @@ namespace Azure { namespace Core { namespace Http {
         std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
         if (!m_requestHandleClosed)
         {
-          return std::move(requestHandleLock);
+          return requestHandleLock;
         }
       }
 
