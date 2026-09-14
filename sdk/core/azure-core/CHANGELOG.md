@@ -10,6 +10,7 @@
 
 ### Bugs Fixed
 
+- [[#7353]](https://github.com/Azure/azure-sdk-for-cpp/pull/7353) Fixed a hang in the WinHTTP transport where `WinHttpRequest`'s destructor could block forever when the request was destroyed before `WinHttpSendRequest` associated the request context with the handle, causing `WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING` to be discarded.
 - [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
 
 ### Other Changes

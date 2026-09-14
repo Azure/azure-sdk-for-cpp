@@ -1432,6 +1432,30 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Set the callback function to be called whenever the state of the request handle changes.
     m_httpAction = std::make_unique<_detail::WinHttpAction>(this);
 
+    // Associate the action with the request handle before the status callback is registered.
+    //
+    // WinHttpSendRequest() also passes this value as its context parameter, but it is not reached
+    // if the request is destroyed first - for example when an exception is thrown while preparing
+    // the request. In that case WinHttpAction::StatusCallback() is invoked with dwContext == 0 and
+    // discards every notification, including the WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING that
+    // ~WinHttpRequest() blocks on, so the destructor would wait forever.
+    //
+    // Binding the context here guarantees HANDLE_CLOSING is always delivered, so the destructor's
+    // close barrier - which exists to keep WinHTTP worker threads from dereferencing a freed
+    // WinHttpAction - always completes.
+    //
+    // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT VALUE WITHOUT UPDATING
+    // WinHttpAction::StatusCallback.
+    DWORD_PTR contextValue = reinterpret_cast<DWORD_PTR>(m_httpAction.get());
+    if (!WinHttpSetOption(
+            m_requestHandle.get(),
+            WINHTTP_OPTION_CONTEXT_VALUE,
+            &contextValue,
+            sizeof(contextValue)))
+    {
+      GetErrorAndThrow("Error while setting the request context value.");
+    }
+
     if (!m_httpAction->RegisterWinHttpStatusCallback(m_requestHandle))
     {
       GetErrorAndThrow("Error while setting up the status callback.");
