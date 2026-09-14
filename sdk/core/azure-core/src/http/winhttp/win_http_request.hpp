@@ -205,7 +205,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     ~WinHttpRequest();
     void MarkRequestHandleForClosing();
     bool IsRequestHandleMarkedForClosing();
-    void CloseRequestHandle(bool lock);
+    void CloseRequestHandle();
     void UnregisterCallback();
     void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
