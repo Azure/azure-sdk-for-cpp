@@ -1760,6 +1760,7 @@ namespace Azure { namespace Core { namespace Http {
         {
           CloseRequestHandle(true);
         }
+        throw;
       }
     }
 
