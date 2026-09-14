@@ -635,7 +635,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
              "not invoking SetEvent_scope_exit() on a closed event.";
     }
   }
-
   void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
   {
     // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
@@ -659,7 +658,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_bytesAvailable = bytesAvailable;
   }
-
   void WinHttpAction::CompleteActionWithError(DWORD_PTR stowedErrorInformation, DWORD stowedError)
   {
     if (m_expectedStatus != WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING)
@@ -698,13 +696,11 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     return m_stowedError;
   }
-
   DWORD_PTR WinHttpAction::GetStowedErrorInformation()
   {
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     return m_stowedErrorInformation;
   }
-
   DWORD WinHttpAction::GetBytesAvailable()
   {
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
@@ -749,7 +745,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Log::Write(Logger::Level::Error, "Exception Thrown: " + std::string(ex.what()));
     }
   }
-
   namespace {
     std::string WinHttpAsyncResultToString(DWORD_PTR result)
     {
@@ -772,7 +767,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       }
     }
   } // namespace
-
   /**
    * @brief HTTP Callback to enable private certificate checks.
    *
@@ -1348,9 +1342,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @param connectionTimeout Connection timeout in milliseconds.
    *
    * @remark Note that we *cannot* use the TlsClientCertificate field in the options passed into
-   * this function because the creator of the associated WinHttpTransport object may have freed
-   * the memory backing that object after constructing the WinHttpTransport object. Therefore, we
-   * must use the tlsClientCertificate saved in the WinHttpTransport object instead.
+   * this function because the creator of the associated WinHttpTransport object may have freed the
+   * memory backing that object after constructing the WinHttpTransport object. Therefore, we must
+   * use the tlsClientCertificate saved in the WinHttpTransport object instead.
    *
    */
   WinHttpRequest::WinHttpRequest(
@@ -1751,6 +1745,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     }
     catch (TransportException const&)
     {
+      // If there was a TLS validation error, then we will have closed the request handle
+      // during the TLS validation callback. So if an exception was thrown, if we force closed
+      // the request handle, clear the handle in the requestHandle to prevent a double free.
       if (IsRequestHandleMarkedForClosing())
       {
         CloseRequestHandle();
