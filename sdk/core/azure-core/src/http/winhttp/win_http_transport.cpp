@@ -873,13 +873,9 @@ namespace Azure { namespace Core { namespace Http {
           Log::Write(
               Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
 
-          // To signal to caller that the request is to be terminated, the callback closes the
-          // handle. This ensures that no message is sent to the server.
-          WinHttpCloseHandle(hInternet);
-
-          // To avoid a double free of this handle record that we've
-          // already closed the handle.
-          m_requestHandleClosed = true;
+          // To signal to caller that the request is to be terminated, the callback marks the
+          // request handle for closing. This ensures that no message is sent to the server.
+          MarkRequestHandleForClosing();
 
           // And we're done processing the request, return because there's nothing
           // else to do.
@@ -1329,7 +1325,12 @@ namespace Azure { namespace Core { namespace Http {
 
     void WinHttpRequest::EnableWebSocketsSupport()
     {
-      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+      auto requestHandleLock = GetRequestHandleLock();
+      if (!requestHandleLock.owns_lock())
+      {
+        throw Core::Http::TransportException("HTTP Request handle is closed.");
+      }
+
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 6387) // warning C6387: _Param_(3) could be '0'.
@@ -1515,7 +1516,7 @@ namespace Azure { namespace Core { namespace Http {
      */
     WinHttpRequest::~WinHttpRequest() { CloseRequestHandle(); }
 
-    void WinHttpRequest::CloseRequestHandle(Core::Context const& context)
+    void WinHttpRequest::CloseRequestHandle()
     {
       Log::Write(
           Logger::Level::Informational,
@@ -1555,6 +1556,26 @@ namespace Azure { namespace Core { namespace Http {
       m_requestHandleClosing = true;
     }
 
+    std::shared_lock<std::shared_timed_mutex> GetRequestHandleSharedLock()
+    {
+      std::shared_lock<std::shared_timed_mutex> requestHandleLock(
+          m_requestHandleMutex, std::defer_lock);
+
+      if (IsRequestHandleMarkedForClosing())
+      {
+        CloseRequestHandle();
+        return requestHandleLock;
+      }
+
+      requestHandleLock.lock();
+      if (m_requestHandleClosed)
+      {
+        requestHandleLock.unlock();
+      }
+
+      return requestHandleLock;
+    }
+
     bool WinHttpRequest::IsRequestHandleMarkedForClosing()
     {
       std::shared_lock<std::shared_timed_mutex> requestHandleClosingLock(
@@ -1565,8 +1586,8 @@ namespace Azure { namespace Core { namespace Http {
 
     void WinHttpRequest::UnregisterCallback()
     {
-      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
-      if (!m_requestHandleClosed)
+      auto requestHandleLock = GetRequestHandleSharedLock();
+      if (!requestHandleLock.owns_lock())
       {
         WinHttpSetStatusCallback(
             m_requestHandle.get(), nullptr, WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS, 0);
@@ -1621,7 +1642,12 @@ namespace Azure { namespace Core { namespace Http {
 
         DWORD dwBytesWritten = 0;
 
-        std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+        auto requestHandleLock = GetRequestHandleLock();
+        if (!requestHandleLock.owns_lock())
+        {
+          throw Core::Http::TransportException("HTTP Request handle is closed.");
+        }
+
         if (!m_httpAction->WaitForAction(
                 [&]() { // Write data to the server.
                   if (!WinHttpWriteData(
@@ -1668,7 +1694,12 @@ namespace Azure { namespace Core { namespace Http {
         Log::Stream(Logger::Level::Verbose)
             << "Client certificate needed, providing before request.." << std::endl;
 
-        std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+        auto requestHandleLock = GetRequestHandleLock();
+        if (!requestHandleLock.owns_lock())
+        {
+          throw Core::Http::TransportException("HTTP Request handle is closed.");
+        }
+
         if (!WinHttpSetOption(
                 m_requestHandle.get(),
                 WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
@@ -1681,7 +1712,12 @@ namespace Azure { namespace Core { namespace Http {
 
       try
       {
-        std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+        auto requestHandleLock = GetRequestHandleLock();
+        if (!requestHandleLock.owns_lock())
+        {
+          throw Core::Http::TransportException("HTTP Request handle is closed.");
+        }
+
         if (!m_httpAction->WaitForAction(
                 [&]() {
                   {
@@ -1759,7 +1795,12 @@ namespace Azure { namespace Core { namespace Http {
       // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
       // When WinHttpReceiveResponse completes successfully, the status code and response headers
       // have been received.
-      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+      auto requestHandleLock = GetRequestHandleLock();
+      if (!requestHandleLock.owns_lock())
+      {
+        throw Core::Http::TransportException("HTTP Request handle is closed.");
+      }
+
       if (!m_httpAction->WaitForAction(
               [this]() {
                 if (!WinHttpReceiveResponse(m_requestHandle.get(), NULL))
@@ -1799,7 +1840,12 @@ namespace Azure { namespace Core { namespace Http {
     // Get the content length as a number.
     if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
     {
-      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+      auto requestHandleLock = GetRequestHandleLock();
+      if (!requestHandleLock.owns_lock())
+      {
+        throw Core::Http::TransportException("HTTP Request handle is closed.");
+      }
+
       if (!WinHttpQueryHeaders(
               m_requestHandle.get(),
               WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
@@ -1828,7 +1874,12 @@ namespace Azure { namespace Core { namespace Http {
     // First, use WinHttpQueryHeaders to obtain the size of the buffer.
     // The call is expected to fail since no destination buffer is provided.
     DWORD sizeOfHeaders = 0;
-    std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+    auto requestHandleLock = GetRequestHandleLock();
+    if (!requestHandleLock.owns_lock())
+    {
+      throw Core::Http::TransportException("HTTP Request handle is closed.");
+    }
+
     if (WinHttpQueryHeaders(
             m_requestHandle.get(),
             WINHTTP_QUERY_RAW_HEADERS,
@@ -1990,7 +2041,12 @@ namespace Azure { namespace Core { namespace Http {
       Azure::Core::Context const& context)
   {
     DWORD numberOfBytesRead = 0;
-    std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+    auto requestHandleLock = GetRequestHandleLock();
+    if (!requestHandleLock.owns_lock())
+    {
+      throw Core::Http::TransportException("HTTP Request handle is closed.");
+    }
+
     if (!m_httpAction->WaitForAction(
             [&]() {
               if (!WinHttpReadData(
