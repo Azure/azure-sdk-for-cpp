@@ -1556,16 +1556,17 @@ namespace Azure { namespace Core { namespace Http {
       if (IsRequestHandleMarkedForClosing())
       {
         CloseRequestHandle();
-        throw Core::Http::TransportException("HTTP Request handle is closed.");
       }
-
-      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
-      if (m_requestHandleClosed)
+      else
       {
-        throw Core::Http::TransportException("HTTP Request handle is closed.");
+        std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+        if (!m_requestHandleClosed)
+        {
+          return std::move(requestHandleLock);
+        }
       }
 
-      return std::move(requestHandleLock);
+      throw Core::Http::TransportException("HTTP Request handle is closed.");
     }
 
     bool WinHttpRequest::IsRequestHandleMarkedForClosing()
