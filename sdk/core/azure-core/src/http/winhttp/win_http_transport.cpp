@@ -1751,6 +1751,7 @@ namespace Azure { namespace Core { namespace Http {
 
         if (streamLength > 0)
         {
+          requestHandleLock.unlock();
           Upload(request, context);
         }
       }
