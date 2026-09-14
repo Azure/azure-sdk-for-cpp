@@ -1521,22 +1521,22 @@ namespace Azure { namespace Core { namespace Http {
       if (!m_requestHandleClosed)
       {
         m_requestHandleClosed = true;
-        auto requestHandle = m_requestHandle.release();
         // Close the outstanding request handle, waiting until the HANDLE_CLOSING status is
         // received.
         if (!m_httpAction->WaitForAction(
                 [this]() {
-            if (!WinHttpCloseHandle(requestHandle))
-            {
-              Log::Write(
-                  Logger::Level::Error,
-                  "Error closing WinHTTP handle: " + GetErrorMessage(GetLastError()));
-            }
+                  auto requestHandle = m_requestHandle.release();
+                  if (!WinHttpCloseHandle(requestHandle))
+                  {
+                    Log::Write(
+                        Logger::Level::Error,
+                        "Error closing WinHTTP handle: " + GetErrorMessage(GetLastError()));
+                  }
                 },
                 WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
-                Azure::COre::Context{})
+                Core::Context{}))
         {
-            Log::Write(Logger::Level::Error, "Error while closing the request handle.");
+          Log::Write(Logger::Level::Error, "Error while closing the request handle.");
         }
         Log::Write(
             Logger::Level::Informational, "WinHttpRequest::CloseRequestHandle. Handle closed.");
