@@ -1668,53 +1668,55 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     try
     {
-      auto requestHandleLock = GetRequestHandleSharedLock();
-      if (!m_httpAction->WaitForAction(
-              [&]() {
-                {
-                  // Send a request.
-                  // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT PARAMETER WITHOUT UPDATING THE
-                  // HttpAction::StatusCallback method.
-                  if (!WinHttpSendRequest(
-                          m_requestHandle.get(),
-                          requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS
-                                                     : encodedHeaders.c_str(),
-                          encodedHeadersLength,
-                          WINHTTP_NO_REQUEST_DATA,
-                          0,
-                          streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
-                          reinterpret_cast<DWORD_PTR>(
-                              m_httpAction.get()))) // Context for WinHTTP status callbacks for
-                                                    // this request.
-                  {
-                    // Errors include:
-                    // ERROR_WINHTTP_CANNOT_CONNECT
-                    // ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED
-                    // ERROR_WINHTTP_CONNECTION_ERROR
-                    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-                    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-                    // ERROR_WINHTTP_INTERNAL_ERROR
-                    // ERROR_WINHTTP_INVALID_URL
-                    // ERROR_WINHTTP_LOGIN_FAILURE
-                    // ERROR_WINHTTP_NAME_NOT_RESOLVED
-                    // ERROR_WINHTTP_OPERATION_CANCELLED
-                    // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
-                    // ERROR_WINHTTP_SECURE_FAILURE
-                    // ERROR_WINHTTP_SHUTDOWN
-                    // ERROR_WINHTTP_TIMEOUT
-                    // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
-                    // ERROR_NOT_ENOUGH_MEMORY
-                    // ERROR_INVALID_PARAMETER
-                    // ERROR_WINHTTP_RESEND_REQUEST
-                    GetErrorAndThrow("Error while sending a request.");
-                  }
-                }
-              },
-              WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE,
-              context))
       {
-        GetErrorAndThrow(
-            "Error while waiting for a send to complete.", m_httpAction->GetStowedError());
+        auto requestHandleLock = GetRequestHandleSharedLock();
+        if (!m_httpAction->WaitForAction(
+                [&]() {
+                  {
+                    // Send a request.
+                    // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT PARAMETER WITHOUT UPDATING THE
+                    // HttpAction::StatusCallback method.
+                    if (!WinHttpSendRequest(
+                            m_requestHandle.get(),
+                            requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS
+                                                       : encodedHeaders.c_str(),
+                            encodedHeadersLength,
+                            WINHTTP_NO_REQUEST_DATA,
+                            0,
+                            streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
+                            reinterpret_cast<DWORD_PTR>(
+                                m_httpAction.get()))) // Context for WinHTTP status callbacks for
+                                                      // this request.
+                    {
+                      // Errors include:
+                      // ERROR_WINHTTP_CANNOT_CONNECT
+                      // ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED
+                      // ERROR_WINHTTP_CONNECTION_ERROR
+                      // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
+                      // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
+                      // ERROR_WINHTTP_INTERNAL_ERROR
+                      // ERROR_WINHTTP_INVALID_URL
+                      // ERROR_WINHTTP_LOGIN_FAILURE
+                      // ERROR_WINHTTP_NAME_NOT_RESOLVED
+                      // ERROR_WINHTTP_OPERATION_CANCELLED
+                      // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
+                      // ERROR_WINHTTP_SECURE_FAILURE
+                      // ERROR_WINHTTP_SHUTDOWN
+                      // ERROR_WINHTTP_TIMEOUT
+                      // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
+                      // ERROR_NOT_ENOUGH_MEMORY
+                      // ERROR_INVALID_PARAMETER
+                      // ERROR_WINHTTP_RESEND_REQUEST
+                      GetErrorAndThrow("Error while sending a request.");
+                    }
+                  }
+                },
+                WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE,
+                context))
+        {
+          GetErrorAndThrow(
+              "Error while waiting for a send to complete.", m_httpAction->GetStowedError());
+        }
       }
 
       // Chunked transfer encoding is not supported and the content length needs to be known up
@@ -1727,7 +1729,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
       if (streamLength > 0)
       {
-        requestHandleLock.unlock();
         Upload(request, context);
       }
     }
