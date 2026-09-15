@@ -264,6 +264,12 @@ namespace Azure { namespace Security { namespace Attestation {
   {
   };
 
+  /** @brief Parameters sent to the attestation service for the AttestPluton API.
+   */
+  struct AttestPlutonOptions final
+  {
+  };
+
   /** @brief The AttestationSigningKey represents a tuple of asymmetric private cryptographic key
    * and X.509 certificate wrapping the public key contained in the certificate.
    *
