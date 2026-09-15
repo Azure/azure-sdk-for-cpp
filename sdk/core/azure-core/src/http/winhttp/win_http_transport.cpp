@@ -532,8 +532,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       m_actionCompleteReset = true;
       m_actionCompleteEvent.reset();
     }
-
-    m_httpRequest->UnregisterCallback();
   }
 
   bool WinHttpAction::RegisterWinHttpStatusCallback(
@@ -1565,16 +1563,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::shared_lock<std::shared_timed_mutex> requestHandleClosingLock(m_requestHandleClosingMutex);
 
     return m_requestHandleClosing;
-  }
-
-  void WinHttpRequest::UnregisterCallback()
-  {
-    auto requestHandleLock = GetRequestHandleSharedLock();
-    if (!requestHandleLock.owns_lock())
-    {
-      WinHttpSetStatusCallback(
-          m_requestHandle.get(), nullptr, WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS, 0);
-    }
   }
 
   std::unique_ptr<WinHttpRequest> WinHttpTransportImpl::CreateRequestHandle(

@@ -207,7 +207,6 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     std::shared_lock<std::shared_timed_mutex> GetRequestHandleSharedLock();
     bool IsRequestHandleMarkedForClosing();
     void CloseRequestHandle();
-    void UnregisterCallback();
     void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void ReceiveResponse(Azure::Core::Context const& context);
