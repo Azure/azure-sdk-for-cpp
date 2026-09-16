@@ -7,6 +7,84 @@
 
 namespace Azure { namespace Storage { namespace Test {
 
+  TEST(BlobBatchClientTest, RejectsNewlinesInSubrequestHeaderValues)
+  {
+    const std::vector<std::string> invalidTagConditions{
+        "\"tag\"='value'\r\nx-ms-delete-snapshots: include",
+        "\"tag\"='value'\nx-ms-delete-snapshots: include",
+        "\"tag\"='value'\rx-ms-delete-snapshots: include",
+    };
+
+    for (const auto& tagConditions : invalidTagConditions)
+    {
+      SCOPED_TRACE(tagConditions);
+      auto containerClient
+          = Blobs::BlobContainerClient("https://account.blob.core.windows.net/container");
+      auto batch = containerClient.CreateBatch();
+      Blobs::DeleteBlobOptions options;
+      options.AccessConditions.TagConditions = tagConditions;
+      batch.DeleteBlob("blob", options);
+
+      EXPECT_THROW(containerClient.SubmitBatch(batch), std::invalid_argument);
+    }
+  }
+
+  TEST(BlobBatchClientTest, RejectsNewlinesInSubrequestUrls)
+  {
+    const std::vector<std::string> invalidSuffixes{
+        "\r\nx-ms-delete-snapshots: include",
+        "\nx-ms-delete-snapshots: include",
+        "\rx-ms-delete-snapshots: include",
+    };
+
+    for (const auto& invalidSuffix : invalidSuffixes)
+    {
+      SCOPED_TRACE(invalidSuffix);
+      const auto blobUrl = "https://account.blob.core.windows.net/container/blob" + invalidSuffix;
+
+      auto serviceClient = Blobs::BlobServiceClient("https://account.blob.core.windows.net");
+      {
+        auto batch = serviceClient.CreateBatch();
+        EXPECT_THROW(
+            {
+              batch.DeleteBlobUrl(blobUrl);
+              serviceClient.SubmitBatch(batch);
+            },
+            std::invalid_argument);
+      }
+      {
+        auto batch = serviceClient.CreateBatch();
+        EXPECT_THROW(
+            {
+              batch.SetBlobAccessTierUrl(blobUrl, Blobs::Models::AccessTier::Cool);
+              serviceClient.SubmitBatch(batch);
+            },
+            std::invalid_argument);
+      }
+
+      auto containerClient
+          = Blobs::BlobContainerClient("https://account.blob.core.windows.net/container");
+      {
+        auto batch = containerClient.CreateBatch();
+        EXPECT_THROW(
+            {
+              batch.DeleteBlobUrl(blobUrl);
+              containerClient.SubmitBatch(batch);
+            },
+            std::invalid_argument);
+      }
+      {
+        auto batch = containerClient.CreateBatch();
+        EXPECT_THROW(
+            {
+              batch.SetBlobAccessTierUrl(blobUrl, Blobs::Models::AccessTier::Cool);
+              containerClient.SubmitBatch(batch);
+            },
+            std::invalid_argument);
+      }
+    }
+  }
+
   TEST_F(BlobContainerClientTest, ServiceBatchSubmitDelete_LIVEONLY_)
   {
     const std::string containerNamePrefix = LowercaseRandomString();
