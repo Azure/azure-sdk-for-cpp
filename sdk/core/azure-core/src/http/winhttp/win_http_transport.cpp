@@ -524,6 +524,16 @@ namespace Azure { namespace Core { namespace Http {
 
 namespace Azure { namespace Core { namespace Http { namespace _detail {
 
+  WinHttpAction::~WinHttpAction()
+  {
+    std::unique_lock<std::shared_timed_mutex> actionCompleteResetLock(m_actionCompleteResetMutex);
+    if (!m_actionCompleteReset)
+    {
+      m_actionCompleteReset = true;
+      m_actionCompleteEvent.reset();
+    }
+  }
+
   bool WinHttpAction::RegisterWinHttpStatusCallback(
       Azure::Core::_internal::UniqueHandle<HINTERNET> const& internetHandle)
   {
@@ -554,7 +564,19 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     // By definition, there cannot be any actions outstanding at this point because we have not
     // yet called initiateAction. So it's safe to reset our state here.
-    ResetEvent(m_actionCompleteEvent.get());
+    std::shared_lock<std::shared_timed_mutex> actionCompleteResetLock(m_actionCompleteResetMutex);
+    if (!m_actionCompleteReset)
+    {
+      ResetEvent(m_actionCompleteEvent.get());
+    }
+    else
+    {
+      Log::Stream(Logger::Level::Verbose) << "WinHttpAction::WaitForAction(): "
+                                             "not invoking ResetEvent() on a closed event.";
+
+      return false;
+    }
+
     m_expectedStatus = expectedCallbackStatus;
     m_stowedError = 0;
     m_stowedErrorInformation = 0;
@@ -598,14 +620,39 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   void WinHttpAction::CompleteAction()
   {
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+    std::shared_lock<std::shared_timed_mutex> actionCompleteResetLock(m_actionCompleteResetMutex);
+    wil::event_set_scope_exit scope_exit;
+    if (!m_actionCompleteReset)
+    {
+      scope_exit = m_actionCompleteEvent.SetEvent_scope_exit();
+    }
+    else
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "WinHttpAction::CompleteAction(): "
+             "not invoking SetEvent_scope_exit() on a closed event.";
+    }
   }
   void WinHttpAction::CompleteActionWithData(DWORD bytesAvailable)
   {
     // Note that the order of scope_exit and lock is important - this ensures that scope_exit is
     // destroyed *after* lock is destroyed, ensuring that the event is not set to the signalled
     // state before the lock is released.
-    auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+    std::shared_lock<std::shared_timed_mutex> actionCompleteResetLock(m_actionCompleteResetMutex);
+    wil::event_set_scope_exit scope_exit;
+    if (!m_actionCompleteReset)
+    {
+      scope_exit = m_actionCompleteEvent.SetEvent_scope_exit();
+    }
+    else
+    {
+      Log::Stream(Logger::Level::Verbose)
+          << "WinHttpAction::CompleteActionWithData(): "
+             "not invoking SetEvent_scope_exit() on a closed event.";
+
+      return;
+    }
+
     std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
     m_bytesAvailable = bytesAvailable;
   }
@@ -616,7 +663,21 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       // Note that the order of scope_exit and lock is important - this ensures that scope_exit
       // is destroyed *after* lock is destroyed, ensuring that the event is not set to the
       // signalled state before the lock is released.
-      auto scope_exit{m_actionCompleteEvent.SetEvent_scope_exit()};
+      std::shared_lock<std::shared_timed_mutex> actionCompleteResetLock(m_actionCompleteResetMutex);
+      wil::event_set_scope_exit scope_exit;
+      if (!m_actionCompleteReset)
+      {
+        scope_exit = m_actionCompleteEvent.SetEvent_scope_exit();
+      }
+      else
+      {
+        Log::Stream(Logger::Level::Verbose)
+            << "WinHttpAction::CompleteActionWithError(): "
+               "not invoking SetEvent_scope_exit() on a closed event.";
+
+        return;
+      }
+
       std::unique_lock<std::mutex> lock(m_actionCompleteMutex);
       m_stowedErrorInformation = stowedErrorInformation;
       m_stowedError = stowedError;
@@ -673,8 +734,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Log::Write(
           Logger::Level::Error,
           "Request Failed Exception Thrown: " + std::string(rfe.what()) + rfe.Message);
-      WinHttpCloseHandle(hInternet);
-      httpAction->m_httpRequest->MarkRequestHandleClosed();
+
+      httpAction->m_httpRequest->MarkRequestHandleForClosing();
     }
     catch (std::exception const& ex)
     {
@@ -808,13 +869,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         Log::Write(
             Logger::Level::Error, "Server certificate is not trusted.  Aborting HTTP request");
 
-        // To signal to caller that the request is to be terminated, the callback closes the
-        // handle. This ensures that no message is sent to the server.
-        WinHttpCloseHandle(hInternet);
-
-        // To avoid a double free of this handle record that we've
-        // already closed the handle.
-        m_requestHandleClosed = true;
+        // To signal to caller that the request is to be terminated, the callback marks the
+        // request handle for closing. This ensures that no message is sent to the server.
+        MarkRequestHandleForClosing();
 
         // And we're done processing the request, return because there's nothing
         // else to do.
@@ -1259,6 +1316,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
   void WinHttpRequest::EnableWebSocketsSupport()
   {
+    auto requestHandleLock = GetRequestHandleSharedLock();
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable : 6387) // warning C6387: _Param_(3) could be '0'.
@@ -1441,14 +1499,18 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   /*
    * Destructor for WinHTTP request. Closes the request handle.
    */
-  WinHttpRequest::~WinHttpRequest()
+  WinHttpRequest::~WinHttpRequest() { CloseRequestHandle(); }
+
+  void WinHttpRequest::CloseRequestHandle()
   {
+    std::unique_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
     if (!m_requestHandleClosed)
     {
       Log::Write(
           Logger::Level::Informational,
-          "WinHttpRequest::~WinHttpRequest. Closing handle synchronously.");
+          "WinHttpRequest::CloseRequestHandle: Closing handle synchronously.");
 
+      m_requestHandleClosed = true;
       // Close the outstanding request handle, waiting until the HANDLE_CLOSING status is
       // received.
       if (!m_httpAction->WaitForAction(
@@ -1461,14 +1523,46 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
                       "Error closing WinHTTP handle: " + GetErrorMessage(GetLastError()));
                 }
               },
-
               WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING,
-              Azure::Core::Context{}))
+              Core::Context{}))
       {
         Log::Write(Logger::Level::Error, "Error while closing the request handle.");
       }
-      Log::Write(Logger::Level::Informational, "WinHttpRequest::~WinHttpRequest. Handle closed.");
+      Log::Write(
+          Logger::Level::Informational, "WinHttpRequest::CloseRequestHandle. Handle closed.");
     }
+  }
+
+  void WinHttpRequest::MarkRequestHandleForClosing()
+  {
+    std::unique_lock<std::shared_timed_mutex> requestHandleClosingLock(m_requestHandleClosingMutex);
+
+    m_requestHandleClosing = true;
+  }
+
+  std::shared_lock<std::shared_timed_mutex> WinHttpRequest::GetRequestHandleSharedLock()
+  {
+    if (IsRequestHandleMarkedForClosing())
+    {
+      CloseRequestHandle();
+    }
+    else
+    {
+      std::shared_lock<std::shared_timed_mutex> requestHandleLock(m_requestHandleMutex);
+      if (!m_requestHandleClosed)
+      {
+        return requestHandleLock;
+      }
+    }
+
+    throw Core::Http::TransportException("HTTP Request handle is closed.");
+  }
+
+  bool WinHttpRequest::IsRequestHandleMarkedForClosing()
+  {
+    std::shared_lock<std::shared_timed_mutex> requestHandleClosingLock(m_requestHandleClosingMutex);
+
+    return m_requestHandleClosing;
   }
 
   std::unique_ptr<WinHttpRequest> WinHttpTransportImpl::CreateRequestHandle(
@@ -1514,6 +1608,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
       DWORD dwBytesWritten = 0;
 
+      auto requestHandleLock = GetRequestHandleSharedLock();
       if (!m_httpAction->WaitForAction(
               [&]() { // Write data to the server.
                 if (!WinHttpWriteData(
@@ -1559,6 +1654,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     {
       Log::Stream(Logger::Level::Verbose)
           << "Client certificate needed, providing before request.." << std::endl;
+
+      auto requestHandleLock = GetRequestHandleSharedLock();
       if (!WinHttpSetOption(
               m_requestHandle.get(),
               WINHTTP_OPTION_CLIENT_CERT_CONTEXT,
@@ -1571,52 +1668,55 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     try
     {
-      if (!m_httpAction->WaitForAction(
-              [&]() {
-                {
-                  // Send a request.
-                  // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT PARAMETER WITHOUT UPDATING THE
-                  // HttpAction::StatusCallback method.
-                  if (!WinHttpSendRequest(
-                          m_requestHandle.get(),
-                          requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS
-                                                     : encodedHeaders.c_str(),
-                          encodedHeadersLength,
-                          WINHTTP_NO_REQUEST_DATA,
-                          0,
-                          streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
-                          reinterpret_cast<DWORD_PTR>(
-                              m_httpAction.get()))) // Context for WinHTTP status callbacks for
-                                                    // this request.
-                  {
-                    // Errors include:
-                    // ERROR_WINHTTP_CANNOT_CONNECT
-                    // ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED
-                    // ERROR_WINHTTP_CONNECTION_ERROR
-                    // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
-                    // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
-                    // ERROR_WINHTTP_INTERNAL_ERROR
-                    // ERROR_WINHTTP_INVALID_URL
-                    // ERROR_WINHTTP_LOGIN_FAILURE
-                    // ERROR_WINHTTP_NAME_NOT_RESOLVED
-                    // ERROR_WINHTTP_OPERATION_CANCELLED
-                    // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
-                    // ERROR_WINHTTP_SECURE_FAILURE
-                    // ERROR_WINHTTP_SHUTDOWN
-                    // ERROR_WINHTTP_TIMEOUT
-                    // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
-                    // ERROR_NOT_ENOUGH_MEMORY
-                    // ERROR_INVALID_PARAMETER
-                    // ERROR_WINHTTP_RESEND_REQUEST
-                    GetErrorAndThrow("Error while sending a request.");
-                  }
-                }
-              },
-              WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE,
-              context))
       {
-        GetErrorAndThrow(
-            "Error while waiting for a send to complete.", m_httpAction->GetStowedError());
+        auto requestHandleLock = GetRequestHandleSharedLock();
+        if (!m_httpAction->WaitForAction(
+                [&]() {
+                  {
+                    // Send a request.
+                    // NB: DO NOT CHANGE THE TYPE OF THE CONTEXT PARAMETER WITHOUT UPDATING THE
+                    // HttpAction::StatusCallback method.
+                    if (!WinHttpSendRequest(
+                            m_requestHandle.get(),
+                            requestHeaders.size() == 0 ? WINHTTP_NO_ADDITIONAL_HEADERS
+                                                       : encodedHeaders.c_str(),
+                            encodedHeadersLength,
+                            WINHTTP_NO_REQUEST_DATA,
+                            0,
+                            streamLength > 0 ? static_cast<DWORD>(streamLength) : 0,
+                            reinterpret_cast<DWORD_PTR>(
+                                m_httpAction.get()))) // Context for WinHTTP status callbacks for
+                                                      // this request.
+                    {
+                      // Errors include:
+                      // ERROR_WINHTTP_CANNOT_CONNECT
+                      // ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED
+                      // ERROR_WINHTTP_CONNECTION_ERROR
+                      // ERROR_WINHTTP_INCORRECT_HANDLE_STATE
+                      // ERROR_WINHTTP_INCORRECT_HANDLE_TYPE
+                      // ERROR_WINHTTP_INTERNAL_ERROR
+                      // ERROR_WINHTTP_INVALID_URL
+                      // ERROR_WINHTTP_LOGIN_FAILURE
+                      // ERROR_WINHTTP_NAME_NOT_RESOLVED
+                      // ERROR_WINHTTP_OPERATION_CANCELLED
+                      // ERROR_WINHTTP_RESPONSE_DRAIN_OVERFLOW
+                      // ERROR_WINHTTP_SECURE_FAILURE
+                      // ERROR_WINHTTP_SHUTDOWN
+                      // ERROR_WINHTTP_TIMEOUT
+                      // ERROR_WINHTTP_UNRECOGNIZED_SCHEME
+                      // ERROR_NOT_ENOUGH_MEMORY
+                      // ERROR_INVALID_PARAMETER
+                      // ERROR_WINHTTP_RESEND_REQUEST
+                      GetErrorAndThrow("Error while sending a request.");
+                    }
+                  }
+                },
+                WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE,
+                context))
+        {
+          GetErrorAndThrow(
+              "Error while waiting for a send to complete.", m_httpAction->GetStowedError());
+        }
       }
 
       // Chunked transfer encoding is not supported and the content length needs to be known up
@@ -1637,9 +1737,9 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       // If there was a TLS validation error, then we will have closed the request handle
       // during the TLS validation callback. So if an exception was thrown, if we force closed
       // the request handle, clear the handle in the requestHandle to prevent a double free.
-      if (m_requestHandleClosed)
+      if (IsRequestHandleMarkedForClosing())
       {
-        m_requestHandle.release();
+        CloseRequestHandle();
       }
       throw;
     }
@@ -1650,6 +1750,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Wait to receive the response to the HTTP request initiated by WinHttpSendRequest.
     // When WinHttpReceiveResponse completes successfully, the status code and response headers
     // have been received.
+    auto requestHandleLock = GetRequestHandleSharedLock();
     if (!m_httpAction->WaitForAction(
             [this]() {
               if (!WinHttpReceiveResponse(m_requestHandle.get(), NULL))
@@ -1688,6 +1789,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // Get the content length as a number.
     if (requestMethod != HttpMethod::Head && responseStatusCode != HttpStatusCode::NoContent)
     {
+      auto requestHandleLock = GetRequestHandleSharedLock();
       if (!WinHttpQueryHeaders(
               m_requestHandle.get(),
               WINHTTP_QUERY_CONTENT_LENGTH | WINHTTP_QUERY_FLAG_NUMBER,
@@ -1716,6 +1818,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     // First, use WinHttpQueryHeaders to obtain the size of the buffer.
     // The call is expected to fail since no destination buffer is provided.
     DWORD sizeOfHeaders = 0;
+    auto requestHandleLock = GetRequestHandleSharedLock();
     if (WinHttpQueryHeaders(
             m_requestHandle.get(),
             WINHTTP_QUERY_RAW_HEADERS,
@@ -1877,6 +1980,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
       Azure::Core::Context const& context)
   {
     DWORD numberOfBytesRead = 0;
+    auto requestHandleLock = GetRequestHandleSharedLock();
     if (!m_httpAction->WaitForAction(
             [&]() {
               if (!WinHttpReadData(

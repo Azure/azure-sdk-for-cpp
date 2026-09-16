@@ -11,6 +11,7 @@
 ### Bugs Fixed
 
 - [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
+- Fixed a crash in the WinHTTP transport caused by a race condition where `SetEvent` could be invoked on an already closed handle.
 
 ### Other Changes
 
