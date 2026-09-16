@@ -1760,7 +1760,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
 
     DWORD sizeOfHttp = sizeOfHeaders;
 
-    // Get the HTTP version.
+    // Get the HTTP version. 
     if (!WinHttpQueryHeaders(
             m_requestHandle.get(),
             WINHTTP_QUERY_VERSION,
