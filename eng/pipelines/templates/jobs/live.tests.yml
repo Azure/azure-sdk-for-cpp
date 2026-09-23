@@ -79,6 +79,8 @@ jobs:
     parameters:
       AgentImage: $(OSVmImage)
 
+  - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
+
   - template: /eng/common/pipelines/templates/steps/bypass-local-dns.yml
 
   # Add g++5 repo to ubuntu
