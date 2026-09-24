@@ -1,0 +1,48 @@
+{
+  "displayNames": {
+    "_": ""
+  },
+  "include": [
+    {
+      "StaticConfigs": {
+        "Ubuntu22": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
+          "BuildArgs": "-j 10",
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_RUST_IN_BUILD=ON"
+        }
+      },
+      "BuildSettings": {
+        "gpp-9": {
+          "AptDependencies": "g++-9",
+          "CC": "/usr/bin/gcc-9",
+          "CXX": "/usr/bin/g++-9"
+        },
+        "clang-15": {
+          "AptDependencies": "clang-15",
+          "CC": "/usr/bin/clang-15",
+          "CXX": "/usr/bin/clang++-15"
+        }
+      }
+    },
+    {
+      "StaticConfigs": {
+        "Win2022": {
+          "OSVmImage": "env:WINDOWSVMIMAGE",
+          "Pool": "env:WINDOWSPOOL",
+          "CMAKE_GENERATOR": "Visual Studio 17 2022",
+          "BuildArgs": "--parallel 8 --config Debug"
+        }
+      },
+      "TargetArchitecture": {
+        "x64": {
+          "CMAKE_GENERATOR_PLATFORM": "x64",
+          "VCPKG_DEFAULT_TRIPLET": "x64-windows-static",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DMSVC_USE_STATIC_CRT=ON -DDISABLE_RUST_IN_BUILD=ON"
+        }
+      }
+    }
+  ]
+}
