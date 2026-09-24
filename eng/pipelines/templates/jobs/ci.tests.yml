@@ -78,11 +78,16 @@ jobs:
       value: ""
     - name: VcpkgArgs
       value: ""
+    - name: CtestExcludeRegexExtra
+      value: ""
 # Apply to all services running public pipeline
     - name: AZURE_TEST_MODE
       value: "PLAYBACK"
     - name: AZURE_LOG_LEVEL
       value: "verbose"
+    # CMake 4 (current macOS images) refuses the cmake_minimum_required(< 3.5) in googletest release-1.11.0.
+    - name: CMAKE_POLICY_VERSION_MINIMUM
+      value: "3.5"
     - ${{ each testEnvVar in parameters.TestEnv }}:
       - name: ${{ testEnvVar.Name }}
         value: ${{ testEnvVar.Value }}
@@ -91,6 +96,8 @@ jobs:
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
         parameters:
           AgentImage: $(OsVmImage)
+
+      - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
       - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
         condition: and(succeeded(), ne(variables['AptDependencies'], ''))
@@ -104,6 +111,17 @@ jobs:
             ne(variables['XCODE_VERSION'], '')
           )
         displayName: Set Xcode version
+
+      # Current macOS images link Homebrew's openssl@3 into /usr/local/include, which shadows the
+      # vcpkg OpenSSL headers the build links against.
+      - bash: |
+          echo "/usr/local/include/openssl -> $(readlink /usr/local/include/openssl || echo 'not a symlink or missing')"
+          for formula in openssl@3 openssl@1.1; do brew unlink "$formula" >/dev/null 2>&1 && echo "Unlinked $formula"; done
+          if [ -e /usr/local/include/openssl ]; then echo "##vso[task.logissue type=warning]/usr/local/include/openssl is still present"; else echo "No OpenSSL headers left in /usr/local/include"; fi
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        displayName: Unlink Homebrew OpenSSL headers
+        condition: and(succeeded(), contains(variables['OSVmImage'], 'macos'))
 
       - template: /eng/pipelines/templates/steps/vcpkg.yml
 
@@ -150,11 +168,14 @@ jobs:
       - ${{ parameters.PreTestSteps }}
       
       - pwsh: |
+          # CtestExcludeRegexExtra lets a matrix entry exclude additional tests (e.g. hosted agents
+          # that the IP-restricted httpbin test server rejects).
+          $excludeRegex = @('${{ parameters.CtestExcludeRegex }}', '$(CtestExcludeRegexExtra)') | Where-Object { $_ }
           ctest `
             -C Debug `
             -V `
             --tests-regex '${{ parameters.CtestRegex }}' `
-            --exclude-regex '${{ parameters.CtestExcludeRegex }}' `
+            --exclude-regex ($excludeRegex -join '|') `
             --no-compress-output `
             -T Test
         workingDirectory: build

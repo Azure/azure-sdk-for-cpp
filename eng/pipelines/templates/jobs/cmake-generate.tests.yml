@@ -52,6 +52,8 @@ jobs:
 
   variables:
     CMOCKA_XML_FILE: "%g-test-results.xml"
+    # CMake 4 (current macOS images) refuses the cmake_minimum_required(< 3.5) in googletest release-1.11.0.
+    CMAKE_POLICY_VERSION_MINIMUM: "3.5"
 
   steps:
   - checkout: self
@@ -60,6 +62,8 @@ jobs:
   - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml
     parameters:
       AgentImage: $(OSVmImage)
+
+  - template: /eng/pipelines/templates/steps/fix-1es-image-apt-azure-sources.yml
 
   - pwsh: sudo apt update && sudo apt install -y $(AptDependencies)
     condition: and(succeeded(), ne(variables['AptDependencies'], ''))

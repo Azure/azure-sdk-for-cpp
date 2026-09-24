@@ -1,1 +1,2 @@
-websockets
+# websocket_server.py uses the handler(websocket, path) signature that websockets 14 removed.
+websockets<14

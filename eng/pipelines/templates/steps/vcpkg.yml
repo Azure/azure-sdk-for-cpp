@@ -1,6 +1,8 @@
 steps:
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear;x-azblob,https://cppvcpkgcache.blob.core.windows.net/public-vcpkg-container,,read"
+      # Current vcpkg rejects an x-azblob binary source without a SAS token, and the
+      # cppvcpkgcache account no longer exists, so public runs build dependencies from source.
+      Write-Host "##vso[task.setvariable variable=VCPKG_BINARY_SOURCES_SECRET;issecret=true;]clear"
     displayName: Set Vcpkg Variables
 
   - task: PowerShell@2
