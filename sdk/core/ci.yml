@@ -38,6 +38,9 @@ stages:
       # In the case of changes to core we want to re-run all CI tests for all
       # libraries to check for potential regressions everywhere.
       CtestRegex: .*
+      # These tests depend on external endpoints that no longer exist or have changed
+      # (main disabled them in source).
+      CtestExcludeRegex: 'TransportAdapter.getChunk|TransportAdapterOptions.CheckFailedCrlValidation'
       LiveTestCtestRegex: azure-core.|json-test
       LiveTestTimeoutInMinutes: 90 # default is 60 min. We need a little longer on worst case for Win+jsonTests
       LineCoverageTarget: 93
@@ -164,6 +167,9 @@ stages:
           Value: https://NotRealAttestationInstanceiso.wus.attest.azure.net
         - Name: ATTESTATION_AAD_URL
           Value: https://NotRealAttestationInstanceaad.wus.attest.azure.net
+# Test proxy: the pinned 1.0.0-dev.20220810.2 targets .NET 6, which current agents no longer have
+        - Name: DOTNET_ROLL_FORWARD
+          Value: Major
 
       CMakeTestOptions:
         - Name: Default
