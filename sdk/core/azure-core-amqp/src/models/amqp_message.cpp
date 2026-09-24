@@ -17,6 +17,7 @@
 #include <azure_uamqp_c/amqp_definitions_annotations.h>
 #include <azure_uamqp_c/amqp_definitions_application_properties.h>
 #include <azure_uamqp_c/amqp_definitions_footer.h>
+#include <azure_uamqp_c/amqp_definitions_message_annotations.h>
 #include <azure_uamqp_c/message.h>
 using NativeMessageBodyType = MESSAGE_BODY_TYPE;
 #elif ENABLE_RUST_AMQP
@@ -118,9 +119,22 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
       AmqpValueImplementation* messageAnnotations{};
       if (!message_get_message_annotations(message, &messageAnnotations) && messageAnnotations)
       {
-        rv->MessageAnnotations = Models::_detail::AmqpValueFactory::FromImplementation(
-                                     UniqueAmqpValueHandle{messageAnnotations})
-                                     .AsAnnotations();
+        auto annotations = Models::_detail::AmqpValueFactory::FromImplementation(
+            UniqueAmqpValueHandle{messageAnnotations});
+#if ENABLE_UAMQP
+        // Sent native handles retain the descriptor; received native handles contain its map.
+        if (annotations.GetType() == AmqpValueType::Described)
+        {
+          auto describedAnnotations = annotations.AsDescribed();
+          if (describedAnnotations.GetDescriptor()
+              != AmqpValue(static_cast<uint64_t>(AmqpDescriptors::MessageAnnotations)))
+          {
+            throw std::runtime_error("Unexpected message annotations descriptor.");
+          }
+          annotations = describedAnnotations.GetValue();
+        }
+#endif
+        rv->MessageAnnotations = annotations.AsAnnotations();
       }
     }
     {
@@ -344,10 +358,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
 
     if (!message.MessageAnnotations.empty())
     {
-      if (message_set_message_annotations(
-              rv.get(),
-              _detail::AmqpValueFactory::ToImplementation(
-                  message.MessageAnnotations.AsAmqpValue())))
+      _detail::UniqueAmqpValueHandle annotations{amqpvalue_create_message_annotations(
+          _detail::AmqpValueFactory::ToImplementation(message.MessageAnnotations.AsAmqpValue()))};
+      if (!annotations)
+      {
+        throw std::runtime_error("Could not create message annotations.");
+      }
+      if (message_set_message_annotations(rv.get(), annotations.get()))
       {
         throw std::runtime_error("Could not set message annotations.");
       }

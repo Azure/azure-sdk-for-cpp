@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed uAMQP message annotation encoding so messages with annotations, including Event Hubs partition keys, include the required AMQP section descriptor. [[#7426]](https://github.com/Azure/azure-sdk-for-cpp/issues/7426)
+
 ### Other Changes
 
 ## 1.0.0-beta.13 (2026-09-03)
