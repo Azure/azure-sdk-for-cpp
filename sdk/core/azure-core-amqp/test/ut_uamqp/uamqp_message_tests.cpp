@@ -2,7 +2,19 @@
 // Licensed under the MIT License.
 
 #include "../src/models/private/message_impl.hpp"
+#include "../src/models/private/value_impl.hpp"
+#include "azure/core/amqp/internal/models/amqp_protocol.hpp"
 #include "azure/core/amqp/models/amqp_message.hpp"
+
+#include <azure_uamqp_c/amqp_definitions_annotations.h>
+#include <azure_uamqp_c/amqp_definitions_message_annotations.h>
+#include <azure_uamqp_c/amqpvalue.h>
+#include <azure_uamqp_c/message.h>
+
+#include <cstdint>
+#include <memory>
+#include <stdexcept>
+#include <vector>
 
 #include <gtest/gtest.h>
 
@@ -44,6 +56,13 @@ TEST_F(TestMessageAmqp, SimpleCreate)
     AmqpMessage message;
 
     EXPECT_TRUE(message.ApplicationProperties.empty());
+    auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
+    AMQP_VALUE annotationsValue = nullptr;
+    auto result = message_get_message_annotations(messageInstance.get(), &annotationsValue);
+    _detail::UniqueAmqpValueHandle annotations{annotationsValue};
+    ASSERT_EQ(0, result);
+    EXPECT_EQ(nullptr, annotations.get());
+
     // By default, the body type is None, so retrieving the body as any other type should throw.
     EXPECT_EQ(MessageBodyType::None, message.BodyType);
     EXPECT_ANY_THROW(message.GetBodyAsAmqpList());
@@ -80,13 +99,91 @@ TEST_F(TestMessageAmqp, TestDeliveryAnnotations)
 
 TEST_F(TestMessageAmqp, TestAnnotations)
 {
-  AmqpMessage message;
-  message.MessageAnnotations["12345"] = 19532;
+  for (bool hasApplicationProperties : {false, true})
+  {
+    SCOPED_TRACE(testing::Message() << "hasApplicationProperties=" << hasApplicationProperties);
+    AmqpMessage message;
+    message.MessageAnnotations["12345"] = 19532;
+    message.MessageAnnotations[AmqpSymbol{"x-opt-partition-key"}] = "stress-key-0";
+    if (hasApplicationProperties)
+    {
+      message.ApplicationProperties["example"] = "value";
+    }
 
-  auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
-  auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
-  EXPECT_EQ(AmqpValue{19532}, message2->MessageAnnotations["12345"]);
-  GTEST_LOG_(INFO) << message;
+    auto messageInstance = _detail::AmqpMessageFactory::ToImplementation(message);
+    AMQP_VALUE annotationsValue = nullptr;
+    auto result = message_get_message_annotations(messageInstance.get(), &annotationsValue);
+    _detail::UniqueAmqpValueHandle annotations{annotationsValue};
+    ASSERT_EQ(0, result);
+    ASSERT_NE(nullptr, annotations.get());
+
+    std::vector<uint8_t> encoded;
+    auto appendBytes = [](void* context, unsigned char const* bytes, size_t size) {
+      auto& output = *static_cast<std::vector<uint8_t>*>(context);
+      output.insert(output.end(), bytes, bytes + size);
+      return 0;
+    };
+    ASSERT_EQ(0, amqpvalue_encode(annotations.get(), appendBytes, &encoded));
+    ASSERT_GE(encoded.size(), 4U);
+    std::vector<uint8_t> const expectedPrefix{0x00, 0x53, 0x72, 0xC1};
+    EXPECT_EQ(expectedPrefix, std::vector<uint8_t>(encoded.begin(), encoded.begin() + 4));
+
+    auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
+    EXPECT_EQ(message.MessageAnnotations.AsAmqpValue(), message2->MessageAnnotations.AsAmqpValue());
+    EXPECT_EQ(message.ApplicationProperties, message2->ApplicationProperties);
+    GTEST_LOG_(INFO) << message;
+  }
+}
+
+TEST_F(TestMessageAmqp, TestDescribedMessageAnnotations)
+{
+  AmqpAnnotations expected{{AmqpSymbol{"x-opt-partition-key"}, "stress-key-0"}};
+  _detail::UniqueMessageHandle messageInstance{message_create()};
+  ASSERT_NE(nullptr, messageInstance.get());
+  _detail::UniqueAmqpValueHandle annotations{amqpvalue_create_message_annotations(
+      _detail::AmqpValueFactory::ToImplementation(expected.AsAmqpValue()))};
+  ASSERT_NE(nullptr, annotations.get());
+  ASSERT_EQ(0, message_set_message_annotations(messageInstance.get(), annotations.get()));
+
+  std::shared_ptr<AmqpMessage> message;
+  ASSERT_NO_THROW(message = _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
+  ASSERT_NE(nullptr, message);
+  EXPECT_EQ(expected.AsAmqpValue(), message->MessageAnnotations.AsAmqpValue());
+}
+
+TEST_F(TestMessageAmqp, TestRawMessageAnnotations)
+{
+  AmqpAnnotations expected{{AmqpSymbol{"x-opt-partition-key"}, "stress-key-0"}};
+  _detail::UniqueMessageHandle messageInstance{message_create()};
+  ASSERT_NE(nullptr, messageInstance.get());
+  ASSERT_EQ(
+      0,
+      message_set_message_annotations(
+          messageInstance.get(),
+          _detail::AmqpValueFactory::ToImplementation(expected.AsAmqpValue())));
+
+  std::shared_ptr<AmqpMessage> message;
+  ASSERT_NO_THROW(message = _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
+  ASSERT_NE(nullptr, message);
+  EXPECT_EQ(expected.AsAmqpValue(), message->MessageAnnotations.AsAmqpValue());
+}
+
+TEST_F(TestMessageAmqp, TestUnexpectedMessageAnnotationsDescriptor)
+{
+  AmqpAnnotations expected{{AmqpSymbol{"x-opt-partition-key"}, "stress-key-0"}};
+  _detail::UniqueMessageHandle messageInstance{message_create()};
+  ASSERT_NE(nullptr, messageInstance.get());
+  AmqpDescribed annotations(
+      static_cast<uint64_t>(Azure::Core::Amqp::_detail::AmqpDescriptors::DeliveryAnnotations),
+      expected.AsAmqpValue());
+  ASSERT_EQ(
+      0,
+      message_set_message_annotations(
+          messageInstance.get(),
+          _detail::AmqpValueFactory::ToImplementation(annotations.AsAmqpValue())));
+
+  EXPECT_THROW(
+      _detail::AmqpMessageFactory::FromImplementation(messageInstance.get()), std::runtime_error);
 }
 
 TEST_F(TestMessageAmqp, TestFooter)
