@@ -112,6 +112,17 @@ jobs:
           )
         displayName: Set Xcode version
 
+      # Current macOS images link Homebrew's openssl@3 into /usr/local/include, which shadows the
+      # vcpkg OpenSSL headers the build links against.
+      - bash: |
+          echo "/usr/local/include/openssl -> $(readlink /usr/local/include/openssl || echo 'not a symlink or missing')"
+          for formula in openssl@3 openssl@1.1; do brew unlink "$formula" >/dev/null 2>&1 && echo "Unlinked $formula"; done
+          if [ -e /usr/local/include/openssl ]; then echo "##vso[task.logissue type=warning]/usr/local/include/openssl is still present"; else echo "No OpenSSL headers left in /usr/local/include"; fi
+        env:
+          HOMEBREW_NO_AUTO_UPDATE: 1
+        displayName: Unlink Homebrew OpenSSL headers
+        condition: and(succeeded(), contains(variables['OSVmImage'], 'macos'))
+
       - template: /eng/pipelines/templates/steps/vcpkg.yml
 
       # Validate all the files are formatted correctly according to the
