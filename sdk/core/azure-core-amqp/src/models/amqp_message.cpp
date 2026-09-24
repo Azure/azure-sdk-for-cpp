@@ -122,7 +122,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace Models {
         auto annotations = Models::_detail::AmqpValueFactory::FromImplementation(
             UniqueAmqpValueHandle{messageAnnotations});
 #if ENABLE_UAMQP
-        // Sent native handles retain the descriptor; received native handles contain its map.
+        // The uAMQP receiver always strips the descriptor. Only readback of a message built
+        // for sending reaches this branch.
         if (annotations.GetType() == AmqpValueType::Described)
         {
           auto describedAnnotations = annotations.AsDescribed();

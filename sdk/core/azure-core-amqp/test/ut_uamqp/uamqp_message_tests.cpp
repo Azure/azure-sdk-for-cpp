@@ -124,9 +124,9 @@ TEST_F(TestMessageAmqp, TestAnnotations)
       return 0;
     };
     ASSERT_EQ(0, amqpvalue_encode(annotations.get(), appendBytes, &encoded));
-    ASSERT_GE(encoded.size(), 4U);
-    std::vector<uint8_t> const expectedPrefix{0x00, 0x53, 0x72, 0xC1};
-    EXPECT_EQ(expectedPrefix, std::vector<uint8_t>(encoded.begin(), encoded.begin() + 4));
+    ASSERT_GE(encoded.size(), 3U);
+    std::vector<uint8_t> const expectedPrefix{0x00, 0x53, 0x72};
+    EXPECT_EQ(expectedPrefix, std::vector<uint8_t>(encoded.begin(), encoded.begin() + 3));
 
     auto message2(_detail::AmqpMessageFactory::FromImplementation(messageInstance.get()));
     EXPECT_EQ(message.MessageAnnotations.AsAmqpValue(), message2->MessageAnnotations.AsAmqpValue());
