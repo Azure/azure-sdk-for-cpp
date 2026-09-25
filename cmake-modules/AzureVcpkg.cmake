@@ -7,6 +7,20 @@ set(AZ_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/..")
 macro(az_vcpkg_integrate)
   message("Vcpkg integrate step.")
 
+  # Prefer repository-owned dependency pins over the builtin vcpkg registry. This overlay
+  # temporarily carries azure-c-shared-utility PR #683 and its prerequisite PR #684 until an
+  # upstream release is available.
+  set(_azure_sdk_vcpkg_overlay_ports "${AZ_ROOT_DIR}/vcpkg-overlays")
+  if(EXISTS "${_azure_sdk_vcpkg_overlay_ports}/azure-c-shared-utility/portfile.cmake")
+    list(FIND VCPKG_OVERLAY_PORTS "${_azure_sdk_vcpkg_overlay_ports}" _azure_sdk_vcpkg_overlay_index)
+    if(_azure_sdk_vcpkg_overlay_index EQUAL -1)
+      list(INSERT VCPKG_OVERLAY_PORTS 0 "${_azure_sdk_vcpkg_overlay_ports}")
+    endif()
+    message(STATUS "Using Azure SDK vcpkg overlay ports from ${_azure_sdk_vcpkg_overlay_ports}")
+  endif()
+  unset(_azure_sdk_vcpkg_overlay_index)
+  unset(_azure_sdk_vcpkg_overlay_ports)
+
   # AUTO CMAKE_TOOLCHAIN_FILE:
   #   User can call `cmake -DCMAKE_TOOLCHAIN_FILE="path_to_the_toolchain"` as the most specific scenario.
   #   As the last alternative (default case), Azure SDK will automatically clone VCPKG folder and set toolchain from there.
