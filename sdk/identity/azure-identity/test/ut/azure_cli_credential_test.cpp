@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "azure/identity/azure_cli_credential.hpp"
+#include "credential_test_helper.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/platform.hpp>
@@ -21,6 +22,7 @@ using Azure::Core::Credentials::AuthenticationException;
 using Azure::Core::Credentials::TokenCredentialOptions;
 using Azure::Core::Credentials::TokenRequestContext;
 using Azure::Identity::AzureCliCredentialOptions;
+using Azure::Identity::Test::_detail::CredentialTestHelper;
 
 namespace {
 constexpr auto InfiniteCommand =
@@ -131,6 +133,30 @@ TEST(AzureCliCredential, NotAvailable)
   EXPECT_THROW(static_cast<void>(azCliCred.GetToken(trc, {})), AuthenticationException);
 #endif // UWP
 }
+
+#if !defined(AZ_PLATFORM_WINDOWS)
+TEST(AzureCliCredential, PosixChildEnvironment)
+{
+  CredentialTestHelper::EnvironmentOverride const environment({
+      {"HOME", "/tmp/azure-cli-home"},
+      {"XDG_CACHE_HOME", "/tmp/azure-cli-cache"},
+      {"AZURE_CONFIG_DIR", "/tmp/azure-cli-config"},
+  });
+  constexpr auto Token = "{\"accessToken\":\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\",\"expiresIn\":30}";
+  AzureCliTestCredential const azCliCred(
+      std::string("if [ \"$HOME\" = /tmp/azure-cli-home ] "
+                  "&& [ \"$XDG_CACHE_HOME\" = /tmp/azure-cli-cache ] "
+                  "&& [ \"$AZURE_CONFIG_DIR\" = /tmp/azure-cli-config ]; "
+                  "then echo '")
+      + Token + "'; else echo 'environment variables not propagated'; fi");
+
+  TokenRequestContext trc;
+  trc.Scopes.push_back("https://storage.azure.com/.default");
+  auto const token = azCliCred.GetToken(trc, {});
+
+  EXPECT_EQ(token.Token, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+}
+#endif
 
 #if !defined(AZ_PLATFORM_WINDOWS) \
     || (!defined(WINAPI_PARTITION_DESKTOP) || WINAPI_PARTITION_DESKTOP) // not UWP
