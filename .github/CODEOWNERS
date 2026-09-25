@@ -88,7 +88,7 @@
 ###########
 
 /eng/                    @danieljurek @mikeharder @benbp @antkmsft
-/eng/common/             @Azure/azure-sdk-eng @Azure/azure-sdk-eng-common-maintainers
+/eng/common/             @Azure/azure-sdk-eng @Azure/azure-sdk-sync-approvers
 /.github/workflows/      @Azure/azure-sdk-eng
 /.github/CODEOWNERS      @rickwinter @Azure/azure-sdk-eng @xirzec
 
