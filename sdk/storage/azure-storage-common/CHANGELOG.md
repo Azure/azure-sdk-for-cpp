@@ -1,16 +1,14 @@
 # Release History
 
-## 12.15.0-beta.2 (Unreleased)
+## 12.15.0 (2026-09-29)
 
 ### Features Added
 
-### Breaking Changes
+- Features in `12.15.0-beta.1` are now generally available.
 
 ### Bugs Fixed
 
 - Added a missing `<cstdint>` include, fixing the build with GCC 13 and later.
-
-### Other Changes
 
 ## 12.15.0-beta.1 (2026-07-29)
 
