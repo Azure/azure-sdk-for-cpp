@@ -1,14 +1,10 @@
 # Release History
 
-## 12.19.0-beta.2 (Unreleased)
+## 12.19.0 (2026-09-29)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Features in `12.19.0-beta.1` are now generally available.
 
 ## 12.19.0-beta.1 (2026-07-29)
 
