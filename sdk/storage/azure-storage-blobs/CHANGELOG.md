@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed CMake dependency resolution when FlatCC provides only a shared runtime library.
+
 ### Other Changes
 
 ## 12.19.0 (2026-09-29)
