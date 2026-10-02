@@ -72,4 +72,5 @@ if ($DailyReleaseRef) {
     $newContent = $newContent -replace '(?m)^(\s+)REF .+$', "`${1}REF $DailyReleaseRef"
 }
 
+$newContent = $newContent.Replace("`r`n", "`n")
 $newContent | Set-Content $portfileLocation -NoNewLine
