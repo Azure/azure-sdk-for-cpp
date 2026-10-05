@@ -5,9 +5,9 @@
   "include": [
     {
       "OSConfiguration": {
-        "macOS-11": {
-          "OSVmImage": "macos-11",
-          "XCODE_VERSION": "12.5.1"
+        "macos-latest": {
+          "OSVmImage": "macos-latest",
+          "XCODE_VERSION": "16.4"
         }
       },
       "StaticConfigs": {
@@ -15,7 +15,8 @@
           "Pool": "Azure Pipelines",
           "BuildArgs": "-j 10",
           "VCPKG_DEFAULT_TRIPLET": "x64-osx",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DWARNINGS_AS_ERRORS=OFF",
+          "CtestExcludeRegexExtra": "TransportAdapter|SdkWithLibcurl|CurlConnectionPool|CurlTransportOptions",
           "PublishMapFiles": "true"
         }
       },
@@ -33,7 +34,7 @@
         "Win2019": {
           "OSVmImage": "MMS2019",
           "Pool": "azsdk-pool-mms-win-2019-general",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019"
+          "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
       "TargetPlatform": {
@@ -61,14 +62,13 @@
       "StaticConfigs": {
         "Win2022": {
           "OSVmImage": "windows-2022",
-          "Pool": "Azure Pipelines",
-          "RunProxyTests": true,
+          "Pool": "azsdk-pool-mms-win-2019-general",
           "CMAKE_GENERATOR": "Visual Studio 17 2022"
         }
       },
       "TargetPlatform": {
         "Win32Api_debug_tests": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DBUILD_TRANSPORT_CURL=ON -DBUILD_TRANSPORT_WINHTTP=ON -DMSVC_USE_STATIC_CRT=ON",
           "BuildArgs": "--parallel 8 --config Debug",
           "PublishMapFiles": "true"
         }
@@ -90,7 +90,7 @@
           "VcpkgInstall": "openssl",
           "OSVmImage": "MMS2019",
           "Pool": "azsdk-pool-mms-win-2019-general",
-          "CMAKE_GENERATOR": "Visual Studio 16 2019",
+          "CMAKE_GENERATOR": "Visual Studio 17 2022",
           "PublishMapFiles": "true"
         }
       },
@@ -117,24 +117,14 @@
     },
     {
       "StaticConfigs": {
-        "Ubuntu18": {
-          "OSVmImage": "MMSUbuntu18.04",
-          "Pool": "azsdk-pool-mms-ubuntu-1804-general",
+        "Ubuntu22": {
+          "OSVmImage": "MMSUbuntu22.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2204-general",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
-          "BuildArgs": "-j 10",
-          "RunProxyTests": true
+          "BuildArgs": "-j 10"
         }
       },
       "BuildSettings": {
-        "gpp-5": {
-          "AptDependencies": "g++-5",
-          "CmakeEnvArg": "CC=/usr/bin/gcc-5 CXX=/usr/bin/g++-5 "
-        },
-        "gpp-8": {
-          "AptDependencies": "g++-8",
-          "CC": "/usr/bin/gcc-8",
-          "CXX": "/usr/bin/g++-8"
-        },
         "gpp-9": {
           "AptDependencies": "g++-9",
           "CC": "/usr/bin/gcc-9",
@@ -142,7 +132,7 @@
         },
         "included_coverage": {
           "AptDependencies": "gcovr lcov",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_BUILD_TYPE=Debug -DBUILD_CODE_COVERAGE=ON -DCMAKE_VERBOSE_MAKEFILE=ON",
           "CODE_COVERAGE_COLLECT_ONLY": "1",
           "CODE_COVERAGE": "enabled",
           "PublishMapFiles": "true"
@@ -150,12 +140,29 @@
         "included": {},
         "included_release": {
           "CMAKE_BUILD_TYPE": "Release",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON -DCMAKE_CXX_FLAGS=-Wno-error=maybe-uninitialized",
           "PublishMapFiles": "true"
         },
         "included_samples": {
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_SAMPLES=ON ",
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_SAMPLES=ON ",
           "PublishMapFiles": "true"
+        }
+      }
+    },
+    {
+      "StaticConfigs": {
+        "Ubuntu20": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "VCPKG_DEFAULT_TRIPLET": "x64-linux",
+          "BuildArgs": "-j 10"
+        }
+      },
+      "BuildSettings": {
+        "gpp-8": {
+          "AptDependencies": "g++-8",
+          "CC": "/usr/bin/gcc-8",
+          "CXX": "/usr/bin/g++-8"
         }
       }
     },
@@ -168,9 +175,8 @@
           "BuildArgs": "-j 10",
           "CC": "/usr/bin/clang-11",
           "CXX": "/usr/bin/clang++-11",
-          "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
-          "PublishMapFiles": "true",
-          "RunProxyTests": true
+          "CmakeArgs": " -DBUILD_TESTING=ON -DDISABLE_PROXY_TESTS=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
+          "PublishMapFiles": "true"
         }
       },
       "BuildSettings": {

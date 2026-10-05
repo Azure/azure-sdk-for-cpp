@@ -7,14 +7,14 @@
         "CmakeEnvArg": ""
       },
       "Linux": {
-        "Pool": "azsdk-pool-mms-ubuntu-1804-general",
-        "OSVmImage": "MMSUbuntu18.04",
+        "Pool": "azsdk-pool-mms-ubuntu-2204-general",
+        "OSVmImage": "MMSUbuntu22.04",
         "CmakeEnvArg": "",
         "AptDependencies": "libcurl4-openssl-dev"
       },
       "Mac": {
         "Pool": "Azure Pipelines",
-        "OSVmImage": "macos-11",
+        "OSVmImage": "macos-latest",
         "CmakeEnvArg": "OPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 OPENSSL_INCLUDE_DIR=/usr/local/opt/openssl@3/include ",
         "BrewDependencies": "openssl"
       }
