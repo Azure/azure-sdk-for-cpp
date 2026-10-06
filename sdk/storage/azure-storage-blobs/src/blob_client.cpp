@@ -583,6 +583,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    // Do not synthesize a range when the caller did not provide one. A ranged GET fails with 416
+    // for an empty blob; an unbounded response is still consumed only up to firstChunkLength.
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
@@ -735,6 +737,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    // Do not synthesize a range when the caller did not provide one. A ranged GET fails with 416
+    // for an empty blob; an unbounded response is still consumed only up to firstChunkLength.
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;

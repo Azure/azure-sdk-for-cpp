@@ -609,7 +609,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   enum class StorageResponseFormat
   {
     /**
-     * @brief Let the service choose the response format (default).
+     * @brief Use the default response format, which is currently Apache Arrow.
      */
     Auto,
     /**

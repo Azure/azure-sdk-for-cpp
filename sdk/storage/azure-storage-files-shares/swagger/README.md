@@ -610,6 +610,9 @@ directive:
 
 ### GetShareProperties
 
+The change-feed enablement header is parsed case-insensitively by the handwritten
+`ShareClient::GetProperties` implementation, while the public field remains `Nullable<bool>`.
+
 ```yaml
 directive:
   - from: swagger-document

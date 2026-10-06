@@ -1220,7 +1220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics Restore;
     };
     /**
-     * @brief NFS only. Type of the file or directory.
+     * @brief Type of the file.
      */
     class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
     public:
@@ -1464,10 +1464,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       struct FileItemDetails final
       {
         /**
-         * Content length of the file. This value may not be up-to-date since an SMB client may
-         * have modified the file locally. The value of Content-Length may not reflect that fact
-         * until the handle is closed or the op-lock is broken. To retrieve current property
-         * values, call Get File Properties.
+         * Content length of the file. This value may not be up-to-date since an SMB client may have
+         * modified the file locally. The value of Content-Length may not reflect that fact until
+         * the handle is closed or the op-lock is broken. To retrieve current property values, call
+         * Get File Properties.
          */
         std::int64_t FileSize = std::int64_t();
         /**
