@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-10-06";
+    constexpr static const char* ApiVersion = "2027-03-07";
   } // namespace _detail
   namespace Models {
     /**
