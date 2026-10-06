@@ -1361,6 +1361,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             "x-ms-share-provisioned-bandwidth-mibps",
             std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
       }
+      if (options.EnableChangeFeed.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-enable-change-feed", options.EnableChangeFeed.Value() ? "true" : "false");
+      }
+      if (options.ChangeFeedRetentionInDays.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-feed-retention-in-days",
+            std::to_string(options.ChangeFeedRetentionInDays.Value()));
+      }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();
       if (httpStatusCode != Core::Http::HttpStatusCode::Created)
@@ -1557,6 +1568,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             pRawResponse->GetHeaders().at(
                 "x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"),
             Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-change-feed-retention-in-days") != 0)
+      {
+        response.ChangeFeedRetentionInDays
+            = std::stoi(pRawResponse->GetHeaders().at("x-ms-file-change-feed-retention-in-days"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-blob-container-for-xfiles-change-feed") != 0)
+      {
+        response.ChangeFeedBlobContainerName
+            = pRawResponse->GetHeaders().at("x-ms-file-blob-container-for-xfiles-change-feed");
       }
       return Response<Models::ShareProperties>(std::move(response), std::move(pRawResponse));
     }
@@ -1995,6 +2016,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         request.SetHeader(
             "x-ms-share-provisioned-bandwidth-mibps",
             std::to_string(options.ShareProvisionedBandwidthMibps.Value()));
+      }
+      if (options.EnableChangeFeed.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-enable-change-feed", options.EnableChangeFeed.Value() ? "true" : "false");
+      }
+      if (options.ChangeFeedRetentionInDays.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-file-change-feed-retention-in-days",
+            std::to_string(options.ChangeFeedRetentionInDays.Value()));
       }
       auto pRawResponse = pipeline.Send(request, context);
       auto httpStatusCode = pRawResponse->GetStatusCode();

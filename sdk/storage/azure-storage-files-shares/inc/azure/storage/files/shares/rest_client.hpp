@@ -734,6 +734,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
+      /**
+       * Specifies whether change feed is enabled on the share.
+       */
+      Nullable<bool> IsChangeFeedEnabled;
+      /**
+       * The number of days that change feed records are retained.
+       */
+      Nullable<std::int32_t> ChangeFeedRetentionInDays;
+      /**
+       * The name of the blob container where change feed records are stored.
+       */
+      Nullable<std::string> ChangeFeedBlobContainerName;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -2692,6 +2704,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2823,6 +2837,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,

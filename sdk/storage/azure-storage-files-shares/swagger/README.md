@@ -552,6 +552,60 @@ directive:
       $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/EnableSmbDirectoryLease"));
 ```
 
+### Share Change Feed
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.EnableChangeFeed = {
+        "name": "x-ms-file-enable-change-feed",
+        "in": "header",
+        "type": "boolean",
+        "required": false,
+        "x-ms-client-name": "EnableChangeFeed"
+      };
+      $.ChangeFeedRetentionInDays = {
+        "name": "x-ms-file-change-feed-retention-in-days",
+        "in": "header",
+        "type": "integer",
+        "format": "int32",
+        "required": false,
+        "x-ms-client-name": "ChangeFeedRetentionInDays"
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      for (const path of ["/{shareName}?restype=share", "/{shareName}?restype=share&comp=properties"]) {
+        $[path].put.parameters.push(
+          {"$ref": "#/parameters/EnableChangeFeed"},
+          {"$ref": "#/parameters/ChangeFeedRetentionInDays"});
+      }
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"].headers
+    transform: >
+      $["x-ms-file-enable-change-feed"] = {
+        "type": "boolean",
+        "x-ms-client-name": "IsChangeFeedEnabled",
+        "x-nullable": true,
+        "description": "Specifies whether change feed is enabled on the share."
+      };
+      $["x-ms-file-change-feed-retention-in-days"] = {
+        "type": "integer",
+        "format": "int32",
+        "x-ms-client-name": "ChangeFeedRetentionInDays",
+        "x-nullable": true,
+        "description": "The number of days that change feed records are retained."
+      };
+      $["x-ms-file-blob-container-for-xfiles-change-feed"] = {
+        "type": "string",
+        "x-ms-client-name": "ChangeFeedBlobContainerName",
+        "x-nullable": true,
+        "description": "The name of the blob container where change feed records are stored."
+      };
+```
+
 ### GetShareProperties
 
 ```yaml
@@ -610,6 +664,29 @@ directive:
           "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true, "x-ms-xml": {"name": ""}}
         }
       };
+      $.schema.required = [];
+      for (const headerName in $.headers) {
+        const header = $.headers[headerName];
+        const clientName = header["x-ms-client-name"]
+          || headerName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        const propertyName = clientName[0].toUpperCase() + clientName.slice(1);
+        if (propertyName !== "AccessTier") {
+          const property = JSON.parse(JSON.stringify(header));
+          delete property["x-ms-client-name"];
+          property["x-ms-xml"] = {"name": ""};
+          $.schema.properties[propertyName] = property;
+        }
+        if (!$.schema.properties[propertyName]["x-nullable"]) {
+          $.schema.required.push(propertyName);
+        }
+      }
+      $.schema.properties.Metadata = {
+        "$ref": "#/definitions/Metadata",
+        "description": $.schema.properties.Metadata.description,
+        "x-ms-xml": {"name": ""}
+      };
+      $.schema.properties.ProvisionedIops.description = "Returns the current share provisioned IOPS.";
+      delete $.headers["x-ms-file-enable-change-feed"];
 ```
 
 ### GetShareAccessPolicy
