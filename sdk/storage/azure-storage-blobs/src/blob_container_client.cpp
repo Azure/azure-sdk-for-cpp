@@ -1484,7 +1484,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto expectResponseFormat = options.ResponseFormat;
     if (expectResponseFormat == StorageResponseFormat::Auto)
     {
-      expectResponseFormat = StorageResponseFormat::Xml;
+      expectResponseFormat = StorageResponseFormat::Arrow;
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {
@@ -1505,12 +1505,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       actualResponseFormat = StorageResponseFormat::Arrow;
     }
-    (void)actualResponseFormat;
-
     ListBlobsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
+    if (actualResponseFormat == StorageResponseFormat::Arrow && options.Prefix.HasValue())
+    {
+      pagedResponse.Prefix = options.Prefix.Value();
+    }
     for (auto& i : response.Value.Items)
     {
       pagedResponse.Blobs.push_back(BlobItemConversion(i));
@@ -1541,7 +1543,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto expectResponseFormat = options.ResponseFormat;
     if (expectResponseFormat == StorageResponseFormat::Auto)
     {
-      expectResponseFormat = StorageResponseFormat::Xml;
+      expectResponseFormat = StorageResponseFormat::Arrow;
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {
