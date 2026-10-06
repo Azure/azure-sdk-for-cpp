@@ -3,9 +3,43 @@
 
 #include "azure/storage/files/shares/share_options.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
+
+#include <azure/core/internal/strings.hpp>
+
+#include <stdexcept>
+
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   const ShareAudience ShareAudience::DefaultAudience(_internal::StorageDefaultAudience);
+
+  namespace _detail {
+    Azure::Nullable<std::string> GetFileIdFromUrl(const Azure::Core::Url& url)
+    {
+      for (const auto& queryParameter : url.GetQueryParameters())
+      {
+        if (Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                queryParameter.first, FileIdQueryParameter))
+        {
+          if (queryParameter.second.empty())
+          {
+            throw std::invalid_argument("File ID cannot be empty.");
+          }
+          return queryParameter.second;
+        }
+      }
+      return Azure::Nullable<std::string>();
+    }
+
+    void AssertPathAddressed(const Azure::Nullable<std::string>& fileId, const char* operationName)
+    {
+      if (fileId.HasValue())
+      {
+        throw std::logic_error(
+            std::string(operationName) + " is not supported for a file ID-addressed client.");
+      }
+    }
+  } // namespace _detail
 
   namespace Models {
     namespace {

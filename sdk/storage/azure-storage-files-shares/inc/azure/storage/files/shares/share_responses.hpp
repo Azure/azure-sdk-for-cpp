@@ -684,6 +684,40 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The NFS related properties for the file.
        */
       FilePosixProperties PosixProperties;
+      /**
+       * The file name. This is populated when the file is addressed by file ID.
+       */
+      Nullable<std::string> FileName;
+    };
+
+    /**
+     * @brief A hard link to a file.
+     */
+    struct FileLink final
+    {
+      /**
+       * The name of the hard link.
+       */
+      std::string Name;
+      /**
+       * The file ID of the hard link's parent directory.
+       */
+      std::string ParentId;
+    };
+
+    /**
+     * @brief Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetFileLinks.
+     */
+    struct GetFileLinksResult final
+    {
+      /**
+       * The properties of the file.
+       */
+      FileProperties Properties;
+      /**
+       * The hard links of the file.
+       */
+      std::vector<FileLink> Links;
     };
 
     /**
@@ -895,6 +929,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The NFS related properties for the file.
        */
       FilePosixProperties PosixProperties;
+      /**
+       * The directory name. This is populated when the directory is addressed by file ID.
+       */
+      Nullable<std::string> FileName;
     };
 
     /**

@@ -79,6 +79,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_shareDirectoryUrl.GetAbsoluteUrl(); }
 
     /**
+     * @brief Gets the file ID when this client addresses a directory by ID.
+     *
+     * @return The file ID, or an empty string when this client addresses a directory by path.
+     */
+    std::string GetFileId() const;
+
+    /**
      * @brief Create a ShareDirectoryClient that's a sub directory of the current
      * ShareDirectoryClient
      * @param subdirectoryName The name of the subdirectory.
@@ -274,17 +281,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   private:
     Azure::Core::Url m_shareDirectoryUrl;
+    Azure::Nullable<std::string> m_fileId;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     _detail::ShareClientConfiguration m_clientConfiguration;
 
     explicit ShareDirectoryClient(
         Azure::Core::Url shareDirectoryUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        _detail::ShareClientConfiguration clientConfiguration)
-        : m_shareDirectoryUrl(std::move(shareDirectoryUrl)), m_pipeline(std::move(pipeline)),
-          m_clientConfiguration(std::move(clientConfiguration))
-    {
-    }
+        _detail::ShareClientConfiguration clientConfiguration);
 
     friend class ShareClient;
   };

@@ -1335,6 +1335,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the directory.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -2120,6 +2124,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the file.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -2640,6 +2648,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Models::NfsFileType NfsFileType;
+      };
+      /**
+       * @brief A hard link to a file.
+       */
+      struct HardLink final
+      {
+        /**
+         * The name of the hard link.
+         */
+        StringEncoded FileName;
+        /**
+         * The fileId of the parent directory of the hard link.
+         */
+        std::string ParentId;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetFileLinks.
+       */
+      struct GetFileLinksResult final
+      {
+        /**
+         * Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
+         */
+        FileProperties Properties;
+        /**
+         * Array of HardLink.
+         */
+        std::vector<HardLink> HardLinks;
       };
     } // namespace _detail
   } // namespace Models
@@ -3377,6 +3413,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const CreateFileHardLinkOptions& options,
+          const Core::Context& context);
+      struct GetFileFileLinksOptions final
+      {
+        Nullable<std::string> LeaseId;
+        Nullable<bool> AllowTrailingDot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::GetFileLinksResult> GetFileLinks(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetFileFileLinksOptions& options,
           const Core::Context& context);
     };
   } // namespace _detail

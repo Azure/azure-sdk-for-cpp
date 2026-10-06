@@ -62,6 +62,8 @@ directive:
     where: $["x-ms-paths"]
     transform: >
       delete $["/{shareName}?restype=share&comp=undelete"].put;
+      delete $["/{shareName}?restype=directory"].get;
+      delete $["/{shareName}"].head;
 ```
 
 ### API Version
@@ -944,6 +946,12 @@ directive:
       $.headers["x-ms-owner"]["x-nullable"] = true;
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"]["x-ms-client-name"] = "FileName";
+      $.headers["x-ms-file-name"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"].description = "The name of the directory.";
+      const fileName = $.headers["x-ms-file-name"];
+      delete $.headers["x-ms-file-name"];
+      $.headers["x-ms-file-name"] = fileName;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "DirectoryProperties",
@@ -1063,6 +1071,12 @@ directive:
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
       $.headers["x-ms-link-count"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"]["x-ms-client-name"] = "FileName";
+      $.headers["x-ms-file-name"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"].description = "The name of the file.";
+      const fileName = $.headers["x-ms-file-name"];
+      delete $.headers["x-ms-file-name"];
+      $.headers["x-ms-file-name"] = fileName;
       delete $.headers["x-ms-type"];
       $.schema = {
         "type": "object",
@@ -1380,6 +1394,91 @@ directive:
         },
         "x-namespace" : "_detail"
       };
+```
+
+### GetFileLinks
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.HardLink["x-namespace"] = "_detail";
+      const propertiesResponse = $doc["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].head.responses["200"];
+      const propertiesSchema = JSON.parse(JSON.stringify(propertiesResponse.schema));
+      propertiesSchema.required = ["SmbProperties", "HttpHeaders"];
+      for (const headerName in propertiesResponse.headers) {
+        const header = propertiesResponse.headers[headerName];
+        const propertyPath = header["x-ms-client-path"]
+          || header["x-ms-client-name"]
+          || headerName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        if (propertyPath.includes(".")) {
+          continue;
+        }
+        const propertyName = propertyPath[0].toUpperCase() + propertyPath.slice(1);
+        const property = JSON.parse(JSON.stringify(header));
+        delete property["x-ms-client-name"];
+        delete property["x-ms-client-path"];
+        property["x-ms-xml"] = {"name": ""};
+        propertiesSchema.properties[propertyName] = property;
+        if (!property["x-nullable"]) {
+          propertiesSchema.required.push(propertyName);
+        }
+      }
+      propertiesSchema.properties.Metadata = {
+        "$ref": "#/definitions/Metadata",
+        "description": propertiesSchema.properties.Metadata.description,
+        "x-ms-xml": {"name": ""}
+      };
+      propertiesSchema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.";
+      $.FileProperties = propertiesSchema;
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      const propertiesResponse = $["/{shareName}/{directory}/{fileName}"].head.responses["200"];
+      propertiesResponse.schema = {"$ref": "#/definitions/FileProperties"};
+
+      const operation = $["/{shareName}?comp=hardlinks"].get;
+      operation.operationId = "File_GetFileLinks";
+      operation.parameters = operation.parameters.filter(p =>
+        p.name !== "fileid" && p["$ref"] !== "#/parameters/ShareSnapshot");
+      operation.responses["200"].schema = {
+        "type": "object",
+        "x-ms-client-name": "GetFileLinksResult",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "xml": {"name": "HardLinks"},
+        "required": ["Properties", "HardLinks"],
+        "properties": {
+          "Properties": {
+            "$ref": "#/definitions/FileProperties",
+            "x-ms-xml": {"name": ""}
+          },
+          "HardLinks": {
+            "type": "array",
+            "x-ms-xml": {"name": "."},
+            "items": {"$ref": "#/definitions/HardLink"}
+          }
+        }
+      };
+
+      const response = operation.responses["200"];
+      const headers = {};
+      for (const sourceHeaderName in propertiesResponse.headers) {
+        let headerName = sourceHeaderName;
+        if (["Content-Length", "Content-Type", "Content-MD5", "Content-Encoding",
+             "Content-Language", "Cache-Control", "Content-Disposition"].includes(headerName)) {
+          headerName = "x-ms-" + headerName.toLowerCase();
+        }
+        const header = JSON.parse(JSON.stringify(propertiesResponse.headers[sourceHeaderName]));
+        const propertyPath = header["x-ms-client-path"]
+          || header["x-ms-client-name"]
+          || sourceHeaderName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        delete header["x-ms-client-name"];
+        header["x-ms-client-path"] = "Properties." + propertyPath[0].toUpperCase() + propertyPath.slice(1);
+        headers[headerName] = header;
+      }
+      response.headers = headers;
 ```
 
 ### Description

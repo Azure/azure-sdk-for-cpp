@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/shares/share_client.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "private/package_version.hpp"
@@ -115,6 +116,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const
   {
     return ShareDirectoryClient(m_shareUrl, m_pipeline, m_clientConfiguration);
+  }
+
+  ShareFileClient ShareClient::GetFileClientByFileId(const std::string& fileId) const
+  {
+    if (fileId.empty())
+    {
+      throw std::invalid_argument("File ID cannot be empty.");
+    }
+    Core::Url fileUrl(m_shareUrl);
+    fileUrl.AppendQueryParameter(
+        _detail::FileIdQueryParameter, _internal::UrlEncodeQueryParameter(fileId));
+    return ShareFileClient(std::move(fileUrl), m_pipeline, m_clientConfiguration);
+  }
+
+  ShareDirectoryClient ShareClient::GetDirectoryClientByFileId(const std::string& fileId) const
+  {
+    if (fileId.empty())
+    {
+      throw std::invalid_argument("File ID cannot be empty.");
+    }
+    Core::Url directoryUrl(m_shareUrl);
+    directoryUrl.AppendQueryParameter(
+        _detail::FileIdQueryParameter, _internal::UrlEncodeQueryParameter(fileId));
+    return ShareDirectoryClient(std::move(directoryUrl), m_pipeline, m_clientConfiguration);
   }
 
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const

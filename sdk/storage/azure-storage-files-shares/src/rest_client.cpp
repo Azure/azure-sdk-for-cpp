@@ -2613,6 +2613,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.NfsFileType
             = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-file-name") != 0)
+      {
+        response.FileName = pRawResponse->GetHeaders().at("x-ms-file-name");
+      }
       return Response<Models::_detail::DirectoryProperties>(
           std::move(response), std::move(pRawResponse));
     }
@@ -4899,6 +4903,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         response.NfsFileType
             = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-file-name") != 0)
+      {
+        response.FileName = pRawResponse->GetHeaders().at("x-ms-file-name");
+      }
       return Response<Models::_detail::FileProperties>(
           std::move(response), std::move(pRawResponse));
     }
@@ -6334,6 +6342,250 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.NfsFileType
           = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
       return Response<Models::_detail::CreateFileHardLinkResult>(
+          std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::_detail::GetFileLinksResult> FileClient::GetFileLinks(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const GetFileFileLinksOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      request.GetUrl().AppendQueryParameter("comp", "hardlinks");
+      request.SetHeader("x-ms-version", "2027-03-07");
+      if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.AllowTrailingDot.HasValue())
+      {
+        request.SetHeader(
+            "x-ms-allow-trailing-dot", options.AllowTrailingDot.Value() ? "true" : "false");
+      }
+      if (options.FileRequestIntent.HasValue()
+          && !options.FileRequestIntent.Value().ToString().empty())
+      {
+        request.SetHeader("x-ms-file-request-intent", options.FileRequestIntent.Value().ToString());
+      }
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (httpStatusCode != Core::Http::HttpStatusCode::Ok)
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::GetFileLinksResult response;
+      {
+        const auto& responseBody = pRawResponse->GetBody();
+        _internal::XmlReader reader(
+            reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+        enum class XmlTagEnum
+        {
+          kUnknown,
+          kHardLinks,
+          kHardLink,
+          kFileName,
+          kParentId,
+        };
+        const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+            {"HardLinks", XmlTagEnum::kHardLinks},
+            {"HardLink", XmlTagEnum::kHardLink},
+            {"FileName", XmlTagEnum::kFileName},
+            {"ParentId", XmlTagEnum::kParentId},
+        };
+        std::vector<XmlTagEnum> xmlPath;
+        Models::_detail::HardLink vectorElement1;
+        while (true)
+        {
+          auto node = reader.Read();
+          if (node.Type == _internal::XmlNodeType::End)
+          {
+            break;
+          }
+          else if (node.Type == _internal::XmlNodeType::StartTag)
+          {
+            auto ite = XmlTagEnumMap.find(node.Name);
+            xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+          }
+          else if (node.Type == _internal::XmlNodeType::Text)
+          {
+            if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kHardLinks
+                && xmlPath[1] == XmlTagEnum::kHardLink && xmlPath[2] == XmlTagEnum::kFileName)
+            {
+              vectorElement1.FileName.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kHardLinks
+                && xmlPath[1] == XmlTagEnum::kHardLink && xmlPath[2] == XmlTagEnum::kParentId)
+            {
+              vectorElement1.ParentId = node.Value;
+            }
+          }
+          else if (node.Type == _internal::XmlNodeType::Attribute)
+          {
+            if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kHardLinks
+                && xmlPath[1] == XmlTagEnum::kHardLink && xmlPath[2] == XmlTagEnum::kFileName
+                && node.Name == "Encoded")
+            {
+              vectorElement1.FileName.Encoded = node.Value == std::string("true");
+            }
+          }
+          else if (node.Type == _internal::XmlNodeType::EndTag)
+          {
+            if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kHardLinks
+                && xmlPath[1] == XmlTagEnum::kHardLink)
+            {
+              response.HardLinks.push_back(std::move(vectorElement1));
+              vectorElement1 = Models::_detail::HardLink();
+            }
+            xmlPath.pop_back();
+          }
+        }
+      }
+      response.Properties.LastModified = DateTime::Parse(
+          pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      for (auto i = pRawResponse->GetHeaders().lower_bound("x-ms-meta-");
+           i != pRawResponse->GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
+           ++i)
+      {
+        response.Properties.Metadata.emplace(i->first.substr(10), i->second);
+      }
+      response.Properties.FileSize
+          = std::stoll(pRawResponse->GetHeaders().at("x-ms-content-length"));
+      if (pRawResponse->GetHeaders().count("x-ms-content-type") != 0)
+      {
+        response.Properties.HttpHeaders.ContentType
+            = pRawResponse->GetHeaders().at("x-ms-content-type");
+      }
+      response.Properties.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      if (pRawResponse->GetHeaders().count("x-ms-content-md5") != 0)
+      {
+        response.Properties.HttpHeaders.ContentHash.Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-content-md5"));
+        response.Properties.HttpHeaders.ContentHash.Algorithm = HashAlgorithm::Md5;
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-content-encoding") != 0)
+      {
+        response.Properties.HttpHeaders.ContentEncoding
+            = pRawResponse->GetHeaders().at("x-ms-content-encoding");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-cache-control") != 0)
+      {
+        response.Properties.HttpHeaders.CacheControl
+            = pRawResponse->GetHeaders().at("x-ms-cache-control");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-content-disposition") != 0)
+      {
+        response.Properties.HttpHeaders.ContentDisposition
+            = pRawResponse->GetHeaders().at("x-ms-content-disposition");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-content-language") != 0)
+      {
+        response.Properties.HttpHeaders.ContentLanguage
+            = pRawResponse->GetHeaders().at("x-ms-content-language");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-completion-time") != 0)
+      {
+        response.Properties.CopyCompletedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-copy-completion-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-status-description") != 0)
+      {
+        response.Properties.CopyStatusDescription
+            = pRawResponse->GetHeaders().at("x-ms-copy-status-description");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-id") != 0)
+      {
+        response.Properties.CopyId = pRawResponse->GetHeaders().at("x-ms-copy-id");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-progress") != 0)
+      {
+        response.Properties.CopyProgress = pRawResponse->GetHeaders().at("x-ms-copy-progress");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-source") != 0)
+      {
+        response.Properties.CopySource = pRawResponse->GetHeaders().at("x-ms-copy-source");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-status") != 0)
+      {
+        response.Properties.CopyStatus
+            = Models::CopyStatus(pRawResponse->GetHeaders().at("x-ms-copy-status"));
+      }
+      response.Properties.IsServerEncrypted
+          = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+      if (pRawResponse->GetHeaders().count("x-ms-file-attributes") != 0)
+      {
+        response.Properties.SmbProperties.Attributes
+            = Models::FileAttributes(pRawResponse->GetHeaders().at("x-ms-file-attributes"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-creation-time") != 0)
+      {
+        response.Properties.SmbProperties.CreatedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-file-creation-time"),
+            Azure::DateTime::DateFormat::Rfc3339);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-last-write-time") != 0)
+      {
+        response.Properties.SmbProperties.LastWrittenOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-file-last-write-time"),
+            Azure::DateTime::DateFormat::Rfc3339);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-change-time") != 0)
+      {
+        response.Properties.SmbProperties.ChangedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-file-change-time"),
+            Azure::DateTime::DateFormat::Rfc3339);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-permission-key") != 0)
+      {
+        response.Properties.SmbProperties.PermissionKey
+            = pRawResponse->GetHeaders().at("x-ms-file-permission-key");
+      }
+      response.Properties.SmbProperties.FileId = pRawResponse->GetHeaders().at("x-ms-file-id");
+      response.Properties.SmbProperties.ParentFileId
+          = pRawResponse->GetHeaders().at("x-ms-file-parent-id");
+      if (pRawResponse->GetHeaders().count("x-ms-lease-duration") != 0)
+      {
+        response.Properties.LeaseDuration
+            = Models::LeaseDurationType(pRawResponse->GetHeaders().at("x-ms-lease-duration"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-state") != 0)
+      {
+        response.Properties.LeaseState
+            = Models::LeaseState(pRawResponse->GetHeaders().at("x-ms-lease-state"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-status") != 0)
+      {
+        response.Properties.LeaseStatus
+            = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-mode") != 0)
+      {
+        response.Properties.FileMode = pRawResponse->GetHeaders().at("x-ms-mode");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-owner") != 0)
+      {
+        response.Properties.Owner = pRawResponse->GetHeaders().at("x-ms-owner");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-group") != 0)
+      {
+        response.Properties.Group = pRawResponse->GetHeaders().at("x-ms-group");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-link-count") != 0)
+      {
+        response.Properties.LinkCount
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-link-count"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-file-type") != 0)
+      {
+        response.Properties.NfsFileType
+            = Models::NfsFileType(pRawResponse->GetHeaders().at("x-ms-file-file-type"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-file-name") != 0)
+      {
+        response.Properties.FileName = pRawResponse->GetHeaders().at("x-ms-file-name");
+      }
+      return Response<Models::_detail::GetFileLinksResult>(
           std::move(response), std::move(pRawResponse));
     }
   } // namespace _detail
