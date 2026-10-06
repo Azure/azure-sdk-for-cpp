@@ -368,6 +368,64 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     /**
+     * @brief Properties of a listed directory.
+     */
+    struct DirectoryItemDetails final
+    {
+      /**
+       * The time the directory was last accessed.
+       */
+      Nullable<DateTime> LastAccessedOn;
+      /**
+       * The date and time the directory was last modified.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value which represents the version of the directory, in quotes.
+       */
+      ETag Etag;
+      /**
+       * The SMB related properties for the directory.
+       */
+      FileSmbProperties SmbProperties;
+      /**
+       * The NFS related properties for the directory.
+       */
+      FilePosixProperties PosixProperties;
+    };
+
+    /**
+     * @brief Properties of a listed file.
+     */
+    struct FileItemDetails final
+    {
+      /**
+       * Content length of the file.
+       */
+      std::int64_t FileSize = std::int64_t();
+      /**
+       * The time the file was last accessed.
+       */
+      Nullable<DateTime> LastAccessedOn;
+      /**
+       * The date and time the file was last modified.
+       */
+      DateTime LastModified;
+      /**
+       * The ETag contains a value which represents the version of the file, in quotes.
+       */
+      ETag Etag;
+      /**
+       * The SMB related properties for the file.
+       */
+      FileSmbProperties SmbProperties;
+      /**
+       * The NFS related properties for the file.
+       */
+      FilePosixProperties PosixProperties;
+    };
+
+    /**
      * @brief A listed directory item.
      */
     struct DirectoryItem final
@@ -391,6 +449,106 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * File properties.
        */
       FileItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a symbolic link item.
+     */
+    using SymLinkItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed symbolic link item.
+     */
+    struct SymLinkItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The target of the symbolic link. */
+      Azure::Nullable<std::string> LinkText;
+      /**
+       * File properties.
+       */
+      SymLinkItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a block device item.
+     */
+    using BlockDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed block device item.
+     */
+    struct BlockDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The major device number. */
+      std::int64_t DeviceMajor = 0;
+      /** @brief The minor device number. */
+      std::int64_t DeviceMinor = 0;
+      /**
+       * File properties.
+       */
+      BlockDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a character device item.
+     */
+    using CharDeviceItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed character device item.
+     */
+    struct CharDeviceItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /** @brief The major device number. */
+      std::int64_t DeviceMajor = 0;
+      /** @brief The minor device number. */
+      std::int64_t DeviceMinor = 0;
+      /**
+       * File properties.
+       */
+      CharDeviceItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a FIFO item.
+     */
+    using FifoItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed FIFO item.
+     */
+    struct FifoItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /**
+       * File properties.
+       */
+      FifoItemDetails Details;
+    };
+
+    /**
+     * @brief Properties of a socket item.
+     */
+    using SocketItemDetails = FileItemDetails;
+
+    /**
+     * @brief A listed socket item.
+     */
+    struct SocketItem final
+    {
+      /** @brief The name of the item */
+      std::string Name;
+      /**
+       * File properties.
+       */
+      SocketItemDetails Details;
     };
 
     /**
@@ -941,6 +1099,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * File items.
      */
     std::vector<Models::FileItem> Files;
+    /**
+     * Symbolic link items.
+     */
+    std::vector<Models::SymLinkItem> SymLinks;
+    /**
+     * Block device items.
+     */
+    std::vector<Models::BlockDeviceItem> BlockDevices;
+    /**
+     * Character device items.
+     */
+    std::vector<Models::CharDeviceItem> CharDevices;
+    /**
+     * FIFO items.
+     */
+    std::vector<Models::FifoItem> Fifos;
+    /**
+     * Socket items.
+     */
+    std::vector<Models::SocketItem> Sockets;
     /**
      * FileId of the directory.
      */

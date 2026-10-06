@@ -62,15 +62,21 @@ std::string ListFilesIncludeFlagsToString(
       Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::ETag,
       Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::Attributes,
       Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::PermissionKey,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::Permissions,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::LinkCount,
+      Azure::Storage::Files::Shares::Models::ListFilesIncludeFlags::NfsAttributes,
   };
   const char* stringList[] = {
       "Timestamps",
       "Etag",
       "Attributes",
       "PermissionKey",
+      "Permissions",
+      "LinkCount",
+      "NfsAttributes",
   };
   std::string ret;
-  for (size_t i = 0; i < 4; ++i)
+  for (size_t i = 0; i < 7; ++i)
   {
     if ((val & valueList[i]) == valueList[i])
     {
@@ -190,6 +196,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     const NfsFileType NfsFileType::Regular("Regular");
     const NfsFileType NfsFileType::Directory("Directory");
     const NfsFileType NfsFileType::SymLink("SymLink");
+    const NfsFileType NfsFileType::BlockDevice("BlockDevice");
+    const NfsFileType NfsFileType::CharacterDevice("CharacterDevice");
+    const NfsFileType NfsFileType::Socket("Socket");
+    const NfsFileType NfsFileType::Fifo("Fifo");
     namespace _detail {
       const AccessRight AccessRight::Read("Read");
       const AccessRight AccessRight::Write("Write");
@@ -2817,10 +2827,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kEntries,
           kDirectory,
           kName,
+          kLinkCount,
           kProperties,
           kLastAccessTime,
           kLastModified,
           kEtag,
+          kUid,
+          kGid,
+          kMode,
           kPermissionKey,
           kAttributes,
           kCreationTime,
@@ -2828,7 +2842,16 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kChangeTime,
           kFileId,
           kFile,
+          kFileType,
           kContentLength,
+          kSymLink,
+          kLinkText,
+          kBlockDevice,
+          kDeviceMajor,
+          kDeviceMinor,
+          kCharDevice,
+          kFifo,
+          kSocket,
           kNextMarker,
           kDirectoryId,
         };
@@ -2840,10 +2863,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"Entries", XmlTagEnum::kEntries},
             {"Directory", XmlTagEnum::kDirectory},
             {"Name", XmlTagEnum::kName},
+            {"LinkCount", XmlTagEnum::kLinkCount},
             {"Properties", XmlTagEnum::kProperties},
             {"LastAccessTime", XmlTagEnum::kLastAccessTime},
             {"Last-Modified", XmlTagEnum::kLastModified},
             {"Etag", XmlTagEnum::kEtag},
+            {"Uid", XmlTagEnum::kUid},
+            {"Gid", XmlTagEnum::kGid},
+            {"Mode", XmlTagEnum::kMode},
             {"PermissionKey", XmlTagEnum::kPermissionKey},
             {"Attributes", XmlTagEnum::kAttributes},
             {"CreationTime", XmlTagEnum::kCreationTime},
@@ -2851,13 +2878,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"ChangeTime", XmlTagEnum::kChangeTime},
             {"FileId", XmlTagEnum::kFileId},
             {"File", XmlTagEnum::kFile},
+            {"FileType", XmlTagEnum::kFileType},
             {"Content-Length", XmlTagEnum::kContentLength},
+            {"SymLink", XmlTagEnum::kSymLink},
+            {"LinkText", XmlTagEnum::kLinkText},
+            {"BlockDevice", XmlTagEnum::kBlockDevice},
+            {"DeviceMajor", XmlTagEnum::kDeviceMajor},
+            {"DeviceMinor", XmlTagEnum::kDeviceMinor},
+            {"CharDevice", XmlTagEnum::kCharDevice},
+            {"Fifo", XmlTagEnum::kFifo},
+            {"Socket", XmlTagEnum::kSocket},
             {"NextMarker", XmlTagEnum::kNextMarker},
             {"DirectoryId", XmlTagEnum::kDirectoryId},
         };
         std::vector<XmlTagEnum> xmlPath;
         Models::_detail::DirectoryItem vectorElement1;
         Models::_detail::FileItem vectorElement2;
+        Models::_detail::SymLinkItem vectorElement3;
+        Models::_detail::BlockDeviceItem vectorElement4;
+        Models::_detail::CharDeviceItem vectorElement5;
+        Models::_detail::FifoItem vectorElement6;
+        Models::_detail::SocketItem vectorElement7;
         while (true)
         {
           auto node = reader.Read();
@@ -2897,6 +2938,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement1.Name.Content = node.Value;
             }
             else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement1.LinkCount = std::stoll(node.Value);
+            }
+            else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
                 && xmlPath[3] == XmlTagEnum::kProperties
@@ -2919,6 +2967,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
             {
               vectorElement1.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement1.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement1.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kDirectory
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement1.Details.FileMode = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -2974,6 +3043,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
               vectorElement2.Name.Content = node.Value;
             }
             else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement2.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kFileType)
+            {
+              vectorElement2.FileType = Models::NfsFileType(node.Value);
+            }
+            else if (
                 xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
                 && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
                 && xmlPath[3] == XmlTagEnum::kProperties
@@ -3004,6 +3087,27 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
             {
               vectorElement2.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement2.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement2.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFile
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement2.Details.FileMode = node.Value;
             }
             else if (
                 xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3050,6 +3154,606 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kFileId)
             {
               vectorElement2.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kName)
+            {
+              vectorElement3.Name.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement3.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kLinkText)
+            {
+              vectorElement3.LinkText = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kContentLength)
+            {
+              vectorElement3.Details.FileSize = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement3.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement3.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement3.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement3.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement3.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement3.Details.FileMode = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement3.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement3.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement3.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement3.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement3.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement3.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kName)
+            {
+              vectorElement4.Name.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement4.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kDeviceMajor)
+            {
+              vectorElement4.DeviceMajor = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kDeviceMinor)
+            {
+              vectorElement4.DeviceMinor = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kContentLength)
+            {
+              vectorElement4.Details.FileSize = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement4.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement4.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement4.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement4.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement4.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement4.Details.FileMode = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement4.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement4.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement4.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement4.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement4.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement4.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kName)
+            {
+              vectorElement5.Name.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement5.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kDeviceMajor)
+            {
+              vectorElement5.DeviceMajor = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kDeviceMinor)
+            {
+              vectorElement5.DeviceMinor = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kContentLength)
+            {
+              vectorElement5.Details.FileSize = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement5.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement5.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement5.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement5.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement5.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement5.Details.FileMode = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement5.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement5.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement5.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement5.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement5.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement5.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kName)
+            {
+              vectorElement6.Name.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement6.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kContentLength)
+            {
+              vectorElement6.Details.FileSize = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement6.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement6.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement6.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement6.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement6.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement6.Details.FileMode = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement6.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement6.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement6.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement6.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement6.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement6.Details.SmbProperties.FileId = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kName)
+            {
+              vectorElement7.Name.Content = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kLinkCount)
+            {
+              vectorElement7.LinkCount = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kContentLength)
+            {
+              vectorElement7.Details.FileSize = std::stoll(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastAccessTime)
+            {
+              vectorElement7.Details.LastAccessedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
+            {
+              vectorElement7.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kEtag)
+            {
+              vectorElement7.Details.Etag = ETag(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kUid)
+            {
+              vectorElement7.Details.Owner = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kGid)
+            {
+              vectorElement7.Details.Group = node.Value;
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kMode)
+            {
+              vectorElement7.Details.FileMode = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kPermissionKey)
+            {
+              vectorElement7.Details.SmbProperties.PermissionKey = node.Value;
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kAttributes)
+            {
+              vectorElement7.Details.SmbProperties.Attributes = Models::FileAttributes(node.Value);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement7.Details.SmbProperties.CreatedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties
+                && xmlPath[4] == XmlTagEnum::kLastWriteTime)
+            {
+              vectorElement7.Details.SmbProperties.LastWrittenOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kChangeTime)
+            {
+              vectorElement7.Details.SmbProperties.ChangedOn
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc3339);
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kFileId)
+            {
+              vectorElement7.Details.SmbProperties.FileId = node.Value;
             }
             else if (
                 xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kEnumerationResults
@@ -3115,6 +3819,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               vectorElement2.Name.Encoded = node.Value == std::string("true");
             }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink
+                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
+            {
+              vectorElement3.Name.Encoded = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice
+                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
+            {
+              vectorElement4.Name.Encoded = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice
+                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
+            {
+              vectorElement5.Name.Encoded = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo
+                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
+            {
+              vectorElement6.Name.Encoded = node.Value == std::string("true");
+            }
+            else if (
+                xmlPath.size() == 4 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket
+                && xmlPath[3] == XmlTagEnum::kName && node.Name == "Encoded")
+            {
+              vectorElement7.Name.Encoded = node.Value == std::string("true");
+            }
           }
           else if (node.Type == _internal::XmlNodeType::EndTag)
           {
@@ -3130,6 +3869,41 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {
               response.Segment.FileItems.push_back(std::move(vectorElement2));
               vectorElement2 = Models::_detail::FileItem();
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSymLink)
+            {
+              response.Segment.SymLinkItems.push_back(std::move(vectorElement3));
+              vectorElement3 = Models::_detail::SymLinkItem();
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kBlockDevice)
+            {
+              response.Segment.BlockDeviceItems.push_back(std::move(vectorElement4));
+              vectorElement4 = Models::_detail::BlockDeviceItem();
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kCharDevice)
+            {
+              response.Segment.CharDeviceItems.push_back(std::move(vectorElement5));
+              vectorElement5 = Models::_detail::CharDeviceItem();
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kFifo)
+            {
+              response.Segment.FifoItems.push_back(std::move(vectorElement6));
+              vectorElement6 = Models::_detail::FifoItem();
+            }
+            else if (
+                xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kEntries && xmlPath[2] == XmlTagEnum::kSocket)
+            {
+              response.Segment.SocketItems.push_back(std::move(vectorElement7));
+              vectorElement7 = Models::_detail::SocketItem();
             }
             xmlPath.pop_back();
           }
