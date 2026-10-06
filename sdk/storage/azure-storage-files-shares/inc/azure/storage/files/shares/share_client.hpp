@@ -92,6 +92,20 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ShareDirectoryClient GetRootDirectoryClient() const;
 
     /**
+     * @brief Creates a file client that addresses a file by its file ID.
+     * @param fileId The file ID of the file.
+     * @return A client that addresses the file by its file ID.
+     */
+    ShareFileClient GetFileClientByFileId(const std::string& fileId) const;
+
+    /**
+     * @brief Creates a directory client that addresses a directory by its file ID.
+     * @param fileId The file ID of the directory.
+     * @return A client that addresses the directory by its file ID.
+     */
+    ShareDirectoryClient GetDirectoryClientByFileId(const std::string& fileId) const;
+
+    /**
      * @brief Creates the file share.
      * @param options Optional parameters to create this file share.
      * @param context Context for cancelling long running operations.

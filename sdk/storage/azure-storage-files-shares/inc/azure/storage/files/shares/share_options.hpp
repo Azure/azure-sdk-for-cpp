@@ -8,6 +8,7 @@
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/url.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 
@@ -272,6 +273,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   namespace _detail {
+    Azure::Nullable<std::string> GetFileIdFromUrl(const Azure::Core::Url& url);
+    void AssertPathAddressed(const Azure::Nullable<std::string>& fileId, const char* operationName);
+
     struct ShareClientConfiguration
     {
       /**
@@ -1173,6 +1177,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
    */
   struct GetFilePropertiesOptions final
+  {
+    /**
+     * The operation will only succeed if the access condition is met.
+     */
+    LeaseAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetFileLinks.
+   */
+  struct GetFileLinksOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
