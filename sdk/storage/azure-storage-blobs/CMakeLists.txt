@@ -76,6 +76,10 @@ set(
     src/private/avro_parser.cpp
     src/private/avro_parser.hpp
     src/private/package_version.hpp
+    src/private/session_authentication_policy.cpp
+    src/private/session_authentication_policy.hpp
+    src/private/token_credential_session_provider.cpp
+    src/private/token_credential_session_provider.hpp
     src/rest_client.cpp
 )
 

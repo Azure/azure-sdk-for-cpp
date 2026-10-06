@@ -87,6 +87,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   using GetServicePropertiesOptions = Blobs::GetServicePropertiesOptions;
   using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
+  using SessionOptions = Blobs::SessionOptions;
 
   /**
    * Configures whether to do content validation for file uploads and downloads.
@@ -223,6 +224,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Optional. Configures whether to do content validation for file downloads.
      */
     Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+
+    /**
+     * @brief Configures persisted session authentication for Blob endpoint download requests.
+     */
+    SessionOptions Session;
   };
 
   /**

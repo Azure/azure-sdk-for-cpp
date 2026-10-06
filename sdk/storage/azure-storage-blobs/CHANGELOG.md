@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for persisted session authentication for eligible blob download requests.
+
 ### Breaking Changes
 
 - Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to

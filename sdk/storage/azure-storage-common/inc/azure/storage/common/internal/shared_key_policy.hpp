@@ -32,13 +32,18 @@ namespace Azure { namespace Storage { namespace _internal {
         Core::Context const& context) const override
     {
       request.SetHeader(
-          "Authorization", "SharedKey " + m_credential->AccountName + ":" + GetSignature(request));
+          "Authorization",
+          "SharedKey " + m_credential->AccountName + ":"
+              + GetSignature(request, m_credential->AccountName, m_credential->GetAccountKey()));
       return nextPolicy.Send(request, context);
     }
 
-  private:
-    std::string GetSignature(const Core::Http::Request& request) const;
+    static std::string GetSignature(
+        const Core::Http::Request& request,
+        const std::string& accountName,
+        const std::string& signingKey);
 
+  private:
     std::shared_ptr<StorageSharedKeyCredential> m_credential;
   };
 
