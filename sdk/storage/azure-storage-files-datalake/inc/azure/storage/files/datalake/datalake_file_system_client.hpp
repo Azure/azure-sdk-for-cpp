@@ -118,6 +118,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Deletes the file system.
+     *
+     * @remark When a file system is deleted, a file system with the same name cannot be created for
+     * at least 30 seconds. The file system might not be available for more than 30 seconds if the
+     * service is still processing the request. While the file system is being deleted, attempts to
+     * create a file system with the same name fail with status code 409 (Conflict). Operations on
+     * paths within the file system, including reads and writes, may continue to succeed for up to
+     * 30 seconds after the delete request is accepted. After this period, all operations on the
+     * file system and its paths fail with status code 404 (Not Found).
+     *
      * @param options Optional parameters to delete this file system.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::DeleteFileSystemResult> containing the
@@ -130,6 +139,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     /**
      * @brief Deletes the file system if it exists.
+     *
+     * @remark When a file system is deleted, a file system with the same name cannot be created for
+     * at least 30 seconds. The file system might not be available for more than 30 seconds if the
+     * service is still processing the request. While the file system is being deleted, attempts to
+     * create a file system with the same name fail with status code 409 (Conflict). Operations on
+     * paths within the file system, including reads and writes, may continue to succeed for up to
+     * 30 seconds after the delete request is accepted. After this period, all operations on the
+     * file system and its paths fail with status code 404 (Not Found).
+     *
      * @param options Optional parameters to delete this file system.
      * @param context Context for cancelling long running operations.
      * @return Azure::Response<Models::DeleteFileSystemResult> containing the

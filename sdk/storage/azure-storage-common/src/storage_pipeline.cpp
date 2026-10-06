@@ -71,7 +71,7 @@ namespace Azure { namespace Storage { namespace _internal {
       policies.emplace_back(policy->Clone());
     }
 
-    // SharedKey/SAS auth runs last among per-retry policies so the signature covers
+    // Request-signing auth runs last among per-retry policies so the signature covers
     // the final, fully-modified request.
     if (storagePipelineOptions.SharedKeyAuthPolicy)
     {

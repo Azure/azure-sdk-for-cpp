@@ -1220,7 +1220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics Restore;
     };
     /**
-     * @brief NFS only. Type of the file or directory.
+     * @brief Type of the file.
      */
     class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
     public:

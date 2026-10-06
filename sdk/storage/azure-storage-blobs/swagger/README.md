@@ -1216,6 +1216,51 @@ directive:
       for (const propertyName in $.BlobProperties.properties) {
         $.BlobProperties.properties[propertyName]["x-ms-xml"] = {"name": ""};
       }
+      $.BlobProperties.description = "Properties of a blob.";
+      const descriptions = {
+        "ObjectReplicationSourceProperties": "Object replication policies associated with the source blob.",
+        "ImmutabilityPolicy": "Immutability policy associated with the blob.",
+        "HttpHeaders": "Standard HTTP properties supported by the blob.",
+        "LastModified": "The date and time when the blob was last modified.",
+        "CreatedOn": "The date and time when the blob was created.",
+        "Metadata": "A set of name-value pairs associated with the blob.",
+        "ObjectReplicationDestinationPolicyId": "The object replication policy identifier for the destination blob.",
+        "BlobType": "The type of the blob.",
+        "CopyCompletedOn": "The completion time of the last attempted copy operation.",
+        "CopyStatusDescription": "A description of the last copy operation status.",
+        "CopyId": "The identifier of the last copy operation.",
+        "CopyProgress": "The progress of the last copy operation.",
+        "CopySource": "The source of the last copy operation.",
+        "CopyStatus": "The status of the last copy operation.",
+        "IsIncrementalCopy": "Indicates whether the blob is an incremental copy.",
+        "IncrementalCopyDestinationSnapshot": "The destination snapshot of the last incremental copy.",
+        "LeaseDuration": "The duration of the blob lease.",
+        "LeaseState": "The current lease state of the blob.",
+        "LeaseStatus": "The current lease status of the blob.",
+        "BlobSize": "The size of the blob in bytes.",
+        "ETag": "The entity tag of the blob.",
+        "SequenceNumber": "The current sequence number of a page blob.",
+        "CommittedBlockCount": "The number of committed blocks in an append blob.",
+        "IsServerEncrypted": "Indicates whether the blob is encrypted by the service.",
+        "EncryptionKeySha256": "The SHA-256 hash of the customer-provided encryption key.",
+        "EncryptionScope": "The encryption scope used to encrypt the blob.",
+        "AccessTier": "The access tier of the blob.",
+        "IsAccessTierInferred": "Indicates whether the access tier was inferred.",
+        "ArchiveStatus": "The archive rehydration status of the blob.",
+        "AccessTierChangedOn": "The time when the access tier was last changed.",
+        "SmartAccessTier": "The underlying access tier of a smart-tier blob.",
+        "VersionId": "The version identifier of the blob.",
+        "IsCurrentVersion": "Indicates whether this is the current blob version.",
+        "TagCount": "The number of tags associated with the blob.",
+        "ExpiresOn": "The time when the blob will expire.",
+        "IsSealed": "Indicates whether the append blob is sealed.",
+        "RehydratePriority": "The priority of an archive rehydration operation.",
+        "LastAccessedOn": "The time when the blob was last read or written.",
+        "HasLegalHold": "Indicates whether the blob has a legal hold."
+      };
+      for (const propertyName in descriptions) {
+        $.BlobProperties.properties[propertyName].description = descriptions[propertyName];
+      }
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses["200"]
     transform: >
