@@ -1,6 +1,9 @@
 steps:
   - pwsh: |
-      if ((lsb_release --release --short) -eq "22.04") {
+      # Read the OS version from /etc/os-release instead of shelling out to
+      # lsb_release, which is not guaranteed to be installed on hosted images.
+      $versionId = (Get-Content /etc/os-release | Select-String '^VERSION_ID=').Line.Split('=')[1].Trim('"')
+      if ($versionId -eq "22.04") {
         Write-Host "Release is 22.04, modifying apt configuration"
 
         Write-Host "sudo rm -f /etc/apt/sources.list.d/azure.list"
