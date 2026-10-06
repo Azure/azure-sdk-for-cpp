@@ -68,6 +68,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
     pipelineOptions.SharedKeyAuthPolicy = std::move(sharedKeyPolicy);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -111,6 +112,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
     auto authPolicies = _detail::CreateTokenAuthenticationPolicies(
         serviceUrl, credential, tokenContext, options.EnableTenantDiscovery, options);
     pipelineOptions.TokenAuthPolicy = std::move(authPolicies.TokenAuthPolicy);
@@ -149,6 +151,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_serviceUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));

@@ -12,6 +12,68 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   const static std::string DfsEndPointIdentifier = ".dfs.";
   const static std::string BlobEndPointIdentifier = ".blob.";
 
+  Models::PathProperties PathPropertiesFromBlobProperties(
+      Blobs::Models::BlobProperties properties,
+      const Azure::Core::Http::RawResponse& response)
+  {
+    Models::PathProperties ret;
+    ret.ETag = std::move(properties.ETag);
+    ret.LastModified = std::move(properties.LastModified);
+    ret.CreatedOn = std::move(properties.CreatedOn);
+    ret.Metadata = std::move(properties.Metadata);
+    ret.LeaseDuration = std::move(properties.LeaseDuration);
+    ret.LeaseState = std::move(properties.LeaseState);
+    ret.LeaseStatus = std::move(properties.LeaseStatus);
+    ret.HttpHeaders = std::move(properties.HttpHeaders);
+    ret.IsServerEncrypted = properties.IsServerEncrypted;
+    ret.EncryptionKeySha256 = std::move(properties.EncryptionKeySha256);
+    ret.EncryptionScope = std::move(properties.EncryptionScope);
+    ret.CopyId = std::move(properties.CopyId);
+    ret.CopySource = std::move(properties.CopySource);
+    ret.CopyStatus = std::move(properties.CopyStatus);
+    ret.CopyProgress = std::move(properties.CopyProgress);
+    ret.CopyCompletedOn = std::move(properties.CopyCompletedOn);
+    ret.ExpiresOn = std::move(properties.ExpiresOn);
+    ret.LastAccessedOn = std::move(properties.LastAccessedOn);
+    ret.FileSize = properties.BlobSize;
+    ret.ArchiveStatus = std::move(properties.ArchiveStatus);
+    ret.RehydratePriority = std::move(properties.RehydratePriority);
+    ret.CopyStatusDescription = std::move(properties.CopyStatusDescription);
+    ret.IsIncrementalCopy = std::move(properties.IsIncrementalCopy);
+    ret.IncrementalCopyDestinationSnapshot
+        = std::move(properties.IncrementalCopyDestinationSnapshot);
+    ret.VersionId = std::move(properties.VersionId);
+    ret.IsCurrentVersion = std::move(properties.IsCurrentVersion);
+    ret.IsDirectory = MetadataIndicatesIsDirectory(ret.Metadata);
+    const auto& headers = response.GetHeaders();
+    auto encryptionContext = headers.find(EncryptionContextHeaderName);
+    if (encryptionContext != headers.end())
+    {
+      ret.EncryptionContext = encryptionContext->second;
+    }
+    auto acl = headers.find(AclHeaderName);
+    if (acl != headers.end())
+    {
+      ret.Acls = Models::Acl::DeserializeAcls(acl->second);
+    }
+    auto owner = headers.find(OwnerHeaderName);
+    if (owner != headers.end())
+    {
+      ret.Owner = owner->second;
+    }
+    auto group = headers.find(GroupHeaderName);
+    if (group != headers.end())
+    {
+      ret.Group = group->second;
+    }
+    auto permissions = headers.find(PermissionsHeaderName);
+    if (permissions != headers.end())
+    {
+      ret.Permissions = permissions->second;
+    }
+    return ret;
+  }
+
   Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url)
   {
     std::string host = url.GetHost();

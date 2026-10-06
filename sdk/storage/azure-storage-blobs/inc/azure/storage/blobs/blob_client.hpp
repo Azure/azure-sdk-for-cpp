@@ -425,6 +425,17 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetAccountInfoOptions& options = GetAccountInfoOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Gets the data locality layout for this blob.
+     *
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A paged response containing the blob's data locality layout.
+     */
+    BlobLayoutPagedResponse GetLayout(
+        const GetBlobLayoutOptions& options = GetBlobLayoutOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   protected:
     /** @brief Blob Url */
     Azure::Core::Url m_blobUrl;

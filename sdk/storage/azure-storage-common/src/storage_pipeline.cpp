@@ -4,6 +4,7 @@
 #include "azure/storage/common/internal/storage_pipeline.hpp"
 
 #include "azure/storage/common/internal/constants.hpp"
+#include "azure/storage/common/internal/storage_data_locality_policy.hpp"
 #include "azure/storage/common/internal/storage_per_retry_policy.hpp"
 #include "azure/storage/common/internal/storage_retry_policy.hpp"
 #include "azure/storage/common/internal/storage_service_version_policy.hpp"
@@ -40,6 +41,10 @@ namespace Azure { namespace Storage { namespace _internal {
     for (auto& policy : clientOptions.PerOperationPolicies)
     {
       policies.emplace_back(policy->Clone());
+    }
+    if (storagePipelineOptions.AddDataLocalityPolicy)
+    {
+      policies.emplace_back(std::make_unique<StorageDataLocalityPolicy>());
     }
 
     // Retry policy

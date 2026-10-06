@@ -190,6 +190,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
     /**
+     * @brief Gets the data locality layout for this file.
+     * @param options Optional parameters to execute this function.
+     * @param context Context for cancelling long running operations.
+     * @return A paged response containing the file's data locality layout.
+     * @remark This request is sent to the blob endpoint.
+     */
+    FileLayoutPagedResponse GetLayout(
+        const GetFileLayoutOptions& options = GetFileLayoutOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
+    /**
      * @brief Creates a new file, or updates the content of an existing file. Updating
      * an existing file overwrites any existing metadata on the file.
      * @param buffer A memory buffer containing the content to upload.
