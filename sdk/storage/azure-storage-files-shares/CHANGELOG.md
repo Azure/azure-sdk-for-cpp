@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Bumped up API version to `2027-03-07`.
 ### Breaking Changes
 
 ### Bugs Fixed
