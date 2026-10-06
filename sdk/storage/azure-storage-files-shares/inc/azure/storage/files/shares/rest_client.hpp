@@ -331,6 +331,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       DateTime LastModified;
       /**
+       * The date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
+      /**
        * The ETag contains a value which represents the version of the share, in quotes.
        */
       ETag Etag;
@@ -637,6 +641,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * the last modified time of the share.
        */
       DateTime LastModified;
+      /**
+       * Returns the date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
       /**
        * Returns the current share quota in GB.
        */

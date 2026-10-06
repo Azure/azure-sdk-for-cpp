@@ -482,6 +482,20 @@ directive:
       $.ShareItemInternal.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
       $.ShareItemInternal["x-ms-client-name"] = "ShareItem";
       $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
+      $.ShareItemDetails.properties["CreationTime"]["x-ms-client-name"] = "CreatedOn";
+      $.ShareItemDetails.properties["CreationTime"]["x-ms-xml"] = {"name": "Creation-Time"};
+      $.ShareItemDetails.properties["CreationTime"]["x-nullable"] = true;
+      $.ShareItemDetails.properties["CreationTime"].description = "The date and time the share was created.";
+      const creationTime = $.ShareItemDetails.properties["CreationTime"];
+      delete $.ShareItemDetails.properties["CreationTime"];
+      const properties = {};
+      for (const name in $.ShareItemDetails.properties) {
+        properties[name] = $.ShareItemDetails.properties[name];
+        if (name === "Last-Modified") {
+          properties["CreationTime"] = creationTime;
+        }
+      }
+      $.ShareItemDetails.properties = properties;
       delete $.ShareItemDetails.properties["EnableSmbDirectoryLease"];
       delete $.ShareItemInternal.properties["Properties"];
       delete $.ShareItemInternal.required;
@@ -571,6 +585,19 @@ directive:
       $["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
       $["x-ms-share-next-allowed-provisioned-iops-downgrade-time"]["x-nullable"] = true;
       $["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"]["x-nullable"] = true;
+      $["x-ms-share-creation-time"]["x-ms-client-name"] = "CreatedOn";
+      $["x-ms-share-creation-time"]["x-nullable"] = true;
+      $["x-ms-share-creation-time"].description = "Returns the date and time the share was created.";
+      const creationTime = $["x-ms-share-creation-time"];
+      delete $["x-ms-share-creation-time"];
+      const headers = {};
+      for (const name in $) {
+        headers[name] = $[name];
+        if (name === "Last-Modified") {
+          headers["x-ms-share-creation-time"] = creationTime;
+        }
+      }
+      $ = headers;
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >

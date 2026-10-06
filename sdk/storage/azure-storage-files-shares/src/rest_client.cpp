@@ -731,6 +731,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           kMetadata,
           kProperties,
           kLastModified,
+          kCreationTime,
           kEtag,
           kQuota,
           kProvisionedIops,
@@ -772,6 +773,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
             {"Metadata", XmlTagEnum::kMetadata},
             {"Properties", XmlTagEnum::kProperties},
             {"Last-Modified", XmlTagEnum::kLastModified},
+            {"Creation-Time", XmlTagEnum::kCreationTime},
             {"Etag", XmlTagEnum::kEtag},
             {"Quota", XmlTagEnum::kQuota},
             {"ProvisionedIops", XmlTagEnum::kProvisionedIops},
@@ -884,6 +886,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
                 && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kLastModified)
             {
               vectorElement1.Details.LastModified
+                  = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
+            }
+            else if (
+                xmlPath.size() == 5 && xmlPath[0] == XmlTagEnum::kEnumerationResults
+                && xmlPath[1] == XmlTagEnum::kShares && xmlPath[2] == XmlTagEnum::kShare
+                && xmlPath[3] == XmlTagEnum::kProperties && xmlPath[4] == XmlTagEnum::kCreationTime)
+            {
+              vectorElement1.Details.CreatedOn
                   = DateTime::Parse(node.Value, Azure::DateTime::DateFormat::Rfc1123);
             }
             else if (
@@ -1416,6 +1426,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       response.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
       response.LastModified = DateTime::Parse(
           pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      if (pRawResponse->GetHeaders().count("x-ms-share-creation-time") != 0)
+      {
+        response.CreatedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-share-creation-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
       response.Quota = std::stoll(pRawResponse->GetHeaders().at("x-ms-share-quota"));
       if (pRawResponse->GetHeaders().count("x-ms-share-provisioned-iops") != 0)
       {
