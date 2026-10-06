@@ -6,6 +6,10 @@
 
 ### Breaking Changes
 
+- Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
+  Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
+  requesting XML responses.
+
 ### Bugs Fixed
 
 ### Other Changes
