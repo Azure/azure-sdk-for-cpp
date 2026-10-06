@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for persisted session authentication for eligible file download requests.
+
 ### Breaking Changes
 
 ### Bugs Fixed

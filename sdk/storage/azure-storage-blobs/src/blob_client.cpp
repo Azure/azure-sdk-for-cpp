@@ -7,6 +7,7 @@
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "private/package_version.hpp"
+#include "private/session_authentication_policy.hpp"
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -88,9 +89,10 @@ namespace Azure { namespace Storage { namespace Blobs {
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
-      pipelineOptions.TokenAuthPolicy
-          = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-              credential, tokenContext, options.EnableTenantDiscovery);
+      auto authPolicies = _detail::CreateTokenAuthenticationPolicies(
+          blobUrl, credential, tokenContext, options.EnableTenantDiscovery, options);
+      pipelineOptions.TokenAuthPolicy = std::move(authPolicies.TokenAuthPolicy);
+      pipelineOptions.SharedKeyAuthPolicy = std::move(authPolicies.FinalAuthPolicy);
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(

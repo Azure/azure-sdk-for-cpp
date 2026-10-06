@@ -14,6 +14,14 @@ namespace Azure { namespace Storage { namespace _internal {
       Azure::Core::Http::Policies::NextHttpPolicy& nextPolicy,
       Azure::Core::Context const& context) const
   {
+    AuthorizeRequest(request, context);
+    return nextPolicy.Send(request, context);
+  }
+
+  void StorageBearerTokenAuthenticationPolicy::AuthorizeRequest(
+      Azure::Core::Http::Request& request,
+      Azure::Core::Context const& context) const
+  {
     std::string tenantId = m_safeTenantId.Get();
     if (!tenantId.empty() || !m_enableTenantDiscovery)
     {
@@ -22,7 +30,6 @@ namespace Azure { namespace Storage { namespace _internal {
       tokenRequestContext.TenantId = tenantId;
       AuthenticateAndAuthorizeRequest(request, tokenRequestContext, context);
     }
-    return nextPolicy.Send(request, context);
   }
 
   bool StorageBearerTokenAuthenticationPolicy::AuthorizeRequestOnChallenge(

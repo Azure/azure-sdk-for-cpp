@@ -98,6 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     blobOptions.ApiVersion = options.ApiVersion;
     blobOptions.CustomerProvidedKey = options.CustomerProvidedKey;
     blobOptions.EnableTenantDiscovery = options.EnableTenantDiscovery;
+    blobOptions.Session = options.Session;
     if (options.Audience.HasValue())
     {
       blobOptions.Audience = Blobs::BlobAudience(options.Audience.Value().ToString());
