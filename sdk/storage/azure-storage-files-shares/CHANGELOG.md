@@ -11,6 +11,8 @@
     link count, and NFS file type.
   - Added support for listing symbolic links, block devices, character devices, FIFOs, and
     sockets.
+- Added the share creation time to `ShareClient::GetProperties` and
+  `ShareServiceClient::ListShares` responses.
 
 ### Breaking Changes
 
