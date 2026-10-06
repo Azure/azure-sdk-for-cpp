@@ -54,6 +54,7 @@ set(
     inc/azure/storage/common/internal/shared_key_policy.hpp
     inc/azure/storage/common/internal/storage_bearer_token_auth.hpp
     inc/azure/storage/common/internal/storage_bearer_token_authentication_policy.hpp
+    inc/azure/storage/common/internal/storage_data_locality_policy.hpp
     inc/azure/storage/common/internal/storage_per_retry_policy.hpp
     inc/azure/storage/common/internal/storage_pipeline.hpp
     inc/azure/storage/common/internal/storage_retry_policy.hpp
@@ -81,6 +82,7 @@ set(
     src/shared_key_policy.cpp
     src/storage_bearer_token_authentication_policy.cpp
     src/storage_credential.cpp
+    src/storage_data_locality_policy.cpp
     src/storage_exception.cpp
     src/storage_per_retry_policy.cpp
     src/storage_pipeline.cpp

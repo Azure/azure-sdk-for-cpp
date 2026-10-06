@@ -75,6 +75,8 @@ set(
     src/page_blob_client.cpp
     src/private/avro_parser.cpp
     src/private/avro_parser.hpp
+    src/private/data_locality.cpp
+    src/private/data_locality.hpp
     src/private/package_version.hpp
     src/private/session_authentication_policy.cpp
     src/private/session_authentication_policy.hpp

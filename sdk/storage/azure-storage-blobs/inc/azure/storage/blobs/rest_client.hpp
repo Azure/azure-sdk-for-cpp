@@ -1451,6 +1451,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
+     * @brief Indicates the download hint for the blob.
+     */
+    class DownloadHint final : public Core::_internal::ExtendableEnumeration<DownloadHint> {
+    public:
+      /** Constructs a new DownloadHint instance */
+      DownloadHint() = default;
+      /** Constructs a new DownloadHint from a string. */
+      explicit DownloadHint(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type DownloadHint: Layout */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static DownloadHint Layout;
+    };
+    /**
      * @brief Detailed information of the downloaded blob.
      */
     struct DownloadBlobDetails final
@@ -1614,6 +1627,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
        */
       Nullable<Models::AccessTier> SmartAccessTier;
+      /**
+       * Indicates the download hint for the blob.
+       */
+      Nullable<Models::DownloadHint> DownloadHint;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
@@ -1880,6 +1897,65 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       bool Deleted = true;
     };
+    namespace _detail {
+      struct BlobLayoutRangesItem final
+      {
+        /**
+         * The start byte offset of the range.
+         */
+        std::int64_t Start = std::int64_t();
+        /**
+         * The end byte offset of the range.
+         */
+        std::int64_t End = std::int64_t();
+        /**
+         * Index into the Endpoints array indicating which endpoint serves this range.
+         */
+        std::int32_t EndpointIndex = std::int32_t();
+      };
+      struct BlobLayoutEndpointsItem final
+      {
+        /**
+         * The index of the endpoint, referenced by Range elements.
+         */
+        std::int32_t Index = std::int32_t();
+        /**
+         * The host:port of the endpoint.
+         */
+        std::string Value;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobClient::GetLayout.
+       */
+      struct BlobLayout final
+      {
+        /**
+         * Array of BlobLayout-RangesItem.
+         */
+        std::vector<BlobLayoutRangesItem> Ranges;
+        /**
+         * Array of BlobLayout-EndpointsItem.
+         */
+        std::vector<BlobLayoutEndpointsItem> Endpoints;
+        /**
+         * The continuation marker used for this request.
+         */
+        std::string Marker;
+        /**
+         * If the number of ranges exceeds MaxResults, a NextMarker is returned for use in
+         * subsequent requests to continue listing.
+         */
+        std::string NextMarker;
+        /**
+         * The maximum number of ranges to return per request.
+         */
+        std::int32_t MaxResults = std::int32_t();
+        /**
+         * Properties of a blob.
+         */
+        BlobProperties Properties;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Undelete.
      */
@@ -3657,6 +3733,28 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const DeleteBlobOptions& options,
+          const Core::Context& context);
+      struct GetBlobLayoutOptions final
+      {
+        Nullable<std::string> Snapshot;
+        Nullable<std::string> VersionId;
+        Nullable<std::string> Marker;
+        Nullable<std::int32_t> MaxResults;
+        Nullable<std::string> Range;
+        Nullable<std::string> LeaseId;
+        Nullable<std::string> IfTags;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
+      };
+      static Response<Models::_detail::BlobLayout> GetLayout(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetBlobLayoutOptions& options,
           const Core::Context& context);
       struct UndeleteBlobOptions final
       {

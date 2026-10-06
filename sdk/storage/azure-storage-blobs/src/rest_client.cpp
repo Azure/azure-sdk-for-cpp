@@ -166,6 +166,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     const BlobType BlobType::BlockBlob("BlockBlob");
     const BlobType BlobType::PageBlob("PageBlob");
     const BlobType BlobType::AppendBlob("AppendBlob");
+    const DownloadHint DownloadHint::Layout("layout");
     const DeleteSnapshotsOption DeleteSnapshotsOption::IncludeSnapshots("include");
     const DeleteSnapshotsOption DeleteSnapshotsOption::OnlySnapshots("only");
     const ScheduleBlobExpiryOriginType ScheduleBlobExpiryOriginType::NeverExpire("NeverExpire");
@@ -411,6 +412,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobServiceProperties response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -707,6 +709,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::ServiceStatistics response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -806,6 +809,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::_detail::ListBlobContainersResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -1098,6 +1102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::UserDelegationKey response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -1287,6 +1292,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::_detail::FindBlobsByTagsResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -1604,6 +1610,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobContainerAccessPolicy response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -1897,6 +1904,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::_detail::FindBlobsByTagsResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -2653,6 +2661,11 @@ namespace Azure { namespace Storage { namespace Blobs {
         response.Details.SmartAccessTier
             = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-smart-access-tier"));
       }
+      if (pRawResponse->GetHeaders().count("x-ms-download-hint") != 0)
+      {
+        response.Details.DownloadHint
+            = Models::DownloadHint(pRawResponse->GetHeaders().at("x-ms-download-hint"));
+      }
       if (httpStatusCode == Core::Http::HttpStatusCode::Ok)
       {
         if (pRawResponse->GetHeaders().count("Content-MD5") != 0)
@@ -3057,6 +3070,443 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
       Models::DeleteBlobResult response;
       return Response<Models::DeleteBlobResult>(std::move(response), std::move(pRawResponse));
+    }
+    Response<Models::_detail::BlobLayout> BlobClient::GetLayout(
+        Core::Http::_internal::HttpPipeline& pipeline,
+        const Core::Url& url,
+        const GetBlobLayoutOptions& options,
+        const Core::Context& context)
+    {
+      auto request = Core::Http::Request(Core::Http::HttpMethod::Get, url);
+      request.GetUrl().AppendQueryParameter("comp", "layout");
+      if (options.Snapshot.HasValue() && !options.Snapshot.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "snapshot", _internal::UrlEncodeQueryParameter(options.Snapshot.Value()));
+      }
+      if (options.VersionId.HasValue() && !options.VersionId.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "versionid", _internal::UrlEncodeQueryParameter(options.VersionId.Value()));
+      }
+      if (options.Marker.HasValue() && !options.Marker.Value().empty())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "marker", _internal::UrlEncodeQueryParameter(options.Marker.Value()));
+      }
+      if (options.MaxResults.HasValue())
+      {
+        request.GetUrl().AppendQueryParameter(
+            "maxresults", std::to_string(options.MaxResults.Value()));
+      }
+      if (options.Range.HasValue() && !options.Range.Value().empty())
+      {
+        request.SetHeader("x-ms-range", options.Range.Value());
+      }
+      if (options.LeaseId.HasValue() && !options.LeaseId.Value().empty())
+      {
+        request.SetHeader("x-ms-lease-id", options.LeaseId.Value());
+      }
+      if (options.IfTags.HasValue() && !options.IfTags.Value().empty())
+      {
+        request.SetHeader("x-ms-if-tags", options.IfTags.Value());
+      }
+      if (options.IfModifiedSince.HasValue())
+      {
+        request.SetHeader(
+            "If-Modified-Since",
+            options.IfModifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+      }
+      if (options.IfUnmodifiedSince.HasValue())
+      {
+        request.SetHeader(
+            "If-Unmodified-Since",
+            options.IfUnmodifiedSince.Value().ToString(Azure::DateTime::DateFormat::Rfc1123));
+      }
+      if (options.IfMatch.HasValue() && !options.IfMatch.ToString().empty())
+      {
+        request.SetHeader("If-Match", options.IfMatch.ToString());
+      }
+      if (options.IfNoneMatch.HasValue() && !options.IfNoneMatch.ToString().empty())
+      {
+        request.SetHeader("If-None-Match", options.IfNoneMatch.ToString());
+      }
+      if (options.EncryptionKey.HasValue() && !options.EncryptionKey.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-key", options.EncryptionKey.Value());
+      }
+      if (options.EncryptionKeySha256.HasValue()
+          && !Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()).empty())
+      {
+        request.SetHeader(
+            "x-ms-encryption-key-sha256",
+            Core::Convert::Base64Encode(options.EncryptionKeySha256.Value()));
+      }
+      if (options.EncryptionAlgorithm.HasValue() && !options.EncryptionAlgorithm.Value().empty())
+      {
+        request.SetHeader("x-ms-encryption-algorithm", options.EncryptionAlgorithm.Value());
+      }
+      request.SetHeader("x-ms-version", "2026-10-06");
+      auto pRawResponse = pipeline.Send(request, context);
+      auto httpStatusCode = pRawResponse->GetStatusCode();
+      if (!(httpStatusCode == Core::Http::HttpStatusCode::Ok
+            || httpStatusCode == Core::Http::HttpStatusCode::NoContent))
+      {
+        throw StorageException::CreateFromResponse(std::move(pRawResponse));
+      }
+      Models::_detail::BlobLayout response;
+      {
+        const auto& responseBody = pRawResponse->GetBody();
+        if (!responseBody.empty())
+        {
+          _internal::XmlReader reader(
+              reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
+          enum class XmlTagEnum
+          {
+            kUnknown,
+            kBlobLayout,
+            kRanges,
+            kRange,
+            kEndpoints,
+            kEndpoint,
+            kMarker,
+            kNextMarker,
+            kMaxResults,
+          };
+          const std::unordered_map<std::string, XmlTagEnum> XmlTagEnumMap{
+              {"BlobLayout", XmlTagEnum::kBlobLayout},
+              {"Ranges", XmlTagEnum::kRanges},
+              {"Range", XmlTagEnum::kRange},
+              {"Endpoints", XmlTagEnum::kEndpoints},
+              {"Endpoint", XmlTagEnum::kEndpoint},
+              {"Marker", XmlTagEnum::kMarker},
+              {"NextMarker", XmlTagEnum::kNextMarker},
+              {"MaxResults", XmlTagEnum::kMaxResults},
+          };
+          std::vector<XmlTagEnum> xmlPath;
+          Models::_detail::BlobLayoutRangesItem vectorElement1;
+          Models::_detail::BlobLayoutEndpointsItem vectorElement2;
+          while (true)
+          {
+            auto node = reader.Read();
+            if (node.Type == _internal::XmlNodeType::End)
+            {
+              break;
+            }
+            else if (node.Type == _internal::XmlNodeType::StartTag)
+            {
+              auto ite = XmlTagEnumMap.find(node.Name);
+              xmlPath.push_back(ite == XmlTagEnumMap.end() ? XmlTagEnum::kUnknown : ite->second);
+            }
+            else if (node.Type == _internal::XmlNodeType::Text)
+            {
+              if (xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kMarker)
+              {
+                response.Marker = node.Value;
+              }
+              else if (
+                  xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kNextMarker)
+              {
+                response.NextMarker = node.Value;
+              }
+              else if (
+                  xmlPath.size() == 2 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kMaxResults)
+              {
+                response.MaxResults = std::stoi(node.Value);
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::Attribute)
+            {
+              if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kRanges && xmlPath[2] == XmlTagEnum::kRange
+                  && node.Name == "Start")
+              {
+                vectorElement1.Start = std::stoll(node.Value);
+              }
+              else if (
+                  xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kRanges && xmlPath[2] == XmlTagEnum::kRange
+                  && node.Name == "End")
+              {
+                vectorElement1.End = std::stoll(node.Value);
+              }
+              else if (
+                  xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kRanges && xmlPath[2] == XmlTagEnum::kRange
+                  && node.Name == "EndpointIndex")
+              {
+                vectorElement1.EndpointIndex = std::stoi(node.Value);
+              }
+              else if (
+                  xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kEndpoints && xmlPath[2] == XmlTagEnum::kEndpoint
+                  && node.Name == "Index")
+              {
+                vectorElement2.Index = std::stoi(node.Value);
+              }
+              else if (
+                  xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kEndpoints && xmlPath[2] == XmlTagEnum::kEndpoint
+                  && node.Name == "Value")
+              {
+                vectorElement2.Value = node.Value;
+              }
+            }
+            else if (node.Type == _internal::XmlNodeType::EndTag)
+            {
+              if (xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kRanges && xmlPath[2] == XmlTagEnum::kRange)
+              {
+                response.Ranges.push_back(std::move(vectorElement1));
+                vectorElement1 = Models::_detail::BlobLayoutRangesItem();
+              }
+              else if (
+                  xmlPath.size() == 3 && xmlPath[0] == XmlTagEnum::kBlobLayout
+                  && xmlPath[1] == XmlTagEnum::kEndpoints && xmlPath[2] == XmlTagEnum::kEndpoint)
+              {
+                response.Endpoints.push_back(std::move(vectorElement2));
+                vectorElement2 = Models::_detail::BlobLayoutEndpointsItem();
+              }
+              xmlPath.pop_back();
+            }
+          }
+        }
+      }
+      if (pRawResponse->GetHeaders().count("Last-Modified") != 0)
+      {
+        response.Properties.LastModified = DateTime::Parse(
+            pRawResponse->GetHeaders().at("Last-Modified"), Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-content-length") != 0)
+      {
+        response.Properties.BlobSize
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-content-length"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-content-type") != 0)
+      {
+        response.Properties.HttpHeaders.ContentType
+            = pRawResponse->GetHeaders().at("x-ms-blob-content-type");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-content-encoding") != 0)
+      {
+        response.Properties.HttpHeaders.ContentEncoding
+            = pRawResponse->GetHeaders().at("x-ms-blob-content-encoding");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-content-md5") != 0)
+      {
+        response.Properties.HttpHeaders.ContentHash.Value
+            = Core::Convert::Base64Decode(pRawResponse->GetHeaders().at("x-ms-blob-content-md5"));
+        response.Properties.HttpHeaders.ContentHash.Algorithm = HashAlgorithm::Md5;
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-creation-time") != 0)
+      {
+        response.Properties.CreatedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-creation-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      for (auto i = pRawResponse->GetHeaders().lower_bound("x-ms-meta-");
+           i != pRawResponse->GetHeaders().end() && i->first.substr(0, 10) == "x-ms-meta-";
+           ++i)
+      {
+        response.Properties.Metadata.emplace(i->first.substr(10), i->second);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-or-policy-id") != 0)
+      {
+        response.Properties.ObjectReplicationDestinationPolicyId
+            = pRawResponse->GetHeaders().at("x-ms-or-policy-id");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-type") != 0)
+      {
+        response.Properties.BlobType
+            = Models::BlobType(pRawResponse->GetHeaders().at("x-ms-blob-type"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-completion-time") != 0)
+      {
+        response.Properties.CopyCompletedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-copy-completion-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-status-description") != 0)
+      {
+        response.Properties.CopyStatusDescription
+            = pRawResponse->GetHeaders().at("x-ms-copy-status-description");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-id") != 0)
+      {
+        response.Properties.CopyId = pRawResponse->GetHeaders().at("x-ms-copy-id");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-progress") != 0)
+      {
+        response.Properties.CopyProgress = pRawResponse->GetHeaders().at("x-ms-copy-progress");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-source") != 0)
+      {
+        response.Properties.CopySource = pRawResponse->GetHeaders().at("x-ms-copy-source");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-status") != 0)
+      {
+        response.Properties.CopyStatus
+            = Models::CopyStatus(pRawResponse->GetHeaders().at("x-ms-copy-status"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-incremental-copy") != 0)
+      {
+        response.Properties.IsIncrementalCopy
+            = pRawResponse->GetHeaders().at("x-ms-incremental-copy") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-copy-destination-snapshot") != 0)
+      {
+        response.Properties.IncrementalCopyDestinationSnapshot
+            = pRawResponse->GetHeaders().at("x-ms-copy-destination-snapshot");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-duration") != 0)
+      {
+        response.Properties.LeaseDuration
+            = Models::LeaseDurationType(pRawResponse->GetHeaders().at("x-ms-lease-duration"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-state") != 0)
+      {
+        response.Properties.LeaseState
+            = Models::LeaseState(pRawResponse->GetHeaders().at("x-ms-lease-state"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-lease-status") != 0)
+      {
+        response.Properties.LeaseStatus
+            = Models::LeaseStatus(pRawResponse->GetHeaders().at("x-ms-lease-status"));
+      }
+      if (pRawResponse->GetHeaders().count("ETag") != 0)
+      {
+        response.Properties.ETag = ETag(pRawResponse->GetHeaders().at("ETag"));
+      }
+      if (pRawResponse->GetHeaders().count("Content-Disposition") != 0)
+      {
+        response.Properties.HttpHeaders.ContentDisposition
+            = pRawResponse->GetHeaders().at("Content-Disposition");
+      }
+      if (pRawResponse->GetHeaders().count("Content-Language") != 0)
+      {
+        response.Properties.HttpHeaders.ContentLanguage
+            = pRawResponse->GetHeaders().at("Content-Language");
+      }
+      if (pRawResponse->GetHeaders().count("Cache-Control") != 0)
+      {
+        response.Properties.HttpHeaders.CacheControl
+            = pRawResponse->GetHeaders().at("Cache-Control");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-sequence-number") != 0)
+      {
+        response.Properties.SequenceNumber
+            = std::stoll(pRawResponse->GetHeaders().at("x-ms-blob-sequence-number"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-committed-block-count") != 0)
+      {
+        response.Properties.CommittedBlockCount
+            = std::stoi(pRawResponse->GetHeaders().at("x-ms-blob-committed-block-count"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-server-encrypted") != 0)
+      {
+        response.Properties.IsServerEncrypted
+            = pRawResponse->GetHeaders().at("x-ms-server-encrypted") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-key-sha256") != 0)
+      {
+        response.Properties.EncryptionKeySha256 = Core::Convert::Base64Decode(
+            pRawResponse->GetHeaders().at("x-ms-encryption-key-sha256"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-encryption-scope") != 0)
+      {
+        response.Properties.EncryptionScope
+            = pRawResponse->GetHeaders().at("x-ms-encryption-scope");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier") != 0)
+      {
+        response.Properties.AccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-access-tier"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-inferred") != 0)
+      {
+        response.Properties.IsAccessTierInferred
+            = pRawResponse->GetHeaders().at("x-ms-access-tier-inferred") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-smart-access-tier") != 0)
+      {
+        response.Properties.SmartAccessTier
+            = Models::AccessTier(pRawResponse->GetHeaders().at("x-ms-smart-access-tier"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-archive-status") != 0)
+      {
+        response.Properties.ArchiveStatus
+            = Models::ArchiveStatus(pRawResponse->GetHeaders().at("x-ms-archive-status"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-access-tier-change-time") != 0)
+      {
+        response.Properties.AccessTierChangedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-access-tier-change-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-version-id") != 0)
+      {
+        response.Properties.VersionId = pRawResponse->GetHeaders().at("x-ms-version-id");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-is-current-version") != 0)
+      {
+        response.Properties.IsCurrentVersion
+            = pRawResponse->GetHeaders().at("x-ms-is-current-version") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-tag-count") != 0)
+      {
+        response.Properties.TagCount = std::stoi(pRawResponse->GetHeaders().at("x-ms-tag-count"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-expiry-time") != 0)
+      {
+        response.Properties.ExpiresOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-expiry-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-blob-sealed") != 0)
+      {
+        response.Properties.IsSealed
+            = pRawResponse->GetHeaders().at("x-ms-blob-sealed") == std::string("true");
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-rehydrate-priority") != 0)
+      {
+        response.Properties.RehydratePriority
+            = Models::RehydratePriority(pRawResponse->GetHeaders().at("x-ms-rehydrate-priority"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-last-access-time") != 0)
+      {
+        response.Properties.LastAccessedOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-last-access-time"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-immutability-policy-until-date") != 0)
+      {
+        if (!response.Properties.ImmutabilityPolicy.HasValue())
+        {
+          response.Properties.ImmutabilityPolicy = Models::BlobImmutabilityPolicy();
+        }
+        response.Properties.ImmutabilityPolicy.Value().ExpiresOn = DateTime::Parse(
+            pRawResponse->GetHeaders().at("x-ms-immutability-policy-until-date"),
+            Azure::DateTime::DateFormat::Rfc1123);
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-immutability-policy-mode") != 0)
+      {
+        if (!response.Properties.ImmutabilityPolicy.HasValue())
+        {
+          response.Properties.ImmutabilityPolicy = Models::BlobImmutabilityPolicy();
+        }
+        response.Properties.ImmutabilityPolicy.Value().PolicyMode
+            = Models::BlobImmutabilityPolicyMode(
+                pRawResponse->GetHeaders().at("x-ms-immutability-policy-mode"));
+      }
+      if (pRawResponse->GetHeaders().count("x-ms-legal-hold") != 0)
+      {
+        response.Properties.HasLegalHold
+            = pRawResponse->GetHeaders().at("x-ms-legal-hold") == std::string("true");
+      }
+      return Response<Models::_detail::BlobLayout>(std::move(response), std::move(pRawResponse));
     }
     Response<Models::UndeleteBlobResult> BlobClient::Undelete(
         Core::Http::_internal::HttpPipeline& pipeline,
@@ -4534,6 +4984,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       std::map<std::string, std::string> response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -5352,6 +5803,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::_detail::GetPageRangesResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -5530,6 +5982,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::_detail::GetPageRangesDiffResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum
@@ -7193,6 +7646,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::GetBlockListResult response;
       {
         const auto& responseBody = pRawResponse->GetBody();
+
         _internal::XmlReader reader(
             reinterpret_cast<const char*>(responseBody.data()), responseBody.size());
         enum class XmlTagEnum

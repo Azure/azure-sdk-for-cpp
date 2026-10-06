@@ -9,7 +9,7 @@ package-name: azure-storage-blobs
 namespace: Azure::Storage::Blobs
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.BlobStorage/stable/2026-12-06/blob.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/refs/heads/feature/storage/stg105base-swagger/specification/storage/data-plane/Microsoft.BlobStorage/stable/2027-03-07/blob.json
 ```
 
 ## ModelFour Options
@@ -25,6 +25,43 @@ modelerfour:
 
 See the [AutoRest samples](https://github.com/Azure/autorest/tree/master/Samples/3b-custom-transformations)
 for more about how we're customizing things.
+
+### Generate Get Blob Layout responses
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}?comp=layout"].get
+    transform: >
+      $.responses["204"].schema = $.responses["200"].schema;
+      for (const statusCode of ["200", "204"]) {
+        for (const headerName in $.responses[statusCode].headers) {
+          if (!["x-ms-meta", "x-ms-or"].includes(headerName)) {
+            $.responses[statusCode].headers[headerName]["x-nullable"] = true;
+          }
+        }
+      }
+  - from: swagger-document
+    where: $.definitions.BlobLayout
+    transform: >
+      const rangeItem = $.properties.Ranges.properties.Range.items;
+      const endpointItem = $.properties.Endpoints.properties.Endpoint.items;
+      $["x-ms-sealed"] = false;
+      $["x-namespace"] = "_detail";
+      rangeItem["x-namespace"] = "_detail";
+      endpointItem["x-namespace"] = "_detail";
+      $.properties.Ranges = {
+        "type": "array",
+        "xml": {"name": "Ranges", "wrapped": true},
+        "items": rangeItem
+      };
+      $.properties.Endpoints = {
+        "type": "array",
+        "xml": {"name": "Endpoints", "wrapped": true},
+        "items": endpointItem
+      };
+      $.properties.Properties = {"$ref": "#/definitions/BlobProperties"};
+```
 
 ### Fix Generator Warnings
 
@@ -75,6 +112,7 @@ directive:
       delete $["/{filesystem}/{path}?FileRename"];
       delete $["/{containerName}?restype=container&comp=list&flat&arrow"];
       delete $["/{containerName}?restype=container&comp=list&hierarchy&arrow"];
+      delete $["/{containerName}?restype=container&comp=session"];
       
       for (const operation in $) {
         for (const verb in $[operation]) {
@@ -967,6 +1005,12 @@ directive:
   - from: swagger-document
     where: $.definitions
     transform: >
+      $.DownloadHint = {
+        "type": "string",
+        "description": "Indicates the download hint for the blob.",
+        "enum": ["layout"],
+        "x-ms-enum": {"name": "DownloadHint", "modelAsString": true}
+      };
       $.DownloadBlobDetails = {
         "type": "object",
         "required": ["ETag", "LastModified", "CreatedOn", "HttpHeaders", "IsServerEncrypted", "HasLegalHold"],
@@ -1003,7 +1047,8 @@ directive:
           "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
           "IsAccessTierInferred": {"type": "boolean", "x-nullable": true},
           "AccessTierChangedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
-          "SmartAccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true}
+          "SmartAccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
+          "DownloadHint": {"$ref": "#/definitions/DownloadHint", "x-nullable": true}
         }
       };
       $.DownloadBlobResult = {
@@ -1072,6 +1117,8 @@ directive:
         $[status_code].headers["x-ms-access-tier-inferred"]["x-ms-client-path"] = "Details.IsAccessTierInferred";
         $[status_code].headers["x-ms-access-tier-change-time"]["x-ms-client-path"] = "Details.AccessTierChangedOn";
         $[status_code].headers["x-ms-smart-access-tier"]["x-ms-client-path"] = "Details.SmartAccessTier";
+        $[status_code].headers["x-ms-download-hint"]["x-ms-client-path"] = "Details.DownloadHint";
+        $[status_code].headers["x-ms-download-hint"]["x-nullable"] = true;
         delete $[status_code].headers["Accept-Ranges"];
         delete $[status_code].headers["Content-Length"];
         delete $[status_code].headers["Content-Range"];
@@ -1098,18 +1145,81 @@ directive:
     transform: >
       $.push({"$ref": "#/parameters/UserPrincipalName"});
   - from: swagger-document
-    where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses
+    where: $.definitions
     transform: >
-      $["200"].schema = {
+      $.BlobProperties = {
         "type": "object",
         "x-ms-client-name": "BlobProperties",
         "x-ms-sealed": false,
+        "required": [
+          "LastModified",
+          "CreatedOn",
+          "Metadata",
+          "BlobType",
+          "BlobSize",
+          "ETag",
+          "IsServerEncrypted",
+          "HttpHeaders",
+          "HasLegalHold"
+        ],
         "properties": {
           "ObjectReplicationSourceProperties": {"type": "array", "items": {"$ref": "#/definitions/ObjectReplicationPolicy"}, "x-ms-xml": {"name": ""}},
           "ImmutabilityPolicy": {"$ref": "#/definitions/BlobImmutabilityPolicy", "x-nullable": true, "x-ms-xml": {"name": ""}},
-          "HttpHeaders": {"$ref": "#/definitions/BlobHttpHeaders", "x-ms-xml": {"name": ""}}
+          "HttpHeaders": {"$ref": "#/definitions/BlobHttpHeaders", "x-ms-xml": {"name": ""}},
+          "LastModified": {"type": "string", "format": "date-time-rfc1123"},
+          "CreatedOn": {"type": "string", "format": "date-time-rfc1123"},
+          "Metadata": {"$ref": "#/definitions/Metadata"},
+          "ObjectReplicationDestinationPolicyId": {"type": "string", "x-nullable": true},
+          "BlobType": {
+            "type": "string",
+            "enum": ["BlockBlob", "PageBlob", "AppendBlob"],
+            "x-ms-enum": {"name": "BlobType", "modelAsString": false}
+          },
+          "CopyCompletedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "CopyStatusDescription": {"type": "string", "x-nullable": true},
+          "CopyId": {"type": "string", "x-nullable": true},
+          "CopyProgress": {"type": "string", "x-nullable": true},
+          "CopySource": {"type": "string", "x-nullable": true},
+          "CopyStatus": {"$ref": "#/definitions/CopyStatus", "x-nullable": true},
+          "IsIncrementalCopy": {"type": "boolean", "x-nullable": true},
+          "IncrementalCopyDestinationSnapshot": {"type": "string", "x-nullable": true},
+          "LeaseDuration": {
+            "type": "string",
+            "enum": ["infinite", "fixed"],
+            "x-ms-enum": {"name": "LeaseDurationType", "modelAsString": false},
+            "x-nullable": true
+          },
+          "LeaseState": {"$ref": "#/definitions/LeaseState", "x-nullable": true},
+          "LeaseStatus": {"$ref": "#/definitions/LeaseStatus", "x-nullable": true},
+          "BlobSize": {"type": "integer", "format": "int64"},
+          "ETag": {"type": "string", "format": "etag"},
+          "SequenceNumber": {"type": "integer", "format": "int64", "x-nullable": true},
+          "CommittedBlockCount": {"type": "integer", "format": "int32", "x-nullable": true},
+          "IsServerEncrypted": {"type": "boolean"},
+          "EncryptionKeySha256": {"type": "string", "format": "byte", "x-nullable": true},
+          "EncryptionScope": {"type": "string", "x-nullable": true},
+          "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
+          "IsAccessTierInferred": {"type": "boolean", "x-nullable": true},
+          "ArchiveStatus": {"$ref": "#/definitions/ArchiveStatus", "x-nullable": true},
+          "AccessTierChangedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "SmartAccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true},
+          "VersionId": {"type": "string", "x-nullable": true},
+          "IsCurrentVersion": {"type": "boolean", "x-nullable": true},
+          "TagCount": {"type": "integer", "format": "int32", "x-nullable": true},
+          "ExpiresOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "IsSealed": {"type": "boolean", "x-nullable": true},
+          "RehydratePriority": {"$ref": "#/definitions/RehydratePriority", "x-nullable": true},
+          "LastAccessedOn": {"type": "string", "format": "date-time-rfc1123", "x-nullable": true},
+          "HasLegalHold": {"type": "boolean", "x-ms-client-default": false}
         }
       };
+      for (const propertyName in $.BlobProperties.properties) {
+        $.BlobProperties.properties[propertyName]["x-ms-xml"] = {"name": ""};
+      }
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses["200"]
+    transform: >
+      $.schema = {"$ref": "#/definitions/BlobProperties"};
   - from: swagger-document
     where: $["x-ms-paths"]["/{containerName}/{blob}"].head.responses["200"].headers
     transform: >
@@ -1182,6 +1292,77 @@ directive:
       $["x-ms-blob-type"]["x-ms-client-default"] = "";
       delete $["Accept-Ranges"];
       delete $["x-ms-or"];
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      const propertiesHeaders = $["/{containerName}/{blob}"].head.responses["200"].headers;
+      const layoutResponses = $["/{containerName}/{blob}?comp=layout"].get.responses;
+      const mappings = {
+        "Last-Modified": ["Last-Modified", "LastModified"],
+        "x-ms-creation-time": ["x-ms-creation-time", "CreatedOn"],
+        "x-ms-meta": ["x-ms-meta", "Metadata"],
+        "x-ms-or-policy-id": ["x-ms-or-policy-id", "ObjectReplicationDestinationPolicyId"],
+        "x-ms-blob-type": ["x-ms-blob-type", "BlobType"],
+        "x-ms-copy-completion-time": ["x-ms-copy-completion-time", "CopyCompletedOn"],
+        "x-ms-copy-status-description": ["x-ms-copy-status-description", "CopyStatusDescription"],
+        "x-ms-copy-id": ["x-ms-copy-id", "CopyId"],
+        "x-ms-copy-progress": ["x-ms-copy-progress", "CopyProgress"],
+        "x-ms-copy-source": ["x-ms-copy-source", "CopySource"],
+        "x-ms-copy-status": ["x-ms-copy-status", "CopyStatus"],
+        "x-ms-incremental-copy": ["x-ms-incremental-copy", "IsIncrementalCopy"],
+        "x-ms-copy-destination-snapshot": ["x-ms-copy-destination-snapshot", "IncrementalCopyDestinationSnapshot"],
+        "x-ms-lease-duration": ["x-ms-lease-duration", "LeaseDuration"],
+        "x-ms-lease-state": ["x-ms-lease-state", "LeaseState"],
+        "x-ms-lease-status": ["x-ms-lease-status", "LeaseStatus"],
+        "x-ms-blob-content-length": ["Content-Length", "BlobSize"],
+        "ETag": ["ETag", "ETag"],
+        "x-ms-blob-content-type": ["Content-Type", "HttpHeaders.ContentType"],
+        "x-ms-blob-content-md5": ["Content-MD5", "HttpHeaders.ContentHash"],
+        "x-ms-blob-content-encoding": ["Content-Encoding", "HttpHeaders.ContentEncoding"],
+        "Content-Disposition": ["Content-Disposition", "HttpHeaders.ContentDisposition"],
+        "Content-Language": ["Content-Language", "HttpHeaders.ContentLanguage"],
+        "Cache-Control": ["Cache-Control", "HttpHeaders.CacheControl"],
+        "x-ms-blob-sequence-number": ["x-ms-blob-sequence-number", "SequenceNumber"],
+        "x-ms-blob-committed-block-count": ["x-ms-blob-committed-block-count", "CommittedBlockCount"],
+        "x-ms-server-encrypted": ["x-ms-server-encrypted", "IsServerEncrypted"],
+        "x-ms-encryption-key-sha256": ["x-ms-encryption-key-sha256", "EncryptionKeySha256"],
+        "x-ms-encryption-scope": ["x-ms-encryption-scope", "EncryptionScope"],
+        "x-ms-access-tier": ["x-ms-access-tier", "AccessTier"],
+        "x-ms-smart-access-tier": ["x-ms-smart-access-tier", "SmartAccessTier"],
+        "x-ms-access-tier-inferred": ["x-ms-access-tier-inferred", "IsAccessTierInferred"],
+        "x-ms-archive-status": ["x-ms-archive-status", "ArchiveStatus"],
+        "x-ms-access-tier-change-time": ["x-ms-access-tier-change-time", "AccessTierChangedOn"],
+        "x-ms-version-id": ["x-ms-version-id", "VersionId"],
+        "x-ms-is-current-version": ["x-ms-is-current-version", "IsCurrentVersion"],
+        "x-ms-tag-count": ["x-ms-tag-count", "TagCount"],
+        "x-ms-expiry-time": ["x-ms-expiry-time", "ExpiresOn"],
+        "x-ms-blob-sealed": ["x-ms-blob-sealed", "IsSealed"],
+        "x-ms-rehydrate-priority": ["x-ms-rehydrate-priority", "RehydratePriority"],
+        "x-ms-last-access-time": ["x-ms-last-access-time", "LastAccessedOn"],
+        "x-ms-immutability-policy-mode": ["x-ms-immutability-policy-mode", "ImmutabilityPolicy.PolicyMode"],
+        "x-ms-immutability-policy-until-date": ["x-ms-immutability-policy-until-date", "ImmutabilityPolicy.ExpiresOn"],
+        "x-ms-legal-hold": ["x-ms-legal-hold", "HasLegalHold"]
+      };
+      for (const statusCode of ["200", "204"]) {
+        const headers = layoutResponses[statusCode].headers;
+        for (const headerName in headers) {
+          if (!mappings[headerName]) {
+            delete headers[headerName];
+          }
+        }
+        for (const headerName in mappings) {
+          if (!headers[headerName]) {
+            continue;
+          }
+          const [sourceHeaderName, propertyPath] = mappings[headerName];
+          headers[headerName] = JSON.parse(JSON.stringify(propertiesHeaders[sourceHeaderName]));
+          delete headers[headerName]["x-ms-client-name"];
+          headers[headerName]["x-ms-client-path"] = "Properties." + propertyPath;
+          if (headerName !== "x-ms-meta") {
+            headers[headerName]["x-nullable"] = true;
+          }
+        }
+      }
 ```
 
 ### DeleteBlob

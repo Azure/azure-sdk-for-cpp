@@ -23,6 +23,8 @@
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
+#include <future>
+
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   constexpr static const int32_t DefaultListAllRangesPageSizeHint = 10000;
@@ -1260,14 +1262,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           "Buffer is not big enough, file range size is " + std::to_string(fileRangeSize) + ".");
     }
 
-    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
-        buffer, static_cast<size_t>(firstChunkLength), context);
-    if (bytesRead != firstChunkLength)
-    {
-      throw Azure::Core::RequestFailedException("Error when reading body stream.");
-    }
-    firstChunk.Value.BodyStream.reset();
-
     auto returnTypeConverter = [](Azure::Response<Models::DownloadFileResult>& response) {
       Models::DownloadFileToResult ret;
       ret.FileSize = response.Value.FileSize;
@@ -1276,9 +1270,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       return Azure::Response<Models::DownloadFileToResult>(
           std::move(ret), std::move(response.RawResponse));
     };
-    auto ret = returnTypeConverter(firstChunk);
 
-    // Keep downloading the remaining in parallel
+    Azure::Nullable<Azure::Response<Models::DownloadFileResult>> lastChunkResponse;
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadFileOptions chunkOptions;
@@ -1303,19 +1296,51 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
+              lastChunkResponse = std::move(chunk);
             }
           };
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
 
-    _internal::ConcurrentTransfer(
-        remainingOffset,
-        remainingSize,
-        options.TransferOptions.ChunkSize,
-        options.TransferOptions.Concurrency,
-        downloadChunkFunc);
+    std::future<void> remainingDownload;
+    if (remainingSize > 0 && options.TransferOptions.Concurrency > 1)
+    {
+      const int remainingConcurrency = options.TransferOptions.Concurrency - 1;
+      remainingDownload = std::async(std::launch::async, [&, remainingConcurrency]() {
+        _internal::ConcurrentTransfer(
+            remainingOffset,
+            remainingSize,
+            options.TransferOptions.ChunkSize,
+            remainingConcurrency,
+            downloadChunkFunc);
+      });
+    }
+
+    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
+        buffer, static_cast<size_t>(firstChunkLength), context);
+    if (bytesRead != firstChunkLength)
+    {
+      throw Azure::Core::RequestFailedException("Error when reading body stream.");
+    }
+    firstChunk.Value.BodyStream.reset();
+
+    if (remainingDownload.valid())
+    {
+      remainingDownload.get();
+    }
+    else if (remainingSize > 0)
+    {
+      _internal::ConcurrentTransfer(
+          remainingOffset,
+          remainingSize,
+          options.TransferOptions.ChunkSize,
+          options.TransferOptions.Concurrency,
+          downloadChunkFunc);
+    }
+
+    auto ret = lastChunkResponse.HasValue() ? returnTypeConverter(lastChunkResponse.Value())
+                                            : returnTypeConverter(firstChunk);
     ret.Value.ContentRange.Offset = firstChunkOffset;
     ret.Value.ContentRange.Length = fileRangeSize;
     return ret;
@@ -1388,8 +1413,6 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     };
 
     _internal::FileWriter fileWriter(fileName);
-    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
-    firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadFileResult>& response) {
       Models::DownloadFileToResult ret;
@@ -1399,9 +1422,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       return Azure::Response<Models::DownloadFileToResult>(
           std::move(ret), std::move(response.RawResponse));
     };
-    auto ret = returnTypeConverter(firstChunk);
 
-    // Keep downloading the remaining in parallel
+    Azure::Nullable<Azure::Response<Models::DownloadFileResult>> lastChunkResponse;
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadFileOptions chunkOptions;
@@ -1424,19 +1446,46 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
+              lastChunkResponse = std::move(chunk);
             }
           };
 
     int64_t remainingOffset = firstChunkOffset + firstChunkLength;
     int64_t remainingSize = fileRangeSize - firstChunkLength;
 
-    _internal::ConcurrentTransfer(
-        remainingOffset,
-        remainingSize,
-        options.TransferOptions.ChunkSize,
-        options.TransferOptions.Concurrency,
-        downloadChunkFunc);
+    std::future<void> remainingDownload;
+    if (remainingSize > 0 && options.TransferOptions.Concurrency > 1)
+    {
+      const int remainingConcurrency = options.TransferOptions.Concurrency - 1;
+      remainingDownload = std::async(std::launch::async, [&, remainingConcurrency]() {
+        _internal::ConcurrentTransfer(
+            remainingOffset,
+            remainingSize,
+            options.TransferOptions.ChunkSize,
+            remainingConcurrency,
+            downloadChunkFunc);
+      });
+    }
+
+    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
+    firstChunk.Value.BodyStream.reset();
+
+    if (remainingDownload.valid())
+    {
+      remainingDownload.get();
+    }
+    else if (remainingSize > 0)
+    {
+      _internal::ConcurrentTransfer(
+          remainingOffset,
+          remainingSize,
+          options.TransferOptions.ChunkSize,
+          options.TransferOptions.Concurrency,
+          downloadChunkFunc);
+    }
+
+    auto ret = lastChunkResponse.HasValue() ? returnTypeConverter(lastChunkResponse.Value())
+                                            : returnTypeConverter(firstChunk);
     ret.Value.ContentRange.Offset = firstChunkOffset;
     ret.Value.ContentRange.Length = fileRangeSize;
     return ret;
