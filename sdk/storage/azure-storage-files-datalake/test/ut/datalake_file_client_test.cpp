@@ -26,6 +26,18 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
+  TEST(DataLakeFileClientOptionsTest, DefaultTransferSizes)
+  {
+    Files::DataLake::DownloadFileToOptions downloadOptions;
+    EXPECT_EQ(
+        downloadOptions.TransferOptions.InitialChunkSize,
+        downloadOptions.TransferOptions.ChunkSize);
+    EXPECT_EQ(downloadOptions.TransferOptions.InitialChunkSize, 4_MB);
+
+    Files::DataLake::UploadFileFromOptions uploadOptions;
+    EXPECT_EQ(uploadOptions.TransferOptions.SingleUploadThreshold, 4_MB);
+  }
+
   void DataLakeFileClientTest::SetUp()
   {
     DataLakeFileSystemClientTest::SetUp();
@@ -820,7 +832,9 @@ namespace Azure { namespace Storage { namespace Test {
   {
     auto fileClient = *m_fileClient;
     const auto blobContent = RandomBuffer(static_cast<size_t>(8_MB));
-    fileClient.UploadFrom(blobContent.data(), blobContent.size());
+    Files::DataLake::UploadFileFromOptions uploadOptions;
+    uploadOptions.TransferOptions.SingleUploadThreshold = blobContent.size();
+    fileClient.UploadFrom(blobContent.data(), blobContent.size(), uploadOptions);
 
     auto testDownloadToBuffer = [&](int concurrency,
                                     int64_t downloadSize,

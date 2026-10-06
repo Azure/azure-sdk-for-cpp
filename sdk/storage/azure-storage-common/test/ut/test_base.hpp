@@ -6,6 +6,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -14,7 +15,9 @@
 #include <cctype>
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <limits>
+#include <memory>
 #include <random>
 #include <vector>
 
@@ -25,6 +28,31 @@ namespace Azure { namespace Storage {
   using Metadata = Azure::Core::CaseInsensitiveMap;
 
   namespace Test {
+
+    class PeekHttpRequestPolicy final : public Core::Http::Policies::HttpPolicy {
+    public:
+      explicit PeekHttpRequestPolicy(std::function<void(const Core::Http::Request&)> callback)
+          : m_callback(std::move(callback))
+      {
+      }
+
+      std::unique_ptr<Core::Http::RawResponse> Send(
+          Core::Http::Request& request,
+          Core::Http::Policies::NextHttpPolicy nextPolicy,
+          Core::Context const& context) const override
+      {
+        m_callback(request);
+        return nextPolicy.Send(request, context);
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<PeekHttpRequestPolicy>(*this);
+      }
+
+    private:
+      std::function<void(const Core::Http::Request&)> m_callback;
+    };
 
     class StorageTest : public Azure::Core::Test::TestBase {
     public:

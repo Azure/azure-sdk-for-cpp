@@ -111,7 +111,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareServiceClientTest, ListShares)
+  TEST_F(FileShareServiceClientTest, ListShares_PLAYBACKONLY_)
   {
     std::string prefix1 = LowercaseRandomString();
     std::string prefix2 = LowercaseRandomString();
@@ -136,6 +136,12 @@ namespace Azure { namespace Storage { namespace Test {
         for (const auto& share : page.Shares)
         {
           result.insert(share.Name);
+          if (shareSet1.find(share.Name) != shareSet1.end()
+              || shareSet2.find(share.Name) != shareSet2.end())
+          {
+            ASSERT_TRUE(share.Details.CreatedOn.HasValue());
+            EXPECT_TRUE(IsValidTime(share.Details.CreatedOn.Value()));
+          }
         }
       }
       for (const auto& name : shareSet1)

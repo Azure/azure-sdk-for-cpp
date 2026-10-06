@@ -30,6 +30,34 @@ namespace Azure { namespace Storage { namespace Test {
     m_fileClient->Create(1024);
   }
 
+  TEST_F(FileShareFileClientTest, FileIdAddressing_PLAYBACKONLY_)
+  {
+    auto pathProperties = m_fileClient->GetProperties().Value;
+    ASSERT_FALSE(pathProperties.SmbProperties.FileId.empty());
+    ASSERT_FALSE(pathProperties.SmbProperties.ParentFileId.empty());
+
+    auto fileIdClient = m_shareClient->GetFileClientByFileId(pathProperties.SmbProperties.FileId);
+    auto fileIdProperties = fileIdClient.GetProperties().Value;
+    ASSERT_TRUE(fileIdProperties.FileName.HasValue());
+    EXPECT_EQ(fileIdProperties.FileName.Value(), m_fileName);
+    EXPECT_EQ(fileIdProperties.SmbProperties.FileId, pathProperties.SmbProperties.FileId);
+
+    auto links = fileIdClient.GetFileLinks().Value;
+    ASSERT_EQ(links.Links.size(), 1);
+    EXPECT_EQ(links.Links[0].Name, m_fileName);
+    EXPECT_EQ(links.Links[0].ParentId, pathProperties.SmbProperties.ParentFileId);
+
+    auto directoryPathProperties = m_fileShareDirectoryClient->GetProperties().Value;
+    ASSERT_FALSE(directoryPathProperties.SmbProperties.FileId.empty());
+    auto directoryIdClient
+        = m_shareClient->GetDirectoryClientByFileId(directoryPathProperties.SmbProperties.FileId);
+    auto directoryIdProperties = directoryIdClient.GetProperties().Value;
+    ASSERT_TRUE(directoryIdProperties.FileName.HasValue());
+    EXPECT_EQ(directoryIdProperties.FileName.Value(), m_directoryName);
+    EXPECT_EQ(
+        directoryIdProperties.SmbProperties.FileId, directoryPathProperties.SmbProperties.FileId);
+  }
+
   TEST_F(FileShareFileClientTest, CreateDeleteFiles)
   {
     {
@@ -2428,16 +2456,9 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(FileShareFileClientTest, PremiumPosixProperties)
+  TEST_F(NfsFileShareClientTest, PremiumPosixProperties)
   {
-    auto shareServiceClient = *m_premiumShareServiceClient;
-
-    auto shareName = LowercaseRandomString();
-    auto shareClient = GetPremiumShareClientForTest(shareName);
-    Files::Shares::CreateShareOptions shareOptions;
-    shareOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
-    EXPECT_NO_THROW(shareClient.Create(shareOptions));
-    auto otherProperties = m_fileClient->GetProperties().Value;
+    auto& shareClient = *m_shareClient;
 
     auto fileName = LowercaseRandomString();
     auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
@@ -2554,8 +2575,8 @@ namespace Azure { namespace Storage { namespace Test {
     auto symbolicLinkClient
         = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     Files::Shares::CreateSymbolicLinkOptions createSymbolicLinkOptions;
-    createSymbolicLinkOptions.CreatedOn = otherProperties.SmbProperties.CreatedOn;
-    createSymbolicLinkOptions.LastWrittenOn = otherProperties.SmbProperties.LastWrittenOn;
+    createSymbolicLinkOptions.CreatedOn = properties.SmbProperties.CreatedOn;
+    createSymbolicLinkOptions.LastWrittenOn = properties.SmbProperties.LastWrittenOn;
 
     createSymbolicLinkOptions.Metadata = RandomMetadata();
     createSymbolicLinkOptions.Group = "123";
@@ -2668,6 +2689,7 @@ namespace Azure { namespace Storage { namespace Test {
     // From file
     fileClient = shareClient.GetRootDirectoryClient().GetFileClient(LowercaseRandomString());
     EXPECT_NO_THROW(fileClient.UploadFrom(tempFilename, uploadOptions));
+    DeleteFile(tempFilename);
     properties = fileClient.GetProperties().Value;
     EXPECT_TRUE(properties.PosixProperties.FileMode.HasValue());
     EXPECT_EQ(properties.PosixProperties.FileMode.Value().ToOctalFileMode(), octalMode);
@@ -2684,15 +2706,9 @@ namespace Azure { namespace Storage { namespace Test {
         Files::Shares::Models::NfsFileType::Regular);
   }
 
-  TEST_F(FileShareFileClientTest, PremiumPosixPropertiesForCopy)
+  TEST_F(NfsFileShareClientTest, PremiumPosixPropertiesForCopy)
   {
-    auto shareServiceClient = *m_premiumShareServiceClient;
-
-    auto shareName = LowercaseRandomString();
-    auto shareClient = GetPremiumShareClientForTest(shareName);
-    Files::Shares::CreateShareOptions shareOptions;
-    shareOptions.EnabledProtocols = Files::Shares::Models::ShareProtocols::Nfs;
-    EXPECT_NO_THROW(shareClient.Create(shareOptions));
+    auto& shareClient = *m_shareClient;
 
     auto sourceName = LowercaseRandomString();
     auto sourceClient = shareClient.GetRootDirectoryClient().GetFileClient(sourceName);

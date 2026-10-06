@@ -435,6 +435,7 @@ namespace Azure { namespace Storage { namespace Test {
     options.TransferOptions.InitialChunkSize = 2;
     options.TransferOptions.ChunkSize = 2;
     options.TransferOptions.Concurrency = 1;
+    options.LayoutAwareRouting = Blobs::LayoutAwareRouting::Disabled;
     blobClient.DownloadTo(
         reinterpret_cast<uint8_t*>(&downloadBuffer[0]),
         static_cast<int64_t>(downloadBuffer.size()),
