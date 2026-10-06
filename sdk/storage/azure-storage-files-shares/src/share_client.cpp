@@ -9,6 +9,7 @@
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
@@ -150,6 +151,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
+    protocolLayerOptions.EnableChangeFeed = options.EnableChangeFeed;
+    protocolLayerOptions.ChangeFeedRetentionInDays = options.ChangeFeedRetentionInDays;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -244,8 +247,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePropertiesOptions();
     protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
-    return _detail::ShareClient::GetProperties(
+    auto response = _detail::ShareClient::GetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
+    const auto& headers = response.RawResponse->GetHeaders();
+    auto changeFeedEnabled = headers.find("x-ms-file-enable-change-feed");
+    if (changeFeedEnabled != headers.end())
+    {
+      response.Value.IsChangeFeedEnabled
+          = Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              changeFeedEnabled->second, "true");
+    }
+    return response;
   }
 
   Azure::Response<Models::SetSharePropertiesResult> ShareClient::SetProperties(
@@ -264,6 +276,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
+    protocolLayerOptions.EnableChangeFeed = options.EnableChangeFeed;
+    protocolLayerOptions.ChangeFeedRetentionInDays = options.ChangeFeedRetentionInDays;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }

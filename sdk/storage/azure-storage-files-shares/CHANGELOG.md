@@ -7,6 +7,7 @@
 - Bumped up API version to `2027-03-07`.
 - Added the share creation time to `ShareClient::GetProperties` and
   `ShareServiceClient::ListShares` responses.
+- Added support for enabling and configuring Files Change Feed when creating or updating a share.
 
 ### Breaking Changes
 

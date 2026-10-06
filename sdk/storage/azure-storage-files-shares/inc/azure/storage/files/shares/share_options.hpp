@@ -491,6 +491,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput is 60 MiB/sec and maximum is 5,125 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies whether change feed is enabled on the
+     * share.
+     */
+    Nullable<bool> EnableChangeFeed;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies the number of days that change feed
+     * records are retained. Valid values are between 1 and 365. The default is 7 days.
+     */
+    Nullable<std::int32_t> ChangeFeedRetentionInDays;
   };
 
   /**
@@ -581,6 +593,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * bandwidth is 60 MiB/sec and max is 5,120 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies whether change feed is enabled on the
+     * share.
+     */
+    Nullable<bool> EnableChangeFeed;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies the number of days that change feed
+     * records are retained. Valid values are between 1 and 365. Once change feed is enabled, this
+     * value can be updated independently.
+     */
+    Nullable<std::int32_t> ChangeFeedRetentionInDays;
   };
 
   /**
