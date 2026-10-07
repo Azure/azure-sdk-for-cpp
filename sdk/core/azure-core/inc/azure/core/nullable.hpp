@@ -74,6 +74,7 @@ public:
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
 #if defined(__clang__)
+// cspell: ignore Wunknown Wmaybe
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-warning-option"
 #pragma clang diagnostic ignored "-Wmaybe-uninitialized"
