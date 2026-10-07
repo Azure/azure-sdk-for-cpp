@@ -75,6 +75,7 @@ public:
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
 #if defined(__clang__)
 #pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-warning-option"
 #pragma clang diagnostic ignored "-Wmaybe-uninitialized"
 #endif // __clang__
       : m_disengaged{}, m_hasValue(other.m_hasValue)
