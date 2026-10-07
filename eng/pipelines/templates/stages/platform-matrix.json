@@ -171,7 +171,7 @@
     },
     {
       "StaticConfigs": {
-        "Ubuntu22": {
+        "Ubuntu24": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
@@ -185,15 +185,15 @@
           "CC": "/usr/bin/gcc-9",
           "CXX": "/usr/bin/g++-9"
         },
-        "clang-13": {
-          "AptDependencies": "clang-13",
-          "CC": "/usr/bin/clang-13",
-          "CXX": "/usr/bin/clang++-13"
-        },
         "clang-15": {
           "AptDependencies": "clang-15",
           "CC": "/usr/bin/clang-15",
           "CXX": "/usr/bin/clang++-15"
+        },
+        "clang-20": {
+          "AptDependencies": "clang-20",
+          "CC": "/usr/bin/clang-20",
+          "CXX": "/usr/bin/clang++-20"
         },
         "included_coverage": {
           "AptDependencies": "gcovr lcov",
