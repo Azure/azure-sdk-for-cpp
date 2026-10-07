@@ -73,6 +73,7 @@ public:
    * @param other A `%Nullable` instance to move into the instance being constructed.
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
+    : m_disengaged{},
 #if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
@@ -81,7 +82,7 @@ public:
 #pragma clang diagnostic ignored "-Wunknown-warning-option" // cspell:disable-line
 #pragma clang diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
 #endif
-      : m_disengaged{}, m_hasValue(other.m_hasValue)
+      m_hasValue(other.m_hasValue)
 #if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
 #pragma GCC diagnostic pop
 #elif defined(__clang__)
