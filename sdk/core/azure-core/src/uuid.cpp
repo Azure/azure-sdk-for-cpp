@@ -31,7 +31,6 @@ namespace {
  000000000011111111112222222222333333
  012345678901234567890123456789012345
  \______________ = 36 ______________/
- 
 */
 constexpr size_t UuidStringLength = 36;
 constexpr bool IsDashIndex(size_t i) { return i == 8 || i == 13 || i == 18 || i == 23; }

@@ -81,7 +81,7 @@ public:
    * @param other A `%Nullable` instance to move into the instance being constructed.
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
-    : m_disengaged{}, m_hasValue(other.m_hasValue)
+      : m_disengaged{}, m_hasValue(other.m_hasValue)
   {
     if (m_hasValue)
     {
