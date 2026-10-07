@@ -73,7 +73,14 @@ public:
    * @param other A `%Nullable` instance to move into the instance being constructed.
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmaybe-uninitialized"
+#endif // __clang__
       : m_disengaged{}, m_hasValue(other.m_hasValue)
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif // __clang__
   {
     if (m_hasValue)
     {
