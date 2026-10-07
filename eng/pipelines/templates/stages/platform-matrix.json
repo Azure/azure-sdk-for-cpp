@@ -225,16 +225,16 @@
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
-          "CC": "/usr/bin/clang-11",
-          "CXX": "/usr/bin/clang++-11",
+          "CC": "/usr/bin/clang-20",
+          "CXX": "/usr/bin/clang++-20",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
           "RunProxyTests": true,
-          "AptDependencies": "clang-11 clang-format-11"
+          "AptDependencies": "clang-20 clang-format-20"
         }
       },
       "BuildSettings": {
-        "clang-11": {
+        "clang-20": {
           "CHECK_CLANG_FORMAT": "1",
           "CHECK_ASCII_CHARACTERS": "1"
         },
