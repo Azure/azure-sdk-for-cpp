@@ -73,15 +73,19 @@ public:
    * @param other A `%Nullable` instance to move into the instance being constructed.
    */
   Nullable(Nullable&& other) noexcept(std::is_nothrow_move_constructible<T>::value)
-#if defined(__clang__)
-// cspell: ignore Wunknown Wmaybe
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
+#elif defined(__clang__)
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunknown-warning-option"
-#pragma clang diagnostic ignored "-Wmaybe-uninitialized"
+#pragma clang diagnostic ignored "-Wunknown-warning-option" // cspell:disable-line
+#pragma clang diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
 #endif // __clang__
       : m_disengaged{}, m_hasValue(other.m_hasValue)
-#if defined(__clang__)
-#pragma clang diagnostic pop
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
 #endif // __clang__
   {
     if (m_hasValue)

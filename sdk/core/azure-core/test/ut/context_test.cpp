@@ -253,7 +253,16 @@ TEST(Context, Ptr)
 
   SomeStructForContext* contextValueRef;
   EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
+
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
+#endif // __clang__
   EXPECT_EQ(contextValueRef->someField, 12345);
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic pop
+#endif
+
   EXPECT_EQ(&value, contextValueRef);
 }
 
