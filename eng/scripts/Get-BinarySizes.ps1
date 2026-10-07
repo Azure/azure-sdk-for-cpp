@@ -68,6 +68,10 @@ function getTargetOs {
         return "ubuntu-22.04"
     }
 
+    if ($OsVMImage -in "MMSUbuntu24.04", "ubuntu-24.04", "azsdk-pool-mms-ubuntu-2404-1espt") {
+        return "ubuntu-24.04"
+    }
+
     LogError "Could not infer target OS from " $OSVmImage
 }
 
