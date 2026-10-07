@@ -80,13 +80,13 @@ public:
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunknown-warning-option" // cspell:disable-line
 #pragma clang diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
-#endif // __clang__
+#endif
       : m_disengaged{}, m_hasValue(other.m_hasValue)
 #if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
 #pragma GCC diagnostic pop
 #elif defined(__clang__)
 #pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
-#endif // __clang__
+#endif
   {
     if (m_hasValue)
     {
