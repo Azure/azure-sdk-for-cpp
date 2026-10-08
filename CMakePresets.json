@@ -912,7 +912,7 @@
         "debug-build",
         "enable-tests"
       ],
-      "displayName": "Linux clang 13 Debug+Tests"
+      "displayName": "Linux clang 20 Debug+Tests"
     },
     {
       "name": "linux-g++-debug",
