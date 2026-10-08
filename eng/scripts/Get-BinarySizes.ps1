@@ -114,9 +114,9 @@ function getToolChain {
             return 'g++-9'
         } elseif ($env:CXX -and $env:CXX.Contains("clang-11")) {
             return 'clang-11'
-        } elseif ($env:CXX -and $env:CXX.Contains("clang-15")) {
+        } elseif ($env:CXX -and $env:CXX.Contains("clang++-15")) {
             return 'clang-15'
-        } elseif ($env:CXX -and $env:CXX.Contains("clang-20")) {
+        } elseif ($env:CXX -and $env:CXX.Contains("clang++-20")) {
             return 'clang-20'
         }
         return "g++-7"
