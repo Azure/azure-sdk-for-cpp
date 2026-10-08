@@ -252,8 +252,10 @@ TEST(Context, Ptr)
   auto contextP = Context{}.WithValue(key, &value);
 
   SomeStructForContext* contextValueRef;
-  EXPECT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
+  ASSERT_TRUE(contextP.TryGetValue<SomeStructForContext*>(key, contextValueRef));
+
   EXPECT_EQ(contextValueRef->someField, 12345);
+
   EXPECT_EQ(&value, contextValueRef);
 }
 

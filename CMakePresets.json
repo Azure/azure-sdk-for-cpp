@@ -702,6 +702,24 @@
       }
     },
     {
+      "name": "linux-basic-clang-15",
+      "displayName": "Linux clang-15",
+      "description": "Using compilers: C = /usr/bin/clang-15, CXX = /usr/bin/clang++-15",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-15",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-15"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
       "name": "linux-basic-clang-18",
       "displayName": "Linux clang-18",
       "description": "Using compilers: C = /usr/bin/clang-18, CXX = /usr/bin/clang++-18",
@@ -712,6 +730,24 @@
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
         "CMAKE_C_COMPILER": "/usr/bin/clang-18",
         "CMAKE_CXX_COMPILER": "/usr/bin/clang++-18"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "linux-basic-clang-20",
+      "displayName": "Linux clang-20",
+      "description": "Using compilers: C = /usr/bin/clang-20, CXX = /usr/bin/clang++-20",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "generator": "Ninja",
+      "hidden": true,
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+        "CMAKE_C_COMPILER": "/usr/bin/clang-20",
+        "CMAKE_CXX_COMPILER": "/usr/bin/clang++-20"
       },
       "condition": {
         "type": "equals",
@@ -828,6 +864,23 @@
       "displayName": "Linux clang 13 Debug+Tests"
     },
     {
+      "name": "linux-clang-15-debug",
+      "inherits": [
+        "linux-basic-clang-15",
+        "debug-build"
+      ],
+      "displayName": "Linux clang 15 Debug"
+    },
+    {
+      "name": "linux-clang-15-debug-tests",
+      "inherits": [
+        "linux-basic-clang-15",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 15 Debug+Tests"
+    },
+    {
       "name": "linux-clang-18-debug",
       "inherits": [
         "linux-basic-clang-18",
@@ -843,6 +896,23 @@
         "enable-tests"
       ],
       "displayName": "Linux clang 18 Debug+Tests"
+    },
+    {
+      "name": "linux-clang-20-debug",
+      "inherits": [
+        "linux-basic-clang-20",
+        "debug-build"
+      ],
+      "displayName": "Linux clang 20 Debug"
+    },
+    {
+      "name": "linux-clang-20-debug-tests",
+      "inherits": [
+        "linux-basic-clang-20",
+        "debug-build",
+        "enable-tests"
+      ],
+      "displayName": "Linux clang 20 Debug+Tests"
     },
     {
       "name": "linux-g++-debug",

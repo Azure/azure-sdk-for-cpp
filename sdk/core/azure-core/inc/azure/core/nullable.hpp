@@ -67,6 +67,14 @@ public:
     }
   }
 
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunknown-warning-option" // cspell:disable-line
+#pragma clang diagnostic ignored "-Wmaybe-uninitialized" // cspell:disable-line
+#endif
   /**
    * @brief Constructs a `%Nullable` by moving in another `%Nullable`.
    *
@@ -80,6 +88,11 @@ public:
       ::new (static_cast<void*>(&m_value)) T(std::move(other.m_value));
     }
   }
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
+#pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
+#endif
 
   /**
    * @brief Destructs the `%Nullable`, calling the destructor for the contained value if there is

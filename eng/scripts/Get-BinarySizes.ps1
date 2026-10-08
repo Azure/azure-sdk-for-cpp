@@ -68,6 +68,10 @@ function getTargetOs {
         return "ubuntu-22.04"
     }
 
+    if ($OsVMImage -in "MMSUbuntu24.04", "ubuntu-24.04", "azsdk-pool-mms-ubuntu-2404-1espt") {
+        return "ubuntu-24.04"
+    }
+
     LogError "Could not infer target OS from " $OSVmImage
 }
 
@@ -110,8 +114,12 @@ function getToolChain {
             return 'g++-9'
         } elseif ($env:CXX -and $env:CXX.Contains("clang-11")) {
             return 'clang-11'
+        } elseif ($env:CXX -and $env:CXX.Contains("clang++-15")) {
+            return 'clang-15'
+        } elseif ($env:CXX -and $env:CXX.Contains("clang++-20")) {
+            return 'clang-20'
         }
-        return "g++-7"
+        return "g++-13"
     }
     LogError "Could not infer toolchain from " $OSVmImage and $CmakeEnvArg
 }

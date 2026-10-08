@@ -171,7 +171,7 @@
     },
     {
       "StaticConfigs": {
-        "Ubuntu22": {
+        "Ubuntu24": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
@@ -185,15 +185,15 @@
           "CC": "/usr/bin/gcc-9",
           "CXX": "/usr/bin/g++-9"
         },
-        "clang-13": {
-          "AptDependencies": "clang-13",
-          "CC": "/usr/bin/clang-13",
-          "CXX": "/usr/bin/clang++-13"
-        },
         "clang-15": {
           "AptDependencies": "clang-15",
           "CC": "/usr/bin/clang-15",
           "CXX": "/usr/bin/clang++-15"
+        },
+        "clang-20": {
+          "AptDependencies": "clang-20",
+          "CC": "/usr/bin/clang-20",
+          "CXX": "/usr/bin/clang++-20"
         },
         "included_coverage": {
           "AptDependencies": "gcovr lcov",
@@ -220,21 +220,21 @@
     },
     {
       "StaticConfigs": {
-        "Ubuntu22": {
+        "Ubuntu24": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "VCPKG_DEFAULT_TRIPLET": "x64-linux",
           "BuildArgs": "-j 10",
-          "CC": "/usr/bin/clang-11",
-          "CXX": "/usr/bin/clang++-11",
+          "CC": "/usr/bin/clang-20",
+          "CXX": "/usr/bin/clang++-20",
           "CmakeArgs": " -DBUILD_TESTING=ON -DBUILD_PERFORMANCE_TESTS=ON -DRUN_LONG_UNIT_TESTS=ON",
           "PublishMapFiles": "true",
           "RunProxyTests": true,
-          "AptDependencies": "clang-11 clang-format-11"
+          "AptDependencies": "clang-20 clang-format-20"
         }
       },
       "BuildSettings": {
-        "clang-11": {
+        "clang-20": {
           "CHECK_CLANG_FORMAT": "1",
           "CHECK_ASCII_CHARACTERS": "1"
         },

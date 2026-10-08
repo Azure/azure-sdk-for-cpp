@@ -151,17 +151,17 @@ jobs:
 
       # Validate all the files are formatted correctly according to the
       # .clang-format file. This step runs on linux only and assumes that
-      # clang-format-11 is installed.
+      # clang-format-20 is installed.
       - bash: |
           # Run clang-format recursively on each source and header file within the repo sdk folder.
           echo "Check clang-formatting"
-          clang-format-11 --version
-          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format-11 -i {} \;
+          clang-format-20 --version
+          find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format-20 -i {} \;
 
           if [[ `git status | grep modified | awk '{print $2}'` ]]; then
             echo Some files were not formatted correctly according to the .clang-format file.
-            echo Please run clang-format version 10 or greater to fix the issue by using this bash command at the root of the repo:
-            echo "find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format -i {} \;"
+            echo Please run clang-format version 20 to fix the issue by using this bash command at the root of the repo:
+            echo "find ./sdk \( -iname '*.hpp' -o -iname '*.cpp' \) ! -iname 'json.hpp' -exec clang-format-20 -i {} \;"
             echo ""
             echo "List of files not formatted correctly:"
             git status | grep modified | awk '{print $2}'
