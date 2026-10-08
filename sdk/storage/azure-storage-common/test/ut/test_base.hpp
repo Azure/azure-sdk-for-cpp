@@ -6,6 +6,7 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
+#include <azure/core/http/policies/policy.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -14,8 +15,11 @@
 #include <cctype>
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <limits>
+#include <memory>
 #include <random>
+#include <utility>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -25,6 +29,33 @@ namespace Azure { namespace Storage {
   using Metadata = Azure::Core::CaseInsensitiveMap;
 
   namespace Test {
+
+    class MockResponsePolicy final : public Core::Http::Policies::HttpPolicy {
+    public:
+      using ResponseFactory = std::function<
+          std::unique_ptr<Core::Http::RawResponse>(Core::Http::Request&, Core::Context const&)>;
+
+      explicit MockResponsePolicy(ResponseFactory responseFactory)
+          : m_responseFactory(std::move(responseFactory))
+      {
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<MockResponsePolicy>(*this);
+      }
+
+      std::unique_ptr<Core::Http::RawResponse> Send(
+          Core::Http::Request& request,
+          Core::Http::Policies::NextHttpPolicy,
+          Core::Context const& context) const override
+      {
+        return m_responseFactory(request, context);
+      }
+
+    private:
+      ResponseFactory m_responseFactory;
+    };
 
     class StorageTest : public Azure::Core::Test::TestBase {
     public:

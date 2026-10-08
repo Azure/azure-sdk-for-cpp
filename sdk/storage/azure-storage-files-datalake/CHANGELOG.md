@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed `ListPaths()` on filesystem and directory clients to handle missing `contentLength`, `owner`, `group`, and `permissions` fields safely.
+- Fixed `ListPaths()` on filesystem and directory clients to accept both numeric FILETIME and RFC1123 creation and expiry times.
+
 ### Other Changes
 
 ## 12.17.0 (2026-09-29)
