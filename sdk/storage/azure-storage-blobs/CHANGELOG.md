@@ -4,13 +4,30 @@
 
 ### Features Added
 
+- Added support for persisted session authentication for eligible blob download requests.
+- Added `BlobClient::GetLayout` and related options and response types for retrieving locality
+  endpoints, byte ranges, and blob properties. Ranges are exposed directly through
+  `Models::BlobLayoutInfo::Ranges` as a vector of `Models::BlobLayoutRange`.
+- Added `DownloadBlobOptions::LayoutEndpoint` for one-shot download routing and
+  `DownloadBlobToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
+  managed downloads.
+- Added `Models::DownloadHint` and `Models::DownloadBlobDetails::DownloadHint`.
+
 ### Breaking Changes
+
+- Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
+  Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
+  requesting XML responses.
 
 ### Bugs Fixed
 
 - Fixed CMake dependency resolution when FlatCC provides only a shared runtime library.
 
 ### Other Changes
+
+- Changed the default initial transfer size for partitioned uploads and downloads from 256 MiB to
+  4 MiB, matching the default subsequent chunk size. Explicitly configured
+  `InitialChunkSize` and `SingleUploadThreshold` values are still respected.
 
 ## 12.19.0 (2026-09-29)
 

@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "private/package_version.hpp"
 
@@ -16,6 +17,62 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
+
+  std::string ShareDirectoryClient::GetFileId() const { return m_fileId.ValueOr(std::string()); }
+
+  namespace {
+    Models::DirectoryItemDetails ToDirectoryItemDetails(
+        Models::_detail::DirectoryItemDetails details)
+    {
+      Models::DirectoryItemDetails result;
+      result.LastAccessedOn = std::move(details.LastAccessedOn);
+      result.LastModified = std::move(details.LastModified);
+      result.Etag = std::move(details.Etag);
+      if (!details.Owner.empty())
+      {
+        result.PosixProperties.Owner = std::move(details.Owner);
+      }
+      if (!details.Group.empty())
+      {
+        result.PosixProperties.Group = std::move(details.Group);
+      }
+      if (!details.FileMode.empty())
+      {
+        result.PosixProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(details.FileMode);
+      }
+      result.SmbProperties = std::move(details.SmbProperties);
+      return result;
+    }
+
+    Models::FileItemDetails ToFileItemDetails(Models::_detail::FileItemDetails details)
+    {
+      Models::FileItemDetails result;
+      result.FileSize = details.FileSize;
+      result.LastAccessedOn = std::move(details.LastAccessedOn);
+      result.LastModified = std::move(details.LastModified);
+      result.Etag = std::move(details.Etag);
+      if (!details.Owner.empty())
+      {
+        result.PosixProperties.Owner = std::move(details.Owner);
+      }
+      if (!details.Group.empty())
+      {
+        result.PosixProperties.Group = std::move(details.Group);
+      }
+      if (!details.FileMode.empty())
+      {
+        result.PosixProperties.FileMode = Models::NfsFileMode::ParseOctalFileMode(details.FileMode);
+      }
+      result.SmbProperties = std::move(details.SmbProperties);
+      return result;
+    }
+
+    bool HasNfsListingTraits(const Models::FilePosixProperties& properties)
+    {
+      return properties.Owner.HasValue() || properties.Group.HasValue()
+          || properties.FileMode.HasValue() || properties.LinkCount.HasValue();
+    }
+  } // namespace
 
   ShareDirectoryClient ShareDirectoryClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -40,11 +97,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
+      Core::Url shareDirectoryUrl,
+      std::shared_ptr<Core::Http::_internal::HttpPipeline> pipeline,
+      _detail::ShareClientConfiguration clientConfiguration)
+      : m_shareDirectoryUrl(std::move(shareDirectoryUrl)),
+        m_fileId(_detail::GetFileIdFromUrl(m_shareDirectoryUrl)), m_pipeline(std::move(pipeline)),
+        m_clientConfiguration(std::move(clientConfiguration))
+  {
+  }
+
+  ShareDirectoryClient::ShareDirectoryClient(
       const std::string& shareDirectoryUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -68,6 +136,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -99,6 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -118,6 +188,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareDirectoryClient ShareDirectoryClient::GetSubdirectoryClient(
       const std::string& subdirectoryName) const
   {
+    _detail::AssertPathAddressed(m_fileId, "GetSubdirectoryClient");
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     return ShareDirectoryClient(builder, m_pipeline, m_clientConfiguration);
@@ -125,6 +196,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareFileClient ShareDirectoryClient::GetFileClient(const std::string& fileName) const
   {
+    _detail::AssertPathAddressed(m_fileId, "GetFileClient");
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     return ShareFileClient(builder, m_pipeline, m_clientConfiguration);
@@ -150,6 +222,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const CreateDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "Create");
     auto protocolLayerOptions = _detail::DirectoryClient::CreateDirectoryOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
@@ -217,6 +290,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
 
   {
+    _detail::AssertPathAddressed(m_fileId, "CreateIfNotExists");
     try
     {
       return Create(options, context);
@@ -239,6 +313,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const RenameFileOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "RenameFile");
     auto sourceFileUrl = m_shareDirectoryUrl;
     sourceFileUrl.AppendPath(_internal::UrlEncodePath(fileName));
 
@@ -300,6 +375,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const RenameDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "RenameSubdirectory");
     auto sourceDirectoryUrl = m_shareDirectoryUrl;
     sourceDirectoryUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
 
@@ -359,6 +435,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "Delete");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::DeleteDirectoryOptions();
     protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
@@ -375,6 +452,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "DeleteIfExists");
     try
     {
       return Delete(options, context);
@@ -417,6 +495,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.PosixProperties.Owner = std::move(response.Value.Owner);
     ret.PosixProperties.Group = std::move(response.Value.Group);
     ret.PosixProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    ret.FileName = std::move(response.Value.FileName);
     return Azure::Response<Models::DirectoryProperties>(
         std::move(ret), std::move(response.RawResponse));
   }
@@ -426,6 +505,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "SetProperties");
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryPropertiesOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (smbProperties.CreatedOn.HasValue())
@@ -483,6 +563,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetDirectoryMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "SetMetadata");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryMetadataOptions();
     protocolLayerOptions.Metadata
@@ -497,6 +578,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListFilesAndDirectoriesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ListFilesAndDirectories");
     auto protocolLayerOptions
         = _detail::DirectoryClient::ListDirectoryFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
@@ -541,7 +623,12 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         directoryItem.Name = std::move(item.Name.Content);
       }
-      directoryItem.Details = std::move(item.Details);
+      directoryItem.Details = ToDirectoryItemDetails(std::move(item.Details));
+      directoryItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      if (HasNfsListingTraits(directoryItem.Details.PosixProperties))
+      {
+        directoryItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::Directory;
+      }
       pagedResponse.Directories.push_back(std::move(directoryItem));
     }
     for (auto& item : response.Value.Segment.FileItems)
@@ -555,8 +642,102 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       {
         fileItem.Name = std::move(item.Name.Content);
       }
-      fileItem.Details = std::move(item.Details);
+      fileItem.Details = ToFileItemDetails(std::move(item.Details));
+      fileItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      if (!item.FileType.ToString().empty())
+      {
+        fileItem.Details.PosixProperties.NfsFileType = std::move(item.FileType);
+      }
+      else if (HasNfsListingTraits(fileItem.Details.PosixProperties))
+      {
+        fileItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::Regular;
+      }
       pagedResponse.Files.push_back(std::move(fileItem));
+    }
+    for (auto& item : response.Value.Segment.SymLinkItems)
+    {
+      Models::SymLinkItem symLinkItem;
+      if (item.Name.Encoded)
+      {
+        symLinkItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        symLinkItem.Name = std::move(item.Name.Content);
+      }
+      symLinkItem.LinkText = std::move(item.LinkText);
+      symLinkItem.Details = ToFileItemDetails(std::move(item.Details));
+      symLinkItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      symLinkItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::SymLink;
+      pagedResponse.SymLinks.push_back(std::move(symLinkItem));
+    }
+    for (auto& item : response.Value.Segment.BlockDeviceItems)
+    {
+      Models::BlockDeviceItem blockDeviceItem;
+      if (item.Name.Encoded)
+      {
+        blockDeviceItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        blockDeviceItem.Name = std::move(item.Name.Content);
+      }
+      blockDeviceItem.DeviceMajor = std::move(item.DeviceMajor);
+      blockDeviceItem.DeviceMinor = std::move(item.DeviceMinor);
+      blockDeviceItem.Details = ToFileItemDetails(std::move(item.Details));
+      blockDeviceItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      blockDeviceItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::BlockDevice;
+      pagedResponse.BlockDevices.push_back(std::move(blockDeviceItem));
+    }
+    for (auto& item : response.Value.Segment.CharDeviceItems)
+    {
+      Models::CharDeviceItem charDeviceItem;
+      if (item.Name.Encoded)
+      {
+        charDeviceItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        charDeviceItem.Name = std::move(item.Name.Content);
+      }
+      charDeviceItem.DeviceMajor = std::move(item.DeviceMajor);
+      charDeviceItem.DeviceMinor = std::move(item.DeviceMinor);
+      charDeviceItem.Details = ToFileItemDetails(std::move(item.Details));
+      charDeviceItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      charDeviceItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::CharacterDevice;
+      pagedResponse.CharDevices.push_back(std::move(charDeviceItem));
+    }
+    for (auto& item : response.Value.Segment.FifoItems)
+    {
+      Models::FifoItem fifoItem;
+      if (item.Name.Encoded)
+      {
+        fifoItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        fifoItem.Name = std::move(item.Name.Content);
+      }
+      fifoItem.Details = ToFileItemDetails(std::move(item.Details));
+      fifoItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      fifoItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::Fifo;
+      pagedResponse.Fifos.push_back(std::move(fifoItem));
+    }
+    for (auto& item : response.Value.Segment.SocketItems)
+    {
+      Models::SocketItem socketItem;
+      if (item.Name.Encoded)
+      {
+        socketItem.Name = Core::Url::Decode(item.Name.Content);
+      }
+      else
+      {
+        socketItem.Name = std::move(item.Name.Content);
+      }
+      socketItem.Details = ToFileItemDetails(std::move(item.Details));
+      socketItem.Details.PosixProperties.LinkCount = std::move(item.LinkCount);
+      socketItem.Details.PosixProperties.NfsFileType = Models::NfsFileType::Socket;
+      pagedResponse.Sockets.push_back(std::move(socketItem));
     }
     pagedResponse.DirectoryId = response.Value.DirectoryId.ValueOr(std::string());
     pagedResponse.m_shareDirectoryClient = std::make_shared<ShareDirectoryClient>(*this);
@@ -572,6 +753,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ListHandles");
     auto protocolLayerOptions = _detail::DirectoryClient::ListDirectoryHandlesOptions();
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
@@ -631,6 +813,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseDirectoryHandleOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ForceCloseHandle");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::ForceDirectoryCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
@@ -647,6 +830,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseAllDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ForceCloseAllHandles");
     auto protocolLayerOptions = _detail::DirectoryClient::ForceDirectoryCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.Marker = options.ContinuationToken;

@@ -5,6 +5,9 @@
 
 #include "azure/storage/blobs/rest_client.hpp"
 
+#include <azure/core/credentials/credentials.hpp>
+#include <azure/core/datetime.hpp>
+#include <azure/core/http/http.hpp>
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/match_conditions.hpp>
@@ -22,6 +25,90 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
+
+  class ContainerSessionProvider;
+  class SessionProvider;
+
+  namespace _detail {
+    class SessionAuthenticationPolicy;
+    class TokenCredentialSessionProvider;
+  } // namespace _detail
+
+  /**
+   * @brief Specifies how persisted session authentication is used.
+   */
+  enum class SessionMode
+  {
+    /**
+     * @brief Lets the SDK determine when to use sessions.
+     *
+     * @note Currently behaves the same as #Disabled.
+     */
+    Auto,
+
+    /**
+     * @brief Disables session authentication.
+     */
+    Disabled,
+
+    /**
+     * @brief Prefers session authentication for eligible requests.
+     *
+     * @note The client can fall back to bearer authentication while acquiring a session, when
+     * session creation is temporarily unavailable, or when the service rejects a session.
+     */
+    Enabled,
+  };
+
+  /**
+   * @brief Configures persisted session authentication.
+   */
+  struct SessionOptions final
+  {
+    /**
+     * @brief The session authentication mode.
+     *
+     * In Auto mode, clients currently use bearer authentication.
+     */
+    SessionMode Mode = SessionMode::Auto;
+
+    /**
+     * @brief Account name used when signing requests. Required when it cannot be inferred from URL.
+     *
+     * For custom endpoints, both AccountName and Provider must be specified.
+     */
+    std::string AccountName;
+
+    /**
+     * @brief Optional provider whose session cache can be shared by multiple clients.
+     *
+     * When unset, each independently constructed client creates its own provider. Clients derived
+     * from that client share its provider and cache. For custom endpoints, both Provider and
+     * AccountName must be specified.
+     */
+    std::shared_ptr<SessionProvider> Provider;
+  };
+
+  /**
+   * @brief Determines whether locality-aware routing is used for managed downloads.
+   */
+  enum class LayoutAwareRouting
+  {
+    /**
+     * @brief The client library determines whether locality-aware routing is enabled.
+     */
+    Auto,
+
+    /**
+     * @brief Locality-aware routing is disabled.
+     */
+    Disabled,
+
+    /**
+     * @brief Locality-aware routing is enabled.
+     */
+    Enabled,
+  };
 
   /**
    * @brief Audiences available for blob service
@@ -287,6 +374,50 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional. Configures whether to do content validation for blob downloads.
      */
     Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+
+    /**
+     * @brief Configures persisted session authentication.
+     */
+    Blobs::SessionOptions Session;
+  };
+
+  /**
+   * @brief Base type for providers that own and cache persisted sessions.
+   *
+   * Session providers can be shared by multiple clients through #SessionOptions::Provider.
+   * Use #ContainerSessionProvider for TokenCredential-based session authentication.
+   */
+  class SessionProvider {
+  public:
+    virtual ~SessionProvider();
+
+  private:
+    friend class ContainerSessionProvider;
+    friend class _detail::SessionAuthenticationPolicy;
+
+    SessionProvider();
+
+    std::shared_ptr<_detail::TokenCredentialSessionProvider> m_provider;
+  };
+
+  /**
+   * @brief Creates and caches container-scoped sessions using a TokenCredential.
+   */
+  class ContainerSessionProvider final : public SessionProvider {
+  public:
+    /**
+     * @brief Creates a provider backed by a TokenCredential.
+     *
+     * @param serviceUrl The Blob service URL.
+     * @param credential The credential used to create sessions.
+     * @param options Client options used by Create Session requests.
+     */
+    ContainerSessionProvider(
+        const std::string& serviceUrl,
+        std::shared_ptr<const Azure::Core::Credentials::TokenCredential> credential,
+        const BlobClientOptions& options);
+
+    ~ContainerSessionProvider() override;
   };
 
   /**
@@ -478,7 +609,7 @@ namespace Azure { namespace Storage { namespace Blobs {
   enum class StorageResponseFormat
   {
     /**
-     * @brief Let the service choose the response format (default).
+     * @brief Use the default response format, which is currently Apache Arrow.
      */
     Auto,
     /**
@@ -801,6 +932,14 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional. Configures whether to do content validation for blob downloads.
      */
     Azure::Nullable<TransferValidationOptions> ValidationOptions;
+
+    /**
+     * @brief Optional. The layout endpoint to use for this download.
+     *
+     * When set, the request is sent to this endpoint while preserving the client endpoint in the
+     * Host header.
+     */
+    std::string LayoutEndpoint;
   };
 
   /**
@@ -823,7 +962,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * downloaded in a single request. Blobs larger than this limit will continue being downloaded
        * in chunks of size ChunkSize.
        */
-      int64_t InitialChunkSize = 256 * 1024 * 1024;
+      int64_t InitialChunkSize = 4 * 1024 * 1024;
 
       /**
        * @brief The maximum number of bytes in a single request.
@@ -840,6 +979,12 @@ namespace Azure { namespace Storage { namespace Blobs {
      * @brief Optional. Configures whether to do content validation for blob downloads.
      */
     Azure::Nullable<TransferValidationOptions> ValidationOptions;
+
+    /**
+     * @brief Determines whether locality-aware routing is used for the parallel range requests.
+     * Disabled by default.
+     */
+    Blobs::LayoutAwareRouting LayoutAwareRouting = Blobs::LayoutAwareRouting::Disabled;
   };
 
   /**
@@ -1069,7 +1214,7 @@ namespace Azure { namespace Storage { namespace Blobs {
        * @brief Blob smaller than this will be uploaded with a single upload operation. This value
        * cannot be larger than 5000 MiB.
        */
-      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
+      int64_t SingleUploadThreshold = 4 * 1024 * 1024;
 
       /**
        * @brief The maximum number of bytes in a single request. This value cannot be larger than
@@ -1810,6 +1955,27 @@ namespace Azure { namespace Storage { namespace Blobs {
    */
   struct SubmitBlobBatchOptions final
   {
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Blobs::BlobClient::GetLayout.
+   */
+  struct GetBlobLayoutOptions final
+  {
+    /**
+     * @brief The range of bytes for which to retrieve the layout.
+     */
+    Azure::Nullable<Core::Http::HttpRange> Range;
+
+    /**
+     * @brief The continuation token for retrieving the next page.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief Access conditions for the operation.
+     */
+    BlobAccessConditions AccessConditions;
   };
 
   namespace _detail {

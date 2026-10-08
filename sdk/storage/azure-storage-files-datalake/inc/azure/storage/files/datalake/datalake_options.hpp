@@ -83,10 +83,15 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   } // namespace Models
 
   using DownloadFileToOptions = Blobs::DownloadBlobToOptions;
+  /**
+   * @brief Determines whether locality-aware routing is used for managed file downloads.
+   */
+  using LayoutAwareRouting = Blobs::LayoutAwareRouting;
   using GetUserDelegationKeyOptions = Blobs::GetUserDelegationKeyOptions;
   using GetServicePropertiesOptions = Blobs::GetServicePropertiesOptions;
   using SetServicePropertiesOptions = Blobs::SetServicePropertiesOptions;
   using EncryptionKey = Blobs::EncryptionKey;
+  using SessionOptions = Blobs::SessionOptions;
 
   /**
    * Configures whether to do content validation for file uploads and downloads.
@@ -223,6 +228,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Optional. Configures whether to do content validation for file downloads.
      */
     Azure::Nullable<TransferValidationOptions> DownloadValidationOptions;
+
+    /**
+     * @brief Configures persisted session authentication for Blob endpoint download requests.
+     */
+    SessionOptions Session;
   };
 
   /**
@@ -881,6 +891,27 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   };
 
   /**
+   * @brief Optional parameters for #Azure::Storage::Files::DataLake::DataLakeFileClient::GetLayout.
+   */
+  struct GetFileLayoutOptions final
+  {
+    /**
+     * @brief The range of bytes for which to retrieve the layout.
+     */
+    Azure::Nullable<Core::Http::HttpRange> Range;
+
+    /**
+     * @brief The continuation token for retrieving the next page.
+     */
+    Azure::Nullable<std::string> ContinuationToken;
+
+    /**
+     * @brief Access conditions for the operation.
+     */
+    PathAccessConditions AccessConditions;
+  };
+
+  /**
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::DataLakeFileClient::Download.
    * @remark Some optional parameter is mandatory in certain combination.
    *         More details:
@@ -918,6 +949,12 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
      * @brief Optional. Configures whether to do content validation for file downloads.
      */
     Azure::Nullable<TransferValidationOptions> ValidationOptions;
+
+    /**
+     * @brief The locality endpoint to use for this download. An empty value uses the normal
+     * endpoint.
+     */
+    std::string LayoutEndpoint;
   };
 
   /**
@@ -1031,7 +1068,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
        * File smaller than this will be uploaded with a single upload operation. This value
        * cannot be larger than 5000 MiB.
        */
-      int64_t SingleUploadThreshold = 256 * 1024 * 1024;
+      int64_t SingleUploadThreshold = 4 * 1024 * 1024;
 
       /**
        * The maximum number of bytes in a single request. This value cannot be larger than

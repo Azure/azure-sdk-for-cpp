@@ -3,12 +3,14 @@
 
 #include "azure/storage/files/shares/share_client.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
@@ -116,6 +118,30 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     return ShareDirectoryClient(m_shareUrl, m_pipeline, m_clientConfiguration);
   }
 
+  ShareFileClient ShareClient::GetFileClientByFileId(const std::string& fileId) const
+  {
+    if (fileId.empty())
+    {
+      throw std::invalid_argument("File ID cannot be empty.");
+    }
+    Core::Url fileUrl(m_shareUrl);
+    fileUrl.AppendQueryParameter(
+        _detail::FileIdQueryParameter, _internal::UrlEncodeQueryParameter(fileId));
+    return ShareFileClient(std::move(fileUrl), m_pipeline, m_clientConfiguration);
+  }
+
+  ShareDirectoryClient ShareClient::GetDirectoryClientByFileId(const std::string& fileId) const
+  {
+    if (fileId.empty())
+    {
+      throw std::invalid_argument("File ID cannot be empty.");
+    }
+    Core::Url directoryUrl(m_shareUrl);
+    directoryUrl.AppendQueryParameter(
+        _detail::FileIdQueryParameter, _internal::UrlEncodeQueryParameter(fileId));
+    return ShareDirectoryClient(std::move(directoryUrl), m_pipeline, m_clientConfiguration);
+  }
+
   ShareClient ShareClient::WithSnapshot(const std::string& snapshot) const
   {
     ShareClient newClient(*this);
@@ -150,6 +176,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
+    protocolLayerOptions.EnableChangeFeed = options.EnableChangeFeed;
+    protocolLayerOptions.ChangeFeedRetentionInDays = options.ChangeFeedRetentionInDays;
     auto result
         = _detail::ShareClient::Create(*m_pipeline, m_shareUrl, protocolLayerOptions, context);
     Models::CreateShareResult ret;
@@ -244,8 +272,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     auto protocolLayerOptions = _detail::ShareClient::GetSharePropertiesOptions();
     protocolLayerOptions.FileRequestIntent = m_clientConfiguration.ShareTokenIntent;
-    return _detail::ShareClient::GetProperties(
+    auto response = _detail::ShareClient::GetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
+    const auto& headers = response.RawResponse->GetHeaders();
+    auto changeFeedEnabled = headers.find("x-ms-file-enable-change-feed");
+    if (changeFeedEnabled != headers.end())
+    {
+      response.Value.IsChangeFeedEnabled
+          = Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              changeFeedEnabled->second, "true");
+    }
+    return response;
   }
 
   Azure::Response<Models::SetSharePropertiesResult> ShareClient::SetProperties(
@@ -264,6 +301,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     protocolLayerOptions.PaidBurstingMaxBandwidthMibps = options.PaidBurstingMaxBandwidthMibps;
     protocolLayerOptions.ShareProvisionedIops = options.ProvisionedMaxIops;
     protocolLayerOptions.ShareProvisionedBandwidthMibps = options.ProvisionedMaxBandwidthMibps;
+    protocolLayerOptions.EnableChangeFeed = options.EnableChangeFeed;
+    protocolLayerOptions.ChangeFeedRetentionInDays = options.ChangeFeedRetentionInDays;
     return _detail::ShareClient::SetProperties(
         *m_pipeline, m_shareUrl, protocolLayerOptions, context);
   }

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "azure/storage/files/datalake/datalake_options.hpp"
+#include "azure/storage/files/datalake/datalake_responses.hpp"
 
 #include <azure/core/datetime.hpp>
 #include <azure/storage/blobs/blob_options.hpp>
@@ -28,6 +29,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   bool MetadataIndicatesIsDirectory(const Storage::Metadata& metadata);
 
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
+
+  Models::PathProperties PathPropertiesFromBlobProperties(
+      Blobs::Models::BlobProperties properties,
+      const Azure::Core::Http::RawResponse& response);
 
   /**
    * @brief Provides conversion methods for Win32 FILETIME to an #Azure::DateTime.

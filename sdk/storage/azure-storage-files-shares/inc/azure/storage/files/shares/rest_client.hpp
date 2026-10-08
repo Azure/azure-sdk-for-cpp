@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-10-06";
+    constexpr static const char* ApiVersion = "2027-03-07";
   } // namespace _detail
   namespace Models {
     /**
@@ -330,6 +330,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The date and time the share was last modified.
        */
       DateTime LastModified;
+      /**
+       * The date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
       /**
        * The ETag contains a value which represents the version of the share, in quotes.
        */
@@ -638,6 +642,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       DateTime LastModified;
       /**
+       * Returns the date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
+      /**
        * Returns the current share quota in GB.
        */
       std::int64_t Quota = std::int64_t();
@@ -726,6 +734,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
+      /**
+       * Specifies whether change feed is enabled on the share.
+       */
+      Nullable<bool> IsChangeFeedEnabled;
+      /**
+       * The number of days that change feed records are retained.
+       */
+      Nullable<std::int32_t> ChangeFeedRetentionInDays;
+      /**
+       * The name of the blob container where change feed records are stored.
+       */
+      Nullable<std::string> ChangeFeedBlobContainerName;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -1200,7 +1220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics Restore;
     };
     /**
-     * @brief NFS only. Type of the file or directory.
+     * @brief Type of the file.
      */
     class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
     public:
@@ -1215,6 +1235,14 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Directory;
       /** Constant value of type NfsFileType: SymLink */
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType SymLink;
+      /** Constant value of type NfsFileType: BlockDevice */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType BlockDevice;
+      /** Constant value of type NfsFileType: CharacterDevice */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType CharacterDevice;
+      /** Constant value of type NfsFileType: Socket */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Socket;
+      /** Constant value of type NfsFileType: Fifo */
+      AZ_STORAGE_FILES_SHARES_DLLEXPORT const static NfsFileType Fifo;
     };
     namespace _detail {
       /**
@@ -1307,6 +1335,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the directory.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -1380,78 +1412,169 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         bool Encoded = bool();
         std::string Content;
       };
-    } // namespace _detail
-    /**
-     * @brief File properties.
-     */
-    struct DirectoryItemDetails final
-    {
       /**
-       * The time the directory was last accessed.
+       * @brief File properties.
        */
-      Nullable<DateTime> LastAccessedOn;
-      /**
-       * The date and time the directory was last modified.
-       */
-      DateTime LastModified;
-      /**
-       * The ETag contains a value which represents the version of the directory, in quotes.
-       */
-      ETag Etag;
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-    };
-    namespace _detail {
+      struct DirectoryItemDetails final
+      {
+        /**
+         * The time the directory was last accessed.
+         */
+        Nullable<DateTime> LastAccessedOn;
+        /**
+         * The date and time the directory was last modified.
+         */
+        DateTime LastModified;
+        /**
+         * The ETag contains a value which represents the version of the directory, in quotes.
+         */
+        ETag Etag;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        std::string Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        std::string Group;
+        /**
+         *  NFS only. The mode of the file or directory.
+         */
+        std::string FileMode;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+      };
       /**
        * @brief A listed directory item.
        */
       struct DirectoryItem final
       {
         StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
         /**
          * File properties.
          */
         DirectoryItemDetails Details;
       };
-    } // namespace _detail
-    /**
-     * @brief File properties.
-     */
-    struct FileItemDetails final
-    {
       /**
-       * Content length of the file. This value may not be up-to-date since an SMB client may have
-       * modified the file locally. The value of Content-Length may not reflect that fact until the
-       * handle is closed or the op-lock is broken. To retrieve current property values, call Get
-       * File Properties.
+       * @brief File properties.
        */
-      std::int64_t FileSize = std::int64_t();
-      /**
-       * The time the file was last accessed.
-       */
-      Nullable<DateTime> LastAccessedOn;
-      /**
-       * The date and time the file was last modified.
-       */
-      DateTime LastModified;
-      /**
-       * The ETag contains a value which represents the version of the file, in quotes.
-       */
-      ETag Etag;
-      /**
-       * The SMB related properties for the file.
-       */
-      FileSmbProperties SmbProperties;
-    };
-    namespace _detail {
+      struct FileItemDetails final
+      {
+        /**
+         * Content length of the file. This value may not be up-to-date since an SMB client may have
+         * modified the file locally. The value of Content-Length may not reflect that fact until
+         * the handle is closed or the op-lock is broken. To retrieve current property values, call
+         * Get File Properties.
+         */
+        std::int64_t FileSize = std::int64_t();
+        /**
+         * The time the file was last accessed.
+         */
+        Nullable<DateTime> LastAccessedOn;
+        /**
+         * The date and time the file was last modified.
+         */
+        DateTime LastModified;
+        /**
+         * The ETag contains a value which represents the version of the file, in quotes.
+         */
+        ETag Etag;
+        /**
+         * NFS only. The owner of the file or directory.
+         */
+        std::string Owner;
+        /**
+         * NFS only. The owning group of the file or directory.
+         */
+        std::string Group;
+        /**
+         *  NFS only. The mode of the file or directory.
+         */
+        std::string FileMode;
+        /**
+         * The SMB related properties for the file.
+         */
+        FileSmbProperties SmbProperties;
+      };
       /**
        * @brief A listed file item.
        */
       struct FileItem final
       {
         StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
+        /**
+         * Type of the file.
+         */
+        NfsFileType FileType;
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
+      /**
+       * @brief A listed symbolic link item.
+       */
+      struct SymLinkItem final
+      {
+        StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
+        std::string LinkText;
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
+      /**
+       * @brief A listed block device item.
+       */
+      struct BlockDeviceItem final
+      {
+        StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
+        std::int64_t DeviceMajor = std::int64_t();
+        std::int64_t DeviceMinor = std::int64_t();
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
+      /**
+       * @brief A listed character device item.
+       */
+      struct CharDeviceItem final
+      {
+        StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
+        std::int64_t DeviceMajor = std::int64_t();
+        std::int64_t DeviceMinor = std::int64_t();
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
+      /**
+       * @brief A listed FIFO item.
+       */
+      struct FifoItem final
+      {
+        StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
+        /**
+         * File properties.
+         */
+        FileItemDetails Details;
+      };
+      /**
+       * @brief A listed socket item.
+       */
+      struct SocketItem final
+      {
+        StringEncoded Name;
+        Nullable<std::int64_t> LinkCount;
         /**
          * File properties.
          */
@@ -1470,6 +1593,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * Array of FileItem.
          */
         std::vector<FileItem> FileItems;
+        /**
+         * Array of SymLinkItem.
+         */
+        std::vector<SymLinkItem> SymLinkItems;
+        /**
+         * Array of BlockDeviceItem.
+         */
+        std::vector<BlockDeviceItem> BlockDeviceItems;
+        /**
+         * Array of CharDeviceItem.
+         */
+        std::vector<CharDeviceItem> CharDeviceItems;
+        /**
+         * Array of FifoItem.
+         */
+        std::vector<FifoItem> FifoItems;
+        /**
+         * Array of SocketItem.
+         */
+        std::vector<SocketItem> SocketItems;
       };
     } // namespace _detail
     /**
@@ -1482,6 +1625,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       ETag = 2,
       Attributes = 4,
       PermissionKey = 8,
+      Permissions = 16,
+      LinkCount = 32,
+      NfsAttributes = 64,
     };
     inline ListFilesIncludeFlags operator|(ListFilesIncludeFlags lhs, ListFilesIncludeFlags rhs)
     {
@@ -1978,6 +2124,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the file.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -2499,6 +2649,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         Models::NfsFileType NfsFileType;
       };
+      /**
+       * @brief A hard link to a file.
+       */
+      struct HardLink final
+      {
+        /**
+         * The name of the hard link.
+         */
+        StringEncoded FileName;
+        /**
+         * The fileId of the parent directory of the hard link.
+         */
+        std::string ParentId;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetFileLinks.
+       */
+      struct GetFileLinksResult final
+      {
+        /**
+         * Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
+         */
+        FileProperties Properties;
+        /**
+         * Array of HardLink.
+         */
+        std::vector<HardLink> HardLinks;
+      };
     } // namespace _detail
   } // namespace Models
   namespace _detail {
@@ -2562,6 +2740,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2693,6 +2873,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3231,6 +3413,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const CreateFileHardLinkOptions& options,
+          const Core::Context& context);
+      struct GetFileFileLinksOptions final
+      {
+        Nullable<std::string> LeaseId;
+        Nullable<bool> AllowTrailingDot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::GetFileLinksResult> GetFileLinks(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetFileFileLinksOptions& options,
           const Core::Context& context);
     };
   } // namespace _detail

@@ -32,6 +32,18 @@ namespace Azure { namespace Storage { namespace Blobs { namespace Models {
 
 namespace Azure { namespace Storage { namespace Test {
 
+  TEST(BlockBlobClientOptionsTest, DefaultTransferSizes)
+  {
+    Blobs::DownloadBlobToOptions downloadOptions;
+    EXPECT_EQ(
+        downloadOptions.TransferOptions.InitialChunkSize,
+        downloadOptions.TransferOptions.ChunkSize);
+    EXPECT_EQ(downloadOptions.TransferOptions.InitialChunkSize, 4_MB);
+
+    Blobs::UploadBlockBlobFromOptions uploadOptions;
+    EXPECT_EQ(uploadOptions.TransferOptions.SingleUploadThreshold, 4_MB);
+  }
+
   void BlockBlobClientTest::SetUp()
   {
     BlobContainerClientTest::SetUp();

@@ -14,6 +14,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   namespace _detail {
     constexpr static const char* ShareSnapshotQueryParameter = "sharesnapshot";
+    constexpr static const char* FileIdQueryParameter = "fileid";
 
     // Error codes:
     constexpr static const char* ParentNotFound = "ParentNotFound";

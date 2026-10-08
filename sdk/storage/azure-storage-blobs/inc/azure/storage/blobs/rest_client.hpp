@@ -1451,6 +1451,19 @@ namespace Azure { namespace Storage { namespace Blobs {
       };
     } // namespace _detail
     /**
+     * @brief Indicates the download hint for the blob.
+     */
+    class DownloadHint final : public Core::_internal::ExtendableEnumeration<DownloadHint> {
+    public:
+      /** Constructs a new DownloadHint instance */
+      DownloadHint() = default;
+      /** Constructs a new DownloadHint from a string. */
+      explicit DownloadHint(std::string value) : ExtendableEnumeration(std::move(value)) {}
+
+      /** Constant value of type DownloadHint: Layout */
+      AZ_STORAGE_BLOBS_DLLEXPORT const static DownloadHint Layout;
+    };
+    /**
      * @brief Detailed information of the downloaded blob.
      */
     struct DownloadBlobDetails final
@@ -1614,6 +1627,10 @@ namespace Azure { namespace Storage { namespace Blobs {
        * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
        */
       Nullable<Models::AccessTier> SmartAccessTier;
+      /**
+       * Indicates the download hint for the blob.
+       */
+      Nullable<Models::DownloadHint> DownloadHint;
     };
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Download.
@@ -1646,12 +1663,12 @@ namespace Azure { namespace Storage { namespace Blobs {
       Models::BlobType BlobType;
     };
     /**
-     * @brief Response type for #Azure::Storage::Blobs::BlobClient::GetProperties.
+     * @brief Properties of a blob.
      */
     struct BlobProperties final
     {
       /**
-       * Array of ObjectReplicationPolicy.
+       * Object replication policies associated with the source blob.
        */
       std::vector<ObjectReplicationPolicy> ObjectReplicationSourceProperties;
       /**
@@ -1659,89 +1676,67 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<BlobImmutabilityPolicy> ImmutabilityPolicy;
       /**
-       * Standard HTTP properties supported by containers and blobs.
+       * Standard HTTP properties supported by the blob.
        */
       BlobHttpHeaders HttpHeaders;
       /**
-       * Returns the date and time the blob was last modified. Any operation that modifies the blob,
-       * including an update of the blob's metadata or properties, changes the last-modified time of
-       * the blob.
+       * The date and time when the blob was last modified.
        */
       DateTime LastModified;
       /**
-       * Returns the date and time the blob was created.
+       * The date and time when the blob was created.
        */
       DateTime CreatedOn;
       /**
-       * A set of name-value pair associated with this blob.
+       * A set of name-value pairs associated with the blob.
        */
       Core::CaseInsensitiveMap Metadata;
       /**
-       * Optional. Only valid when Object Replication is enabled for the storage container and on
-       * the destination blob of the replication.
+       * The object replication policy identifier for the destination blob.
        */
       Nullable<std::string> ObjectReplicationDestinationPolicyId;
       /**
-       * The blob's type.
+       * The type of the blob.
        */
       Models::BlobType BlobType;
       /**
-       * Conclusion time of the last attempted Copy Blob operation where this blob was the
-       * destination blob. This value can specify the time of a completed, aborted, or failed copy
-       * attempt. This header does not appear if a copy is pending, if this blob has never been the
-       * destination in a Copy Blob operation, or if this blob has been modified after a concluded
-       * Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.
+       * The completion time of the last attempted copy operation.
        */
       Nullable<DateTime> CopyCompletedOn;
       /**
-       * Only appears when x-ms-copy-status is failed or pending. Describes the cause of the last
-       * fatal or non-fatal copy operation failure. This header does not appear if this blob has
-       * never been the destination in a Copy Blob operation, or if this blob has been modified
-       * after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or Put Block
-       * List.
+       * A description of the last copy operation status.
        */
       Nullable<std::string> CopyStatusDescription;
       /**
-       * String identifier for this copy operation. Use with Get Blob Properties to check the status
-       * of this copy operation, or pass to Abort Copy Blob to abort a pending copy.
+       * The identifier of the last copy operation.
        */
       Nullable<std::string> CopyId;
       /**
-       * Contains the number of bytes copied and the total bytes in the source in the last attempted
-       * Copy Blob operation where this blob was the destination blob. Can show between 0 and
-       * Content-Length bytes copied. This header does not appear if this blob has never been the
-       * destination in a Copy Blob operation, or if this blob has been modified after a concluded
-       * Copy Blob operation using Set Blob Properties, Put Blob, or Put Block List.
+       * The progress of the last copy operation.
        */
       Nullable<std::string> CopyProgress;
       /**
-       * URL up to 2 KB in length that specifies the source blob or file used in the last attempted
-       * Copy Blob operation where this blob was the destination blob. This header does not appear
-       * if this blob has never been the destination in a Copy Blob operation, or if this blob has
-       * been modified after a concluded Copy Blob operation using Set Blob Properties, Put Blob, or
-       * Put Block List.
+       * The source of the last copy operation.
        */
       Nullable<std::string> CopySource;
       /**
-       * State of the copy operation identified by x-ms-copy-id.
+       * The status of the last copy operation.
        */
       Nullable<Models::CopyStatus> CopyStatus;
       /**
-       * Included if the blob is incremental copy blob.
+       * Indicates whether the blob is an incremental copy.
        */
       Nullable<bool> IsIncrementalCopy;
       /**
-       * Included if the blob is incremental copy blob or incremental copy snapshot, if
-       * x-ms-copy-status is success. Snapshot time of the last successful incremental copy snapshot
-       * for this blob.
+       * The destination snapshot of the last incremental copy.
        */
       Nullable<std::string> IncrementalCopyDestinationSnapshot;
       /**
-       * When a blob is leased, specifies whether the lease is of infinite or fixed duration.
+       * The duration of the blob lease.
        */
       Nullable<LeaseDurationType> LeaseDuration;
       /**
-       * Lease state of the blob.
+       * The current lease state of the blob.
        */
       Nullable<Models::LeaseState> LeaseState;
       /**
@@ -1749,80 +1744,59 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<Models::LeaseStatus> LeaseStatus;
       /**
-       * Size of the blob in bytes.
+       * The size of the blob in bytes.
        */
       std::int64_t BlobSize = std::int64_t();
       /**
-       * The ETag contains a value that you can use to perform operations conditionally. If the
-       * request version is 2011-08-18 or newer, the ETag value will be in quotes.
+       * The entity tag of the blob.
        */
       Azure::ETag ETag;
       /**
-       * The current sequence number for a page blob. This header is not returned for block blobs or
-       * append blobs.
+       * The current sequence number of a page blob.
        */
       Nullable<std::int64_t> SequenceNumber;
       /**
-       * The number of committed blocks present in the blob. This header is returned only for append
-       * blobs.
+       * The number of committed blocks in an append blob.
        */
       Nullable<std::int32_t> CommittedBlockCount;
       /**
-       * The value of this header is set to true if the blob data and application metadata are
-       * completely encrypted using the specified algorithm. Otherwise, the value is set to false
-       * (when the blob is unencrypted, or if only parts of the blob/application metadata are
-       * encrypted).
+       * Indicates whether the blob is encrypted by the service.
        */
       bool IsServerEncrypted = bool();
       /**
-       * The SHA-256 hash of the encryption key used to encrypt the metadata. This header is only
-       * returned when the metadata was encrypted with a customer-provided key.
+       * The SHA-256 hash of the customer-provided encryption key.
        */
       Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
       /**
-       * Returns the name of the encryption scope used to encrypt the blob contents and application
-       * metadata.  Note that the absence of this header implies use of the default account
-       * encryption scope.
+       * The encryption scope used to encrypt the blob.
        */
       Nullable<std::string> EncryptionScope;
       /**
-       * The tier of page blob on a premium storage account or tier of block blob on blob storage
-       * LRS accounts. For a list of allowed premium page blob tiers, see
-       * https://learn.microsoft.com/azure/virtual-machines/disks-types#premium-ssd. For blob
-       * storage LRS accounts, valid values are Hot/Cool/Archive.
+       * The access tier of the blob.
        */
       Nullable<Models::AccessTier> AccessTier;
       /**
-       * For page blobs on a premium storage account only. If the access tier is not explicitly set
-       * on the blob, the tier is inferred based on its content length and this header will be
-       * returned with true value.
+       * Indicates whether the access tier was inferred.
        */
       Nullable<bool> IsAccessTierInferred;
       /**
-       * For blob storage LRS accounts, valid values are
-       * rehydrate-pending-to-hot/rehydrate-pending-to-cool. If the blob is being rehydrated and is
-       * not complete then this header is returned indicating that rehydrate is pending and also
-       * tells the destination tier.
+       * The archive rehydration status of the blob.
        */
       Nullable<Models::ArchiveStatus> ArchiveStatus;
       /**
-       * The time the tier was changed on the object. This is only returned if the tier on the block
-       * blob was ever set.
+       * The time when the access tier was last changed.
        */
       Nullable<DateTime> AccessTierChangedOn;
       /**
-       * The underlying tier of a smart tier blob. Only returned if the blob is in Smart tier.
+       * The underlying access tier of a smart-tier blob.
        */
       Nullable<Models::AccessTier> SmartAccessTier;
       /**
-       * A DateTime value returned by the service that uniquely identifies the blob. The value of
-       * this header indicates the blob version, and may be used in subsequent requests to access
-       * this version of the blob.
+       * The version identifier of the blob.
        */
       Nullable<std::string> VersionId;
       /**
-       * The value of this header indicates whether version of this blob is a current version, see
-       * also x-ms-version-id header.
+       * Indicates whether this is the current blob version.
        */
       Nullable<bool> IsCurrentVersion;
       /**
@@ -1830,25 +1804,23 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       Nullable<std::int32_t> TagCount;
       /**
-       * The time this blob will expire.
+       * The time when the blob will expire.
        */
       Nullable<DateTime> ExpiresOn;
       /**
-       * If this blob has been sealed.
+       * Indicates whether the append blob is sealed.
        */
       Nullable<bool> IsSealed;
       /**
-       * If an object is in rehydrate pending state then this header is returned with priority of
-       * rehydrate. Valid values are High and Standard.
+       * The priority of an archive rehydration operation.
        */
       Nullable<Models::RehydratePriority> RehydratePriority;
       /**
-       * UTC date/time value generated by the service that indicates the time at which the blob was
-       * last read or written to.
+       * The time when the blob was last read or written.
        */
       Nullable<DateTime> LastAccessedOn;
       /**
-       * Indicates if a legal hold is present on the blob.
+       * Indicates whether the blob has a legal hold.
        */
       bool HasLegalHold = false;
     };
@@ -1880,6 +1852,65 @@ namespace Azure { namespace Storage { namespace Blobs {
        */
       bool Deleted = true;
     };
+    namespace _detail {
+      struct BlobLayoutRangesItem final
+      {
+        /**
+         * The start byte offset of the range.
+         */
+        std::int64_t Start = std::int64_t();
+        /**
+         * The end byte offset of the range.
+         */
+        std::int64_t End = std::int64_t();
+        /**
+         * Index into the Endpoints array indicating which endpoint serves this range.
+         */
+        std::int32_t EndpointIndex = std::int32_t();
+      };
+      struct BlobLayoutEndpointsItem final
+      {
+        /**
+         * The index of the endpoint, referenced by Range elements.
+         */
+        std::int32_t Index = std::int32_t();
+        /**
+         * The host:port of the endpoint.
+         */
+        std::string Value;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Blobs::BlobClient::GetLayout.
+       */
+      struct BlobLayout final
+      {
+        /**
+         * Array of BlobLayout-RangesItem.
+         */
+        std::vector<BlobLayoutRangesItem> Ranges;
+        /**
+         * Array of BlobLayout-EndpointsItem.
+         */
+        std::vector<BlobLayoutEndpointsItem> Endpoints;
+        /**
+         * The continuation marker used for this request.
+         */
+        std::string Marker;
+        /**
+         * If the number of ranges exceeds MaxResults, a NextMarker is returned for use in
+         * subsequent requests to continue listing.
+         */
+        std::string NextMarker;
+        /**
+         * The maximum number of ranges to return per request.
+         */
+        std::int32_t MaxResults = std::int32_t();
+        /**
+         * Properties of a blob.
+         */
+        BlobProperties Properties;
+      };
+    } // namespace _detail
     /**
      * @brief Response type for #Azure::Storage::Blobs::BlobClient::Undelete.
      */
@@ -3657,6 +3688,28 @@ namespace Azure { namespace Storage { namespace Blobs {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const DeleteBlobOptions& options,
+          const Core::Context& context);
+      struct GetBlobLayoutOptions final
+      {
+        Nullable<std::string> Snapshot;
+        Nullable<std::string> VersionId;
+        Nullable<std::string> Marker;
+        Nullable<std::int32_t> MaxResults;
+        Nullable<std::string> Range;
+        Nullable<std::string> LeaseId;
+        Nullable<std::string> IfTags;
+        Nullable<DateTime> IfModifiedSince;
+        Nullable<DateTime> IfUnmodifiedSince;
+        ETag IfMatch;
+        ETag IfNoneMatch;
+        Nullable<std::string> EncryptionKey;
+        Nullable<std::vector<std::uint8_t>> EncryptionKeySha256;
+        Nullable<std::string> EncryptionAlgorithm;
+      };
+      static Response<Models::_detail::BlobLayout> GetLayout(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetBlobLayoutOptions& options,
           const Core::Context& context);
       struct UndeleteBlobOptions final
       {

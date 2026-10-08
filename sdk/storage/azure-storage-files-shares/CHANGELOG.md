@@ -4,6 +4,19 @@
 
 ### Features Added
 
+- Bumped up API version to `2027-03-07`.
+- Added NFS List Files V2 support to `ShareDirectoryClient::ListFilesAndDirectories`.
+  - Added `Permissions`, `LinkCount`, and `NfsAttributes` listing traits.
+  - Added POSIX properties for listed files and directories, including owner, group, file mode,
+    link count, and NFS file type.
+  - Added support for listing symbolic links, block devices, character devices, FIFOs, and
+    sockets.
+- Added the share creation time to `ShareClient::GetProperties` and
+  `ShareServiceClient::ListShares` responses.
+- Added support for enabling and configuring Files Change Feed when creating or updating a share.
+- Added support for addressing files and directories by file ID, retrieving their properties, and
+  listing a file's hard links.
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -103,6 +103,7 @@ namespace Azure { namespace Storage { namespace Test {
       Blobs::Models::ListBlobsIncludeFlags include)
   {
     Blobs::ListBlobsOptions options;
+    options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
     options.Prefix = blobName;
     options.Include = include;
     for (auto page = containerClient.ListBlobs(options); page.HasPage(); page.MoveToNextPage())
@@ -239,7 +240,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     for (const auto format :
-         {Blobs::StorageResponseFormat::Arrow, Blobs::StorageResponseFormat::Xml})
+         {Blobs::StorageResponseFormat::Auto, Blobs::StorageResponseFormat::Xml})
     {
 
       Azure::Storage::Blobs::ListBlobsOptions options;
@@ -256,10 +257,17 @@ namespace Azure { namespace Storage { namespace Test {
         EXPECT_FALSE(pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderDate).empty());
         EXPECT_FALSE(
             pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderXMsVersion).empty());
+        const auto& contentType
+            = pageResult.RawResponse->GetHeaders().at(_internal::HttpHeaderContentType);
         if (format == Blobs::StorageResponseFormat::Xml)
         {
+          EXPECT_NE(contentType.find(_internal::ContentTypeXml), std::string::npos);
           EXPECT_FALSE(pageResult.ServiceEndpoint.empty());
           EXPECT_EQ(pageResult.BlobContainerName, m_containerName);
+        }
+        else
+        {
+          EXPECT_NE(contentType.find(_internal::ContentTypeApacheArrowStream), std::string::npos);
         }
         for (const auto& blob : pageResult.Blobs)
         {
@@ -308,6 +316,7 @@ namespace Azure { namespace Storage { namespace Test {
       for (auto pageResult = containerClient.ListBlobs(options); pageResult.HasPage();
            pageResult.MoveToNextPage())
       {
+        EXPECT_EQ(pageResult.Prefix, prefix1);
         for (const auto& blob : pageResult.Blobs)
         {
           listBlobs.insert(blob.Name);
@@ -343,6 +352,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobsOptions options;
+    options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
     options.PageSizeHint = 3;
     options.StartFrom = startFrom;
     std::set<std::string> listBlobs;
@@ -458,6 +468,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobsOptions options;
+    options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
     options.Prefix = prefix;
     std::set<std::string> items;
     for (auto pageResult = containerClient.ListBlobsByHierarchy(delimiter, options);
@@ -530,6 +541,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     Azure::Storage::Blobs::ListBlobsOptions options;
+    options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
     options.Prefix = prefix;
     options.StartFrom = startFrom;
     std::set<std::string> items;
@@ -591,6 +603,7 @@ namespace Azure { namespace Storage { namespace Test {
     blobClient.AppendBlock(contentStream);
 
     Azure::Storage::Blobs::ListBlobsOptions options;
+    options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
     options.Prefix = blobName;
     options.Include = Blobs::Models::ListBlobsIncludeFlags::Snapshots
         | Blobs::Models::ListBlobsIncludeFlags::Versions
@@ -1666,6 +1679,7 @@ namespace Azure { namespace Storage { namespace Test {
       EXPECT_EQ(blobUrl, containerClient.GetUrl() + "/" + _internal::UrlEncodePath(blobName));
       Blobs::Models::BlobItem blobItem;
       Blobs::ListBlobsOptions options;
+      options.ResponseFormat = Blobs::StorageResponseFormat::Xml;
       options.Prefix = "aaaaa";
       for (auto page = containerClient.ListBlobs(options); page.HasPage(); page.MoveToNextPage())
       {
@@ -1679,7 +1693,9 @@ namespace Azure { namespace Storage { namespace Test {
       }
       EXPECT_EQ(blobItem.Name, blobName);
       bool found = false;
-      for (auto page = containerClient.ListBlobsByHierarchy("/"); page.HasPage();
+      Blobs::ListBlobsOptions hierarchyOptions;
+      hierarchyOptions.ResponseFormat = Blobs::StorageResponseFormat::Xml;
+      for (auto page = containerClient.ListBlobsByHierarchy("/", hierarchyOptions); page.HasPage();
            page.MoveToNextPage())
       {
         for (auto& p : page.BlobPrefixes)

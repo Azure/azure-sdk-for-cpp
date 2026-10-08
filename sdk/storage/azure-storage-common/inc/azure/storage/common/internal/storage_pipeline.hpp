@@ -19,6 +19,7 @@ namespace Azure { namespace Storage { namespace _internal {
     std::string PrimaryHost;
     std::string SecondaryHost;
     std::string ApiVersion;
+    bool AddDataLocalityPolicy = false;
     std::unique_ptr<Core::Http::Policies::HttpPolicy> TokenAuthPolicy;
     std::unique_ptr<Core::Http::Policies::HttpPolicy> SharedKeyAuthPolicy;
   };

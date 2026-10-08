@@ -6,10 +6,13 @@
 #include "azure/storage/blobs/append_blob_client.hpp"
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
+#include "private/data_locality.hpp"
 #include "private/package_version.hpp"
+#include "private/session_authentication_policy.hpp"
 
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 #include <azure/storage/common/internal/constants.hpp>
@@ -17,6 +20,7 @@
 #include <azure/storage/common/internal/reliable_stream.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
+#include <azure/storage/common/internal/storage_data_locality_policy.hpp>
 #include <azure/storage/common/internal/storage_pipeline.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/internal/structured_message_decoding_stream.hpp>
@@ -24,12 +28,137 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 #include <algorithm>
+#include <future>
+#include <limits>
+#include <map>
+#include <vector>
 
 namespace Azure { namespace Storage { namespace Blobs {
 
   namespace _detail {
     Azure::Core::Context::Key const DataLakeInteroperabilityExtraOptionsKey;
   }
+
+  namespace {
+    bool HasDataLocalityHint(const Models::DownloadBlobDetails& details)
+    {
+      return details.DownloadHint.HasValue()
+          && Azure::Core::_internal::StringExtensions::ToLower(
+                 details.DownloadHint.Value().ToString())
+          == Models::DownloadHint::Layout.ToString();
+    }
+
+    bool IsLayoutAwareRoutingEnabled(LayoutAwareRouting value)
+    {
+      return value != LayoutAwareRouting::Disabled;
+    }
+
+    void CompleteBlobPropertiesFromResponse(
+        Models::BlobProperties& properties,
+        const Azure::Core::Http::RawResponse& rawResponse)
+    {
+      if (properties.AccessTier.HasValue() && !properties.IsAccessTierInferred.HasValue())
+      {
+        properties.IsAccessTierInferred = false;
+      }
+      if (properties.VersionId.HasValue() && !properties.IsCurrentVersion.HasValue())
+      {
+        properties.IsCurrentVersion = false;
+      }
+      if (properties.CopyStatus.HasValue() && !properties.IsIncrementalCopy.HasValue())
+      {
+        properties.IsIncrementalCopy = false;
+      }
+      if (properties.BlobType == Models::BlobType::AppendBlob && !properties.IsSealed.HasValue())
+      {
+        properties.IsSealed = false;
+      }
+
+      std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
+      for (auto i = rawResponse.GetHeaders().lower_bound("x-ms-or-");
+           i != rawResponse.GetHeaders().end() && i->first.substr(0, 8) == "x-ms-or-";
+           ++i)
+      {
+        const std::string& header = i->first;
+        auto underscorePos = header.find('_', 8);
+        if (underscorePos == std::string::npos)
+        {
+          continue;
+        }
+        std::string policyId = std::string(header.begin() + 8, header.begin() + underscorePos);
+        Models::ObjectReplicationRule rule;
+        rule.RuleId = header.substr(underscorePos + 1);
+        rule.ReplicationStatus = Models::ObjectReplicationStatus(i->second);
+        orPropertiesMap[policyId].emplace_back(std::move(rule));
+      }
+      for (auto& property : orPropertiesMap)
+      {
+        Models::ObjectReplicationPolicy policy;
+        policy.PolicyId = property.first;
+        policy.Rules = std::move(property.second);
+        properties.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
+      }
+    }
+
+    std::unique_ptr<_detail::DataLocalityLayoutState> CreateDataLocalityLayoutState(
+        BlobClient blobClient,
+        Azure::Nullable<Azure::Core::Http::HttpRange> range,
+        Azure::ETag eTag,
+        Azure::Core::Context context)
+    {
+      auto refresher = [range = std::move(range),
+                        eTag = std::move(eTag),
+                        context = std::move(context),
+                        blobClient = std::move(blobClient)]() {
+        try
+        {
+          GetBlobLayoutOptions options;
+          options.Range = range;
+          options.AccessConditions.IfMatch = eTag;
+          auto page = blobClient.GetLayout(options, context);
+          _detail::DataLocalityLayout layout;
+          for (; page.HasPage(); page.MoveToNextPage(context))
+          {
+            if (!layout.ETag.HasValue())
+            {
+              layout.ETag = page.Layout.Properties.ETag;
+            }
+            if (layout.BlobSize == 0)
+            {
+              layout.BlobSize = page.Layout.Properties.BlobSize;
+            }
+            for (auto& layoutRange : page.Layout.Ranges)
+            {
+              if (layoutRange.Endpoint.empty() || layoutRange.Range.Offset < 0
+                  || !layoutRange.Range.Length.HasValue() || layoutRange.Range.Length.Value() <= 0)
+              {
+                throw Azure::Core::RequestFailedException("Invalid blob layout range.");
+              }
+              layout.Ranges.push_back(std::move(layoutRange));
+            }
+          }
+          std::sort(
+              layout.Ranges.begin(),
+              layout.Ranges.end(),
+              [](const Models::BlobLayoutRange& lhs, const Models::BlobLayoutRange& rhs) {
+                return lhs.Range.Offset < rhs.Range.Offset;
+              });
+          return layout;
+        }
+        catch (const StorageException& exception)
+        {
+          if (exception.StatusCode == Core::Http::HttpStatusCode::BadRequest
+              || static_cast<int>(exception.StatusCode) >= 500)
+          {
+            return _detail::DataLocalityLayout();
+          }
+          throw;
+        }
+      };
+
+      return std::make_unique<_detail::DataLocalityLayoutState>(std::move(refresher));
+    }
+  } // namespace
 
   BlobClient BlobClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -64,6 +193,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -82,15 +212,17 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
     {
       Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
               : _internal::StorageScope);
-      pipelineOptions.TokenAuthPolicy
-          = std::make_unique<_internal::StorageBearerTokenAuthenticationPolicy>(
-              credential, tokenContext, options.EnableTenantDiscovery);
+      auto authPolicies = _detail::CreateTokenAuthenticationPolicies(
+          blobUrl, credential, tokenContext, options.EnableTenantDiscovery, options);
+      pipelineOptions.TokenAuthPolicy = std::move(authPolicies.TokenAuthPolicy);
+      pipelineOptions.SharedKeyAuthPolicy = std::move(authPolicies.FinalAuthPolicy);
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -111,6 +243,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
@@ -214,8 +347,14 @@ namespace Azure { namespace Storage { namespace Blobs {
           = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
 
+    std::string dataLocalityEndpoint;
+    const auto downloadContext = !options.LayoutEndpoint.empty()
+        ? _internal::WithDataLocalityEndpoint(context, options.LayoutEndpoint)
+        : context.TryGetValue(_internal::DataLocalityEndpointKey, dataLocalityEndpoint)
+        ? context
+        : _internal::WithReplicaStatus(context);
     auto downloadResponse = _detail::BlobClient::Download(
-        *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+        *m_pipeline, m_blobUrl, protocolLayerOptions, downloadContext);
 
     int64_t structuredContentLength = 0;
     if (isStructuredMessage)
@@ -349,6 +488,83 @@ namespace Azure { namespace Storage { namespace Blobs {
     return downloadResponse;
   }
 
+  BlobLayoutPagedResponse BlobClient::GetLayout(
+      const GetBlobLayoutOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    _detail::BlobClient::GetBlobLayoutOptions protocolLayerOptions;
+    protocolLayerOptions.Marker = options.ContinuationToken;
+    if (options.Range.HasValue())
+    {
+      std::string range = "bytes=" + std::to_string(options.Range.Value().Offset) + "-";
+      if (options.Range.Value().Length.HasValue())
+      {
+        range += std::to_string(
+            options.Range.Value().Offset + options.Range.Value().Length.Value() - 1);
+      }
+      protocolLayerOptions.Range = std::move(range);
+    }
+    protocolLayerOptions.LeaseId = options.AccessConditions.LeaseId;
+    protocolLayerOptions.IfTags = options.AccessConditions.TagConditions;
+    protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
+    protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
+    {
+      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKeySha256
+          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+      protocolLayerOptions.EncryptionAlgorithm
+          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
+    }
+
+    auto response
+        = _detail::BlobClient::GetLayout(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    BlobLayoutPagedResponse pagedResponse;
+    std::map<int32_t, std::string> endpoints;
+    for (const auto& endpoint : response.Value.Endpoints)
+    {
+      if (endpoint.Index < 0 || endpoint.Value.empty()
+          || !endpoints.emplace(endpoint.Index, endpoint.Value).second)
+      {
+        throw Azure::Core::RequestFailedException("Invalid blob layout endpoint.");
+      }
+    }
+    for (const auto& range : response.Value.Ranges)
+    {
+      const auto endpoint = endpoints.find(range.EndpointIndex);
+      if (range.Start < 0 || range.End < range.Start || endpoint == endpoints.end())
+      {
+        throw Azure::Core::RequestFailedException("Invalid blob layout range.");
+      }
+      const auto rangeLength
+          = static_cast<uint64_t>(range.End) - static_cast<uint64_t>(range.Start) + 1;
+      if (rangeLength > static_cast<uint64_t>((std::numeric_limits<int64_t>::max)()))
+      {
+        throw Azure::Core::RequestFailedException("Invalid blob layout range.");
+      }
+      Models::BlobLayoutRange layoutRange;
+      layoutRange.Range.Offset = range.Start;
+      layoutRange.Range.Length = static_cast<int64_t>(rangeLength);
+      layoutRange.Endpoint = endpoint->second;
+      pagedResponse.Layout.Ranges.push_back(std::move(layoutRange));
+    }
+    pagedResponse.Layout.Properties = std::move(response.Value.Properties);
+    if (!pagedResponse.Layout.Properties.ETag.HasValue())
+    {
+      pagedResponse.Layout.Properties.ETag = options.AccessConditions.IfMatch;
+    }
+    CompleteBlobPropertiesFromResponse(pagedResponse.Layout.Properties, *response.RawResponse);
+
+    pagedResponse.m_blobClient = std::make_shared<BlobClient>(*this);
+    pagedResponse.m_operationOptions = options;
+    pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
+    pagedResponse.NextPageToken = response.Value.NextMarker;
+    pagedResponse.RawResponse = std::move(response.RawResponse);
+    return pagedResponse;
+  }
+
   Azure::Response<Models::DownloadBlobToResult> BlobClient::DownloadTo(
       uint8_t* buffer,
       size_t bufferSize,
@@ -367,6 +583,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    // Do not synthesize a range when the caller did not provide one. A ranged GET fails with 416
+    // for an empty blob; an unbounded response is still consumed only up to firstChunkLength.
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
@@ -391,6 +609,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       blobRangeSize = blobSize;
     }
     firstChunkLength = (std::min)(firstChunkLength, blobRangeSize);
+    const int64_t remainingOffset = firstChunkOffset + firstChunkLength;
+    const int64_t remainingSize = blobRangeSize - firstChunkLength;
 
     if (static_cast<uint64_t>(blobRangeSize) > (std::numeric_limits<size_t>::max)()
         || static_cast<size_t>(blobRangeSize) > bufferSize)
@@ -399,13 +619,20 @@ namespace Azure { namespace Storage { namespace Blobs {
           "Buffer is not big enough, blob range size is " + std::to_string(blobRangeSize) + ".");
     }
 
-    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
-        buffer, static_cast<size_t>(firstChunkLength), context);
-    if (bytesRead != firstChunkLength)
+    std::unique_ptr<_detail::DataLocalityLayoutState> dataLocalityState;
+    if (remainingSize > 0 && IsLayoutAwareRoutingEnabled(options.LayoutAwareRouting)
+        && HasDataLocalityHint(firstChunk.Value.Details))
     {
-      throw Azure::Core::RequestFailedException("Error when reading body stream.");
+      Core::Http::HttpRange remainingRange;
+      remainingRange.Offset = remainingOffset;
+      remainingRange.Length = remainingSize;
+      dataLocalityState = CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+      dataLocalityState->WaitForInitialLayout();
+      if (!dataLocalityState->HasLayout())
+      {
+        dataLocalityState.reset();
+      }
     }
-    firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
@@ -417,9 +644,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Azure::Response<Models::DownloadBlobToResult>(
           std::move(ret), std::move(response.RawResponse));
     };
-    auto ret = returnTypeConverter(firstChunk);
 
-    // Keep downloading the remaining in parallel
+    Azure::Nullable<Azure::Response<Models::DownloadBlobResult>> lastChunkResponse;
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
@@ -428,11 +654,14 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            auto chunk = Download(chunkOptions, context);
+            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
+                                          context, dataLocalityState->GetEndpoint(offset, length))
+                                                        : context;
+            auto chunk = Download(chunkOptions, chunkContext);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
                 static_cast<size_t>(chunkOptions.Range.Value().Length.Value()),
-                context);
+                chunkContext);
             if (bytesRead != chunkOptions.Range.Value().Length.Value())
             {
               throw Azure::Core::RequestFailedException("Error when reading body stream.");
@@ -440,20 +669,52 @@ namespace Azure { namespace Storage { namespace Blobs {
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
-              ret.Value.TransactionalContentHash.Reset();
+              lastChunkResponse = std::move(chunk);
             }
           };
 
-    int64_t remainingOffset = firstChunkOffset + firstChunkLength;
-    int64_t remainingSize = blobRangeSize - firstChunkLength;
+    std::future<void> remainingDownload;
+    if (remainingSize > 0 && options.TransferOptions.Concurrency > 1)
+    {
+      const int remainingConcurrency = options.TransferOptions.Concurrency - 1;
+      remainingDownload = std::async(std::launch::async, [&, remainingConcurrency]() {
+        _internal::ConcurrentTransfer(
+            remainingOffset,
+            remainingSize,
+            options.TransferOptions.ChunkSize,
+            remainingConcurrency,
+            downloadChunkFunc);
+      });
+    }
 
-    _internal::ConcurrentTransfer(
-        remainingOffset,
-        remainingSize,
-        options.TransferOptions.ChunkSize,
-        options.TransferOptions.Concurrency,
-        downloadChunkFunc);
+    int64_t bytesRead = firstChunk.Value.BodyStream->ReadToCount(
+        buffer, static_cast<size_t>(firstChunkLength), context);
+    if (bytesRead != firstChunkLength)
+    {
+      throw Azure::Core::RequestFailedException("Error when reading body stream.");
+    }
+    firstChunk.Value.BodyStream.reset();
+
+    if (remainingDownload.valid())
+    {
+      remainingDownload.get();
+    }
+    else if (remainingSize > 0)
+    {
+      _internal::ConcurrentTransfer(
+          remainingOffset,
+          remainingSize,
+          options.TransferOptions.ChunkSize,
+          options.TransferOptions.Concurrency,
+          downloadChunkFunc);
+    }
+
+    auto ret = lastChunkResponse.HasValue() ? returnTypeConverter(lastChunkResponse.Value())
+                                            : returnTypeConverter(firstChunk);
+    if (lastChunkResponse.HasValue())
+    {
+      ret.Value.TransactionalContentHash.Reset();
+    }
     ret.Value.ContentRange.Offset = firstChunkOffset;
     ret.Value.ContentRange.Length = blobRangeSize;
     return ret;
@@ -476,6 +737,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     DownloadBlobOptions firstChunkOptions;
     firstChunkOptions.Range = options.Range;
+    // Do not synthesize a range when the caller did not provide one. A ranged GET fails with 416
+    // for an empty blob; an unbounded response is still consumed only up to firstChunkLength.
     if (firstChunkOptions.Range.HasValue())
     {
       firstChunkOptions.Range.Value().Length = firstChunkLength;
@@ -500,6 +763,23 @@ namespace Azure { namespace Storage { namespace Blobs {
       blobRangeSize = blobSize;
     }
     firstChunkLength = (std::min)(firstChunkLength, blobRangeSize);
+    const int64_t remainingOffset = firstChunkOffset + firstChunkLength;
+    const int64_t remainingSize = blobRangeSize - firstChunkLength;
+
+    std::unique_ptr<_detail::DataLocalityLayoutState> dataLocalityState;
+    if (remainingSize > 0 && IsLayoutAwareRoutingEnabled(options.LayoutAwareRouting)
+        && HasDataLocalityHint(firstChunk.Value.Details))
+    {
+      Core::Http::HttpRange remainingRange;
+      remainingRange.Offset = remainingOffset;
+      remainingRange.Length = remainingSize;
+      dataLocalityState = CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+      dataLocalityState->WaitForInitialLayout();
+      if (!dataLocalityState->HasLayout())
+      {
+        dataLocalityState.reset();
+      }
+    }
 
     auto bodyStreamToFile = [](Azure::Core::IO::BodyStream& stream,
                                _internal::FileWriter& fileWriter,
@@ -523,8 +803,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     };
 
     _internal::FileWriter fileWriter(fileName);
-    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
-    firstChunk.Value.BodyStream.reset();
 
     auto returnTypeConverter = [](Azure::Response<Models::DownloadBlobResult>& response) {
       Models::DownloadBlobToResult ret;
@@ -536,9 +814,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       return Azure::Response<Models::DownloadBlobToResult>(
           std::move(ret), std::move(response.RawResponse));
     };
-    auto ret = returnTypeConverter(firstChunk);
 
-    // Keep downloading the remaining in parallel
+    Azure::Nullable<Azure::Response<Models::DownloadBlobResult>> lastChunkResponse;
     auto downloadChunkFunc
         = [&](int64_t offset, int64_t length, int64_t chunkId, int64_t numChunks) {
             DownloadBlobOptions chunkOptions;
@@ -547,30 +824,60 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            auto chunk = Download(chunkOptions, context);
+            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
+                                          context, dataLocalityState->GetEndpoint(offset, length))
+                                                        : context;
+            auto chunk = Download(chunkOptions, chunkContext);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
                 fileWriter,
                 offset - firstChunkOffset,
                 chunkOptions.Range.Value().Length.Value(),
-                context);
+                chunkContext);
 
             if (chunkId == numChunks - 1)
             {
-              ret = returnTypeConverter(chunk);
-              ret.Value.TransactionalContentHash.Reset();
+              lastChunkResponse = std::move(chunk);
             }
           };
 
-    int64_t remainingOffset = firstChunkOffset + firstChunkLength;
-    int64_t remainingSize = blobRangeSize - firstChunkLength;
+    std::future<void> remainingDownload;
+    if (remainingSize > 0 && options.TransferOptions.Concurrency > 1)
+    {
+      const int remainingConcurrency = options.TransferOptions.Concurrency - 1;
+      remainingDownload = std::async(std::launch::async, [&, remainingConcurrency]() {
+        _internal::ConcurrentTransfer(
+            remainingOffset,
+            remainingSize,
+            options.TransferOptions.ChunkSize,
+            remainingConcurrency,
+            downloadChunkFunc);
+      });
+    }
 
-    _internal::ConcurrentTransfer(
-        remainingOffset,
-        remainingSize,
-        options.TransferOptions.ChunkSize,
-        options.TransferOptions.Concurrency,
-        downloadChunkFunc);
+    bodyStreamToFile(*(firstChunk.Value.BodyStream), fileWriter, 0, firstChunkLength, context);
+    firstChunk.Value.BodyStream.reset();
+
+    if (remainingDownload.valid())
+    {
+      remainingDownload.get();
+    }
+    else if (remainingSize > 0)
+    {
+      _internal::ConcurrentTransfer(
+          remainingOffset,
+          remainingSize,
+          options.TransferOptions.ChunkSize,
+          options.TransferOptions.Concurrency,
+          downloadChunkFunc);
+    }
+
+    auto ret = lastChunkResponse.HasValue() ? returnTypeConverter(lastChunkResponse.Value())
+                                            : returnTypeConverter(firstChunk);
+    if (lastChunkResponse.HasValue())
+    {
+      ret.Value.TransactionalContentHash.Reset();
+    }
     ret.Value.ContentRange.Offset = firstChunkOffset;
     ret.Value.ContentRange.Length = blobRangeSize;
     return ret;
@@ -605,51 +912,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     auto response = _detail::BlobClient::GetProperties(
         *m_pipeline, m_blobUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
-    if (response.Value.AccessTier.HasValue() && !response.Value.IsAccessTierInferred.HasValue())
-    {
-      response.Value.IsAccessTierInferred = false;
-    }
-    if (response.Value.VersionId.HasValue() && !response.Value.IsCurrentVersion.HasValue())
-    {
-      response.Value.IsCurrentVersion = false;
-    }
-    if (response.Value.CopyStatus.HasValue() && !response.Value.IsIncrementalCopy.HasValue())
-    {
-      response.Value.IsIncrementalCopy = false;
-    }
-    if (response.Value.BlobType == Models::BlobType::AppendBlob
-        && !response.Value.IsSealed.HasValue())
-    {
-      response.Value.IsSealed = false;
-    }
-    {
-      std::map<std::string, std::vector<Models::ObjectReplicationRule>> orPropertiesMap;
-      for (auto i = response.RawResponse->GetHeaders().lower_bound("x-ms-or-");
-           i != response.RawResponse->GetHeaders().end() && i->first.substr(0, 8) == "x-ms-or-";
-           ++i)
-      {
-        const std::string& header = i->first;
-        auto underscorePos = header.find('_', 8);
-        if (underscorePos == std::string::npos)
-        {
-          continue;
-        }
-        std::string policyId = std::string(header.begin() + 8, header.begin() + underscorePos);
-        std::string ruleId = header.substr(underscorePos + 1);
-
-        Models::ObjectReplicationRule rule;
-        rule.RuleId = std::move(ruleId);
-        rule.ReplicationStatus = Models::ObjectReplicationStatus(i->second);
-        orPropertiesMap[policyId].emplace_back(std::move(rule));
-      }
-      for (auto& property : orPropertiesMap)
-      {
-        Models::ObjectReplicationPolicy policy;
-        policy.PolicyId = property.first;
-        policy.Rules = std::move(property.second);
-        response.Value.ObjectReplicationSourceProperties.emplace_back(std::move(policy));
-      }
-    }
+    CompleteBlobPropertiesFromResponse(response.Value, *response.RawResponse);
     return response;
   }
 

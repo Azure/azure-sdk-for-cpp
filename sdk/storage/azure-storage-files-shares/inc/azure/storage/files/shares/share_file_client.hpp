@@ -78,6 +78,13 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     std::string GetUrl() const { return m_shareFileUrl.GetAbsoluteUrl(); }
 
     /**
+     * @brief Gets the file ID when this client addresses a file by ID.
+     *
+     * @return The file ID, or an empty string when this client addresses a file by path.
+     */
+    std::string GetFileId() const;
+
+    /**
      * @brief Initializes a new instance of the ShareFileClient class with an identical URL
      * source but the specified share snapshot timestamp.
      *
@@ -446,19 +453,26 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         const CreateHardLinkOptions& options = CreateHardLinkOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
+    /**
+     * @brief Returns the hard links and properties of a file addressed by file ID.
+     * @param options Optional parameters for getting the file links.
+     * @param context Context for cancelling the operation.
+     * @return The file properties and hard links.
+     */
+    Azure::Response<Models::GetFileLinksResult> GetFileLinks(
+        const GetFileLinksOptions& options = GetFileLinksOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
   private:
     Azure::Core::Url m_shareFileUrl;
+    Azure::Nullable<std::string> m_fileId;
     std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> m_pipeline;
     _detail::ShareClientConfiguration m_clientConfiguration;
 
     explicit ShareFileClient(
         Azure::Core::Url shareFileUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
-        _detail::ShareClientConfiguration clientConfiguration)
-        : m_shareFileUrl(std::move(shareFileUrl)), m_pipeline(std::move(pipeline)),
-          m_clientConfiguration(std::move(clientConfiguration))
-    {
-    }
+        _detail::ShareClientConfiguration clientConfiguration);
 
     friend class ShareClient;
     friend class ShareDirectoryClient;

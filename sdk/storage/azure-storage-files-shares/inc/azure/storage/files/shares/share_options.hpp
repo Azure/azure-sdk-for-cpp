@@ -8,6 +8,7 @@
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
 #include <azure/core/nullable.hpp>
+#include <azure/core/url.hpp>
 #include <azure/storage/common/access_conditions.hpp>
 #include <azure/storage/common/internal/concurrent_transfer.hpp>
 
@@ -272,6 +273,9 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   };
 
   namespace _detail {
+    Azure::Nullable<std::string> GetFileIdFromUrl(const Azure::Core::Url& url);
+    void AssertPathAddressed(const Azure::Nullable<std::string>& fileId, const char* operationName);
+
     struct ShareClientConfiguration
     {
       /**
@@ -491,6 +495,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * throughput is 60 MiB/sec and maximum is 5,125 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies whether change feed is enabled on the
+     * share.
+     */
+    Nullable<bool> EnableChangeFeed;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies the number of days that change feed
+     * records are retained. Valid values are between 1 and 365. The default is 7 days.
+     */
+    Nullable<std::int32_t> ChangeFeedRetentionInDays;
   };
 
   /**
@@ -581,6 +597,19 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
      * bandwidth is 60 MiB/sec and max is 5,120 MiB/sec.
      */
     Nullable<std::int64_t> ProvisionedMaxBandwidthMibps;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies whether change feed is enabled on the
+     * share.
+     */
+    Nullable<bool> EnableChangeFeed;
+
+    /**
+     * Optional. Version 2026-06-06 and newer. Specifies the number of days that change feed
+     * records are retained. Valid values are between 1 and 365. Once change feed is enabled, this
+     * value can be updated independently.
+     */
+    Nullable<std::int32_t> ChangeFeedRetentionInDays;
   };
 
   /**
@@ -1148,6 +1177,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
    * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
    */
   struct GetFilePropertiesOptions final
+  {
+    /**
+     * The operation will only succeed if the access condition is met.
+     */
+    LeaseAccessConditions AccessConditions;
+  };
+
+  /**
+   * @brief Optional parameters for #Azure::Storage::Files::Shares::ShareFileClient::GetFileLinks.
+   */
+  struct GetFileLinksOptions final
   {
     /**
      * The operation will only succeed if the access condition is met.
