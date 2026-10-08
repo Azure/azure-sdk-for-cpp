@@ -44,6 +44,10 @@ parameters:
   - name: MatrixFile
     type: string
     default: eng/pipelines/templates/stages/platform-matrix.json
+  # A second matrix file, built beside MatrixFile. Empty means no second job set.
+  - name: AdditionalMatrixFile
+    type: string
+    default: ''
   - name: JobName
     type: string
     default: Validate 
@@ -77,6 +81,38 @@ jobs:
         TestEnv: ${{ parameters.TestEnv }}
         PreTestSteps: ${{ parameters.PreTestSteps }}
         PostTestSteps: ${{ parameters.PostTestSteps }}
+
+  # A separate call, not a second MatrixConfigs entry above: generate-job-matrix
+  # passes one AdditionalParameters object to every config, and ci.tests.yml
+  # names each job "<DisplayName>_<OSName>", so two configs in one call would
+  # declare the same job identifier twice.
+  - ${{ if ne(parameters.AdditionalMatrixFile, '') }}:
+    - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+      parameters:
+        GenerateJobName: ${{ parameters.JobName }}_uamqp_generate_matrix
+        MatrixConfigs:
+          - Name: uamqp
+            Path: ${{ parameters.AdditionalMatrixFile }}
+            Selection: all
+            GenerateVMJobs: true
+        JobTemplatePath: /eng/pipelines/templates/jobs/ci.tests.yml
+        OsVmImage: $(LINUXVMIMAGE)
+        Pool: $(LINUXPOOL)
+        AdditionalParameters:
+          DisplayName: ${{ parameters.JobName }}_uamqp
+          Artifacts: ${{ parameters.Artifacts }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestPipeline: ${{ parameters.TestPipeline }}
+          CtestRegex: ${{ parameters.CtestRegex }}
+          CtestExcludeRegex: ${{ parameters.CtestExcludeRegex }}
+          CoverageReportPath: ${{ parameters.CoverageReportPath }}
+          # The coverage targets are calibrated against the Rust build.
+          CoverageEnabled: false
+          LineCoverageTarget: ${{ parameters.LineCoverageTarget }}
+          BranchCoverageTarget: ${{ parameters.BranchCoverageTarget }}
+          TestEnv: ${{ parameters.TestEnv }}
+          PreTestSteps: ${{ parameters.PreTestSteps }}
+          PostTestSteps: ${{ parameters.PostTestSteps }}
 
   # Disable build for cpp - client
   - ${{ if and(eq(parameters.RunMetaJobs, 'true'), ne(parameters.ServiceDirectory, 'not-specified' )) }}:

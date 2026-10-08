@@ -82,6 +82,11 @@ parameters:
   - name: UseFederatedAuth
     type: boolean
     default: true
+  # A second matrix file. The Build stage passes it; PrePublishBuild does not,
+  # so pull request feedback stays fast.
+  - name: AdditionalMatrixFile
+    type: string
+    default: ''
 
 extends:
   ${{ if eq(variables['System.TeamProject'], 'internal') }}:
@@ -172,6 +177,7 @@ extends:
             # Code coverage is enabled by default for live tests
             parameters:
               MatrixFile: eng/pipelines/templates/stages/platform-matrix.json
+              AdditionalMatrixFile: ${{ parameters.AdditionalMatrixFile }}
               JobName: Validate
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
               Artifacts: ${{ parameters.Artifacts }}
