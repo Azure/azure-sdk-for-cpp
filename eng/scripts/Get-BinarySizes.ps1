@@ -119,7 +119,7 @@ function getToolChain {
         } elseif ($env:CXX -and $env:CXX.Contains("clang-20")) {
             return 'clang-20'
         }
-        return "g++-7"
+        return "g++-13"
     }
     LogError "Could not infer toolchain from " $OSVmImage and $CmakeEnvArg
 }
