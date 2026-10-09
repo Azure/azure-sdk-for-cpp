@@ -270,6 +270,10 @@ directive:
       $.Path["x-namespace"] = "_detail";
       $.Path.properties["lastModified"]["format"] = "date-time-rfc1123";
       $.Path.properties["contentLength"]["x-ms-client-name"] = "FileSize";
+      $.Path.properties["contentLength"]["x-ms-client-default"] = "std::int64_t()";
+      for (const field of ["owner", "group", "permissions"]) {
+        $.Path.properties[field]["x-ms-client-default"] = "";
+      }
       $.Path.properties["isDirectory"]["x-ms-client-default"] = false;
       $.Path.properties["EncryptionScope"]["x-nullable"] = true;
       $.Path.properties["EncryptionContext"]["x-nullable"] = true;

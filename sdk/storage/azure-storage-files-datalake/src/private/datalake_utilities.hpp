@@ -29,6 +29,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
 
   Blobs::BlobClientOptions GetBlobClientOptions(const DataLakeClientOptions& options);
 
+  DateTime ParseFileTimeString(const std::string& value);
+
   /**
    * @brief Provides conversion methods for Win32 FILETIME to an #Azure::DateTime.
    *

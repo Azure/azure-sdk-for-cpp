@@ -292,13 +292,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       item.ETag = std::move(path.ETag);
       if (path.CreatedOn.HasValue())
       {
-        item.CreatedOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-            std::stoll(path.CreatedOn.Value()));
+        item.CreatedOn = _detail::ParseFileTimeString(path.CreatedOn.Value());
       }
       if (path.ExpiresOn.HasValue() && path.ExpiresOn.Value() != "0")
       {
-        item.ExpiresOn = _detail::Win32FileTimeConverter::Win32FileTimeToDateTime(
-            std::stoll(path.ExpiresOn.Value()));
+        item.ExpiresOn = _detail::ParseFileTimeString(path.ExpiresOn.Value());
       }
       pagedResponse.Paths.push_back(std::move(item));
     }
