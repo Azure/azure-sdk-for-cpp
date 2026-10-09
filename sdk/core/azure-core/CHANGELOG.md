@@ -16,8 +16,6 @@
 
 ### Other Changes
 
-- CMake builds now preserve a caller-selected C++17 or newer standard instead of overriding it with C++14. C++14 remains the minimum and default.
-
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
