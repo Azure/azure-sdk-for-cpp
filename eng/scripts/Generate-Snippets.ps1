@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 # Powershell script to generate snippets from C++ source files.
+# Accepts LF or CRLF input and writes generated Markdown with LF line endings.
 # Usage: generate_snippets.ps1 <source_dir> <output_dir>
 
 param(
@@ -27,10 +28,10 @@ function ParseSnippets {
 	#$snippet_pattern = '@begin_snippet:\s+(?<snippet_name>\w+)\s+(?<snippet_contents>.*?)@end_snippet'
 
 	$snippet_map = @{}
-	$snippet_pattern = '@begin_snippet:\s+(?<snippet_name>\w+)\s+\n(?<snippet_contents>.*?)\s+(//|`*/)\s+@end_snippet'
+	$snippet_pattern = '@begin_snippet:[ \t]+(?<snippet_name>\w+)[ \t]*\n(?<snippet_contents>.*?)\s+(//|`*/)\s+@end_snippet'
 	foreach ($cpp_file in $input_files) {
 		Write-Host "Scanning source: $cpp_file"
-		$cpp_file_contents = Get-Content $cpp_file -Raw
+		$cpp_file_contents = (Get-Content $cpp_file -Raw) -replace "`r`n", "`n"
 		$snippet_matches = [regex]::Matches($cpp_file_contents, $snippet_pattern, 'Singleline')
 
 		foreach ($snippet_match in $snippet_matches) {
@@ -56,7 +57,7 @@ function ProcessSnippetsInFile {
 		[Parameter(Mandatory = $true)]
 		[object]$output_file
 	)
-	$output_file_contents = Get-Content $output_file -Raw
+	$output_file_contents = (Get-Content $output_file -Raw) -replace "`r`n", "`n"
 	$snippet_matches = [regex]::Matches($output_file_contents, '@insert_snippet:\s+(?<snippet_name>\w+)', 'Singleline')
 
 	# if there is no match, we don't need to do anything else.
@@ -78,13 +79,13 @@ function ProcessSnippetsInFile {
 		if ($output_file.Extension -eq '.md') {
 
 			# Remove the existing snippet text, if any.
-			$output_file_contents = [Regex]::Replace($output_file_contents, "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+``````cpp.+?``````\s+", "<!-- @insert_snippet: $snippet_name -->`r`n`r`n", 'Singleline')
+			$output_file_contents = [Regex]::Replace($output_file_contents, "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+``````cpp.+?``````\s+", "<!-- @insert_snippet: $snippet_name -->`n`n", 'Singleline')
 
 			# Insert the snippet text.
 			$snippet_text = $snippet_map[$snippet_name]
 			
 			# Remove leading spaces from each line, by first splitting the text into lines.
-			$lines = $snippet_text -split [Environment]::NewLine
+			$lines = $snippet_text -split "`n"
 
 			# Then, find the minimum leading whitespace across all lines.
 			# This is done to trim the minimum amount of leading whitespace from each line while preserving the relative indentation for lines that are already indented.
@@ -101,9 +102,9 @@ function ProcessSnippetsInFile {
 			}
 
 			# Join the lines back into a single string
-			$snippet_text_clean = $trimmedLines -join [Environment]::NewLine
+			$snippet_text_clean = $trimmedLines -join "`n"
 
-			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`r`n``````cpp`r`n$snippet_text_clean`r`n```````r`n`r`n"
+			$output_file_contents = $output_file_contents -replace "<!--\s+@insert_snippet:\s+$snippet_name\s*-->\s+", "<!-- @insert_snippet: $snippet_name -->`n``````cpp`n$snippet_text_clean`n```````n`n"
 
 		}
 		elseif ($output_file.Extension -eq '.hpp') {
@@ -119,8 +120,8 @@ function ProcessSnippetsInFile {
 
 	}
 	# The Regex::Replace above inserts an extra newline at the end of the file. Remove it.
-	$output_file_contents = $output_file_contents -replace "`r`n\s*\Z", ""
-	$original_contents = $original_file_contents -replace "`r`n\s*\Z", ""
+	$output_file_contents = $output_file_contents -replace "`n\s*\Z", ""
+	$original_contents = $original_file_contents -replace "`n\s*\Z", ""
 
 	if ($verify) {
 		if ($output_file_contents -ne $original_contents) {
@@ -130,7 +131,7 @@ function ProcessSnippetsInFile {
 	}
  elseif (!$verify) {
 		Write-Host "Writing file: $output_file"
-		Set-Content -Path $output_file.FullName -Value $output_file_contents
+		Set-Content -Path $output_file.FullName -Value "$output_file_contents`n" -NoNewline
 	}
 	return $true
 
