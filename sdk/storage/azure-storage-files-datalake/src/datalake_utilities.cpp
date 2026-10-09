@@ -12,6 +12,17 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
   const static std::string DfsEndPointIdentifier = ".dfs.";
   const static std::string BlobEndPointIdentifier = ".blob.";
 
+  DateTime ParseFileTimeString(const std::string& value)
+  {
+    // The service can return FILETIME ticks or an RFC1123 date.
+    if (value.empty() || value.find_first_not_of("0123456789") != std::string::npos)
+    {
+      return DateTime::Parse(value, DateTime::DateFormat::Rfc1123);
+    }
+
+    return Win32FileTimeConverter::Win32FileTimeToDateTime(std::stoll(value));
+  }
+
   Azure::Core::Url GetBlobUrlFromUrl(const Azure::Core::Url& url)
   {
     std::string host = url.GetHost();
