@@ -4,7 +4,9 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (eventhubs-consume-events LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
+if(NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 14 OR CMAKE_CXX_STANDARD STREQUAL "98")
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 macro (define_sample samplename)

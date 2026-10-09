@@ -37,7 +37,9 @@ az_vcpkg_integrate()
 
 # Project definition
 project(azure-sdk LANGUAGES CXX C)
-set(CMAKE_CXX_STANDARD 14)
+if(NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 14 OR CMAKE_CXX_STANDARD STREQUAL "98")
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Enable a build configuration to disable features when building for Windows Store.

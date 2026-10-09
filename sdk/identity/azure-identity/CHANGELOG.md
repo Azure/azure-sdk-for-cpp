@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- CMake builds now preserve a caller-selected C++17 or newer standard instead of overriding it with C++14. C++14 remains the minimum and default.
+
 ## 1.13.3 (2026-01-16)
 
 ### Bugs Fixed

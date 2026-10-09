@@ -12,7 +12,9 @@ project(azure-messaging-eventhubs-checkpointstore-blob LANGUAGES CXX)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-set(CMAKE_CXX_STANDARD 14)
+if(NOT DEFINED CMAKE_CXX_STANDARD OR CMAKE_CXX_STANDARD LESS 14 OR CMAKE_CXX_STANDARD STREQUAL "98")
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
