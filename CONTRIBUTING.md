@@ -143,14 +143,6 @@ To check compatibility with the minimum supported standard, configure with
 `cmake -DCMAKE_CXX_STANDARD=14 ..`, as the CI builds do. To build with a higher
 standard, use, for example, `cmake -DCMAKE_CXX_STANDARD=20 ..`.
 
-The `samples/integration/cmake-cxx-standard` project checks that the SDK preserves
-the selected standard and publishes its C++14 requirement. Configure and build it
-with no standard, with `-DCMAKE_CXX_STANDARD=11` (which must be raised to C++14),
-with `-DCMAKE_CXX_STANDARD=14`, and with
-`-DCMAKE_CXX_STANDARD=20 -DEXPECTED_CXX_VERSION=202002`. Run `ctest` in each build directory. To check the
-installed target, configure the same project with `-DUSE_INSTALLED_CORE=ON` and
-`-DCMAKE_PREFIX_PATH=<azure-core-install-directory>`.
-
 #### Static Analysis
 
 When the project is built using MSVC on Windows, the compiler can run [static analysis](https://learn.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
