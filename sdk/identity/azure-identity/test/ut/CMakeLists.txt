@@ -6,8 +6,6 @@ cmake_minimum_required (VERSION 3.13)
 set(azure-identity-test)
 
 project (azure-identity-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 

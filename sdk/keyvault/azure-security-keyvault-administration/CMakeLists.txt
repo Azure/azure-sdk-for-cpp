@@ -12,8 +12,6 @@ project(azure-security-keyvault-administration LANGUAGES CXX)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(FETCH_SOURCE_DEPS)
@@ -69,6 +67,7 @@ set(
 )
 
 add_library(azure-security-keyvault-administration ${AZURE_SECURITY_KEYVAULT_ADMINISTRATION_HEADER} ${AZURE_SECURITY_KEYVAULT_ADMINISTRATION_SOURCE})
+target_compile_features(azure-security-keyvault-administration PUBLIC cxx_std_14)
 add_library(Azure::azure-security-keyvault-administration ALIAS azure-security-keyvault-administration)
 create_per_service_target_build(keyvault azure-security-keyvault-administration)
 

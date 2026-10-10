@@ -78,8 +78,6 @@ Follow the next template to create the main CMake project
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(provide-a-project-name-here LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Name the binary to be created.
 add_executable (
