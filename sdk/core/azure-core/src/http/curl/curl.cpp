@@ -1877,7 +1877,7 @@ namespace Azure { namespace Core {
         std::unique_lock<std::mutex> lockResult(crl_cache_lock);
 
         // update existing
-        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+        const X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
         for (auto it = crl_cache.begin(); it != crl_cache.end(); ++it)
         {
           X509_CRL* cacheEntry = *it;
@@ -1886,7 +1886,7 @@ namespace Azure { namespace Core {
             continue;
           }
 
-          X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
+          const X509_NAME* crl_issuer = X509_CRL_get_issuer(cacheEntry);
           if (!crl_issuer || !cert_issuer)
           {
             continue;
@@ -1934,7 +1934,7 @@ namespace Azure { namespace Core {
 
       Azure::Core::_internal::UniqueHandle<X509_CRL> LoadCertificateCrlFromMemory(X509* cert)
       {
-        X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
+        const X509_NAME* cert_issuer = cert ? X509_get_issuer_name(cert) : nullptr;
 
         std::unique_lock<std::mutex> lockResult(crl_cache_lock);
 
@@ -1948,7 +1948,7 @@ namespace Azure { namespace Core {
 
           // names don't match up. probably a hash collision
           // so lets test if there is another crl on disk.
-          X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
+          const X509_NAME* crl_issuer = X509_CRL_get_issuer(crl);
           if (!crl_issuer || !cert_issuer)
           {
             continue;
