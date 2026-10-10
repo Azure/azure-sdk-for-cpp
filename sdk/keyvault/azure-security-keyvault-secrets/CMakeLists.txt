@@ -12,8 +12,6 @@ project(azure-security-keyvault-secrets LANGUAGES CXX)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(FETCH_SOURCE_DEPS)
@@ -105,6 +103,8 @@ set(
 )
 
 add_library(azure-security-keyvault-secrets ${AZURE_SECURITY_KEYVAULT_SECRETS_HEADER} ${AZURE_SECURITY_KEYVAULT_SECRETS_SOURCE} "src/keyvault_secret.cpp")
+target_compile_features(azure-security-keyvault-secrets PUBLIC cxx_std_14)
+set_target_properties(azure-security-keyvault-secrets PROPERTIES CXX_STANDARD_REQUIRED ON)
 add_library(Azure::azure-security-keyvault-secrets ALIAS azure-security-keyvault-secrets)
 create_per_service_target_build(keyvault azure-security-keyvault-secrets)
 

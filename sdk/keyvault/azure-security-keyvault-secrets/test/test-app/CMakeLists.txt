@@ -4,14 +4,14 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (keyvault-secrets-test-app LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   keyvault-secrets-test-app
     test_app.cpp
     macro_guard.cpp
  )
+target_compile_features(keyvault-secrets-test-app PRIVATE cxx_std_14)
+set_target_properties(keyvault-secrets-test-app PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(keyvault-secrets-test-app PRIVATE _azure_BUILDING_TESTS)
 

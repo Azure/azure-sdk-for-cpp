@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-security-keyvault-keys-perf LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_KEYVAULT_KEY_PERF_TEST_HEADER
@@ -22,6 +20,8 @@ add_executable (
   azure-security-keyvault-keys-perf
      ${AZURE_KEYVAULT_KEY_PERF_TEST_HEADER} ${AZURE_KEYVAULT_KEY_PERF_TEST_SOURCE}
 )
+target_compile_features(azure-security-keyvault-keys-perf PRIVATE cxx_std_14)
+set_target_properties(azure-security-keyvault-keys-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-security-keyvault-keys-perf PRIVATE _azure_BUILDING_TESTS)
 

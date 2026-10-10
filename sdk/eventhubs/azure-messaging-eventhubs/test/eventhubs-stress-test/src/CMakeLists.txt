@@ -6,8 +6,6 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(azure-messaging-eventhubs-stress-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(WITH_STL ON)
 
@@ -33,6 +31,8 @@ add_executable(
   azure-messaging-eventhubs-stress-test
   ${SOURCE_FILES} ${INCLUDE_FILES}
 )
+target_compile_features(azure-messaging-eventhubs-stress-test PRIVATE cxx_std_14)
+set_target_properties(azure-messaging-eventhubs-stress-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-messaging-eventhubs-stress-test PRIVATE _azure_BUILDING_TESTS)
 

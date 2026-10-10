@@ -24,8 +24,6 @@ if(MSVC)
 endif()
 
 project (azure-core-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(BUILD_TRANSPORT_CURL)
   SET(CURL_OPTIONS_TESTS curl_options_test.cpp)
@@ -99,6 +97,8 @@ add_executable (
     uuid_test.cpp
     win_http_transport_test.cpp
 )
+target_compile_features(azure-core-test PRIVATE cxx_std_14)
+set_target_properties(azure-core-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-core-test PRIVATE _azure_BUILDING_TESTS)
 
@@ -155,6 +155,8 @@ add_executable (
   azure-core-global-context-test
   global_context_test.cpp
 )
+target_compile_features(azure-core-global-context-test PRIVATE cxx_std_14)
+set_target_properties(azure-core-global-context-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 create_map_file(azure-core-global-context-test azure-core-global-context-test.map)
 
@@ -192,6 +194,8 @@ if(BUILD_TRANSPORT_CURL)
     azure-core-libcurl-test
     azure_libcurl_core_main_test.cpp
   )
+  target_compile_features(azure-core-libcurl-test PRIVATE cxx_std_14)
+  set_target_properties(azure-core-libcurl-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 if(MSVC AND BUILD_TRANSPORT_CURL)
   copy_shared_lib_binaries(azure-core-libcurl-test azure-core)
 endif()

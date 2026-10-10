@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-messaging-eventhubs-blobstore-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
@@ -20,6 +18,8 @@ add_executable (
     blob_checkpoint_store_test.cpp
     eventhubs_test_base.hpp
 )
+target_compile_features(azure-messaging-eventhubs-blobstore-test PRIVATE cxx_std_14)
+set_target_properties(azure-messaging-eventhubs-blobstore-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-messaging-eventhubs-blobstore-test PRIVATE _azure_BUILDING_TESTS)
 

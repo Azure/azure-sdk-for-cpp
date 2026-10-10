@@ -13,8 +13,6 @@ endif()
 # Project set up
 cmake_minimum_required(VERSION 3.13)
 project(vcpkg-all-smoke LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(MSVC)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -24,6 +22,8 @@ add_executable (
   vcpkg-all-smoke
     src/main.cpp
 )
+target_compile_features(vcpkg-all-smoke PRIVATE cxx_std_14)
+set_target_properties(vcpkg-all-smoke PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 # Link to Azure SDK
 target_link_libraries(vcpkg-all-smoke

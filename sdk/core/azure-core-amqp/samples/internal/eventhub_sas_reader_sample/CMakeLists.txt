@@ -14,6 +14,8 @@ project(eventhub_sas_reader_sample)
 add_executable(eventhub_sas_reader_sample
     eventhub_sas_reader_sample.cpp
 )
+target_compile_features(eventhub_sas_reader_sample PRIVATE cxx_std_14)
+set_target_properties(eventhub_sas_reader_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(eventhub_sas_reader_sample PRIVATE _azure_BUILDING_SAMPLES)
 

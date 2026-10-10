@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-blobs-perf LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 include(AzureVcpkg)
 az_vcpkg_integrate()
 
@@ -34,6 +32,8 @@ add_executable (
   azure-storage-blobs-perf
      ${AZURE_STORAGE_BLOBS_PERF_TEST_HEADER} ${AZURE_STORAGE_BLOBS_PERF_TEST_SOURCE}
 )
+target_compile_features(azure-storage-blobs-perf PRIVATE cxx_std_14)
+set_target_properties(azure-storage-blobs-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-blobs-perf PRIVATE _azure_BUILDING_TESTS)
 

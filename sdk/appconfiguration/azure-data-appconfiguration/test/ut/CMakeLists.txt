@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-data-appconfiguration-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(CreateMapFile)
 
@@ -18,6 +16,8 @@ add_executable (
      configuration_test.cpp
      macro_guard.cpp
      )
+target_compile_features(azure-data-appconfiguration-test PRIVATE cxx_std_14)
+set_target_properties(azure-data-appconfiguration-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-data-appconfiguration-test PRIVATE _azure_BUILDING_TESTS)
 

@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-identity-perf LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_IDENTITY_PERF_TEST_HEADER
@@ -24,6 +22,8 @@ add_executable (
   azure-identity-perf
      ${AZURE_IDENTITY_PERF_TEST_HEADER} ${AZURE_IDENTITY_PERF_TEST_SOURCE}
 )
+target_compile_features(azure-identity-perf PRIVATE cxx_std_14)
+set_target_properties(azure-identity-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-identity-perf PRIVATE _azure_BUILDING_TESTS)
 

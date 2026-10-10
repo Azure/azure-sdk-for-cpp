@@ -17,8 +17,6 @@ include(AzureDoxygen)
 include(AzureGlobalCompileOptions)
 include(AzureConfigRTTI)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(NOT AZ_ALL_LIBRARIES)
@@ -65,6 +63,8 @@ set(
 )
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
+target_compile_features(azure-security-attestation PUBLIC cxx_std_14)
+set_target_properties(azure-security-attestation PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 create_per_service_target_build(attestation azure-security-attestation)
 

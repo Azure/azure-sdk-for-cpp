@@ -10,8 +10,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.12)
 project(azure-core LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include(AzureVersion)
@@ -154,6 +152,8 @@ set(
     )
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
+target_compile_features(azure-core PUBLIC cxx_std_14)
+set_target_properties(azure-core PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(
   azure-core

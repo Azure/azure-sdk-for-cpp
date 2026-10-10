@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-security-keyvault-keys-hsm-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
@@ -20,6 +18,8 @@ add_executable (
     key_client_test_hsm_live.hpp
     key_client_test_hsm_live.cpp
 )
+target_compile_features(azure-security-keyvault-keys-hsm-test PRIVATE cxx_std_14)
+set_target_properties(azure-security-keyvault-keys-hsm-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-security-keyvault-keys-hsm-test PRIVATE _azure_BUILDING_TESTS)
 

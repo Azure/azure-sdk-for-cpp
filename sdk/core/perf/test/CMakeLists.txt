@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-perf-unit-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 if(DEFINED ENV{VCPKG-AZURE-CORE-CPP})
    find_package(azure-core-cpp $ENV{VCPKG-AZURE-CORE-CPP} EXACT)
@@ -23,6 +21,8 @@ add_executable (
     src/random_stream_test.cpp
     src/result_output_test.cpp
 )
+target_compile_features(azure-perf-unit-test PRIVATE cxx_std_14)
+set_target_properties(azure-perf-unit-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
   # Disable warnings

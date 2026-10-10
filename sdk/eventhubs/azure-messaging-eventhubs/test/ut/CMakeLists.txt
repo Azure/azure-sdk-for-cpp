@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-messaging-eventhubs-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
@@ -35,6 +33,8 @@ add_executable (
     round_trip_test.cpp
     test_checkpoint_store.hpp
 )
+target_compile_features(azure-messaging-eventhubs-test PRIVATE cxx_std_14)
+set_target_properties(azure-messaging-eventhubs-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-messaging-eventhubs-test PRIVATE _azure_BUILDING_TESTS)
 

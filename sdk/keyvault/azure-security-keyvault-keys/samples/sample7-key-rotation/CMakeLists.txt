@@ -4,13 +4,13 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (sample7-key-rotation LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   sample7-key-rotation
   sample7_key_rotation.cpp
 )
+target_compile_features(sample7-key-rotation PRIVATE cxx_std_14)
+set_target_properties(sample7-key-rotation PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample7-key-rotation PRIVATE _azure_BUILDING_SAMPLES)
 

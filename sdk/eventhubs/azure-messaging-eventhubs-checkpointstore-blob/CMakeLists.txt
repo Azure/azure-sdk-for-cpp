@@ -12,8 +12,6 @@ project(azure-messaging-eventhubs-checkpointstore-blob LANGUAGES CXX)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(FETCH_SOURCE_DEPS)
@@ -72,6 +70,8 @@ add_library(
   azure-messaging-eventhubs-checkpointstore-blob
     ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_HEADER} ${AZURE_MESSAGING_EVENTHUBS_BLOB_CHECKPOINT_SOURCE}
 )
+target_compile_features(azure-messaging-eventhubs-checkpointstore-blob PUBLIC cxx_std_14)
+set_target_properties(azure-messaging-eventhubs-checkpointstore-blob PROPERTIES CXX_STANDARD_REQUIRED ON)
 target_compile_definitions(azure-messaging-eventhubs-checkpointstore-blob PRIVATE _azure_BUILDING_SDK)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs-checkpointstore-blob)
 add_library(Azure::azure-messaging-eventhubs-checkpointstore-blob ALIAS azure-messaging-eventhubs-checkpointstore-blob)

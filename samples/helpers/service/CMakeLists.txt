@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.12)
 project(service LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 add_library(
@@ -14,6 +12,8 @@ add_library(
       inc/azure/service/client.hpp
       src/client.cpp
  )
+target_compile_features(service PUBLIC cxx_std_14)
+set_target_properties(service PROPERTIES CXX_STANDARD_REQUIRED ON)
 
  target_link_libraries(service PUBLIC azure-core)
 

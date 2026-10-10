@@ -4,13 +4,13 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(azure-core-libcurl-stress-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(
   azure-core-libcurl-stress-test
   libcurl_stress_test.cpp
 )
+target_compile_features(azure-core-libcurl-stress-test PRIVATE cxx_std_14)
+set_target_properties(azure-core-libcurl-stress-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(azure-core-libcurl-stress-test PRIVATE azure-core)
 

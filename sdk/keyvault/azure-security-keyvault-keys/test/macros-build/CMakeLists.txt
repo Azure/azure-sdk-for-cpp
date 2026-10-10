@@ -4,13 +4,13 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (macros-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   macros-build
   macros_build.cpp
   macros_build.hpp)
+target_compile_features(macros-build PRIVATE cxx_std_14)
+set_target_properties(macros-build PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(macros-build PRIVATE _azure_BUILDING_TESTS)
 

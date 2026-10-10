@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-messaging-eventhubs-perf LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_EVENTHUBS_PERF_TEST_HEADER
@@ -22,6 +20,8 @@ add_executable (
   azure-messaging-eventhubs-perf
      ${AZURE_EVENTHUBS_PERF_TEST_HEADER} ${AZURE_EVENTHUBS_PERF_TEST_SOURCE}
 )
+target_compile_features(azure-messaging-eventhubs-perf PRIVATE cxx_std_14)
+set_target_properties(azure-messaging-eventhubs-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-messaging-eventhubs-perf PRIVATE _azure_BUILDING_TESTS)
 

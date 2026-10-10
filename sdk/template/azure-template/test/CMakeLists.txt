@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 
 project (azure-template-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_compile_definitions(AZURE_TEST_DATA_PATH="${CMAKE_BINARY_DIR}")
 
@@ -16,6 +14,8 @@ add_executable (
      ut/macro_guard.cpp
      ut/template_test.cpp
      )
+target_compile_features(azure-template-test PRIVATE cxx_std_14)
+set_target_properties(azure-template-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-template-test PRIVATE _azure_BUILDING_TESTS)
 

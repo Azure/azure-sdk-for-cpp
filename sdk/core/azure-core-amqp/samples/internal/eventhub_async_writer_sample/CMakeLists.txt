@@ -10,6 +10,8 @@ project(eventhub_writer_async_sample)
 add_executable(eventhub_writer_async_sample
     eventhub_async_writer_sample.cpp
 )
+target_compile_features(eventhub_writer_async_sample PRIVATE cxx_std_14)
+set_target_properties(eventhub_writer_async_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(eventhub_writer_async_sample PRIVATE _azure_BUILDING_SAMPLES)
 

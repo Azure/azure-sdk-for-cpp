@@ -4,13 +4,13 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(azure-data-tables-stress-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(
   azure-data-tables-stress-test
   tables_stress_test.cpp
 )
+target_compile_features(azure-data-tables-stress-test PRIVATE cxx_std_14)
+set_target_properties(azure-data-tables-stress-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-data-tables-stress-test PRIVATE _azure_BUILDING_TESTS)
 

@@ -6,8 +6,6 @@ cmake_minimum_required (VERSION 3.13)
 set(azure-identity-test)
 
 project (azure-identity-test LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 include(GoogleTest)
 
@@ -35,6 +33,8 @@ add_executable (
     token_credential_test.cpp
     workload_identity_credential_test.cpp
     )
+target_compile_features(azure-identity-test PRIVATE cxx_std_14)
+set_target_properties(azure-identity-test PROPERTIES CXX_STANDARD_REQUIRED ON)
   
 target_compile_definitions(azure-identity-test PRIVATE _azure_BUILDING_TESTS)
 

@@ -12,8 +12,6 @@ cmake_minimum_required (VERSION 3.13)
 
 project(azure-core-amqp LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 include(AzureVersion)
@@ -279,8 +277,8 @@ add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} 
 elseif(USE_RUST_AMQP)
 add_library(azure-core-amqp ${AZURE_CORE_AMQP_SOURCE} ${AZURE_CORE_AMQP_HEADER} ${AZURE_RUST_AMQP_SOURCE})
 endif()
-
-
+target_compile_features(azure-core-amqp PUBLIC cxx_std_14)
+set_target_properties(azure-core-amqp PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 if (USE_UAMQP)
 target_include_directories(azure-core-amqp SYSTEM PRIVATE ${UAMQP_INC_FOLDER})

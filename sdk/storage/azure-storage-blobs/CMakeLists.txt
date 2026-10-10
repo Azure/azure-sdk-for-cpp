@@ -8,8 +8,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-storage-blobs LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
@@ -80,6 +78,8 @@ set(
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})
+target_compile_features(azure-storage-blobs PUBLIC cxx_std_14)
+set_target_properties(azure-storage-blobs PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(storage azure-storage-blobs)
 
 # make sure that users can consume the project as a library.

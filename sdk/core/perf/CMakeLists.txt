@@ -4,8 +4,6 @@
 cmake_minimum_required (VERSION 3.13)
 project(azure-perf LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake-modules")
@@ -40,6 +38,8 @@ set(
 )
 
 add_library(azure-perf ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})
+target_compile_features(azure-perf PUBLIC cxx_std_14)
+set_target_properties(azure-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-perf PRIVATE _azure_BUILDING_TESTS)
 

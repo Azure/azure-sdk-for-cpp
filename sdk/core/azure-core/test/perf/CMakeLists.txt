@@ -4,8 +4,6 @@
 # Configure CMake project.
 cmake_minimum_required (VERSION 3.13)
 project(azure-core-perf LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(
   AZURE_CORE_PERF_TEST_HEADER
@@ -30,6 +28,8 @@ add_executable (
   azure-core-perf
      ${AZURE_CORE_PERF_TEST_HEADER} ${AZURE_CORE_PERF_TEST_SOURCE}
 )
+target_compile_features(azure-core-perf PRIVATE cxx_std_14)
+set_target_properties(azure-core-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-core-perf PRIVATE _azure_BUILDING_TESTS)
 

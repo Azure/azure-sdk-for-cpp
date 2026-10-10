@@ -12,8 +12,6 @@ project(azure-messaging-eventhubs LANGUAGES CXX)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 if(FETCH_SOURCE_DEPS)
@@ -99,6 +97,8 @@ add_library(
   azure-messaging-eventhubs
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
 )
+target_compile_features(azure-messaging-eventhubs PUBLIC cxx_std_14)
+set_target_properties(azure-messaging-eventhubs PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 
