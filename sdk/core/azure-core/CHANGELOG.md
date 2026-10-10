@@ -16,8 +16,6 @@
 
 ### Other Changes
 
-- CMake targets now express C++14 as a minimum requirement instead of overriding caller-selected C++ standards. SDK libraries propagate this requirement through their public and installed targets.
-
 ### Acknowledgments
 
 Thank you to our developer community members who helped to make Azure Core better with their contributions to this release:
