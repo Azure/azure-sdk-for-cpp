@@ -63,7 +63,6 @@ set(
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})
 target_compile_features(azure-storage-queues PUBLIC cxx_std_14)
-set_target_properties(azure-storage-queues PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-queues PRIVATE _azure_BUILDING_SDK)
 

@@ -31,8 +31,6 @@ add_executable (
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.hpp
 )
-target_compile_features(azure-storage-files-shares-test PRIVATE cxx_std_14)
-set_target_properties(azure-storage-files-shares-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-files-shares-test PRIVATE _azure_BUILDING_TESTS)
 

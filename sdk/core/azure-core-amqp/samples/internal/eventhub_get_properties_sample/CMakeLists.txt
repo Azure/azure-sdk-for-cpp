@@ -14,8 +14,6 @@ project(eventhub_get_eventhub_properties_sample)
 add_executable(eventhub_get_eventhub_properties_sample
     eventhub_get_eventhub_properties_sample.cpp
 )
-target_compile_features(eventhub_get_eventhub_properties_sample PRIVATE cxx_std_14)
-set_target_properties(eventhub_get_eventhub_properties_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(eventhub_get_eventhub_properties_sample PRIVATE _azure_BUILDING_SAMPLES)
 

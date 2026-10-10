@@ -34,8 +34,6 @@ add_executable (
      token_test.cpp
      tpmattestation_test.cpp
 )
-target_compile_features(azure-security-attestation-test PRIVATE cxx_std_14)
-set_target_properties(azure-security-attestation-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-security-attestation-test PRIVATE _azure_BUILDING_TESTS)
 

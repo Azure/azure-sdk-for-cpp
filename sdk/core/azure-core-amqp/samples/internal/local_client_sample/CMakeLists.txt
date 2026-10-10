@@ -10,8 +10,6 @@ project(local_client_sample)
 add_executable(local_client_sample
     local_client_sample.cpp
 )
-target_compile_features(local_client_sample PRIVATE cxx_std_14)
-set_target_properties(local_client_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(local_client_sample PRIVATE _azure_BUILDING_SAMPLES)
 

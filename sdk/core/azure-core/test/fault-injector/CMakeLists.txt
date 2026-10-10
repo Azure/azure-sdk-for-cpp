@@ -11,8 +11,6 @@ add_executable (
   azure-core-test-fault-injector
   fault_injector_test.cpp
 )
-target_compile_features(azure-core-test-fault-injector PRIVATE cxx_std_14)
-set_target_properties(azure-core-test-fault-injector PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(azure-core-test-fault-injector PRIVATE azure-core)
 

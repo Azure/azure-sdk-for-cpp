@@ -10,7 +10,6 @@ find_package(azure-security-keyvault-secrets-cpp CONFIG REQUIRED)
 
 add_executable(azure_sample main.cpp)
 target_compile_features(azure_sample PRIVATE cxx_std_14)
-set_target_properties(azure_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(azure_sample PRIVATE
     Azure::azure-identity

@@ -84,8 +84,6 @@ add_executable (
   azure-performance-library-name-test
     src/main.cpp
 )
-target_compile_features(azure-performance-library-name-test PRIVATE cxx_std_14)
-set_target_properties(azure-performance-library-name-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 # Include the headers from the project.
 target_include_directories(

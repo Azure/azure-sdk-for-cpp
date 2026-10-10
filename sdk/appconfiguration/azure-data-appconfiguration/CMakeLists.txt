@@ -54,7 +54,6 @@ set(
 
 add_library(azure-data-appconfiguration ${AZURE_DATA_APPCONFIGURATION_HEADER} ${AZURE_DATA_APPCONFIGURATION_SOURCE})
 target_compile_features(azure-data-appconfiguration PUBLIC cxx_std_14)
-set_target_properties(azure-data-appconfiguration PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-data-appconfiguration PRIVATE _azure_BUILDING_SDK)
 

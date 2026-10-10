@@ -89,7 +89,6 @@ set(
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
 target_compile_features(azure-identity PUBLIC cxx_std_14)
-set_target_properties(azure-identity PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(identity azure-identity)
 
 # make sure that users can consume the project as a library.

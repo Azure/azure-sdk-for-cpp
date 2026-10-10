@@ -101,7 +101,6 @@ add_library(azure-security-keyvault-certificates
   ${AZURE_KEYVAULT_CERTIFICATES_HEADER} ${AZURE_KEYVAULT_CERTIFICATES_SOURCE}
 )
 target_compile_features(azure-security-keyvault-certificates PUBLIC cxx_std_14)
-set_target_properties(azure-security-keyvault-certificates PROPERTIES CXX_STANDARD_REQUIRED ON)
 add_library(Azure::azure-security-keyvault-certificates ALIAS azure-security-keyvault-certificates)
 create_per_service_target_build(keyvault azure-security-keyvault-certificates)
 

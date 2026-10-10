@@ -91,7 +91,6 @@ set(
 
 add_library(azure-storage-common ${AZURE_STORAGE_COMMON_HEADER} ${AZURE_STORAGE_COMMON_SOURCE})
 target_compile_features(azure-storage-common PUBLIC cxx_std_14)
-set_target_properties(azure-storage-common PROPERTIES CXX_STANDARD_REQUIRED ON)
 target_compile_definitions(azure-storage-common PRIVATE _azure_BUILDING_SDK)
 create_per_service_target_build(storage azure-storage-common)
 

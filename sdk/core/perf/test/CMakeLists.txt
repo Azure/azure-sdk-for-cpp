@@ -21,8 +21,6 @@ add_executable (
     src/random_stream_test.cpp
     src/result_output_test.cpp
 )
-target_compile_features(azure-perf-unit-test PRIVATE cxx_std_14)
-set_target_properties(azure-perf-unit-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 if (MSVC)
   # Disable warnings

@@ -39,7 +39,6 @@ set(
 
 add_library(azure-perf ${AZURE_PERFORMANCE_HEADER} ${AZURE_PERFORMANCE_SOURCE})
 target_compile_features(azure-perf PUBLIC cxx_std_14)
-set_target_properties(azure-perf PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-perf PRIVATE _azure_BUILDING_TESTS)
 

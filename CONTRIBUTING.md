@@ -136,8 +136,9 @@ First-party C++ targets require at least C++14 using target compile features. SD
 libraries publish that requirement to consumers, including through installed CMake
 targets. The SDK does not set a directory-wide `CMAKE_CXX_STANDARD`: compiler
 defaults newer than C++14 are allowed, and caller-selected higher standards are
-preserved. First-party build targets require the selected standard rather than
-silently falling back when it is unsupported.
+preserved when supported. Callers control whether an unsupported higher standard
+may fall back through `CMAKE_CXX_STANDARD_REQUIRED`; set it to `ON` to require the
+requested standard.
 
 To check compatibility with the minimum supported standard, configure with
 `cmake -DCMAKE_CXX_STANDARD=14 ..`, as the CI builds do. To build with a higher

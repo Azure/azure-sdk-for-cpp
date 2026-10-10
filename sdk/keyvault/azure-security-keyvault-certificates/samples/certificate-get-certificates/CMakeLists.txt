@@ -9,8 +9,6 @@ add_executable (
   certificate-get-certificates
   certificate_get_certificates.cpp
 )
-target_compile_features(certificate-get-certificates PRIVATE cxx_std_14)
-set_target_properties(certificate-get-certificates PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(certificate-get-certificates PRIVATE _azure_BUILDING_SAMPLES)
 

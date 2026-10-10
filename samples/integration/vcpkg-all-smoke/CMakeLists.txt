@@ -22,8 +22,6 @@ add_executable (
   vcpkg-all-smoke
     src/main.cpp
 )
-target_compile_features(vcpkg-all-smoke PRIVATE cxx_std_14)
-set_target_properties(vcpkg-all-smoke PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 # Link to Azure SDK
 target_link_libraries(vcpkg-all-smoke

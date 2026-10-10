@@ -11,8 +11,6 @@ add_executable (
   azure-storage-blobs-test-fault-injector
     azure_storage_blobs_fault_injector_test.cpp
 )
-target_compile_features(azure-storage-blobs-test-fault-injector PRIVATE cxx_std_14)
-set_target_properties(azure-storage-blobs-test-fault-injector PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-blobs-test-fault-injector PRIVATE _azure_BUILDING_TESTS)
 

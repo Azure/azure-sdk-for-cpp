@@ -13,7 +13,6 @@ add_library(
       src/get_env.cpp
 )
 target_compile_features(get-env-helper PRIVATE cxx_std_14)
-set_target_properties(get-env-helper PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(get-env-helper PRIVATE _azure_BUILDING_SAMPLES)
 

@@ -19,8 +19,6 @@ add_executable (
     certificate_client_test.cpp
     macro_guard.cpp
 )
-target_compile_features(azure-security-keyvault-certificates-test PRIVATE cxx_std_14)
-set_target_properties(azure-security-keyvault-certificates-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-security-keyvault-certificates-test PRIVATE _azure_BUILDING_TESTS)
 

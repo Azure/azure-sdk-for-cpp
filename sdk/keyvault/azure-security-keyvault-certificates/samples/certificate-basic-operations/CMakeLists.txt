@@ -9,8 +9,6 @@ add_executable (
   certificate-basic-operations
   certificate_basic_operations.cpp
 )
-target_compile_features(certificate-basic-operations PRIVATE cxx_std_14)
-set_target_properties(certificate-basic-operations PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(certificate-basic-operations PRIVATE _azure_BUILDING_SAMPLES)
 

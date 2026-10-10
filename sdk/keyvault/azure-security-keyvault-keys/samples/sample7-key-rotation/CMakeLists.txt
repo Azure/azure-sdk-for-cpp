@@ -9,8 +9,6 @@ add_executable (
   sample7-key-rotation
   sample7_key_rotation.cpp
 )
-target_compile_features(sample7-key-rotation PRIVATE cxx_std_14)
-set_target_properties(sample7-key-rotation PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample7-key-rotation PRIVATE _azure_BUILDING_SAMPLES)
 

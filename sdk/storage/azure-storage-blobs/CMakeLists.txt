@@ -79,7 +79,6 @@ set(
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})
 target_compile_features(azure-storage-blobs PUBLIC cxx_std_14)
-set_target_properties(azure-storage-blobs PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(storage azure-storage-blobs)
 
 # make sure that users can consume the project as a library.

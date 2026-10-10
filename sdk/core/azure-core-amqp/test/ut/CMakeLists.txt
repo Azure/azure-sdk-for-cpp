@@ -39,8 +39,6 @@ add_executable(azure-core-amqp-tests
   amqp_performative_tests.cpp
   ${UAMQP_ONLY_TESTS}
 )
-target_compile_features(azure-core-amqp-tests PRIVATE cxx_std_14)
-set_target_properties(azure-core-amqp-tests PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 
 if (USE_UAMQP)

@@ -74,7 +74,6 @@ set(
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})
 target_compile_features(azure-storage-files-datalake PUBLIC cxx_std_14)
-set_target_properties(azure-storage-files-datalake PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-files-datalake PRIVATE _azure_BUILDING_SDK)
 

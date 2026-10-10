@@ -153,7 +153,6 @@ set(
 
 add_library(azure-core ${AZURE_CORE_HEADER} ${AZURE_CORE_SOURCE})
 target_compile_features(azure-core PUBLIC cxx_std_14)
-set_target_properties(azure-core PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(
   azure-core

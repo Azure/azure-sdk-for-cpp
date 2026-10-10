@@ -70,7 +70,6 @@ set(
 
 add_library(azure-storage-files-shares ${AZURE_STORAGE_FILES_SHARES_HEADER} ${AZURE_STORAGE_FILES_SHARES_SOURCE})
 target_compile_features(azure-storage-files-shares PUBLIC cxx_std_14)
-set_target_properties(azure-storage-files-shares PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-files-shares PRIVATE _azure_BUILDING_SDK)
 

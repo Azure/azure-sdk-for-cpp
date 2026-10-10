@@ -9,8 +9,6 @@ add_executable (
   sample6-wrap-unwrap
   sample6_wrap_unwrap.cpp
 )
-target_compile_features(sample6-wrap-unwrap PRIVATE cxx_std_14)
-set_target_properties(sample6-wrap-unwrap PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample6-wrap-unwrap PRIVATE _azure_BUILDING_SAMPLES)
 

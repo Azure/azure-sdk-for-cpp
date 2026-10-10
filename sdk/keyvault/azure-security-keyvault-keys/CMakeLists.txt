@@ -128,7 +128,6 @@ add_library(azure-security-keyvault-keys
   ${AZURE_KEYVAULT_KEYS_HEADER} ${AZURE_KEYVAULT_KEYS_SOURCE}
 )
 target_compile_features(azure-security-keyvault-keys PUBLIC cxx_std_14)
-set_target_properties(azure-security-keyvault-keys PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(keyvault azure-security-keyvault-keys)
 add_library(Azure::azure-security-keyvault-keys ALIAS azure-security-keyvault-keys)
 

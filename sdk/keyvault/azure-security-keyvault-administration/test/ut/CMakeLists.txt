@@ -20,8 +20,6 @@ add_executable (
     macro_guard.cpp
     settings_client_base_test.hpp
     settings_client_test.cpp)
-target_compile_features(azure-security-keyvault-administration-test PRIVATE cxx_std_14)
-set_target_properties(azure-security-keyvault-administration-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-security-keyvault-administration-test PRIVATE _azure_BUILDING_TESTS)
 

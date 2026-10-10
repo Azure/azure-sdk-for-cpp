@@ -8,8 +8,6 @@ if(MSVC)
 endif()
 
 add_executable(datalake-getting-started datalake_getting_started.cpp)
-target_compile_features(datalake-getting-started PRIVATE cxx_std_14)
-set_target_properties(datalake-getting-started PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build_for_sample(storage datalake-getting-started)
 target_link_libraries(datalake-getting-started PRIVATE azure-storage-files-datalake get-env-helper)
 target_compile_definitions(datalake-getting-started PRIVATE _azure_BUILDING_SAMPLES)

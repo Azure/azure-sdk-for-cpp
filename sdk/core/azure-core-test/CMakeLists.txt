@@ -29,7 +29,6 @@ add_library (
   ${AZURE_CORE_TEST_SOURCE}
   )
 target_compile_features(azure-core-test-fw PUBLIC cxx_std_14)
-set_target_properties(azure-core-test-fw PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 include(TestProxyPrep)
 SetUpTestProxy("sdk/core")

@@ -9,8 +9,6 @@ add_executable (
   sample1-basic-operations
   sample1_basic_operations.cpp
 )
-target_compile_features(sample1-basic-operations PRIVATE cxx_std_14)
-set_target_properties(sample1-basic-operations PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample1-basic-operations PRIVATE _azure_BUILDING_SAMPLES)
 

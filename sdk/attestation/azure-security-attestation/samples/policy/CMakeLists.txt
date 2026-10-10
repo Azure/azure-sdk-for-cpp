@@ -11,8 +11,6 @@ add_executable (
   ${samplename}.cpp
   cryptohelpers.hpp
 )
-target_compile_features(attestation-${samplename} PRIVATE cxx_std_14)
-set_target_properties(attestation-${samplename} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(attestation attestation-${samplename})
 

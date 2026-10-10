@@ -9,8 +9,6 @@ macro (define_sample samplename)
 add_executable (
   eventhubs-${samplename}
   ${samplename}.cpp)
-target_compile_features(eventhubs-${samplename} PRIVATE cxx_std_14)
-set_target_properties(eventhubs-${samplename} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 CREATE_PER_SERVICE_TARGET_BUILD_FOR_SAMPLE(eventhubs eventhubs-${samplename} ${ARGN})
 

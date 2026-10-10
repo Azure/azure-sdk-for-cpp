@@ -53,7 +53,6 @@ set(
 
 add_library(azure-template ${AZURE_TEMPLATE_HEADER} ${AZURE_TEMPLATE_SOURCE})
 target_compile_features(azure-template PUBLIC cxx_std_14)
-set_target_properties(azure-template PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 # SDK libraries should privately define _azure_BUILDING_SDK,
 # tests should define _azure_BUILDING_TESTS,

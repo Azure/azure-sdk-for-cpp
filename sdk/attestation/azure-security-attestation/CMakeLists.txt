@@ -64,7 +64,6 @@ set(
 
 add_library(azure-security-attestation ${AZURE_ATTESTATION_HEADER} ${AZURE_ATTESTATION_SOURCE})
 target_compile_features(azure-security-attestation PUBLIC cxx_std_14)
-set_target_properties(azure-security-attestation PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 create_per_service_target_build(attestation azure-security-attestation)
 

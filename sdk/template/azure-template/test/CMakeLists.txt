@@ -14,8 +14,6 @@ add_executable (
      ut/macro_guard.cpp
      ut/template_test.cpp
      )
-target_compile_features(azure-template-test PRIVATE cxx_std_14)
-set_target_properties(azure-template-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-template-test PRIVATE _azure_BUILDING_TESTS)
 

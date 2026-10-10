@@ -98,7 +98,6 @@ add_library(
     ${AZURE_MESSAGING_EVENTHUBS_HEADER} ${AZURE_MESSAGING_EVENTHUBS_SOURCE}
 )
 target_compile_features(azure-messaging-eventhubs PUBLIC cxx_std_14)
-set_target_properties(azure-messaging-eventhubs PROPERTIES CXX_STANDARD_REQUIRED ON)
 create_per_service_target_build(eventhubs azure-messaging-eventhubs)
 add_library(Azure::azure-messaging-eventhubs ALIAS azure-messaging-eventhubs)
 

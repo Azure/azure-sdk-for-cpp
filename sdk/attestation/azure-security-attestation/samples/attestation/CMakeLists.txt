@@ -12,8 +12,6 @@ add_executable (
   ${samplename}.cpp
   attestation_collateral.cpp 
   attestation_collateral.hpp)
-target_compile_features(attestation-${samplename} PRIVATE cxx_std_14)
-set_target_properties(attestation-${samplename} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(attestation-${samplename} PRIVATE _azure_BUILDING_SAMPLES)
 

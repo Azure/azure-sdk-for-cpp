@@ -24,7 +24,6 @@ add_executable (
      src/main.cpp
 )
 target_compile_features(application PRIVATE cxx_std_14)
-set_target_properties(application PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(application PRIVATE _azure_BUILDING_SAMPLES)
 

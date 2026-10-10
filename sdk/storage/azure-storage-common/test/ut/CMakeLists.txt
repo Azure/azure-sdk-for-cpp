@@ -21,8 +21,6 @@ add_executable (
     test_base.cpp
     test_base.hpp
 )
-target_compile_features(azure-storage-common-test PRIVATE cxx_std_14)
-set_target_properties(azure-storage-common-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-storage-common-test PRIVATE _azure_BUILDING_TESTS)
 

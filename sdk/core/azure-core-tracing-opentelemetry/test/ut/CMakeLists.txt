@@ -25,8 +25,6 @@ add_executable (
     service_support_test.cpp
     test_exporter.hpp
 )
-target_compile_features(azure-core-tracing-opentelemetry-test PRIVATE cxx_std_14)
-set_target_properties(azure-core-tracing-opentelemetry-test PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-core-tracing-opentelemetry-test PRIVATE _azure_BUILDING_TESTS)
 

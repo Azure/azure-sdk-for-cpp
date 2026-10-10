@@ -13,7 +13,6 @@ add_library(
       src/client.cpp
  )
 target_compile_features(service PUBLIC cxx_std_14)
-set_target_properties(service PROPERTIES CXX_STANDARD_REQUIRED ON)
 
  target_link_libraries(service PUBLIC azure-core)
 

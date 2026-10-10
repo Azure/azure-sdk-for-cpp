@@ -14,8 +14,6 @@ project(eventhub_sas_writer_sample)
 add_executable(eventhub_sas_writer_sample
     eventhub_sas_writer_sample.cpp
 )
-target_compile_features(eventhub_sas_writer_sample PRIVATE cxx_std_14)
-set_target_properties(eventhub_sas_writer_sample PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(eventhub_sas_writer_sample PRIVATE _azure_BUILDING_SAMPLES)
 

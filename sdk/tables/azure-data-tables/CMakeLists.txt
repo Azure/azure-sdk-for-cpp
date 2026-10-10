@@ -69,7 +69,6 @@ set(
 
 add_library(azure-data-tables ${AZURE_DATA_TABLES_HEADER} ${AZURE_DATA_TABLES_SOURCE})
 target_compile_features(azure-data-tables PUBLIC cxx_std_14)
-set_target_properties(azure-data-tables PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(azure-data-tables PRIVATE _azure_BUILDING_SDK)
 

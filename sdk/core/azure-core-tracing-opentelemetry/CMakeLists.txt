@@ -53,7 +53,6 @@ if (BUILD_AZURE_CORE_TRACING_OPENTELEMETRY)
 
     add_library(azure-core-tracing-opentelemetry ${AZURE_CORE_OPENTELEMETRY_HEADER} ${AZURE_CORE_OPENTELEMETRY_SOURCE})
     target_compile_features(azure-core-tracing-opentelemetry PUBLIC cxx_std_14)
-    set_target_properties(azure-core-tracing-opentelemetry PROPERTIES CXX_STANDARD_REQUIRED ON)
 
     target_include_directories(
       azure-core-tracing-opentelemetry

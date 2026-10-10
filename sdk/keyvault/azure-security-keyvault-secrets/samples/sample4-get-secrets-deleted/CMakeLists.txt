@@ -9,8 +9,6 @@ add_executable (
   sample4-get-secrets-deleted
   sample4_get_secrets_deleted.cpp
 )
-target_compile_features(sample4-get-secrets-deleted PRIVATE cxx_std_14)
-set_target_properties(sample4-get-secrets-deleted PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample4-get-secrets-deleted PRIVATE _azure_BUILDING_SAMPLES)
 

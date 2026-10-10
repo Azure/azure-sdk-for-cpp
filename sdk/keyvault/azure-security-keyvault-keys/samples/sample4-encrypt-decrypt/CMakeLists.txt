@@ -9,8 +9,6 @@ add_executable (
   sample4-encrypt-decrypt
   sample4_encrypt_decrypt.cpp
 )
-target_compile_features(sample4-encrypt-decrypt PRIVATE cxx_std_14)
-set_target_properties(sample4-encrypt-decrypt PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_compile_definitions(sample4-encrypt-decrypt PRIVATE _azure_BUILDING_SAMPLES)
 
