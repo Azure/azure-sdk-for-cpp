@@ -228,6 +228,25 @@ Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is
 
 Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuration for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
+###### Event Hubs live-test resources
+
+The Event Hubs pipeline deploys fresh resources for each live-test job. The checkpoint store uses a `StorageV2` account. Before tests or samples start, `sdk/eventhubs/Test-LiveTestEnvironment.ps1` requires `EVENTHUB_NAME`, `EVENTHUBS_NAMESPACE`, `EVENTHUBS_HOST`, `EVENTHUB_CONSUMER_GROUP`, and `CHECKPOINTSTORE_STORAGE_URL`.
+
+If the preflight fails, read the deployment log before investigating individual tests. A failed deployment can leave partial resources without publishing the test settings. Fix the deployment and rerun the pipeline. Keep the normal cleanup step, which removes each job's temporary resource group.
+
+Run the preflight locally after setting the environment variables from a successful deployment:
+
+```powershell
+./sdk/eventhubs/Test-LiveTestEnvironment.ps1
+```
+
+The resource configuration and preflight tests use Pester. The Linux playback jobs run them without Azure access:
+
+```powershell
+Import-Module Pester -RequiredVersion 5.7.1
+Invoke-Pester -Path ./sdk/eventhubs/tests -CI
+```
+
 ###### Tests that you must ask for
 
 A few tests take too long to run in a normal pass, so they skip themselves unless you set an environment variable. Set the variable to any value to run them.
