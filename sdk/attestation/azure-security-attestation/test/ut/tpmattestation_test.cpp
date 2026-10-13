@@ -6,6 +6,7 @@
 #include "azure/attestation/attestation_client.hpp"
 #include "mock_attestation_transport.hpp"
 
+#include <azure/core/base64.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
@@ -144,15 +145,18 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
   TEST(TpmAttestationOfflineTests, AttestTpm)
   {
     auto transport = std::make_shared<MockAttestationTransport>();
-    // "eyJwIjoxfQ" is the base64url encoding of {"p":1}.
-    transport->AttestResponseBody = R"({"data": "eyJwIjoxfQ"})";
+    std::string const expected = R"({"p":1})";
+    transport->AttestResponseBody = R"({"data": ")"
+        + Azure::Core::_internal::Base64Url::Base64UrlEncode(
+            std::vector<uint8_t>(expected.begin(), expected.end()))
+        + R"("})";
     auto client = CreateMockClient(transport);
 
     std::string payload = R"({"payload": { "type": "aikcert" } })";
     auto response = client.AttestTpm(std::vector<uint8_t>(payload.begin(), payload.end()));
 
     std::string result(response.Value.TpmResult.begin(), response.Value.TpmResult.end());
-    EXPECT_EQ(R"({"p":1})", result);
+    EXPECT_EQ(expected, result);
     EXPECT_NE(std::string::npos, transport->LastRequestUrl.find("attest/Tpm"));
   }
 
