@@ -4,7 +4,9 @@
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_administration_client.hpp"
 #include "azure/attestation/attestation_client.hpp"
+#include "mock_attestation_transport.hpp"
 
+#include <azure/core/exception.hpp>
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
@@ -84,7 +86,7 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
       {
         return GetEnv("ATTESTATION_ISOLATED_URL");
       }
-      throw std::runtime_error("Unkown instance type.");
+      throw std::runtime_error("Unknown instance type.");
     }
 
     AttestationTokenValidationOptions GetTokenValidationOptions()
@@ -144,6 +146,43 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));
     EXPECT_TRUE(parsedResponse["payload"].contains("service_context"));
+  }
+
+  TEST(PlutonAttestationOfflineTests, AttestPluton)
+  {
+    auto transport = std::make_shared<MockAttestationTransport>();
+    // "eyJwIjoxfQ" is the base64url encoding of {"p":1}.
+    transport->AttestResponseBody = R"({"data": "eyJwIjoxfQ"})";
+    auto client = CreateMockClient(transport, PlutonApiVersion);
+
+    std::string payload = R"({"payload": { "type": "pluton" } })";
+    auto response = client.AttestPluton(std::vector<uint8_t>(payload.begin(), payload.end()));
+
+    std::string result(response.Value.PlutonResult.begin(), response.Value.PlutonResult.end());
+    EXPECT_EQ(R"({"p":1})", result);
+    EXPECT_NE(std::string::npos, transport->LastRequestUrl.find("attest/Pluton"));
+    EXPECT_NE(std::string::npos, transport->LastRequestUrl.find(PlutonApiVersion));
+  }
+
+  TEST(PlutonAttestationOfflineTests, AttestPlutonEmptyResponse)
+  {
+    auto transport = std::make_shared<MockAttestationTransport>();
+    transport->AttestResponseBody = R"({})";
+    auto client = CreateMockClient(transport, PlutonApiVersion);
+
+    auto response = client.AttestPluton(std::vector<uint8_t>{1, 2, 3});
+    EXPECT_TRUE(response.Value.PlutonResult.empty());
+  }
+
+  TEST(PlutonAttestationOfflineTests, AttestPlutonServiceError)
+  {
+    auto transport = std::make_shared<MockAttestationTransport>();
+    transport->AttestResponseBody = R"({"error": {"code": "BadRequest", "message": "bad"}})";
+    transport->AttestStatusCode = Azure::Core::Http::HttpStatusCode::BadRequest;
+    auto client = CreateMockClient(transport);
+
+    EXPECT_THROW(
+        client.AttestPluton(std::vector<uint8_t>{1, 2, 3}), Azure::Core::RequestFailedException);
   }
 
 }}}} // namespace Azure::Security::Attestation::Test

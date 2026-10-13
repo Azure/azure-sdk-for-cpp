@@ -4,6 +4,7 @@
 #include "attestation_collateral.hpp"
 #include "azure/attestation/attestation_administration_client.hpp"
 #include "azure/attestation/attestation_client.hpp"
+#include "mock_attestation_transport.hpp"
 
 #include <azure/core/internal/json/json.hpp>
 #include <azure/core/test/test_base.hpp>
@@ -138,6 +139,21 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
     EXPECT_TRUE(parsedResponse["payload"].is_object());
     EXPECT_TRUE(parsedResponse["payload"].contains("challenge"));
     EXPECT_TRUE(parsedResponse["payload"].contains("service_context"));
+  }
+
+  TEST(TpmAttestationOfflineTests, AttestTpm)
+  {
+    auto transport = std::make_shared<MockAttestationTransport>();
+    // "eyJwIjoxfQ" is the base64url encoding of {"p":1}.
+    transport->AttestResponseBody = R"({"data": "eyJwIjoxfQ"})";
+    auto client = CreateMockClient(transport);
+
+    std::string payload = R"({"payload": { "type": "aikcert" } })";
+    auto response = client.AttestTpm(std::vector<uint8_t>(payload.begin(), payload.end()));
+
+    std::string result(response.Value.TpmResult.begin(), response.Value.TpmResult.end());
+    EXPECT_EQ(R"({"p":1})", result);
+    EXPECT_NE(std::string::npos, transport->LastRequestUrl.find("attest/Tpm"));
   }
 
 }}}} // namespace Azure::Security::Attestation::Test
