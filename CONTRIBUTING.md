@@ -293,6 +293,8 @@ ctest -R storage # runs all the azure storage unit tests
 `gcov` and `gcovr` must be installed on your system.
 Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
 
+Coverage builds use `-fprofile-update=atomic` for thread-safe counter updates. Linking `Threads::Threads` alone can omit `-pthread` on newer glibc, leaving GCC's default counters vulnerable to concurrent updates. Keep gcovr parse errors enabled so invalid coverage data fails the build.
+
 ```sh
 # install gcov and gcovr if missing
 sudo apt-get install gcov gcovr # example for Linux
@@ -307,6 +309,14 @@ make package-name_cov_html # for example `azure-core_cov_html`
 Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
 
 If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.
+
+The standalone coverage regression test runs 16 threads and requires exactly 1,600,000 recorded function calls. It also requires gcovr to parse the resulting data without ignoring errors. Event Hubs coverage jobs run this test before the SDK tests. Run it locally from the repository root with a GNU compiler:
+
+```sh
+cmake -S cmake-modules/tests/code-coverage -B build/coverage-regression -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/coverage-regression
+(cd build/coverage-regression && ctest --output-on-failure)
+```
 
 ### Visual Studio 2019 or newer
 
