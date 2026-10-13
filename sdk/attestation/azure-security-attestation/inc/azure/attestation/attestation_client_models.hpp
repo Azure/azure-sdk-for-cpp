@@ -65,6 +65,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
     /**
      * @brief Specifies that this should apply to Pluton security processors.
      *
+     * Requires AttestationAdministrationClientOptions::ApiVersion = 2026-03-11-preview.
+     *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationType Pluton;
   };
