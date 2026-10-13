@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+# cspell: words gcda
 
 set(OBJECT_DIR "${TEST_BINARY_DIR}/CMakeFiles/coverage-test.dir")
 file(REMOVE "${OBJECT_DIR}/coverage_test.cpp.gcda")

@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+# cspell: words DGCOV DGCOVR
 
 cmake_minimum_required(VERSION 3.13)
 project(azure-code-coverage-test LANGUAGES CXX)
