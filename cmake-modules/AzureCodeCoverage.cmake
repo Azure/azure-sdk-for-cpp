@@ -26,7 +26,8 @@ endif()
 
 # Set the compiler flags for the CMake project from where this is called (PARENT_SCOPE)
 function(append_code_coverage_for_current_project)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage" PARENT_SCOPE)
+    # Threads::Threads can omit -pthread on newer glibc, leaving GCC's counters non-atomic.
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage -fprofile-update=atomic" PARENT_SCOPE)
 endfunction()
 
 
