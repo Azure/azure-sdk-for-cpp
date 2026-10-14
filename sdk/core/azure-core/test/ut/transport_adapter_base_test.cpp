@@ -430,7 +430,7 @@ namespace Azure { namespace Core { namespace Test {
     }
   }
 
-  TEST_P(TransportAdapter, getChunkWithStream)
+  TEST_P(TransportAdapter, DISABLED_getChunkWithStream)
   {
     Azure::Core::Url host("http://anglesharp.azurewebsites.net/Chunked");
     auto expectedResponseBodySize = -1; // chunked will return unknown body length

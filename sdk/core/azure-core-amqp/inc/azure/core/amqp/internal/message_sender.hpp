@@ -171,6 +171,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     std::uint64_t GetMaxMessageSize() const;
 
 #if ENABLE_UAMQP
+    /** @brief Reports whether the peer has taken the link away.
+     *
+     * Never throws, so a caller holding a cached sender can test it instead of discovering the
+     * loss from a call that fails.
+     *
+     * @return true if the peer has detached the link.
+     */
+    bool IsLinkDetached() const noexcept;
+
     /** @brief Send a message synchronously to the target of the message sender.
      *
      * @param message The message to send.

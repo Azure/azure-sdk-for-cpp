@@ -8,6 +8,9 @@
 #include "azure/core/amqp/internal/management.hpp"
 
 #include <azure_uamqp_c/cbs.h>
+
+#include <mutex>
+#include <string>
 struct CBS_INSTANCE_TAG;
 
 namespace Azure { namespace Core { namespace Amqp { namespace _detail {
@@ -34,6 +37,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     ClaimsBasedSecurityImpl& operator=(ClaimsBasedSecurityImpl&&) noexcept = delete;
 
     _azure_NODISCARD CbsOpenResult Open(Context const& context);
+
+    /** @brief The reason the last `Open` failed, or an empty string when it did not fail. */
+    std::string GetOpenFailureDetail() const;
+
     void Close(Context const& context);
     _azure_NODISCARD std::tuple<CbsOperationResult, uint32_t, std::string> PutToken(
         CbsTokenType type,
@@ -45,6 +52,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   private:
     std::shared_ptr<_detail::SessionImpl> m_session;
     std::shared_ptr<_detail::ManagementClientImpl> m_management;
+
+    // OnError runs on the polling thread while ManagementClientImpl::Open holds its own open
+    // lock across WaitForResult. This capture therefore uses a lock of its own; taking the
+    // management open lock here would block the polling thread for the whole open.
+    mutable std::mutex m_errorLock;
+    Models::_internal::AmqpError m_lastError;
+
     // Inherited via ManagementClientEvents
     void OnError(Models::_internal::AmqpError const& error) override;
   };

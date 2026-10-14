@@ -379,6 +379,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
             = dynamic_cast<Azure::Core::Amqp::_detail::CbsOpenFailedException const*>(&e);
         ASSERT_NE(nullptr, typed);
         EXPECT_EQ(Azure::Core::Amqp::_detail::CbsOpenResult::Error, typed->Result);
+
+        // The result alone collapses every transport, TLS and link failure into one value, so
+        // the sentence must also carry the reason the layer below gave. A caller that logs the
+        // exception and has no log listener has nothing else to read.
+        EXPECT_NE(std::string::npos, what.find("reason:")) << what;
+        // The reason must name which link failed, not "sender or receiver".
+        EXPECT_NE(std::string::npos, what.find("the message sender")) << what;
+        // A generic state error must never be the whole story the caller gets.
+        EXPECT_EQ(std::string::npos, what.find("Message Sender entered the Error State.")) << what;
       }
       EXPECT_TRUE(caught);
 

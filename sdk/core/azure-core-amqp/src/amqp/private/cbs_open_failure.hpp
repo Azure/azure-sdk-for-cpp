@@ -66,14 +66,30 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   // The sentence that the caller reads in the exception. Neither this function
   // nor the one below takes the token, so no failure text can hold a secret.
+  //
+  // `detail` is the reason the layer below reported. `CbsOpenResult::Error` covers every
+  // transport, TLS and link failure, so without the reason a reader cannot tell a refused socket
+  // from a rejected handshake. It is empty when that layer produced no reason, and the sentence
+  // then reads exactly as it did before.
   inline std::string DescribeCbsOpenFailure(
       CbsOpenResult result,
       std::string const& audienceUrl,
-      CbsOpenCaller caller)
+      CbsOpenCaller caller,
+      std::string const& detail = {})
   {
     std::stringstream ss;
     ss << "Could not open Claims Based Security object. Result: " << result
-       << ", audience: " << audienceUrl << ", caller: " << CbsOpenCallerName(caller) << ".";
+       << ", audience: " << audienceUrl << ", caller: " << CbsOpenCallerName(caller);
+    if (!detail.empty())
+    {
+      ss << ", reason: " << detail;
+    }
+    // The reason comes from a layer below and often ends in its own full stop. A second one
+    // reads as a typo in the customer's log.
+    if (detail.empty() || detail.back() != '.')
+    {
+      ss << ".";
+    }
     return ss.str();
   }
 
@@ -88,10 +104,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       Azure::DateTime const& expiresOn,
       CbsOpenCaller caller,
       std::string const& connectionSummary,
-      std::chrono::milliseconds elapsed)
+      std::chrono::milliseconds elapsed,
+      std::string const& detail = {})
   {
     std::stringstream ss;
-    ss << DescribeCbsOpenFailure(result, audienceUrl, caller)
+    ss << DescribeCbsOpenFailure(result, audienceUrl, caller, detail)
        << " Token type: " << CbsTokenTypeName(tokenType)
        << ", token expires: " << FormatTokenExpiry(expiresOn)
        << ". Connection: " << (connectionSummary.empty() ? "unknown" : connectionSummary)

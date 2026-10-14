@@ -22,9 +22,11 @@
 
 #include <windows.h>
 
+#include <atomic>
 #include <chrono>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -62,11 +64,13 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     WinHttpRequest* const m_httpRequest{};
     wil::unique_event m_actionCompleteEvent;
     // Mutex protecting all mutable members of the class.
+    std::shared_timed_mutex m_actionCompleteResetMutex;
     std::mutex m_actionCompleteMutex;
     DWORD m_expectedStatus{};
     DWORD m_stowedError{};
     DWORD_PTR m_stowedErrorInformation{};
     DWORD m_bytesAvailable{};
+    std::atomic<bool> m_actionCompleteReset{false};
 
     /*
      * Callback from WinHTTP called after the TLS certificates are received when the caller sets
@@ -104,6 +108,8 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         throw std::runtime_error("Error creating Action Complete Event.");
       }
     }
+
+    ~WinHttpAction();
 
     /**
      * Register the WinHTTP Status callback used by the action.
@@ -165,7 +171,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
    * @brief A WinHttpRequest object encapsulates an HTTP operation.
    */
   class WinHttpRequest final {
-    bool m_requestHandleClosed{false};
+    std::shared_timed_mutex m_requestHandleClosingMutex;
+    std::atomic<bool> m_requestHandleClosing{false};
+    std::shared_timed_mutex m_requestHandleMutex;
+    std::atomic<bool> m_requestHandleClosed{false};
     Azure::Core::_internal::UniqueHandle<HINTERNET> m_requestHandle;
     std::unique_ptr<WinHttpAction> m_httpAction;
     std::vector<std::string> m_expectedTlsRootCertificates;
@@ -194,7 +203,10 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         std::chrono::milliseconds connectionTimeout);
 
     ~WinHttpRequest();
-    void MarkRequestHandleClosed() { m_requestHandleClosed = true; };
+    void MarkRequestHandleForClosing();
+    std::shared_lock<std::shared_timed_mutex> GetRequestHandleSharedLock();
+    bool IsRequestHandleMarkedForClosing();
+    void CloseRequestHandle();
     void Upload(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void SendRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context);
     void ReceiveResponse(Azure::Core::Context const& context);

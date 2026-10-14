@@ -32,6 +32,7 @@ using namespace Azure::Core::_internal;
 const Models::AttestationType AttestationType::SgxEnclave("SgxEnclave");
 const Models::AttestationType AttestationType::OpenEnclave("OpenEnclave");
 const Models::AttestationType AttestationType::Tpm("Tpm");
+const Models::AttestationType AttestationType::Pluton("Pluton");
 const Models::PolicyModification PolicyModification::Removed("Removed");
 const Models::PolicyModification PolicyModification::Updated("Updated");
 const Models::PolicyCertificateModification PolicyCertificateModification::IsAbsent("IsAbsent");

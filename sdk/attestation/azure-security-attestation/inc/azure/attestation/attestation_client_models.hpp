@@ -61,6 +61,14 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      *
      */
     AZ_ATTESTATION_DLLEXPORT static const AttestationType Tpm;
+
+    /**
+     * @brief Specifies that this should apply to Pluton security processors.
+     *
+     * Requires AttestationAdministrationClientOptions::ApiVersion = 2026-03-11-preview.
+     *
+     */
+    AZ_ATTESTATION_DLLEXPORT static const AttestationType Pluton;
   };
 
   /**
@@ -462,6 +470,15 @@ namespace Azure { namespace Security { namespace Attestation { namespace Models 
      *
      */
     std::vector<uint8_t> TpmResult;
+  };
+
+  /** @brief The result of a call to AttestPluton.
+   */
+  struct PlutonAttestationResult final
+  {
+    /** @brief Attestation response data.
+     */
+    std::vector<uint8_t> PlutonResult;
   };
 
   /**

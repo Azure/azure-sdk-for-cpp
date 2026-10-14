@@ -54,6 +54,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       return CbsOpenResult::Ok;
     }
   }
+
+  // This backend reports every open failure by throwing and returns Ok otherwise, so the shared
+  // call site reads the reason from the exception and never asks for one here.
+  std::string ClaimsBasedSecurityImpl::GetOpenFailureDetail() const { return {}; }
   void ClaimsBasedSecurityImpl::Close(Context const& context)
   {
     Common::_detail::CallContext callContext(
