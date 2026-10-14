@@ -13,18 +13,15 @@
   managed downloads.
 - Added `Models::DownloadHint` and `Models::DownloadBlobDetails::DownloadHint`.
 
-### Breaking Changes
-
-- Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
-  Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
-  requesting XML responses.
-
 ### Bugs Fixed
 
 - Fixed CMake dependency resolution when FlatCC provides only a shared runtime library.
 
 ### Other Changes
 
+- Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
+  Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
+  requesting XML responses.
 - Changed the default initial transfer size for partitioned uploads and downloads from 256 MiB to
   4 MiB, matching the default subsequent chunk size. Explicitly configured
   `InitialChunkSize` and `SingleUploadThreshold` values are still respected.
