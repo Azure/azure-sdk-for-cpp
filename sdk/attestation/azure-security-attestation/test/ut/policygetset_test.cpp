@@ -228,8 +228,8 @@ namespace Azure { namespace Security { namespace Attestation { namespace Test {
         auto policy = adminClient.GetAttestationPolicy(attestationType);
 
         // The policy should have a value, and the token should have been issued by the service.
-        // Note that if the policy *doesn't* have a body, then the attestation type must be TPM
-        // since TPM attestation is the only attestation type which allows empty policy
+        // Note that if the policy *doesn't* have a body, then the attestation type must be TPM or Pluton
+        // since TPM and Pluton attestation are the only attestation types which allow empty policy
         // documents.
         if (policy.Value.Body.empty())
         {
