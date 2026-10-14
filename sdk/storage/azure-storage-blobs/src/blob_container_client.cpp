@@ -427,12 +427,22 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (columnName == "ImmutabilityPolicyUntilDate")
             {
-              result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy.Value().ExpiresOn
+              auto& policy = result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy;
+              if (!policy.HasValue())
+              {
+                policy = Models::BlobImmutabilityPolicy();
+              }
+              policy.Value().ExpiresOn
                   = std::chrono::system_clock::time_point(std::chrono::seconds(parsedIntValue));
             }
             else if (columnName == "ImmutabilityPolicyMode")
             {
-              result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy.Value().PolicyMode
+              auto& policy = result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy;
+              if (!policy.HasValue())
+              {
+                policy = Models::BlobImmutabilityPolicy();
+              }
+              policy.Value().PolicyMode
                   = Models::BlobImmutabilityPolicyMode(std::move(parsedStringValue));
             }
             else if (columnName == "VersionId")
