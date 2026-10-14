@@ -8,6 +8,7 @@
 #if defined(AZ_PLATFORM_WINDOWS) && defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
 
 #include "azure/core/context.hpp"
+#include "azure/core/diagnostics/logger.hpp"
 #include "azure/core/http/http.hpp"
 #include "azure/core/http/win_http_transport.hpp"
 #include "azure/core/io/body_stream.hpp"
@@ -24,9 +25,11 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #include <algorithm>
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <cstring>
+#include <exception>
 #include <future>
 #include <memory>
 #include <stdexcept>
@@ -122,6 +125,13 @@ namespace Azure { namespace Core { namespace Test {
 
   namespace {
 
+    // Dedicated exception type so tests can distinguish an injected OnRead failure from
+    // TransportException (which also derives from std::runtime_error).
+    class InjectedOnReadException final : public std::exception {
+    public:
+      char const* what() const noexcept override { return "Injected mid-upload OnRead failure"; }
+    };
+
     // Non-contiguous stream that copies from an underlying vector via OnRead (so TryReadContiguous
     // returns false and WinHttpRequest::Upload uses ScopedScratchBuffer).
     class NonContiguousBodyStream final : public Azure::Core::IO::BodyStream {
@@ -134,7 +144,7 @@ namespace Azure { namespace Core { namespace Test {
       {
         if (m_throwAfterBytes > 0 && m_offset >= m_throwAfterBytes)
         {
-          throw std::runtime_error("Injected mid-upload OnRead failure");
+          throw InjectedOnReadException{};
         }
         size_t const toRead = (std::min)(count, m_data.size() - m_offset);
         if (toRead > 0)
@@ -155,13 +165,49 @@ namespace Azure { namespace Core { namespace Test {
       void Rewind() override { m_offset = 0; }
     };
 
+    // Non-contiguous stream that produces synthetic data up to a large total length and tracks
+    // how many chunks have been read so a test can cancel while WinHttpWriteData is blocked.
+    class PendingWriteBodyStream final : public Azure::Core::IO::BodyStream {
+    private:
+      int64_t const m_totalLength;
+      int64_t m_offset = 0;
+      std::atomic<size_t>& m_onReadCount;
+      std::atomic<uint8_t const*>& m_lastBufferPtr;
+
+      size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const&) override
+      {
+        size_t const remaining = static_cast<size_t>(m_totalLength - m_offset);
+        size_t const toRead = (std::min)(count, remaining);
+        if (toRead > 0)
+        {
+          std::memset(buffer, 0x42, toRead);
+          m_offset += static_cast<int64_t>(toRead);
+          m_lastBufferPtr.store(buffer);
+          m_onReadCount.fetch_add(1);
+        }
+        return toRead;
+      }
+
+    public:
+      PendingWriteBodyStream(
+          int64_t totalLength,
+          std::atomic<size_t>& onReadCount,
+          std::atomic<uint8_t const*>& lastBufferPtr)
+          : m_totalLength(totalLength), m_onReadCount(onReadCount), m_lastBufferPtr(lastBufferPtr)
+      {
+      }
+
+      int64_t Length() const override { return m_totalLength; }
+      void Rewind() override { m_offset = 0; }
+    };
+
     class LoopbackHttpServer final {
     private:
       SOCKET m_listenSocket = INVALID_SOCKET;
       uint16_t m_port = 0;
 
     public:
-      LoopbackHttpServer()
+      explicit LoopbackHttpServer(int receiveBufferSize = 0)
       {
         WSADATA wsaData{};
         if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
@@ -173,6 +219,16 @@ namespace Azure { namespace Core { namespace Test {
         if (m_listenSocket == INVALID_SOCKET)
         {
           throw std::runtime_error("socket() failed");
+        }
+
+        if (receiveBufferSize > 0)
+        {
+          setsockopt(
+              m_listenSocket,
+              SOL_SOCKET,
+              SO_RCVBUF,
+              reinterpret_cast<char const*>(&receiveBufferSize),
+              sizeof(receiveBufferSize));
         }
 
         sockaddr_in addr{};
@@ -285,6 +341,62 @@ namespace Azure { namespace Core { namespace Test {
         closesocket(client);
         return body;
       }
+
+      // Accepts a connection, reads only the HTTP request headers, and then stops reading from the
+      // socket until releaseSignal is ready so the client's TCP send buffer fills and
+      // WinHttpWriteData stays pending.
+      void AcceptAndStallBodyUntil(std::shared_future<void> releaseSignal)
+      {
+        fd_set readSet{};
+        FD_ZERO(&readSet);
+        FD_SET(m_listenSocket, &readSet);
+        timeval acceptTimeout{};
+        acceptTimeout.tv_sec = 10;
+        acceptTimeout.tv_usec = 0;
+        if (select(0, &readSet, nullptr, nullptr, &acceptTimeout) <= 0)
+        {
+          return;
+        }
+
+        SOCKET client = accept(m_listenSocket, nullptr, nullptr);
+        if (client == INVALID_SOCKET)
+        {
+          return;
+        }
+
+        int const rcvBuf = 4096;
+        setsockopt(
+            client, SOL_SOCKET, SO_RCVBUF, reinterpret_cast<char const*>(&rcvBuf), sizeof(rcvBuf));
+
+        DWORD const ioTimeoutMs = 10000;
+        if (setsockopt(
+                client,
+                SOL_SOCKET,
+                SO_RCVTIMEO,
+                reinterpret_cast<char const*>(&ioTimeoutMs),
+                sizeof(ioTimeoutMs))
+            == SOCKET_ERROR)
+        {
+          closesocket(client);
+          return;
+        }
+
+        std::string rawRequest;
+        char temp[512];
+        while (rawRequest.find("\r\n\r\n") == std::string::npos)
+        {
+          int n = recv(client, temp, sizeof(temp), 0);
+          if (n <= 0)
+          {
+            closesocket(client);
+            return;
+          }
+          rawRequest.append(temp, static_cast<size_t>(n));
+        }
+
+        releaseSignal.wait_for(std::chrono::seconds(10));
+        closesocket(client);
+      }
     };
 
   } // namespace
@@ -355,22 +467,165 @@ namespace Azure { namespace Core { namespace Test {
 
   TEST(WinHttpTransport, UploadFailureClosesRequestHandleBeforeUnwind)
   {
-    LoopbackHttpServer server;
-    Azure::Core::Url const url(
-        "http://127.0.0.1:" + std::to_string(server.GetPort()) + "/upload-fail");
-    Azure::Core::Http::WinHttpTransport transport;
+    // Obtain the current thread's reusable scratch buffer address before starting the upload.
+    uint8_t const* expectedScratchPtr = nullptr;
+    {
+      Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer initBuf(1024);
+      expectedScratchPtr = initBuf.Get();
+    }
+    ASSERT_NE(expectedScratchPtr, nullptr);
 
-    std::vector<uint8_t> payload(128 * 1024, 0x5A);
-    // Throw after the first 64 KiB chunk has been written to WinHTTP.
-    NonContiguousBodyStream failingStream(payload, 64 * 1024);
+    // 1. Mid-upload OnRead exception: verify the dedicated InjectedOnReadException propagates and
+    // that WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING completes before ScopedScratchBuffer is released.
+    {
+      std::atomic<bool> sawHandleClosingCallback{false};
+      std::atomic<bool> handleClosedObserved{false};
+      std::atomic<bool> scratchBufferStillHeldAtClose{false};
+      auto const uploadThreadId = std::this_thread::get_id();
 
-    auto serverFuture = std::async(
-        std::launch::async, [&]() { return server.AcceptAndReadBody(64 * 1024, false); });
+      Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
+      Azure::Core::Diagnostics::Logger::SetListener(
+          [&](Azure::Core::Diagnostics::Logger::Level, std::string const& message) {
+            if (message.find("Closing handle; completing outstanding Close request")
+                != std::string::npos)
+            {
+              sawHandleClosingCallback.store(true);
+            }
+            else if (
+                message == "WinHttpRequest::CloseRequestHandle. Handle closed."
+                && std::this_thread::get_id() == uploadThreadId)
+            {
+              handleClosedObserved.store(sawHandleClosingCallback.load());
+              // CloseRequestHandle() logs this on the upload thread immediately after
+              // WaitForAction(..., WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING) completes. If
+              // CloseRequestHandle() ran inside WinHttpRequest::Upload's catch block before
+              // ~ScopedScratchBuffer(), the thread-local scratch buffer is still marked InUse so a
+              // nested ScopedScratchBuffer must allocate a distinct fallback buffer.
+              Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer probe(1024);
+              scratchBufferStillHeldAtClose.store(probe.Get() != expectedScratchPtr);
+            }
+          });
 
-    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &failingStream);
-    EXPECT_THROW(
-        static_cast<void>(transport.Send(request, Azure::Core::Context{})), std::runtime_error);
-    serverFuture.wait();
+      LoopbackHttpServer server;
+      Azure::Core::Url const url(
+          "http://127.0.0.1:" + std::to_string(server.GetPort()) + "/upload-fail");
+      Azure::Core::Http::WinHttpTransport transport;
+
+      std::vector<uint8_t> payload(128 * 1024, 0x5A);
+      // Throw InjectedOnReadException after the first 64 KiB chunk has been written to WinHTTP.
+      NonContiguousBodyStream failingStream(payload, 64 * 1024);
+
+      auto serverFuture = std::async(
+          std::launch::async, [&]() { return server.AcceptAndReadBody(64 * 1024, false); });
+
+      Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &failingStream);
+      EXPECT_THROW(
+          static_cast<void>(transport.Send(request, Azure::Core::Context{})),
+          InjectedOnReadException);
+      serverFuture.wait();
+
+      Azure::Core::Diagnostics::Logger::SetListener(nullptr);
+
+      EXPECT_TRUE(handleClosedObserved.load());
+      EXPECT_TRUE(scratchBufferStillHeldAtClose.load());
+    }
+
+    // 2. Cancellation while WinHttpWriteData is pending (before WRITE_COMPLETE): verify that
+    // cancellation aborts a pending write, waits for WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING, and
+    // only releases the ScopedScratchBuffer after the handle has closed.
+    {
+      std::atomic<size_t> onReadCount{0};
+      std::atomic<size_t> writeCompleteCount{0};
+      std::atomic<uint8_t const*> lastReadBufferPtr{nullptr};
+      std::atomic<bool> sawHandleClosingCallback{false};
+      std::atomic<bool> handleClosedObserved{false};
+      std::atomic<bool> writeWasPendingAtClose{false};
+      std::atomic<bool> scratchBufferStillHeldAtClose{false};
+      auto const uploadThreadId = std::this_thread::get_id();
+
+      Azure::Core::Diagnostics::Logger::SetLevel(Azure::Core::Diagnostics::Logger::Level::Verbose);
+      Azure::Core::Diagnostics::Logger::SetListener(
+          [&](Azure::Core::Diagnostics::Logger::Level, std::string const& message) {
+            if (message.find("WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE") != std::string::npos)
+            {
+              writeCompleteCount.fetch_add(1);
+            }
+            else if (
+                message.find("Closing handle; completing outstanding Close request")
+                != std::string::npos)
+            {
+              sawHandleClosingCallback.store(true);
+            }
+            else if (
+                message == "WinHttpRequest::CloseRequestHandle. Handle closed."
+                && std::this_thread::get_id() == uploadThreadId)
+            {
+              handleClosedObserved.store(sawHandleClosingCallback.load());
+              writeWasPendingAtClose.store(writeCompleteCount.load() < onReadCount.load());
+              Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer probe(1024);
+              scratchBufferStillHeldAtClose.store(probe.Get() != expectedScratchPtr);
+            }
+          });
+
+      LoopbackHttpServer server(4096);
+      Azure::Core::Url const url(
+          "http://127.0.0.1:" + std::to_string(server.GetPort()) + "/upload-cancel-pending");
+      Azure::Core::Http::WinHttpTransport transport;
+
+      // 64 MiB stream ensures TCP loopback buffers fill when the server stops reading after
+      // headers, leaving WinHttpWriteData pending inside WaitForAction.
+      PendingWriteBodyStream stallingStream(64 * 1024 * 1024, onReadCount, lastReadBufferPtr);
+
+      std::promise<void> releaseServerPromise;
+      auto releaseServerFuture = releaseServerPromise.get_future().share();
+      auto serverFuture = std::async(
+          std::launch::async, [&]() { server.AcceptAndStallBodyUntil(releaseServerFuture); });
+
+      Azure::Core::Context cancelContext;
+      std::atomic<bool> stopCanceller{false};
+      std::thread canceller([&]() {
+        // Wait until a chunk has been read into ScopedScratchBuffer and handed to WinHttpWriteData,
+        // and WRITE_COMPLETE has not fired for at least 50 ms (meaning WinHttpWriteData is blocked
+        // pending socket buffer space).
+        while (!stopCanceller.load())
+        {
+          size_t const reads = onReadCount.load();
+          size_t const writes = writeCompleteCount.load();
+          if (reads > 0 && reads > writes)
+          {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            if (onReadCount.load() == reads && writeCompleteCount.load() == writes)
+            {
+              cancelContext.Cancel();
+              break;
+            }
+          }
+          std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        }
+      });
+
+      Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &stallingStream);
+      EXPECT_THROW(
+          static_cast<void>(transport.Send(request, cancelContext)),
+          Azure::Core::OperationCancelledException);
+
+      stopCanceller.store(true);
+      canceller.join();
+      releaseServerPromise.set_value();
+      serverFuture.wait();
+
+      Azure::Core::Diagnostics::Logger::SetListener(nullptr);
+
+      EXPECT_EQ(lastReadBufferPtr.load(), expectedScratchPtr);
+      EXPECT_TRUE(handleClosedObserved.load());
+      EXPECT_TRUE(writeWasPendingAtClose.load());
+      EXPECT_TRUE(scratchBufferStillHeldAtClose.load());
+
+      // Once Send() has finished unwinding, the thread-local scratch buffer must be available for
+      // reuse again.
+      Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer afterUnwindProbe(1024);
+      EXPECT_EQ(afterUnwindProbe.Get(), expectedScratchPtr);
+    }
   }
 
 }}} // namespace Azure::Core::Test
