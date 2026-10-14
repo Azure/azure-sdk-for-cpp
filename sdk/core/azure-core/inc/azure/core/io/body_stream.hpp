@@ -26,10 +26,16 @@
 
 namespace Azure { namespace Core { namespace IO {
 
+  namespace _detail {
+    struct BodyStreamHelpers;
+  } // namespace _detail
+
   /**
    * @brief Used to read data to/from a service.
    */
   class BodyStream {
+    friend struct Azure::Core::IO::_detail::BodyStreamHelpers;
+
   private:
     /**
      * @brief Read portion of data into a buffer.
@@ -43,6 +49,31 @@ namespace Azure { namespace Core { namespace IO {
      * @return Number of bytes read.
      */
     virtual size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) = 0;
+
+    /**
+     * @brief Try to read a portion of data directly from an underlying contiguous memory buffer
+     * without copying.
+     *
+     * @param buffer Output pointer set to the start of the contiguous data read.
+     * @param count Maximum number of bytes to read.
+     * @param bytesRead Output number of bytes read.
+     * @param context A context to control the request lifetime.
+     *
+     * @return `true` if the stream supports contiguous reads (\p buffer and \p bytesRead are set);
+     * `false` if a caller-provided destination buffer and `Read()` must be used instead.
+     */
+    virtual bool OnTryReadContiguous(
+        uint8_t const*& buffer,
+        size_t count,
+        size_t& bytesRead,
+        Azure::Core::Context const& context)
+    {
+      (void)buffer;
+      (void)count;
+      (void)bytesRead;
+      (void)context;
+      return false;
+    }
 
   public:
     /**
@@ -127,6 +158,12 @@ namespace Azure { namespace Core { namespace IO {
     size_t m_offset = 0;
 
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
+
+    bool OnTryReadContiguous(
+        uint8_t const*& buffer,
+        size_t count,
+        size_t& bytesRead,
+        Azure::Core::Context const& context) override;
 
   public:
     // Forbid constructor for rval so we don't end up storing dangling ptr
@@ -317,4 +354,40 @@ namespace Azure { namespace Core { namespace IO {
 
     int64_t Length() const override;
   };
+
+  namespace _detail {
+    struct BodyStreamHelpers final
+    {
+      static bool TryReadContiguous(
+          BodyStream& stream,
+          uint8_t const*& buffer,
+          size_t count,
+          size_t& bytesRead,
+          Azure::Core::Context const& context = Azure::Core::Context())
+      {
+        context.ThrowIfCancelled();
+        return stream.OnTryReadContiguous(buffer, count, bytesRead, context);
+      }
+
+      class ScopedScratchBuffer final {
+      private:
+        struct RawBufferDeleter final
+        {
+          void operator()(uint8_t* ptr) const noexcept;
+        };
+
+        std::unique_ptr<uint8_t[], RawBufferDeleter> m_fallbackBuffer;
+        uint8_t* m_ptr = nullptr;
+        bool m_usingThreadLocal = false;
+
+      public:
+        explicit ScopedScratchBuffer(size_t requiredSize);
+        ScopedScratchBuffer(ScopedScratchBuffer const&) = delete;
+        ScopedScratchBuffer& operator=(ScopedScratchBuffer const&) = delete;
+        ~ScopedScratchBuffer();
+
+        uint8_t* Get() const noexcept { return m_ptr; }
+      };
+    };
+  } // namespace _detail
 }}} // namespace Azure::Core::IO

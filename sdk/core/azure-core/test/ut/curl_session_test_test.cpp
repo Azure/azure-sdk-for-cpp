@@ -355,4 +355,47 @@ namespace Azure { namespace Core { namespace Test {
             .size(),
         0);
   }
+
+  TEST_F(CurlSession, ZeroCopyPutMemoryBodyStream)
+  {
+    std::string const continueResponse("HTTP/1.1 100 Continue\r\n\r\n");
+    std::string const okResponse("HTTP/1.1 200 Ok\r\nContent-Length: 0\r\n\r\n");
+    std::string const connectionKey("connection-key");
+    std::vector<uint8_t> const payload = {1, 2, 3, 4, 5, 6, 7, 8};
+
+    MockCurlNetworkConnection* curlMock = new MockCurlNetworkConnection();
+    {
+      ::testing::InSequence seq;
+      // 1. Send HTTP headers
+      EXPECT_CALL(*curlMock, SendBuffer(_, _, _)).WillOnce(Return(CURLE_OK));
+      // 2. Read 100 Continue
+      EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+          .WillOnce(DoAll(
+              SetArrayArgument<0>(
+                  continueResponse.data(), continueResponse.data() + continueResponse.size()),
+              Return(continueResponse.size())));
+      // 3. Send body directly from payload.data() without copying
+      EXPECT_CALL(*curlMock, SendBuffer(::testing::Eq(payload.data()), payload.size(), _))
+          .WillOnce(Return(CURLE_OK));
+      // 4. Read 200 OK
+      EXPECT_CALL(*curlMock, ReadFromSocket(_, _, _))
+          .WillOnce(DoAll(
+              SetArrayArgument<0>(okResponse.data(), okResponse.data() + okResponse.size()),
+              Return(okResponse.size())));
+    }
+    EXPECT_CALL(*curlMock, DestructObj());
+
+    std::unique_ptr<MockCurlNetworkConnection> uniqueCurlMock(curlMock);
+
+    Azure::Core::IO::MemoryBodyStream bodyStream(payload);
+    Azure::Core::Url url("http://microsoft.com");
+    Azure::Core::Http::Request request(Azure::Core::Http::HttpMethod::Put, url, &bodyStream);
+
+    Azure::Core::Http::CurlTransportOptions transportOptions;
+    transportOptions.HttpKeepAlive = false;
+    auto session = std::make_unique<Azure::Core::Http::CurlSession>(
+        request, std::move(uniqueCurlMock), transportOptions);
+
+    EXPECT_EQ(CURLE_OK, session->Perform(Azure::Core::Context{}));
+  }
 }}} // namespace Azure::Core::Test

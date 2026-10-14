@@ -162,8 +162,8 @@ int pollSocketUntilEventOrTimeout(
     // Before doing any work, check to make sure that the context hasn't already been cancelled.
     context.ThrowIfCancelled();
     int pollTimeoutMs = static_cast<int>(
-        (std::min)(
-            pollInterval, std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
+        (std::min)(pollInterval,
+                   std::chrono::duration_cast<std::chrono::milliseconds>(deadline - now))
             .count());
 #if defined(AZ_PLATFORM_POSIX)
     result = poll(&poller, 1, pollTimeoutMs);
@@ -684,22 +684,49 @@ CURLcode CurlConnection::SendBuffer(
 CURLcode CurlSession::UploadBody(Context const& context)
 {
   // Send body UploadStreamPageSize at a time (libcurl default)
-  // NOTE: if stream is on top a contiguous memory, we can avoid allocating this copying buffer
   auto streamBody = this->m_request.GetBodyStream();
   CURLcode sendResult = CURLE_OK;
 
-  auto unique_buffer
-      = std::make_unique<uint8_t[]>(static_cast<size_t>(_detail::DefaultUploadChunkSize));
+  uint8_t const* contiguousBuffer = nullptr;
+  size_t rawRequestLen = 0;
+  if (Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
+          *streamBody, contiguousBuffer, _detail::DefaultUploadChunkSize, rawRequestLen, context))
+  {
+    while (rawRequestLen > 0)
+    {
+      sendResult = m_connection->SendBuffer(contiguousBuffer, rawRequestLen, context);
+      if (sendResult != CURLE_OK)
+      {
+        return sendResult;
+      }
+      if (!Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
+              *streamBody,
+              contiguousBuffer,
+              _detail::DefaultUploadChunkSize,
+              rawRequestLen,
+              context))
+      {
+        break;
+      }
+    }
+    return sendResult;
+  }
+
+  int64_t const streamLength = streamBody->Length();
+  size_t const uploadChunkSize = streamLength > 0
+      ? static_cast<size_t>(
+            (std::min)(streamLength, static_cast<int64_t>(_detail::DefaultUploadChunkSize)))
+      : _detail::DefaultUploadChunkSize;
+  Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer scratchBuffer(uploadChunkSize);
 
   while (true)
   {
-    size_t rawRequestLen
-        = streamBody->Read(unique_buffer.get(), _detail::DefaultUploadChunkSize, context);
+    rawRequestLen = streamBody->Read(scratchBuffer.Get(), uploadChunkSize, context);
     if (rawRequestLen == 0)
     {
       break;
     }
-    sendResult = m_connection->SendBuffer(unique_buffer.get(), rawRequestLen, context);
+    sendResult = m_connection->SendBuffer(scratchBuffer.Get(), rawRequestLen, context);
     if (sendResult != CURLE_OK)
     {
       return sendResult;
@@ -1482,9 +1509,10 @@ inline std::string GetConnectionKey(
   key.append(",");
 #if LIBCURL_VERSION_NUM >= 0x074D00 // 7.77.0
   key.append(
-      !options.SslOptions.PemEncodedExpectedRootCertificates.empty() ? std::to_string(
-          std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
-                                                                     : "0");
+      !options.SslOptions.PemEncodedExpectedRootCertificates.empty()
+          ? std::to_string(
+                std::hash<std::string>{}(options.SslOptions.PemEncodedExpectedRootCertificates))
+          : "0");
 #else
   key.append("0");
 #endif
@@ -1620,8 +1648,9 @@ namespace Azure { namespace Core {
 
     template <typename Api, typename... Args> auto MakeUniqueHandle(Api& OpensslApi, Args&&... args)
     {
-      auto raw = OpensslApi(std::forward<Args>(
-          args)...); // forwarding is probably unnecessary, could use const Args&...
+      auto raw = OpensslApi(
+          std::forward<Args>(
+              args)...); // forwarding is probably unnecessary, could use const Args&...
       // check raw
       using T = std::remove_pointer_t<decltype(raw)>; // no need to request T when we can see
                                                       // what OpensslApi returned

@@ -1613,44 +1613,79 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
   {
     auto streamBody = request.GetBodyStream();
     int64_t streamLength = streamBody->Length();
-
-    // Consider using `MaximumUploadChunkSize` here, after some perf measurements
-    size_t uploadChunkSize = DefaultUploadChunkSize;
-    if (streamLength < MaximumUploadChunkSize)
+    if (streamLength <= 0)
     {
-      uploadChunkSize = static_cast<size_t>(streamLength);
+      return;
     }
-    auto unique_buffer = std::make_unique<uint8_t[]>(uploadChunkSize);
 
-    while (true)
-    {
-      size_t rawRequestLen = streamBody->Read(unique_buffer.get(), uploadChunkSize, context);
-      if (rawRequestLen == 0)
-      {
-        break;
-      }
-
+    auto writeChunk = [&](uint8_t const* buffer, size_t length) {
       DWORD dwBytesWritten = 0;
 
       auto requestHandleLock = GetRequestHandleSharedLock();
       if (!m_httpAction->WaitForAction(
               [&]() { // Write data to the server.
                 if (!WinHttpWriteData(
-                        m_requestHandle.get(),
-                        unique_buffer.get(),
-                        static_cast<DWORD>(rawRequestLen),
-                        &dwBytesWritten))
+                        m_requestHandle.get(), buffer, static_cast<DWORD>(length), &dwBytesWritten))
                 {
                   GetErrorAndThrow("Error while uploading/sending data.");
                 }
               },
               WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE,
               context))
-
       {
         GetErrorAndThrow(
             "Error sending HTTP request asynchronously", m_httpAction->GetStowedError());
       }
+    };
+
+    uint8_t const* contiguousBuffer = nullptr;
+    size_t rawRequestLen = 0;
+    if (Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
+            *streamBody, contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
+    {
+      try
+      {
+        while (rawRequestLen > 0)
+        {
+          writeChunk(contiguousBuffer, rawRequestLen);
+          if (!Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
+                  *streamBody, contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
+          {
+            break;
+          }
+        }
+      }
+      catch (...)
+      {
+        CloseRequestHandle();
+        throw;
+      }
+      return;
+    }
+
+    size_t const uploadChunkSize = static_cast<size_t>(
+        (std::min)(streamLength, static_cast<int64_t>(DefaultUploadChunkSize)));
+    Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer scratchBuffer(uploadChunkSize);
+
+    try
+    {
+      while (true)
+      {
+        rawRequestLen = streamBody->Read(scratchBuffer.Get(), uploadChunkSize, context);
+        if (rawRequestLen == 0)
+        {
+          break;
+        }
+
+        writeChunk(scratchBuffer.Get(), rawRequestLen);
+      }
+    }
+    catch (...)
+    {
+      // Ensure the request handle is closed (and WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING has been
+      // received) before scratchBuffer is released or freed on stack unwind.
+      CloseRequestHandle();
+      throw;
     }
   }
 

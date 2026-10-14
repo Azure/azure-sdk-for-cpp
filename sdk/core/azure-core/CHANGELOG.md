@@ -13,6 +13,7 @@
 - [[#7353]](https://github.com/Azure/azure-sdk-for-cpp/pull/7353) Fixed a hang in the WinHTTP transport where `WinHttpRequest`'s destructor could block forever when the request was destroyed before `WinHttpSendRequest` associated the request context with the handle, causing `WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING` to be discarded.
 - [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
 - Fixed a crash in the WinHTTP transport caused by a race condition where `SetEvent` could be invoked on an already closed handle.
+- Fixed process-heap lock contention during concurrent uploads in the WinHTTP and libcurl transports by sending `MemoryBodyStream` payloads without an intermediate copy, reusing an uninitialized per-thread 64 KiB staging buffer for non-contiguous streams, and closing the WinHTTP request handle before releasing the staging buffer on cancellation or error.
 
 ### Other Changes
 
