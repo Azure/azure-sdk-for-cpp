@@ -279,25 +279,25 @@ TEST(MemoryBodyStream, TryReadContiguous)
 
   // First partial read returns exact pointer into underlying vector.
   EXPECT_TRUE(
-      _detail::BodyStreamHelpers::TryReadContiguous(stream, chunkPtr, 3, bytesRead, Context{}));
+      _detail::BodyStreamHelpers::TryReadContiguous(stream, &chunkPtr, 3, bytesRead, Context{}));
   EXPECT_EQ(bytesRead, 3u);
   EXPECT_EQ(chunkPtr, data.data());
 
   // Second read returns remaining bytes starting at offset 3.
   EXPECT_TRUE(
-      _detail::BodyStreamHelpers::TryReadContiguous(stream, chunkPtr, 3, bytesRead, Context{}));
+      _detail::BodyStreamHelpers::TryReadContiguous(stream, &chunkPtr, 3, bytesRead, Context{}));
   EXPECT_EQ(bytesRead, 2u);
   EXPECT_EQ(chunkPtr, data.data() + 3);
 
   // At EOF, still returns true with 0 bytesRead.
   EXPECT_TRUE(
-      _detail::BodyStreamHelpers::TryReadContiguous(stream, chunkPtr, 3, bytesRead, Context{}));
+      _detail::BodyStreamHelpers::TryReadContiguous(stream, &chunkPtr, 3, bytesRead, Context{}));
   EXPECT_EQ(bytesRead, 0u);
 
   // Rewind resets offset for retries.
   stream.Rewind();
   EXPECT_TRUE(
-      _detail::BodyStreamHelpers::TryReadContiguous(stream, chunkPtr, 10, bytesRead, Context{}));
+      _detail::BodyStreamHelpers::TryReadContiguous(stream, &chunkPtr, 10, bytesRead, Context{}));
   EXPECT_EQ(bytesRead, data.size());
   EXPECT_EQ(chunkPtr, data.data());
 
@@ -305,7 +305,7 @@ TEST(MemoryBodyStream, TryReadContiguous)
   MemoryBodyStream emptyStream(nullptr, 0);
   EXPECT_TRUE(
       _detail::BodyStreamHelpers::TryReadContiguous(
-          emptyStream, chunkPtr, 10, bytesRead, Context{}));
+          emptyStream, &chunkPtr, 10, bytesRead, Context{}));
   EXPECT_EQ(bytesRead, 0u);
   EXPECT_EQ(chunkPtr, nullptr);
 
@@ -315,7 +315,7 @@ TEST(MemoryBodyStream, TryReadContiguous)
   stream.Rewind();
   EXPECT_THROW(
       _detail::BodyStreamHelpers::TryReadContiguous(
-          stream, chunkPtr, 10, bytesRead, cancelledContext),
+          stream, &chunkPtr, 10, bytesRead, cancelledContext),
       Azure::Core::OperationCancelledException);
 }
 
@@ -326,7 +326,7 @@ TEST(BodyStream, TryReadContiguousNonContiguous)
   size_t bytesRead = 0;
   EXPECT_FALSE(
       _detail::BodyStreamHelpers::TryReadContiguous(
-          testStream, chunkPtr, 10, bytesRead, Context{}));
+          testStream, &chunkPtr, 10, bytesRead, Context{}));
 
   std::string testDataPath(AZURE_TEST_DATA_PATH);
 #if defined(AZ_PLATFORM_POSIX)
@@ -337,14 +337,14 @@ TEST(BodyStream, TryReadContiguousNonContiguous)
   FileBodyStream fileStream(testDataPath);
   EXPECT_FALSE(
       _detail::BodyStreamHelpers::TryReadContiguous(
-          fileStream, chunkPtr, 10, bytesRead, Context{}));
+          fileStream, &chunkPtr, 10, bytesRead, Context{}));
 
   std::vector<uint8_t> const data = {1, 2, 3, 4};
   MemoryBodyStream memStream(data);
   ProgressBodyStream progressStream(memStream, [](int64_t) {});
   EXPECT_FALSE(
       _detail::BodyStreamHelpers::TryReadContiguous(
-          progressStream, chunkPtr, 10, bytesRead, Context{}));
+          progressStream, &chunkPtr, 10, bytesRead, Context{}));
 }
 
 TEST(BodyStream, ScopedScratchBufferReuseAndReentrancy)

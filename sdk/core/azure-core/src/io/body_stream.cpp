@@ -156,14 +156,15 @@ size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& co
 }
 
 bool MemoryBodyStream::OnTryReadContiguous(
-    uint8_t const*& buffer,
+    uint8_t const** buffer,
     size_t count,
     size_t& bytesRead,
     Context const& context)
 {
   (void)context;
+  AZURE_ASSERT(buffer);
   bytesRead = (std::min)(count, this->m_length - this->m_offset);
-  buffer = this->m_data ? (this->m_data + this->m_offset) : nullptr;
+  *buffer = this->m_data ? (this->m_data + this->m_offset) : nullptr;
   this->m_offset += bytesRead;
 
   return true;

@@ -63,7 +63,7 @@ namespace Azure { namespace Core { namespace IO {
      * `false` if a caller-provided destination buffer and `Read()` must be used instead.
      */
     virtual bool OnTryReadContiguous(
-        uint8_t const*& buffer,
+        uint8_t const** buffer,
         size_t count,
         size_t& bytesRead,
         Azure::Core::Context const& context)
@@ -160,7 +160,7 @@ namespace Azure { namespace Core { namespace IO {
     size_t OnRead(uint8_t* buffer, size_t count, Azure::Core::Context const& context) override;
 
     bool OnTryReadContiguous(
-        uint8_t const*& buffer,
+        uint8_t const** buffer,
         size_t count,
         size_t& bytesRead,
         Azure::Core::Context const& context) override;
@@ -360,11 +360,13 @@ namespace Azure { namespace Core { namespace IO {
     {
       static bool TryReadContiguous(
           BodyStream& stream,
-          uint8_t const*& buffer,
+          uint8_t const** buffer,
           size_t count,
           size_t& bytesRead,
           Azure::Core::Context const& context = Azure::Core::Context())
       {
+        AZURE_ASSERT(buffer);
+
         context.ThrowIfCancelled();
         return stream.OnTryReadContiguous(buffer, count, bytesRead, context);
       }

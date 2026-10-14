@@ -690,7 +690,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
   uint8_t const* contiguousBuffer = nullptr;
   size_t rawRequestLen = 0;
   if (Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
-          *streamBody, contiguousBuffer, _detail::DefaultUploadChunkSize, rawRequestLen, context))
+          *streamBody, &contiguousBuffer, _detail::DefaultUploadChunkSize, rawRequestLen, context))
   {
     while (rawRequestLen > 0)
     {
@@ -701,7 +701,7 @@ CURLcode CurlSession::UploadBody(Context const& context)
       }
       if (!Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
               *streamBody,
-              contiguousBuffer,
+              &contiguousBuffer,
               _detail::DefaultUploadChunkSize,
               rawRequestLen,
               context))

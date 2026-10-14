@@ -1641,7 +1641,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
     uint8_t const* contiguousBuffer = nullptr;
     size_t rawRequestLen = 0;
     if (Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
-            *streamBody, contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
+            *streamBody, &contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
     {
       try
       {
@@ -1649,7 +1649,7 @@ namespace Azure { namespace Core { namespace Http { namespace _detail {
         {
           writeChunk(contiguousBuffer, rawRequestLen);
           if (!Azure::Core::IO::_detail::BodyStreamHelpers::TryReadContiguous(
-                  *streamBody, contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
+                  *streamBody, &contiguousBuffer, MaximumUploadChunkSize, rawRequestLen, context))
           {
             break;
           }
