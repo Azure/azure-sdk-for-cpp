@@ -208,6 +208,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
         Models::AmqpMessage messageToSend,
         Context const& context = {});
 
+#if _azure_TESTING_BUILD && ENABLE_UAMQP
+    /** @brief The number of requests still waiting for a response.
+     *
+     * `ExecuteOperation` creates one queue for each request and removes it on the way out. A test
+     * uses this to assert that an operation that ended without a response left nothing behind.
+     */
+    std::size_t GetPendingOperationCount() const;
+#endif
+
   private:
     friend class Azure::Core::Amqp::_detail::ManagementClientFactory;
     ManagementClient(std::shared_ptr<_detail::ManagementClientImpl> impl) : m_impl{impl} {}
