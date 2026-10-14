@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// cspell:words WSADATA
+
 #include <azure/core/platform.hpp>
 
 #if defined(AZ_PLATFORM_WINDOWS) && defined(BUILD_TRANSPORT_WINHTTP_ADAPTER)
@@ -208,9 +210,40 @@ namespace Azure { namespace Core { namespace Test {
 
       std::vector<uint8_t> AcceptAndReadBody(size_t expectedBodySize, bool sendResponse = true)
       {
+        fd_set readSet{};
+        FD_ZERO(&readSet);
+        FD_SET(m_listenSocket, &readSet);
+        timeval acceptTimeout{};
+        acceptTimeout.tv_sec = 10;
+        acceptTimeout.tv_usec = 0;
+        if (select(0, &readSet, nullptr, nullptr, &acceptTimeout) <= 0)
+        {
+          return {};
+        }
+
         SOCKET client = accept(m_listenSocket, nullptr, nullptr);
         if (client == INVALID_SOCKET)
         {
+          return {};
+        }
+
+        DWORD const ioTimeoutMs = 10000;
+        if (setsockopt(
+                client,
+                SOL_SOCKET,
+                SO_RCVTIMEO,
+                reinterpret_cast<char const*>(&ioTimeoutMs),
+                sizeof(ioTimeoutMs))
+                == SOCKET_ERROR
+            || setsockopt(
+                   client,
+                   SOL_SOCKET,
+                   SO_SNDTIMEO,
+                   reinterpret_cast<char const*>(&ioTimeoutMs),
+                   sizeof(ioTimeoutMs))
+                == SOCKET_ERROR)
+        {
+          closesocket(client);
           return {};
         }
 
