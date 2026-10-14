@@ -29,11 +29,75 @@
 #include <cstdio>
 #include <cstring>
 #include <memory>
+#include <new>
 #include <stdexcept>
 #include <vector>
 
 using Azure::Core::Context;
 using namespace Azure::Core::IO;
+
+namespace {
+constexpr size_t DefaultScratchBufferCapacity = 1024 * 64;
+
+struct ThreadLocalScratchSlot final
+{
+  std::unique_ptr<uint8_t[], void (*)(uint8_t*)> Buffer{nullptr, [](uint8_t* ptr) {
+                                                          ::operator delete[](ptr);
+                                                        }};
+  size_t Capacity = 0;
+  bool InUse = false;
+};
+
+ThreadLocalScratchSlot& GetThreadLocalScratchSlot()
+{
+  thread_local ThreadLocalScratchSlot slot;
+  return slot;
+}
+} // namespace
+
+void Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer::RawBufferDeleter::operator()(
+    uint8_t* ptr) const noexcept
+{
+  ::operator delete[](ptr);
+}
+
+Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer::ScopedScratchBuffer(
+    size_t requiredSize)
+{
+  if (requiredSize == 0)
+  {
+    return;
+  }
+
+  auto& slot = GetThreadLocalScratchSlot();
+  if (!slot.InUse)
+  {
+    if (slot.Capacity < requiredSize)
+    {
+      slot.Buffer.reset();
+      slot.Capacity = 0;
+      size_t const allocSize = (std::max)(requiredSize, DefaultScratchBufferCapacity);
+      slot.Buffer.reset(static_cast<uint8_t*>(::operator new[](allocSize)));
+      slot.Capacity = allocSize;
+    }
+    slot.InUse = true;
+    m_usingThreadLocal = true;
+    m_ptr = slot.Buffer.get();
+  }
+  else
+  {
+    m_fallbackBuffer.reset(static_cast<uint8_t*>(::operator new[](requiredSize)));
+    m_ptr = m_fallbackBuffer.get();
+  }
+}
+
+Azure::Core::IO::_detail::BodyStreamHelpers::ScopedScratchBuffer::~ScopedScratchBuffer()
+{
+  if (m_usingThreadLocal)
+  {
+    GetThreadLocalScratchSlot().InUse = false;
+  }
+}
 
 #if defined(AZ_PLATFORM_WINDOWS)
 // For an abundance of caution, adding this as a compile time check since we are using static_cast
@@ -89,6 +153,21 @@ size_t MemoryBodyStream::OnRead(uint8_t* buffer, size_t count, Context const& co
   m_offset += copy_length;
 
   return copy_length;
+}
+
+bool MemoryBodyStream::OnTryReadContiguous(
+    uint8_t const** buffer,
+    size_t count,
+    size_t& bytesRead,
+    Context const& context)
+{
+  (void)context;
+  AZURE_ASSERT(buffer);
+  bytesRead = (std::min)(count, this->m_length - this->m_offset);
+  *buffer = this->m_data ? (this->m_data + this->m_offset) : nullptr;
+  this->m_offset += bytesRead;
+
+  return true;
 }
 
 FileBodyStream::FileBodyStream(const std::string& filename)
