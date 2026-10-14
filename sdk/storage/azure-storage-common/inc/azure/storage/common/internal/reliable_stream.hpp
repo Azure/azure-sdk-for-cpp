@@ -9,6 +9,7 @@
 #include <azure/core/io/body_stream.hpp>
 
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <memory>
 

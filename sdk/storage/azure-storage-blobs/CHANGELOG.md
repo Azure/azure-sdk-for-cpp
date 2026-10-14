@@ -1,6 +1,6 @@
 # Release History
 
-## 12.19.0-beta.2 (Unreleased)
+## 12.20.0-beta.1 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,23 @@
 
 ### Bugs Fixed
 
+- Fixed CMake dependency resolution when FlatCC provides only a shared runtime library.
+
 ### Other Changes
+
+## 12.19.0 (2026-09-29)
+
+### Features Added
+
+- Features in `12.19.0-beta.1` are now generally available.
+
+### Bugs Fixed
+
+- Fixed CR/LF injection through request targets and header values in Blob Batch subrequests.
+
+### Other Changes
+
+- Added `nanoarrow` with IPC support as a dependency for Apache Arrow responses.
 
 ## 12.19.0-beta.1 (2026-07-29)
 

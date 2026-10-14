@@ -13,8 +13,11 @@
 
 namespace {
 constexpr std::chrono::milliseconds CancellationCheckInterval{100};
+} // namespace
 
-void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Context const& context)
+void Azure::Messaging::EventHubs::_detail::RetryOperation::WaitForRetryDelay(
+    std::chrono::milliseconds retryAfter,
+    Azure::Core::Context const& context)
 {
   auto const deadline = std::chrono::steady_clock::now() + retryAfter;
   while (true)
@@ -30,7 +33,6 @@ void WaitForRetryDelay(std::chrono::milliseconds retryAfter, Azure::Core::Contex
     std::this_thread::sleep_until((std::min)(deadline, now + CancellationCheckInterval));
   }
 }
-} // namespace
 
 bool Azure::Messaging::EventHubs::_detail::RetryOperation::Execute(
     std::function<bool()> operation,

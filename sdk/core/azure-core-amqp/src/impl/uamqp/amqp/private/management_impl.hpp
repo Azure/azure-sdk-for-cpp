@@ -75,6 +75,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ManagementOpenStatus Open(Context const& context = {});
 
     /**
+     * @brief The reason the last `Open` failed, or an empty string when it did not fail.
+     *
+     * `Open` reports a failure as a `ManagementOpenStatus`, and every transport, TLS and link
+     * failure collapses into `Error`. The reason the layer below gave was written to the log and
+     * then dropped, so a caller holding only the status could not say what went wrong. This keeps
+     * it for the caller that builds the exception.
+     */
+    std::string GetOpenFailureDetail() const;
+
+    /**
      * @brief Close the management instance.
      */
     void Close(Context const& context);
@@ -99,12 +109,17 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     std::shared_ptr<MessageSenderImpl> m_messageSender;
     std::shared_ptr<MessageReceiverImpl> m_messageReceiver;
     ManagementState m_state = ManagementState::Idle;
-    std::mutex m_openCloseLock;
+    mutable std::mutex m_openCloseLock;
     bool m_isOpen{false};
     bool m_messageSenderOpen{false};
     bool m_messageReceiverOpen{false};
-    Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<_internal::ManagementOpenStatus>
-        m_openCompleteQueue;
+    // The status alone cannot say which link failed or what state it entered, and the handlers
+    // that complete this queue run on the polling thread while Open holds m_openCloseLock. The
+    // reason therefore travels with the status rather than through a member the handler would
+    // have to lock.
+    Azure::Core::Amqp::Common::_internal::
+        AsyncOperationQueue<_internal::ManagementOpenStatus, std::string>
+            m_openCompleteQueue;
 
     bool m_sendCompleted{false};
 
@@ -122,6 +137,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     _internal::ManagementClientEvents* m_eventHandler{};
     std::string m_managementEntityPath;
     Azure::Core::Credentials::AccessToken m_accessToken;
+
+    // Written by Open under m_openCloseLock, read by GetOpenFailureDetail under the same lock.
+    std::string m_openFailureDetail;
 
     using ManagementOperationQueue = Azure::Core::Amqp::Common::_internal::AsyncOperationQueue<
         _internal::ManagementOperationStatus,

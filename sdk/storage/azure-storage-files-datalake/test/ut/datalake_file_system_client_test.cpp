@@ -1073,6 +1073,43 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
+  TEST(DataLakeFileSystemClientUnitTest, ListPathsWithMissingFieldsAndRfc1123Dates)
+  {
+    const std::string body = R"({"paths":[{
+      "creationTime":"Fri, 11 Oct 2019 22:32:19 GMT",
+      "etag":"0x8D74E9AE06DE5D2",
+      "lastModified":"Fri, 11 Oct 2019 22:32:19 GMT",
+      "name":"data/archive/archive.json.gz"
+    }]})";
+    Files::DataLake::DataLakeClientOptions options;
+    options.PerRetryPolicies.emplace_back(
+        std::make_unique<MockResponsePolicy>([body](Core::Http::Request&, Core::Context const&) {
+          auto response = std::make_unique<Core::Http::RawResponse>(
+              1, 1, Core::Http::HttpStatusCode::Ok, "OK");
+          response->SetBody(std::vector<uint8_t>(body.begin(), body.end()));
+          response->SetHeader("content-type", "application/json");
+          response->SetHeader("content-length", std::to_string(body.size()));
+          return response;
+        }));
+    const std::string url = "https://account.dfs.core.windows.net/filesystem";
+    auto response = Files::DataLake::DataLakeFileSystemClient(url, options).ListPaths(true);
+    ASSERT_EQ(response.Paths.size(), 1U);
+    const auto& path = response.Paths[0];
+    EXPECT_EQ(path.Name, "data/archive/archive.json.gz");
+    EXPECT_FALSE(path.IsDirectory);
+    EXPECT_EQ(path.FileSize, 0);
+    EXPECT_TRUE(path.Owner.empty());
+    EXPECT_TRUE(path.Group.empty());
+    EXPECT_TRUE(path.Permissions.empty());
+    EXPECT_EQ(path.ETag, "0x8D74E9AE06DE5D2");
+    EXPECT_EQ(path.LastModified, DateTime(2019, 10, 11, 22, 32, 19));
+    ASSERT_TRUE(path.CreatedOn.HasValue());
+    EXPECT_EQ(path.CreatedOn.Value(), DateTime(2019, 10, 11, 22, 32, 19));
+    EXPECT_FALSE(path.ExpiresOn.HasValue());
+    response.MoveToNextPage();
+    EXPECT_FALSE(response.HasPage());
+  }
+
   TEST_F(DataLakeFileSystemClientTest, Audience)
   {
     auto credential = GetTestCredential();
