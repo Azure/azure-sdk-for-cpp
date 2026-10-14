@@ -656,6 +656,28 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         m_listening = false;
       }
 
+      // Closes the connections without closing the links on them first, which is the shape of a
+      // service side idle close: the links go away with the connection rather than through a
+      // DETACH. StopListening cannot be used for this, because it closes every service endpoint
+      // first and that sends a real DETACH.
+      void CloseConnectionsWithoutDetachingLinks()
+      {
+        GTEST_LOG_(INFO) << "Closing connections without detaching their links";
+        for (const auto& connection : m_connections)
+        {
+          try
+          {
+            connection->Close({});
+          }
+          catch (std::exception const& ex)
+          {
+            GTEST_LOG_(INFO) << "Close of a mock connection reported: " << ex.what();
+          }
+        }
+        // Dropped here so the teardown in StopListening does not close them a second time.
+        m_connections.clear();
+      }
+
       void ForceCbsError(bool forceError)
       {
         for (const auto& serviceEndpoint : m_serviceEndpoints)

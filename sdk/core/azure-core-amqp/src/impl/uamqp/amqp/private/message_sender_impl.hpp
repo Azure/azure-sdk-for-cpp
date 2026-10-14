@@ -9,6 +9,7 @@
 
 #include <azure_uamqp_c/message_sender.h>
 
+#include <atomic>
 #include <cstdint>
 #include <map>
 
@@ -61,6 +62,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     std::uint64_t GetMaxMessageSize() const;
 
+    /** @brief Reports whether the peer has taken the link away.
+     *
+     * Never throws, so a caller can test a cached sender rather than discovering a dead link from
+     * a call that fails.
+     */
+    bool IsLinkDetached() const noexcept { return m_linkDetached.load(std::memory_order_acquire); }
+
     std::string GetLinkName() const;
 
   private:
@@ -76,6 +84,19 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         Azure::Core::Amqp::_internal::MessageSender::MessageSendCompleteCallback onSendComplete,
         Context const& context);
     void OnLinkDetached(Models::_internal::AmqpError const& error);
+
+    /** @brief Read the negotiated maximum message size from the link and store it.
+     *
+     * The caller must know the link is attached. Returns the value it stored.
+     */
+    std::uint64_t CaptureMaxMessageSize() const;
+
+    /** @brief Record that the link reached the attached state.
+     *
+     * Runs on the uAMQP polling thread, so it swallows any failure rather than letting an
+     * exception unwind into C code.
+     */
+    void OnLinkAttached() noexcept;
 
     /** @brief Release the link and the async operation on the connection, then mark the sender as
      * closed.
@@ -97,6 +118,16 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     };
 
     bool m_senderOpen{false};
+
+    // The negotiated maximum message size, captured each time the link attaches. Mutable so the
+    // const getter can fill it on demand.
+    mutable std::atomic<bool> m_maxMessageSizeCached{false};
+    mutable std::atomic<std::uint64_t> m_maxMessageSize{0};
+
+    // Set when the peer takes the link away, cleared when a link attaches. Presence in a cache is
+    // not liveness, so callers need a test that does not throw.
+    std::atomic<bool> m_linkDetached{false};
+
     UniqueMessageSender m_messageSender{};
     std::shared_ptr<_detail::LinkImpl> m_link;
     _internal::MessageSenderEvents* m_events;

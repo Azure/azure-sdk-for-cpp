@@ -62,6 +62,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::chrono::milliseconds& retryAfter,
         double jitterFactor = -1);
 
+    // Honours a retry delay while staying responsive to cancellation. Shared so a caller with its
+    // own recovery loop waits the same way `Execute` does.
+    static void WaitForRetryDelay(
+        std::chrono::milliseconds retryAfter,
+        Azure::Core::Context const& context);
+
     explicit RetryOperation(Azure::Core::Http::Policies::RetryOptions const& retryOptions)
         : m_retryOptions(retryOptions)
     {

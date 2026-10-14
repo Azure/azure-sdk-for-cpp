@@ -259,17 +259,23 @@ TEST(Nullable, Move)
 
 TEST(Nullable, ConstexprAndRvalue)
 {
-#if defined(__clang__)
+// NOLINT(clang-diagnostic-unknown-pragmas)
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpessimizing-move" // cspell:disable-line
+#elif defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpessimizing-move" // cspell:disable-line
-#endif // __clang__
+#endif
 
   Nullable<int> nullableInt0(std::move(Nullable<int>()));
   Nullable<int> nullableInt11(std::move(Nullable<int>(11)));
 
-#if defined(__clang__)
+#if defined(__GNUC__) && (__GNUC__ > 13 || (__GNUC__ == 13 && __GNUC_MINOR__ >= 3))
+#pragma GCC diagnostic pop
+#elif defined(__clang__)
 #pragma clang diagnostic pop // NOLINT(clang-diagnostic-unknown-pragmas)
-#endif // __clang__
+#endif
 
   Nullable<int> nullableInt00(Nullable<int>{});
   Nullable<int> nullableInt1(Nullable<int>(1));

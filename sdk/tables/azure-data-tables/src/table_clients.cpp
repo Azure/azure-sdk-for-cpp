@@ -399,7 +399,6 @@ Models::QueryTablesPagedResponse TableServiceClient::QueryTables(
     response.Prefix = options.Prefix;
     response.m_operationOptions = options;
     response.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    response.RawResponse = std::move(response.RawResponse);
     auto headers = rawResponse->GetHeaders();
 
     if (headers.find("x-ms-continuation-NextTableName") != headers.end())

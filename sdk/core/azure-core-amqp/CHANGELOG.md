@@ -1,16 +1,36 @@
 # Release History
 
-## 1.0.0-beta.13 (Unreleased)
+## 1.0.0-beta.14 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed uAMQP message annotation encoding so messages with annotations, including Event Hubs partition keys, include the required AMQP section descriptor. [[#7426]](https://github.com/Azure/azure-sdk-for-cpp/issues/7426)
+- The uAMQP management client no longer leaves the response queue of a cancelled operation behind. `ExecuteOperation` creates one queue for each request and removed it on the two exits that return, but not on the exit that throws for a wait that ended without a result, and not on the rethrow that follows. A management client lives as long as the connection that owns it, and the `$cbs` client runs a put-token for every authentication, so a long running client grew that map by one entry for every cancelled operation. The removal now runs from a scope guard, so every exit clears it. The request identifier is a UUID, so a leaked entry could never be matched to a later request; the cost was memory. `ExecuteOperation` also read the queue out of the map with `at()` while holding no lock. That function runs on more than one thread and it is where entries are inserted and removed, so the read raced with another caller's insert or erase. It now takes the queue under the lock and waits without it, because the receive path needs the same lock to complete the queue. [[#7386]](https://github.com/Azure/azure-sdk-for-cpp/issues/7386)
+
+### Other Changes
+
+## 1.0.0-beta.13 (2026-09-03)
 
 ### Features Added
 
 - The Rust AMQP backend now generates SAS tokens from a shared access key. It sends CBS put-token requests with the `servicebus.windows.net:sastoken` token type.
 - Added support for the AMQP Decimal types (AmqpDecimal128, AmqpDecimal64, and AmqpDecimal32).
 
-### Breaking Changes
-
 ### Bugs Fixed
 
+- `MessageSender` now stores the negotiated maximum message size when its link attaches, and
+  `GetMaxMessageSize` returns that stored value instead of reading the link. The value is fixed when
+  the peer's ATTACH arrives and cannot change for the life of a link, but the read failed once the
+  link was no longer attached, so callers were discovering a dead link from an exception thrown by a
+  getter. The value is read again on each attach, so an entity whose maximum was reconfigured
+  between links stays correct. `MessageSender::IsLinkDetached` reports the same fact without
+  throwing, and a close no longer waits for a DETACH from a peer that has already detached. The
+  teardown still runs on every path. This change applies to the uAMQP transport.
+  [[#7389]](https://github.com/Azure/azure-sdk-for-cpp/issues/7389)
 - uAMQP pollable registration and removal no longer block each other while a poll is in flight. The
   polling registry now waits on completion notifications, and sender, receiver, and link setup and
   teardown do not hold connection locks across registry operations. The polling thread now sleeps
@@ -36,9 +56,8 @@
 - A claims based security open that fails now throws `CbsOpenFailedException`, which carries the `CbsOpenResult`. The three failures need different handling: `Error` reached the transport and may be retried, while `Cancelled` is the caller's own cancellation or deadline and `Invalid` is a state error. The result was previously readable only by matching the message text, so a reword would have changed caller behavior with no compiler error. The type derives from `std::runtime_error` and carries the same message, so existing handlers keep working. The Rust backend reports every open failure by throwing rather than by returning a result, so those throws are classified at the shared call site and carry the same type.
 - The uAMQP management client now closes the message sender when the message receiver fails to open. Two handlers returned a status without that close, and a message sender that stays open stops the process in its own destructor.
 - The uAMQP management client now names the management node and the open status in the lines that it writes when an open fails, and it keeps the text of the exception that ended the open. The message sender open failure moved from the Error level to the Warning level, because that call reports the failure to its caller.
-- The uAMQP management client no longer leaves the response queue of a cancelled operation behind. `ExecuteOperation` creates one queue for each request and removed it on the two exits that return, but not on the exit that throws for a wait that ended without a result, and not on the rethrow that follows. A management client lives as long as the connection that owns it, and the `$cbs` client runs a put-token for every authentication, so a long running client grew that map by one entry for every cancelled operation. The removal now runs from a scope guard, so every exit clears it. The request identifier is a UUID, so a leaked entry could never be matched to a later request; the cost was memory. `ExecuteOperation` also read the queue out of the map with `at()` while holding no lock. That function runs on more than one thread and it is where entries are inserted and removed, so the read raced with another caller's insert or erase. It now takes the queue under the lock and waits without it, because the receive path needs the same lock to complete the queue. [[#7386]](https://github.com/Azure/azure-sdk-for-cpp/issues/7386)
-
-### Other Changes
+- A claims based security open that fails now carries the reason that the layer below reported. `CbsOpenResult::Error` covers every transport, TLS and link failure, so a reader holding only the result could not separate a refused socket from a rejected attach. The management client wrote that reason to the log and then dropped it, because `ManagementClientImpl::Open` reports a failure as a status and the exception that named the cause was destroyed in the handler. The reason now travels with the status and reaches both the warning and the `CbsOpenFailedException` message, so a caller that logs the exception and has no log listener can still tell what failed. It names which of the two links failed, because the sender and the receiver fail for different causes. The reason is empty when the layer below gave none, and the sentence then reads exactly as it did before. It never holds the token.
+- The claims based security object now keeps the AMQP error that the service sent. `ClaimsBasedSecurityImpl::OnError` receives the condition, the description, and the info map, which is the richest statement the service makes about a refused claim, and it only wrote them to the log. They are now added to the reason that the open failure carries. The capture takes a lock of its own, because that callback runs on the polling thread while the management client holds its open lock.
 
 ## 1.0.0-beta.12 (2026-05-14)
 

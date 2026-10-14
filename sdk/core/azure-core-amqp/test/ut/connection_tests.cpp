@@ -12,6 +12,7 @@
 #include "azure/core/amqp/internal/network/socket_listener.hpp"
 #include "azure/core/amqp/internal/network/socket_transport.hpp"
 #include "azure/core/amqp/internal/session.hpp"
+#include "azure/core/amqp/rtti.hpp"
 #include "azure/core/internal/environment.hpp"
 #include "azure/core/url.hpp"
 #include "mock_amqp_server.hpp"
@@ -515,9 +516,13 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     catch (std::runtime_error const& e)
     {
       EXPECT_EQ(text, std::string{e.what()});
+#if defined(AZ_CORE_AMQP_RTTI)
       auto const* typed = dynamic_cast<CbsOpenFailedException const*>(&e);
       ASSERT_NE(nullptr, typed);
       EXPECT_EQ(CbsOpenResult::Error, typed->Result);
+#else
+      EXPECT_EQ(CbsOpenResult::Error, static_cast<CbsOpenFailedException const&>(e).Result);
+#endif
     }
 
     // Every failure value survives the throw, so a caller can branch on it.
@@ -534,6 +539,55 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         EXPECT_EQ(failure, e.Result);
       }
     }
+  }
+
+  // `CbsOpenResult::Error` covers every transport, TLS and link failure, so a reader holding only
+  // the result cannot say what went wrong. The reason the layer below gave must reach the
+  // sentence the caller logs.
+  TEST_F(TestCbsOpenFailureText, TheFailureTextCarriesTheReasonFromTheLayerBelow)
+  {
+    using Azure::Core::Amqp::_detail::CbsOpenCaller;
+    using Azure::Core::Amqp::_detail::CbsOpenResult;
+
+    std::string const reason{"the message sender or receiver open threw: connection refused"};
+
+    auto const withReason = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+        CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate, reason);
+    EXPECT_NE(std::string::npos, withReason.find(reason)) << withReason;
+    // The fields that were already there must survive.
+    EXPECT_NE(std::string::npos, withReason.find("Error")) << withReason;
+    EXPECT_NE(std::string::npos, withReason.find(Audience())) << withReason;
+    EXPECT_NE(std::string::npos, withReason.find("ConnectionImpl::AuthenticateAudience"))
+        << withReason;
+
+    // A layer that gave no reason must leave the sentence exactly as it was, so a caller that
+    // never sees a reason reads no empty clause.
+    auto const withoutReason = Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+        CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate);
+    EXPECT_EQ(std::string::npos, withoutReason.find("reason:")) << withoutReason;
+    EXPECT_EQ(
+        Azure::Core::Amqp::_detail::DescribeCbsOpenFailure(
+            CbsOpenResult::Error, Audience(), CbsOpenCaller::Authenticate, {}),
+        withoutReason);
+  }
+
+  // The log line carries the reason as well, next to the connection summary and the elapsed time.
+  TEST_F(TestCbsOpenFailureText, TheLogTextCarriesTheReasonWithTheConnectionSummary)
+  {
+    std::string const reason{"the open completed with status Error for node '$cbs'"};
+
+    auto const text = Azure::Core::Amqp::_detail::FormatCbsOpenFailureLog(
+        Azure::Core::Amqp::_detail::CbsOpenResult::Error,
+        Audience(),
+        Azure::Core::Amqp::_detail::CbsTokenType::Jwt,
+        Azure::DateTime(2035, 1, 2, 3, 4, 5),
+        Azure::Core::Amqp::_detail::CbsOpenCaller::Refresh,
+        "instance 7, host example.servicebus.windows.net:5671, state End",
+        std::chrono::milliseconds(12),
+        reason);
+    EXPECT_NE(std::string::npos, text.find(reason)) << text;
+    EXPECT_NE(std::string::npos, text.find("instance 7")) << text;
+    EXPECT_NE(std::string::npos, text.find("12 ms")) << text;
   }
 
   TEST_F(TestCbsOpenFailureText, TheLogTextAddsTheTokenTypeAndTheExpiry)

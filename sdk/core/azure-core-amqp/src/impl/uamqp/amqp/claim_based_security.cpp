@@ -38,9 +38,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
       auto rv{m_management->Open(context)};
       if (rv != ManagementOpenStatus::Ok)
       {
+        auto const detail = m_management->GetOpenFailureDetail();
         Log::Stream(Logger::Level::Warning)
             << "ClaimsBasedSecurityImpl::Open: the $cbs management client did not open. Status: "
-            << ManagementOpenStatusName(rv) << ".";
+            << ManagementOpenStatusName(rv) << "."
+            << (detail.empty() ? std::string{} : " Reason: " + detail + ".");
       }
       switch (rv)
       {
@@ -66,6 +68,39 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   }
 
   void ClaimsBasedSecurityImpl::Close(Context const& context) { m_management->Close(context); }
+
+  // The management client holds the reason that its own layer produced. The AMQP error that the
+  // service sent is richer, because it names the condition, the description, and the info map, so
+  // it is added when one arrived. Either part may be absent.
+  std::string ClaimsBasedSecurityImpl::GetOpenFailureDetail() const
+  {
+    std::string detail{m_management ? m_management->GetOpenFailureDetail() : std::string{}};
+
+    Models::_internal::AmqpError lastError;
+    {
+      std::lock_guard<std::mutex> lock(m_errorLock);
+      lastError = m_lastError;
+    }
+    if (lastError)
+    {
+      std::stringstream ss;
+      if (!detail.empty())
+      {
+        ss << detail << "; ";
+      }
+      ss << "the service reported condition: " << lastError.Condition.ToString()
+         << ", description: " << lastError.Description;
+      // The info map carries the fields that make a condition actionable, such as the
+      // network-host and port of a redirect. It is usually empty, so it is only added when the
+      // service sent one.
+      if (!lastError.Info.empty())
+      {
+        ss << ", info: " << lastError.Info;
+      }
+      return ss.str();
+    }
+    return detail;
+  }
 
   std::tuple<CbsOperationResult, uint32_t, std::string> ClaimsBasedSecurityImpl::PutToken(
       CbsTokenType tokenType,
@@ -183,6 +218,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   void ClaimsBasedSecurityImpl::OnError(Models::_internal::AmqpError const& error)
   {
     Log::Stream(Logger::Level::Warning) << "AMQP Error processing ClaimsBasedSecurity: " << error;
+    // This is the only place the service's own condition and description reach this object. A
+    // caller that reads the exception and nothing else would otherwise never see them.
+    std::lock_guard<std::mutex> lock(m_errorLock);
+    m_lastError = error;
   }
 
 }}}} // namespace Azure::Core::Amqp::_detail
