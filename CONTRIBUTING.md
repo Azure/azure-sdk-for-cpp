@@ -228,6 +228,25 @@ Even for running on `PLAYBACK` mode, the env configuration is mandatory. This is
 
 Take a look to [this file](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/ci.yml#L52) which defines the required configuration for each SDK package. Those settings are used to run all unit test on `PLAYBACK` mode on CI, you can use the same settings from that file to run on `PLAYBACK` locally.
 
+###### Event Hubs live-test resources
+
+The Event Hubs pipeline deploys fresh resources for each live-test job. The checkpoint store uses a `StorageV2` account. Before tests or samples start, `sdk/eventhubs/Test-LiveTestEnvironment.ps1` requires `EVENTHUB_NAME`, `EVENTHUBS_NAMESPACE`, `EVENTHUBS_HOST`, `EVENTHUB_CONSUMER_GROUP`, and `CHECKPOINTSTORE_STORAGE_URL`.
+
+If the preflight fails, read the deployment log before investigating individual tests. A failed deployment can leave partial resources without publishing the test settings. Fix the deployment and rerun the pipeline. Keep the normal cleanup step, which removes each job's temporary resource group.
+
+Run the preflight locally after setting the environment variables from a successful deployment:
+
+```powershell
+./sdk/eventhubs/Test-LiveTestEnvironment.ps1
+```
+
+The resource configuration and preflight tests use Pester. The Linux playback jobs run them without Azure access:
+
+```powershell
+Import-Module Pester -RequiredVersion 5.7.1
+Invoke-Pester -Path ./sdk/eventhubs/tests -CI
+```
+
 ###### Tests that you must ask for
 
 A few tests take too long to run in a normal pass, so they skip themselves unless you set an environment variable. Set the variable to any value to run them.
@@ -274,6 +293,8 @@ ctest -R storage # runs all the azure storage unit tests
 `gcov` and `gcovr` must be installed on your system.
 Also, make sure to generate the project with Debug mode. Then, option `-DBUILD_TESTING` must be `ON` and to use a GNU compiler (like gcc).
 
+Coverage builds use `-fprofile-update=atomic` for thread-safe counter updates. Linking `Threads::Threads` alone can omit `-pthread` on newer glibc, leaving GCC's default counters vulnerable to concurrent updates. Keep gcovr parse errors enabled so invalid coverage data fails the build.
+
 ```sh
 # install gcov and gcovr if missing
 sudo apt-get install gcov gcovr # example for Linux
@@ -288,6 +309,14 @@ make package-name_cov_html # for example `azure-core_cov_html`
 Running the above commands will create the test executable and run it. While it runs, gcov will capture coverage and produce coverage data. And when test finished, gcovr is used to parse the coverage data to produce and XML or HTML. The output files will be inside the package build directory. For example, for Azure core, it will be `../build/path/sdk/core/azure-core/`.
 
 If the coverage data has been previously generated (for example, if you manually run the unit tests), you can define `CODE_COVERAGE_COLLECT_ONLY` environment variable (set it to any value) and then the report will be generated without running the tests again. This is how the coverage reports are generated on CI, where the tests runs prior to code coverage step.
+
+The standalone coverage regression test runs 16 threads and requires exactly 1,600,000 recorded function calls. It also requires gcovr to parse the resulting data without ignoring errors. Event Hubs coverage jobs run this test before the SDK tests. Run it locally from the repository root with a GNU compiler:
+
+```sh
+cmake -S cmake-modules/tests/code-coverage -B build/coverage-regression -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/coverage-regression
+(cd build/coverage-regression && ctest --output-on-failure)
+```
 
 ### Visual Studio 2019 or newer
 

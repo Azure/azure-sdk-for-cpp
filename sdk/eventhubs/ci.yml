@@ -9,6 +9,8 @@ trigger:
       - hotfix/*
   paths:
     include:
+      - cmake-modules/AzureCodeCoverage.cmake
+      - cmake-modules/tests/code-coverage
       - sdk/eventhubs
 
 pr:
@@ -20,6 +22,8 @@ pr:
       - hotfix/*
   paths:
     include:
+      - cmake-modules/AzureCodeCoverage.cmake
+      - cmake-modules/tests/code-coverage
       - sdk/eventhubs
       - eng/common/testproxy
 
@@ -32,6 +36,22 @@ extends:
       LiveTestTimeoutInMinutes: 120
       LineCoverageTarget: 27
       BranchCoverageTarget: 13
+      PreTestSteps:
+        - bash: |
+            cmake -S cmake-modules/tests/code-coverage -B build/coverage-regression -DCMAKE_BUILD_TYPE=Debug &&
+            cmake --build build/coverage-regression &&
+            (cd build/coverage-regression && ctest --output-on-failure)
+          displayName: Test multithreaded coverage counters
+          condition: and(succeeded(), eq(variables['CODE_COVERAGE'], 'enabled'))
+        - pwsh: |
+            . "$(Build.SourcesDirectory)/eng/common/scripts/Helpers/PSModule-Helpers.ps1"
+            Install-ModuleIfNotInstalled "Pester" "5.7.1" | Import-Module
+            Invoke-Pester -Path "$(Build.SourcesDirectory)/sdk/eventhubs/tests" -CI
+          displayName: Test Event Hubs resource configuration
+          condition: and(succeeded(), eq(variables['AZURE_TEST_MODE'], 'PLAYBACK'), eq(variables['Agent.OS'], 'Linux'))
+        - pwsh: ./sdk/eventhubs/Test-LiveTestEnvironment.ps1
+          displayName: Validate Event Hubs live-test environment
+          condition: and(succeeded(), eq(variables['AZURE_TEST_MODE'], 'LIVE'))
       Artifacts:
         - Name: azure-messaging-eventhubs
           Path: azure-messaging-eventhubs

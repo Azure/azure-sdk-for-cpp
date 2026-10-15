@@ -4,6 +4,12 @@
 
 ### Features Added
 
+- Added Pluton attestation support (requires API version `2026-03-11-preview`; not supported with the default API version):
+  - `AttestationClient::AttestPluton` method. Set `AttestationClientOptions::ApiVersion` to `2026-03-11-preview`.
+  - `AttestationType::Pluton` attestation type for the attestation policy APIs. Set `AttestationAdministrationClientOptions::ApiVersion` to `2026-03-11-preview`.
+  - `PlutonAttestationResult` model type.
+  - `AttestPlutonOptions` options type.
+
 ### Breaking Changes
 
 ### Bugs Fixed
