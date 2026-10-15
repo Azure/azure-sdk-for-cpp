@@ -378,15 +378,25 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::unique_ptr<Core::Http::RawResponse>& rawResponse,
         const Core::Context& context)
     {
-      if (rawResponse->GetStatusCode() != Core::Http::HttpStatusCode::Accepted
-          || rawResponse->GetHeaders().count(_internal::HttpHeaderContentType) == 0)
+      if (rawResponse->GetStatusCode() != Core::Http::HttpStatusCode::Accepted)
       {
         return;
       }
 
-      const std::string boundary = rawResponse->GetHeaders()
-                                       .at(std::string(_internal::HttpHeaderContentType))
-                                       .substr(BatchContentTypePrefix.length());
+      const auto contentTypeHeader
+          = rawResponse->GetHeaders().find(_internal::HttpHeaderContentType);
+      if (contentTypeHeader == rawResponse->GetHeaders().end())
+      {
+        throw StorageException("Invalid batch response: missing multipart Content-Type.");
+      }
+      const auto& contentType = contentTypeHeader->second;
+      if (contentType.compare(0, BatchContentTypePrefix.size(), BatchContentTypePrefix) != 0
+          || contentType.size() == BatchContentTypePrefix.size())
+      {
+        throw StorageException(
+            "Invalid batch response: expected multipart/mixed with a nonempty boundary.");
+      }
+      const std::string boundary = contentType.substr(BatchContentTypePrefix.size());
 
       std::unique_ptr<_detail::BlobBatchAccessHelper> batchAccessHelper;
       {

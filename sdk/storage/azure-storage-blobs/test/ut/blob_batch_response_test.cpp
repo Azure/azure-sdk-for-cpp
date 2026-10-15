@@ -10,17 +10,26 @@
 namespace Azure { namespace Storage { namespace Test {
   namespace {
     const std::string BatchBoundary = "batch_response";
+    const std::string BatchContentType = "multipart/mixed; boundary=" + BatchBoundary;
 
     class BatchResponseTransport final : public Core::Http::HttpTransport {
     public:
-      explicit BatchResponseTransport(std::string body) : m_body(std::move(body)) {}
+      explicit BatchResponseTransport(
+          std::string body,
+          Nullable<std::string> contentType,
+          Core::Http::HttpStatusCode status)
+          : m_body(std::move(body)), m_contentType(std::move(contentType)), m_status(status)
+      {
+      }
 
       std::unique_ptr<Core::Http::RawResponse> Send(Core::Http::Request&, const Core::Context&)
           override
       {
-        auto response = std::make_unique<Core::Http::RawResponse>(
-            1, 1, Core::Http::HttpStatusCode::Accepted, "Accepted");
-        response->SetHeader("Content-Type", "multipart/mixed; boundary=" + BatchBoundary);
+        auto response = std::make_unique<Core::Http::RawResponse>(1, 1, m_status, "Batch response");
+        if (m_contentType.HasValue())
+        {
+          response->SetHeader("Content-Type", m_contentType.Value());
+        }
         response->SetHeader("Content-Length", std::to_string(m_body.size()));
         response->SetBodyStream(
             std::make_unique<Core::IO::MemoryBodyStream>(
@@ -30,6 +39,8 @@ namespace Azure { namespace Storage { namespace Test {
 
     private:
       std::string m_body;
+      Nullable<std::string> m_contentType;
+      Core::Http::HttpStatusCode m_status;
     };
 
     std::string Part(
@@ -48,10 +59,16 @@ namespace Azure { namespace Storage { namespace Test {
 
     class BlobBatchResponseTest : public testing::TestWithParam<bool> {
     protected:
-      template <class Test> void WithBatch(const std::string& body, Test test)
+      template <class Test>
+      void WithBatch(
+          const std::string& body,
+          Test test,
+          Nullable<std::string> contentType = BatchContentType,
+          Core::Http::HttpStatusCode status = Core::Http::HttpStatusCode::Accepted)
       {
         Blobs::BlobClientOptions options;
-        options.Transport.Transport = std::make_shared<BatchResponseTransport>(body);
+        options.Transport.Transport
+            = std::make_shared<BatchResponseTransport>(body, std::move(contentType), status);
         options.Retry.MaxRetries = 0;
         if (GetParam())
         {
@@ -68,13 +85,18 @@ namespace Azure { namespace Storage { namespace Test {
         }
       }
 
-      void ExpectInvalidResponse(const std::string& body)
+      void ExpectInvalidResponse(
+          const std::string& body,
+          Nullable<std::string> contentType = BatchContentType)
       {
-        WithBatch(body, [](auto& client, auto& batch) {
-          batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/first");
-          batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/second");
-          EXPECT_THROW(client.SubmitBatch(batch), StorageException);
-        });
+        WithBatch(
+            body,
+            [](auto& client, auto& batch) {
+              batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/first");
+              batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/second");
+              EXPECT_THROW(client.SubmitBatch(batch), StorageException);
+            },
+            std::move(contentType));
       }
     };
   } // namespace
@@ -82,6 +104,53 @@ namespace Azure { namespace Storage { namespace Test {
   TEST_P(BlobBatchResponseTest, RejectsNumericPrefixContentId)
   {
     ExpectInvalidResponse(Finish(Part("Content-ID: 0junk\r\n") + Part("Content-ID: 1\r\n")));
+  }
+
+  TEST_P(BlobBatchResponseTest, RejectsInvalidMultipartContentType)
+  {
+    const auto body = Finish(Part("Content-ID: 0\r\n") + Part("Content-ID: 1\r\n"));
+    const std::string prefix = "multipart/mixed; boundary=";
+    for (size_t length = 0; length <= prefix.size(); ++length)
+    {
+      SCOPED_TRACE(length);
+      ExpectInvalidResponse(body, prefix.substr(0, length));
+    }
+    for (const auto& contentType : {
+             std::string("text/plain"),
+             std::string("application/json"),
+             std::string("multipart/mixed"),
+             std::string(prefix.size(), 'x') + BatchBoundary,
+             std::string("multipart/mixed; boundary"),
+             std::string("multipart/mixed; boundary=\"\""),
+         })
+    {
+      SCOPED_TRACE(contentType);
+      ExpectInvalidResponse(body, contentType);
+    }
+    ExpectInvalidResponse(body, Nullable<std::string>());
+  }
+
+  TEST_P(BlobBatchResponseTest, PreservesNonMultipartBatchError)
+  {
+    WithBatch(
+        "",
+        [](auto& client, auto& batch) {
+          batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/first");
+          try
+          {
+            client.SubmitBatch(batch);
+            FAIL() << "Expected the original HTTP failure.";
+          }
+          catch (const StorageException& exception)
+          {
+            EXPECT_EQ(exception.StatusCode, Core::Http::HttpStatusCode::BadRequest);
+            ASSERT_NE(exception.RawResponse, nullptr);
+            EXPECT_EQ(
+                exception.RawResponse->GetStatusCode(), Core::Http::HttpStatusCode::BadRequest);
+          }
+        },
+        Nullable<std::string>(),
+        Core::Http::HttpStatusCode::BadRequest);
   }
 
   TEST_P(BlobBatchResponseTest, RejectsInvalidContentIds)
