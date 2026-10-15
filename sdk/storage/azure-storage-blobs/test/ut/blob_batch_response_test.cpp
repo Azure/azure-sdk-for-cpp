@@ -9,7 +9,7 @@
 
 namespace Azure { namespace Storage { namespace Test {
   namespace {
-    const std::string BatchBoundary = "batch_response";
+    const std::string BatchBoundary = "batch_Response";
     const std::string BatchContentType = "multipart/mixed; boundary=" + BatchBoundary;
 
     class BatchResponseTransport final : public Core::Http::HttpTransport {
@@ -128,6 +128,32 @@ namespace Azure { namespace Storage { namespace Test {
       ExpectInvalidResponse(body, contentType);
     }
     ExpectInvalidResponse(body, Nullable<std::string>());
+  }
+
+  TEST_P(BlobBatchResponseTest, AcceptsMixedCaseMultipartContentType)
+  {
+    const auto body = Finish(Part("Content-ID: 0\r\n") + Part("Content-ID: 1\r\n"));
+    for (const auto& prefix : {
+             "Multipart/Mixed; boundary=",
+             "multipart/mixed; Boundary=",
+             "MULTIPART/MIXED; BOUNDARY=",
+         })
+    {
+      SCOPED_TRACE(prefix);
+      WithBatch(
+          body,
+          [](auto& client, auto& batch) {
+            auto first
+                = batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/first");
+            auto second
+                = batch.DeleteBlobUrl("https://account.blob.core.windows.net/container/second");
+            ASSERT_NO_THROW(client.SubmitBatch(batch));
+            EXPECT_NO_THROW(first.GetResponse());
+            EXPECT_NO_THROW(second.GetResponse());
+          },
+          std::string(prefix) + BatchBoundary);
+    }
+    ExpectInvalidResponse(body, std::string("multipart/mixed; boundary=batch_response"));
   }
 
   TEST_P(BlobBatchResponseTest, PreservesNonMultipartBatchError)

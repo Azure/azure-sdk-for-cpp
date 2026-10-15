@@ -390,8 +390,9 @@ namespace Azure { namespace Storage { namespace Blobs {
         throw StorageException("Invalid batch response: missing multipart Content-Type.");
       }
       const auto& contentType = contentTypeHeader->second;
-      if (contentType.compare(0, BatchContentTypePrefix.size(), BatchContentTypePrefix) != 0
-          || contentType.size() == BatchContentTypePrefix.size())
+      if (contentType.size() <= BatchContentTypePrefix.size()
+          || !Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              contentType.substr(0, BatchContentTypePrefix.size()), BatchContentTypePrefix))
       {
         throw StorageException(
             "Invalid batch response: expected multipart/mixed with a nonempty boundary.");
