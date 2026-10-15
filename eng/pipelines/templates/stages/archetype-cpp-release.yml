@@ -44,7 +44,7 @@ stages:
 
           - job: TagRepository
             displayName: "Create release tag"
-            condition: ne(variables['Skip.TagRepository'], 'true')
+            condition: and(ne(variables['Skip.TagRepository'], 'true'), ne(variables['PartnerFeed'], 'true'))
             dependsOn:
               - ReleaseGate
 
@@ -94,7 +94,7 @@ stages:
                   PackageName: ${{artifact.name}}
                   SourceRootPath: $(Build.SourcesDirectory)
 
-          - ${{if ne(artifact.skipPublishDocGithubIo, 'true')}}:
+          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(variables['PartnerFeed'], 'true'))}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
@@ -162,10 +162,10 @@ stages:
                       - ci-configs/packages-latest.json
                       - ci-configs/packages-preview.json
 
-          - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
+          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables['PartnerFeed'], 'true')) }}:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(variables['PartnerFeed'], 'true'))
               # This step requires the tag step
               dependsOn:
                 - TagRepository
@@ -311,6 +311,64 @@ stages:
                       -Comment $prComment
                   condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                   displayName: Comment notification to PR
+
+          - ${{ if eq(variables['PartnerFeed'], 'true') }}:
+            - job: PublishVcpkg
+              displayName: Publish to vcpkg-partner-feed
+              condition: and(succeeded(), eq(variables['PartnerFeed'], 'true'))
+              dependsOn:
+                - ReleaseGate
+              pool:
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
+                os: windows
+
+              templateContext:
+                inputs:
+                  - input: pipelineArtifact
+                    artifactName: packages
+                    targetPath: $(Pipeline.Workspace)/packages
+
+              steps:
+                - checkout: self
+
+                - pwsh: |
+                    $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
+                    $version = $packageSpec.version
+                    Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
+                  displayName: Set PackageVersion variable
+
+                # There are potential race conditions if this script runs
+                # in parallel against the same branch name. Release only
+                # one package at a time.
+
+                # Clone Vcpkg partner feed
+                - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                  parameters:
+                    RepoOwner: Azure
+                    RepoName: azure-sdk-vcpkg-partner-feed
+                    SetVcpkgRoot: false
+
+                - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
+                  parameters:
+                    ArtifactName: ${{ artifact.Name }}
+                    VcpkgPortName: ${{ artifact.VcpkgPortName }}
+                    UpdateVcpkgBeta: false
+                    PartnerRelease: true
+                    PartnerReleaseRef: $(Build.SourceVersion)
+
+                - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+                  parameters:
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
+
+                # Push changes to vcpkg partner feed
+                - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+                  parameters:
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
+                    TargetRepoName: azure-sdk-vcpkg-partner-feed
+                    BaseRepoOwner: Azure
+                    CommitMsg: Update vcpkg-configuration.json
+                    BaseRepoBranch: $(DefaultBranch)
 
           - ${{if ne(artifact.skipUpdatePackageVersion, 'true')}}:
             - job: UpdatePackageVersion
