@@ -72,3 +72,10 @@ pipelines:
           lastModifiedDate: 2026-05-19
         armory:
           lastModifiedDate: 2026-05-19
+  6282:
+    retail:
+      binary:
+        binskim:
+          lastModifiedDate: 2026-10-15
+        spotbugs:
+          lastModifiedDate: 2026-10-15
