@@ -86,7 +86,7 @@ jobs:
         image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
-        apiviewParserVersion: "20240927.5"
+        apiviewParserVersion: "20261009.3"
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
@@ -334,6 +334,8 @@ jobs:
             - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
               parameters:
                 ArtifactPath: $(Build.ArtifactStagingDirectory)\packages
+                # Test-only: keep JSON artifacts without submitting revisions to production APIView.
+                Condition: false
 
         - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
           parameters:
