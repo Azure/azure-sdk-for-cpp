@@ -86,7 +86,7 @@ jobs:
         image: $(WINDOWSVMIMAGE)
         os: windows
       variables:
-        apiviewParserVersion: "20240927.5"
+        apiviewParserVersion: "20261009.3"
         VCPKG_DEFAULT_TRIPLET: 'x64-windows-static'
         Package.EnableSBOMSigning: true
       steps:
