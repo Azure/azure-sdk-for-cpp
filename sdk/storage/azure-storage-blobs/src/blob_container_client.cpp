@@ -8,6 +8,7 @@
 #include "azure/storage/blobs/block_blob_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
 #include "private/package_version.hpp"
+#include "private/session_authentication_policy.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -426,12 +427,22 @@ namespace Azure { namespace Storage { namespace Blobs {
             }
             else if (columnName == "ImmutabilityPolicyUntilDate")
             {
-              result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy.Value().ExpiresOn
+              auto& policy = result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy;
+              if (!policy.HasValue())
+              {
+                policy = Models::BlobImmutabilityPolicy();
+              }
+              policy.Value().ExpiresOn
                   = std::chrono::system_clock::time_point(std::chrono::seconds(parsedIntValue));
             }
             else if (columnName == "ImmutabilityPolicyMode")
             {
-              result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy.Value().PolicyMode
+              auto& policy = result.Items[batchRowStartOffset + r].Details.ImmutabilityPolicy;
+              if (!policy.HasValue())
+              {
+                policy = Models::BlobImmutabilityPolicy();
+              }
+              policy.Value().PolicyMode
                   = Models::BlobImmutabilityPolicyMode(std::move(parsedStringValue));
             }
             else if (columnName == "VersionId")
@@ -1267,6 +1278,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobContainerUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
     pipelineOptions.SharedKeyAuthPolicy = std::move(sharedKeyAuthPolicy);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
@@ -1285,8 +1297,8 @@ namespace Azure { namespace Storage { namespace Blobs {
         m_blobContainerUrl.GetHost(), options.SecondaryHostForRetryReads));
     perRetryPolicies.emplace_back(std::make_unique<_internal::StoragePerRetryPolicy>());
     std::unique_ptr<Azure::Core::Http::Policies::HttpPolicy> tokenAuthPolicy;
+    Azure::Core::Credentials::TokenRequestContext tokenContext;
     {
-      Azure::Core::Credentials::TokenRequestContext tokenContext;
       tokenContext.Scopes.emplace_back(
           options.Audience.HasValue()
               ? _internal::GetDefaultScopeForAudience(options.Audience.Value().ToString())
@@ -1310,7 +1322,11 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobContainerUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
-    pipelineOptions.TokenAuthPolicy = std::move(tokenAuthPolicy);
+    pipelineOptions.AddDataLocalityPolicy = true;
+    auto authPolicies = _detail::CreateTokenAuthenticationPolicies(
+        blobContainerUrl, credential, tokenContext, options.EnableTenantDiscovery, options);
+    pipelineOptions.TokenAuthPolicy = std::move(authPolicies.TokenAuthPolicy);
+    pipelineOptions.SharedKeyAuthPolicy = std::move(authPolicies.FinalAuthPolicy);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
@@ -1345,6 +1361,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.PrimaryHost = m_blobContainerUrl.GetHost();
     pipelineOptions.SecondaryHost = options.SecondaryHostForRetryReads;
     pipelineOptions.ApiVersion = options.ApiVersion;
+    pipelineOptions.AddDataLocalityPolicy = true;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
         _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
@@ -1484,7 +1501,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto expectResponseFormat = options.ResponseFormat;
     if (expectResponseFormat == StorageResponseFormat::Auto)
     {
-      expectResponseFormat = StorageResponseFormat::Xml;
+      expectResponseFormat = StorageResponseFormat::Arrow;
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {
@@ -1505,12 +1522,14 @@ namespace Azure { namespace Storage { namespace Blobs {
     {
       actualResponseFormat = StorageResponseFormat::Arrow;
     }
-    (void)actualResponseFormat;
-
     ListBlobsPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.BlobContainerName = std::move(response.Value.BlobContainerName);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
+    if (actualResponseFormat == StorageResponseFormat::Arrow && options.Prefix.HasValue())
+    {
+      pagedResponse.Prefix = options.Prefix.Value();
+    }
     for (auto& i : response.Value.Items)
     {
       pagedResponse.Blobs.push_back(BlobItemConversion(i));
@@ -1541,7 +1560,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto expectResponseFormat = options.ResponseFormat;
     if (expectResponseFormat == StorageResponseFormat::Auto)
     {
-      expectResponseFormat = StorageResponseFormat::Xml;
+      expectResponseFormat = StorageResponseFormat::Arrow;
     }
     if (expectResponseFormat == StorageResponseFormat::Arrow)
     {

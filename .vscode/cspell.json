@@ -98,6 +98,7 @@
     "cgmanifest",
     "Chelnokov",
     "chewi",
+    "chinacloudapi",
     "Chukwu",
     "cmake",
     "CMOCKA",
@@ -291,6 +292,7 @@
     "unskipped",
     "UPNs",
     "usgov",
+    "usgovcloudapi",
     "usgoviowa",
     "usgovvirginia",
     "vcpkg",
@@ -315,6 +317,7 @@
     "Xclang",
     "xcode",
     "xcodebuild",
+    "xfiles",
     "XSMB",
     "zulu"
   ],

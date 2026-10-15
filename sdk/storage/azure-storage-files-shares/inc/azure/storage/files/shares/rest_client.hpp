@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     /**
      * The version used for the operations to Azure storage services.
      */
-    constexpr static const char* ApiVersion = "2026-10-06";
+    constexpr static const char* ApiVersion = "2027-03-07";
   } // namespace _detail
   namespace Models {
     /**
@@ -330,6 +330,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * The date and time the share was last modified.
        */
       DateTime LastModified;
+      /**
+       * The date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
       /**
        * The ETag contains a value which represents the version of the share, in quotes.
        */
@@ -638,6 +642,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        */
       DateTime LastModified;
       /**
+       * Returns the date and time the share was created.
+       */
+      Nullable<DateTime> CreatedOn;
+      /**
        * Returns the current share quota in GB.
        */
       std::int64_t Quota = std::int64_t();
@@ -726,6 +734,18 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
        * Returns the current share next allowed provisioned bandwidth downgrade time.
        */
       Nullable<DateTime> NextAllowedProvisionedBandwidthDowngradeTime;
+      /**
+       * Specifies whether change feed is enabled on the share.
+       */
+      Nullable<bool> IsChangeFeedEnabled;
+      /**
+       * The number of days that change feed records are retained.
+       */
+      Nullable<std::int32_t> ChangeFeedRetentionInDays;
+      /**
+       * The name of the blob container where change feed records are stored.
+       */
+      Nullable<std::string> ChangeFeedBlobContainerName;
     };
     /**
      * @brief Specifies the option include to delete the base share and all of its snapshots.
@@ -1200,7 +1220,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       AZ_STORAGE_FILES_SHARES_DLLEXPORT const static FilePropertySemantics Restore;
     };
     /**
-     * @brief NFS only. Type of the file or directory.
+     * @brief Type of the file.
      */
     class NfsFileType final : public Core::_internal::ExtendableEnumeration<NfsFileType> {
     public:
@@ -1307,6 +1327,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the directory.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -1978,6 +2002,10 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          * NFS only. Type of the file or directory.
          */
         Nullable<Models::NfsFileType> NfsFileType;
+        /**
+         * The name of the file.
+         */
+        Nullable<std::string> FileName;
       };
     } // namespace _detail
     /**
@@ -2499,6 +2527,34 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
          */
         Models::NfsFileType NfsFileType;
       };
+      /**
+       * @brief A hard link to a file.
+       */
+      struct HardLink final
+      {
+        /**
+         * The name of the hard link.
+         */
+        StringEncoded FileName;
+        /**
+         * The fileId of the parent directory of the hard link.
+         */
+        std::string ParentId;
+      };
+      /**
+       * @brief Response type for #Azure::Storage::Files::Shares::FileClient::GetFileLinks.
+       */
+      struct GetFileLinksResult final
+      {
+        /**
+         * Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.
+         */
+        FileProperties Properties;
+        /**
+         * Array of HardLink.
+         */
+        std::vector<HardLink> HardLinks;
+      };
     } // namespace _detail
   } // namespace Models
   namespace _detail {
@@ -2562,6 +2618,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::CreateShareResult> Create(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -2693,6 +2751,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
         Nullable<Models::ShareTokenIntent> FileRequestIntent;
         Nullable<std::int64_t> ShareProvisionedIops;
         Nullable<std::int64_t> ShareProvisionedBandwidthMibps;
+        Nullable<bool> EnableChangeFeed;
+        Nullable<std::int32_t> ChangeFeedRetentionInDays;
       };
       static Response<Models::SetSharePropertiesResult> SetProperties(
           Core::Http::_internal::HttpPipeline& pipeline,
@@ -3231,6 +3291,17 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
           Core::Http::_internal::HttpPipeline& pipeline,
           const Core::Url& url,
           const CreateFileHardLinkOptions& options,
+          const Core::Context& context);
+      struct GetFileFileLinksOptions final
+      {
+        Nullable<std::string> LeaseId;
+        Nullable<bool> AllowTrailingDot;
+        Nullable<Models::ShareTokenIntent> FileRequestIntent;
+      };
+      static Response<Models::_detail::GetFileLinksResult> GetFileLinks(
+          Core::Http::_internal::HttpPipeline& pipeline,
+          const Core::Url& url,
+          const GetFileFileLinksOptions& options,
           const Core::Context& context);
     };
   } // namespace _detail

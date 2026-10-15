@@ -4,6 +4,13 @@
 
 ### Features Added
 
+- Bumped up API version to `2027-03-07`.
+- Added the share creation time to `ShareClient::GetProperties` and
+  `ShareServiceClient::ListShares` responses.
+- Added support for enabling and configuring Files Change Feed when creating or updating a share.
+- Added support for addressing files and directories by file ID, retrieving their properties, and
+  listing a file's hard links.
+
 ### Breaking Changes
 
 ### Bugs Fixed

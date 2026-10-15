@@ -22,6 +22,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
+      _detail::AssertPathAddressed(m_fileClient.Value().m_fileId, "AcquireLease");
       _detail::FileClient::AcquireFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.ProposedLeaseId = GetLeaseId();
       protocolLayerOptions.Duration = static_cast<int32_t>(duration.count());
@@ -79,6 +80,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
+      _detail::AssertPathAddressed(m_fileClient.Value().m_fileId, "RenewLease");
       AZURE_ASSERT_MSG(false, "File lease doesn't support renew");
       AZURE_NOT_IMPLEMENTED();
     }
@@ -116,6 +118,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
+      _detail::AssertPathAddressed(m_fileClient.Value().m_fileId, "ReleaseLease");
       _detail::FileClient::ReleaseFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.AllowTrailingDot
@@ -170,6 +173,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
+      _detail::AssertPathAddressed(m_fileClient.Value().m_fileId, "ChangeLease");
       _detail::FileClient::ChangeFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.LeaseId = GetLeaseId();
       protocolLayerOptions.ProposedLeaseId = proposedLeaseId;
@@ -237,6 +241,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     (void)options;
     if (m_fileClient.HasValue())
     {
+      _detail::AssertPathAddressed(m_fileClient.Value().m_fileId, "BreakLease");
       _detail::FileClient::BreakFileLeaseOptions protocolLayerOptions;
       protocolLayerOptions.AllowTrailingDot
           = m_fileClient.Value().m_clientConfiguration.AllowTrailingDot;

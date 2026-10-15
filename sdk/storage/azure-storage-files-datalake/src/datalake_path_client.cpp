@@ -343,61 +343,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
             Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
             options.IncludeUserPrincipalName.Value())
                                                     : context);
-    Models::PathProperties ret;
-    ret.ETag = std::move(response.Value.ETag);
-    ret.LastModified = std::move(response.Value.LastModified);
-    ret.CreatedOn = std::move(response.Value.CreatedOn);
-    ret.Metadata = std::move(response.Value.Metadata);
-    ret.LeaseDuration = std::move(response.Value.LeaseDuration);
-    ret.LeaseState = std::move(response.Value.LeaseState);
-    ret.LeaseStatus = std::move(response.Value.LeaseStatus);
-    ret.HttpHeaders = std::move(response.Value.HttpHeaders);
-    ret.IsServerEncrypted = response.Value.IsServerEncrypted;
-    ret.EncryptionKeySha256 = std::move(response.Value.EncryptionKeySha256);
-    ret.EncryptionScope = std::move(response.Value.EncryptionScope);
-    ret.CopyId = std::move(response.Value.CopyId);
-    ret.CopySource = std::move(response.Value.CopySource);
-    ret.CopyStatus = std::move(response.Value.CopyStatus);
-    ret.CopyProgress = std::move(response.Value.CopyProgress);
-    ret.CopyCompletedOn = std::move(response.Value.CopyCompletedOn);
-    ret.ExpiresOn = std::move(response.Value.ExpiresOn);
-    ret.LastAccessedOn = std::move(response.Value.LastAccessedOn);
-    ret.FileSize = response.Value.BlobSize;
-    ret.ArchiveStatus = std::move(response.Value.ArchiveStatus);
-    ret.RehydratePriority = std::move(response.Value.RehydratePriority);
-    ret.CopyStatusDescription = std::move(response.Value.CopyStatusDescription);
-    ret.IsIncrementalCopy = std::move(response.Value.IsIncrementalCopy);
-    ret.IncrementalCopyDestinationSnapshot
-        = std::move(response.Value.IncrementalCopyDestinationSnapshot);
-    ret.VersionId = std::move(response.Value.VersionId);
-    ret.IsCurrentVersion = std::move(response.Value.IsCurrentVersion);
-    ret.IsDirectory = _detail::MetadataIndicatesIsDirectory(ret.Metadata);
-    auto& headers = response.RawResponse->GetHeaders();
-    auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
-    if (encryptionContext != headers.end())
-    {
-      ret.EncryptionContext = encryptionContext->second;
-    }
-    auto acl = headers.find(_detail::AclHeaderName);
-    if (acl != headers.end())
-    {
-      ret.Acls = Models::Acl::DeserializeAcls(acl->second);
-    }
-    auto owner = headers.find(_detail::OwnerHeaderName);
-    if (owner != headers.end())
-    {
-      ret.Owner = owner->second;
-    }
-    auto group = headers.find(_detail::GroupHeaderName);
-    if (group != headers.end())
-    {
-      ret.Group = group->second;
-    }
-    auto permissions = headers.find(_detail::PermissionsHeaderName);
-    if (permissions != headers.end())
-    {
-      ret.Permissions = permissions->second;
-    }
+    auto ret = _detail::PathPropertiesFromBlobProperties(
+        std::move(response.Value), *response.RawResponse);
     return Azure::Response<Models::PathProperties>(std::move(ret), std::move(response.RawResponse));
   }
 
