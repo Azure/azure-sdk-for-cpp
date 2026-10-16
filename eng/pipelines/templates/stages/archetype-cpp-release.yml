@@ -44,57 +44,58 @@ stages:
                   steps:
                     - pwsh: Write-Host 'Release gate succeeded. Dependent jobs will run.'
 
-          - job: TagRepository
-            displayName: "Create release tag"
-            condition: and(ne(variables['Skip.TagRepository'], 'true'), not(${{ parameters.PublishToVcpkgPartnerFeed }}))
-            dependsOn:
-              - ReleaseGate
+          - ${{ if not(parameters.PublishToVcpkgPartnerFeed) }}:
+            - job: TagRepository
+              displayName: "Create release tag"
+              condition: ne(variables['Skip.TagRepository'], 'true')
+              dependsOn:
+                - ReleaseGate
 
-            pool:
-              name: $(WINDOWSPOOL)
-              image: $(WINDOWSVMIMAGE)
-              os: windows
+              pool:
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
+                os: windows
 
-            templateContext:
-              inputs:
-                - input: pipelineArtifact
-                  artifactName: packages
-                  targetPath: $(Pipeline.Workspace)/packages
-
-            steps:
-              - checkout: self
-              - template: /eng/common/pipelines/templates/steps/retain-run.yml
-              - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-                parameters:
-                  PackageName: ${{ artifact.Name }}
-                  ServiceDirectory: ${{ parameters.ServiceDirectory }}
-                  TestPipeline: ${{ parameters.TestPipeline }}
-              - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
-                displayName: Output Visible Artifacts
-              - task: Powershell@2
+              templateContext:
                 inputs:
-                  filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
-                  arguments: >
-                    -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
-                    -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
-                    -ForRelease $true
-                  pwsh: true
-                displayName: Verify CHANGELOG.md contents
-              - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
-                parameters:
-                  ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
-                  PackageRepository: CPP
-                  ReleaseSha: $(Build.SourceVersion)
-                  RepoId: Azure/azure-sdk-for-cpp
-              - template: /eng/common/pipelines/templates/steps/create-apireview.yml
-                parameters:
-                  ArtifactPath: $(Pipeline.Workspace)/packages
-                  Artifacts: ${{parameters.Artifacts}}
-                  ConfigFileDir: $(Pipeline.Workspace)/packages/PackageInfo
-                  MarkPackageAsShipped: true
-                  ArtifactName: ${{parameters.ArtifactName}}
-                  PackageName: ${{artifact.name}}
-                  SourceRootPath: $(Build.SourcesDirectory)
+                  - input: pipelineArtifact
+                    artifactName: packages
+                    targetPath: $(Pipeline.Workspace)/packages
+
+              steps:
+                - checkout: self
+                - template: /eng/common/pipelines/templates/steps/retain-run.yml
+                - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
+                  parameters:
+                    PackageName: ${{ artifact.Name }}
+                    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                    TestPipeline: ${{ parameters.TestPipeline }}
+                - pwsh: Get-ChildItem -Recurse $(Pipeline.Workspace)/packages/${{artifact.Name}}
+                  displayName: Output Visible Artifacts
+                - task: Powershell@2
+                  inputs:
+                    filePath: $(Build.SourcesDirectory)/eng/common/scripts/Verify-ChangeLog.ps1
+                    arguments: >
+                      -ChangeLogLocation $(Pipeline.Workspace)/packages/${{artifact.Name}}/CHANGELOG.md
+                      -VersionString (Get-Content $(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json | ConvertFrom-Json).version
+                      -ForRelease $true
+                    pwsh: true
+                  displayName: Verify CHANGELOG.md contents
+                - template: /eng/common/pipelines/templates/steps/create-tags-and-git-release.yml
+                  parameters:
+                    ArtifactLocation: "$(Pipeline.Workspace)/packages/${{artifact.Name}}"
+                    PackageRepository: CPP
+                    ReleaseSha: $(Build.SourceVersion)
+                    RepoId: Azure/azure-sdk-for-cpp
+                - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+                  parameters:
+                    ArtifactPath: $(Pipeline.Workspace)/packages
+                    Artifacts: ${{parameters.Artifacts}}
+                    ConfigFileDir: $(Pipeline.Workspace)/packages/PackageInfo
+                    MarkPackageAsShipped: true
+                    ArtifactName: ${{parameters.ArtifactName}}
+                    PackageName: ${{artifact.name}}
+                    SourceRootPath: $(Build.SourcesDirectory)
 
           - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), not(parameters.PublishToVcpkgPartnerFeed))}}:
             - job: PublishDocs
@@ -339,6 +340,11 @@ stages:
                       $version = $packageSpec.version
                       Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
                     displayName: Set PackageVersion variable
+
+                  - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                    parameters:
+                      TokenOwners: 
+                        - Azure
 
                   # There are potential race conditions if this script runs
                   # in parallel against the same branch name. Release only
