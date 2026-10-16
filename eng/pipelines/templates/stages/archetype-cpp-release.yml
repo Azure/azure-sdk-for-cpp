@@ -312,7 +312,7 @@ stages:
                   condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                   displayName: Comment notification to PR
 
-          - ${{ if eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
+          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), eq(variables['PublishToVcpkgPartnerFeed'], 'true')) }}:
             - job: PublishVcpkgPartnerFeed
               displayName: Publish to vcpkg-partner-feed
               condition: and(succeeded(), eq(variables['PublishToVcpkgPartnerFeed'], 'true'))
