@@ -46,7 +46,7 @@ stages:
 
           - job: TagRepository
             displayName: "Create release tag"
-            condition: and(ne(variables['Skip.TagRepository'], 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))
+            condition: and(ne(variables['Skip.TagRepository'], 'true'), ne(parameters.PublishToVcpkgPartnerFeed, 'true'))
             dependsOn:
               - ReleaseGate
 
@@ -96,7 +96,7 @@ stages:
                   PackageName: ${{artifact.name}}
                   SourceRootPath: $(Build.SourcesDirectory)
 
-          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(artifact.publishToVcpkgPartnerFeed, 'true'))}}:
+          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(parameters.PublishToVcpkgPartnerFeed, 'true'))}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
@@ -164,10 +164,10 @@ stages:
                       - ci-configs/packages-latest.json
                       - ci-configs/packages-preview.json
 
-          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables['PartnerFeed'], 'true')) }}:
+          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(parameters.PublishToVcpkgPartnerFeed, 'true')) }}:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(variables['PartnerFeed'], 'true'))
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(parameters.PublishToVcpkgPartnerFeed, 'true'))
               # This step requires the tag step
               dependsOn:
                 - TagRepository
@@ -314,10 +314,10 @@ stages:
                   condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                   displayName: Comment notification to PR
 
-          - ${{ if eq(variables['PartnerFeed'], 'true') }}:
+          - ${{ if eq(parameters.PublishToVcpkgPartnerFeed, 'true') }}:
             - job: PublishVcpkgPartnerFeed
               displayName: Publish to vcpkg-partner-feed
-              condition: and(succeeded(), eq(variables['PartnerFeed'], 'true'))
+              condition: and(succeeded(), eq(parameters.PublishToVcpkgPartnerFeed, 'true'))
               dependsOn:
                 - ReleaseGate
               pool:
