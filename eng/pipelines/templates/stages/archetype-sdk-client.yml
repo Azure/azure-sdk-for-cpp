@@ -223,7 +223,8 @@ extends:
                                 - LiveTest_${{ cloud.key }}
               Artifacts: ${{ parameters.Artifacts }}
               ArtifactName: packages
-              PublishToVcpkgPartnerFeed: ${{ eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}
+              ${{ eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
+                PublishToVcpkgPartnerFeed: true
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
 
