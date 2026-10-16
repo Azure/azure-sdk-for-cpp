@@ -72,7 +72,7 @@ pipelines:
           lastModifiedDate: 2026-05-19
         armory:
           lastModifiedDate: 2026-05-19
-  2123:
+  2255:
     retail:
       binary:
         binskim:
