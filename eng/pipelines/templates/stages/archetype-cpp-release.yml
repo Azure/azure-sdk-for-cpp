@@ -11,6 +11,8 @@ parameters:
   TargetDocRepoOwner: MicrosoftDocs
   TargetDocRepoName: azure-docs-sdk-cpp
 
+  PublishToVcpkgPartnerFeed: 'false'
+
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
@@ -44,7 +46,7 @@ stages:
 
           - job: TagRepository
             displayName: "Create release tag"
-            condition: and(ne(variables['Skip.TagRepository'], 'true'), ne(${{ variables.PublishToVcpkgPartnerFeed }}, 'true'))
+            condition: and(ne(variables['Skip.TagRepository'], 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))
             dependsOn:
               - ReleaseGate
 
@@ -165,7 +167,7 @@ stages:
           - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables.PublishToVcpkgPartnerFeed, 'true')) }}:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
-              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(${{ variables.PublishToVcpkgPartnerFeed }}, 'true'))
+              condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))
               # This step requires the tag step
               dependsOn:
                 - TagRepository
