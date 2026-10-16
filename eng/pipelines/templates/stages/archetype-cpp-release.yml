@@ -176,10 +176,9 @@ stages:
                 image: $(WINDOWSVMIMAGE)
                 os: windows
 
-              - ${{ if ne(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
-                - variables:
-                  VcpkgPrRepoOwner: Microsoft
-                  VcpkgPrRepoName: vcpkg
+              variables:
+                VcpkgPrRepoOwner: Microsoft
+                VcpkgPrRepoName: vcpkg
 
               templateContext:
                 inputs:
