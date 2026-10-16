@@ -74,6 +74,11 @@ pipelines:
           lastModifiedDate: 2026-05-19
   1963:
     retail:
+      source:
+        psscriptanalyzer:
+          lastModifiedDate: 2026-10-16
+        armory:
+          lastModifiedDate: 2026-10-16
       binary:
         binskim:
           lastModifiedDate: 2026-10-16
