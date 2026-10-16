@@ -313,7 +313,7 @@ stages:
                   displayName: Comment notification to PR
 
           - ${{ if eq(variables['PartnerFeed'], 'true') }}:
-            - job: PublishVcpkg
+            - job: PublishVcpkgPartnerFeed
               displayName: Publish to vcpkg-partner-feed
               condition: and(succeeded(), eq(variables['PartnerFeed'], 'true'))
               dependsOn:
