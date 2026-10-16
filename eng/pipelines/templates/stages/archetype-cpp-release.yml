@@ -11,8 +11,6 @@ parameters:
   TargetDocRepoOwner: MicrosoftDocs
   TargetDocRepoName: azure-docs-sdk-cpp
 
-  PublishToVcpkgPartnerFeed: 'false'
-
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
@@ -96,7 +94,7 @@ stages:
                   PackageName: ${{artifact.name}}
                   SourceRootPath: $(Build.SourcesDirectory)
 
-          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(variables.PublishToVcpkgPartnerFeed, 'true'))}}:
+          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
@@ -164,7 +162,7 @@ stages:
                       - ci-configs/packages-latest.json
                       - ci-configs/packages-preview.json
 
-          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables.PublishToVcpkgPartnerFeed, 'true')) }}:
+          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true')) }}:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
               condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))
@@ -314,10 +312,10 @@ stages:
                   condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                   displayName: Comment notification to PR
 
-          - ${{ if eq(variables.PublishToVcpkgPartnerFeed, 'true') }}:
+          - ${{ if eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
             - job: PublishVcpkgPartnerFeed
               displayName: Publish to vcpkg-partner-feed
-              condition: and(succeeded(), eq(${{ variables.PublishToVcpkgPartnerFeed }}, 'true'))
+              condition: and(succeeded(), eq(variables['PublishToVcpkgPartnerFeed'], 'true'))
               dependsOn:
                 - ReleaseGate
               pool:
