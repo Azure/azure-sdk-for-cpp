@@ -16,6 +16,7 @@ SetUpTestProxy("sdk/storage")
 
 add_executable (
   azure-storage-files-datalake-test
+    data_locality_test.cpp
     datalake_directory_client_test.cpp
     datalake_directory_client_test.hpp
     datalake_file_client_test.cpp
@@ -29,6 +30,7 @@ add_executable (
     datalake_service_client_test.cpp
     datalake_service_client_test.hpp
     macro_guard.cpp
+    session_authentication_test.cpp
     simplified_header_test.cpp
     # Include shared test source code
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../azure-storage-common/test/ut/test_base.cpp

@@ -204,6 +204,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.Range = options.Range;
     blobOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     blobOptions.Range = options.Range;
+    blobOptions.LayoutEndpoint = options.LayoutEndpoint;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -253,6 +254,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
+    ret.Details.DownloadHint = std::move(response.Value.Details.DownloadHint);
     auto& headers = response.RawResponse->GetHeaders();
     auto encryptionContext = headers.find(_detail::EncryptionContextHeaderName);
     if (encryptionContext != headers.end())
@@ -281,6 +283,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     return Azure::Response<Models::DownloadFileResult>(
         std::move(ret), std::move(response.RawResponse));
+  }
+
+  FileLayoutPagedResponse DataLakeFileClient::GetLayout(
+      const GetFileLayoutOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::GetBlobLayoutOptions blobOptions;
+    blobOptions.Range = options.Range;
+    blobOptions.ContinuationToken = options.ContinuationToken;
+    blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
+    blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto response = m_blobClient.GetLayout(blobOptions, context);
+
+    FileLayoutPagedResponse result;
+    result.Layout.Ranges = std::move(response.Layout.Ranges);
+    result.Layout.Properties = _detail::PathPropertiesFromBlobProperties(
+        std::move(response.Layout.Properties), *response.RawResponse);
+    result.CurrentPageToken = std::move(response.CurrentPageToken);
+    result.NextPageToken = std::move(response.NextPageToken);
+    result.RawResponse = std::move(response.RawResponse);
+    result.m_fileClient = std::make_shared<DataLakeFileClient>(*this);
+    result.m_operationOptions = options;
+    return result;
   }
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(
@@ -364,6 +392,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
+    ret.Details.DownloadHint = std::move(response.Value.Details.DownloadHint);
     return Azure::Response<Models::DownloadFileToResult>(
         std::move(ret), std::move(response.RawResponse));
   }
@@ -404,6 +433,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     ret.Details.EncryptionKeySha256 = std::move(response.Value.Details.EncryptionKeySha256);
     ret.Details.EncryptionScope = std::move(response.Value.Details.EncryptionScope);
     ret.Details.IsServerEncrypted = response.Value.Details.IsServerEncrypted;
+    ret.Details.DownloadHint = std::move(response.Value.Details.DownloadHint);
     return Azure::Response<Models::DownloadFileToResult>(
         std::move(ret), std::move(response.RawResponse));
   }

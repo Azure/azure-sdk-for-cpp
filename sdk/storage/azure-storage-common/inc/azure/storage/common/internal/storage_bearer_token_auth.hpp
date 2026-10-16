@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace _internal {
 
-  class StorageBearerTokenAuthenticationPolicy final
+  class StorageBearerTokenAuthenticationPolicy
       : public Core::Http::Policies::_internal::BearerTokenAuthenticationPolicy {
   public:
     /**
@@ -36,6 +36,15 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       return std::unique_ptr<HttpPolicy>(new StorageBearerTokenAuthenticationPolicy(*this));
     }
+
+  protected:
+    void AuthorizeRequest(Azure::Core::Http::Request& request, Azure::Core::Context const& context)
+        const;
+
+    std::unique_ptr<Azure::Core::Http::RawResponse> AuthorizeAndSendRequest(
+        Azure::Core::Http::Request& request,
+        Azure::Core::Http::Policies::NextHttpPolicy& nextPolicy,
+        Azure::Core::Context const& context) const override;
 
   private:
     struct SafeTenantId
@@ -65,11 +74,6 @@ namespace Azure { namespace Storage { namespace _internal {
     std::vector<std::string> m_scopes;
     mutable SafeTenantId m_safeTenantId;
     bool m_enableTenantDiscovery;
-
-    std::unique_ptr<Azure::Core::Http::RawResponse> AuthorizeAndSendRequest(
-        Azure::Core::Http::Request& request,
-        Azure::Core::Http::Policies::NextHttpPolicy& nextPolicy,
-        Azure::Core::Context const& context) const override;
 
     bool AuthorizeRequestOnChallenge(
         std::string const& challenge,

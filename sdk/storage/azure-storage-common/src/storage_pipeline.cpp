@@ -4,6 +4,7 @@
 #include "azure/storage/common/internal/storage_pipeline.hpp"
 
 #include "azure/storage/common/internal/constants.hpp"
+#include "azure/storage/common/internal/storage_data_locality_policy.hpp"
 #include "azure/storage/common/internal/storage_per_retry_policy.hpp"
 #include "azure/storage/common/internal/storage_retry_policy.hpp"
 #include "azure/storage/common/internal/storage_service_version_policy.hpp"
@@ -41,6 +42,10 @@ namespace Azure { namespace Storage { namespace _internal {
     {
       policies.emplace_back(policy->Clone());
     }
+    if (storagePipelineOptions.AddDataLocalityPolicy)
+    {
+      policies.emplace_back(std::make_unique<StorageDataLocalityPolicy>());
+    }
 
     // Retry policy
     policies.emplace_back(std::make_unique<StorageRetryPolicy>(clientOptions.Retry));
@@ -66,7 +71,7 @@ namespace Azure { namespace Storage { namespace _internal {
       policies.emplace_back(policy->Clone());
     }
 
-    // SharedKey/SAS auth runs last among per-retry policies so the signature covers
+    // Request-signing auth runs last among per-retry policies so the signature covers
     // the final, fully-modified request.
     if (storagePipelineOptions.SharedKeyAuthPolicy)
     {

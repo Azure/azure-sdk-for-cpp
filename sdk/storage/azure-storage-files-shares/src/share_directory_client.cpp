@@ -3,6 +3,7 @@
 
 #include "azure/storage/files/shares/share_directory_client.hpp"
 
+#include "azure/storage/files/shares/share_constants.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "private/package_version.hpp"
 
@@ -16,6 +17,8 @@
 #include <azure/storage/common/storage_exception.hpp>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
+
+  std::string ShareDirectoryClient::GetFileId() const { return m_fileId.ValueOr(std::string()); }
 
   ShareDirectoryClient ShareDirectoryClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -40,11 +43,22 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   }
 
   ShareDirectoryClient::ShareDirectoryClient(
+      Core::Url shareDirectoryUrl,
+      std::shared_ptr<Core::Http::_internal::HttpPipeline> pipeline,
+      _detail::ShareClientConfiguration clientConfiguration)
+      : m_shareDirectoryUrl(std::move(shareDirectoryUrl)),
+        m_fileId(_detail::GetFileIdFromUrl(m_shareDirectoryUrl)), m_pipeline(std::move(pipeline)),
+        m_clientConfiguration(std::move(clientConfiguration))
+  {
+  }
+
+  ShareDirectoryClient::ShareDirectoryClient(
       const std::string& shareDirectoryUrl,
       std::shared_ptr<StorageSharedKeyCredential> credential,
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -68,6 +82,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -99,6 +114,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ShareClientOptions& options)
       : m_shareDirectoryUrl(shareDirectoryUrl)
   {
+    m_fileId = _detail::GetFileIdFromUrl(m_shareDirectoryUrl);
     m_clientConfiguration.AllowTrailingDot = options.AllowTrailingDot;
     m_clientConfiguration.AllowSourceTrailingDot = options.AllowSourceTrailingDot;
     m_clientConfiguration.ShareTokenIntent = options.ShareTokenIntent;
@@ -118,6 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
   ShareDirectoryClient ShareDirectoryClient::GetSubdirectoryClient(
       const std::string& subdirectoryName) const
   {
+    _detail::AssertPathAddressed(m_fileId, "GetSubdirectoryClient");
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(subdirectoryName));
     return ShareDirectoryClient(builder, m_pipeline, m_clientConfiguration);
@@ -125,6 +142,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
 
   ShareFileClient ShareDirectoryClient::GetFileClient(const std::string& fileName) const
   {
+    _detail::AssertPathAddressed(m_fileId, "GetFileClient");
     auto builder = m_shareDirectoryUrl;
     builder.AppendPath(_internal::UrlEncodePath(fileName));
     return ShareFileClient(builder, m_pipeline, m_clientConfiguration);
@@ -150,6 +168,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const CreateDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "Create");
     auto protocolLayerOptions = _detail::DirectoryClient::CreateDirectoryOptions();
     protocolLayerOptions.Metadata
         = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
@@ -217,6 +236,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const Azure::Core::Context& context) const
 
   {
+    _detail::AssertPathAddressed(m_fileId, "CreateIfNotExists");
     try
     {
       return Create(options, context);
@@ -239,6 +259,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const RenameFileOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "RenameFile");
     auto sourceFileUrl = m_shareDirectoryUrl;
     sourceFileUrl.AppendPath(_internal::UrlEncodePath(fileName));
 
@@ -300,6 +321,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const RenameDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "RenameSubdirectory");
     auto sourceDirectoryUrl = m_shareDirectoryUrl;
     sourceDirectoryUrl.AppendPath(_internal::UrlEncodePath(subdirectoryName));
 
@@ -359,6 +381,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "Delete");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::DeleteDirectoryOptions();
     protocolLayerOptions.AllowTrailingDot = m_clientConfiguration.AllowTrailingDot;
@@ -375,6 +398,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const DeleteDirectoryOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "DeleteIfExists");
     try
     {
       return Delete(options, context);
@@ -417,6 +441,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     ret.PosixProperties.Owner = std::move(response.Value.Owner);
     ret.PosixProperties.Group = std::move(response.Value.Group);
     ret.PosixProperties.NfsFileType = std::move(response.Value.NfsFileType);
+    ret.FileName = std::move(response.Value.FileName);
     return Azure::Response<Models::DirectoryProperties>(
         std::move(ret), std::move(response.RawResponse));
   }
@@ -426,6 +451,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetDirectoryPropertiesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "SetProperties");
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryPropertiesOptions();
     protocolLayerOptions.FileAttributes = smbProperties.Attributes.ToString();
     if (smbProperties.CreatedOn.HasValue())
@@ -483,6 +509,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const SetDirectoryMetadataOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "SetMetadata");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::SetDirectoryMetadataOptions();
     protocolLayerOptions.Metadata
@@ -497,6 +524,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListFilesAndDirectoriesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ListFilesAndDirectories");
     auto protocolLayerOptions
         = _detail::DirectoryClient::ListDirectoryFilesAndDirectoriesSegmentOptions();
     protocolLayerOptions.Prefix = options.Prefix;
@@ -572,6 +600,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ListDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ListHandles");
     auto protocolLayerOptions = _detail::DirectoryClient::ListDirectoryHandlesOptions();
     protocolLayerOptions.Marker = options.ContinuationToken;
     protocolLayerOptions.MaxResults = options.PageSizeHint;
@@ -631,6 +660,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseDirectoryHandleOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ForceCloseHandle");
     (void)options;
     auto protocolLayerOptions = _detail::DirectoryClient::ForceDirectoryCloseHandlesOptions();
     protocolLayerOptions.HandleId = handleId;
@@ -647,6 +677,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
       const ForceCloseAllDirectoryHandlesOptions& options,
       const Azure::Core::Context& context) const
   {
+    _detail::AssertPathAddressed(m_fileId, "ForceCloseAllHandles");
     auto protocolLayerOptions = _detail::DirectoryClient::ForceDirectoryCloseHandlesOptions();
     protocolLayerOptions.HandleId = FileAllHandles;
     protocolLayerOptions.Marker = options.ContinuationToken;

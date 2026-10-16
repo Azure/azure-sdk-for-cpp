@@ -57,6 +57,31 @@ namespace Azure { namespace Storage {
       ResponseFactory m_responseFactory;
     };
 
+    class PeekHttpRequestPolicy final : public Core::Http::Policies::HttpPolicy {
+    public:
+      explicit PeekHttpRequestPolicy(std::function<void(const Core::Http::Request&)> callback)
+          : m_callback(std::move(callback))
+      {
+      }
+
+      std::unique_ptr<Core::Http::RawResponse> Send(
+          Core::Http::Request& request,
+          Core::Http::Policies::NextHttpPolicy nextPolicy,
+          Core::Context const& context) const override
+      {
+        m_callback(request);
+        return nextPolicy.Send(request, context);
+      }
+
+      std::unique_ptr<HttpPolicy> Clone() const override
+      {
+        return std::make_unique<PeekHttpRequestPolicy>(*this);
+      }
+
+    private:
+      std::function<void(const Core::Http::Request&)> m_callback;
+    };
+
     class StorageTest : public Azure::Core::Test::TestBase {
     public:
       StorageTest() { TestBase::SetUpTestSuiteLocal(AZURE_TEST_ASSETS_DIR); }

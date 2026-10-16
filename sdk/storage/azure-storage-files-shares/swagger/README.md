@@ -9,7 +9,7 @@ package-name: azure-storage-files-shares
 namespace: Azure::Storage::Files::Shares
 output-folder: generated
 clear-output-folder: true
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/storage/data-plane/Microsoft.FileStorage/stable/2026-12-06/file.json
+input-file: https://raw.githubusercontent.com/Jinming-Hu/azure-rest-api-specs/refs/heads/stg105-file-codegen/specification/storage/data-plane/Microsoft.FileStorage/stable/2027-03-07/file.json
 ```
 
 ## ModelFour Options
@@ -62,6 +62,8 @@ directive:
     where: $["x-ms-paths"]
     transform: >
       delete $["/{shareName}?restype=share&comp=undelete"].put;
+      delete $["/{shareName}?restype=directory"].get;
+      delete $["/{shareName}"].head;
 ```
 
 ### API Version
@@ -79,12 +81,12 @@ directive:
           "name": "ApiVersion",
           "modelAsString": false
           },
-        "enum": ["2026-10-06"]
+        "enum": ["2027-03-07"]
       };
   - from: swagger-document
     where: $.parameters
     transform: >
-      $.ApiVersionParameter.enum = ["2026-10-06"];
+      $.ApiVersionParameter.enum = ["2027-03-07"];
 ```
 
 ### Rename Operations
@@ -482,6 +484,20 @@ directive:
       $.ShareItemInternal.properties["Details"] = {"$ref": "#/definitions/ShareItemDetails", "x-ms-xml": {"name": "Properties"}};
       $.ShareItemInternal["x-ms-client-name"] = "ShareItem";
       $.ShareItemDetails.properties["ProvisionedBandwidthMiBps"]["x-ms-client-name"] = "ProvisionedBandwidthMBps";
+      $.ShareItemDetails.properties["CreationTime"]["x-ms-client-name"] = "CreatedOn";
+      $.ShareItemDetails.properties["CreationTime"]["x-ms-xml"] = {"name": "Creation-Time"};
+      $.ShareItemDetails.properties["CreationTime"]["x-nullable"] = true;
+      $.ShareItemDetails.properties["CreationTime"].description = "The date and time the share was created.";
+      const creationTime = $.ShareItemDetails.properties["CreationTime"];
+      delete $.ShareItemDetails.properties["CreationTime"];
+      const properties = {};
+      for (const name in $.ShareItemDetails.properties) {
+        properties[name] = $.ShareItemDetails.properties[name];
+        if (name === "Last-Modified") {
+          properties["CreationTime"] = creationTime;
+        }
+      }
+      $.ShareItemDetails.properties = properties;
       delete $.ShareItemDetails.properties["EnableSmbDirectoryLease"];
       delete $.ShareItemInternal.properties["Properties"];
       delete $.ShareItemInternal.required;
@@ -538,7 +554,64 @@ directive:
       $ = $.filter(p => !p["$ref"] || !p["$ref"].endsWith("#/parameters/EnableSmbDirectoryLease"));
 ```
 
+### Share Change Feed
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.parameters
+    transform: >
+      $.EnableChangeFeed = {
+        "name": "x-ms-file-enable-change-feed",
+        "in": "header",
+        "type": "boolean",
+        "required": false,
+        "x-ms-client-name": "EnableChangeFeed"
+      };
+      $.ChangeFeedRetentionInDays = {
+        "name": "x-ms-file-change-feed-retention-in-days",
+        "in": "header",
+        "type": "integer",
+        "format": "int32",
+        "required": false,
+        "x-ms-client-name": "ChangeFeedRetentionInDays"
+      };
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      for (const path of ["/{shareName}?restype=share", "/{shareName}?restype=share&comp=properties"]) {
+        $[path].put.parameters.push(
+          {"$ref": "#/parameters/EnableChangeFeed"},
+          {"$ref": "#/parameters/ChangeFeedRetentionInDays"});
+      }
+  - from: swagger-document
+    where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"].headers
+    transform: >
+      $["x-ms-file-enable-change-feed"] = {
+        "type": "boolean",
+        "x-ms-client-name": "IsChangeFeedEnabled",
+        "x-nullable": true,
+        "description": "Specifies whether change feed is enabled on the share."
+      };
+      $["x-ms-file-change-feed-retention-in-days"] = {
+        "type": "integer",
+        "format": "int32",
+        "x-ms-client-name": "ChangeFeedRetentionInDays",
+        "x-nullable": true,
+        "description": "The number of days that change feed records are retained."
+      };
+      $["x-ms-file-blob-container-for-xfiles-change-feed"] = {
+        "type": "string",
+        "x-ms-client-name": "ChangeFeedBlobContainerName",
+        "x-nullable": true,
+        "description": "The name of the blob container where change feed records are stored."
+      };
+```
+
 ### GetShareProperties
+
+The change-feed enablement header is parsed case-insensitively by the handwritten
+`ShareClient::GetProperties` implementation, while the public field remains `Nullable<bool>`.
 
 ```yaml
 directive:
@@ -571,6 +644,19 @@ directive:
       $["x-ms-share-max-burst-credits-for-iops"]["x-nullable"] = true;
       $["x-ms-share-next-allowed-provisioned-iops-downgrade-time"]["x-nullable"] = true;
       $["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"]["x-nullable"] = true;
+      $["x-ms-share-creation-time"]["x-ms-client-name"] = "CreatedOn";
+      $["x-ms-share-creation-time"]["x-nullable"] = true;
+      $["x-ms-share-creation-time"].description = "Returns the date and time the share was created.";
+      const creationTime = $["x-ms-share-creation-time"];
+      delete $["x-ms-share-creation-time"];
+      const headers = {};
+      for (const name in $) {
+        headers[name] = $[name];
+        if (name === "Last-Modified") {
+          headers["x-ms-share-creation-time"] = creationTime;
+        }
+      }
+      $ = headers;
   - from: swagger-document
     where: $["x-ms-paths"]["/{shareName}?restype=share"].get.responses["200"]
     transform: >
@@ -583,6 +669,29 @@ directive:
           "AccessTier": {"$ref": "#/definitions/AccessTier", "x-nullable": true, "x-ms-xml": {"name": ""}}
         }
       };
+      $.schema.required = [];
+      for (const headerName in $.headers) {
+        const header = $.headers[headerName];
+        const clientName = header["x-ms-client-name"]
+          || headerName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        const propertyName = clientName[0].toUpperCase() + clientName.slice(1);
+        if (propertyName !== "AccessTier") {
+          const property = JSON.parse(JSON.stringify(header));
+          delete property["x-ms-client-name"];
+          property["x-ms-xml"] = {"name": ""};
+          $.schema.properties[propertyName] = property;
+        }
+        if (!$.schema.properties[propertyName]["x-nullable"]) {
+          $.schema.required.push(propertyName);
+        }
+      }
+      $.schema.properties.Metadata = {
+        "$ref": "#/definitions/Metadata",
+        "description": $.schema.properties.Metadata.description,
+        "x-ms-xml": {"name": ""}
+      };
+      $.schema.properties.ProvisionedIops.description = "Returns the current share provisioned IOPS.";
+      delete $.headers["x-ms-file-enable-change-feed"];
 ```
 
 ### GetShareAccessPolicy
@@ -807,6 +916,12 @@ directive:
       $.headers["x-ms-owner"]["x-nullable"] = true;
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"]["x-ms-client-name"] = "FileName";
+      $.headers["x-ms-file-name"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"].description = "The name of the directory.";
+      const fileName = $.headers["x-ms-file-name"];
+      delete $.headers["x-ms-file-name"];
+      $.headers["x-ms-file-name"] = fileName;
       $.schema = {
         "type": "object",
         "x-ms-client-name": "DirectoryProperties",
@@ -926,6 +1041,12 @@ directive:
       $.headers["x-ms-group"]["x-nullable"] = true;
       $.headers["x-ms-file-file-type"]["x-nullable"] = true;
       $.headers["x-ms-link-count"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"]["x-ms-client-name"] = "FileName";
+      $.headers["x-ms-file-name"]["x-nullable"] = true;
+      $.headers["x-ms-file-name"].description = "The name of the file.";
+      const fileName = $.headers["x-ms-file-name"];
+      delete $.headers["x-ms-file-name"];
+      $.headers["x-ms-file-name"] = fileName;
       delete $.headers["x-ms-type"];
       $.schema = {
         "type": "object",
@@ -1243,6 +1364,91 @@ directive:
         },
         "x-namespace" : "_detail"
       };
+```
+
+### GetFileLinks
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.definitions
+    transform: >
+      $.HardLink["x-namespace"] = "_detail";
+      const propertiesResponse = $doc["x-ms-paths"]["/{shareName}/{directory}/{fileName}"].head.responses["200"];
+      const propertiesSchema = JSON.parse(JSON.stringify(propertiesResponse.schema));
+      propertiesSchema.required = ["SmbProperties", "HttpHeaders"];
+      for (const headerName in propertiesResponse.headers) {
+        const header = propertiesResponse.headers[headerName];
+        const propertyPath = header["x-ms-client-path"]
+          || header["x-ms-client-name"]
+          || headerName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        if (propertyPath.includes(".")) {
+          continue;
+        }
+        const propertyName = propertyPath[0].toUpperCase() + propertyPath.slice(1);
+        const property = JSON.parse(JSON.stringify(header));
+        delete property["x-ms-client-name"];
+        delete property["x-ms-client-path"];
+        property["x-ms-xml"] = {"name": ""};
+        propertiesSchema.properties[propertyName] = property;
+        if (!property["x-nullable"]) {
+          propertiesSchema.required.push(propertyName);
+        }
+      }
+      propertiesSchema.properties.Metadata = {
+        "$ref": "#/definitions/Metadata",
+        "description": propertiesSchema.properties.Metadata.description,
+        "x-ms-xml": {"name": ""}
+      };
+      propertiesSchema.description = "Response type for #Azure::Storage::Files::Shares::ShareFileClient::GetProperties.";
+      $.FileProperties = propertiesSchema;
+  - from: swagger-document
+    where: $["x-ms-paths"]
+    transform: >
+      const propertiesResponse = $["/{shareName}/{directory}/{fileName}"].head.responses["200"];
+      propertiesResponse.schema = {"$ref": "#/definitions/FileProperties"};
+
+      const operation = $["/{shareName}?comp=hardlinks"].get;
+      operation.operationId = "File_GetFileLinks";
+      operation.parameters = operation.parameters.filter(p =>
+        p.name !== "fileid" && p["$ref"] !== "#/parameters/ShareSnapshot");
+      operation.responses["200"].schema = {
+        "type": "object",
+        "x-ms-client-name": "GetFileLinksResult",
+        "x-ms-sealed": false,
+        "x-namespace": "_detail",
+        "xml": {"name": "HardLinks"},
+        "required": ["Properties", "HardLinks"],
+        "properties": {
+          "Properties": {
+            "$ref": "#/definitions/FileProperties",
+            "x-ms-xml": {"name": ""}
+          },
+          "HardLinks": {
+            "type": "array",
+            "x-ms-xml": {"name": "."},
+            "items": {"$ref": "#/definitions/HardLink"}
+          }
+        }
+      };
+
+      const response = operation.responses["200"];
+      const headers = {};
+      for (const sourceHeaderName in propertiesResponse.headers) {
+        let headerName = sourceHeaderName;
+        if (["Content-Length", "Content-Type", "Content-MD5", "Content-Encoding",
+             "Content-Language", "Cache-Control", "Content-Disposition"].includes(headerName)) {
+          headerName = "x-ms-" + headerName.toLowerCase();
+        }
+        const header = JSON.parse(JSON.stringify(propertiesResponse.headers[sourceHeaderName]));
+        const propertyPath = header["x-ms-client-path"]
+          || header["x-ms-client-name"]
+          || sourceHeaderName.replace(/-(.)/g, (_, c) => c.toUpperCase());
+        delete header["x-ms-client-name"];
+        header["x-ms-client-path"] = "Properties." + propertyPath[0].toUpperCase() + propertyPath.slice(1);
+        headers[headerName] = header;
+      }
+      response.headers = headers;
 ```
 
 ### Description

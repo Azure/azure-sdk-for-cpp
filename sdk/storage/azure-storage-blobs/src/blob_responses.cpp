@@ -10,6 +10,13 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
+  void BlobLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  {
+    m_operationOptions.ContinuationToken = NextPageToken;
+    m_operationOptions.AccessConditions.IfMatch = Layout.Properties.ETag;
+    *this = m_blobClient->GetLayout(m_operationOptions, context);
+  }
+
   std::unique_ptr<Azure::Core::Http::RawResponse> StartBlobCopyOperation::PollInternal(
       const Azure::Core::Context&)
   {
