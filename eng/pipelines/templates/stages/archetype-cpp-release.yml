@@ -313,7 +313,7 @@ stages:
                   displayName: Comment notification to PR
 
             - job: PublishVcpkgPartnerFeed
-              displayName: Publish to vcpkg-partner-feed
+              displayName: Publish to partner-feed-copy
               condition: and(succeeded(), eq(variables['PublishToVcpkgPartnerFeed'], 'true'))
               dependsOn:
                 - ReleaseGate
@@ -332,10 +332,29 @@ stages:
                 - checkout: self
 
                 - pwsh: |
+                    $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
+                    if ('$(VcpkgForkBranchName)') {
+                      Write-Host "Using queue time branch name"
+                      $branchName = '$(VcpkgForkBranchName)'
+                    }
+                    Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
+                  displayName: Set fork branch name
+
+                - pwsh: |
                     $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
                     $version = $packageSpec.version
                     Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
                   displayName: Set PackageVersion variable
+
+                - pwsh: |
+                    $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
+
+                    if ('$(VcpkgPRTitle)') {
+                      Write-Host "Using queue time PR title"
+                      $title = '$(VcpkgPRTitle)'
+                    }
+                    Write-Host "##vso[task.setvariable variable=PrTitle]$title"
+                  displayName: Set PR title
 
                 # There are potential race conditions if this script runs
                 # in parallel against the same branch name. Release only
@@ -350,7 +369,7 @@ stages:
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                   parameters:
                     RepoOwner: antkmsft
-                    RepoName: azure-sdk-vcpkg-partner-feed
+                    RepoName: azure-sdk-partner-feed-copy
                     SetVcpkgRoot: false
 
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
@@ -363,13 +382,13 @@ stages:
 
                 - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
                   parameters:
-                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-partner-feed-copy
 
                 # Push changes to vcpkg partner feed
                 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
                   parameters:
-                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
-                    TargetRepoName: azure-sdk-vcpkg-partner-feed
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-partner-feed-copy
+                    TargetRepoName: azure-sdk-partner-feed-copy
                     BaseRepoOwner: antkmsft
                     CommitMsg: Update vcpkg-configuration.json
                     BaseRepoBranch: $(DefaultBranch)
