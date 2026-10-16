@@ -8,10 +8,12 @@
 #include <azure/core/azure_assert.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/internal/strings.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 #include <algorithm>
 #include <cstring>
@@ -79,15 +81,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       bool LookAhead(const std::string& expect) const
       {
-        for (size_t i = 0; i < expect.length(); ++i)
-        {
-          if (currPos + i < endPos && currPos[i] == expect[i])
-          {
-            continue;
-          }
-          return false;
-        }
-        return true;
+        return expect.size() <= static_cast<size_t>(endPos - currPos)
+            && std::equal(expect.begin(), expect.end(), currPos);
       }
 
       void Consume(const std::string& expect)
@@ -111,7 +106,8 @@ namespace Azure { namespace Storage { namespace Blobs {
 
       const char* AfterNext(const std::string& expect) const
       {
-        return (std::min)(endPos, FindNext(expect) + expect.length());
+        auto next = FindNext(expect);
+        return next == endPos ? endPos : next + expect.length();
       }
 
       std::string GetBeforeNextAndConsume(const std::string& expect)
@@ -119,7 +115,7 @@ namespace Azure { namespace Storage { namespace Blobs {
         // This moves currPos
         auto ePos = FindNext(expect);
         std::string ret(currPos, ePos);
-        currPos = (std::min)(endPos, ePos + expect.length());
+        currPos = ePos == endPos ? endPos : ePos + expect.length();
         return ret;
       }
     };
@@ -382,54 +378,26 @@ namespace Azure { namespace Storage { namespace Blobs {
         std::unique_ptr<Core::Http::RawResponse>& rawResponse,
         const Core::Context& context)
     {
-      if (rawResponse->GetStatusCode() != Core::Http::HttpStatusCode::Accepted
-          || rawResponse->GetHeaders().count(_internal::HttpHeaderContentType) == 0)
+      if (rawResponse->GetStatusCode() != Core::Http::HttpStatusCode::Accepted)
       {
         return;
       }
 
-      const std::string boundary = rawResponse->GetHeaders()
-                                       .at(std::string(_internal::HttpHeaderContentType))
-                                       .substr(BatchContentTypePrefix.length());
-
-      const std::vector<uint8_t>& responseBody
-          = rawResponse->ExtractBodyStream()->ReadToEnd(context);
-      Parser parser(responseBody);
-
-      std::vector<std::string> subresponses;
-      while (true)
+      const auto contentTypeHeader
+          = rawResponse->GetHeaders().find(_internal::HttpHeaderContentType);
+      if (contentTypeHeader == rawResponse->GetHeaders().end())
       {
-        parser.Consume("--" + boundary);
-        if (parser.LookAhead("--"))
-        {
-          parser.Consume("--");
-        }
-        if (parser.IsEnd())
-        {
-          break;
-        }
-        auto contentIdPos = parser.AfterNext("Content-ID: ");
-        auto responseStartPos = parser.AfterNext(LineEnding + LineEnding);
-        auto responseEndPos = parser.FindNext("--" + boundary);
-        if (contentIdPos != parser.endPos)
-        {
-          parser.currPos = contentIdPos;
-          auto idEndPos = parser.FindNext(LineEnding);
-          size_t id = static_cast<size_t>(std::stoi(std::string(parser.currPos, idEndPos)));
-          if (subresponses.size() < id + 1)
-          {
-            subresponses.resize(id + 1);
-          }
-          subresponses[id] = std::string(responseStartPos, responseEndPos);
-          parser.currPos = responseEndPos;
-        }
-        else
-        {
-          rawResponse = ParseRawResponse(std::string(responseStartPos, responseEndPos));
-          parser.currPos = responseEndPos;
-          return;
-        }
+        throw StorageException("Invalid batch response: missing multipart Content-Type.");
       }
+      const auto& contentType = contentTypeHeader->second;
+      if (contentType.size() <= BatchContentTypePrefix.size()
+          || !Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+              contentType.substr(0, BatchContentTypePrefix.size()), BatchContentTypePrefix))
+      {
+        throw StorageException(
+            "Invalid batch response: expected multipart/mixed with a nonempty boundary.");
+      }
+      const std::string boundary = contentType.substr(BatchContentTypePrefix.size());
 
       std::unique_ptr<_detail::BlobBatchAccessHelper> batchAccessHelper;
       {
@@ -447,6 +415,136 @@ namespace Azure { namespace Storage { namespace Blobs {
         {
           batchAccessHelper = std::make_unique<_detail::BlobBatchAccessHelper>(*batch);
         }
+      }
+
+      const size_t requestCount = batchAccessHelper->Subrequests().size();
+      std::vector<std::string> subresponses(requestCount);
+      std::vector<bool> received(requestCount, false);
+      size_t responseCount = 0;
+
+      const std::vector<uint8_t>& responseBody
+          = rawResponse->ExtractBodyStream()->ReadToEnd(context);
+      if (responseBody.empty())
+      {
+        throw StorageException("Invalid batch response: missing multipart body.");
+      }
+      Parser parser(responseBody);
+      const std::string delimiter = "--" + boundary;
+      while (true)
+      {
+        if (!parser.LookAhead(delimiter))
+        {
+          throw StorageException("Invalid batch response: missing multipart boundary.");
+        }
+        parser.Consume(delimiter);
+        if (parser.LookAhead("--"))
+        {
+          parser.Consume("--");
+          break;
+        }
+        if (!parser.LookAhead(LineEnding))
+        {
+          throw StorageException("Invalid batch response: malformed multipart boundary.");
+        }
+        parser.Consume(LineEnding);
+        auto responseStartPos = parser.AfterNext(LineEnding + LineEnding);
+        if (responseStartPos == parser.endPos)
+        {
+          throw StorageException("Invalid batch response: missing subresponse headers.");
+        }
+        std::string headers(parser.currPos, responseStartPos - 2);
+        Parser headerParser(headers);
+        Nullable<std::string> contentId;
+        while (!headerParser.IsEnd())
+        {
+          auto header = headerParser.GetBeforeNextAndConsume(LineEnding);
+          auto colon = header.find(':');
+          if (colon != std::string::npos
+              && Core::_internal::StringExtensions::LocaleInvariantCaseInsensitiveEqual(
+                  header.substr(0, colon), "Content-ID"))
+          {
+            if (contentId.HasValue())
+            {
+              throw StorageException("Invalid batch response: duplicate Content-ID header.");
+            }
+            auto valueStart = colon + 1;
+            if (valueStart < header.size() && header[valueStart] == ' ')
+            {
+              ++valueStart;
+            }
+            contentId = header.substr(valueStart);
+          }
+        }
+        parser.currPos = responseStartPos;
+        auto responseEndPos = parser.FindNext(LineEnding + delimiter);
+        if (responseEndPos == parser.endPos)
+        {
+          throw StorageException("Invalid batch response: missing closing multipart boundary.");
+        }
+        std::string responseText(responseStartPos, responseEndPos);
+        parser.currPos = responseEndPos + LineEnding.size();
+        if (!contentId.HasValue())
+        {
+          // A single uncorrelated error is a failure of the entire batch, not a subresponse.
+          if (responseCount != 0 || !parser.LookAhead(delimiter + "--"))
+          {
+            throw StorageException("Invalid batch response: missing Content-ID header.");
+          }
+          std::unique_ptr<Core::Http::RawResponse> batchError;
+          try
+          {
+            batchError = ParseRawResponse(responseText + LineEnding);
+          }
+          catch (const std::invalid_argument&)
+          {
+            throw StorageException("Invalid batch response: malformed batch-level error.");
+          }
+          catch (const std::out_of_range&)
+          {
+            throw StorageException("Invalid batch response: malformed batch-level error.");
+          }
+          catch (const std::runtime_error&)
+          {
+            throw StorageException("Invalid batch response: malformed batch-level error.");
+          }
+          const auto status = static_cast<int>(batchError->GetStatusCode());
+          if (status < 400 || status > 599)
+          {
+            throw StorageException("Invalid batch response: missing Content-ID header.");
+          }
+          rawResponse = std::move(batchError);
+          return;
+        }
+
+        size_t id = 0;
+        if (contentId.Value().empty())
+        {
+          throw StorageException("Invalid batch response: empty Content-ID.");
+        }
+        for (char c : contentId.Value())
+        {
+          if (!Core::_internal::StringExtensions::IsDigit(c))
+          {
+            throw StorageException("Invalid batch response: Content-ID must contain only digits.");
+          }
+          const size_t digit = static_cast<size_t>(c - '0');
+          if (digit >= requestCount || id > (requestCount - 1 - digit) / 10)
+          {
+            throw StorageException("Invalid batch response: Content-ID is out of range.");
+          }
+          id = id * 10 + digit;
+        }
+        if (received[id])
+        {
+          throw StorageException("Invalid batch response: duplicate Content-ID.");
+        }
+        received[id] = true;
+        ++responseCount;
+        subresponses[id] = std::move(responseText) + LineEnding;
+      }
+      if (responseCount != requestCount)
+      {
+        throw StorageException("Invalid batch response: incomplete subresponses.");
       }
 
       size_t subresponseCounter = 0;
