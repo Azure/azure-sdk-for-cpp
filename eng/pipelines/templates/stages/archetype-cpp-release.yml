@@ -94,7 +94,7 @@ stages:
                   PackageName: ${{artifact.name}}
                   SourceRootPath: $(Build.SourcesDirectory)
 
-          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(${{ variables.PublishToVcpkgPartnerFeed }}, 'true'))}}:
+          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(variables.PublishToVcpkgPartnerFeed, 'true'))}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
@@ -162,7 +162,7 @@ stages:
                       - ci-configs/packages-latest.json
                       - ci-configs/packages-preview.json
 
-          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(${{ variables.PublishToVcpkgPartnerFeed }}, 'true')) }}:
+          - ${{ if and(ne(artifact.skipPublishVcpkg, 'true'), ne(variables.PublishToVcpkgPartnerFeed, 'true')) }}:
             - job: PublishVcpkg
               displayName: Publish to vcpkg
               condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(${{ variables.PublishToVcpkgPartnerFeed }}, 'true'))
