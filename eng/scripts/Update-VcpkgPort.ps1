@@ -13,7 +13,9 @@ param (
 
     [string] $GitCommitParameters,
 
-    [switch] $DailyRelease
+    [switch] $DailyRelease,
+    
+    [switch] $PartnerRelease
 )
 
 ."$PSScriptRoot/../common/scripts/common.ps1"
@@ -105,7 +107,7 @@ Write-Host "git reset HEAD^"
 git reset HEAD^
 
 # Only perform the final commit if this is not a test release
-if (!$DailyRelease) { 
+if (!$DailyRelease -and !$PartnerRelease) { 
     # Grab content needed for commit message and place in a temporary file
     $packageVersion = (Get-Content $ReleaseArtifactSourceDirectory/package-info.json -Raw | ConvertFrom-Json).version
     $commitMessageFile = New-TemporaryFile
@@ -173,5 +175,9 @@ user.name and user.email.
 In the case of a test release set this to ensure that the x-add-version step
 includes `--overwrite-version` to ensure daily packages are properly updated
 in the vcpkg repo.
+
+.PARAMETER PartnerRelease
+In the case of a partner release set this so that the release gets created
+according to the partner release process.
 
 #>

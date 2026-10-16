@@ -5,8 +5,10 @@ parameters:
   VcpkgPortName: not-set
   DisplayNameExtension:
   DailyReleaseRef:
+  PartnerReleaseRef:
   DailyRelease: false
   UpdateVcpkgBeta: true
+  PartnerRelease: false
 
 steps:
   - task: Powershell@2
@@ -17,6 +19,7 @@ steps:
         -PackageSpecPath ${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}/package-info.json
         -SourceDirectory ${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}/vcpkg
         -DailyReleaseRef '${{ parameters.DailyReleaseRef }}'
+        -PartnerReleaseRef '${{ parameters.PartnerReleaseRef }}'
         -Verbose
       pwsh: true
     displayName: Initialize vcpkg release ${{ parameters.DisplayNameExtension }}
@@ -33,6 +36,7 @@ steps:
         -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
         -VcpkgPortName '${{ parameters.VcpkgPortName }}'
         -DailyRelease:$${{ parameters.DailyRelease }}
+        -PartnerRelease:$${{ parameters.PartnerRelease }}
     displayName: Check whether to release to vcpkg
 
   - task: Powershell@2
@@ -46,6 +50,7 @@ steps:
         -VcpkgPortName '${{ parameters.VcpkgPortName }}'
         -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
         -DailyRelease:$${{ parameters.DailyRelease }}
+        -PartnerRelease:$${{ parameters.PartnerRelease }}
       workingDirectory: ${{ parameters.Workspace }}/vcpkg
     condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
     displayName: Update vcpkg port ${{ parameters.DisplayNameExtension }}

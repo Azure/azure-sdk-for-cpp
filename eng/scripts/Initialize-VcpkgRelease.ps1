@@ -16,6 +16,10 @@ Name of the GitHub repo (of the form Azure/azure-sdk-for-cpp)
 If supplied update the portfile.cmake file's REF and SHA512 with values
 associated with the given ref.
 
+.PARAMETER PartnerReleaseRef
+If supplied update the portfile.cmake file's REF and SHA512 with values
+associated with the given ref.
+
 #>
 [CmdletBinding()]
 param (
@@ -31,7 +35,9 @@ param (
     [ValidateNotNullOrEmpty()]
     [string] $GitHubRepo,
 
-    [string] $DailyReleaseRef
+    [string] $DailyReleaseRef,
+    
+    [string] $PartnerReleaseRef
 )
 
 # If there's nothing in the "port" folder to upload set SkipVcpkgUpdate to true
@@ -48,6 +54,11 @@ $tarGzUri = "https://github.com/$GitHubRepo/archive/$($packageSpec.packageName).
 if ($DailyReleaseRef) {
     Write-Verbose "Initializing Daily Release"
     $tarGzUri =  "https://github.com/$GitHubRepo/archive/$DailyReleaseRef.tar.gz"    
+}
+
+if ($PartnerReleaseRef) {
+    Write-Verbose "Initializing Partner Release"
+    $tarGzUri =  "https://github.com/$GitHubRepo/archive/$PartnerReleaseRef.tar.gz"    
 }
 
 Write-Host "Downloading tarball to compute hash from $tarGzUri" 
@@ -70,6 +81,11 @@ $newContent = $portFileContent -replace '(SHA512\s+)0', "`${1}$sha512"
 if ($DailyReleaseRef) {
     Write-Verbose "Overriding REF with test release ref: $DailyReleaseRef"
     $newContent = $newContent -replace '(?m)^(\s+)REF .+$', "`${1}REF $DailyReleaseRef"
+}
+
+if ($PartnerReleaseRef) {
+    Write-Verbose "Overriding REF with partner release ref: $PartnerReleaseRef"
+    $newContent = $newContent -replace '(?m)^(\s+)REF .+$', "`${1}REF $PartnerReleaseRef"
 }
 
 $newContent = $newContent.Replace("`r`n", "`n")

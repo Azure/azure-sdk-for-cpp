@@ -2,7 +2,8 @@ param(
     [string] $ReleaseArtifactSourceDirectory,
     [string] $VcpkgFolder,
     [string] $VcpkgPortName,
-    [switch] $DailyRelease
+    [switch] $DailyRelease,
+    [switch] $PartnerRelease
 )
 
 ."$PSScriptRoot/../common/scripts/common.ps1"
@@ -11,6 +12,12 @@ Set-StrictMode -Version 3
 
 if ($DailyRelease) { 
     Write-Host "Release is daily, publish to vcpkg"
+    Write-Host "##vso[task.setvariable variable=PublishToVcpkg]true"
+    exit 0
+}
+
+if ($PartnerRelease) {
+    Write-Host "Partner release, publish to vcpkg"
     Write-Host "##vso[task.setvariable variable=PublishToVcpkg]true"
     exit 0
 }
