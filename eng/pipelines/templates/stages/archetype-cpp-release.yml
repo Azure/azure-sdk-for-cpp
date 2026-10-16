@@ -44,7 +44,7 @@ stages:
                   steps:
                     - pwsh: Write-Host 'Release gate succeeded. Dependent jobs will run.'
 
-          - ${{ if not(parameters.PublishToVcpkgPartnerFeed) }}:
+          - ${{ if ne(parameters.PublishToVcpkgPartnerFeed, 'true') }}:
             - job: TagRepository
               displayName: "Create release tag"
               condition: ne(variables['Skip.TagRepository'], 'true')
@@ -97,7 +97,7 @@ stages:
                     PackageName: ${{artifact.name}}
                     SourceRootPath: $(Build.SourcesDirectory)
 
-          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), not(parameters.PublishToVcpkgPartnerFeed))}}:
+          - ${{if and(ne(artifact.skipPublishDocGithubIo, 'true'), ne(parameters.PublishToVcpkgPartnerFeed, 'true'))}}:
             - job: PublishDocs
               displayName: Publish Docs to GitHub pages
               condition: and(succeeded(), ne(variables['Skip.PublishDocs'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-cpp-pr'))
@@ -166,7 +166,7 @@ stages:
                       - ci-configs/packages-preview.json
 
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
-            - ${{ if not(parameters.PublishToVcpkgPartnerFeed) }}:
+            - ${{ if ne(parameters.PublishToVcpkgPartnerFeed, 'true') }}:
               - job: PublishVcpkg
                 displayName: Publish to vcpkg
                 condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'))
@@ -316,7 +316,7 @@ stages:
                     condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                     displayName: Comment notification to PR
 
-            - ${{ if parameters.PublishToVcpkgPartnerFeed }}:
+            - ${{ else }}:
               - job: PublishVcpkgPartnerFeed
                 displayName: Publish to vcpkg-partner-feed
                 dependsOn:
