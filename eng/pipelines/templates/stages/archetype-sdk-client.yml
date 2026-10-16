@@ -206,12 +206,6 @@ extends:
               EnvVars: ${{ parameters.EnvVars }}
 
       - ${{ if and(eq(variables['System.TeamProject'], 'internal'), not(endsWith(variables['Build.DefinitionName'], ' - tests'))) }}:
-          - pwsh: |
-              if ('$(PublishToVcpkgPartnerFeed)' -eq 'true') {
-                Write-Host "##vso[task.setvariable variable=PublishToVcpkgPartnerFeed]true"
-              } else {
-                Write-Host "##vso[task.setvariable variable=PublishToVcpkgPartnerFeed]false"
-              }
           - template: archetype-cpp-release.yml@self
             parameters:
               ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -229,8 +223,7 @@ extends:
                                 - LiveTest_${{ cloud.key }}
               Artifacts: ${{ parameters.Artifacts }}
               ArtifactName: packages
-              ${{ eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
-                PublishToVcpkgPartnerFeed: true
+              PublishToVcpkgPartnerFeed: ${{ eq(variables['PublishToVcpkgPartnerFeed'], 'true') }}
               ${{ if eq(parameters.ServiceDirectory, 'template') }}:
                 TestPipeline: true
 
