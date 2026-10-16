@@ -368,8 +368,8 @@ stages:
                 # Clone Vcpkg partner feed
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                   parameters:
-                    RepoOwner: antkmsft
-                    RepoName: azure-sdk-partner-feed-copy
+                    RepoOwner: Azure
+                    RepoName: azure-sdk-vcpkg-partner-feed
                     SetVcpkgRoot: false
 
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
@@ -382,14 +382,14 @@ stages:
 
                 - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
                   parameters:
-                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-partner-feed-copy
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
 
                 # Push changes to vcpkg partner feed
                 - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
                   parameters:
-                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-partner-feed-copy
-                    TargetRepoName: azure-sdk-partner-feed-copy
-                    BaseRepoOwner: antkmsft
+                    WorkingDirectory: $(Pipeline.Workspace)/azure-sdk-vcpkg-partner-feed
+                    TargetRepoName: azure-sdk-vcpkg-partner-feed
+                    BaseRepoOwner: Azure
                     CommitMsg: Update vcpkg-configuration.json
                     BaseRepoBranch: $(DefaultBranch)
 
