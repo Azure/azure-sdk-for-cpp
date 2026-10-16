@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- [[#7316]](https://github.com/Azure/azure-sdk-for-cpp/issues/7316) Preserve Azure CLI user configuration and cache environment variables in spawned POSIX processes.
+
 ### Other Changes
 
 ## 1.13.3 (2026-01-16)
