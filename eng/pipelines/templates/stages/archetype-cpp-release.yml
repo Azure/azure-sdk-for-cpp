@@ -163,7 +163,7 @@ stages:
                       - ci-configs/packages-preview.json
 
           - ${{ if ne(artifact.skipPublishVcpkg, 'true') }}:
-            ${{ if ne(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
+            - ${{ if ne(variables['PublishToVcpkgPartnerFeed'], 'true') }}:
               - job: PublishVcpkg
                 displayName: Publish to vcpkg
                 condition: and(succeeded(), ne(variables['Skip.PublishVcpkg'], 'true'), ne(variables['PublishToVcpkgPartnerFeed'], 'true'))
@@ -313,7 +313,7 @@ stages:
                     condition: and(succeeded(), eq(variables['PublishToVcpkg'], 'true'))
                     displayName: Comment notification to PR
 
-            ${{ else }}:
+            - ${{ else }}:
               - job: PublishVcpkgPartnerFeed
                 displayName: Publish to vcpkg-partner-feed
                 condition: and(succeeded(), eq(variables['PublishToVcpkgPartnerFeed'], 'true'))
