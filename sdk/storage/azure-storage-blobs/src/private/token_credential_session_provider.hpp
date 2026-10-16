@@ -44,8 +44,11 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     struct CacheEntry
     {
       std::mutex Mutex;
+      // Serializes initial creation and refresh for this container.
+      std::timed_mutex SessionCreationMutex;
       Azure::Nullable<SessionTokenInfo> Current;
       Azure::DateTime CooldownUntil;
+      // When the last Create Session attempt began, used to suppress rapid retries.
       Azure::DateTime LastRefreshStarted;
     };
 
