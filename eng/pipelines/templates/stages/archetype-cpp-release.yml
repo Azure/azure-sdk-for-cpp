@@ -313,7 +313,7 @@ stages:
                   displayName: Comment notification to PR
 
             - job: PublishVcpkgPartnerFeed
-              displayName: Publish to partner-feed-copy
+              displayName: Publish to vcpkg-partner-feed
               condition: and(succeeded(), eq(variables['PublishToVcpkgPartnerFeed'], 'true'))
               dependsOn:
                 - ReleaseGate
@@ -364,6 +364,11 @@ stages:
                   parameters:
                     RepoOwner: azure-sdk
                     PRBranchName: $(PrBranchName)
+
+                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                  parameters:
+                    TokenOwners: 
+                      - Azure
 
                 # Clone Vcpkg partner feed
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml

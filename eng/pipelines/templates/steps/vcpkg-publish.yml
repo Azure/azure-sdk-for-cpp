@@ -69,3 +69,17 @@ steps:
           -VcpkgPortName '${{ parameters.VcpkgPortName }}'
           -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
       displayName: Update Vcpkg Betas port ${{ parameters.DisplayNameExtension }}
+
+  - ${{ if eq(parameters.PartnerRelease, 'true') }}:
+    - task: Powershell@2
+      inputs:
+        pwsh: true
+        targetType: filePath
+        filePath: eng/scripts/Update-VcpkgBeta.ps1
+        arguments: >-
+          -VcpkgBetaFolder ${{ parameters.Workspace }}/azure-sdk-vcpkg-partner-feed
+          -VcpkgFolder ${{ parameters.Workspace }}/vcpkg
+          -ReleaseArtifactSourceDirectory "${{ parameters.Workspace }}/packages/${{ parameters.ArtifactName }}"
+          -VcpkgPortName '${{ parameters.VcpkgPortName }}'
+          -GitCommitParameters '-c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com"'
+      displayName: Update Vcpkg Partner Feed port ${{ parameters.DisplayNameExtension }}
