@@ -337,14 +337,14 @@ stages:
                     Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
                   displayName: Set PackageVersion variable
 
-                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
-                  parameters:
-                    TokenOwners: 
-                      - Azure
-
                 # There are potential race conditions if this script runs
                 # in parallel against the same branch name. Release only
                 # one package at a time.
+                # Clone main vcpkg repo
+                - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
+                  parameters:
+                    RepoOwner: azure-sdk
+                    PRBranchName: $(PrBranchName)
 
                 # Clone Vcpkg partner feed
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
