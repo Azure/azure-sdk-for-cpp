@@ -11,9 +11,6 @@ parameters:
   TargetDocRepoOwner: MicrosoftDocs
   TargetDocRepoName: azure-docs-sdk-cpp
 
-variables:
-  PublishToVcpkgPartnerFeed: 'false'
-
 stages:
   - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
     - ${{ each artifact in parameters.Artifacts }}:
