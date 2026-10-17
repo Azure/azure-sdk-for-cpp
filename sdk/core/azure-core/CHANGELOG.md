@@ -10,6 +10,7 @@
 
 ### Bugs Fixed
 
+- [[#7272]](https://github.com/Azure/azure-sdk-for-cpp/issues/7272) Copying `RequestFailedException` (and derived types such as `Azure::Storage::StorageException`) now preserves `what()` instead of replacing it with the service `Message` field. Because the copy constructor is inline in an installed header, consumers linking a prebuilt binary must rebuild to pick up this fix.
 - [[#7353]](https://github.com/Azure/azure-sdk-for-cpp/pull/7353) Fixed a hang in the WinHTTP transport where `WinHttpRequest`'s destructor could block forever when the request was destroyed before `WinHttpSendRequest` associated the request context with the handle, causing `WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING` to be discarded.
 - [[#7200]](https://github.com/Azure/azure-sdk-for-cpp/pull/7200) Fix global-buffer-overflow and undefined shift in `Base64Decode()`. (A community contribution, courtesy of _[groeneai](https://github.com/groeneai)_)
 - Fixed a crash in the WinHTTP transport caused by a race condition where `SetEvent` could be invoked on an already closed handle.
