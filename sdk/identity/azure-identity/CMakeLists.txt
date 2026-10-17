@@ -9,8 +9,6 @@ az_vcpkg_integrate()
 cmake_minimum_required (VERSION 3.13)
 project(azure-identity LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 # Compile Options
 option(FETCH_SOURCE_DEPS "build source dependencies" OFF)
@@ -90,6 +88,7 @@ set(
 )
 
 add_library(azure-identity ${AZURE_IDENTITY_HEADER} ${AZURE_IDENTITY_SOURCE})
+target_compile_features(azure-identity PUBLIC cxx_std_14)
 create_per_service_target_build(identity azure-identity)
 
 # make sure that users can consume the project as a library.
