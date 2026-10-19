@@ -13,7 +13,7 @@ steps:
         Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"        
         Write-Host "Using GitHub token for authentication as ${{ parameters.AuthTokenUsername }}"
 
-        $pat = "${{ parameters.AuthToken }}""
+        $pat = "${{ parameters.AuthToken }}"
         $debugPat = $pat[0..3] -join ''
 
         Write-Host "git clone https://${{ parameters.AuthTokenUsername }}:$debugPat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
