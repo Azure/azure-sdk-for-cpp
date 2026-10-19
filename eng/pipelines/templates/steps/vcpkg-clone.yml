@@ -4,20 +4,18 @@ parameters:
   RepoName: vcpkg
   PRBranchName: not-set
   SetVcpkgRoot: true
-  AuthTokenUsername: azure-sdk
   AuthToken: ''
 
 steps:
   - ${{ if ne(parameters.AuthToken, '') }}:
     - pwsh: |
+        $tokenLength = "${{ parameters.AuthToken }}".Length
+        $startsWithGhp = "${{ parameters.AuthToken }}".Substring(0, 4) -eq "ghp_"
+
         Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"        
-        Write-Host "Using GitHub token for authentication as ${{ parameters.AuthTokenUsername }}"
+        Write-Host "Using GitHub token for authentication (Token length: $tokenLength, Starts with 'ghp_': $startsWithGhp)."
 
-        $pat = "${{ parameters.AuthToken }}"
-        $debugPat = $pat[0..3] -join ''
-
-        Write-Host "git clone https://${{ parameters.AuthTokenUsername }}:$debugPat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
-        git clone https://${{ parameters.AuthTokenUsername }}:$pat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        git clone https://${{ parameters.AuthToken }}@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
         if ($LASTEXITCODE -ne 0) {
           Write-Error "Unable to check out vcpkg fork repo"
           exit $LASTEXITCODE
