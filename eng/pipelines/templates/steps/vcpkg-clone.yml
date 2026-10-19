@@ -16,7 +16,7 @@ steps:
         $pat = "${{ parameters.AuthToken }}""
         $debugPat = $pat[0..3] -join ''
 
-        Write-Host  git clone https://${{ parameters.AuthTokenUsername }}:$debugPat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        Write-Host "git clone https://${{ parameters.AuthTokenUsername }}:$debugPat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
         git clone https://${{ parameters.AuthTokenUsername }}:$pat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
         if ($LASTEXITCODE -ne 0) {
           Write-Error "Unable to check out vcpkg fork repo"
