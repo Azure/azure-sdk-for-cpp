@@ -13,7 +13,11 @@ steps:
         Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"        
         Write-Host "Using GitHub token for authentication as ${{ parameters.AuthTokenUsername }}"
 
-        git clone https://${{ parameters.AuthTokenUsername }}:${{ parameters.AuthToken }}@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        $pat = "${{ parameters.AuthToken }}""
+        $debugPat = $pat[0..3] -join ''
+
+        Write-Host  git clone https://${{ parameters.AuthTokenUsername }}:$debugPat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        git clone https://${{ parameters.AuthTokenUsername }}:$pat@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
         if ($LASTEXITCODE -ne 0) {
           Write-Error "Unable to check out vcpkg fork repo"
           exit $LASTEXITCODE
