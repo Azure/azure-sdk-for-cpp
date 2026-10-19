@@ -376,6 +376,9 @@ stages:
                     RepoOwner: Azure
                     RepoName: azure-sdk-vcpkg-partner-feed
                     SetVcpkgRoot: false
+                    UseGhToken: true
+                  env:
+                    GH_TOKEN: $(GH_TOKEN)
 
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                   parameters:

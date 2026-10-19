@@ -4,11 +4,25 @@ parameters:
   RepoName: vcpkg
   PRBranchName: not-set
   SetVcpkgRoot: true
+  GhTokenUsername: azure-sdk
+  GhTokenEnvVarName: GH_TOKEN
+  UseGhToken: false
 
 steps:
   - pwsh: |
       Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
-      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+      if (${{ parameters.UseGhToken }}) {
+        Write-Host "Using GitHub token for authentication as ${{ parameters.GhTokenUsername }}"
+        $ghToken = $env:${{ parameters.GhTokenEnvVarName }}
+        if (-not $ghToken) {
+          Write-Error "GitHub token is not set in environment variable ${{ parameters.GhTokenEnvVarName }}"
+          exit 1
+        }
+        $repoUrl = "https://${{ parameters.GhTokenUsername }}:$ghToken@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }}"
+      } else {
+        $repoUrl = "https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }}"
+      }
+      git clone $repoUrl ${{ parameters.Workspace }}/${{ parameters.RepoName }}
       if ($LASTEXITCODE -ne 0) {
         Write-Error "Unable to check out vcpkg fork repo"
         exit $LASTEXITCODE
