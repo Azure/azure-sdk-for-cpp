@@ -4,22 +4,16 @@ parameters:
   RepoName: vcpkg
   PRBranchName: not-set
   SetVcpkgRoot: true
-  GhTokenUsername: azure-sdk
-  GhTokenEnvVarName: GH_TOKEN
-  UseGhToken: false
+  AuthTokenUsername: azure-sdk
+  AuthToken: ''
 
 steps:
-  - ${{ if eq(parameters.UseGhToken, true) }}:
+  - ${{ if ne(parameters.AuthToken, '') }}:
     - pwsh: |
         Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"        
-        Write-Host "Using GitHub token for authentication as ${{ parameters.GhTokenUsername }}"
-        $ghToken = $env:${{ parameters.GhTokenEnvVarName }}
-        if (-not $ghToken) {
-          Write-Error "GitHub token is not set in environment variable ${{ parameters.GhTokenEnvVarName }}"
-          exit 1
-        }
+        Write-Host "Using GitHub token for authentication as ${{ parameters.AuthTokenUsername }}"
 
-        git clone https://${{ parameters.GhTokenUsername }}:$ghToken@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        git clone https://${{ parameters.AuthTokenUsername }}:${{ parameters.AuthToken }}@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
         if ($LASTEXITCODE -ne 0) {
           Write-Error "Unable to check out vcpkg fork repo"
           exit $LASTEXITCODE
