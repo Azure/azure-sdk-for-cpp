@@ -28,9 +28,12 @@ Do not replace it with the generated model header or edit generated C++ files.
 The emitter needs the Queue migration changes: XML metadata and nullable values,
 header collections and scalar headers, SAS-safe query parameters, pipeline reuse,
 and optional request bodies. Use committed emitter revision
-`f81e14cd`, including fixed-precision XML date-times, or a revision containing those
-changes. An unmodified published emitter is not sufficient. Generate from a clean
-snapshot of that revision, not from uncommitted emitter experiments.
+`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)),
+including the default-off response-header option, intrinsic optional ETags, and
+fixed-precision XML date-times. An unmodified published emitter is not sufficient.
+Generate from a clean snapshot of that revision, not from uncommitted emitter
+experiments.
 
 Build `packages/codegen.cpp` first, then `packages/typespec-cpp`, using the
 emitter repository's package manifests. Use its compiler and dependencies rather

@@ -43,11 +43,13 @@ specifications or other languages:
 ## Regeneration
 
 Use a clean checkout or snapshot of
-[`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) containing
-`f81e14cd` (fixed-precision XML date-times), encoded byte response headers,
-streaming binary request/response support, and typed XML ETags. The unmodified
-published emitter is not a supported input. Do not include unrelated multipart
-emitter experiments.
+[`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
+`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
+This revision includes the default-off response-header option, intrinsic optional
+ETags, fixed-precision XML date-times, and streaming binary request/response
+support. The unmodified published emitter and unrelated local experiments are not
+supported generation inputs.
 
 Build `packages/codegen.cpp` first, then `packages/typespec-cpp`, using their
 package manifests. The generation toolchain uses TypeSpec compiler 1.12.0 and

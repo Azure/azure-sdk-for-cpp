@@ -38,10 +38,12 @@ responsible for continuation tokens. Downloads continue to use Blob Storage.
 
 Use a clean checkout or snapshot of
 [`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
-`8b90d07e9621bcb53bfc4082f9ddd472b7fca1e4`, or a revision containing those changes.
-Uncommitted emitter experiments and the unmodified published emitter are not
-supported inputs. Build `packages/codegen.cpp` first, then
-`packages/typespec-cpp`, using their package manifests. The generation toolchain
+`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
+This revision includes the default-off response-header option, intrinsic optional
+ETags, and lenient JSON boolean parsing. Uncommitted emitter experiments and the
+unmodified published emitter are not supported inputs. Build `packages/codegen.cpp`
+first, then `packages/typespec-cpp`, using their package manifests. The generation toolchain
 uses TypeSpec compiler 1.12.0 and client-generator-core 0.68.4.
 
 Provide the DataLakeStorage directory from the exact specification revision in
