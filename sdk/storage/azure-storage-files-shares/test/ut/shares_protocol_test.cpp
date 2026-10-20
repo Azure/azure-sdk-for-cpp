@@ -337,8 +337,36 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     EXPECT_EQ(
         response.Value.TransactionalContentHash.Value().Value, (std::vector<uint8_t>{1, 2, 3}));
     EXPECT_EQ(response.Value.HttpHeaders.ContentHash.Value, (std::vector<uint8_t>{4, 5, 6}));
-    EXPECT_EQ(Transport->Requests[0].Headers.at("x-ms-range"), "bytes=2-4");
+    EXPECT_EQ(Transport->Requests[0].Headers.at("Range"), "bytes=2-4");
+    EXPECT_EQ(Transport->Requests[0].Headers.count("x-ms-range"), 0U);
     EXPECT_EQ(Transport->Requests[0].Headers.at("x-ms-range-get-content-md5"), "true");
+  }
+
+  TEST_F(SharesProtocolTest, DownloadPreserves64BitAndOpenEndedRanges)
+  {
+    ShareFileClient client(Endpoint, Options());
+    for (bool const bounded : {true, false})
+    {
+      auto headers = FileHeaders();
+      headers.emplace("content-length", "3");
+      headers.emplace("content-range", "bytes 4294967296-4294967298/4294967299");
+      Transport->Replies.push_back({Http::HttpStatusCode::PartialContent, "abc", headers});
+      Core::Http::HttpRange range;
+      range.Offset = INT64_C(4294967296);
+      if (bounded)
+      {
+        range.Length = 3;
+      }
+      DownloadFileOptions options;
+      options.Range = range;
+      auto response = client.Download(options);
+      EXPECT_EQ(response.Value.ContentRange.Offset, range.Offset);
+      auto const& request = Transport->Requests.back();
+      EXPECT_EQ(
+          request.Headers.at("Range"),
+          bounded ? "bytes=4294967296-4294967298" : "bytes=4294967296-");
+      EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
+    }
   }
 
   TEST_F(SharesProtocolTest, UploadBorrowsStreamAndPreservesHashAndLease)
@@ -358,7 +386,8 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     auto const& request = Transport->Requests.at(0);
     EXPECT_EQ(request.Stream, &stream);
     EXPECT_EQ(request.Headers.at("content-md5"), "AQID");
-    EXPECT_EQ(request.Headers.at("x-ms-range"), "bytes=7-9");
+    EXPECT_EQ(request.Headers.at("Range"), "bytes=7-9");
+    EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
     EXPECT_EQ(request.Headers.at("x-ms-lease-id"), "lease");
     EXPECT_EQ(request.Headers.at("x-ms-file-last-write-time"), "preserve");
     EXPECT_EQ(request.Headers.count("Content-Type"), 0U);
@@ -371,7 +400,8 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     ShareFileClient client(Endpoint, Options());
     auto response = client.ClearRange(512, 512);
     EXPECT_FALSE(response.Value.IsServerEncrypted);
-    EXPECT_EQ(Transport->Requests[0].Headers.at("x-ms-range"), "bytes=512-1023");
+    EXPECT_EQ(Transport->Requests[0].Headers.at("Range"), "bytes=512-1023");
+    EXPECT_EQ(Transport->Requests[0].Headers.count("x-ms-range"), 0U);
     EXPECT_EQ(Transport->Requests[0].Headers.at("x-ms-write"), "clear");
     EXPECT_EQ(Transport->Requests[0].Headers.at("Content-Length"), "0");
     EXPECT_TRUE(Transport->Requests[0].Body.empty());
@@ -390,6 +420,7 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     ShareFileClient client(Endpoint, Options());
     GetFileRangeListOptions options;
     options.PageSizeHint = 1;
+    options.Range = Core::Http::HttpRange{1, 1024};
     auto page = client.GetAllRangeList(options);
     ASSERT_EQ(page.Ranges.size(), 1U);
     EXPECT_EQ(page.Ranges[0].Offset, 1);
@@ -399,6 +430,11 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     EXPECT_EQ(
         Core::Url::Decode(Transport->Requests[1].Url.GetQueryParameters().at("marker")), "next+/=");
     EXPECT_EQ(Transport->Requests[0].Url.GetQueryParameters().at("maxresults"), "1");
+    for (auto const& request : Transport->Requests)
+    {
+      EXPECT_EQ(request.Headers.at("Range"), "bytes=1-1024");
+      EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
+    }
   }
 
   TEST_F(SharesProtocolTest, ShareStatisticsAre64BitAndEntityHeadersOptional)
@@ -538,7 +574,8 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     EXPECT_EQ(response.Value.TransactionalContentHash.Value, hash.Value);
     EXPECT_EQ(response.Value.TransactionalContentHash.Algorithm, HashAlgorithm::Crc64);
     auto const& request = Transport->Requests.at(0);
-    EXPECT_EQ(request.Headers.at("x-ms-range"), "bytes=16-23");
+    EXPECT_EQ(request.Headers.at("Range"), "bytes=16-23");
+    EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
     EXPECT_EQ(request.Headers.at("x-ms-source-range"), "bytes=4-11");
     EXPECT_EQ(request.Headers.at("x-ms-source-content-crc64"), "AQIDBAUGBwg=");
     EXPECT_EQ(request.Headers.at("x-ms-source-if-match-crc64"), "AQIDBAUGBwg=");

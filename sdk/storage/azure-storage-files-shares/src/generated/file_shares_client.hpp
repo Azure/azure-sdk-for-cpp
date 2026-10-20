@@ -303,8 +303,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
     /**
      * @brief Upload a range of bytes to a file.
-     * @param xMsRange Specifies the range of bytes to be written. Both the start and end of the
-     * range must be specified.
+     * @param range Specifies the range of bytes to be written. Both the start and end of the range
+     * must be specified.
      * @param xMsWrite Specify one of the following options: - Update: Writes the bytes specified by
      * the request body into the specified range. - Clear: Clears the specified range and releases
      * the space used in storage for that range.
@@ -315,7 +315,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
      *
      */
     Response<Models::UploadRangeFileResult> UploadRangeFile(
-        const std::string& xMsRange,
+        const std::string& range,
         const Models::FileRangeWriteType& xMsWrite,
         std::int64_t contentLength,
         const FileSharesClientUploadRangeFileOptions& options = {},
@@ -323,8 +323,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
     /**
      * @brief Upload a range of bytes to a file.
-     * @param xMsRange Specifies the range of bytes to be written. Both the start and end of the
-     * range must be specified.
+     * @param range Specifies the range of bytes to be written. Both the start and end of the range
+     * must be specified.
      * @param xMsWrite Specify one of the following options: - Update: Writes the bytes specified by
      * the request body into the specified range. - Clear: Clears the specified range and releases
      * the space used in storage for that range.
@@ -336,7 +336,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
      *
      */
     Response<Models::UploadRangeFileResult> UploadRangeFile(
-        const std::string& xMsRange,
+        const std::string& range,
         const Models::FileRangeWriteType& xMsWrite,
         std::int64_t contentLength,
         Core::IO::BodyStream& optionalBody,
@@ -345,8 +345,8 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
 
     /**
      * @brief Upload a range of bytes to a file where the contents are read from a URL.
-     * @param xMsRange Specifies the range of bytes to be written. Both the start and end of the
-     * range must be specified.
+     * @param range Specifies the range of bytes to be written. Both the start and end of the range
+     * must be specified.
      * @param xMsCopySource Specifies the URL of the source file or blob, up to 2 KB in length.
      * @param xMsWrite Only update is supported.
      * @param contentLength The number of bytes being transmitted in the request body.
@@ -356,7 +356,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
      *
      */
     Response<Models::UploadRangeFromUrlFileResult> UploadRangeFromUrlFile(
-        const std::string& xMsRange,
+        const std::string& range,
         const std::string& xMsCopySource,
         const Models::FileRangeWriteFromUrlType& xMsWrite,
         std::int64_t contentLength,

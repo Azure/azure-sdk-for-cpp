@@ -1263,7 +1263,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     FileSharesClientDownloadFileOptions generated;
     Intent(generated, options.FileRequestIntent);
     generated.XMsAllowTrailingDot = options.AllowTrailingDot;
-    generated.XMsRange = NonEmpty(options.Range);
+    generated.Range = NonEmpty(options.Range);
     generated.XMsRangeGetContentMd5 = options.RangeGetContentMD5;
     generated.XMsStructuredBody = NonEmpty(options.StructuredBodyType);
     generated.XMsLeaseId = NonEmpty(options.LeaseId);
@@ -1562,7 +1562,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Intent(generated, options.FileRequestIntent);
     generated.Sharesnapshot = NonEmpty(options.Sharesnapshot);
     generated.Prevsharesnapshot = NonEmpty(options.Prevsharesnapshot);
-    generated.XMsRange = NonEmpty(options.Range);
+    generated.Range = NonEmpty(options.Range);
     generated.XMsLeaseId = NonEmpty(options.LeaseId);
     generated.XMsAllowTrailingDot = options.AllowTrailingDot;
     generated.XMsFileSupportRename = options.SupportRename;

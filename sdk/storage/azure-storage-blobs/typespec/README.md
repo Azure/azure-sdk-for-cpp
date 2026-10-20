@@ -16,8 +16,10 @@ handwritten, including the Delete Blob and Set Blob Access Tier subrequests.
 These paths retain the existing policy pipelines without calling generated
 operations. Ordinary Delete Blob and Set Blob Access Tier calls remain generated.
 Flat and hierarchical listing use generated streaming HTTP calls
-with the existing XML and Apache Arrow readers. A private pipeline policy
-preserves Storage header conventions before user policies run.
+with the existing XML and Apache Arrow readers. Range requests use the standard
+`Range` header directly from the specification; Azure-specific source-range and
+range-checksum headers are retained. A private pipeline policy preserves the
+remaining Storage header conventions before user policies run.
 
 All public headers, including `inc/azure/storage/blobs/rest_client.hpp`, are
 retained for source compatibility. Do not replace them with generated headers

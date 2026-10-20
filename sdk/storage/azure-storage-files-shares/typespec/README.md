@@ -32,7 +32,8 @@ upstream specification:
 - ETag and Last-Modified response headers are nullable because some operations,
   including ACL and statistics queries, do not require them. Adapters still
   require these headers wherever the legacy operation required them.
-- Range requests use the existing `x-ms-range` header.
+- Range requests use the standard `Range` header directly from the specification.
+  Azure-specific source-range and range-checksum headers are retained.
 
 `pipelineMode: reuse` preserves the existing authentication, retries, service
 version, and user policies. A private policy removes generated `Accept` and binary

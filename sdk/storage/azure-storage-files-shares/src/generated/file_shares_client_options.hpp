@@ -490,7 +490,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Nullable<std::int32_t> Timeout;
 
     /// Return file data only from the specified byte range.
-    Nullable<std::string> XMsRange;
+    Nullable<std::string> Range;
 
     /// When this header is set to true and specified together with the Range header, the service
     /// returns the MD5 hash for the range, as long as the range is less than or equal to 4 MB in
@@ -862,7 +862,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Nullable<std::int32_t> Timeout;
 
     /// Return file data only from the specified byte range.
-    Nullable<std::string> XMsRange;
+    Nullable<std::string> Range;
 
     /// If specified, the lease ID must match the lease ID of the file.
     Nullable<std::string> XMsLeaseId;
@@ -901,7 +901,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
     Nullable<std::int32_t> Timeout;
 
     /// Return file data only from the specified byte range.
-    Nullable<std::string> XMsRange;
+    Nullable<std::string> Range;
 
     /// If specified, the lease ID must match the lease ID of the file.
     Nullable<std::string> XMsLeaseId;

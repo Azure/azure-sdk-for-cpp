@@ -21,12 +21,6 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         Core::Http::Policies::NextHttpPolicy nextPolicy,
         Core::Context const& context) const override
     {
-      auto const range = request.GetHeader("Range");
-      if (range.HasValue())
-      {
-        request.SetHeader("x-ms-range", range.Value());
-        request.RemoveHeader("Range");
-      }
       auto const accept = request.GetHeader("Accept");
       if (accept.HasValue()
           && (accept.Value() == "application/xml" || accept.Value() == "application/json"

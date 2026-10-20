@@ -27,5 +27,3 @@ using Storage.File;
 
 @@alternateType(EtagResponseHeader.etag, Azure.Core.eTag | null, "cpp");
 @@alternateType(LastModifiedResponseHeader.lastModified, utcDateTime | null, "cpp");
-@@TypeSpec.Http.header(RangeHeader.range, "x-ms-range");
-@@TypeSpec.Http.header(RangeRequiredHeader.range, "x-ms-range");

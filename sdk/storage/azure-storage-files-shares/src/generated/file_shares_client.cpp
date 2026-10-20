@@ -3502,9 +3502,9 @@ FileSharesClient::DownloadFile(
     request.SetHeader("x-ms-client-request-id", options.XMsClientRequestId.Value());
   }
 
-  if (options.XMsRange.HasValue())
+  if (options.Range.HasValue())
   {
-    request.SetHeader("x-ms-range", options.XMsRange.Value());
+    request.SetHeader("Range", options.Range.Value());
   }
 
   if (options.XMsRangeGetContentMd5.HasValue())
@@ -5370,7 +5370,7 @@ FileSharesClient::BreakLeaseFile(
 
 Azure::Response<Azure::Storage::Files::Shares::_detail::Models::UploadRangeFileResult>
 FileSharesClient::UploadRangeFile(
-    const std::string& xMsRange,
+    const std::string& range,
     const Models::FileRangeWriteType& xMsWrite,
     std::int64_t contentLength,
     const FileSharesClientUploadRangeFileOptions& options,
@@ -5393,7 +5393,7 @@ FileSharesClient::UploadRangeFile(
   request.SetHeader("Content-Type", "application/octet-stream");
 
   request.SetHeader("x-ms-version", m_xMsVersion);
-  request.SetHeader("x-ms-range", xMsRange);
+  request.SetHeader("Range", range);
   request.SetHeader("x-ms-write", xMsWrite.ToString());
   request.SetHeader("Content-Length", std::to_string(contentLength));
   if (options.XMsClientRequestId.HasValue())
@@ -5559,7 +5559,7 @@ FileSharesClient::UploadRangeFile(
 
 Azure::Response<Azure::Storage::Files::Shares::_detail::Models::UploadRangeFileResult>
 FileSharesClient::UploadRangeFile(
-    const std::string& xMsRange,
+    const std::string& range,
     const Models::FileRangeWriteType& xMsWrite,
     std::int64_t contentLength,
     Core::IO::BodyStream& optionalBody,
@@ -5584,7 +5584,7 @@ FileSharesClient::UploadRangeFile(
   request.SetHeader("Content-Type", "application/octet-stream");
 
   request.SetHeader("x-ms-version", m_xMsVersion);
-  request.SetHeader("x-ms-range", xMsRange);
+  request.SetHeader("Range", range);
   request.SetHeader("x-ms-write", xMsWrite.ToString());
   request.SetHeader("Content-Length", std::to_string(contentLength));
   if (options.XMsClientRequestId.HasValue())
@@ -5750,7 +5750,7 @@ FileSharesClient::UploadRangeFile(
 
 Azure::Response<Azure::Storage::Files::Shares::_detail::Models::UploadRangeFromUrlFileResult>
 FileSharesClient::UploadRangeFromUrlFile(
-    const std::string& xMsRange,
+    const std::string& range,
     const std::string& xMsCopySource,
     const Models::FileRangeWriteFromUrlType& xMsWrite,
     std::int64_t contentLength,
@@ -5769,7 +5769,7 @@ FileSharesClient::UploadRangeFromUrlFile(
   Core::Http::Request request(Core::Http::HttpMethod::Put, url);
 
   request.SetHeader("x-ms-version", m_xMsVersion);
-  request.SetHeader("x-ms-range", xMsRange);
+  request.SetHeader("Range", range);
   request.SetHeader("x-ms-copy-source", xMsCopySource);
   request.SetHeader("x-ms-write", xMsWrite.ToString());
   request.SetHeader("Content-Length", std::to_string(contentLength));
@@ -5989,9 +5989,9 @@ FileSharesClient::GetRangeListFile(
     request.SetHeader("x-ms-client-request-id", options.XMsClientRequestId.Value());
   }
 
-  if (options.XMsRange.HasValue())
+  if (options.Range.HasValue())
   {
-    request.SetHeader("x-ms-range", options.XMsRange.Value());
+    request.SetHeader("Range", options.Range.Value());
   }
 
   if (options.XMsLeaseId.HasValue())
@@ -6328,9 +6328,9 @@ FileSharesClient::ListAllRangesFile(
     request.SetHeader("x-ms-client-request-id", options.XMsClientRequestId.Value());
   }
 
-  if (options.XMsRange.HasValue())
+  if (options.Range.HasValue())
   {
-    request.SetHeader("x-ms-range", options.XMsRange.Value());
+    request.SetHeader("Range", options.Range.Value());
   }
 
   if (options.XMsLeaseId.HasValue())

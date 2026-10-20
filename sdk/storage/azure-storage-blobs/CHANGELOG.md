@@ -13,6 +13,7 @@
 ### Other Changes
 
 - Migrated the private protocol layer from AutoRest to TypeSpec without changing the public API.
+- Range requests now send the standard `Range` header instead of `x-ms-range`.
 
 ## 12.19.0 (2026-09-29)
 

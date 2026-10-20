@@ -317,9 +317,55 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     EXPECT_EQ(std::string(bytes.begin(), bytes.end()), "abc");
     EXPECT_EQ(response.RawResponse->GetHeaders().at("x-ms-content-crc64"), "AQIDBAUGBwg=");
     auto const& request = Transport->Requests.at(0);
-    EXPECT_EQ(request.Headers.at("x-ms-range"), "bytes=2-4");
-    EXPECT_EQ(request.Headers.count("range"), 0U);
+    EXPECT_EQ(request.Headers.at("Range"), "bytes=2-4");
+    EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
+    EXPECT_EQ(request.Headers.at("x-ms-range-get-content-crc64"), "true");
     EXPECT_EQ(request.Url.GetQueryParameters().at("snapshot"), "a%2Bb%3D");
+  }
+
+  TEST_F(BlobsProtocolTest, DownloadPreserves64BitAndOpenEndedRanges)
+  {
+    BlobClient client(Endpoint, Options());
+    for (bool const bounded : {true, false})
+    {
+      auto headers = DownloadHeaders();
+      headers.emplace("content-range", "bytes 4294967296-4294967298/4294967299");
+      Transport->Replies.push_back({Http::HttpStatusCode::PartialContent, "abc", headers});
+      Core::Http::HttpRange range;
+      range.Offset = INT64_C(4294967296);
+      if (bounded)
+      {
+        range.Length = 3;
+      }
+      DownloadBlobOptions options;
+      options.Range = range;
+      auto response = client.Download(options);
+      EXPECT_EQ(response.Value.ContentRange.Offset, range.Offset);
+      auto const& request = Transport->Requests.back();
+      EXPECT_EQ(
+          request.Headers.at("Range"),
+          bounded ? "bytes=4294967296-4294967298" : "bytes=4294967296-");
+      EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
+    }
+  }
+
+  TEST_F(BlobsProtocolTest, PageUpdatesAndClearsPreserve64BitRangeHeaders)
+  {
+    auto headers = EntityHeaders();
+    headers.emplace("x-ms-blob-sequence-number", "0");
+    Transport->Replies = {
+        {Http::HttpStatusCode::Created, "", headers}, {Http::HttpStatusCode::Created, "", headers}};
+    PageBlobClient client(Endpoint, Options());
+    std::vector<uint8_t> bytes(512);
+    Core::IO::MemoryBodyStream stream(bytes);
+    client.UploadPages(INT64_C(4294967296), stream);
+    client.ClearPages({INT64_C(4294967296), 512});
+    ASSERT_EQ(Transport->Requests.size(), 2U);
+    for (auto const& request : Transport->Requests)
+    {
+      EXPECT_EQ(request.Headers.at("Range"), "bytes=4294967296-4294967807");
+      EXPECT_EQ(request.Headers.count("x-ms-range"), 0U);
+    }
   }
 
   TEST_F(BlobsProtocolTest, MissingConditionalDownloadHeadersRemainOptional)
