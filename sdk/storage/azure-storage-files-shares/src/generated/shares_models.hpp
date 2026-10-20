@@ -924,7 +924,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
       Nullable<DateTime> LastModified;
 
       /// The ETag of the file.
-      Nullable<ETag> ETag;
+      Azure::ETag ETag;
     };
 
     /**

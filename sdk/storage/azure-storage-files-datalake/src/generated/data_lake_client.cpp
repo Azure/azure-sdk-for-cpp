@@ -367,14 +367,14 @@ Azure::Response<Azure::Storage::Files::DataLake::_detail::Models::CreatePathResu
         options.IfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsSourceIfModifiedSince.HasValue())

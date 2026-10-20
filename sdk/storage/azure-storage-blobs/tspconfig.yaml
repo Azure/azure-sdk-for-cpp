@@ -7,6 +7,7 @@ options:
     headersOutputPath: azure/storage/blobs
     noPublicHeaders: true
     pipelineMode: reuse
+    includeResponseHeadersInModels: true
     binaryResponseBodyMode: stream
     typeRename:
       - from: BlobClient

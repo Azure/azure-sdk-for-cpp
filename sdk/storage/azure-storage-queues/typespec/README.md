@@ -5,6 +5,9 @@ Queue operations are generated directly from TypeSpec using
 `tsp-location.yaml` pins the service specification and `tspconfig.yaml` selects
 the service version and internal protocol generation.
 
+`includeResponseHeadersInModels: true` explicitly enables the typed response
+headers consumed by the compatibility layer.
+
 All generated code is in `src/generated`, under
 `Azure::Storage::Queues::_detail`. The public clients reuse their existing
 Storage pipelines and convert generated models to the existing public models.

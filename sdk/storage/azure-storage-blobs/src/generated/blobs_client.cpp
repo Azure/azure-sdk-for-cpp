@@ -8260,14 +8260,14 @@ BlobsClient::StartCopyFromUrlBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsSourceIfTags.HasValue())
@@ -8476,14 +8476,14 @@ BlobsClient::CopyFromUrlBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.IfModifiedSince.HasValue())
@@ -9025,14 +9025,14 @@ Azure::Response<Azure::Storage::Blobs::_detail::Models::GetTagsBlobResult> Blobs
         options.XMsBlobIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsBlobIfMatch.HasValue() && options.XMsBlobIfMatch.Value().HasValue())
+  if (options.XMsBlobIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-blob-if-match", options.XMsBlobIfMatch.Value().ToString());
+    request.SetHeader("x-ms-blob-if-match", options.XMsBlobIfMatch.ToString());
   }
 
-  if (options.XMsBlobIfNoneMatch.HasValue() && options.XMsBlobIfNoneMatch.Value().HasValue())
+  if (options.XMsBlobIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-blob-if-none-match", options.XMsBlobIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-blob-if-none-match", options.XMsBlobIfNoneMatch.ToString());
   }
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -9307,14 +9307,14 @@ Azure::Response<Azure::Storage::Blobs::_detail::Models::SetTagsBlobResult> Blobs
         options.XMsBlobIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsBlobIfMatch.HasValue() && options.XMsBlobIfMatch.Value().HasValue())
+  if (options.XMsBlobIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-blob-if-match", options.XMsBlobIfMatch.Value().ToString());
+    request.SetHeader("x-ms-blob-if-match", options.XMsBlobIfMatch.ToString());
   }
 
-  if (options.XMsBlobIfNoneMatch.HasValue() && options.XMsBlobIfNoneMatch.Value().HasValue())
+  if (options.XMsBlobIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-blob-if-none-match", options.XMsBlobIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-blob-if-none-match", options.XMsBlobIfNoneMatch.ToString());
   }
 
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
@@ -10293,14 +10293,14 @@ BlobsClient::AppendBlockFromUrlAppendBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsCopySourceAuthorization.HasValue())
@@ -11359,14 +11359,14 @@ BlobsClient::UploadBlobFromUrlBlockBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsSourceIfTags.HasValue())
@@ -12023,14 +12023,14 @@ BlobsClient::StageBlockFromUrlBlockBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsCopySourceAuthorization.HasValue())
@@ -14642,14 +14642,14 @@ BlobsClient::UploadPagesFromUrlPageBlob(
         options.XMsSourceIfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
-  if (options.XMsSourceIfMatch.HasValue() && options.XMsSourceIfMatch.Value().HasValue())
+  if (options.XMsSourceIfMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-match", options.XMsSourceIfMatch.ToString());
   }
 
-  if (options.XMsSourceIfNoneMatch.HasValue() && options.XMsSourceIfNoneMatch.Value().HasValue())
+  if (options.XMsSourceIfNoneMatch.HasValue())
   {
-    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.Value().ToString());
+    request.SetHeader("x-ms-source-if-none-match", options.XMsSourceIfNoneMatch.ToString());
   }
 
   if (options.XMsCopySourceAuthorization.HasValue())

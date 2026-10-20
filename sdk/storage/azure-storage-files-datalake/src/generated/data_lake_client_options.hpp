@@ -169,10 +169,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     Nullable<DateTime> IfUnmodifiedSince;
 
     /// Specify an ETag value to operate only on blobs with a matching value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify an ETag value to operate only on blobs without a matching value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Specify this header value to operate only on a blob if it has been modified since the
     /// specified date/time.

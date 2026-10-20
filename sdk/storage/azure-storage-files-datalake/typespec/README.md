@@ -2,7 +2,8 @@
 
 The private protocol client is generated from the DataLakeStorage TypeSpec
 specification pinned in `tsp-location.yaml`. `tspconfig.yaml` enables pipeline
-reuse and lenient JSON boolean parsing. Generated files live in `src/generated`,
+reuse, typed response header models (`includeResponseHeadersInModels: true`),
+and lenient JSON boolean parsing. Generated files live in `src/generated`,
 under `Azure::Storage::Files::DataLake::_detail`.
 
 `src/datalake_protocol.cpp` adapts generated options and results to the existing

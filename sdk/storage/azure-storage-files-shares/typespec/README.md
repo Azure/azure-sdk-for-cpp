@@ -4,6 +4,9 @@ The private protocol is generated from the FileStorage TypeSpec revision pinned
 in `tsp-location.yaml`. The C++ projection selects API version `2026-10-06`,
 matching the existing SDK, including paginated range listing.
 
+`includeResponseHeadersInModels: true` explicitly enables the typed response
+headers consumed by the compatibility layer.
+
 Generated files live in `src/generated` under
 `Azure::Storage::Files::Shares::_detail`. The generated client is named
 `FileSharesClient` to avoid colliding with the retained legacy private `FileClient`.

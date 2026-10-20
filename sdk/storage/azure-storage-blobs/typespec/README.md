@@ -2,7 +2,8 @@
 
 The private protocol client is generated from the BlobStorage TypeSpec
 specification pinned in `tsp-location.yaml`. `tspconfig.yaml` enables pipeline
-reuse and streaming binary responses. Generated files live in `src/generated`,
+reuse, typed response header models (`includeResponseHeadersInModels: true`),
+and streaming binary responses. Generated files live in `src/generated`,
 under `Azure::Storage::Blobs::_detail`.
 
 `src/blobs_protocol.cpp` adapts generated options and results to the existing SDK

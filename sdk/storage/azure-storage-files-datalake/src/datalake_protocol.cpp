@@ -134,7 +134,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
         item.EncryptionContext = std::move(path.EncryptionContext);
         if (path.ETag.HasValue())
         {
-          item.ETag = path.ETag.Value().ToString();
+          item.ETag = path.ETag.ToString();
         }
         result.Paths.emplace_back(std::move(item));
       }

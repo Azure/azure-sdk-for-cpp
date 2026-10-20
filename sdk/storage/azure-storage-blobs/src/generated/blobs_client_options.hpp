@@ -1216,10 +1216,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Specifies a SQL-like where clause on blob tags to operate only on a source blob with
     /// matching tags.
@@ -1288,10 +1288,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Specify this value to operate only on a blob if it has been modified since the specified
     /// date-time.
@@ -1443,10 +1443,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsBlobIfUnmodifiedSince;
 
     /// Specify this value to operate only on a blob with a matching Etag value.
-    Nullable<ETag> XMsBlobIfMatch;
+    ETag XMsBlobIfMatch;
 
     /// Specify this value to operate only on a blob with a non-matching Etag value.
-    Nullable<ETag> XMsBlobIfNoneMatch;
+    ETag XMsBlobIfNoneMatch;
   };
 
   /**
@@ -1488,10 +1488,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsBlobIfUnmodifiedSince;
 
     /// Specify this value to operate only on a blob with a matching Etag value.
-    Nullable<ETag> XMsBlobIfMatch;
+    ETag XMsBlobIfMatch;
 
     /// Specify this value to operate only on a blob with a non-matching Etag value.
-    Nullable<ETag> XMsBlobIfNoneMatch;
+    ETag XMsBlobIfNoneMatch;
   };
 
   /**
@@ -1727,10 +1727,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Only the Bearer authorization scheme is supported, and the value must be a valid OAuth
     /// access token for the copy source.
@@ -1976,10 +1976,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Specifies a SQL-like where clause on blob tags to operate only on a source blob with
     /// matching tags.
@@ -2116,10 +2116,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Only the Bearer authorization scheme is supported, and the value must be a valid OAuth
     /// access token for the copy source.
@@ -2603,10 +2603,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     Nullable<DateTime> XMsSourceIfUnmodifiedSince;
 
     /// Specify this value to operate only on a source blob with a matching Etag value.
-    Nullable<ETag> XMsSourceIfMatch;
+    ETag XMsSourceIfMatch;
 
     /// Specify this value to operate only on a source blob with a non-matching Etag value.
-    Nullable<ETag> XMsSourceIfNoneMatch;
+    ETag XMsSourceIfNoneMatch;
 
     /// Only the Bearer authorization scheme is supported, and the value must be a valid OAuth
     /// access token for the copy source.

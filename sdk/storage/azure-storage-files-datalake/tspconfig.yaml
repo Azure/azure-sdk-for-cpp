@@ -7,5 +7,6 @@ options:
     headersOutputPath: azure/storage/files/datalake
     noPublicHeaders: true
     pipelineMode: reuse
+    includeResponseHeadersInModels: true
     enableLenientJsonBooleanParsing: true
     api-version: "2026-06-06"

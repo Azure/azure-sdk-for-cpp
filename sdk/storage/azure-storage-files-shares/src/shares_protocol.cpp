@@ -344,7 +344,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares { names
       }
       if (source.ETag.HasValue())
       {
-        target.Etag = source.ETag.Value();
+        target.Etag = source.ETag;
       }
       target.SmbProperties.CreatedOn = source.CreationTime;
       target.SmbProperties.LastWrittenOn = source.LastWriteTime;

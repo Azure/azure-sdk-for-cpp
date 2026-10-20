@@ -278,7 +278,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       Nullable<std::string> EncryptionContext;
 
       ///
-      Nullable<ETag> ETag;
+      Azure::ETag ETag;
     };
 
     /**
