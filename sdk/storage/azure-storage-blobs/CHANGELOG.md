@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Migrated the private protocol layer from AutoRest to TypeSpec without changing the public API.
+
 ## 12.19.0 (2026-09-29)
 
 ### Features Added

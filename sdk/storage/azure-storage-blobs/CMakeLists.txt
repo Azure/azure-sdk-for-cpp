@@ -76,7 +76,13 @@ set(
     src/private/avro_parser.cpp
     src/private/avro_parser.hpp
     src/private/package_version.hpp
-    src/rest_client.cpp
+    src/private/blobs_protocol.hpp
+    src/blobs_protocol.cpp
+    src/generated/blobs.cpp
+    src/generated/blobs_client.cpp
+    src/generated/blobs_client.hpp
+    src/generated/blobs_client_options.hpp
+    src/generated/blobs_models.hpp
 )
 
 add_library(azure-storage-blobs ${AZURE_STORAGE_BLOBS_HEADER} ${AZURE_STORAGE_BLOBS_SOURCE})

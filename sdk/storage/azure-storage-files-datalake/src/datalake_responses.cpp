@@ -10,6 +10,24 @@
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
   namespace Models {
+    namespace _detail {
+      const PathRenameMode PathRenameMode::Legacy("legacy");
+      const PathRenameMode PathRenameMode::Posix("posix");
+      const PathSetAccessControlListRecursiveMode PathSetAccessControlListRecursiveMode::Set("set");
+      const PathSetAccessControlListRecursiveMode PathSetAccessControlListRecursiveMode::Modify(
+          "modify");
+      const PathSetAccessControlListRecursiveMode PathSetAccessControlListRecursiveMode::Remove(
+          "remove");
+    } // namespace _detail
+    const PublicAccessType PublicAccessType::None("");
+    const PublicAccessType PublicAccessType::FileSystem("container");
+    const PublicAccessType PublicAccessType::Path("blob");
+    const PathResourceType PathResourceType::Directory("directory");
+    const PathResourceType PathResourceType::File("file");
+    const LeaseAction LeaseAction::Acquire("acquire");
+    const LeaseAction LeaseAction::AutoRenew("auto-renew");
+    const LeaseAction LeaseAction::Release("release");
+    const LeaseAction LeaseAction::AcquireRelease("acquire-release");
 
     Acl Acl::FromString(const std::string& aclString)
     {

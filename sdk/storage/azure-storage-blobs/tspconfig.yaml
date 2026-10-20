@@ -1,0 +1,14 @@
+emit:
+  - "@azure-tools/typespec-cpp"
+options:
+  "@azure-tools/typespec-cpp":
+    flavor: azure
+    namespace: Azure::Storage::Blobs::_detail
+    headersOutputPath: azure/storage/blobs
+    noPublicHeaders: true
+    pipelineMode: reuse
+    binaryResponseBodyMode: stream
+    typeRename:
+      - from: BlobClient
+        to: BlobsClient
+    api-version: "2026-10-06"

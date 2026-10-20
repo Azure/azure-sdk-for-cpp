@@ -4,6 +4,7 @@
 #include "azure/storage/blobs/blob_service_client.hpp"
 
 #include "azure/storage/blobs/blob_batch.hpp"
+#include "private/blobs_protocol.hpp"
 #include "private/package_version.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
@@ -70,7 +71,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.SharedKeyAuthPolicy = std::move(sharedKeyPolicy);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildBlobsPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   BlobServiceClient::BlobServiceClient(
@@ -113,7 +114,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.TokenAuthPolicy = std::move(tokenAuthPolicy);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildBlobsPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   BlobServiceClient::BlobServiceClient(
@@ -147,7 +148,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     pipelineOptions.ApiVersion = options.ApiVersion;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildBlobsPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   BlobContainerClient BlobServiceClient::GetBlobContainerClient(

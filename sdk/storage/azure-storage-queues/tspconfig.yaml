@@ -1,0 +1,10 @@
+emit:
+  - "@azure-tools/typespec-cpp"
+options:
+  "@azure-tools/typespec-cpp":
+    flavor: azure
+    namespace: Azure::Storage::Queues::_detail
+    headersOutputPath: azure/storage/queues
+    noPublicHeaders: true
+    pipelineMode: reuse
+    api-version: "2026-04-06"

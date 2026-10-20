@@ -6,6 +6,7 @@
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 #include "private/package_version.hpp"
+#include "private/shares_protocol.hpp"
 
 #include <azure/core/credentials/credentials.hpp>
 #include <azure/core/http/policies/policy.hpp>
@@ -57,7 +58,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildSharesPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareClient::ShareClient(
@@ -89,7 +90,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildSharesPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareClient::ShareClient(const std::string& shareUrl, const ShareClientOptions& options)
@@ -108,7 +109,7 @@ namespace Azure { namespace Storage { namespace Files { namespace Shares {
     pipelineOptions.ApiVersion = options.ApiVersion;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildSharesPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   ShareDirectoryClient ShareClient::GetRootDirectoryClient() const

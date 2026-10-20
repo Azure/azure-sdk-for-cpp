@@ -63,15 +63,21 @@ set(
     src/datalake_file_system_client.cpp
     src/datalake_lease_client.cpp
     src/datalake_options.cpp
+    src/datalake_protocol.cpp
     src/datalake_path_client.cpp
     src/datalake_responses.cpp
     src/datalake_sas_builder.cpp
     src/datalake_service_client.cpp
     src/datalake_utilities.cpp
     src/private/datalake_constants.hpp
+    src/private/datalake_protocol.hpp
     src/private/datalake_utilities.hpp
     src/private/package_version.hpp
-    src/rest_client.cpp
+    src/generated/data_lake_client.cpp
+    src/generated/data_lake_client.hpp
+    src/generated/data_lake_client_options.hpp
+    src/generated/datalake.cpp
+    src/generated/datalake_models.hpp
 )
 
 add_library(azure-storage-files-datalake ${AZURE_STORAGE_FILES_DATALAKE_HEADER} ${AZURE_STORAGE_FILES_DATALAKE_SOURCE})

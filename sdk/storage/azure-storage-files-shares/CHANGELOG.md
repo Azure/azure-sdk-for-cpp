@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Migrated the private File Shares protocol layer from AutoRest to TypeSpec while retaining the
+  existing public API, streaming transfers, and Storage pipeline behavior.
+
 ## 12.19.0 (2026-09-29)
 
 ### Features Added

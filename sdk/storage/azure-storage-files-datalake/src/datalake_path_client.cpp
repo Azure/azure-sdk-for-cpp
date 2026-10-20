@@ -4,6 +4,7 @@
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 
 #include "private/datalake_constants.hpp"
+#include "private/datalake_protocol.hpp"
 #include "private/datalake_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -65,7 +66,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -102,7 +103,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakePathClient::DataLakePathClient(
@@ -125,7 +126,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.ApiVersion = options.ApiVersion;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   Azure::Response<Models::SetPathAccessControlListResult> DataLakePathClient::SetAccessControlList(
@@ -142,8 +143,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return _detail::PathClient::SetAccessControlList(
-        *m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    return _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+        .SetAccessControlList(protocolLayerOptions, context);
   }
 
   Azure::Response<Models::SetPathPermissionsResult> DataLakePathClient::SetPermissions(
@@ -160,8 +161,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    return _detail::PathClient::SetAccessControlList(
-        *m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    return _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+        .SetAccessControlList(protocolLayerOptions, context);
   }
 
   Azure::Response<Models::SetPathHttpHeadersResult> DataLakePathClient::SetHttpHeaders(
@@ -247,7 +248,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       protocolLayerOptions.EncryptionAlgorithm
           = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
-    return _detail::PathClient::Create(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    return _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+        .Create(protocolLayerOptions, context);
   }
 
   Azure::Response<Models::CreatePathResult> DataLakePathClient::CreateIfNotExists(
@@ -295,8 +297,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       {
         protocolLayerOptions.Paginated = paginated;
       }
-      auto response
-          = _detail::PathClient::Delete(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+      auto response = _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+                          .Delete(protocolLayerOptions, context);
       continuationToken = Azure::Core::Http::_internal::HttpShared::GetHeaderOrEmptyString(
           response.RawResponse->GetHeaders(), "x-ms-continuation");
       if (continuationToken.empty())
@@ -412,8 +414,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Upn = options.IncludeUserPrincipalName;
-    auto response = _detail::PathClient::GetAccessControlList(
-        *m_pipeline, m_pathUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    auto response
+        = _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+              .GetAccessControlList(protocolLayerOptions, _internal::WithReplicaStatus(context));
     Azure::Nullable<std::vector<Models::Acl>> acl;
     if (!response.Value.Acl.empty())
     {
@@ -444,8 +447,9 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.Upn = options.IncludeUserPrincipalName;
-    auto response = _detail::PathClient::GetSystemProperties(
-        *m_pipeline, m_pathUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    auto response
+        = _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+              .GetSystemProperties(protocolLayerOptions, _internal::WithReplicaStatus(context));
     if (response.RawResponse->GetHeaders().at("x-ms-resource-type") == "file")
     {
       response.Value.IsDirectory = false;
@@ -489,8 +493,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.MaxRecords = options.PageSizeHint;
     protocolLayerOptions.ForceFlag = options.ContinueOnFailure;
     protocolLayerOptions.Acl = Models::Acl::SerializeAcls(acls);
-    auto response = _detail::PathClient::SetAccessControlListRecursive(
-        *m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    auto response = _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+                        .SetAccessControlListRecursive(protocolLayerOptions, context);
 
     SetPathAccessControlListRecursivePagedResponse pagedResponse;
     pagedResponse.NumberOfSuccessfulFiles = response.Value.NumberOfSuccessfulDirectories;

@@ -1,0 +1,14 @@
+emit:
+  - "@azure-tools/typespec-cpp"
+options:
+  "@azure-tools/typespec-cpp":
+    flavor: azure
+    namespace: Azure::Storage::Files::Shares::_detail
+    headersOutputPath: azure/storage/files/shares
+    noPublicHeaders: true
+    pipelineMode: reuse
+    binaryResponseBodyMode: stream
+    typeRename:
+      - from: FileClient
+        to: FileSharesClient
+    api-version: "2026-10-06"

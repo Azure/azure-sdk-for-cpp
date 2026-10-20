@@ -4,6 +4,7 @@
 #include "azure/storage/files/datalake/datalake_service_client.hpp"
 
 #include "azure/storage/files/datalake/datalake_file_system_client.hpp"
+#include "private/datalake_protocol.hpp"
 #include "private/datalake_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -60,7 +61,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
@@ -97,7 +98,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeServiceClient::DataLakeServiceClient(
@@ -121,7 +122,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.ApiVersion = options.ApiVersion;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeFileSystemClient DataLakeServiceClient::GetFileSystemClient(

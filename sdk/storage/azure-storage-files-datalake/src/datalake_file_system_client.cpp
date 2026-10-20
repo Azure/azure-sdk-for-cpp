@@ -7,6 +7,7 @@
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 #include "azure/storage/files/datalake/datalake_path_client.hpp"
 #include "private/datalake_constants.hpp"
+#include "private/datalake_protocol.hpp"
 #include "private/datalake_utilities.hpp"
 #include "private/package_version.hpp"
 
@@ -67,7 +68,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeFileSystemClient::DataLakeFileSystemClient(
@@ -104,7 +105,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeFileSystemClient::DataLakeFileSystemClient(
@@ -128,7 +129,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     pipelineOptions.ApiVersion = options.ApiVersion;
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildDataLakePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   DataLakeFileClient DataLakeFileSystemClient::GetFileClient(const std::string& fileName) const
@@ -273,8 +274,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.ContinuationToken = options.ContinuationToken;
     protocolLayerOptions.BeginFrom = options.StartFrom;
 
-    auto response = _detail::FileSystemClient::ListPaths(
-        *m_pipeline, m_fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    auto response = _detail::DataLakeProtocolClient(m_fileSystemUrl, m_pipeline)
+                        .ListPaths(protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     ListPathsPagedResponse pagedResponse;
     for (auto& path : response.Value.Paths)
@@ -383,8 +384,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
-    auto result = _detail::PathClient::Create(
-        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
+    auto result = _detail::DataLakeProtocolClient(destinationDfsUrl, m_pipeline)
+                      .Create(protocolLayerOptions, context);
 
     Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
     if (m_clientConfiguration.UploadValidationOptions.HasValue())
@@ -457,8 +458,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
-    auto result = _detail::PathClient::Create(
-        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
+    auto result = _detail::DataLakeProtocolClient(destinationDfsUrl, m_pipeline)
+                      .Create(protocolLayerOptions, context);
 
     Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
     if (m_clientConfiguration.UploadValidationOptions.HasValue())
@@ -551,8 +552,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     _detail::PathClient::UndeletePathOptions protocolLayerOptions;
     protocolLayerOptions.UndeleteSource = undeleteSource;
-    auto result
-        = _detail::PathClient::Undelete(*m_pipeline, blobUrl, protocolLayerOptions, context);
+    auto result = _detail::DataLakeProtocolClient(blobUrl, m_pipeline)
+                      .Undelete(protocolLayerOptions, context);
 
     if (result.Value.ResourceType.HasValue()
         && result.Value.ResourceType.Value() == Models::PathResourceType::Directory.ToString())

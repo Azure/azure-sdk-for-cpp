@@ -1,5 +1,8 @@
 # Azure Storage C++ Protocol Layer
 
+This AutoRest configuration is retained for historical reference. The active
+protocol layer is generated from TypeSpec; see [generation instructions](../typespec/README.md).
+
 > see https://aka.ms/autorest
 
 ## Configuration

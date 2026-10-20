@@ -4,6 +4,7 @@
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
 
 #include "private/datalake_constants.hpp"
+#include "private/datalake_protocol.hpp"
 #include "private/datalake_utilities.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
@@ -113,8 +114,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         encodingStreamOptions.Flags = _internal::StructuredMessageFlags::Crc64;
         auto structuredContent
             = _internal::StructuredMessageEncodingStream(&content, encodingStreamOptions);
-        auto response = _detail::FileClient::Append(
-            *m_pipeline, m_pathUrl, structuredContent, protocolLayerOptions, context);
+        auto response = _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+                            .Append(structuredContent, protocolLayerOptions, context);
         if (response.RawResponse->GetHeaders().count("x-ms-structured-body") == 0)
         {
           throw Azure::Storage::StorageException(
@@ -123,8 +124,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         return response;
       }
     }
-    return _detail::FileClient::Append(
-        *m_pipeline, m_pathUrl, content, protocolLayerOptions, context);
+    return _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+        .Append(content, protocolLayerOptions, context);
   }
 
   Azure::Response<Models::FlushFileResult> DataLakeFileClient::Flush(
@@ -167,7 +168,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     {
       protocolLayerOptions.LeaseDuration = static_cast<int64_t>(options.LeaseDuration->count());
     }
-    return _detail::FileClient::Flush(*m_pipeline, m_pathUrl, protocolLayerOptions, context);
+    return _detail::DataLakeProtocolClient(m_pathUrl, m_pipeline)
+        .Flush(protocolLayerOptions, context);
   }
 
   Azure::Response<Models::DeleteFileResult> DataLakeFileClient::Delete(

@@ -12,6 +12,7 @@
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/constants.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
+#include <azure/storage/common/storage_exception.hpp>
 
 #include <algorithm>
 #include <cstring>
@@ -280,13 +281,76 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     struct DeleteBlobSubrequest final : public _detail::BatchSubrequest
     {
-      DeleteBlobSubrequest(Blobs::BlobClient blobClient, DeleteBlobOptions options)
-          : BatchSubrequest(_detail::BatchSubrequestType::DeleteBlob),
-            Client(std::move(blobClient)), Options(std::move(options))
+      DeleteBlobSubrequest(
+          Core::Url url,
+          std::shared_ptr<Core::Http::_internal::HttpPipeline> pipeline,
+          DeleteBlobOptions options)
+          : BatchSubrequest(_detail::BatchSubrequestType::DeleteBlob), Url(std::move(url)),
+            Pipeline(std::move(pipeline)), Options(std::move(options))
       {
       }
 
-      Blobs::BlobClient Client;
+      Response<Models::DeleteBlobResult> Send(const Core::Context& context) const
+      {
+        Core::Http::Request request(Core::Http::HttpMethod::Delete, Url);
+        const auto& conditions = Options.AccessConditions;
+        if (conditions.LeaseId.HasValue() && !conditions.LeaseId.Value().empty())
+        {
+          request.SetHeader("x-ms-lease-id", conditions.LeaseId.Value());
+        }
+        if (Options.DeleteSnapshots.HasValue()
+            && !Options.DeleteSnapshots.Value().ToString().empty())
+        {
+          request.SetHeader("x-ms-delete-snapshots", Options.DeleteSnapshots.Value().ToString());
+        }
+        if (conditions.IfModifiedSince.HasValue())
+        {
+          request.SetHeader(
+              "If-Modified-Since",
+              conditions.IfModifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
+        }
+        if (conditions.IfUnmodifiedSince.HasValue())
+        {
+          request.SetHeader(
+              "If-Unmodified-Since",
+              conditions.IfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
+        }
+        if (conditions.IfMatch.HasValue() && !conditions.IfMatch.ToString().empty())
+        {
+          request.SetHeader("If-Match", conditions.IfMatch.ToString());
+        }
+        if (conditions.IfNoneMatch.HasValue() && !conditions.IfNoneMatch.ToString().empty())
+        {
+          request.SetHeader("If-None-Match", conditions.IfNoneMatch.ToString());
+        }
+        if (conditions.TagConditions.HasValue() && !conditions.TagConditions.Value().empty())
+        {
+          request.SetHeader("x-ms-if-tags", conditions.TagConditions.Value());
+        }
+        request.SetHeader("x-ms-version", "2026-10-06");
+        if (conditions.AccessTierIfModifiedSince.HasValue())
+        {
+          request.SetHeader(
+              "x-ms-access-tier-if-modified-since",
+              conditions.AccessTierIfModifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
+        }
+        if (conditions.AccessTierIfUnmodifiedSince.HasValue())
+        {
+          request.SetHeader(
+              "x-ms-access-tier-if-unmodified-since",
+              conditions.AccessTierIfUnmodifiedSince.Value().ToString(
+                  DateTime::DateFormat::Rfc1123));
+        }
+        auto response = Pipeline->Send(request, context);
+        if (response->GetStatusCode() != Core::Http::HttpStatusCode::Accepted)
+        {
+          throw StorageException::CreateFromResponse(std::move(response));
+        }
+        return Response<Models::DeleteBlobResult>(Models::DeleteBlobResult{}, std::move(response));
+      }
+
+      Core::Url Url;
+      std::shared_ptr<Core::Http::_internal::HttpPipeline> Pipeline;
       DeleteBlobOptions Options;
       std::promise<Nullable<Response<Models::DeleteBlobResult>>> Promise;
     };
@@ -294,15 +358,53 @@ namespace Azure { namespace Storage { namespace Blobs {
     struct SetBlobAccessTierSubrequest final : public _detail::BatchSubrequest
     {
       SetBlobAccessTierSubrequest(
-          Blobs::BlobClient blobClient,
+          Core::Url url,
+          std::shared_ptr<Core::Http::_internal::HttpPipeline> pipeline,
           Models::AccessTier tier,
           SetBlobAccessTierOptions options)
-          : BatchSubrequest(_detail::BatchSubrequestType::SetBlobAccessTier),
-            Client(std::move(blobClient)), Tier(std::move(tier)), Options(std::move(options))
+          : BatchSubrequest(_detail::BatchSubrequestType::SetBlobAccessTier), Url(std::move(url)),
+            Pipeline(std::move(pipeline)), Tier(std::move(tier)), Options(std::move(options))
       {
       }
 
-      Blobs::BlobClient Client;
+      Response<Models::SetBlobAccessTierResult> Send(const Core::Context& context) const
+      {
+        Core::Http::Request request(Core::Http::HttpMethod::Put, Url);
+        request.GetUrl().AppendQueryParameter("comp", "tier");
+        if (!Tier.ToString().empty())
+        {
+          request.SetHeader("x-ms-access-tier", Tier.ToString());
+        }
+        if (Options.RehydratePriority.HasValue()
+            && !Options.RehydratePriority.Value().ToString().empty())
+        {
+          request.SetHeader(
+              "x-ms-rehydrate-priority", Options.RehydratePriority.Value().ToString());
+        }
+        request.SetHeader("x-ms-version", "2026-10-06");
+        if (Options.AccessConditions.LeaseId.HasValue()
+            && !Options.AccessConditions.LeaseId.Value().empty())
+        {
+          request.SetHeader("x-ms-lease-id", Options.AccessConditions.LeaseId.Value());
+        }
+        if (Options.AccessConditions.TagConditions.HasValue()
+            && !Options.AccessConditions.TagConditions.Value().empty())
+        {
+          request.SetHeader("x-ms-if-tags", Options.AccessConditions.TagConditions.Value());
+        }
+        auto response = Pipeline->Send(request, context);
+        const auto status = response->GetStatusCode();
+        if (status != Core::Http::HttpStatusCode::Ok
+            && status != Core::Http::HttpStatusCode::Accepted)
+        {
+          throw StorageException::CreateFromResponse(std::move(response));
+        }
+        return Response<Models::SetBlobAccessTierResult>(
+            Models::SetBlobAccessTierResult{}, std::move(response));
+      }
+
+      Core::Url Url;
+      std::shared_ptr<Core::Http::_internal::HttpPipeline> Pipeline;
       Models::AccessTier Tier;
       SetBlobAccessTierOptions Options;
       std::promise<Nullable<Response<Models::SetBlobAccessTierResult>>> Promise;
@@ -348,8 +450,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto& subrequest = *static_cast<DeleteBlobSubrequest*>(subrequestPtr.get());
           requestBody += getBatchBoundary();
           std::string subrequestText;
-          subrequest.Client.Delete(
-              subrequest.Options, Core::Context().WithValue(s_subrequestKey, &subrequestText));
+          subrequest.Send(Core::Context().WithValue(s_subrequestKey, &subrequestText));
           requestBody += subrequestText;
         }
         else if (subrequestPtr->Type == _detail::BatchSubrequestType::SetBlobAccessTier)
@@ -358,10 +459,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           requestBody += getBatchBoundary();
 
           std::string subrequestText;
-          subrequest.Client.SetAccessTier(
-              subrequest.Tier,
-              subrequest.Options,
-              Core::Context().WithValue(s_subrequestKey, &subrequestText));
+          subrequest.Send(Core::Context().WithValue(s_subrequestKey, &subrequestText));
           requestBody += subrequestText;
         }
         else
@@ -457,8 +555,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto& subrequest = *static_cast<DeleteBlobSubrequest*>(subrequestPtr.get());
           try
           {
-            auto response = subrequest.Client.Delete(
-                subrequest.Options,
+            auto response = subrequest.Send(
                 Core::Context().WithValue(s_subresponseKey, &subresponses[subresponseCounter++]));
             subrequest.Promise.set_value(std::move(response));
           }
@@ -472,9 +569,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           auto& subrequest = *static_cast<SetBlobAccessTierSubrequest*>(subrequestPtr.get());
           try
           {
-            auto response = subrequest.Client.SetAccessTier(
-                subrequest.Tier,
-                subrequest.Options,
+            auto response = subrequest.Send(
                 Core::Context().WithValue(s_subresponseKey, &subresponses[subresponseCounter++]));
             subrequest.Promise.set_value(std::move(response));
           }
@@ -595,7 +690,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<DeleteBlobSubrequest>(
-        GetBlobClientForSubrequest(std::move(blobUrl)), options);
+        std::move(blobUrl), m_blobServiceClient.m_batchSubrequestPipeline, options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -607,7 +702,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobOptions& options)
   {
     auto op = std::make_shared<DeleteBlobSubrequest>(
-        GetBlobClientForSubrequest(Core::Url(blobUrl)), options);
+        Core::Url(blobUrl), m_blobServiceClient.m_batchSubrequestPipeline, options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -624,7 +719,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     blobUrl.AppendPath(_internal::UrlEncodePath(blobContainerName));
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<SetBlobAccessTierSubrequest>(
-        GetBlobClientForSubrequest(std::move(blobUrl)), std::move(accessTier), options);
+        std::move(blobUrl),
+        m_blobServiceClient.m_batchSubrequestPipeline,
+        std::move(accessTier),
+        options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -637,7 +735,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobAccessTierOptions& options)
   {
     auto op = std::make_shared<SetBlobAccessTierSubrequest>(
-        GetBlobClientForSubrequest(Core::Url(blobUrl)), std::move(accessTier), options);
+        Core::Url(blobUrl),
+        m_blobServiceClient.m_batchSubrequestPipeline,
+        std::move(accessTier),
+        options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -664,7 +765,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<DeleteBlobSubrequest>(
-        GetBlobClientForSubrequest(std::move(blobUrl)), options);
+        std::move(blobUrl), m_blobContainerClient.m_batchSubrequestPipeline, options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -676,7 +777,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       const DeleteBlobOptions& options)
   {
     auto op = std::make_shared<DeleteBlobSubrequest>(
-        GetBlobClientForSubrequest(Core::Url(blobUrl)), options);
+        Core::Url(blobUrl), m_blobContainerClient.m_batchSubrequestPipeline, options);
     DeferredResponse<Models::DeleteBlobResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -691,7 +792,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     auto blobUrl = m_blobContainerClient.m_blobContainerUrl;
     blobUrl.AppendPath(_internal::UrlEncodePath(blobName));
     auto op = std::make_shared<SetBlobAccessTierSubrequest>(
-        GetBlobClientForSubrequest(std::move(blobUrl)), std::move(accessTier), options);
+        std::move(blobUrl),
+        m_blobContainerClient.m_batchSubrequestPipeline,
+        std::move(accessTier),
+        options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));
@@ -704,7 +808,10 @@ namespace Azure { namespace Storage { namespace Blobs {
       const SetBlobAccessTierOptions& options)
   {
     auto op = std::make_shared<SetBlobAccessTierSubrequest>(
-        GetBlobClientForSubrequest(Core::Url(blobUrl)), std::move(accessTier), options);
+        Core::Url(blobUrl),
+        m_blobContainerClient.m_batchSubrequestPipeline,
+        std::move(accessTier),
+        options);
     DeferredResponse<Models::SetBlobAccessTierResult> deferredResponse(
         CreateDeferredResponseFunc(op->Promise));
     m_subrequests.push_back(std::move(op));

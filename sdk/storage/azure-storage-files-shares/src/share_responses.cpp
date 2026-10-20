@@ -6,10 +6,133 @@
 #include "azure/storage/files/shares/share_directory_client.hpp"
 #include "azure/storage/files/shares/share_file_client.hpp"
 
+#include <algorithm>
+#include <iterator>
 #include <thread>
 
 namespace Azure { namespace Storage { namespace Files { namespace Shares {
   namespace Models {
+    const ShareTokenIntent ShareTokenIntent::Backup("backup");
+    const AccessTier AccessTier::TransactionOptimized("TransactionOptimized");
+    const AccessTier AccessTier::Hot("Hot");
+    const AccessTier AccessTier::Cool("Cool");
+    const AccessTier AccessTier::Premium("Premium");
+    const LeaseStatus LeaseStatus::Locked("locked");
+    const LeaseStatus LeaseStatus::Unlocked("unlocked");
+    const LeaseState LeaseState::Available("available");
+    const LeaseState LeaseState::Leased("leased");
+    const LeaseState LeaseState::Expired("expired");
+    const LeaseState LeaseState::Breaking("breaking");
+    const LeaseState LeaseState::Broken("broken");
+    const LeaseDurationType LeaseDurationType::Infinite("infinite");
+    const LeaseDurationType LeaseDurationType::Fixed("fixed");
+    const ShareProtocols ShareProtocols::Smb("SMB");
+    const ShareProtocols ShareProtocols::Nfs("NFS");
+    const ShareRootSquash ShareRootSquash::NoRootSquash("NoRootSquash");
+    const ShareRootSquash ShareRootSquash::RootSquash("RootSquash");
+    const ShareRootSquash ShareRootSquash::AllSquash("AllSquash");
+    const DeleteSnapshotsOption DeleteSnapshotsOption::Include("include");
+    const FilePermissionFormat FilePermissionFormat::Sddl("sddl");
+    const FilePermissionFormat FilePermissionFormat::Binary("binary");
+    FileAttributes::FileAttributes(const std::string& value)
+    {
+      const std::string delimiter = " | ";
+      size_t cur = 0;
+      while (cur != std::string::npos)
+      {
+        auto delimiter_pos = value.find(delimiter, cur);
+        std::string v;
+        if (delimiter_pos == std::string::npos)
+        {
+          v = value.substr(cur);
+          cur = delimiter_pos;
+        }
+        else
+        {
+          v = value.substr(cur, delimiter_pos - cur);
+          cur = delimiter_pos + delimiter.size();
+        }
+        if (!v.empty())
+        {
+          m_value.push_back(std::move(v));
+        }
+      }
+      std::sort(m_value.begin(), m_value.end());
+    }
+    FileAttributes FileAttributes::operator|(const FileAttributes& other) const
+    {
+      FileAttributes ret;
+      std::set_union(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::back_inserter(ret.m_value));
+      return ret;
+    }
+    FileAttributes FileAttributes::operator&(const FileAttributes& other) const
+    {
+      FileAttributes ret;
+      std::set_intersection(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::back_inserter(ret.m_value));
+      return ret;
+    }
+    FileAttributes FileAttributes::operator^(const FileAttributes& other) const
+    {
+      FileAttributes ret;
+      std::set_symmetric_difference(
+          m_value.begin(),
+          m_value.end(),
+          other.m_value.begin(),
+          other.m_value.end(),
+          std::back_inserter(ret.m_value));
+      return ret;
+    }
+    std::string FileAttributes::ToString() const
+    {
+      std::string ret;
+      for (const auto& v : m_value)
+      {
+        ret += (ret.empty() ? "" : " | ") + v;
+      }
+      return ret;
+    }
+    const FileAttributes FileAttributes::ReadOnly("ReadOnly");
+    const FileAttributes FileAttributes::Hidden("Hidden");
+    const FileAttributes FileAttributes::System("System");
+    const FileAttributes FileAttributes::None("None");
+    const FileAttributes FileAttributes::Directory("Directory");
+    const FileAttributes FileAttributes::Archive("Archive");
+    const FileAttributes FileAttributes::Temporary("Temporary");
+    const FileAttributes FileAttributes::Offline("Offline");
+    const FileAttributes FileAttributes::NotContentIndexed("NotContentIndexed");
+    const FileAttributes FileAttributes::NoScrubData("NoScrubData");
+    const FilePropertySemantics FilePropertySemantics::New("New");
+    const FilePropertySemantics FilePropertySemantics::Restore("Restore");
+    const NfsFileType NfsFileType::Regular("Regular");
+    const NfsFileType NfsFileType::Directory("Directory");
+    const NfsFileType NfsFileType::SymLink("SymLink");
+    namespace _detail {
+      const AccessRight AccessRight::Read("Read");
+      const AccessRight AccessRight::Write("Write");
+      const AccessRight AccessRight::Delete("Delete");
+    } // namespace _detail
+    const CopyStatus CopyStatus::Pending("pending");
+    const CopyStatus CopyStatus::Success("success");
+    const CopyStatus CopyStatus::Aborted("aborted");
+    const CopyStatus CopyStatus::Failed("failed");
+    const FileLastWrittenMode FileLastWrittenMode::Now("now");
+    const FileLastWrittenMode FileLastWrittenMode::Preserve("preserve");
+    const PermissionCopyMode PermissionCopyMode::Source("source");
+    const PermissionCopyMode PermissionCopyMode::Override("override");
+    const ModeCopyMode ModeCopyMode::Source("source");
+    const ModeCopyMode ModeCopyMode::Override("override");
+    const OwnerCopyMode OwnerCopyMode::Source("source");
+    const OwnerCopyMode OwnerCopyMode::Override("override");
 
     ShareFileHandleAccessRights::ShareFileHandleAccessRights(const std::string& value)
     {

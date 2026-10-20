@@ -7,6 +7,12 @@
 
 namespace Azure { namespace Storage { namespace Queues {
 
+  namespace Models {
+    const GeoReplicationStatus GeoReplicationStatus::Live("live");
+    const GeoReplicationStatus GeoReplicationStatus::Bootstrap("bootstrap");
+    const GeoReplicationStatus GeoReplicationStatus::Unavailable("unavailable");
+  } // namespace Models
+
   void ListQueuesPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;

@@ -1,5 +1,10 @@
 # Azure Storage C++ Protocol Layer
 
+This AutoRest configuration is retained for historical reference. The active
+private protocol is generated from TypeSpec; see
+[`../typespec/README.md`](../typespec/README.md) for regeneration instructions.
+Do not regenerate the retained public `rest_client.hpp` header with AutoRest.
+
 > see https://aka.ms/autorest
 
 ## Configuration

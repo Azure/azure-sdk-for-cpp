@@ -1,5 +1,9 @@
 # Azure Storage C++ Protocol Layer
 
+This configuration is retained for historical reference. The private protocol
+layer is now generated from TypeSpec; see [TypeSpec generation](../typespec/README.md).
+Do not regenerate or replace the retained public `rest_client.hpp` with AutoRest output.
+
 > see https://aka.ms/autorest
 
 ## Configuration

@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Migrated the private Data Lake protocol layer from AutoRest to TypeSpec while preserving public APIs.
+
 ## 12.17.0 (2026-09-29)
 
 ### Other Changes

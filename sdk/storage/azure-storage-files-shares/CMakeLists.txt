@@ -59,7 +59,13 @@ set(
 set(
   AZURE_STORAGE_FILES_SHARES_SOURCE
     src/private/package_version.hpp
-    src/rest_client.cpp
+    src/generated/file_shares_client.cpp
+    src/generated/file_shares_client.hpp
+    src/generated/file_shares_client_options.hpp
+    src/generated/shares.cpp
+    src/generated/shares_models.hpp
+    src/private/shares_protocol.hpp
+    src/shares_protocol.cpp
     src/share_client.cpp
     src/share_directory_client.cpp
     src/share_file_client.cpp

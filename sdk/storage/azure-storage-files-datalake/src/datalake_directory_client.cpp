@@ -4,6 +4,7 @@
 #include "azure/storage/files/datalake/datalake_directory_client.hpp"
 
 #include "azure/storage/files/datalake/datalake_file_client.hpp"
+#include "private/datalake_protocol.hpp"
 #include "private/datalake_utilities.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
@@ -118,8 +119,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
-    auto response = _detail::PathClient::Create(
-        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
+    auto response = _detail::DataLakeProtocolClient(destinationDfsUrl, m_pipeline)
+                        .Create(protocolLayerOptions, context);
 
     Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
     if (m_clientConfiguration.UploadValidationOptions.HasValue())
@@ -191,8 +192,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     protocolLayerOptions.SourceIfModifiedSince = options.SourceAccessConditions.IfModifiedSince;
     protocolLayerOptions.SourceIfUnmodifiedSince = options.SourceAccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.RenameSource = "/" + sourceDfsUrl.GetRelativeUrl();
-    auto response = _detail::PathClient::Create(
-        *m_pipeline, destinationDfsUrl, protocolLayerOptions, context);
+    auto response = _detail::DataLakeProtocolClient(destinationDfsUrl, m_pipeline)
+                        .Create(protocolLayerOptions, context);
 
     Azure::Nullable<Blobs::TransferValidationOptions> uploadValidationOptions;
     if (m_clientConfiguration.UploadValidationOptions.HasValue())
@@ -297,8 +298,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       fileSystemUrl.SetPath(fileSystemName);
     }
 
-    auto response = _detail::FileSystemClient::ListPaths(
-        *m_pipeline, fileSystemUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    auto response = _detail::DataLakeProtocolClient(fileSystemUrl, m_pipeline)
+                        .ListPaths(protocolLayerOptions, _internal::WithReplicaStatus(context));
 
     ListPathsPagedResponse pagedResponse;
     for (auto& path : response.Value.Paths)
