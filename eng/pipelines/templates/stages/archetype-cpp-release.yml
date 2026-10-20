@@ -332,29 +332,10 @@ stages:
                 - checkout: self
 
                 - pwsh: |
-                    $branchName = "azure-sdk-for-cpp-${{ artifact.Name }}-$(Build.BuildId)"
-                    if ('$(VcpkgForkBranchName)') {
-                      Write-Host "Using queue time branch name"
-                      $branchName = '$(VcpkgForkBranchName)'
-                    }
-                    Write-Host "##vso[task.setvariable variable=PrBranchName]$branchName"
-                  displayName: Set fork branch name
-
-                - pwsh: |
                     $packageSpec = Get-Content -Raw -Path "$(Pipeline.Workspace)/packages/${{artifact.Name}}/package-info.json" | ConvertFrom-Json
                     $version = $packageSpec.version
                     Write-Host "##vso[task.setvariable variable=PackageVersion]$version"
                   displayName: Set PackageVersion variable
-
-                - pwsh: |
-                    $title = "[${{ artifact.VcpkgPortName }}] publish version $(PackageVersion)"
-
-                    if ('$(VcpkgPRTitle)') {
-                      Write-Host "Using queue time PR title"
-                      $title = '$(VcpkgPRTitle)'
-                    }
-                    Write-Host "##vso[task.setvariable variable=PrTitle]$title"
-                  displayName: Set PR title
 
                 # There are potential race conditions if this script runs
                 # in parallel against the same branch name. Release only
@@ -363,13 +344,6 @@ stages:
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                   parameters:
                     RepoOwner: azure-sdk
-                    PRBranchName: $(PrBranchName)
-
-                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
-                  parameters:
-                    AlwaysUseOwnerSuffix: true
-                    TokenOwners: 
-                      - Azure
 
                 # Clone Vcpkg partner feed
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
@@ -377,7 +351,6 @@ stages:
                     RepoOwner: Azure
                     RepoName: azure-sdk-vcpkg-partner-feed
                     SetVcpkgRoot: false
-                    AuthToken: $(GH_TOKEN_Azure)
 
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                   parameters:
