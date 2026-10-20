@@ -345,12 +345,18 @@ stages:
                   parameters:
                     RepoOwner: azure-sdk
 
+                - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+                  parameters:
+                    TokenOwners: 
+                      - Azure
+
                 # Clone Vcpkg partner feed
                 - template: /eng/pipelines/templates/steps/vcpkg-clone.yml
                   parameters:
                     RepoOwner: Azure
                     RepoName: azure-sdk-vcpkg-partner-feed
                     SetVcpkgRoot: false
+                    AuthToken: $(GH_TOKEN)
 
                 - template: /eng/pipelines/templates/steps/vcpkg-publish.yml
                   parameters:
