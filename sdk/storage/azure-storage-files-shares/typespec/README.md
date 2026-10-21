@@ -4,7 +4,7 @@ The private protocol is generated from the FileStorage TypeSpec revision pinned
 in `tsp-location.yaml`. The C++ projection selects API version `2026-10-06`,
 matching the existing SDK, including paginated range listing.
 
-`includeResponseHeadersInModels: true` explicitly enables the typed response
+`includeHeadersInResponse: true` explicitly enables the typed response
 headers consumed by the compatibility layer.
 
 Generated files live in `src/generated` under
@@ -21,8 +21,9 @@ headers or manually edit generated C++.
 
 ## Compatibility customizations
 
-`typespec/client.tsp` is a package-local C++ projection, without modifying the
-upstream specification:
+The pinned specification's `client.tsp` provides the C++ projection, maintained in
+[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446).
+No package-local TypeSpec overlay is needed:
 
 - Metadata is a case-insensitive prefix header collection (`x-ms-meta-`).
 - Request timestamps remain strings, preserving `now`, `preserve`, and the exact
@@ -49,7 +50,7 @@ snapshot targeting, checksum handling, and the existing handwritten pagers.
 
 Use a clean checkout or snapshot of
 [`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
-`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+`7a902b92d515b4c3484fcefce1216336d9718a75`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
 This revision includes the default-off response-header option, intrinsic optional
 ETags, fixed-precision XML date-times, and XML unwrapped-scalar response parsing.
@@ -65,10 +66,11 @@ specification revision in `tsp-location.yaml`, then run from this package:
 .\typespec\generate.ps1 `
   -EmitterPath C:\path\to\typespec-cpp\packages\typespec-cpp `
   -SpecDirectory C:\path\to\azure-rest-api-specs\specification\storage\data-plane\FileStorage `
-  -ClangFormatPath "C:\Program Files\LLVM\bin\clang-format.exe"
+  -ClangFormatPath C:\path\to\clang-format-11\clang-format.exe
 ```
 
-The script generates and formats the five files with clang-format 11.0.0 in a
+The script generates directly from the pinned service's `client.tsp`, without a
+package-local overlay, and formats the five files with clang-format 11.0.0 in a
 temporary directory before copying them into the package. Use `-OutputDirectory`
 to regenerate elsewhere for comparison.
 

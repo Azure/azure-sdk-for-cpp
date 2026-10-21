@@ -62,7 +62,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     /// level is supported; for recursive list, multiple entity levels are supported. (Inclusive)
     Nullable<std::string> StartFrom;
 
-    ///
+    /// The exclusive end of the listing range.
     Nullable<std::string> EndBefore;
   };
 
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    ///
+    /// The optional virtual hierarchy delimiter.
     Nullable<std::string> Delimiter;
 
     /// Filters the results to return only resources whose name begins with the specified prefix.
@@ -101,10 +101,10 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     /// level is supported; for recursive list, multiple entity levels are supported. (Inclusive)
     Nullable<std::string> StartFrom;
 
-    ///
+    /// The exclusive end of the listing range.
     Nullable<std::string> EndBefore;
 
-    ///
+    /// The type of entries to include.
     Nullable<std::string> Showonly;
   };
 

@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
     };
 
     /**
-     * @brief
+     * @brief A path returned to the C++ protocol client.
      *
      */
     struct PathItem final
@@ -277,7 +277,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake { nam
       /// The encryption context.
       Nullable<std::string> EncryptionContext;
 
-      ///
+      /// The entity tag, when returned by the service.
       Azure::ETag ETag;
     };
 

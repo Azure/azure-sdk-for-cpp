@@ -3433,7 +3433,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail { name
   };
 
   /**
-   * @brief
+   * @brief Preserves the empty Parquet XML configuration used by the C++ client.
    *
    */
   struct StorageCppParquetConfiguration final

@@ -7,7 +7,7 @@ options:
     headersOutputPath: azure/storage/files/shares
     noPublicHeaders: true
     pipelineMode: reuse
-    includeResponseHeadersInModels: true
+    includeHeadersInResponse: true
     binaryResponseBodyMode: stream
     typeRename:
       - from: FileClient

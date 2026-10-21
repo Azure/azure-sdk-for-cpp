@@ -53,7 +53,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
     std::string GetUrl() const;
 
     /**
-     * @brief
+     * @brief Returns the flat listing stream for the handwritten C++ XML/Arrow reader.
      * @param options Optional parameters.
      * @param context The context for the operation can be used for request cancellation.
      * @return Represent a byte array
@@ -64,7 +64,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         const Core::Context& context = {}) const;
 
     /**
-     * @brief
+     * @brief Returns the hierarchical listing stream for the handwritten C++ XML/Arrow reader.
      * @param options Optional parameters.
      * @param context The context for the operation can be used for request cancellation.
      * @return Represent a byte array

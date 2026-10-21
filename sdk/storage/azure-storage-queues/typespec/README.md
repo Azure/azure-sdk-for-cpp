@@ -5,7 +5,7 @@ Queue operations are generated directly from TypeSpec using
 `tsp-location.yaml` pins the service specification and `tspconfig.yaml` selects
 the service version and internal protocol generation.
 
-`includeResponseHeadersInModels: true` explicitly enables the typed response
+`includeHeadersInResponse: true` explicitly enables the typed response
 headers consumed by the compatibility layer.
 
 All generated code is in `src/generated`, under
@@ -28,7 +28,7 @@ Do not replace it with the generated model header or edit generated C++ files.
 The emitter needs the Queue migration changes: XML metadata and nullable values,
 header collections and scalar headers, SAS-safe query parameters, pipeline reuse,
 and optional request bodies. Use committed emitter revision
-`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+`7a902b92d515b4c3484fcefce1216336d9718a75`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)),
 including the default-off response-header option, intrinsic optional ETags, and
 fixed-precision XML date-times. An unmodified published emitter is not sufficient.
@@ -41,31 +41,35 @@ than independently installing the latest TypeSpec packages. The migration was
 generated with compiler 1.12.0 and client-generator-core 0.68.4.
 
 Provide a QueueStorage specification directory from the exact revision in
-`tsp-location.yaml`. `typespec/client.tsp` adds C++-specific customizations without
-changing those upstream inputs. From this package directory, run:
+`tsp-location.yaml`. Its `client.tsp` and `client-cpp.mjs` contain the C++-scoped
+customizations maintained in
+[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446).
+No package-local TypeSpec overlay is needed. From this package directory, run:
 
 ```powershell
 .\typespec\generate.ps1 `
   -EmitterPath C:\path\to\typespec-cpp\packages\typespec-cpp `
   -SpecDirectory C:\path\to\azure-rest-api-specs\specification\storage\data-plane\QueueStorage `
-  -ClangFormatPath "C:\Program Files\LLVM\bin\clang-format.exe"
+  -ClangFormatPath C:\path\to\clang-format-11\clang-format.exe
 ```
 
-Use clang-format 11.0.0. The script generates and formats in a temporary directory
-before copying the five generated files into the package. `-OutputDirectory`
-can redirect the output for comparison without changing the package.
+Use clang-format 11.0.0. The script stages the pinned service inputs, including
+`client-cpp.mjs`, and generates directly from their `client.tsp` in a temporary
+directory. It formats the output before copying the five generated files into
+the package. `-OutputDirectory` can redirect the output for comparison without
+changing the package.
 
 After regeneration, build the package and run the offline `QueueProtocolTest.*`
 tests, then the existing playback tests when test-proxy assets are available.
 The offline tests cover public model conversions, metadata, service versions,
 SAS URLs, XML, paging, error handling, and visibility-only updates.
 
-The C++ input overlay preserves nullable RFC1123 statistics dates and 64-bit
+The service's C++ projection preserves nullable RFC1123 statistics dates and 64-bit
 receive/peek count options, supplies the `StorageServiceStats` XML root, and
 enables metadata header collections. ACL dates retain all seven fractional-second
 digits. Delegation-key request dates are projected as strings and formatted by
 the handwritten client without fractional seconds, as required by that endpoint.
-Keep `client-cpp.mjs` alongside `client.tsp`:
-the helper applies the existing language-scoped `alternateType` decorator to
-expanded operation parameters that the pinned compiler's `::parameters`
-selector does not expose. It does not modify the upstream specification.
+The pinned service's `client-cpp.mjs` helper applies the existing language-scoped
+`alternateType` decorator to expanded operation parameters that the compiler's
+`::parameters` selector does not expose. These decorators affect only the C++
+projection.

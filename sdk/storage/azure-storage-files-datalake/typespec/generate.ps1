@@ -34,13 +34,12 @@ try {
   foreach ($file in @("client.tsp", "main.tsp", "models.tsp", "routes.tsp")) {
     Copy-Item -LiteralPath (Join-Path $spec $file) -Destination (Join-Path $work "service")
   }
-  Copy-Item -LiteralPath (Join-Path $PSScriptRoot "client.tsp") -Destination $work
   Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) "tspconfig.yaml") -Destination $work
   Copy-Item -LiteralPath (Join-Path $PSScriptRoot "..\..\..\..\.clang-format") -Destination $work
   $linkType = if ($IsWindows) { "Junction" } else { "SymbolicLink" }
   New-Item -ItemType $linkType -Path $modules -Target (Join-Path $emitter "node_modules") | Out-Null
 
-  & node $compiler compile (Join-Path $work "client.tsp") `
+  & node $compiler compile (Join-Path $work "service\client.tsp") `
     --config (Join-Path $work "tspconfig.yaml") --emit $emitter `
     --output-dir (Join-Path $work "output") --pretty false
   if ($LASTEXITCODE -ne 0) {

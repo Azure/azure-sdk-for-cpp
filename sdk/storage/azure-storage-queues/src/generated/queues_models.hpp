@@ -242,7 +242,7 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail { nam
   };
 
   /**
-   * @brief Statistics for the storage queue service.
+   * @brief Statistics returned to the C++ queue protocol client.
    *
    */
   struct GetStatisticsServiceResult final

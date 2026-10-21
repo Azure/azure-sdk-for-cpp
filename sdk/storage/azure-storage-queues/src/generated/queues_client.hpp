@@ -82,7 +82,7 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
      * enabled for the storage account.
      * @param options Optional parameters.
      * @param context The context for the operation can be used for request cancellation.
-     * @return Statistics for the storage queue service.
+     * @return Statistics returned to the C++ queue protocol client.
      *
      */
     Response<Models::GetStatisticsServiceResult> GetStatisticsService(

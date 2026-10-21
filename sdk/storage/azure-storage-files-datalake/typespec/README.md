@@ -2,7 +2,7 @@
 
 The private protocol client is generated from the DataLakeStorage TypeSpec
 specification pinned in `tsp-location.yaml`. `tspconfig.yaml` enables pipeline
-reuse, typed response header models (`includeResponseHeadersInModels: true`),
+reuse, typed response header models (`includeHeadersInResponse: true`),
 and lenient JSON boolean parsing. Generated files live in `src/generated`,
 under `Azure::Storage::Files::DataLake::_detail`.
 
@@ -19,8 +19,10 @@ headers or manually edit generated C++.
 
 ## C++ customizations
 
-`client.tsp` uses language-scoped decorators without editing the upstream
-specification or other languages' projections:
+The pinned specification's `client.tsp` uses C++-scoped decorators, maintained in
+[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446),
+without changing the REST API definition or other languages' projections.
+No package-local TypeSpec overlay is needed:
 
 - Operations already delegated to Blob Storage or not used by the SDK are hidden.
 - A replacement path-item model reads the service's lowercase JSON `etag`.
@@ -38,7 +40,7 @@ responsible for continuation tokens. Downloads continue to use Blob Storage.
 
 Use a clean checkout or snapshot of
 [`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
-`33d83878c16f09fc0377bd326845b9c40c2a5f24`
+`7a902b92d515b4c3484fcefce1216336d9718a75`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
 This revision includes the default-off response-header option, intrinsic optional
 ETags, and lenient JSON boolean parsing. Uncommitted emitter experiments and the
@@ -53,10 +55,11 @@ Provide the DataLakeStorage directory from the exact specification revision in
 .\typespec\generate.ps1 `
   -EmitterPath C:\path\to\typespec-cpp\packages\typespec-cpp `
   -SpecDirectory C:\path\to\azure-rest-api-specs\specification\storage\data-plane\DataLakeStorage `
-  -ClangFormatPath "C:\Program Files\LLVM\bin\clang-format.exe"
+  -ClangFormatPath C:\path\to\clang-format-11\clang-format.exe
 ```
 
-The script generates and formats the five files with clang-format 11.0.0 in a
+The script generates directly from the pinned service's `client.tsp`, without a
+package-local overlay, and formats the five files with clang-format 11.0.0 in a
 temporary directory before copying them into the package. Use `-OutputDirectory`
 to regenerate elsewhere for comparison.
 
