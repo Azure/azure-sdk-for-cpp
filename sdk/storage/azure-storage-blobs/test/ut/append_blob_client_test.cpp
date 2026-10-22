@@ -408,9 +408,14 @@ namespace Azure { namespace Storage { namespace Test {
             blobContent.end()));
   }
 
-  TEST_F(SyntheticStorageTest, AppendBlockFromUriCrc64AccessCondition_PLAYBACKONLY_)
+  TEST_F(StorageTest, AppendBlockFromUriCrc64AccessCondition_PLAYBACKONLY_)
   {
-    auto clientOptions = InitSyntheticClientOptions<Blobs::BlobClientOptions>();
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
     std::vector<std::string> hashes;
     clientOptions.PerRetryPolicies.push_back(
         std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request const& request) {
@@ -430,10 +435,16 @@ namespace Azure { namespace Storage { namespace Test {
     options.TransactionalContentHash = ContentHash();
     options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
     options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    ExpectStorageError("Crc64Mismatch", [&]() {
+    try
+    {
       appendBlobClient.AppendBlockFromUri(
           "https://account.blob.core.windows.net/container/source", options);
-    });
+      FAIL() << "Expected CRC64 mismatch.";
+    }
+    catch (StorageException const& exception)
+    {
+      EXPECT_EQ(exception.ErrorCode, "Crc64Mismatch");
+    }
     options.TransactionalContentHash.Value().Value = contentCrc64;
     EXPECT_NO_THROW(appendBlobClient.AppendBlockFromUri(
         "https://account.blob.core.windows.net/container/source", options));

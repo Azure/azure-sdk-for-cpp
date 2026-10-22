@@ -286,9 +286,14 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(SyntheticStorageTest, PaginationDelete_PLAYBACKONLY_)
+  TEST_F(StorageTest, PaginationDelete_PLAYBACKONLY_)
   {
-    auto clientOptions = InitSyntheticClientOptions<Files::DataLake::DataLakeClientOptions>();
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
+    auto clientOptions = InitStorageClientOptions<Files::DataLake::DataLakeClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
     std::vector<std::string> continuations;
     clientOptions.PerRetryPolicies.push_back(
         std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request const& request) {

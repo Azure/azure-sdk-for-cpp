@@ -19,16 +19,45 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete());
   }
 
-  TEST_F(SyntheticStorageTest, BlobBearerChallengeWorks_PLAYBACKONLY_)
+  TEST_F(StorageTest, BlobBearerChallengeWorks_PLAYBACKONLY_)
   {
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
     const std::string aadTenantId = "11111111-1111-1111-1111-111111111111";
     const std::string aadClientId = "synthetic-client";
     const std::string aadClientSecret = "synthetic-secret";
     const std::string blobUrlString = "https://account.blob.core.windows.net/container/blob";
 
     Blobs::BlobClientOptions clientOptions
-        = InitSyntheticClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-    auto options = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+        = InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
+    auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+    int defaultScopeRequests = 0;
+    int customScopeRequests = 0;
+    options.PerRetryPolicies.push_back(
+        std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request& request) {
+          auto stream = request.GetBodyStream();
+          ASSERT_NE(stream, nullptr);
+          auto body = stream->ReadToEnd();
+          stream->Rewind();
+          const std::string requestBody(body.begin(), body.end());
+          if (requestBody.find(
+                  "scope=" + Core::Url::Encode("https://account.blob.core.windows.net/.default"))
+              != std::string::npos)
+          {
+            ++customScopeRequests;
+          }
+          else
+          {
+            EXPECT_NE(
+                requestBody.find(
+                    "scope=" + Core::Url::Encode("https://storage.azure.com/.default")),
+                std::string::npos);
+            ++defaultScopeRequests;
+          }
+        }));
 
     // With tenantId
     clientOptions.EnableTenantDiscovery = true;
@@ -90,7 +119,8 @@ namespace Azure { namespace Storage { namespace Test {
             "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_THROW(blobClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
-    ExpectTokenScopes("https://account.blob.core.windows.net/.default");
+    EXPECT_EQ(defaultScopeRequests, 4);
+    EXPECT_EQ(customScopeRequests, 1);
   }
 
 }}} // namespace Azure::Storage::Test

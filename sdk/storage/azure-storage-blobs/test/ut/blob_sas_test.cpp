@@ -931,14 +931,19 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClient2.Download(), StorageException);
   }
 
-  TEST_F(SyntheticStorageTest, BlobPrincipalBoundDelegationSas_CrossTenant_PLAYBACKONLY_)
+  TEST_F(StorageTest, BlobPrincipalBoundDelegationSas_CrossTenant_PLAYBACKONLY_)
   {
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
     const std::string accountName = "account";
     auto credentialOptions
-        = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+        = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
     credentialOptions.AdditionallyAllowedTenants = {"*"};
     auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
         "11111111-1111-1111-1111-111111111111",
@@ -947,10 +952,25 @@ namespace Azure { namespace Storage { namespace Test {
         credentialOptions);
     const std::string delegatedUserObjectId = "33333333-3333-3333-3333-333333333333";
 
+    const std::vector<std::string> tenants
+        = {"11111111-1111-1111-1111-111111111111", "00000000-0000-0000-0000-000000000000"};
+    size_t delegationRequests = 0;
+    auto serviceOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    serviceOptions.PerRetryPolicies.push_back(
+        std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request& request) {
+          auto stream = request.GetBodyStream();
+          ASSERT_NE(stream, nullptr);
+          auto body = stream->ReadToEnd();
+          stream->Rewind();
+          ASSERT_LT(delegationRequests, tenants.size());
+          EXPECT_NE(
+              std::string(body.begin(), body.end())
+                  .find(
+                      "<DelegatedUserTid>" + tenants[delegationRequests++] + "</DelegatedUserTid>"),
+              std::string::npos);
+        }));
     auto blobServiceClient = Blobs::BlobServiceClient(
-        "https://account.blob.core.windows.net",
-        GetTestCredential(),
-        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
+        "https://account.blob.core.windows.net", GetTestCredential(), serviceOptions);
     Blobs::Models::UserDelegationKey userDelegationKey;
     {
       Blobs::GetUserDelegationKeyOptions options;
@@ -976,7 +996,7 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(
             Azure::Core::Url("https://account.blob.core.windows.net/container/blob"), sasToken),
         endUserCredential,
-        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
     EXPECT_NO_THROW(blobClient1.Download());
 
     {
@@ -990,9 +1010,17 @@ namespace Azure { namespace Storage { namespace Test {
         AppendQueryParameters(
             Azure::Core::Url("https://account.blob.core.windows.net/container/blob"), sasToken),
         endUserCredential,
-        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
-    ExpectStorageError("AuthorizationPermissionMismatch", [&]() { blobClient2.Download(); });
-    ExpectDelegatedTenantRequests();
+        InitStorageClientOptions<Blobs::BlobClientOptions>());
+    try
+    {
+      blobClient2.Download();
+      FAIL() << "Expected authorization failure.";
+    }
+    catch (StorageException const& exception)
+    {
+      EXPECT_EQ(exception.ErrorCode, "AuthorizationPermissionMismatch");
+    }
+    EXPECT_EQ(delegationRequests, tenants.size());
   }
 
   TEST_F(BlobSasTest, DynamicSas_LIVEONLY_)

@@ -473,12 +473,16 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(SyntheticStorageTest, RenameBlobContainer_PLAYBACKONLY_)
+  TEST_F(StorageTest, RenameBlobContainer_PLAYBACKONLY_)
   {
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
     Blobs::BlobServiceClient serviceClient(
-        "https://account.blob.core.windows.net",
-        GetTestCredential(),
-        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
+        "https://account.blob.core.windows.net", GetTestCredential(), clientOptions);
     const std::string prefix = "synthetic-";
 
     const std::string srcContainerName = prefix + "src";

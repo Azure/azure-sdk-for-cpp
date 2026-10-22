@@ -6,15 +6,12 @@
 #include <azure/core/base64.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/etag.hpp>
-#include <azure/core/http/http.hpp>
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/core/io/body_stream.hpp>
 #include <azure/core/platform.hpp>
 #include <azure/core/test/test_base.hpp>
 #include <azure/identity/client_secret_credential.hpp>
-#include <azure/storage/common/storage_exception.hpp>
 
-#include <algorithm>
 #include <cctype>
 #include <chrono>
 #include <cstdint>
@@ -22,7 +19,6 @@
 #include <limits>
 #include <memory>
 #include <random>
-#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -63,7 +59,7 @@ namespace Azure { namespace Storage {
 
     class PeekHttpRequestPolicy final : public Core::Http::Policies::HttpPolicy {
     public:
-      explicit PeekHttpRequestPolicy(std::function<void(const Core::Http::Request&)> callback)
+      explicit PeekHttpRequestPolicy(std::function<void(Core::Http::Request&)> callback)
           : m_callback(std::move(callback))
       {
       }
@@ -83,7 +79,7 @@ namespace Azure { namespace Storage {
       }
 
     private:
-      std::function<void(const Core::Http::Request&)> m_callback;
+      std::function<void(Core::Http::Request&)> m_callback;
     };
 
     class StorageTest : public Azure::Core::Test::TestBase {
@@ -239,114 +235,6 @@ namespace Azure { namespace Storage {
       std::mt19937_64 m_randomGenerator;
 
       constexpr static const char* PlaybackOnlyToken = "_PLAYBACKONLY_";
-    };
-
-    class SyntheticStorageTest : public StorageTest {
-    private:
-      class ResponsePolicy final : public Core::Http::Policies::HttpPolicy {
-      public:
-        explicit ResponsePolicy(std::function<void(Core::Http::Request&)> inspectRequest)
-            : m_inspectRequest(std::move(inspectRequest))
-        {
-        }
-
-        std::unique_ptr<HttpPolicy> Clone() const override
-        {
-          return std::make_unique<ResponsePolicy>(*this);
-        }
-
-        std::unique_ptr<Core::Http::RawResponse> Send(
-            Core::Http::Request& request,
-            Core::Http::Policies::NextHttpPolicy nextPolicy,
-            Core::Context const& context) const override
-        {
-          m_inspectRequest(request);
-          auto response = nextPolicy.Send(request, context);
-          EXPECT_EQ(response->GetHeaders().at("Server"), "Azure-Storage-Cpp-Synthetic-Test-Server");
-          return response;
-        }
-
-      private:
-        std::function<void(Core::Http::Request&)> m_inspectRequest;
-      };
-
-    protected:
-      void SetUp() override
-      {
-        m_testContext.TestMode = Core::Test::TestProxyManager::GetTestMode();
-        if (!m_testContext.IsPlaybackMode())
-        {
-          SkipTest();
-          return;
-        }
-        StorageTest::SetUp();
-      }
-
-      template <class T> T InitSyntheticClientOptions()
-      {
-        auto options = InitStorageClientOptions<T>();
-        if (m_testProxy->GetRecordingId().empty())
-        {
-          throw std::runtime_error("Synthetic playback did not start; refusing network access.");
-        }
-        options.Retry.MaxRetries = 0;
-        options.PerRetryPolicies.push_back(
-            std::make_unique<ResponsePolicy>([this](Core::Http::Request& request) {
-              if (auto stream = request.GetBodyStream())
-              {
-                auto body = stream->ReadToEnd();
-                stream->Rewind();
-                m_requestBodies.emplace_back(body.begin(), body.end());
-              }
-            }));
-        return options;
-      }
-
-      void ExpectStorageError(std::string const& code, std::function<void()> const& operation)
-      {
-        try
-        {
-          operation();
-          FAIL() << "Expected StorageException with error code " << code;
-        }
-        catch (StorageException const& exception)
-        {
-          EXPECT_EQ(exception.ErrorCode, code);
-        }
-      }
-
-      void ExpectDelegatedTenantRequests() const
-      {
-        for (auto const* tenant :
-             {"11111111-1111-1111-1111-111111111111", "00000000-0000-0000-0000-000000000000"})
-        {
-          const std::string field
-              = std::string("<DelegatedUserTid>") + tenant + "</DelegatedUserTid>";
-          EXPECT_EQ(
-              std::count_if(
-                  m_requestBodies.begin(),
-                  m_requestBodies.end(),
-                  [&](std::string const& body) { return body.find(field) != std::string::npos; }),
-              1);
-        }
-      }
-
-      void ExpectTokenScopes(std::string const& customScope) const
-      {
-        for (auto const& scope : {std::string("https://storage.azure.com/.default"), customScope})
-        {
-          const std::string field = "scope=" + Core::Url::Encode(scope);
-          EXPECT_EQ(
-              std::count_if(
-                  m_requestBodies.begin(),
-                  m_requestBodies.end(),
-                  [&](std::string const& body) { return body.find(field) != std::string::npos; }),
-              scope == customScope ? 1 : 4);
-        }
-      }
-
-    private:
-      std::vector<std::string> m_requestBodies;
     };
 
     constexpr inline unsigned long long operator""_KB(unsigned long long x) { return x * 1024; }

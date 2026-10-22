@@ -2,27 +2,6 @@
 
 Storage accounts are required for running storage unit tests. We don't expect users or developers to do these configurations or run unit tests, unless you're making some major changes or working on new features.
 
-## Synthetic playback tests
-
-`SyntheticStorageTest.*_PLAYBACKONLY_` cases use fabricated test-proxy fixtures, not
-captured Azure responses. They cover client-side request construction, response
-handling, bearer challenges, SAS fields, CRC64 conditions, container rename, and
-delete continuation without requiring service feature flags or cross-tenant identities.
-They do not establish that Azure accepts these requests or enforces the simulated
-authorization rules.
-
-Every synthetic response, including token and error responses, contains
-`Server: Azure-Storage-Cpp-Synthetic-Test-Server`. The fixture checks this marker
-and refuses to run in LIVE or RECORD mode. It also refuses to send requests if
-playback has not started. No Storage connection strings or Azure credentials are
-needed; token requests use dummy credentials and are routed through test-proxy.
-
-The fixtures use the existing test-proxy playback infrastructure and live in the
-assets repository referenced by `assets.json`. Do not replace real service
-recordings with synthetic responses.
-`StructuredMessageTest_Large_LIVEONLY_` uses a 64 MiB + 512-byte body and has no
-playback fixture.
-
 Azure Storage libraries for C++ offers three types for authorizing access to data: `Shared Key(storage account key)`, `Shared access signature (SAS)` and `Azure Active Directory (Azure AD)`. 
 The first two types can be obtained by `connection string`.
 
