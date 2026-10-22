@@ -408,31 +408,37 @@ namespace Azure { namespace Storage { namespace Test {
             blobContent.end()));
   }
 
-  TEST_F(AppendBlobClientTest, DISABLED_AppendBlockFromUriCrc64AccessCondition)
+  TEST_F(SyntheticStorageTest, AppendBlockFromUriCrc64AccessCondition_PLAYBACKONLY_)
   {
-    auto appendBlobClient = GetAppendBlobClientForTest(RandomString());
-
-    const std::vector<uint8_t> blobContent = RandomBuffer(10);
+    auto clientOptions = InitSyntheticClientOptions<Blobs::BlobClientOptions>();
+    std::vector<std::string> hashes;
+    clientOptions.PerRetryPolicies.push_back(
+        std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request const& request) {
+          hashes.push_back(request.GetHeaders().at("x-ms-source-content-crc64"));
+          EXPECT_EQ(
+              request.GetHeaders().at("x-ms-copy-source"),
+              "https://account.blob.core.windows.net/container/source");
+        }));
+    Blobs::AppendBlobClient appendBlobClient(
+        "https://account.blob.core.windows.net/container/destination",
+        GetTestCredential(),
+        clientOptions);
+    const std::vector<uint8_t> blobContent(10, 'a');
     const std::vector<uint8_t> contentCrc64
         = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
-
-    appendBlobClient.Create();
-    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-    appendBlobClient.AppendBlock(contentStream);
-
-    auto appendBlobClient2 = GetAppendBlobClientForTest(RandomString());
-    appendBlobClient2.Create();
-
     Blobs::AppendBlockFromUriOptions options;
     options.TransactionalContentHash = ContentHash();
     options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
     options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    EXPECT_THROW(
-        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options),
-        StorageException);
+    ExpectStorageError("Crc64Mismatch", [&]() {
+      appendBlobClient.AppendBlockFromUri(
+          "https://account.blob.core.windows.net/container/source", options);
+    });
     options.TransactionalContentHash.Value().Value = contentCrc64;
-    EXPECT_NO_THROW(
-        appendBlobClient2.AppendBlockFromUri(appendBlobClient.GetUrl() + GetSas(), options));
+    EXPECT_NO_THROW(appendBlobClient.AppendBlockFromUri(
+        "https://account.blob.core.windows.net/container/source", options));
+    EXPECT_EQ(
+        hashes, (std::vector<std::string>{DummyCrc64, Core::Convert::Base64Encode(contentCrc64)}));
   }
 
   TEST_F(AppendBlobClientTest, HighThroughputAppendBlob_LIVEONLY_)

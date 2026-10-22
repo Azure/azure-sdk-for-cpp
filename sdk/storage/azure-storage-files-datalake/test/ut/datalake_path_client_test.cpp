@@ -6,7 +6,6 @@
 #include <azure/identity/client_secret_credential.hpp>
 
 #include <algorithm>
-#include <future>
 #include <thread>
 
 namespace Azure { namespace Storage { namespace Test {
@@ -287,56 +286,26 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(DataLakePathClientTest, DISABLED_PaginationDelete)
+  TEST_F(SyntheticStorageTest, PaginationDelete_PLAYBACKONLY_)
   {
-    // This test should be tested locally because it needs an AAD app that has no RBAC permissions
-    // to do the ACL check.
-    const std::string tenantId = "";
-    const std::string appId = "";
-    const std::string appSecret = "";
-
-    // Create resource
-    std::string directoryName = RandomString();
-    auto directoryClient = m_fileSystemClient->GetDirectoryClient(directoryName);
-    directoryClient.Create();
-    // Concurrent create 5000+ files
-    std::vector<std::future<void>> futures;
-    for (int workerIndex = 0; workerIndex < 50; ++workerIndex)
-    {
-      futures.emplace_back(std::async(std::launch::async, [&, workerIndex]() {
-        for (int fileIndex = 0; fileIndex < 101; ++fileIndex)
-        {
-          directoryClient
-              .GetFileClient(std::to_string(workerIndex) + "-" + std::to_string(fileIndex))
-              .Create();
-        }
-      }));
-    }
-    for (auto& f : futures)
-    {
-      f.get();
-    }
-
-    // Set Acls
-    auto rootDirClient = m_fileSystemClient->GetDirectoryClient("");
-    /* cspell:disable-next-line */
-    rootDirClient.SetPermissions("rwxrwxrwx");
-    auto aclResult = rootDirClient.GetAccessControlList();
-    auto acls = aclResult.Value.Acls;
-    Files::DataLake::Models::Acl acl;
-    acl.Permissions = "rwx";
-    acl.Id = appId;
-    acl.Type = "user";
-    acls.emplace_back(acl);
-    rootDirClient.SetAccessControlListRecursive(acls);
-
-    // Pagination delete
+    auto clientOptions = InitSyntheticClientOptions<Files::DataLake::DataLakeClientOptions>();
+    std::vector<std::string> continuations;
+    clientOptions.PerRetryPolicies.push_back(
+        std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request const& request) {
+          auto const& query = request.GetUrl().GetQueryParameters();
+          EXPECT_EQ(query.at("recursive"), "true");
+          EXPECT_EQ(query.at("paginated"), "true");
+          auto continuation = query.find("continuation");
+          continuations.push_back(continuation == query.end() ? "" : continuation->second);
+        }));
     Files::DataLake::DataLakePathClient oauthDirectoryClient(
-        Files::DataLake::_detail::GetDfsUrlFromUrl(directoryClient.GetUrl()),
-        std::make_shared<Azure::Identity::ClientSecretCredential>(tenantId, appId, appSecret));
+        "https://account.dfs.core.windows.net/filesystem/directory",
+        GetTestCredential(),
+        clientOptions);
     Files::DataLake::DeletePathOptions options;
     options.Recursive = true;
     EXPECT_NO_THROW(oauthDirectoryClient.Delete(options));
+    EXPECT_EQ(continuations, (std::vector<std::string>{"", "page-2", "page-3"}));
   }
 
   TEST_F(DataLakePathClientTest, PathAccessControls)

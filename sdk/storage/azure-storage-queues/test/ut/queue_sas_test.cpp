@@ -416,7 +416,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(QueueSasTest, DISABLED_UserDelegationSasPermissions)
+  TEST_F(QueueSasTest, UserDelegationSasPermissions_PLAYBACKONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -426,9 +426,6 @@ namespace Azure { namespace Storage { namespace Test {
     queueSasBuilder.StartsOn = sasStartsOn;
     queueSasBuilder.ExpiresOn = sasExpiresOn;
     queueSasBuilder.QueueName = m_queueName;
-
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
 
     Queues::Models::UserDelegationKey userDelegationKey;
     {
@@ -440,7 +437,6 @@ namespace Azure { namespace Storage { namespace Test {
     }
 
     auto queueClient = *m_queueClient;
-    auto accountName = keyCredential->AccountName;
 
     for (auto permissions :
          {Sas::QueueSasPermissions::Read,
@@ -450,7 +446,8 @@ namespace Azure { namespace Storage { namespace Test {
           Sas::QueueSasPermissions::All})
     {
       queueSasBuilder.SetPermissions(permissions);
-      auto sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto sasToken
+          = queueSasBuilder.GenerateSasToken(userDelegationKey, StandardStorageAccountName());
 
       if ((permissions & Sas::QueueSasPermissions::Read) == Sas::QueueSasPermissions::Read)
       {
@@ -546,29 +543,29 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueClient2.GetProperties(), StorageException);
   }
 
-  TEST_F(QueueSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  TEST_F(SyntheticStorageTest, QueuePrincipalBoundDelegationSas_CrossTenant_PLAYBACKONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    Azure::Identity::ClientSecretCredentialOptions credentialOptions;
+    auto credentialOptions
+        = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
     credentialOptions.AdditionallyAllowedTenants = {"*"};
     auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_SECRET_CROSS_TENANT"));
-    auto delegatedUserObjectId = getObjectIdFromTokenCredential(endUserCredential);
+        "11111111-1111-1111-1111-111111111111",
+        "synthetic-client",
+        "synthetic-secret",
+        credentialOptions);
+    const std::string delegatedUserObjectId = "33333333-3333-3333-3333-333333333333";
 
     auto queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        "https://account.queue.core.windows.net",
         GetTestCredential(),
-        InitStorageClientOptions<Queues::QueueClientOptions>());
+        InitSyntheticClientOptions<Queues::QueueClientOptions>());
     Queues::Models::UserDelegationKey userDelegationKey;
     {
       Queues::GetUserDelegationKeyOptions options;
-      options.DelegatedUserTid = "4ab3a968-f1ae-47a6-b82c-f654612122a9";
+      options.DelegatedUserTid = "11111111-1111-1111-1111-111111111111";
       userDelegationKey = queueServiceClient.GetUserDelegationKey(sasExpiresOn, options).Value;
     }
 
@@ -576,19 +573,19 @@ namespace Azure { namespace Storage { namespace Test {
     queueSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     queueSasBuilder.StartsOn = sasStartsOn;
     queueSasBuilder.ExpiresOn = sasExpiresOn;
-    queueSasBuilder.QueueName = m_queueName;
+    queueSasBuilder.QueueName = "queue";
     queueSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
 
-    auto queueClient = *m_queueClient;
-    auto accountName = keyCredential->AccountName;
+    const Core::Url queueUrl("https://account.queue.core.windows.net/queue");
+    const std::string accountName = "account";
 
     queueSasBuilder.SetPermissions(Sas::QueueSasPermissions::All);
     auto sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
     Queues::QueueClient queueClient1(
-        AppendQueryParameters(Azure::Core::Url(queueClient.GetUrl()), sasToken),
+        AppendQueryParameters(queueUrl, sasToken),
         endUserCredential,
-        InitStorageClientOptions<Queues::QueueClientOptions>());
+        InitSyntheticClientOptions<Queues::QueueClientOptions>());
     EXPECT_NO_THROW(queueClient1.GetProperties());
 
     {
@@ -598,9 +595,10 @@ namespace Azure { namespace Storage { namespace Test {
     }
     sasToken = queueSasBuilder.GenerateSasToken(userDelegationKey, accountName);
     Queues::QueueClient queueClient2(
-        AppendQueryParameters(Azure::Core::Url(queueClient.GetUrl()), sasToken),
+        AppendQueryParameters(queueUrl, sasToken),
         endUserCredential,
-        InitStorageClientOptions<Queues::QueueClientOptions>());
-    EXPECT_THROW(queueClient2.GetProperties(), StorageException);
+        InitSyntheticClientOptions<Queues::QueueClientOptions>());
+    ExpectStorageError("AuthorizationPermissionMismatch", [&]() { queueClient2.GetProperties(); });
+    ExpectDelegatedTenantRequests();
   }
 }}} // namespace Azure::Storage::Test

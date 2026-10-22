@@ -19,22 +19,22 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_NO_THROW(containerClient.Delete());
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_BearerChallengeWorks)
+  TEST_F(SyntheticStorageTest, BlobBearerChallengeWorks_PLAYBACKONLY_)
   {
-    // This testcase needs a client secret to run.
-    const std::string aadTenantId = "";
-    const std::string aadClientId = "";
-    const std::string aadClientSecret = "";
+    const std::string aadTenantId = "11111111-1111-1111-1111-111111111111";
+    const std::string aadClientId = "synthetic-client";
+    const std::string aadClientSecret = "synthetic-secret";
+    const std::string blobUrlString = "https://account.blob.core.windows.net/container/blob";
 
     Blobs::BlobClientOptions clientOptions
-        = InitStorageClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
-    auto options = Azure::Identity::ClientSecretCredentialOptions();
+        = InitSyntheticClientOptions<Azure::Storage::Blobs::BlobClientOptions>();
+    auto options = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
 
     // With tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     auto blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             aadTenantId, aadClientId, aadClientSecret, options),
         clientOptions);
@@ -45,17 +45,17 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(blobClient.GetProperties());
 
     // With custom audience
-    auto blobUrl = Azure::Core::Url(m_blockBlobClient->GetUrl());
+    auto blobUrl = Azure::Core::Url(blobUrlString);
     clientOptions.Audience = Blobs::BlobAudience(blobUrl.GetScheme() + "://" + blobUrl.GetHost());
     blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -66,7 +66,7 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "test", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -75,7 +75,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Disable Tenant Discovery and without tenantId
     clientOptions.EnableTenantDiscovery = false;
     blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -85,11 +85,12 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {};
     blobClient = Blobs::BlobClient(
-        m_blockBlobClient->GetUrl(),
+        blobUrlString,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_THROW(blobClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
+    ExpectTokenScopes("https://account.blob.core.windows.net/.default");
   }
 
 }}} // namespace Azure::Storage::Test

@@ -339,20 +339,20 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(queueServiceClient.GetProperties(), StorageException);
   }
 
-  TEST_F(QueueServiceClientTest, DISABLED_BearerChallengeWorks)
+  TEST_F(SyntheticStorageTest, QueueBearerChallengeWorks_PLAYBACKONLY_)
   {
-    // This testcase needs a client secret to run.
-    const std::string aadTenantId = "";
-    const std::string aadClientId = "";
-    const std::string aadClientSecret = "";
-    auto clientOptions = InitStorageClientOptions<Queues::QueueClientOptions>();
-    auto options = InitStorageClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
+    const std::string aadTenantId = "11111111-1111-1111-1111-111111111111";
+    const std::string aadClientId = "synthetic-client";
+    const std::string aadClientSecret = "synthetic-secret";
+    const std::string serviceUrl = "https://account.queue.core.windows.net";
+    auto clientOptions = InitSyntheticClientOptions<Queues::QueueClientOptions>();
+    auto options = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
 
     // With tenantId
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     auto queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             aadTenantId, aadClientId, aadClientSecret, options),
         clientOptions);
@@ -362,18 +362,18 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_NO_THROW(queueServiceClient.GetProperties());
 
     // With custom audience
-    auto queueUrl = Azure::Core::Url(m_queueServiceClient->GetUrl());
+    auto queueUrl = Azure::Core::Url(serviceUrl);
     clientOptions.Audience
         = Queues::QueueAudience(queueUrl.GetScheme() + "://" + queueUrl.GetHost());
     queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -384,7 +384,7 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {"*"};
     queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "test", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -393,7 +393,7 @@ namespace Azure { namespace Storage { namespace Test {
     // Disable Tenant Discovery and without tenantId
     clientOptions.EnableTenantDiscovery = false;
     queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
@@ -404,11 +404,12 @@ namespace Azure { namespace Storage { namespace Test {
     clientOptions.EnableTenantDiscovery = true;
     options.AdditionallyAllowedTenants = {};
     queueServiceClient = Queues::QueueServiceClient(
-        m_queueServiceClient->GetUrl(),
+        serviceUrl,
         std::make_shared<Azure::Identity::ClientSecretCredential>(
             "", aadClientId, aadClientSecret, options),
         clientOptions);
     EXPECT_THROW(
         queueServiceClient.GetProperties(), Azure::Core::Credentials::AuthenticationException);
+    ExpectTokenScopes("https://account.queue.core.windows.net/.default");
   }
 }}} // namespace Azure::Storage::Test

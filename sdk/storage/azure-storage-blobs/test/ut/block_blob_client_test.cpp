@@ -2644,13 +2644,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlockBlobClientTest, DISABLED_StructuredMessageTest_Large)
+  TEST_F(BlockBlobClientTest, StructuredMessageTest_Large_LIVEONLY_)
   {
-    const size_t contentSize = 1ull * 1024 * 1024 * 1024 + 512;
+    const size_t contentSize = 64 * 1024 * 1024 + 512;
     auto content = RandomBuffer(contentSize);
     auto bodyStream = Azure::Core::IO::MemoryBodyStream(content.data(), content.size());
-    const std::string tempFileName = RandomString();
-    WriteFile(tempFileName, content);
     Blobs::TransferValidationOptions validationOptions;
     validationOptions.Algorithm = StorageChecksumAlgorithm::Crc64;
 

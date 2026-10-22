@@ -666,7 +666,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(ShareSasTest, DISABLED_FileUserDelegationSasPermissions)
+  TEST_F(ShareSasTest, FileUserDelegationSasPermissions_PLAYBACKONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
@@ -680,10 +680,6 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.ShareName = m_shareName;
     fileSasBuilder.FilePath = fileName;
     fileSasBuilder.Resource = Sas::ShareSasResource::File;
-
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
 
     Files::Shares::Models::UserDelegationKey userDelegationKey;
     {
@@ -705,7 +701,8 @@ namespace Azure { namespace Storage { namespace Test {
           Sas::ShareFileSasPermissions::Delete})
     {
       fileSasBuilder.SetPermissions(permissions);
-      auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
+      auto sasToken
+          = fileSasBuilder.GenerateSasToken(userDelegationKey, StandardStorageAccountName());
 
       if ((permissions & Sas::ShareFileSasPermissions::Read) == Sas::ShareFileSasPermissions::Read)
       {
@@ -808,32 +805,31 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(fileClient2.GetProperties(), StorageException);
   }
 
-  TEST_F(ShareSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  TEST_F(SyntheticStorageTest, SharePrincipalBoundDelegationSas_CrossTenant_PLAYBACKONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    std::string fileName = RandomString();
-
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
-    Azure::Identity::ClientSecretCredentialOptions credentialOptions;
+    const std::string fileName = "file";
+    const std::string accountName = "account";
+    auto credentialOptions
+        = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
     credentialOptions.AdditionallyAllowedTenants = {"*"};
     auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_SECRET_CROSS_TENANT"));
-    auto delegatedUserObjectId = getObjectIdFromTokenCredential(endUserCredential);
+        "11111111-1111-1111-1111-111111111111",
+        "synthetic-client",
+        "synthetic-secret",
+        credentialOptions);
+    const std::string delegatedUserObjectId = "33333333-3333-3333-3333-333333333333";
 
     auto shareServiceClient = Files::Shares::ShareServiceClient(
-        m_shareServiceClient->GetUrl(),
+        "https://account.file.core.windows.net",
         GetTestCredential(),
-        InitStorageClientOptions<Files::Shares::ShareClientOptions>());
+        InitSyntheticClientOptions<Files::Shares::ShareClientOptions>());
     Files::Shares::Models::UserDelegationKey userDelegationKey;
     {
       Files::Shares::GetUserDelegationKeyOptions options;
-      options.DelegatedUserTid = "4ab3a968-f1ae-47a6-b82c-f654612122a9";
+      options.DelegatedUserTid = "11111111-1111-1111-1111-111111111111";
       userDelegationKey = shareServiceClient.GetUserDelegationKey(sasExpiresOn, options).Value;
     }
 
@@ -841,24 +837,19 @@ namespace Azure { namespace Storage { namespace Test {
     fileSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     fileSasBuilder.StartsOn = sasStartsOn;
     fileSasBuilder.ExpiresOn = sasExpiresOn;
-    fileSasBuilder.ShareName = m_shareName;
+    fileSasBuilder.ShareName = "share";
     fileSasBuilder.FilePath = fileName;
     fileSasBuilder.Resource = Sas::ShareSasResource::File;
     fileSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
 
-    auto shareClient = *m_shareClient;
-    auto fileClient = shareClient.GetRootDirectoryClient().GetFileClient(fileName);
-    fileClient.Create(1);
-
-    auto fileOptions = InitStorageClientOptions<Files::Shares::ShareClientOptions>();
+    const Core::Url fileUrl("https://account.file.core.windows.net/share/file");
+    auto fileOptions = InitSyntheticClientOptions<Files::Shares::ShareClientOptions>();
     fileOptions.ShareTokenIntent = Files::Shares::Models::ShareTokenIntent::Backup;
     fileSasBuilder.SetPermissions(Sas::ShareFileSasPermissions::All);
     auto sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
     Files::Shares::ShareFileClient fileClient1(
-        AppendQueryParameters(Azure::Core::Url(fileClient.GetUrl()), sasToken),
-        endUserCredential,
-        fileOptions);
+        AppendQueryParameters(fileUrl, sasToken), endUserCredential, fileOptions);
     EXPECT_NO_THROW(fileClient1.GetProperties());
 
     {
@@ -868,9 +859,8 @@ namespace Azure { namespace Storage { namespace Test {
     }
     sasToken = fileSasBuilder.GenerateSasToken(userDelegationKey, accountName);
     Files::Shares::ShareFileClient fileClient2(
-        AppendQueryParameters(Azure::Core::Url(fileClient.GetUrl()), sasToken),
-        endUserCredential,
-        fileOptions);
-    EXPECT_THROW(fileClient2.GetProperties(), StorageException);
+        AppendQueryParameters(fileUrl, sasToken), endUserCredential, fileOptions);
+    ExpectStorageError("AuthorizationPermissionMismatch", [&]() { fileClient2.GetProperties(); });
+    ExpectDelegatedTenantRequests();
   }
 }}} // namespace Azure::Storage::Test

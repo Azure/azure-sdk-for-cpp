@@ -931,42 +931,40 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(blobClient2.Download(), StorageException);
   }
 
-  TEST_F(BlobSasTest, DISABLED_PrincipalBoundDelegationSas_CrossTenant)
+  TEST_F(SyntheticStorageTest, BlobPrincipalBoundDelegationSas_CrossTenant_PLAYBACKONLY_)
   {
     auto sasStartsOn = std::chrono::system_clock::now() - std::chrono::minutes(5);
     auto sasExpiresOn = std::chrono::system_clock::now() + std::chrono::minutes(60);
 
-    auto keyCredential
-        = _internal::ParseConnectionString(StandardStorageConnectionString()).KeyCredential;
-    auto accountName = keyCredential->AccountName;
-    Azure::Identity::ClientSecretCredentialOptions credentialOptions;
+    const std::string accountName = "account";
+    auto credentialOptions
+        = InitSyntheticClientOptions<Azure::Identity::ClientSecretCredentialOptions>();
     credentialOptions.AdditionallyAllowedTenants = {"*"};
     auto endUserCredential = std::make_shared<Azure::Identity::ClientSecretCredential>(
-        GetEnv("AZURE_TENANT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_ID_CROSS_TENANT"),
-        GetEnv("AZURE_CLIENT_SECRET_CROSS_TENANT"));
-    auto delegatedUserObjectId = getObjectIdFromTokenCredential(endUserCredential);
+        "11111111-1111-1111-1111-111111111111",
+        "synthetic-client",
+        "synthetic-secret",
+        credentialOptions);
+    const std::string delegatedUserObjectId = "33333333-3333-3333-3333-333333333333";
 
     auto blobServiceClient = Blobs::BlobServiceClient(
-        m_blobServiceClient->GetUrl(),
+        "https://account.blob.core.windows.net",
         GetTestCredential(),
-        InitStorageClientOptions<Blobs::BlobClientOptions>());
+        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
     Blobs::Models::UserDelegationKey userDelegationKey;
     {
       Blobs::GetUserDelegationKeyOptions options;
-      options.DelegatedUserTid = "4ab3a968-f1ae-47a6-b82c-f654612122a9";
+      options.DelegatedUserTid = "11111111-1111-1111-1111-111111111111";
       userDelegationKey = blobServiceClient.GetUserDelegationKey(sasExpiresOn, options).Value;
     }
 
-    auto blobContainerClient = *m_blobContainerClient;
-    auto blobClient = *m_blockBlobClient;
-    const std::string blobName = m_blobName;
+    const std::string blobName = "blob";
 
     Sas::BlobSasBuilder blobSasBuilder;
     blobSasBuilder.Protocol = Sas::SasProtocol::HttpsAndHttp;
     blobSasBuilder.StartsOn = sasStartsOn;
     blobSasBuilder.ExpiresOn = sasExpiresOn;
-    blobSasBuilder.BlobContainerName = m_containerName;
+    blobSasBuilder.BlobContainerName = "container";
     blobSasBuilder.BlobName = blobName;
     blobSasBuilder.Resource = Sas::BlobSasResource::Blob;
     blobSasBuilder.DelegatedUserObjectId = delegatedUserObjectId;
@@ -975,9 +973,10 @@ namespace Azure { namespace Storage { namespace Test {
     auto sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
 
     Blobs::BlockBlobClient blobClient1(
-        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
+        AppendQueryParameters(
+            Azure::Core::Url("https://account.blob.core.windows.net/container/blob"), sasToken),
         endUserCredential,
-        InitStorageClientOptions<Blobs::BlobClientOptions>());
+        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
     EXPECT_NO_THROW(blobClient1.Download());
 
     {
@@ -988,10 +987,12 @@ namespace Azure { namespace Storage { namespace Test {
     }
     sasToken = blobSasBuilder.GenerateSasToken(userDelegationKey, accountName);
     Blobs::BlockBlobClient blobClient2(
-        AppendQueryParameters(Azure::Core::Url(blobClient.GetUrl()), sasToken),
-        GetTestCredential(),
-        InitStorageClientOptions<Blobs::BlobClientOptions>());
-    EXPECT_THROW(blobClient2.Download(), StorageException);
+        AppendQueryParameters(
+            Azure::Core::Url("https://account.blob.core.windows.net/container/blob"), sasToken),
+        endUserCredential,
+        InitSyntheticClientOptions<Blobs::BlobClientOptions>());
+    ExpectStorageError("AuthorizationPermissionMismatch", [&]() { blobClient2.Download(); });
+    ExpectDelegatedTenantRequests();
   }
 
   TEST_F(BlobSasTest, DynamicSas_LIVEONLY_)
