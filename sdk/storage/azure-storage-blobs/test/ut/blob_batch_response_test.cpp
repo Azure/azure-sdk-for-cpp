@@ -31,9 +31,8 @@ namespace Azure { namespace Storage { namespace Test {
           response->SetHeader("Content-Type", m_contentType.Value());
         }
         response->SetHeader("Content-Length", std::to_string(m_body.size()));
-        response->SetBodyStream(
-            std::make_unique<Core::IO::MemoryBodyStream>(
-                reinterpret_cast<const uint8_t*>(m_body.data()), m_body.size()));
+        response->SetBodyStream(std::make_unique<Core::IO::MemoryBodyStream>(
+            reinterpret_cast<const uint8_t*>(m_body.data()), m_body.size()));
         return response;
       }
 
