@@ -1,5 +1,12 @@
 # Release History
 
+## 12.19.1 (2026-10-22)
+
+### Bugs Fixed
+
+- Fixed Blob Batch response parsing to reject malformed multipart responses and invalid, duplicate,
+  or incomplete response IDs.
+
 ## 12.19.0 (2026-09-29)
 
 ### Features Added
