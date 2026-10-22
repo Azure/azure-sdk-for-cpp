@@ -17,22 +17,9 @@ and refuses to run in LIVE or RECORD mode. It also refuses to send requests if
 playback has not started. No Storage connection strings or Azure credentials are
 needed; token requests use dummy credentials and are routed through test-proxy.
 
-Start test-proxy using the instructions in [TestProxy.md](../../doc/TestProxy.md),
-set `AZURE_TEST_MODE=PLAYBACK`, and run each Storage test executable with
-`--gtest_filter=SyntheticStorageTest.*`. If using a manually started proxy, set
-`AZURE_TEST_USE_TEST_PROXY=OFF` to prevent the test fixture from starting another.
-
-The fixtures live in the assets repository referenced by `assets.json`. To regenerate
-them from the repository root:
-
-```powershell
-python sdk\storage\generate-synthetic-recordings.py --assets-repo <assets-checkout>
-```
-
-The generator is deterministic and refuses to overwrite non-synthetic recordings.
-Publish regenerated fixtures using `test-proxy push -a assets.json` from
-`sdk\storage`, committing the updated assets pin with the corresponding test changes.
-Do not replace real service recordings with synthetic responses.
+The fixtures use the existing test-proxy playback infrastructure and live in the
+assets repository referenced by `assets.json`. Do not replace real service
+recordings with synthetic responses.
 `StructuredMessageTest_Large_LIVEONLY_` uses a 64 MiB + 512-byte body and has no
 playback fixture.
 
