@@ -27,11 +27,12 @@ Do not replace it with the generated model header or edit generated C++ files.
 
 The emitter needs the Queue migration changes: XML metadata and nullable values,
 header collections and scalar headers, SAS-safe query parameters, pipeline reuse,
-and optional request bodies. Use committed emitter revision
-`7a902b92d515b4c3484fcefce1216336d9718a75`
+and optional request bodies. Use merged emitter revision
+`810b64ca434127b81547fbbabec039fe2d9dc4f2`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)),
 including the default-off response-header option, intrinsic optional ETags, and
-fixed-precision XML date-times. An unmodified published emitter is not sufficient.
+fixed-precision XML date-times, and optional-body Content-Type handling.
+Older published emitters are not sufficient.
 Generate from a clean snapshot of that revision, not from uncommitted emitter
 experiments.
 
@@ -41,9 +42,9 @@ than independently installing the latest TypeSpec packages. The migration was
 generated with compiler 1.12.0 and client-generator-core 0.68.4.
 
 Provide a QueueStorage specification directory from the exact revision in
-`tsp-location.yaml`. Its `client.tsp` and `client-cpp.mjs` contain the C++-scoped
+`tsp-location.yaml`. Its `client.tsp` and `routes.tsp` contain the C++-scoped
 customizations maintained in
-[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446).
+[Azure/azure-rest-api-specs#47555](https://github.com/Azure/azure-rest-api-specs/pull/47555).
 No package-local TypeSpec overlay is needed. From this package directory, run:
 
 ```powershell
@@ -53,8 +54,8 @@ No package-local TypeSpec overlay is needed. From this package directory, run:
   -ClangFormatPath C:\path\to\clang-format-11\clang-format.exe
 ```
 
-Use clang-format 11.0.0. The script stages the pinned service inputs, including
-`client-cpp.mjs`, and generates directly from their `client.tsp` in a temporary
+Use clang-format 11.0.0. The script stages the pinned service's four TypeSpec
+files and generates directly from their `client.tsp` in a temporary
 directory. It formats the output before copying the five generated files into
 the package. `-OutputDirectory` can redirect the output for comparison without
 changing the package.
@@ -69,7 +70,6 @@ receive/peek count options, supplies the `StorageServiceStats` XML root, and
 enables metadata header collections. ACL dates retain all seven fractional-second
 digits. Delegation-key request dates are projected as strings and formatted by
 the handwritten client without fractional seconds, as required by that endpoint.
-The pinned service's `client-cpp.mjs` helper applies the existing language-scoped
-`alternateType` decorator to expanded operation parameters that the compiler's
-`::parameters` selector does not expose. These decorators affect only the C++
-projection.
+The pinned service applies `@alternateType(int64, "cpp")` directly to the
+receive/peek count declarations in `routes.tsp`. These decorators affect only
+the C++ projection; no JavaScript helper is needed.

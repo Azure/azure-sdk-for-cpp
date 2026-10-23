@@ -31,7 +31,7 @@ $work = Join-Path ([System.IO.Path]::GetTempPath()) ("queues-typespec-" + [guid]
 $modules = Join-Path $work "node_modules"
 New-Item -ItemType Directory -Path (Join-Path $work "service") | Out-Null
 try {
-  foreach ($file in @("client.tsp", "main.tsp", "models.tsp", "routes.tsp", "client-cpp.mjs")) {
+  foreach ($file in @("client.tsp", "main.tsp", "models.tsp", "routes.tsp")) {
     Copy-Item -LiteralPath (Join-Path $spec $file) -Destination (Join-Path $work "service")
   }
   Copy-Item -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) "tspconfig.yaml") -Destination $work

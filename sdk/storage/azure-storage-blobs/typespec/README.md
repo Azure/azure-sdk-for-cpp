@@ -30,7 +30,7 @@ or manually edit generated C++.
 The pinned specification's `client.tsp` and `Cpp/client.tsp` apply C++-scoped
 customizations without changing other languages or the REST API definition.
 These inputs are maintained in
-[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446);
+[Azure/azure-rest-api-specs#47555](https://github.com/Azure/azure-rest-api-specs/pull/47555);
 no package-local TypeSpec overlay is needed:
 
 - Batch operations and typed listing operations are excluded.
@@ -49,11 +49,12 @@ no package-local TypeSpec overlay is needed:
 
 Use a clean checkout or snapshot of
 [`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
-`7a902b92d515b4c3484fcefce1216336d9718a75`
+`810b64ca434127b81547fbbabec039fe2d9dc4f2`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
 This revision includes the default-off response-header option, intrinsic optional
 ETags, fixed-precision XML date-times, and streaming binary request/response
-support. The unmodified published emitter and unrelated local experiments are not
+support, optional-body Content-Type handling, and C++ string literal escaping.
+Older published emitters and unrelated local experiments are not
 supported generation inputs.
 
 Build `packages/codegen.cpp` first, then `packages/typespec-cpp`, using their

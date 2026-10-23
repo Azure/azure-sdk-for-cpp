@@ -2732,7 +2732,6 @@ FileSharesClient::CreateFile(
       options.OptionalBody.HasValue() ? options.OptionalBody.Value().size() : 0);
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/octet-stream");
   request.SetHeader("x-ms-type", "file");
 
   request.SetHeader("x-ms-version", m_xMsVersion);
@@ -2873,6 +2872,10 @@ FileSharesClient::CreateFile(
         std::to_string(options.XMsStructuredContentLength.Value()));
   }
 
+  if (options.OptionalBody.HasValue())
+  {
+    request.SetHeader("Content-Type", "application/octet-stream");
+  }
   if (options.Metadata.HasValue())
   {
     for (auto const& header : options.Metadata.Value())
@@ -5390,8 +5393,6 @@ FileSharesClient::UploadRangeFile(
       options.OptionalBody.HasValue() ? options.OptionalBody.Value().size() : 0);
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/octet-stream");
-
   request.SetHeader("x-ms-version", m_xMsVersion);
   request.SetHeader("Range", range);
   request.SetHeader("x-ms-write", xMsWrite.ToString());
@@ -5439,6 +5440,10 @@ FileSharesClient::UploadRangeFile(
         std::to_string(options.XMsStructuredContentLength.Value()));
   }
 
+  if (options.OptionalBody.HasValue())
+  {
+    request.SetHeader("Content-Type", "application/octet-stream");
+  }
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);
@@ -13021,8 +13026,6 @@ FileSharesClient::SetAccessPolicyShare(
 
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/xml");
-
   request.SetHeader("x-ms-version", m_xMsVersion);
   if (options.XMsClientRequestId.HasValue())
   {
@@ -13039,6 +13042,10 @@ FileSharesClient::SetAccessPolicyShare(
     request.SetHeader("x-ms-file-request-intent", options.XMsFileRequestIntent.Value().ToString());
   }
 
+  if (options.ShareAcl.HasValue())
+  {
+    request.SetHeader("Content-Type", "application/xml");
+  }
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);

@@ -3792,8 +3792,6 @@ BlobsClient::SetAccessPolicyContainer(
 
   Core::Http::Request request(Core::Http::HttpMethod::Put, url, &requestBody);
 
-  request.SetHeader("Content-Type", "application/xml");
-
   request.SetHeader("x-ms-version", m_xMsVersion);
   if (options.XMsClientRequestId.HasValue())
   {
@@ -3824,6 +3822,10 @@ BlobsClient::SetAccessPolicyContainer(
         options.IfUnmodifiedSince.Value().ToString(DateTime::DateFormat::Rfc1123));
   }
 
+  if (options.ContainerAcl.HasValue())
+  {
+    request.SetHeader("Content-Type", "application/xml");
+  }
   request.SetHeader("Content-Length", std::to_string(requestBody.Length()));
 
   auto rawResponse = m_pipeline->Send(request, context);

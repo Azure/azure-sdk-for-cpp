@@ -20,7 +20,7 @@ headers or manually edit generated C++.
 ## C++ customizations
 
 The pinned specification's `client.tsp` uses C++-scoped decorators, maintained in
-[Azure/azure-rest-api-specs#47446](https://github.com/Azure/azure-rest-api-specs/pull/47446),
+[Azure/azure-rest-api-specs#47555](https://github.com/Azure/azure-rest-api-specs/pull/47555),
 without changing the REST API definition or other languages' projections.
 No package-local TypeSpec overlay is needed:
 
@@ -40,10 +40,11 @@ responsible for continuation tokens. Downloads continue to use Blob Storage.
 
 Use a clean checkout or snapshot of
 [`Azure/typespec-cpp`](https://github.com/Azure/typespec-cpp) at commit
-`7a902b92d515b4c3484fcefce1216336d9718a75`
+`810b64ca434127b81547fbbabec039fe2d9dc4f2`
 ([Azure/typespec-cpp#585](https://github.com/Azure/typespec-cpp/pull/585)).
 This revision includes the default-off response-header option, intrinsic optional
-ETags, and lenient JSON boolean parsing. Uncommitted emitter experiments and the
+ETags, lenient JSON boolean parsing, and optional-body Content-Type handling.
+Uncommitted emitter experiments and the
 unmodified published emitter are not supported inputs. Build `packages/codegen.cpp`
 first, then `packages/typespec-cpp`, using their package manifests. The generation toolchain
 uses TypeSpec compiler 1.12.0 and client-generator-core 0.68.4.
