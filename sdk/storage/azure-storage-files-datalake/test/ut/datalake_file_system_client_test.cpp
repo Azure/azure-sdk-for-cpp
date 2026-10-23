@@ -34,9 +34,12 @@ namespace Azure { namespace Storage { namespace Test {
     sasBuilder.SetPermissions(Sas::DataLakeFileSystemSasPermissions::All);
     if (m_useTokenCredentialByDefault)
     {
+      Files::DataLake::GetUserDelegationKeyOptions options;
+      options.StartsOn = std::chrono::system_clock::now() - std::chrono::seconds(5);
       auto userDelegationKey
           = m_dataLakeServiceClient
-                ->GetUserDelegationKey(std::chrono::system_clock::now() + std::chrono::minutes(60))
+                ->GetUserDelegationKey(
+                    std::chrono::system_clock::now() + std::chrono::minutes(60), options)
                 .Value;
       return sasBuilder.GenerateSasToken(userDelegationKey, AdlsGen2AccountName());
     }
