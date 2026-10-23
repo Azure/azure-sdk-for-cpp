@@ -20,6 +20,7 @@ add_executable (
     queue_client_messages_test.cpp
     queue_client_test.cpp
     queue_client_test.hpp
+    queue_protocol_test.cpp
     queue_sas_test.cpp
     queue_service_client_test.cpp
     queue_service_client_test.hpp

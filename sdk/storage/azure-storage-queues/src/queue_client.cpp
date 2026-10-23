@@ -4,6 +4,8 @@
 #include "azure/storage/queues/queue_client.hpp"
 
 #include "private/package_version.hpp"
+#include "private/queue_model_conversions.hpp"
+#include "private/queue_protocol.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
@@ -12,6 +14,8 @@
 #include <azure/storage/common/internal/storage_pipeline.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
+
+#include <stdexcept>
 
 namespace Azure { namespace Storage { namespace Queues {
 
@@ -49,7 +53,7 @@ namespace Azure { namespace Storage { namespace Queues {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueClient::QueueClient(
@@ -76,7 +80,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueClient::QueueClient(const std::string& queueUrl, const QueueClientOptions& options)
@@ -90,7 +94,7 @@ namespace Azure { namespace Storage { namespace Queues {
     pipelineOptions.ApiVersion = options.ApiVersion.ToString();
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
+        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   Azure::Response<Models::CreateQueueResult> QueueClient::Create(
@@ -99,14 +103,16 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     try
     {
-      _detail::QueueClient::CreateQueueOptions protocolLayerOptions;
-      protocolLayerOptions.Metadata
-          = std::map<std::string, std::string>(options.Metadata.begin(), options.Metadata.end());
-      auto response
-          = _detail::QueueClient::Create(*m_pipeline, m_queueUrl, protocolLayerOptions, context);
-      response.Value.Created
-          = response.RawResponse->GetStatusCode() == Core::Http::HttpStatusCode::Created;
-      return response;
+      _detail::QueuesClientCreateQueueOptions protocolLayerOptions;
+      protocolLayerOptions.Metadata = options.Metadata;
+      auto response = _detail::InvokeStorageProtocol([&] {
+        return _detail::QueuesClient(m_queueUrl, m_pipeline)
+            .CreateQueue(protocolLayerOptions, context);
+      });
+      Models::CreateQueueResult result;
+      result.Created = response.RawResponse->GetStatusCode() == Core::Http::HttpStatusCode::Created;
+      return Azure::Response<Models::CreateQueueResult>(
+          std::move(result), std::move(response.RawResponse));
     }
     catch (StorageException& e)
     {
@@ -127,8 +133,9 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     try
     {
-      _detail::QueueClient::DeleteQueueOptions protocolLayerOptions;
-      return _detail::QueueClient::Delete(*m_pipeline, m_queueUrl, protocolLayerOptions, context);
+      auto response = _detail::InvokeStorageProtocol(
+          [&] { return _detail::QueuesClient(m_queueUrl, m_pipeline).DeleteQueue({}, context); });
+      return Azure::Response<Models::DeleteQueueResult>({}, std::move(response.RawResponse));
     }
     catch (StorageException& e)
     {
@@ -147,21 +154,28 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueClient::GetQueuePropertiesOptions protocolLayerOptions;
-    auto ret = _detail::QueueClient::GetProperties(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+    auto ret = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline).GetPropertiesQueue({}, context);
+    });
     Models::QueueProperties queueProperties;
-    queueProperties.Metadata = std::move(ret.Value.Metadata);
-    if (ret.Value.ApproximateMessageCount > static_cast<int64_t>(INT32_MAX))
+    if (ret.Value.Metadata.HasValue())
+    {
+      queueProperties.Metadata = std::move(ret.Value.Metadata.Value());
+    }
+    if (!ret.Value.ApproximateMessagesCount.HasValue())
+    {
+      throw std::out_of_range("Missing x-ms-approximate-messages-count response header.");
+    }
+    auto const count = ret.Value.ApproximateMessagesCount.Value();
+    if (count > static_cast<int64_t>(INT32_MAX))
     {
       queueProperties.ApproximateMessageCount = -1;
     }
     else
     {
-      queueProperties.ApproximateMessageCount
-          = static_cast<std::int32_t>(ret.Value.ApproximateMessageCount);
+      queueProperties.ApproximateMessageCount = static_cast<std::int32_t>(count);
     }
-    queueProperties.ApproximateMessageCountLong = ret.Value.ApproximateMessageCount;
+    queueProperties.ApproximateMessageCountLong = count;
     return Azure::Response<Models::QueueProperties>(
         std::move(queueProperties), std::move(ret.RawResponse));
   }
@@ -172,11 +186,13 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueClient::SetQueueMetadataOptions protocolLayerOptions;
-    protocolLayerOptions.Metadata
-        = std::map<std::string, std::string>(metadata.begin(), metadata.end());
-    return _detail::QueueClient::SetMetadata(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+    _detail::QueuesClientSetMetadataQueueOptions protocolLayerOptions;
+    protocolLayerOptions.Metadata = std::move(metadata);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .SetMetadataQueue(protocolLayerOptions, context);
+    });
+    return Azure::Response<Models::SetQueueMetadataResult>({}, std::move(response.RawResponse));
   }
 
   Azure::Response<Models::QueueAccessPolicy> QueueClient::GetAccessPolicy(
@@ -184,9 +200,11 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueClient::GetQueueAccessPolicyOptions protocolLayerOptions;
-    return _detail::QueueClient::GetAccessPolicy(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline).GetAccessPolicyQueue({}, context);
+    });
+    return Azure::Response<Models::QueueAccessPolicy>(
+        _detail::ToPublic(std::move(response.Value)), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::SetQueueAccessPolicyResult> QueueClient::SetAccessPolicy(
@@ -195,10 +213,13 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::QueueClient::SetQueueAccessPolicyOptions protocolLayerOptions;
-    protocolLayerOptions.QueueAcl = accessPolicy.SignedIdentifiers;
-    return _detail::QueueClient::SetAccessPolicy(
-        *m_pipeline, m_queueUrl, protocolLayerOptions, context);
+    _detail::QueuesClientSetAccessPolicyQueueOptions protocolLayerOptions;
+    protocolLayerOptions.QueueAcl = _detail::ToGenerated(accessPolicy);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .SetAccessPolicyQueue(protocolLayerOptions, context);
+    });
+    return Azure::Response<Models::SetQueueAccessPolicyResult>({}, std::move(response.RawResponse));
   }
 
   Azure::Response<Models::EnqueueMessageResult> QueueClient::EnqueueMessage(
@@ -206,52 +227,79 @@ namespace Azure { namespace Storage { namespace Queues {
       const EnqueueMessageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueClient::EnqueueQueueMessageOptions protocolLayerOptions;
-    protocolLayerOptions.QueueMessage.MessageText = std::move(messageText);
+    _detail::QueuesClientSendMessageQueueOptions protocolLayerOptions;
+    _detail::Models::QueueMessage message;
+    message.MessageText = std::move(messageText);
     if (options.TimeToLive.HasValue())
     {
-      protocolLayerOptions.MessageTimeToLive
-          = static_cast<int32_t>(options.TimeToLive.Value().count());
+      protocolLayerOptions.Messagettl = static_cast<int32_t>(options.TimeToLive.Value().count());
     }
     if (options.VisibilityTimeout.HasValue())
     {
       protocolLayerOptions.Visibilitytimeout
           = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
     }
-    return _detail::QueueClient::EnqueueMessage(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .SendMessageQueue(message, protocolLayerOptions, context);
+    });
+    Models::EnqueueMessageResult result;
+    if (!response.Value.Items.empty())
+    {
+      auto& item = response.Value.Items.front();
+      result.MessageId = std::move(item.MessageId);
+      result.InsertedOn = item.InsertionTime;
+      result.ExpiresOn = item.ExpirationTime;
+      result.PopReceipt = std::move(item.PopReceipt);
+      result.NextVisibleOn = item.TimeNextVisible;
+    }
+    return Azure::Response<Models::EnqueueMessageResult>(
+        std::move(result), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::ReceivedMessages> QueueClient::ReceiveMessages(
       const ReceiveMessagesOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueClient::ReceiveQueueMessagesOptions protocolLayerOptions;
-    protocolLayerOptions.NumberOfMessages = options.MaxMessages;
+    _detail::QueuesClientReceiveMessagesQueueOptions protocolLayerOptions;
+    protocolLayerOptions.Numofmessages = options.MaxMessages;
     if (options.VisibilityTimeout.HasValue())
     {
       protocolLayerOptions.Visibilitytimeout
           = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
     }
-    return _detail::QueueClient::ReceiveMessages(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .ReceiveMessagesQueue(protocolLayerOptions, context);
+    });
+    Models::ReceivedMessages result;
+    result.Messages.reserve(response.Value.Items.size());
+    for (auto& item : response.Value.Items)
+    {
+      result.Messages.emplace_back(_detail::ToPublic(std::move(item)));
+    }
+    return Azure::Response<Models::ReceivedMessages>(
+        std::move(result), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::PeekedMessages> QueueClient::PeekMessages(
       const PeekMessagesOptions& options,
       const Azure::Core::Context& context) const
   {
-    (void)options;
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueClient::PeekQueueMessagesOptions protocolLayerOptions;
-    protocolLayerOptions.NumberOfMessages = options.MaxMessages;
-    return _detail::QueueClient::PeekMessages(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    _detail::QueuesClientPeekMessagesQueueOptions protocolLayerOptions;
+    protocolLayerOptions.Numofmessages = options.MaxMessages;
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .PeekMessagesQueue(protocolLayerOptions, context);
+    });
+    Models::PeekedMessages result;
+    result.Messages.reserve(response.Value.Items.size());
+    for (auto& item : response.Value.Items)
+    {
+      result.Messages.emplace_back(_detail::ToPublic(std::move(item)));
+    }
+    return Azure::Response<Models::PeekedMessages>(
+        std::move(result), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::UpdateMessageResult> QueueClient::UpdateMessage(
@@ -261,26 +309,27 @@ namespace Azure { namespace Storage { namespace Queues {
       const UpdateMessageOptions& options,
       const Azure::Core::Context& context) const
   {
-    auto messageUrl = m_queueUrl;
-    messageUrl.AppendPath("messages");
-    messageUrl.AppendPath(_internal::UrlEncodePath(messageId));
+    _detail::QueuesClientUpdateMessageQueueOptions protocolLayerOptions;
     if (options.MessageText.HasValue())
     {
-      _detail::QueueClient::UpdateQueueMessageOptions protocolLayerOptions;
-      protocolLayerOptions.QueueMessage.MessageText = options.MessageText.Value();
-      protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.Visibilitytimeout = static_cast<int32_t>(visibilityTimeout.count());
-      return _detail::QueueClient::UpdateMessage(
-          *m_pipeline, messageUrl, protocolLayerOptions, context);
+      _detail::Models::QueueMessage message;
+      message.MessageText = options.MessageText.Value();
+      protocolLayerOptions.QueueMessage = std::move(message);
     }
-    else
-    {
-      _detail::QueueClient::UpdateQueueMessageVisibilityOptions protocolLayerOptions;
-      protocolLayerOptions.PopReceipt = popReceipt;
-      protocolLayerOptions.Visibilitytimeout = static_cast<int32_t>(visibilityTimeout.count());
-      return _detail::QueueClient::UpdateMessageVisibility(
-          *m_pipeline, messageUrl, protocolLayerOptions, context);
-    }
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .UpdateMessageQueue(
+              messageId,
+              popReceipt,
+              static_cast<int32_t>(visibilityTimeout.count()),
+              protocolLayerOptions,
+              context);
+    });
+    Models::UpdateMessageResult result;
+    result.PopReceipt = std::move(response.Value.PopReceipt);
+    result.NextVisibleOn = response.Value.TimeNextVisible;
+    return Azure::Response<Models::UpdateMessageResult>(
+        std::move(result), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::DeleteMessageResult> QueueClient::DeleteMessage(
@@ -290,13 +339,11 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto messageUrl = m_queueUrl;
-    messageUrl.AppendPath("messages");
-    messageUrl.AppendPath(_internal::UrlEncodePath(messageId));
-    _detail::QueueClient::DeleteQueueMessageOptions protocolLayerOptions;
-    protocolLayerOptions.PopReceipt = popReceipt;
-    return _detail::QueueClient::DeleteMessage(
-        *m_pipeline, messageUrl, protocolLayerOptions, context);
+    auto response = _detail::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_queueUrl, m_pipeline)
+          .DeleteMessageQueue(messageId, popReceipt, {}, context);
+    });
+    return Azure::Response<Models::DeleteMessageResult>({}, std::move(response.RawResponse));
   }
 
   Azure::Response<Models::ClearMessagesResult> QueueClient::ClearMessages(
@@ -304,11 +351,9 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto messagesUrl = m_queueUrl;
-    messagesUrl.AppendPath("messages");
-    _detail::QueueClient::ClearQueueMessagesOptions protocolLayerOptions;
-    return _detail::QueueClient::ClearMessages(
-        *m_pipeline, messagesUrl, protocolLayerOptions, context);
+    auto response = _detail::InvokeStorageProtocol(
+        [&] { return _detail::QueuesClient(m_queueUrl, m_pipeline).ClearQueue({}, context); });
+    return Azure::Response<Models::ClearMessagesResult>({}, std::move(response.RawResponse));
   }
 
 }}} // namespace Azure::Storage::Queues

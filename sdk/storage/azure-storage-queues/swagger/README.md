@@ -1,4 +1,7 @@
-# Azure Storage C++ Protocol Layer
+# Legacy Azure Storage C++ Protocol Layer
+
+This configuration is retained as historical migration reference. Queue protocol
+code is now generated from TypeSpec; see [the generation instructions](../typespec/README.md).
 
 > see https://aka.ms/autorest
 

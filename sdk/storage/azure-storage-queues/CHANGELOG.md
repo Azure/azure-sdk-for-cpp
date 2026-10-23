@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Migrated the internal REST protocol layer to TypeSpec generation without changing public APIs.
+
 ## 12.8.0 (2026-09-29)
 
 ### Other Changes
