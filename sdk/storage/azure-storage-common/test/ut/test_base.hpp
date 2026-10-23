@@ -59,7 +59,7 @@ namespace Azure { namespace Storage {
 
     class PeekHttpRequestPolicy final : public Core::Http::Policies::HttpPolicy {
     public:
-      explicit PeekHttpRequestPolicy(std::function<void(const Core::Http::Request&)> callback)
+      explicit PeekHttpRequestPolicy(std::function<void(Core::Http::Request&)> callback)
           : m_callback(std::move(callback))
       {
       }
@@ -79,7 +79,7 @@ namespace Azure { namespace Storage {
       }
 
     private:
-      std::function<void(const Core::Http::Request&)> m_callback;
+      std::function<void(Core::Http::Request&)> m_callback;
     };
 
     class StorageTest : public Azure::Core::Test::TestBase {
