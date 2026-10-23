@@ -79,13 +79,8 @@ pipelines:
           lastModifiedDate: 2026-10-17
         spotbugs:
           lastModifiedDate: 2026-10-17
-  1963:
+  2123:
     retail:
-      source:
-        psscriptanalyzer:
-          lastModifiedDate: 2026-10-23
-        armory:
-          lastModifiedDate: 2026-10-23
       binary:
         binskim:
           lastModifiedDate: 2026-10-23
