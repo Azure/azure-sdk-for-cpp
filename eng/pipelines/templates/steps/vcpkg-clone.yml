@@ -4,16 +4,31 @@ parameters:
   RepoName: vcpkg
   PRBranchName: not-set
   SetVcpkgRoot: true
+  AuthToken: ''
 
 steps:
-  - pwsh: |
-      Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"
-      git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
-      if ($LASTEXITCODE -ne 0) {
-        Write-Error "Unable to check out vcpkg fork repo"
-        exit $LASTEXITCODE
-      }
-    displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
+  - ${{ if ne(parameters.AuthToken, '') }}:
+    - pwsh: |
+        $tokenLength = "${{ parameters.AuthToken }}".Length
+        $startsWithGhp = "${{ parameters.AuthToken }}".Substring(0, 4) -eq "ghp_"
+
+        Write-Host "git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}"        
+        Write-Host "Using GitHub token for authentication (Token length: $tokenLength, Starts with 'ghp_': $startsWithGhp)."
+
+        git clone https://azure-sdk:${{ parameters.AuthToken }}@github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "Unable to check out vcpkg fork repo"
+          exit $LASTEXITCODE
+        }
+      displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
+  - ${{ else }}:
+    - pwsh: |
+        git clone https://github.com/${{ parameters.RepoOwner }}/${{ parameters.RepoName }} ${{ parameters.Workspace }}/${{ parameters.RepoName }}
+        if ($LASTEXITCODE -ne 0) {
+          Write-Error "Unable to check out vcpkg fork repo"
+          exit $LASTEXITCODE
+        }
+      displayName: Clone vcpkg (${{ parameters.RepoOwner }}/${{ parameters.RepoName }})
 
   - ${{ if eq(parameters.SetVcpkgRoot, true) }}:
     - pwsh: |
