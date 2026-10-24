@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "azure/storage/queues/queue_options.hpp"
+
 #include <azure/core/case_insensitive_containers.hpp>
 #include <azure/core/datetime.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -17,7 +19,6 @@
 #include <cstdint>
 #include <memory>
 #include <string>
-#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -247,39 +248,6 @@ namespace Azure { namespace Storage { namespace Queues {
       Core::CaseInsensitiveMap Metadata;
     };
     /**
-     * @brief Include this parameter to specify that the queues' metadata be returned as part of the
-     * response body.
-     */
-    enum class ListQueuesIncludeFlags
-    {
-      None = 0,
-      Metadata = 1,
-    };
-    inline ListQueuesIncludeFlags operator|(ListQueuesIncludeFlags lhs, ListQueuesIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListQueuesIncludeFlags>;
-      return static_cast<ListQueuesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
-    }
-    inline ListQueuesIncludeFlags& operator|=(
-        ListQueuesIncludeFlags& lhs,
-        ListQueuesIncludeFlags rhs)
-    {
-      lhs = lhs | rhs;
-      return lhs;
-    }
-    inline ListQueuesIncludeFlags operator&(ListQueuesIncludeFlags lhs, ListQueuesIncludeFlags rhs)
-    {
-      using type = std::underlying_type_t<ListQueuesIncludeFlags>;
-      return static_cast<ListQueuesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
-    }
-    inline ListQueuesIncludeFlags& operator&=(
-        ListQueuesIncludeFlags& lhs,
-        ListQueuesIncludeFlags rhs)
-    {
-      lhs = lhs & rhs;
-      return lhs;
-    }
-    /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::Create.
      */
     struct CreateQueueResult final
@@ -505,37 +473,6 @@ namespace Azure { namespace Storage { namespace Queues {
   } // namespace Models
 
   class QueueServiceClient;
-
-  /**
-   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
-   */
-  struct ListQueuesOptions final
-  {
-    /**
-     * @brief Specifies a string that filters the results to return only queues whose name begins
-     * with the specified prefix.
-     */
-    Azure::Nullable<std::string> Prefix;
-
-    /**
-     * @brief A string value that identifies the portion of the list of queues to be returned with
-     * the next listing operation. The operation returns a non-empty continuation token if the
-     * listing operation did not return all queues remaining to be listed with the current segment.
-     * The ContinuationToken value can be used as the value for the ContinuationToken parameter in a
-     * subsequent call to request the next segment of list items.
-     */
-    Azure::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief Specifies the maximum number of queues to return.
-     */
-    Azure::Nullable<int32_t> PageSizeHint;
-
-    /**
-     * @brief Specifies that the queue's metadata be returned.
-     */
-    Models::ListQueuesIncludeFlags Include = Models::ListQueuesIncludeFlags::None;
-  };
 
   /**
    * @brief Response type for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
