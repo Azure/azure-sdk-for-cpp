@@ -5,13 +5,13 @@
 
 #include "private/package_version.hpp"
 #include "private/queue_model_conversions.hpp"
-#include "private/queue_protocol.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_pipeline.hpp>
+#include <azure/storage/common/internal/storage_protocol.hpp>
 #include <azure/storage/common/storage_common.hpp>
 #include <azure/storage/common/storage_exception.hpp>
 
@@ -105,7 +105,7 @@ namespace Azure { namespace Storage { namespace Queues {
     {
       _detail::QueuesClientCreateQueueOptions protocolLayerOptions;
       protocolLayerOptions.Metadata = options.Metadata;
-      auto response = _detail::InvokeStorageProtocol([&] {
+      auto response = _internal::InvokeStorageProtocol([&] {
         return _detail::QueuesClient(m_queueUrl, m_pipeline)
             .CreateQueue(protocolLayerOptions, context);
       });
@@ -133,7 +133,7 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     try
     {
-      auto response = _detail::InvokeStorageProtocol(
+      auto response = _internal::InvokeStorageProtocol(
           [&] { return _detail::QueuesClient(m_queueUrl, m_pipeline).DeleteQueue({}, context); });
       return Azure::Response<Models::DeleteQueueResult>({}, std::move(response.RawResponse));
     }
@@ -154,7 +154,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto ret = _detail::InvokeStorageProtocol([&] {
+    auto ret = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline).GetPropertiesQueue({}, context);
     });
     Models::QueueProperties queueProperties;
@@ -188,7 +188,7 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     _detail::QueuesClientSetMetadataQueueOptions protocolLayerOptions;
     protocolLayerOptions.Metadata = std::move(metadata);
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .SetMetadataQueue(protocolLayerOptions, context);
     });
@@ -200,7 +200,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline).GetAccessPolicyQueue({}, context);
     });
     return Azure::Response<Models::QueueAccessPolicy>(
@@ -215,7 +215,7 @@ namespace Azure { namespace Storage { namespace Queues {
     (void)options;
     _detail::QueuesClientSetAccessPolicyQueueOptions protocolLayerOptions;
     protocolLayerOptions.QueueAcl = _detail::ToGenerated(accessPolicy);
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .SetAccessPolicyQueue(protocolLayerOptions, context);
     });
@@ -239,7 +239,7 @@ namespace Azure { namespace Storage { namespace Queues {
       protocolLayerOptions.Visibilitytimeout
           = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
     }
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .SendMessageQueue(message, protocolLayerOptions, context);
     });
@@ -268,7 +268,7 @@ namespace Azure { namespace Storage { namespace Queues {
       protocolLayerOptions.Visibilitytimeout
           = static_cast<int32_t>(options.VisibilityTimeout.Value().count());
     }
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .ReceiveMessagesQueue(protocolLayerOptions, context);
     });
@@ -288,7 +288,7 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     _detail::QueuesClientPeekMessagesQueueOptions protocolLayerOptions;
     protocolLayerOptions.Numofmessages = options.MaxMessages;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .PeekMessagesQueue(protocolLayerOptions, context);
     });
@@ -316,7 +316,7 @@ namespace Azure { namespace Storage { namespace Queues {
       message.MessageText = options.MessageText.Value();
       protocolLayerOptions.QueueMessage = std::move(message);
     }
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .UpdateMessageQueue(
               messageId,
@@ -339,7 +339,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_queueUrl, m_pipeline)
           .DeleteMessageQueue(messageId, popReceipt, {}, context);
     });
@@ -351,7 +351,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto response = _detail::InvokeStorageProtocol(
+    auto response = _internal::InvokeStorageProtocol(
         [&] { return _detail::QueuesClient(m_queueUrl, m_pipeline).ClearQueue({}, context); });
     return Azure::Response<Models::ClearMessagesResult>({}, std::move(response.RawResponse));
   }

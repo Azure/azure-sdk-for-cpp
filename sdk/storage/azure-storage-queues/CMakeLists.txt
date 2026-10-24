@@ -33,9 +33,9 @@ if(FETCH_SOURCE_DEPS)
         add_subdirectory(${oneFolder} EXCLUDE_FROM_ALL)
     endforeach()
 elseif(NOT AZ_ALL_LIBRARIES)
-  find_package(azure-storage-common-cpp CONFIG QUIET)
+  find_package(azure-storage-common-cpp 12.16.0 CONFIG QUIET)
   if(NOT azure-storage-common-cpp_FOUND)
-    find_package(azure-storage-common-cpp REQUIRED)
+    find_package(azure-storage-common-cpp 12.16.0 REQUIRED)
   endif()
 endif()
 
@@ -55,7 +55,6 @@ set(
   AZURE_STORAGE_QUEUES_SOURCE
     src/private/package_version.hpp
     src/private/queue_model_conversions.hpp
-    src/private/queue_protocol.hpp
     src/generated/queues_client.hpp
     src/generated/queues_client_options.hpp
     src/generated/queues_models.hpp

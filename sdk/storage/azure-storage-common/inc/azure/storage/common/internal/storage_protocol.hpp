@@ -8,7 +8,7 @@
 
 #include <utility>
 
-namespace Azure { namespace Storage { namespace Queues { namespace _detail {
+namespace Azure { namespace Storage { namespace _internal {
 
   template <class Operation>
   auto InvokeStorageProtocol(Operation&& operation)
@@ -32,4 +32,4 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     }
   }
 
-}}}} // namespace Azure::Storage::Queues::_detail
+}}} // namespace Azure::Storage::_internal

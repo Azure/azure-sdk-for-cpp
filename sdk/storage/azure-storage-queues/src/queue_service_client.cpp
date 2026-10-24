@@ -5,13 +5,13 @@
 
 #include "private/package_version.hpp"
 #include "private/queue_model_conversions.hpp"
-#include "private/queue_protocol.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_pipeline.hpp>
+#include <azure/storage/common/internal/storage_protocol.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
@@ -117,7 +117,7 @@ namespace Azure { namespace Storage { namespace Queues {
       protocolLayerOptions.Include = std::vector<_detail::Models::ListQueuesIncludeType>{
           _detail::Models::ListQueuesIncludeType::Metadata};
     }
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_serviceUrl, m_pipeline)
           .GetQueuesService(protocolLayerOptions, _internal::WithReplicaStatus(context));
     });
@@ -160,7 +160,7 @@ namespace Azure { namespace Storage { namespace Queues {
   {
     (void)options;
     auto protocolProperties = _detail::ToGenerated(std::move(properties));
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_serviceUrl, m_pipeline)
           .SetPropertiesService(protocolProperties, {}, context);
     });
@@ -172,7 +172,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_serviceUrl, m_pipeline)
           .GetPropertiesService({}, _internal::WithReplicaStatus(context));
     });
@@ -185,7 +185,7 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_serviceUrl, m_pipeline).GetStatisticsService({}, context);
     });
     Models::ServiceStatistics result;
@@ -229,7 +229,7 @@ namespace Azure { namespace Storage { namespace Queues {
     keyInfo.Expiry
         = expiresOn.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
     keyInfo.DelegatedUserTid = options.DelegatedUserTid;
-    auto response = _detail::InvokeStorageProtocol([&] {
+    auto response = _internal::InvokeStorageProtocol([&] {
       return _detail::QueuesClient(m_serviceUrl, m_pipeline)
           .GetUserDelegationKeyService(keyInfo, {}, context);
     });

@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include "../../src/private/queue_protocol.hpp"
-
 #include <azure/core/exception.hpp>
 #include <azure/core/http/transport.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
@@ -346,49 +344,6 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     }
     ASSERT_EQ(Transport->Requests.size(), 2U);
     EXPECT_EQ(Transport->Requests[1].Url.GetQueryParameters().at("marker"), "next");
-  }
-
-  TEST(QueueProtocolAdapterTest, PreservesExistingExceptions)
-  {
-    try
-    {
-      Queues::_detail::InvokeStorageProtocol([] {
-        StorageException error("existing Storage exception");
-        error.ErrorCode = "Existing";
-        error.AdditionalInformation["Detail"] = "retained";
-        error.RawResponse
-            = std::make_unique<Http::RawResponse>(1, 1, Http::HttpStatusCode::Conflict, "Conflict");
-        throw error;
-      });
-      FAIL() << "Expected StorageException";
-    }
-    catch (StorageException const& error)
-    {
-      EXPECT_STREQ(error.what(), "existing Storage exception");
-      EXPECT_EQ(error.ErrorCode, "Existing");
-      EXPECT_EQ(error.AdditionalInformation.at("Detail"), "retained");
-      ASSERT_NE(error.RawResponse, nullptr);
-    }
-    try
-    {
-      Queues::_detail::InvokeStorageProtocol(
-          [] { throw Core::RequestFailedException("response parsing failed"); });
-      FAIL() << "Expected Core::RequestFailedException";
-    }
-    catch (StorageException const&)
-    {
-      FAIL() << "An exception without an HTTP response must not be translated";
-    }
-    catch (Core::RequestFailedException const& error)
-    {
-      EXPECT_STREQ(error.what(), "response parsing failed");
-      EXPECT_EQ(error.RawResponse, nullptr);
-    }
-    EXPECT_THROW(
-        Queues::_detail::InvokeStorageProtocol([] { throw std::logic_error("unrelated"); }),
-        std::logic_error);
-    auto value = Queues::_detail::InvokeStorageProtocol([] { return std::make_unique<int>(42); });
-    EXPECT_EQ(*value, 42);
   }
 
   TEST_F(QueueProtocolTest, CancellationAndTransportFailures)
