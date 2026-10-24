@@ -4,12 +4,14 @@
 #include "azure/storage/queues/queue_service_client.hpp"
 
 #include "private/package_version.hpp"
+#include "private/queue_model_conversions.hpp"
 
 #include <azure/core/http/policies/policy.hpp>
 #include <azure/storage/common/crypt.hpp>
 #include <azure/storage/common/internal/shared_key_policy.hpp>
 #include <azure/storage/common/internal/storage_bearer_token_auth.hpp>
 #include <azure/storage/common/internal/storage_pipeline.hpp>
+#include <azure/storage/common/internal/storage_protocol.hpp>
 #include <azure/storage/common/internal/storage_switch_to_secondary_policy.hpp>
 #include <azure/storage/common/storage_common.hpp>
 
@@ -105,22 +107,47 @@ namespace Azure { namespace Storage { namespace Queues {
       const ListQueuesOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::ServiceClient::ListServiceQueuesSegmentOptions protocolLayerOptions;
+    _detail::QueuesClientGetQueuesServiceOptions protocolLayerOptions;
     protocolLayerOptions.Prefix = options.Prefix;
     protocolLayerOptions.Marker = options.ContinuationToken;
-    protocolLayerOptions.MaxResults = options.PageSizeHint;
-    protocolLayerOptions.Include = options.Include;
-    auto response = _detail::ServiceClient::ListQueuesSegment(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    protocolLayerOptions.Maxresults = options.PageSizeHint;
+    if ((options.Include & Models::ListQueuesIncludeFlags::Metadata)
+        == Models::ListQueuesIncludeFlags::Metadata)
+    {
+      protocolLayerOptions.Include = std::vector<_detail::Models::ListQueuesIncludeType>{
+          _detail::Models::ListQueuesIncludeType::Metadata};
+    }
+    auto response = _internal::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_serviceUrl, m_pipeline)
+          .GetQueuesService(protocolLayerOptions, _internal::WithReplicaStatus(context));
+    });
 
     ListQueuesPagedResponse pagedResponse;
     pagedResponse.ServiceEndpoint = std::move(response.Value.ServiceEndpoint);
     pagedResponse.Prefix = std::move(response.Value.Prefix);
-    pagedResponse.Queues = std::move(response.Value.Items);
+    if (response.Value.QueueItems.HasValue())
+    {
+      pagedResponse.Queues.reserve(response.Value.QueueItems.Value().size());
+      for (auto& item : response.Value.QueueItems.Value())
+      {
+        Models::QueueItem queue;
+        queue.Name = std::move(item.Name);
+        if (item.Metadata.HasValue())
+        {
+          for (auto& entry : item.Metadata.Value())
+          {
+            queue.Metadata[entry.first] = std::move(entry.second);
+          }
+        }
+        pagedResponse.Queues.emplace_back(std::move(queue));
+      }
+    }
     pagedResponse.m_queueServiceClient = std::make_shared<QueueServiceClient>(*this);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
-    pagedResponse.NextPageToken = response.Value.ContinuationToken;
+    pagedResponse.NextPageToken = response.Value.NextMarker.empty()
+        ? Azure::Nullable<std::string>()
+        : Azure::Nullable<std::string>(std::move(response.Value.NextMarker));
     pagedResponse.RawResponse = std::move(response.RawResponse);
 
     return pagedResponse;
@@ -132,10 +159,12 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::ServiceClient::SetServicePropertiesOptions protocolLayerOptions;
-    protocolLayerOptions.QueueServiceProperties = std::move(properties);
-    return _detail::ServiceClient::SetProperties(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
+    auto protocolProperties = _detail::ToGenerated(std::move(properties));
+    auto response = _internal::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_serviceUrl, m_pipeline)
+          .SetPropertiesService(protocolProperties, {}, context);
+    });
+    return Azure::Response<Models::SetServicePropertiesResult>({}, std::move(response.RawResponse));
   }
 
   Azure::Response<Models::QueueServiceProperties> QueueServiceClient::GetProperties(
@@ -143,9 +172,12 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::ServiceClient::GetServicePropertiesOptions protocolLayerOptions;
-    return _detail::ServiceClient::GetProperties(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, _internal::WithReplicaStatus(context));
+    auto response = _internal::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_serviceUrl, m_pipeline)
+          .GetPropertiesService({}, _internal::WithReplicaStatus(context));
+    });
+    return Azure::Response<Models::QueueServiceProperties>(
+        _detail::ToPublic(std::move(response.Value)), std::move(response.RawResponse));
   }
 
   Azure::Response<Models::ServiceStatistics> QueueServiceClient::GetStatistics(
@@ -153,9 +185,18 @@ namespace Azure { namespace Storage { namespace Queues {
       const Azure::Core::Context& context) const
   {
     (void)options;
-    _detail::ServiceClient::GetServiceStatisticsOptions protocolLayerOptions;
-    return _detail::ServiceClient::GetStatistics(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
+    auto response = _internal::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_serviceUrl, m_pipeline).GetStatisticsService({}, context);
+    });
+    Models::ServiceStatistics result;
+    if (response.Value.GeoReplication.HasValue())
+    {
+      auto& replication = response.Value.GeoReplication.Value();
+      result.GeoReplication.Status = Models::GeoReplicationStatus(replication.Status.ToString());
+      result.GeoReplication.LastSyncedOn = replication.LastSyncTime;
+    }
+    return Azure::Response<Models::ServiceStatistics>(
+        std::move(result), std::move(response.RawResponse));
   }
 
   Azure::Response<QueueClient> QueueServiceClient::CreateQueue(
@@ -182,14 +223,27 @@ namespace Azure { namespace Storage { namespace Queues {
       const GetUserDelegationKeyOptions& options,
       const Azure::Core::Context& context) const
   {
-    _detail::ServiceClient::GetServiceUserDelegationKeyOptions protocolLayerOptions;
-    protocolLayerOptions.KeyInfo.Start = options.StartsOn.ToString(
-        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
-    protocolLayerOptions.KeyInfo.Expiry = expiresOn.ToString(
-        Azure::DateTime::DateFormat::Rfc3339, Azure::DateTime::TimeFractionFormat::Truncate);
-    protocolLayerOptions.KeyInfo.DelegatedUserTid = options.DelegatedUserTid;
-    return _detail::ServiceClient::GetUserDelegationKey(
-        *m_pipeline, m_serviceUrl, protocolLayerOptions, context);
+    _detail::Models::KeyInfo keyInfo;
+    keyInfo.Start = options.StartsOn.ToString(
+        DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
+    keyInfo.Expiry
+        = expiresOn.ToString(DateTime::DateFormat::Rfc3339, DateTime::TimeFractionFormat::Truncate);
+    keyInfo.DelegatedUserTid = options.DelegatedUserTid;
+    auto response = _internal::InvokeStorageProtocol([&] {
+      return _detail::QueuesClient(m_serviceUrl, m_pipeline)
+          .GetUserDelegationKeyService(keyInfo, {}, context);
+    });
+    Models::UserDelegationKey result;
+    result.SignedObjectId = std::move(response.Value.SignedOid);
+    result.SignedTenantId = std::move(response.Value.SignedTid);
+    result.SignedStartsOn = response.Value.SignedStart;
+    result.SignedExpiresOn = response.Value.SignedExpiry;
+    result.SignedService = std::move(response.Value.SignedService);
+    result.SignedVersion = std::move(response.Value.SignedVersion);
+    result.SignedDelegatedUserTid = std::move(response.Value.SignedDelegatedUserTid);
+    result.Value = std::move(response.Value.Value);
+    return Azure::Response<Models::UserDelegationKey>(
+        std::move(result), std::move(response.RawResponse));
   }
 
 }}} // namespace Azure::Storage::Queues

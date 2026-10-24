@@ -1,0 +1,12 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "languageId": "cpp",
+  "dictionaries": [
+    "powershell",
+    "cpp"
+  ],
+  "words": [
+    "numofmessages"
+  ]
+}
