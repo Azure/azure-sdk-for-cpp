@@ -50,7 +50,7 @@ namespace Azure { namespace Storage { namespace Queues {
     pipelineOptions.SharedKeyAuthPolicy = std::make_unique<_internal::SharedKeyPolicy>(credential);
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueServiceClient::QueueServiceClient(
@@ -77,7 +77,7 @@ namespace Azure { namespace Storage { namespace Queues {
     }
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueServiceClient::QueueServiceClient(
@@ -93,7 +93,7 @@ namespace Azure { namespace Storage { namespace Queues {
     pipelineOptions.ApiVersion = options.ApiVersion.ToString();
 
     m_pipeline = std::make_shared<Azure::Core::Http::_internal::HttpPipeline>(
-        _detail::BuildQueuePipelinePolicies(options, std::move(pipelineOptions)));
+        _internal::BuildHttpPipelinePolicies(options, std::move(pipelineOptions)));
   }
 
   QueueClient QueueServiceClient::GetQueueClient(const std::string& queueName) const

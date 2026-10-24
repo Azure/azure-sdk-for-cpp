@@ -464,7 +464,22 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     }
     EXPECT_NE(Transport->Requests[4].Body.find("MessageText"), std::string::npos);
     EXPECT_NE(Transport->Requests[5].Body.find("a&amp;b"), std::string::npos);
-    EXPECT_EQ(Transport->Requests[2].Headers.at("Content-Type"), "application/xml; charset=UTF-8");
+    for (auto const index : {0, 1, 2})
+    {
+      EXPECT_EQ(Transport->Requests[index].Headers.at("Accept"), "application/xml");
+    }
+    for (auto const index : {2, 4, 5})
+    {
+      EXPECT_EQ(Transport->Requests[index].Headers.at("Content-Type"), "application/xml");
+    }
+    for (auto const index : {0, 1, 6, 7})
+    {
+      EXPECT_EQ(Transport->Requests[index].Headers.count("Content-Type"), 0U);
+    }
+    for (auto const index : {3, 4, 5, 6, 7})
+    {
+      EXPECT_EQ(Transport->Requests[index].Headers.count("Accept"), 0U);
+    }
     EXPECT_EQ(Transport->Requests[6].Url.GetQueryParameters().at("popreceipt"), "receipt");
     for (auto const& request : Transport->Requests)
     {
@@ -578,8 +593,13 @@ namespace Azure { namespace Storage { namespace Test { namespace {
     EXPECT_FALSE(client.GetStatistics().Value.GeoReplication.LastSyncedOn.HasValue());
     ASSERT_EQ(Transport->Requests.size(), 4U);
     EXPECT_NE(Transport->Requests[0].Body.find("<StorageServiceProperties>"), std::string::npos);
-    EXPECT_EQ(Transport->Requests[0].Headers.at("Content-Type"), "application/xml; charset=UTF-8");
-    EXPECT_EQ(Transport->Requests[1].Headers.count("Accept"), 0U);
+    EXPECT_EQ(Transport->Requests[0].Headers.at("Content-Type"), "application/xml");
+    EXPECT_EQ(Transport->Requests[0].Headers.count("Accept"), 0U);
+    for (auto const index : {1, 2, 3})
+    {
+      EXPECT_EQ(Transport->Requests[index].Headers.at("Accept"), "application/xml");
+      EXPECT_EQ(Transport->Requests[index].Headers.count("Content-Type"), 0U);
+    }
     EXPECT_EQ(Transport->Requests[0].Body.find("<QueueServiceProperties>"), std::string::npos);
     EXPECT_EQ(Transport->Requests[0].Url.GetQueryParameters().at("restype"), "service");
     EXPECT_TRUE(Transport->Requests[1].HasReplicaStatus);
