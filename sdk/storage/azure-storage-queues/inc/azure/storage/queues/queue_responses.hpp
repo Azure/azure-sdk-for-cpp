@@ -32,7 +32,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates whether a retention policy is enabled for the storage service.
        */
-      bool IsEnabled = bool();
+      bool IsEnabled = false;
       /**
        * Indicates the number of days that metrics or logging or soft-deleted data should be
        * retained. All data older than this value will be deleted.
@@ -51,15 +51,15 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates whether all delete requests should be logged.
        */
-      bool Delete = bool();
+      bool Delete = false;
       /**
        * Indicates whether all read requests should be logged.
        */
-      bool Read = bool();
+      bool Read = false;
       /**
        * Indicates whether all write requests should be logged.
        */
-      bool Write = bool();
+      bool Write = false;
       /**
        * The retention policy.
        */
@@ -78,7 +78,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates whether metrics are enabled for the Queue service.
        */
-      bool IsEnabled = bool();
+      bool IsEnabled = false;
       /**
        * Indicates whether metrics should generate summary statistics for called API operations.
        */
@@ -255,7 +255,7 @@ namespace Azure { namespace Storage { namespace Queues {
       /**
        * Indicates if the queue was successfully created by this operation.
        */
-      bool Created = bool();
+      bool Created = false;
     };
     /**
      * @brief Response type for #Azure::Storage::Queues::QueueClient::Delete.
