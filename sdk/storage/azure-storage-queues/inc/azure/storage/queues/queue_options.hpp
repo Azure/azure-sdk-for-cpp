@@ -33,11 +33,23 @@ namespace Azure { namespace Storage { namespace Queues {
       None = 0,
       Metadata = 1,
     };
+    /**
+     * @brief Combines the flags from both operands.
+     * @param lhs The left operand.
+     * @param rhs The right operand.
+     * @return The combined flags.
+     */
     inline ListQueuesIncludeFlags operator|(ListQueuesIncludeFlags lhs, ListQueuesIncludeFlags rhs)
     {
       using type = std::underlying_type_t<ListQueuesIncludeFlags>;
       return static_cast<ListQueuesIncludeFlags>(static_cast<type>(lhs) | static_cast<type>(rhs));
     }
+    /**
+     * @brief Adds the right operand's flags to the left operand.
+     * @param lhs The flags to update.
+     * @param rhs The flags to add.
+     * @return A reference to the updated left operand.
+     */
     inline ListQueuesIncludeFlags& operator|=(
         ListQueuesIncludeFlags& lhs,
         ListQueuesIncludeFlags rhs)
@@ -45,11 +57,23 @@ namespace Azure { namespace Storage { namespace Queues {
       lhs = lhs | rhs;
       return lhs;
     }
+    /**
+     * @brief Selects the flags present in both operands.
+     * @param lhs The left operand.
+     * @param rhs The right operand.
+     * @return The flags present in both operands.
+     */
     inline ListQueuesIncludeFlags operator&(ListQueuesIncludeFlags lhs, ListQueuesIncludeFlags rhs)
     {
       using type = std::underlying_type_t<ListQueuesIncludeFlags>;
       return static_cast<ListQueuesIncludeFlags>(static_cast<type>(lhs) & static_cast<type>(rhs));
     }
+    /**
+     * @brief Retains only the right operand's flags in the left operand.
+     * @param lhs The flags to update.
+     * @param rhs The flags to retain.
+     * @return A reference to the updated left operand.
+     */
     inline ListQueuesIncludeFlags& operator&=(
         ListQueuesIncludeFlags& lhs,
         ListQueuesIncludeFlags rhs)

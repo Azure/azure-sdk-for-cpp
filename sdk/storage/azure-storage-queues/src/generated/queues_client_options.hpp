@@ -37,9 +37,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -52,9 +52,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -67,9 +67,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -82,9 +82,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -114,9 +114,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// maxresults, or specifies a value greater than 5000, the server will return up to 5000 items.
     Nullable<std::int32_t> Maxresults;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
 
     /// Specify to include additional, optional information.
@@ -132,9 +132,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
 
     /// The metadata headers.
@@ -150,9 +150,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -165,9 +165,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -180,9 +180,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
 
     /// The metadata headers.
@@ -198,9 +198,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -213,9 +213,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
 
     /// The access control list.
@@ -241,9 +241,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// visibility timeout of a message can be set to a value later than the expiry time.
     Nullable<std::int32_t> Visibilitytimeout;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -256,9 +256,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -282,9 +282,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// does not expire. If this parameter is omitted, the default time-to-live is 7 days.
     Nullable<std::int32_t> Messagettl;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -302,9 +302,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// single message is retrieved from the queue with this operation.
     Nullable<std::int64_t> Numofmessages;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 
@@ -317,9 +317,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
 
     /// The queue message. The message must be in a format that can be included in an XML request
@@ -336,9 +336,9 @@ namespace Azure { namespace Storage { namespace Queues { namespace _detail {
     /// An opaque, globally-unique, client-generated string identifier for the request.
     Nullable<std::string> XMsClientRequestId;
 
-    /// The timeout parameter is expressed in seconds. For more information, see <a
-    /// href="https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations">Setting
-    /// Timeouts for Queue Service Operations.</a>
+    /// The timeout parameter is expressed in seconds. For more information, see [Setting Timeouts
+    /// for Queue Service
+    /// Operations.](https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations)
     Nullable<std::int32_t> Timeout;
   };
 }}}} // namespace Azure::Storage::Queues::_detail

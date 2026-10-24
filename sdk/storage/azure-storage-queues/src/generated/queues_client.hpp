@@ -25,10 +25,6 @@
 #include <vector>
 
 namespace Azure { namespace Storage { namespace Queues { namespace _detail {
-  /**
-   * @brief
-   *
-   */
   class QueuesClient final {
   public:
     /**
