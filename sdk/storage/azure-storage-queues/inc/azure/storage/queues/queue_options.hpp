@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/storage/queues/rest_client.hpp"
+#include "azure/storage/queues/queue_models.hpp"
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -18,6 +18,10 @@
 #include <string>
 
 namespace Azure { namespace Storage { namespace Queues {
+
+  namespace _detail {
+    constexpr static const char* ApiVersion = "2026-04-06";
+  } // namespace _detail
 
   /**
    * @brief Audiences available for queue service

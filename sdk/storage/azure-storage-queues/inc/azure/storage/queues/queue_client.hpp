@@ -11,7 +11,11 @@
 #include "azure/storage/queues/queue_options.hpp"
 #include "azure/storage/queues/queue_responses.hpp"
 
+#include <azure/core/context.hpp>
 #include <azure/core/credentials/credentials.hpp>
+#include <azure/core/internal/http/pipeline.hpp>
+#include <azure/core/response.hpp>
+#include <azure/core/url.hpp>
 #include <azure/storage/common/storage_credential.hpp>
 
 #include <memory>
