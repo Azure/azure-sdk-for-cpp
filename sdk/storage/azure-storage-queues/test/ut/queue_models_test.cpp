@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#include <azure/storage/queues/queue_models.hpp>
+#include <azure/storage/queues/queue_responses.hpp>
 
 #include <gtest/gtest.h>
 
@@ -41,6 +41,11 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_TRUE(Models::ReceivedMessages().Messages.empty());
     EXPECT_EQ(Models::PeekedQueueMessage().DequeueCount, 0);
     EXPECT_TRUE(Models::PeekedMessages().Messages.empty());
+    Queues::ListQueuesOptions list;
+    EXPECT_FALSE(list.Prefix.HasValue());
+    EXPECT_FALSE(list.ContinuationToken.HasValue());
+    EXPECT_FALSE(list.PageSizeHint.HasValue());
+    EXPECT_EQ(list.Include, Models::ListQueuesIncludeFlags::None);
   }
 
   TEST(QueueModels, Enumerations)

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "azure/storage/queues/queue_models.hpp"
+#include "azure/storage/queues/queue_responses.hpp"
 
 #include <azure/core/internal/client_options.hpp>
 #include <azure/core/internal/extendable_enumeration.hpp>
@@ -147,37 +147,6 @@ namespace Azure { namespace Storage { namespace Queues {
      * Audience is not set.
      */
     Azure::Nullable<QueueAudience> Audience;
-  };
-
-  /**
-   * Optional parameters for #Azure::Storage::Queues::QueueServiceClient::ListQueues.
-   */
-  struct ListQueuesOptions final
-  {
-    /**
-     * @brief Specifies a string that filters the results to return only queues whose name begins
-     * with the specified prefix.
-     */
-    Azure::Nullable<std::string> Prefix;
-
-    /**
-     * @brief A string value that identifies the portion of the list of queues to be returned with
-     * the next listing operation. The operation returns a non-empty continuation token if the
-     * listing operation did not return all queues remaining to be listed with the current segment.
-     * The ContinuationToken value can be used as the value for the ContinuationToken parameter in a
-     * subsequent call to request the next segment of list items.
-     */
-    Azure::Nullable<std::string> ContinuationToken;
-
-    /**
-     * @brief Specifies the maximum number of queues to return.
-     */
-    Azure::Nullable<int32_t> PageSizeHint;
-
-    /**
-     * @brief Specifies that the queue's metadata be returned.
-     */
-    Models::ListQueuesIncludeFlags Include = Models::ListQueuesIncludeFlags::None;
   };
 
   /**

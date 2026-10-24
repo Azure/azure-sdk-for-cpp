@@ -44,7 +44,6 @@ set(
     inc/azure/storage/queues.hpp
     inc/azure/storage/queues/dll_import_export.hpp
     inc/azure/storage/queues/queue_client.hpp
-    inc/azure/storage/queues/queue_models.hpp
     inc/azure/storage/queues/queue_options.hpp
     inc/azure/storage/queues/queue_responses.hpp
     inc/azure/storage/queues/queue_sas_builder.hpp
