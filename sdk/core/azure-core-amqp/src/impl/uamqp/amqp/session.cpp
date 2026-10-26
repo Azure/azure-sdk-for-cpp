@@ -87,8 +87,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
   SessionImpl::SessionImpl(
       std::shared_ptr<_detail::ConnectionImpl> connection,
       _internal::SessionOptions const& options,
-      _internal::SessionEvents* eventHandler)
-      : m_connectionToPoll(connection),
+      _internal::SessionEvents* eventHandler,
+      EndSession endSession)
+      : m_endSession{endSession}, m_connectionToPoll(connection),
         m_session{session_create(*connection, SessionImpl::OnLinkAttachedFn, this)},
         m_options{options}, m_eventHandler{eventHandler}
 
@@ -172,7 +173,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     // When we end the session, it clears all the links, so we need to ensure that the
     //    m_newLinkAttachedQueue.Clear();
-    if (session_end(m_session.get(), nullptr, nullptr))
+    if (m_endSession(m_session.get(), nullptr, nullptr))
     {
       throw std::runtime_error("Could not begin session");
     }
@@ -193,7 +194,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     }
     // When we end the session, it clears all the links, so we need to ensure that the
     //    m_newLinkAttachedQueue.Clear();
-    if (session_end(
+    if (m_endSession(
             m_session.get(),
             condition.empty() ? nullptr : condition.c_str(),
             description.empty() ? nullptr : description.c_str()))

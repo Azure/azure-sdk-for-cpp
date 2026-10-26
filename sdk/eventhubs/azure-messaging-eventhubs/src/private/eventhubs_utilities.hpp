@@ -144,10 +144,33 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
   class EventHubsPropertiesClient {
   public:
+    using ManagementClientFactory = Azure::Core::Amqp::_internal::ManagementClient (*)(
+        Azure::Core::Amqp::_internal::Session const&,
+        std::string const&,
+        Azure::Core::Amqp::_internal::ManagementClientOptions const&);
+
+    static Azure::Core::Amqp::_internal::ManagementClient CreateManagementClient(
+        Azure::Core::Amqp::_internal::Session const& session,
+        std::string const& eventHub,
+        Azure::Core::Amqp::_internal::ManagementClientOptions const& options)
+    {
+      return session.CreateManagementClient(eventHub, options);
+    }
+
+    // Internal injection point for failures between beginning the session and assigning the client.
+    EventHubsPropertiesClient(
+        Azure::Core::Amqp::_internal::Session session,
+        std::string eventHubName,
+        ManagementClientFactory createManagementClient = CreateManagementClient)
+        : m_session{std::move(session)}, m_eventHub{std::move(eventHubName)},
+          m_createManagementClient{createManagementClient}
+    {
+    }
+
     EventHubsPropertiesClient(
         const Azure::Core::Amqp::_internal::Connection& connection,
         std::string eventHubName)
-        : m_session{connection.CreateSession()}, m_eventHub{std::move(eventHubName)} {};
+        : EventHubsPropertiesClient(connection.CreateSession(), std::move(eventHubName)) {};
 
     ~EventHubsPropertiesClient()
     {
@@ -332,7 +355,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         managementClientOptions.EnableTrace = _detail::EnableAmqpTrace;
         managementClientOptions.ExpectedStatusCodeKeyName = "status-code";
         m_managementClient = std::make_unique<Azure::Core::Amqp::_internal::ManagementClient>(
-            m_session.CreateManagementClient(m_eventHub, managementClientOptions));
+            m_createManagementClient(m_session, m_eventHub, managementClientOptions));
 
         auto openResult{m_managementClient->Open(context)};
         if (openResult != Azure::Core::Amqp::_internal::ManagementOpenStatus::Ok)
@@ -354,6 +377,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
     bool m_managementClientIsOpen{false};
     std::string m_eventHub;
+    ManagementClientFactory m_createManagementClient;
   };
 
   class EventHubsUtilities {

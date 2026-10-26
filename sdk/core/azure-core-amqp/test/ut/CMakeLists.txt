@@ -37,6 +37,7 @@ add_executable(azure-core-amqp-tests
   message_source_target.cpp
   operation_timeout_tests.cpp
   mock_amqp_server.hpp
+  session_cleanup_tests.cpp
   session_tests.cpp
   amqp_performative_tests.cpp
   ${UAMQP_ONLY_TESTS}
@@ -44,7 +45,8 @@ add_executable(azure-core-amqp-tests
 
 
 if (USE_UAMQP)
-target_include_directories(azure-core-amqp-tests PRIVATE ../../src/amqp/impl/uamqp/amqp/private)
+target_include_directories(azure-core-amqp-tests SYSTEM PRIVATE ${UAMQP_INC_FOLDER})
+target_link_libraries(azure-core-amqp-tests PRIVATE umock_c azure_macro_utils_c aziotsharedutil)
 endif()
 if (USE_RUST_AMQP)
 target_include_directories(azure-core-amqp-tests PRIVATE ../../src/impl/rust_amqp/rust_amqp/rust_wrapper)
