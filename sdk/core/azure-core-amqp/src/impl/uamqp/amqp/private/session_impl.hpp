@@ -86,6 +86,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     EndSession m_endSession{session_end};
     bool m_connectionAsyncStarted{false};
     bool m_isBegun{false};
+    // A failed protocol shutdown still requires native destruction and a polling release.
+    bool m_endFailed{false};
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;

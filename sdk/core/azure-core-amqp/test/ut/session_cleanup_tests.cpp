@@ -3,11 +3,12 @@
 
 #if ENABLE_UAMQP
 #include "../../src/impl/uamqp/amqp/private/session_impl.hpp"
-#include "mock_amqp_server.hpp"
+#include "cleanup_test_listener.hpp"
 
 #include <azure/core/amqp/internal/management.hpp>
 
 #include <cstdlib>
+
 #include <gtest/gtest.h>
 
 namespace Azure { namespace Core { namespace Amqp { namespace Tests {
@@ -19,8 +20,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       std::weak_ptr<_detail::SessionImpl> sessionLifetime;
       std::weak_ptr<_detail::ConnectionImpl> connectionLifetime;
       {
-        MessageTests::AmqpServerMock server;
-        server.StartListening();
+        CleanupTestListener server;
         _internal::ConnectionOptions options;
         options.Port = server.GetPort();
         _internal::Connection connection("localhost", nullptr, options);
@@ -29,7 +29,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
         {
           auto impl = std::make_shared<_detail::SessionImpl>(
               _detail::ConnectionFactory::GetImpl(connection),
-              _internal::SessionOptions{}, nullptr, FailEnd);
+              _internal::SessionOptions{},
+              nullptr,
+              FailEnd);
           sessionLifetime = impl;
           auto session = _detail::SessionFactory::CreateFromInternal(impl);
           session.Begin({});
@@ -65,56 +67,76 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     }
   } // namespace
 
-  TEST(SessionCleanupDeathTest, FailedEndReleasesLastOwner)
+  class SessionCleanupDeathTest : public ::testing::Test {
+  protected:
+    void SetUp() override
+    {
+      // Re-exec the child instead of inheriting AMQP polling-thread mutexes across fork.
+      ::testing::FLAGS_gtest_death_test_style = "threadsafe";
+    }
+  };
+
+  TEST_F(SessionCleanupDeathTest, FailedEndReleasesLastOwner)
   {
-    EXPECT_EXIT({
-      FailedEndWithSharedOwner(false);
-      std::exit(::testing::Test::HasFailure() ? 1 : 0);
-    }, ::testing::ExitedWithCode(0), "");
+    EXPECT_EXIT(
+        {
+          FailedEndWithSharedOwner(false);
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
   }
 
-  TEST(SessionCleanupDeathTest, FailedEndWithErrorReleasesLastOwner)
+  TEST_F(SessionCleanupDeathTest, FailedEndWithErrorReleasesLastOwner)
   {
-    EXPECT_EXIT({
-      FailedEndWithSharedOwner(true);
-      std::exit(::testing::Test::HasFailure() ? 1 : 0);
-    }, ::testing::ExitedWithCode(0), "");
+    EXPECT_EXIT(
+        {
+          FailedEndWithSharedOwner(true);
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
   }
 
-  TEST(SessionCleanupDeathTest, FailedEndCanBeRetried)
+  TEST_F(SessionCleanupDeathTest, FailedEndCanBeRetried)
   {
-    EXPECT_EXIT({
-      {
-        MessageTests::AmqpServerMock server;
-        server.StartListening();
-        _internal::ConnectionOptions options;
-        options.Port = server.GetPort();
-        _internal::Connection connection("localhost", nullptr, options);
-        auto session = _detail::SessionFactory::CreateFromInternal(
-            std::make_shared<_detail::SessionImpl>(
-                _detail::ConnectionFactory::GetImpl(connection),
-                _internal::SessionOptions{}, nullptr, FailOnceEnd));
-        session.Begin({});
-        EXPECT_THROW(session.End({}), std::runtime_error);
-        EXPECT_NO_THROW(session.End("amqp:internal-error", "retry", {}));
-        EXPECT_THROW(session.End({}), std::runtime_error);
-      }
-      Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
-      std::exit(::testing::Test::HasFailure() ? 1 : 0);
-    }, ::testing::ExitedWithCode(0), "");
+    EXPECT_EXIT(
+        {
+          {
+            CleanupTestListener server;
+            _internal::ConnectionOptions options;
+            options.Port = server.GetPort();
+            _internal::Connection connection("localhost", nullptr, options);
+            auto session = _detail::SessionFactory::CreateFromInternal(
+                std::make_shared<_detail::SessionImpl>(
+                    _detail::ConnectionFactory::GetImpl(connection),
+                    _internal::SessionOptions{},
+                    nullptr,
+                    FailOnceEnd));
+            session.Begin({});
+            EXPECT_THROW(session.End({}), std::runtime_error);
+            EXPECT_NO_THROW(session.End("amqp:internal-error", "retry", {}));
+            EXPECT_THROW(session.End({}), std::runtime_error);
+          }
+          Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
   }
 
-  TEST(SessionCleanupDeathTest, MissingEndStillAsserts)
+  TEST_F(SessionCleanupDeathTest, MissingEndStillAsserts)
   {
-    EXPECT_DEATH({
-      MessageTests::AmqpServerMock server;
-      server.StartListening();
-      _internal::ConnectionOptions options;
-      options.Port = server.GetPort();
-      _internal::Connection connection("localhost", nullptr, options);
-      auto session = connection.CreateSession();
-      session.Begin({});
-    }, "Session was not ended before destruction");
+    EXPECT_DEATH(
+        {
+          CleanupTestListener server;
+          _internal::ConnectionOptions options;
+          options.Port = server.GetPort();
+          _internal::Connection connection("localhost", nullptr, options);
+          auto session = connection.CreateSession();
+          session.Begin({});
+        },
+        "");
   }
 }}}} // namespace Azure::Core::Amqp::Tests
 #endif

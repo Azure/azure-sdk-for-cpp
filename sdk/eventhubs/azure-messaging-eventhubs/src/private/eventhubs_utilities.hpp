@@ -174,14 +174,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     ~EventHubsPropertiesClient()
     {
-      // A destructor is noexcept, so an exception here terminates the process. An idle
-      // link detach after 30 minutes makes a throwing close the ordinary case here.
+      // Finish both management and session cleanup, including partially initialized clients.
+      // Explicit Close and destruction use the same ownership checks.
       try
       {
-        if (m_managementClientIsOpen)
-        {
-          m_managementClient->Close();
-        }
+        Close({});
       }
       catch (std::exception const& ex)
       {
@@ -235,10 +232,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         }
         auto bodyMap = body.AsMap();
         properties.Name = static_cast<std::string>(bodyMap["name"]);
-        properties.CreatedOn = Azure::DateTime(std::chrono::system_clock::from_time_t(
-            std::chrono::duration_cast<std::chrono::seconds>(
-                static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()))
-                .count()));
+        properties.CreatedOn = Azure::DateTime(
+            std::chrono::system_clock::from_time_t(
+                std::chrono::duration_cast<std::chrono::seconds>(
+                    static_cast<std::chrono::milliseconds>(bodyMap["created_at"].AsTimestamp()))
+                    .count()));
         auto partitions = bodyMap["partition_ids"].AsArray();
         for (const auto& partition : partitions)
         {
@@ -295,11 +293,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         // For <reasons> the last enqueued offset is returned as a string. Convert to an int64.
         properties.LastEnqueuedOffset = static_cast<std::string>(bodyMap["last_enqueued_offset"]);
 
-        properties.LastEnqueuedTimeUtc = Azure::DateTime(std::chrono::system_clock::from_time_t(
-            std::chrono::duration_cast<std::chrono::seconds>(
-                static_cast<std::chrono::milliseconds>(
-                    bodyMap["last_enqueued_time_utc"].AsTimestamp()))
-                .count()));
+        properties.LastEnqueuedTimeUtc = Azure::DateTime(
+            std::chrono::system_clock::from_time_t(
+                std::chrono::duration_cast<std::chrono::seconds>(
+                    static_cast<std::chrono::milliseconds>(
+                        bodyMap["last_enqueued_time_utc"].AsTimestamp()))
+                    .count()));
         properties.IsEmpty = bodyMap["is_partition_empty"];
       }
       return properties;
@@ -308,27 +307,30 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     void Close(Azure::Core::Context const& context)
     {
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
-      if (m_managementClient)
+      if (m_managementClientIsOpen)
       {
-        if (m_managementClientIsOpen)
+        // ManagementClient::Close releases its links even when it reports a close failure.
+        m_managementClientIsOpen = false;
+        try
         {
-          // Drop the flag first, so a throwing close cannot make the destructor close again.
-          m_managementClientIsOpen = false;
-          try
-          {
-            m_managementClient->Close(context);
-          }
-          catch (std::exception const& ex)
-          {
-            Azure::Core::Diagnostics::_internal::Log::Stream(
-                Azure::Core::Diagnostics::Logger::Level::Warning)
-                << "Exception while closing the management client: " << ex.what();
-          }
+          m_managementClient->Close(context);
         }
-        // Its own try block, so a failed management close does not strand the session.
+        catch (std::exception const& ex)
+        {
+          Azure::Core::Diagnostics::_internal::Log::Stream(
+              Azure::Core::Diagnostics::Logger::Level::Warning)
+              << "Exception while closing the management client: " << ex.what();
+        }
+      }
+      // Drop link ownership before ending the session. Its native end frees link endpoints.
+      m_managementClient.reset();
+      // Beginning the session precedes management creation, which can throw before assignment.
+      if (m_sessionIsBegun)
+      {
         try
         {
           m_session.End(context);
+          m_sessionIsBegun = false;
         }
         catch (std::exception const& ex)
         {
@@ -346,7 +348,11 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
       if (!m_managementClient)
       {
-        m_session.Begin(context);
+        if (!m_sessionIsBegun)
+        {
+          m_session.Begin(context);
+          m_sessionIsBegun = true;
+        }
 
         // Create a management client off the session.
         // Eventhubs management APIs return a status code in the "status-code" application
@@ -376,6 +382,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     Azure::Core::Amqp::_internal::Session m_session;
     std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
     bool m_managementClientIsOpen{false};
+    bool m_sessionIsBegun{false};
     std::string m_eventHub;
     ManagementClientFactory m_createManagementClient;
   };

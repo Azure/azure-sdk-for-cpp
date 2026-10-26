@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed producer cleanup after partition discovery fails during management-client initialization or session shutdown. Cleanup now ends an acquired session independently of management-client creation and supports repeated close calls.
+
 ### Other Changes
 
 ## 1.0.0-beta.15 (2026-09-02)

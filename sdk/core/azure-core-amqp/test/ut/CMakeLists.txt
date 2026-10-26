@@ -29,6 +29,7 @@ add_executable(azure-core-amqp-tests
   async_operation_queue_tests.cpp
   azure_core_amqp_tests.cpp
   claim_based_security_tests.cpp
+  cleanup_test_listener.hpp
   connection_string_tests.cpp
   connection_tests.cpp
   global_state_tests.cpp
