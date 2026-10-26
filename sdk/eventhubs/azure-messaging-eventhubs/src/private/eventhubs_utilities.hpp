@@ -194,7 +194,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Core::Context const& context)
     {
 
-      EnsureManagementClient(context);
+      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      auto operationContext = CreateOperationContext(context);
+      EnsureManagementClient(*operationContext);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;
@@ -206,7 +208,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           "com.microsoft:eventhub" /* type of operation */,
           "" /* locales */,
           message,
-          context);
+          *operationContext);
 
       Models::EventHubProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
@@ -251,7 +253,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::string const& partitionId,
         Core::Context const& context)
     {
-      EnsureManagementClient(context);
+      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      auto operationContext = CreateOperationContext(context);
+      EnsureManagementClient(*operationContext);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
       Azure::Core::Amqp::Models::AmqpMessage message;
@@ -265,7 +269,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           "com.microsoft:partition" /* type of operation */,
           "" /* locales */,
           message,
-          context);
+          *operationContext);
 
       Models::EventHubPartitionProperties properties;
       if (result.Status != Azure::Core::Amqp::_internal::ManagementOperationStatus::Ok)
@@ -306,6 +310,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     void Close(Azure::Core::Context const& context)
     {
+      {
+        // Cancel before waiting for the operation lock: a query may have no caller deadline.
+        // Reject queries on stale references once producer/consumer invalidation starts.
+        std::lock_guard<std::mutex> cancellationLock(m_operationContextMutex);
+        m_isClosed = true;
+        if (auto operationContext = m_operationContext.lock())
+        {
+          operationContext->Cancel();
+        }
+      }
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
       if (m_managementClientIsOpen)
       {
@@ -342,10 +356,24 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     }
 
   private:
+    std::shared_ptr<Azure::Core::Context> CreateOperationContext(
+        Azure::Core::Context const& context)
+    {
+      std::lock_guard<std::mutex> lock(m_operationContextMutex);
+      if (m_isClosed)
+      {
+        throw Azure::Core::OperationCancelledException("Properties client is closed.");
+      }
+      // A child inherits caller cancellation but can be cancelled without changing the caller.
+      auto operationContext
+          = std::make_shared<Azure::Core::Context>(context.WithDeadline(context.GetDeadline()));
+      m_operationContext = operationContext;
+      return operationContext;
+    }
+
+    // The getter owns m_managementClientMutex through initialization and operation completion.
     void EnsureManagementClient(Azure::Core::Context const& context)
     {
-
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
       if (!m_managementClient)
       {
         if (!m_sessionIsBegun)
@@ -372,13 +400,10 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       }
     }
 
-    std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> const& GetManagementClient()
-    {
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
-      return m_managementClient;
-    }
-
     std::mutex m_managementClientMutex;
+    std::mutex m_operationContextMutex;
+    std::weak_ptr<Azure::Core::Context> m_operationContext;
+    bool m_isClosed{false};
     Azure::Core::Amqp::_internal::Session m_session;
     std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
     bool m_managementClientIsOpen{false};

@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed producer cleanup after partition discovery fails during management-client initialization or session shutdown. Cleanup now ends an acquired session independently of management-client creation and supports repeated close calls.
+- Synchronized properties queries with cleanup during producer recovery. Cleanup cancels an active query before releasing its management client and session, without cancelling the caller's context.
 
 ### Other Changes
 

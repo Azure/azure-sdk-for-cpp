@@ -13,6 +13,7 @@
 
 #include <atomic>
 #include <cstdlib>
+#include <future>
 
 #include <gtest/gtest.h>
 
@@ -41,17 +42,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     class PropertiesEndpoint final : public Amqp::Tests::MessageTests::MockServiceEndpoint {
     public:
-      PropertiesEndpoint(bool failDiscovery = false)
-          : MockServiceEndpoint("$management", {}), m_failDiscovery{failDiscovery}
+      PropertiesEndpoint(bool failDiscovery = false, std::promise<void>* requestReceived = nullptr)
+          : MockServiceEndpoint("$management", {}), m_failDiscovery{failDiscovery},
+            m_requestReceived{requestReceived}
       {
       }
 
     private:
       bool m_failDiscovery;
+      std::promise<void>* m_requestReceived;
       void MessageReceived(
           std::string const&,
           std::shared_ptr<Amqp::Models::AmqpMessage> const& request) override
       {
+        if (m_requestReceived)
+        {
+          // Acknowledge receipt without replying. Close must interrupt the client's response wait.
+          m_requestReceived->set_value();
+          return;
+        }
         Amqp::Models::AmqpMessage response;
         response.ApplicationProperties["status-code"] = m_failDiscovery ? 500 : 200;
         response.Properties.CorrelationId = request->Properties.MessageId;
@@ -60,6 +69,13 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         body["created_at"]
             = Amqp::Models::AmqpTimestamp(std::chrono::milliseconds(0)).AsAmqpValue();
         body["partition_ids"] = Amqp::Models::AmqpArray{"0", "1"}.AsAmqpValue();
+        body["partition"] = "0";
+        body["begin_sequence_number"] = std::int64_t{0};
+        body["last_enqueued_sequence_number"] = std::int64_t{1};
+        body["last_enqueued_offset"] = "1";
+        body["last_enqueued_time_utc"]
+            = Amqp::Models::AmqpTimestamp(std::chrono::milliseconds(0)).AsAmqpValue();
+        body["is_partition_empty"] = false;
         response.SetBody(body.AsAmqpValue());
         auto result = GetMessageSender().Send(response, GetListenerContext());
         EXPECT_EQ(std::get<0>(result), Amqp::_internal::MessageSendStatus::Ok);
@@ -91,11 +107,117 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
-    int endCalls = 0;
+    std::atomic<int> endCalls{0};
     int CountEnd(SESSION_HANDLE session, char const* condition, char const* description)
     {
       ++endCalls;
       return session_end(session, condition, description);
+    }
+
+    template <typename T> void RequireReady(std::future<T>& operation)
+    {
+      if (operation.wait_for(std::chrono::seconds(10)) != std::future_status::ready)
+      {
+        ADD_FAILURE() << "Concurrent properties operation did not finish";
+        // Avoid hanging in a future destructor; the parent death test reports the failure.
+        std::exit(1);
+      }
+    }
+
+    void ConcurrentPropertiesClose(
+        bool partitionProperties,
+        bool cancelCaller,
+        bool pauseBeforeSend = false)
+    {
+      {
+        std::promise<void> requestReceived;
+        auto received = requestReceived.get_future();
+        std::promise<void> resumeQuery;
+        auto resume = resumeQuery.get_future();
+        if (pauseBeforeSend)
+        {
+          Azure::Core::Diagnostics::Logger::SetLevel(
+              Azure::Core::Diagnostics::Logger::Level::Verbose);
+          Azure::Core::Diagnostics::Logger::SetListener(
+              [&](Azure::Core::Diagnostics::Logger::Level, std::string const& line) {
+                if (line.find("ManagementClient::ExecuteOperation:") != std::string::npos
+                    && line.find("Create Queue for request.") != std::string::npos)
+                {
+                  // Pause inside ExecuteOperation, before it sends, to expose destruction of an
+                  // active management client even when ordinary close callbacks finish quickly.
+                  requestReceived.set_value();
+                  RequireReady(resume);
+                }
+              });
+        }
+        Amqp::Tests::MessageTests::AmqpServerMock server(AvailablePort());
+        server.AddServiceEndpoint(
+            std::make_shared<PropertiesEndpoint>(
+                false, pauseBeforeSend ? nullptr : &requestReceived));
+        server.StartListening();
+        {
+          Amqp::_internal::ConnectionOptions options;
+          options.Port = server.GetPort();
+          Amqp::_internal::Connection connection("localhost", nullptr, options);
+          auto session = Amqp::_detail::SessionFactory::CreateFromInternal(
+              std::make_shared<Amqp::_detail::SessionImpl>(
+                  Amqp::_detail::ConnectionFactory::GetImpl(connection),
+                  Amqp::_internal::SessionOptions{},
+                  nullptr,
+                  CountEnd));
+          endCalls = 0;
+          EventHubsPropertiesClient properties(session, "hub");
+          // No deadline: Close must not depend on the caller eventually timing out.
+          Azure::Core::Context queryContext;
+          auto query = std::async(std::launch::async, [&]() {
+            if (partitionProperties)
+            {
+              properties.GetEventHubsPartitionProperties("hub", "0", queryContext);
+            }
+            else
+            {
+              properties.GetEventHubsProperties("hub", queryContext);
+            }
+          });
+          RequireReady(received);
+          received.get();
+          if (cancelCaller)
+          {
+            queryContext.Cancel();
+          }
+          std::promise<void> closeStarted;
+          auto started = closeStarted.get_future();
+          auto close = std::async(std::launch::async, [&]() {
+            closeStarted.set_value();
+            properties.Close({});
+          });
+          RequireReady(started);
+          if (pauseBeforeSend)
+          {
+            EXPECT_EQ(close.wait_for(std::chrono::milliseconds(200)), std::future_status::timeout);
+            EXPECT_EQ(endCalls.load(), 0);
+            resumeQuery.set_value();
+          }
+          RequireReady(query);
+          EXPECT_ANY_THROW(query.get());
+          RequireReady(close);
+          EXPECT_NO_THROW(close.get());
+          EXPECT_EQ(queryContext.IsCancelled(), cancelCaller);
+          properties.Close({});
+          EXPECT_EQ(endCalls.load(), 1);
+
+          // A stale properties-client reference must not reopen the session after invalidation.
+          EXPECT_THROW(
+              properties.GetEventHubsProperties("hub", {}), Core::OperationCancelledException);
+          EXPECT_THROW(
+              properties.GetEventHubsPartitionProperties("hub", "0", {}),
+              Core::OperationCancelledException);
+          EXPECT_EQ(endCalls.load(), 1);
+          Azure::Core::Diagnostics::Logger::SetListener(nullptr);
+        }
+        server.StopListening();
+      }
+      Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
     void SuccessfulDiscovery(bool cancelledClose)
@@ -131,6 +253,9 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             auto result = properties.GetEventHubsProperties("hub", context);
             EXPECT_EQ(result.Name, "hub");
             EXPECT_EQ(result.PartitionIds, (std::vector<std::string>{"0", "1"}));
+            auto partition = properties.GetEventHubsPartitionProperties("hub", "0", context);
+            EXPECT_EQ(partition.PartitionId, "0");
+            EXPECT_EQ(partition.LastEnqueuedOffset, "1");
             if (cancelledClose)
             {
               context.Cancel();
@@ -142,7 +267,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
             properties.Close(context);
             properties.Close(context);
           }
-          EXPECT_EQ(endCalls, 1);
+          EXPECT_EQ(endCalls.load(), 1);
         }
         server.StopListening();
       }
@@ -235,6 +360,41 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
         ::testing::ExitedWithCode(0),
         "");
   }
+
+  class ConcurrentPropertiesCleanupDeathTest
+      : public PropertiesCleanupDeathTest,
+        public ::testing::WithParamInterface<std::tuple<bool, bool>> {};
+
+  TEST_P(ConcurrentPropertiesCleanupDeathTest, CloseDuringPendingQuery)
+  {
+    auto const partitionProperties = std::get<0>(GetParam());
+    auto const cancelCaller = std::get<1>(GetParam());
+    EXPECT_EXIT(
+        {
+          ConcurrentPropertiesClose(partitionProperties, cancelCaller);
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
+  }
+
+  TEST_P(ConcurrentPropertiesCleanupDeathTest, CloseBeforeManagementSend)
+  {
+    auto const partitionProperties = std::get<0>(GetParam());
+    auto const cancelCaller = std::get<1>(GetParam());
+    EXPECT_EXIT(
+        {
+          ConcurrentPropertiesClose(partitionProperties, cancelCaller, true);
+          std::exit(::testing::Test::HasFailure() ? 1 : 0);
+        },
+        ::testing::ExitedWithCode(0),
+        "");
+  }
+
+  INSTANTIATE_TEST_SUITE_P(
+      PropertiesAndPartitions,
+      ConcurrentPropertiesCleanupDeathTest,
+      ::testing::Combine(::testing::Bool(), ::testing::Bool()));
 
   TEST_F(PropertiesCleanupDeathTest, ManagementCloseFailureStillEndsSession)
   {
