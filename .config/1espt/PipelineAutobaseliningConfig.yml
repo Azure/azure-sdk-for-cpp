@@ -86,7 +86,7 @@ pipelines:
           lastModifiedDate: 2026-10-24
         spotbugs:
           lastModifiedDate: 2026-10-24
-  2255:
+  1963:
     retail:
       binary:
         binskim:
