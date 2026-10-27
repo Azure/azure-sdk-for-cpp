@@ -2,7 +2,7 @@
 
 These tests cover producer cleanup after partition discovery fails and cleanup while a properties query is running. They verify that management clients, sessions, and connection polling references are released safely, including when initialization or shutdown throws.
 
-The tests use the uAMQP backend and local loopback listeners. They do not require Azure credentials, a live broker, or the HTTP test proxy. See [CONTRIBUTING.md](../CONTRIBUTING.md) for compiler and dependency setup.
+The tests use the uAMQP backend and local loopback listeners. They do not require Azure credentials, a live broker, or the HTTP test proxy. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md) for compiler and dependency setup.
 
 ## Build and run
 
@@ -12,6 +12,7 @@ Run from the repository root, adding any toolchain or platform options required 
 cmake -S . -B build/cleanup \
   -DCMAKE_BUILD_TYPE=Debug \
   -DBUILD_TESTING=ON \
+  -D AZURE_EVENTHUBS_CTEST_TIMEOUT=60 \
   -DDISABLE_RUST_IN_BUILD=ON
 
 cmake --build build/cleanup --config Debug --target \
@@ -25,6 +26,8 @@ ctest --test-dir build/cleanup -C Debug \
   --output-on-failure --timeout 60
 ```
 
+The configure option sets the Event Hubs test timeout to 60 seconds; CTest's `--timeout` alone does not override an explicit per-test timeout.
+
 The discovery command should list **20 cases**: four session cases, eight properties cleanup cases, and eight parameterized concurrency cases. Both test files are guarded by `ENABLE_UAMQP`. The default Rust backend does not include them; a successful run with no matching tests does not validate this cleanup behavior.
 
 To repeat just the concurrency cases five times:
@@ -37,7 +40,7 @@ ctest --test-dir build/cleanup -C Debug \
 
 ## Session ownership and shutdown
 
-Source: [session_cleanup_tests.cpp](../sdk/core/azure-core-amqp/test/ut/session_cleanup_tests.cpp), fixture `SessionCleanupDeathTest`.
+Source: [session_cleanup_tests.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core-amqp/test/ut/session_cleanup_tests.cpp), fixture `SessionCleanupDeathTest`.
 
 | Test | Behavior checked |
 | --- | --- |
@@ -48,7 +51,7 @@ Source: [session_cleanup_tests.cpp](../sdk/core/azure-core-amqp/test/ut/session_
 
 ## Properties initialization and producer cleanup
 
-Source: [properties_cleanup_test.cpp](../sdk/eventhubs/azure-messaging-eventhubs/test/ut/properties_cleanup_test.cpp), fixture `PropertiesCleanupDeathTest`.
+Source: [properties_cleanup_test.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/test/ut/properties_cleanup_test.cpp), fixture `PropertiesCleanupDeathTest`.
 
 | Test | Behavior checked |
 | --- | --- |
@@ -78,7 +81,7 @@ The second test depends on the management log messages containing `ManagementCli
 
 Except for `MissingEndStillAsserts`, the tests use `EXPECT_EXIT` and require a zero child exit status. An exception assertion alone would miss the original crash: a later destructor can abort after the exception has already been caught. The fixtures use Google Test's `threadsafe` death-test style to re-execute the child without inheriting polling-thread mutexes.
 
-The [cleanup listener](../sdk/core/azure-core-amqp/test/ut/cleanup_test_listener.hpp) accepts TCP connection attempts without creating a peer AMQP session. This isolates injected creation and session-end failures from mock-server teardown. Discovery and concurrency cases use the AMQP mock server because they need management links and requests. Weak ownership checks, an atomic session-end counter, and `GlobalStateHolder::AssertIdle()` check resource lifetime in addition to process survival.
+The [cleanup listener](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/core/azure-core-amqp/test/ut/cleanup_test_listener.hpp) accepts TCP connection attempts without creating a peer AMQP session. This isolates injected creation and session-end failures from mock-server teardown. Discovery and concurrency cases use the AMQP mock server because they need management links and requests. Weak ownership checks, an atomic session-end counter, and `GlobalStateHolder::AssertIdle()` check resource lifetime in addition to process survival.
 
 The concurrency gate reproduced process termination and an AddressSanitizer heap-use-after-free before synchronization was added. For Google Test 1.12 on Linux ARM64 under AddressSanitizer, set `GTEST_DEATH_TEST_USE_FORK=1` to avoid the small clone-child stack overflowing before the SDK code runs.
 
