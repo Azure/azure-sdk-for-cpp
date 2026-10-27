@@ -473,11 +473,17 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_FALSE(userDelegationKey.Value.empty());
   }
 
-  TEST_F(BlobServiceClientTest, DISABLED_RenameBlobContainer)
+  TEST_F(StorageTest, RenameBlobContainer_PLAYBACKONLY_)
   {
-    // This feature is not enabled everywhere
-    auto serviceClient = *m_blobServiceClient;
-    const std::string prefix = LowercaseRandomString() + "2";
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
+    Blobs::BlobServiceClient serviceClient(
+        "https://account.blob.core.windows.net", GetTestCredential(), clientOptions);
+    const std::string prefix = "synthetic-";
 
     const std::string srcContainerName = prefix + "src";
     auto srcContainerClient = serviceClient.CreateBlobContainer(srcContainerName).Value;
@@ -489,20 +495,22 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_THROW(srcContainerClient.GetProperties(), StorageException);
     EXPECT_NO_THROW(destContainerClient.GetProperties());
 
-    Blobs::BlobLeaseClient leaseClient(destContainerClient, RandomUUID());
+    Blobs::BlobLeaseClient leaseClient(destContainerClient, "44444444-4444-4444-4444-444444444444");
     leaseClient.Acquire(std::chrono::seconds(60));
 
     const std::string destContainerName2 = prefix + "dest2";
     Blobs::RenameBlobContainerOptions renameOptions;
-    renameOptions.SourceAccessConditions.LeaseId = RandomUUID();
+    renameOptions.SourceAccessConditions.LeaseId = "55555555-5555-5555-5555-555555555555";
     EXPECT_THROW(
         serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions),
         StorageException);
     renameOptions.SourceAccessConditions.LeaseId = leaseClient.GetLeaseId();
-    EXPECT_NO_THROW(
-        serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions));
-
-    auto destContainerClient2 = serviceClient.GetBlobContainerClient(destContainerName2);
+    auto destContainerClient2
+        = serviceClient.RenameBlobContainer(destContainerName, destContainerName2, renameOptions)
+              .Value;
+    EXPECT_EQ(
+        destContainerClient2.GetUrl(), "https://account.blob.core.windows.net/synthetic-dest2");
+    EXPECT_EQ(destContainerClient2.GetProperties().Value.ETag, ETag("\"synthetic-renamed-etag\""));
     destContainerClient2.Delete();
   }
 

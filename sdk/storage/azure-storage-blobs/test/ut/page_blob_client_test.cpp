@@ -491,20 +491,29 @@ namespace Azure { namespace Storage { namespace Test {
         0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options2));
   }
 
-  TEST_F(PageBlobClientTest, DISABLED_UploadPagesFromUriCrc64AccessCondition)
+  TEST_F(StorageTest, UploadPagesFromUriCrc64AccessCondition_PLAYBACKONLY_)
   {
-    auto pageBlobClient = *m_pageBlobClient;
-
-    std::vector<uint8_t> blobContent = RandomBuffer(static_cast<size_t>(4_KB));
+    if (!m_testContext.IsPlaybackMode())
+    {
+      GTEST_SKIP() << "Synthetic responses are playback-only.";
+    }
+    auto clientOptions = InitStorageClientOptions<Blobs::BlobClientOptions>();
+    ASSERT_FALSE(m_testProxy->GetRecordingId().empty());
+    std::vector<std::string> hashes;
+    clientOptions.PerRetryPolicies.push_back(
+        std::make_unique<PeekHttpRequestPolicy>([&](Core::Http::Request const& request) {
+          hashes.push_back(request.GetHeaders().at("x-ms-source-content-crc64"));
+          EXPECT_EQ(
+              request.GetHeaders().at("x-ms-copy-source"),
+              "https://account.blob.core.windows.net/container/source");
+        }));
+    Blobs::PageBlobClient pageBlobClient(
+        "https://account.blob.core.windows.net/container/destination",
+        GetTestCredential(),
+        clientOptions);
+    const std::vector<uint8_t> blobContent(static_cast<size_t>(4_KB), 'a');
     const std::vector<uint8_t> contentCrc64
         = Azure::Storage::Crc64Hash().Final(blobContent.data(), blobContent.size());
-
-    pageBlobClient.Create(blobContent.size());
-    auto contentStream = Azure::Core::IO::MemoryBodyStream(blobContent.data(), blobContent.size());
-    pageBlobClient.UploadPages(0, contentStream);
-
-    auto pageBlobClient2 = GetPageBlobClientTestForTest(RandomString());
-    pageBlobClient2.Create(blobContent.size());
 
     Blobs::UploadPagesFromUriOptions options;
     Azure::Core::Http::HttpRange sourceRange;
@@ -513,13 +522,21 @@ namespace Azure { namespace Storage { namespace Test {
     options.TransactionalContentHash = ContentHash();
     options.TransactionalContentHash.Value().Algorithm = HashAlgorithm::Crc64;
     options.TransactionalContentHash.Value().Value = Azure::Core::Convert::Base64Decode(DummyCrc64);
-    EXPECT_THROW(
-        pageBlobClient2.UploadPagesFromUri(
-            0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options),
-        StorageException);
+    try
+    {
+      pageBlobClient.UploadPagesFromUri(
+          0, "https://account.blob.core.windows.net/container/source", sourceRange, options);
+      FAIL() << "Expected CRC64 mismatch.";
+    }
+    catch (StorageException const& exception)
+    {
+      EXPECT_EQ(exception.ErrorCode, "Crc64Mismatch");
+    }
     options.TransactionalContentHash.Value().Value = contentCrc64;
-    EXPECT_NO_THROW(pageBlobClient2.UploadPagesFromUri(
-        0, pageBlobClient.GetUrl() + GetSas(), sourceRange, options));
+    EXPECT_NO_THROW(pageBlobClient.UploadPagesFromUri(
+        0, "https://account.blob.core.windows.net/container/source", sourceRange, options));
+    EXPECT_EQ(
+        hashes, (std::vector<std::string>{DummyCrc64, Core::Convert::Base64Encode(contentCrc64)}));
   }
 
   TEST_F(PageBlobClientTest, CreateIfNotExists)
