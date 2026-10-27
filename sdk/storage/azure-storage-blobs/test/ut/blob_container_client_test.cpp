@@ -1201,7 +1201,7 @@ namespace Azure { namespace Storage { namespace Test {
     }
   }
 
-  TEST_F(BlobContainerClientTest, Tags)
+  TEST_F(BlobContainerClientTest, GetSetTags)
   {
     auto containerClient = *m_blobContainerClient;
 
@@ -1244,16 +1244,32 @@ namespace Azure { namespace Storage { namespace Test {
 
     auto blobItem = GetBlobItem(blobName, Blobs::Models::ListBlobsIncludeFlags::Tags);
     EXPECT_EQ(blobItem.Details.Tags, tags);
+  }
 
+  TEST_F(BlobContainerClientTest, ListBlobsByTags_PLAYBACKONLY_)
+  {
+    auto containerClient = *m_blobContainerClient;
+
+    std::map<std::string, std::string> tags;
+    std::string c1 = "k" + RandomString() + "1";
+    std::string v1 = RandomString() + "2";
+    std::string c2 = "k" + RandomString() + "3";
+    std::string v2 = RandomString() + "4";
+    std::string c3 = "k" + RandomString() + "5";
+    std::string v3 = RandomString() + "6";
+    tags[c1] = v1;
+    tags[c2] = v2;
+    tags[c3] = v3;
+
+    std::string blobName = "blob" + RandomString();
     std::vector<std::string> blobNames;
-    blobNames.push_back(blobName);
-    for (int i = 0; i < 5; ++i)
+    for (int i = 0; i < 6; ++i)
     {
-      const auto blobName1 = blobName + std::to_string(i);
-      blobNames.push_back(blobName1);
-      auto blobClient1 = containerClient.GetAppendBlobClient(blobName1);
-      blobClient1.Create();
-      blobClient1.SetTags(tags);
+      const auto currentBlobName = i == 0 ? blobName : blobName + std::to_string(i - 1);
+      blobNames.push_back(currentBlobName);
+      auto blobClient = containerClient.GetAppendBlobClient(currentBlobName);
+      blobClient.Create();
+      blobClient.SetTags(tags);
     }
 
     std::string whereExpression
