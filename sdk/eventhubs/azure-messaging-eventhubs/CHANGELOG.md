@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed cleanup blocking on pending properties queries with the Rust AMQP backend. Queries can be cancelled without cancelling the caller context, and subsequent queries recreate failed management links.
+
 - Fixed producer cleanup after partition discovery fails during management-client initialization or session shutdown. Cleanup now ends an acquired session independently of management-client creation and supports repeated close calls.
 - Synchronized properties queries with cleanup during producer recovery. Cleanup cancels an active query before releasing its management client and session, without cancelling the caller's context.
 

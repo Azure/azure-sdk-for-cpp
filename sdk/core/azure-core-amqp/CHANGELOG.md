@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed Rust management calls ignoring cancellation and deadlines. Failed calls now throw safely, require fresh management links before reuse, and allow bounded management teardown.
+
 - Fixed uAMQP session destruction after a failed `End`. Native resources and the connection polling reference are released when the last session owner is destroyed; callers must still end sessions before destruction.
 
 - Fixed uAMQP message annotation encoding so messages with annotations, including Event Hubs partition keys, include the required AMQP section descriptor. [[#7426]](https://github.com/Azure/azure-sdk-for-cpp/issues/7426)

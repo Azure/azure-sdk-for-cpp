@@ -32,6 +32,7 @@ add_executable (
     processor_test.cpp
     producer_client_test.cpp
     properties_cleanup_test.cpp
+    rust_properties_cleanup_test.cpp
     reattach_connection_string_test.cpp
     reattach_policy_test.cpp
     retry_operation_test.cpp
@@ -50,6 +51,13 @@ endif()
 
 
 if(USE_RUST_AMQP)
+  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../../../core/azure-core-amqp/test/rust-peer/Cargo.toml CRATES amqp_cleanup_peer)
+  if(NOT APPLE AND (LINUX OR UNIX))
+    corrosion_set_env_vars(amqp_cleanup_peer
+      OPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}
+      OPENSSL_DIR=${OPENSSL_INCLUDE_DIR}/..)
+  endif()
+  target_link_libraries(azure-messaging-eventhubs-test PRIVATE amqp_cleanup_peer)
   target_compile_definitions(azure-messaging-eventhubs-test PRIVATE ENABLE_RUST_AMQP)
 else()
   find_package(umock_c CONFIG REQUIRED)

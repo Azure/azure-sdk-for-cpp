@@ -125,6 +125,15 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
           GetCallContext(), timeoutMilliseconds);
     }
 
+    /** Observe cancellation only during a synchronous management operation.
+     * This object and its stored Context must remain stationary until FFI returns.
+     */
+    void SetOperationCancellation()
+    {
+      Azure::Core::Amqp::RustInterop::_detail::call_context_set_cancellation(
+          GetCallContext(), IsOperationCancelled, &m_context);
+    }
+
     std::uint64_t GetTeardownTimeoutMilliseconds() const
     {
       auto const remaining = GetTimeoutMilliseconds();
@@ -165,6 +174,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Common { namespace
     }
 
   private:
+    static bool IsOperationCancelled(void const* state) noexcept
+    {
+      return static_cast<Azure::Core::Context const*>(state)->IsCancelled();
+    }
+
     UniqueRustCallContext m_callContext;
     Azure::Core::Context m_context;
   };

@@ -134,10 +134,14 @@ pub unsafe extern "C" fn amqpmanagement_detach_and_release(
     let management = Box::from_raw(management);
     let call_context = call_context_from_ptr_mut(call_context);
     trace!("Starting to detach management");
-    let result = call_context
-        .runtime_context()
-        .runtime()
-        .block_on(management.detach());
+    let result = call_context.block_on_with_timeout(management.detach());
+    let result = match result {
+        Ok(result) => result,
+        Err(err) => {
+            call_context.set_error(Box::new(err));
+            return -1;
+        }
+    };
     trace!("Detached management");
     if let Err(err) = result {
         error!("Failed to detach management: {:?}", err);
@@ -176,11 +180,18 @@ pub unsafe extern "C" fn amqpmanagement_call(
             })
             .collect();
         trace!("Converted application properties.");
-        let result = call_context.runtime_context().runtime().block_on(
+        let result = call_context.block_on_with_cancellation(
             management
                 .inner
                 .call(operation_type.to_string(), application_properties),
         );
+        let result = match result {
+            Ok(result) => result,
+            Err(err) => {
+                call_context.set_error(Box::new(err));
+                return ptr::null_mut();
+            }
+        };
         if let Err(err) = result {
             error!("Failed to call management: {:?}", err);
             call_context.set_error(Box::new(err));

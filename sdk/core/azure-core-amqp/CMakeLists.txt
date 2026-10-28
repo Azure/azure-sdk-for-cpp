@@ -137,7 +137,7 @@ endif()
 
  
   # Import targets defined in a package or workspace manifest `Cargo.toml` file
-  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml)
+  corrosion_import_crate(MANIFEST_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/rust_amqp/rust_amqp/rust_wrapper/Cargo.toml CRATES rust_wrapper)
 
   # Set the build environment variables for the rust_wrapper crate to use our targetted OpenSSL version.
   if(NOT APPLE)

@@ -27,6 +27,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "amqp_cleanup_peer"
+version = "0.1.0"
+dependencies = [
+ "fe2o3-amqp",
+ "fe2o3-amqp-types",
+ "tokio",
+]
+
+[[package]]
 name = "android-tzdata"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
