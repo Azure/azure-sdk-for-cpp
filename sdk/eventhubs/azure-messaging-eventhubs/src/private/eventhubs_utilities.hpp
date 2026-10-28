@@ -194,8 +194,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Core::Context const& context)
     {
 
+#if defined(ENABLE_UAMQP)
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
       auto operationContext = CreateOperationContext(context);
+#else
+      auto const* operationContext = &context;
+#endif
       EnsureManagementClient(*operationContext);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
@@ -203,7 +207,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       message.ApplicationProperties["name"]
           = static_cast<Azure::Core::Amqp::Models::AmqpValue>(eventHubName);
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-      auto result = ExecuteManagementOperation(
+      auto result = m_managementClient->ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:eventhub" /* type of operation */,
           "" /* locales */,
@@ -253,8 +257,12 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         std::string const& partitionId,
         Core::Context const& context)
     {
+#if defined(ENABLE_UAMQP)
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
       auto operationContext = CreateOperationContext(context);
+#else
+      auto const* operationContext = &context;
+#endif
       EnsureManagementClient(*operationContext);
 
       // Send a message to the management endpoint to retrieve the properties of the eventhub.
@@ -264,7 +272,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       message.ApplicationProperties["partition"]
           = Azure::Core::Amqp::Models::AmqpValue{partitionId};
       message.SetBody(Azure::Core::Amqp::Models::AmqpValue{});
-      auto result = ExecuteManagementOperation(
+      auto result = m_managementClient->ExecuteOperation(
           "READ" /* operation */,
           "com.microsoft:partition" /* type of operation */,
           "" /* locales */,
@@ -310,6 +318,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
     void Close(Azure::Core::Context const& context)
     {
+#if defined(ENABLE_UAMQP)
       {
         // Cancel before waiting for the operation lock: a query may have no caller deadline.
         // Reject queries on stale references once producer/consumer invalidation starts.
@@ -320,8 +329,25 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
           operationContext->Cancel();
         }
       }
+#endif
       std::unique_lock<std::mutex> lock(m_managementClientMutex);
-      ResetManagement(context);
+      if (m_managementClientIsOpen)
+      {
+        // ManagementClient::Close releases its links even when it reports a close failure.
+        m_managementClientIsOpen = false;
+        try
+        {
+          m_managementClient->Close(context);
+        }
+        catch (std::exception const& ex)
+        {
+          Azure::Core::Diagnostics::_internal::Log::Stream(
+              Azure::Core::Diagnostics::Logger::Level::Warning)
+              << "Exception while closing the management client: " << ex.what();
+        }
+      }
+      // Drop link ownership before ending the session. Its native end frees link endpoints.
+      m_managementClient.reset();
       // Beginning the session precedes management creation, which can throw before assignment.
       if (m_sessionIsBegun)
       {
@@ -340,51 +366,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     }
 
   private:
-    Azure::Core::Amqp::_internal::ManagementOperationResult ExecuteManagementOperation(
-        std::string const& operation,
-        std::string const& type,
-        std::string const& locales,
-        Azure::Core::Amqp::Models::AmqpMessage message,
-        Azure::Core::Context const& context)
-    {
-      try
-      {
-        return m_managementClient->ExecuteOperation(
-            operation, type, locales, std::move(message), context);
-      }
-      catch (...)
-      {
-        // A cancelled Rust call can leave an unmatched response. Replace links
-        // lazily on the next query, without delaying this query's exception.
-        m_managementClientNeedsReset = true;
-        throw;
-      }
-    }
-
-    // Called only while holding m_managementClientMutex. Keep the begun session
-    // so a later ordinary query can attach fresh management links on it.
-    void ResetManagement(Azure::Core::Context const& context)
-    {
-      if (m_managementClientIsOpen)
-      {
-        // ManagementClient::Close releases its links even when it reports a close failure.
-        m_managementClientIsOpen = false;
-        try
-        {
-          m_managementClient->Close(context);
-        }
-        catch (std::exception const& ex)
-        {
-          Azure::Core::Diagnostics::_internal::Log::Stream(
-              Azure::Core::Diagnostics::Logger::Level::Warning)
-              << "Exception while closing the management client: " << ex.what();
-        }
-      }
-      // Drop link ownership before ending the session. Its native end frees link endpoints.
-      m_managementClient.reset();
-      m_managementClientNeedsReset = false;
-    }
-
+#if defined(ENABLE_UAMQP)
     std::shared_ptr<Azure::Core::Context> CreateOperationContext(
         Azure::Core::Context const& context)
     {
@@ -399,15 +381,16 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       m_operationContext = operationContext;
       return operationContext;
     }
+#endif
 
-    // The getter owns m_managementClientMutex through initialization and operation completion.
     void EnsureManagementClient(Azure::Core::Context const& context)
     {
-      context.ThrowIfCancelled();
-      if (m_managementClientNeedsReset)
-      {
-        ResetManagement(context);
-      }
+#if !defined(ENABLE_UAMQP)
+      // Rust management calls do not yet observe cancellation of the child context.
+      // Keep the lock limited to initialization until that support is available.
+      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+#endif
+      // With uAMQP, the getter holds this lock through operation completion.
       if (!m_managementClient)
       {
         if (!m_sessionIsBegun)
@@ -435,13 +418,14 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     }
 
     std::mutex m_managementClientMutex;
+#if defined(ENABLE_UAMQP)
     std::mutex m_operationContextMutex;
     std::weak_ptr<Azure::Core::Context> m_operationContext;
     bool m_isClosed{false};
+#endif
     Azure::Core::Amqp::_internal::Session m_session;
     std::unique_ptr<Azure::Core::Amqp::_internal::ManagementClient> m_managementClient;
     bool m_managementClientIsOpen{false};
-    bool m_managementClientNeedsReset{false};
     bool m_sessionIsBegun{false};
     std::string m_eventHub;
     ManagementClientFactory m_createManagementClient;

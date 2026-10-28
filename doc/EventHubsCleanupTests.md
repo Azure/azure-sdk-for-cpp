@@ -2,9 +2,11 @@
 
 These tests cover producer cleanup after partition discovery fails and cleanup while a properties query is running. They verify that management clients, sessions, and connection polling references are released safely, including when initialization or shutdown throws.
 
-The tests use local loopback listeners with the uAMQP and Rust backends. They do not require Azure credentials, a live broker, or the HTTP test proxy. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md) for compiler and dependency setup.
+The tests use the uAMQP backend and local loopback listeners. They do not require Azure credentials, a live broker, or the HTTP test proxy. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-cpp/blob/main/CONTRIBUTING.md) for compiler and dependency setup.
 
-## Build and run with uAMQP
+Properties-query cancellation and synchronization with cleanup apply only to uAMQP. The Rust backend retains its initialization-only lock because pending Rust management calls do not observe child-context cancellation. Rust cancellation, recovery, and concurrent cleanup are tracked in [azure-sdk-for-rust#5527](https://github.com/Azure/azure-sdk-for-rust/issues/5527).
+
+## Build and run
 
 Run from the repository root, adding any toolchain or platform options required by your development environment:
 
@@ -28,7 +30,7 @@ ctest --test-dir build/cleanup -C Debug \
 
 The configure option sets the Event Hubs test timeout to 60 seconds; CTest's `--timeout` alone does not override an explicit per-test timeout.
 
-The discovery command should list **21 cases**: four session cases, nine properties cleanup cases, and eight parameterized concurrency cases. These two test files are guarded by `ENABLE_UAMQP`. The Rust backend uses the separate cases described below; a successful run with no matching tests does not validate this cleanup behavior.
+The discovery command should list **20 cases**: four session cases, eight properties cleanup cases, and eight parameterized concurrency cases. Both test files are guarded by `ENABLE_UAMQP`. The default Rust backend does not include them; a successful run with no matching tests does not validate this cleanup behavior.
 
 To repeat just the concurrency cases five times:
 
@@ -37,35 +39,6 @@ ctest --test-dir build/cleanup -C Debug \
   -R 'ConcurrentPropertiesCleanupDeathTest' \
   --repeat until-fail:5 --output-on-failure --timeout 60
 ```
-
-## Build and run with Rust
-
-```sh
-cmake -S . -B build/cleanup-rust \
-  -DCMAKE_BUILD_TYPE=Debug \
-  -DBUILD_TESTING=ON \
-  -DAZURE_EVENTHUBS_CTEST_TIMEOUT=60 \
-  -DDISABLE_RUST_IN_BUILD=OFF
-cmake --build build/cleanup-rust --config Debug --target azure-messaging-eventhubs-test
-ctest --test-dir build/cleanup-rust -C Debug \
-  -R 'Rust.*PropertiesCleanupDeathTest' --output-on-failure --timeout 60
-cargo test -p rust_wrapper call_context -- --test-threads=1
-```
-
-This selects **13 C++ cases** and **six Rust context cases**. The C++ tests link a test-only Rust AMQP peer built from the existing fe2o3 dependency. The peer acknowledges receipt of management requests and withholds their responses, so cancellation occurs after a real request reaches the server. A 15-second child-process watchdog reports a blocked query or close as a failure.
-
-Source: [rust_properties_cleanup_test.cpp](https://github.com/Azure/azure-sdk-for-cpp/blob/main/sdk/eventhubs/azure-messaging-eventhubs/test/ut/rust_properties_cleanup_test.cpp).
-
-| Cases | Behavior checked |
-| --- | --- |
-| `CloseDuringPendingQuery` (four) | Both getters release their operation lock when close cancels the child context; caller cancellation state is preserved, repeated close succeeds, and stale references reject queries. |
-| `ConsumerCloseDuringPendingQuery` (four) | Public consumer close completes with either getter pending, including when the close deadline has already expired. The original query context has no deadline and remains uncancelled. |
-| `CancelledPropertiesThenRediscover`, `CancelledPartitionThenRediscover` | Caller cancellation interrupts the query; subsequent public producer queries succeed with fresh links. |
-| `QueryDeadlineThenRediscover` | A query deadline interrupts the wait; a later query succeeds. |
-| `ServiceErrorIsExceptionThenRediscover` | A real service error produces an exception instead of converting a null Rust value; a later query succeeds. |
-| `DirectManagementFailureRequiresReopen` | A failed management client rejects reuse until close and reopen. |
-
-The Rust context tests cover cancellation before and during a wait, deadlines, successful results, dropping the pending future exactly once, and teardown that runs despite cancellation. These changes cover management calls after initialization; they do not establish cancellation of pending session begin, authentication, or management attach, or forced termination of dependency background tasks.
 
 ## Session ownership and shutdown
 
@@ -84,7 +57,6 @@ Source: [properties_cleanup_test.cpp](https://github.com/Azure/azure-sdk-for-cpp
 
 | Test | Behavior checked |
 | --- | --- |
-| `CancelledQueryThenRediscover` | Caller cancellation interrupts a query, and both getters succeed on subsequent queries with fresh management links. |
 | `SuccessfulDiscoveryAndRepeatedClose` | Hub and partition properties are returned correctly, and repeated close ends the session exactly once. |
 | `ManagementCloseFailureStillEndsSession` | A canceled management close logs its failure, but session cleanup still runs exactly once. |
 | `CreationFailureThenRepeatedClose` | Management creation throws after session begin. Retrying creation preserves the original error and does not acquire another polling reference; repeated close releases ownership. |

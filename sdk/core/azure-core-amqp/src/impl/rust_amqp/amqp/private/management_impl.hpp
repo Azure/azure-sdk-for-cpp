@@ -72,7 +72,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     bool m_isOpen{false};
-    bool m_operationFailed{false};
     UniqueAmqpManagement m_management;
     _internal::ManagementClientOptions m_options;
     std::shared_ptr<_detail::SessionImpl> m_session;

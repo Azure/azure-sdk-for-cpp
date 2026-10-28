@@ -1,7 +1,6 @@
 [workspace]
 resolver = "2"
 members = [
-    "sdk/core/azure-core-amqp/test/rust-peer",
     "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/azure_core_amqp",
     "sdk/core/azure-core-amqp/src/impl/rust_amqp/rust_amqp/rust_wrapper",
 ]

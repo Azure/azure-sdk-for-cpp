@@ -82,7 +82,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         throw std::runtime_error("Could not attach management object: " + callContext.GetError());
       }
       m_isOpen = true;
-      m_operationFailed = false;
       return _internal::ManagementOpenStatus::Ok;
     }
     catch (...)
@@ -105,16 +104,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
           << "Execute Operation called when management is not initialized.";
       throw std::runtime_error("Management is not open!");
     }
-    if (m_operationFailed)
-    {
-      throw std::runtime_error(
-          "Management operation failed; close and reopen the client before reuse.");
-    }
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
-
-    callContext.SetTimeoutMilliseconds(callContext.GetTimeoutMilliseconds());
-    callContext.SetOperationCancellation();
 
     Azure::Core::Amqp::Models::AmqpMap propertiesMap;
     for (const auto& val : messageToSend.ApplicationProperties)
@@ -129,15 +120,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
         m_management.get(),
         typeOfOperation.c_str(),
         Models::_detail::AmqpValueFactory::ToImplementation(applicationProperties))};
-
-    if (!value)
-    {
-      // Cancellation can leave an unmatched response in the management links.
-      // Keep the handle open for consuming Close, but prohibit another query.
-      m_operationFailed = true;
-      context.ThrowIfCancelled();
-      throw std::runtime_error("Management operation failed: " + callContext.GetError());
-    }
 
     auto responseMessage = std::make_shared<Azure::Core::Amqp::Models::AmqpMessage>();
     responseMessage->SetBody(Models::_detail::AmqpValueFactory::FromImplementation(value));
@@ -157,8 +139,6 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
     Common::_detail::CallContext callContext(
         Common::_detail::GlobalStateHolder::GlobalStateInstance()->GetRuntimeContext(), context);
-
-    callContext.SetTeardownTimeoutMilliseconds();
 
     // Even if the detach fails, the management client is closed. A client that failed to detach is
     // not usable again, and a client that keeps the open flag stops the process in its destructor.

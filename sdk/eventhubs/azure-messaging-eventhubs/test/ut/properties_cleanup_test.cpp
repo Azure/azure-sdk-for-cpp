@@ -42,24 +42,20 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
 
     class PropertiesEndpoint final : public Amqp::Tests::MessageTests::MockServiceEndpoint {
     public:
-      PropertiesEndpoint(
-          bool failDiscovery = false,
-          std::promise<void>* requestReceived = nullptr,
-          std::atomic<bool>* holdQuery = nullptr)
+      PropertiesEndpoint(bool failDiscovery = false, std::promise<void>* requestReceived = nullptr)
           : MockServiceEndpoint("$management", {}), m_failDiscovery{failDiscovery},
-            m_requestReceived{requestReceived}, m_holdQuery{holdQuery}
+            m_requestReceived{requestReceived}
       {
       }
 
     private:
       bool m_failDiscovery;
       std::promise<void>* m_requestReceived;
-      std::atomic<bool>* m_holdQuery;
       void MessageReceived(
           std::string const&,
           std::shared_ptr<Amqp::Models::AmqpMessage> const& request) override
       {
-        if (m_requestReceived && (!m_holdQuery || m_holdQuery->load()))
+        if (m_requestReceived)
         {
           // Acknowledge receipt without replying. Close must interrupt the client's response wait.
           m_requestReceived->set_value();
@@ -224,39 +220,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       Amqp::Common::_detail::GlobalStateHolder::GlobalStateInstance()->AssertIdle();
     }
 
-    void CancelledQueryThenRediscover()
-    {
-      std::promise<void> requestReceived;
-      auto received = requestReceived.get_future();
-      std::atomic<bool> holdQuery{true};
-      Amqp::Tests::MessageTests::AmqpServerMock server(AvailablePort());
-      server.AddServiceEndpoint(
-          std::make_shared<PropertiesEndpoint>(false, &requestReceived, &holdQuery));
-      server.StartListening();
-      {
-        Amqp::_internal::ConnectionOptions options;
-        options.Port = server.GetPort();
-        Amqp::_internal::Connection connection("localhost", nullptr, options);
-        EventHubsPropertiesClient properties(connection, "hub");
-        Azure::Core::Context caller;
-        auto query = std::async(
-            std::launch::async, [&] { properties.GetEventHubsProperties("hub", caller); });
-        RequireReady(received);
-        received.get();
-        caller.Cancel();
-        RequireReady(query);
-        EXPECT_ANY_THROW(query.get());
-        EXPECT_TRUE(caller.IsCancelled());
-        holdQuery = false;
-        auto context = Azure::Core::Context().WithDeadline(
-            std::chrono::system_clock::now() + std::chrono::seconds(5));
-        EXPECT_EQ(properties.GetEventHubsProperties("hub", context).Name, "hub");
-        EXPECT_EQ(properties.GetEventHubsPartitionProperties("hub", "0", context).PartitionId, "0");
-        properties.Close(context);
-      }
-      server.StopListening();
-    }
-
     void SuccessfulDiscovery(bool cancelledClose)
     {
       std::atomic<bool> closeFailureLogged{false};
@@ -386,17 +349,6 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace Test {
       ::testing::FLAGS_gtest_death_test_style = "threadsafe";
     }
   };
-
-  TEST_F(PropertiesCleanupDeathTest, CancelledQueryThenRediscover)
-  {
-    EXPECT_EXIT(
-        {
-          CancelledQueryThenRediscover();
-          std::exit(::testing::Test::HasFailure() ? 1 : 0);
-        },
-        ::testing::ExitedWithCode(0),
-        "");
-  }
 
   TEST_F(PropertiesCleanupDeathTest, SuccessfulDiscoveryAndRepeatedClose)
   {
