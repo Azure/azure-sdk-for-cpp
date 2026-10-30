@@ -10,6 +10,7 @@
 #include <exception>
 #include <functional>
 #include <future>
+#include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
@@ -33,6 +34,12 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
 
   class DataLocalityLayoutState final {
   public:
+    static std::unique_ptr<DataLocalityLayoutState> Create(
+        Blobs::BlobClient blobClient,
+        Azure::Nullable<Azure::Core::Http::HttpRange> range,
+        Azure::ETag eTag,
+        Azure::Core::Context context);
+
     explicit DataLocalityLayoutState(std::function<DataLocalityLayout()> refresh);
 
     ~DataLocalityLayoutState() { WaitForRefreshTask(); }

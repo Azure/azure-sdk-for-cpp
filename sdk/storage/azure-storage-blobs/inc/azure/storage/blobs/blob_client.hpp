@@ -23,17 +23,8 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  class BlobClient;
-
   namespace _detail {
     class DataLocalityLayoutState;
-
-    std::unique_ptr<DataLocalityLayoutState> CreateDataLocalityLayoutState(
-        Blobs::BlobClient blobClient,
-        Azure::Nullable<Azure::Core::Http::HttpRange> range,
-        Azure::ETag eTag,
-        Azure::Core::Context context);
-
     AZ_STORAGE_BLOBS_DLLEXPORT extern const Azure::Core::Context::Key
         DataLakeInteroperabilityExtraOptionsKey;
   } // namespace _detail
@@ -465,10 +456,6 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobServiceBatch;
     friend class BlobContainerBatch;
     friend class _detail::BlobLayoutPagedResponse;
-    friend std::unique_ptr<_detail::DataLocalityLayoutState> _detail::CreateDataLocalityLayoutState(
-        Blobs::BlobClient blobClient,
-        Azure::Nullable<Azure::Core::Http::HttpRange> range,
-        Azure::ETag eTag,
-        Azure::Core::Context context);
+    friend class _detail::DataLocalityLayoutState;
   };
 }}} // namespace Azure::Storage::Blobs

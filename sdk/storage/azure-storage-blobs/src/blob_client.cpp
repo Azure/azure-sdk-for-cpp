@@ -102,7 +102,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   } // namespace
 
-  std::unique_ptr<_detail::DataLocalityLayoutState> _detail::CreateDataLocalityLayoutState(
+  std::unique_ptr<_detail::DataLocalityLayoutState> _detail::DataLocalityLayoutState::Create(
       Blobs::BlobClient blobClient,
       Azure::Nullable<Azure::Core::Http::HttpRange> range,
       Azure::ETag eTag,
@@ -628,7 +628,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
       dataLocalityState
-          = _detail::CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+          = _detail::DataLocalityLayoutState::Create(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
@@ -777,7 +777,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
       dataLocalityState
-          = _detail::CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+          = _detail::DataLocalityLayoutState::Create(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
