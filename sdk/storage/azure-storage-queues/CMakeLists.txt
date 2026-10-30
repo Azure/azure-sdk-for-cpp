@@ -48,19 +48,23 @@ set(
     inc/azure/storage/queues/queue_responses.hpp
     inc/azure/storage/queues/queue_sas_builder.hpp
     inc/azure/storage/queues/queue_service_client.hpp
-    inc/azure/storage/queues/rest_client.hpp
     inc/azure/storage/queues/rtti.hpp
 )
 
 set(
   AZURE_STORAGE_QUEUES_SOURCE
     src/private/package_version.hpp
+    src/private/queue_model_conversions.hpp
+    src/generated/queues_client.hpp
+    src/generated/queues_client_options.hpp
+    src/generated/queues_models.hpp
+    src/generated/queues_client.cpp
+    src/generated/queues.cpp
     src/queue_client.cpp
     src/queue_options.cpp
     src/queue_responses.cpp
     src/queue_sas_builder.cpp
     src/queue_service_client.cpp
-    src/rest_client.cpp
 )
 
 add_library(azure-storage-queues ${AZURE_STORAGE_QUEUES_HEADER} ${AZURE_STORAGE_QUEUES_SOURCE})

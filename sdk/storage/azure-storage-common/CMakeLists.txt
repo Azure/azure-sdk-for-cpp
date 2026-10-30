@@ -57,6 +57,7 @@ set(
     inc/azure/storage/common/internal/storage_data_locality_policy.hpp
     inc/azure/storage/common/internal/storage_per_retry_policy.hpp
     inc/azure/storage/common/internal/storage_pipeline.hpp
+    inc/azure/storage/common/internal/storage_protocol.hpp
     inc/azure/storage/common/internal/storage_retry_policy.hpp
     inc/azure/storage/common/internal/storage_service_version_policy.hpp
     inc/azure/storage/common/internal/storage_switch_to_secondary_policy.hpp

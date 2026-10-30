@@ -3,7 +3,7 @@
 
 #include "azure/storage/queues/queue_sas_builder.hpp"
 
-#include "azure/storage/queues/rest_client.hpp"
+#include "azure/storage/queues/queue_options.hpp"
 
 #include <azure/core/http/http.hpp>
 #include <azure/storage/common/crypt.hpp>
