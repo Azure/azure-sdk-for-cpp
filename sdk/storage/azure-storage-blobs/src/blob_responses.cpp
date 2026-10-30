@@ -10,7 +10,7 @@
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  void BlobLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  void _detail::BlobLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;
     m_operationOptions.AccessConditions.IfMatch = Layout.Properties.ETag;

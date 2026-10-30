@@ -24,6 +24,7 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 namespace Azure { namespace Storage { namespace Blobs {
 
   namespace _detail {
+    class DataLocalityLayoutState;
     AZ_STORAGE_BLOBS_DLLEXPORT extern const Azure::Core::Context::Key
         DataLakeInteroperabilityExtraOptionsKey;
   } // namespace _detail
@@ -425,17 +426,6 @@ namespace Azure { namespace Storage { namespace Blobs {
         const GetAccountInfoOptions& options = GetAccountInfoOptions(),
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
-    /**
-     * @brief Gets the data locality layout for this blob.
-     *
-     * @param options Optional parameters to execute this function.
-     * @param context Context for cancelling long running operations.
-     * @return A paged response containing the blob's data locality layout.
-     */
-    BlobLayoutPagedResponse GetLayout(
-        const GetBlobLayoutOptions& options = GetBlobLayoutOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context()) const;
-
   protected:
     /** @brief Blob Url */
     Azure::Core::Url m_blobUrl;
@@ -445,6 +435,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     _detail::BlobClientConfiguration m_clientConfiguration;
 
   private:
+    _detail::BlobLayoutPagedResponse GetLayout(
+        const _detail::GetBlobLayoutOptions& options = _detail::GetBlobLayoutOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
     explicit BlobClient(
         Azure::Core::Url blobUrl,
         std::shared_ptr<Azure::Core::Http::_internal::HttpPipeline> pipeline,
@@ -461,5 +455,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     friend class BlobLeaseClient;
     friend class BlobServiceBatch;
     friend class BlobContainerBatch;
+    friend class _detail::BlobLayoutPagedResponse;
+    friend class _detail::DataLocalityLayoutState;
   };
 }}} // namespace Azure::Storage::Blobs

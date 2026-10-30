@@ -204,7 +204,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     blobOptions.Range = options.Range;
     blobOptions.RangeHashAlgorithm = options.RangeHashAlgorithm;
     blobOptions.Range = options.Range;
-    blobOptions.LayoutEndpoint = options.LayoutEndpoint;
     blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
     blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
     blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
@@ -218,10 +217,11 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     auto response = m_blobClient.Download(
         blobOptions,
-        options.IncludeUserPrincipalName.HasValue() ? context.WithValue(
-            Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
-            options.IncludeUserPrincipalName.Value())
-                                                    : context);
+        options.IncludeUserPrincipalName.HasValue()
+            ? context.WithValue(
+                  Blobs::_detail::DataLakeInteroperabilityExtraOptionsKey,
+                  options.IncludeUserPrincipalName.Value())
+            : context);
     Models::DownloadFileResult ret;
     ret.Body = std::move(response.Value.BodyStream);
     ret.Details.HttpHeaders = std::move(response.Value.Details.HttpHeaders);
@@ -283,32 +283,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     }
     return Azure::Response<Models::DownloadFileResult>(
         std::move(ret), std::move(response.RawResponse));
-  }
-
-  FileLayoutPagedResponse DataLakeFileClient::GetLayout(
-      const GetFileLayoutOptions& options,
-      const Azure::Core::Context& context) const
-  {
-    Blobs::GetBlobLayoutOptions blobOptions;
-    blobOptions.Range = options.Range;
-    blobOptions.ContinuationToken = options.ContinuationToken;
-    blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
-    blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
-    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
-    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
-    auto response = m_blobClient.GetLayout(blobOptions, context);
-
-    FileLayoutPagedResponse result;
-    result.Layout.Ranges = std::move(response.Layout.Ranges);
-    result.Layout.Properties = _detail::PathPropertiesFromBlobProperties(
-        std::move(response.Layout.Properties), *response.RawResponse);
-    result.CurrentPageToken = std::move(response.CurrentPageToken);
-    result.NextPageToken = std::move(response.NextPageToken);
-    result.RawResponse = std::move(response.RawResponse);
-    result.m_fileClient = std::make_shared<DataLakeFileClient>(*this);
-    result.m_operationOptions = options;
-    return result;
   }
 
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(

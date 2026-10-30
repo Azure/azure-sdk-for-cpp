@@ -28,7 +28,7 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
         layout.Ranges.begin(),
         layout.Ranges.end(),
         offset,
-        [](const Models::BlobLayoutRange& value, int64_t target) {
+        [](const Models::_detail::BlobLayoutRange& value, int64_t target) {
           return value.Range.Offset <= target
               && value.Range.Length.Value() <= target - value.Range.Offset;
         });

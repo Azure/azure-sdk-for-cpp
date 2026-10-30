@@ -100,65 +100,67 @@ namespace Azure { namespace Storage { namespace Blobs {
       }
     }
 
-    std::unique_ptr<_detail::DataLocalityLayoutState> CreateDataLocalityLayoutState(
-        BlobClient blobClient,
-        Azure::Nullable<Azure::Core::Http::HttpRange> range,
-        Azure::ETag eTag,
-        Azure::Core::Context context)
-    {
-      auto refresher = [range = std::move(range),
-                        eTag = std::move(eTag),
-                        context = std::move(context),
-                        blobClient = std::move(blobClient)]() {
-        try
-        {
-          GetBlobLayoutOptions options;
-          options.Range = range;
-          options.AccessConditions.IfMatch = eTag;
-          auto page = blobClient.GetLayout(options, context);
-          _detail::DataLocalityLayout layout;
-          for (; page.HasPage(); page.MoveToNextPage(context))
-          {
-            if (!layout.ETag.HasValue())
-            {
-              layout.ETag = page.Layout.Properties.ETag;
-            }
-            if (layout.BlobSize == 0)
-            {
-              layout.BlobSize = page.Layout.Properties.BlobSize;
-            }
-            for (auto& layoutRange : page.Layout.Ranges)
-            {
-              if (layoutRange.Endpoint.empty() || layoutRange.Range.Offset < 0
-                  || !layoutRange.Range.Length.HasValue() || layoutRange.Range.Length.Value() <= 0)
-              {
-                throw Azure::Core::RequestFailedException("Invalid blob layout range.");
-              }
-              layout.Ranges.push_back(std::move(layoutRange));
-            }
-          }
-          std::sort(
-              layout.Ranges.begin(),
-              layout.Ranges.end(),
-              [](const Models::BlobLayoutRange& lhs, const Models::BlobLayoutRange& rhs) {
-                return lhs.Range.Offset < rhs.Range.Offset;
-              });
-          return layout;
-        }
-        catch (const StorageException& exception)
-        {
-          if (exception.StatusCode == Core::Http::HttpStatusCode::BadRequest
-              || static_cast<int>(exception.StatusCode) >= 500)
-          {
-            return _detail::DataLocalityLayout();
-          }
-          throw;
-        }
-      };
-
-      return std::make_unique<_detail::DataLocalityLayoutState>(std::move(refresher));
-    }
   } // namespace
+
+  std::unique_ptr<_detail::DataLocalityLayoutState> _detail::DataLocalityLayoutState::Create(
+      Blobs::BlobClient blobClient,
+      Azure::Nullable<Azure::Core::Http::HttpRange> range,
+      Azure::ETag eTag,
+      Azure::Core::Context context)
+  {
+    auto refresher = [range = std::move(range),
+                      eTag = std::move(eTag),
+                      context = std::move(context),
+                      blobClient = std::move(blobClient)]() {
+      try
+      {
+        _detail::GetBlobLayoutOptions options;
+        options.Range = range;
+        options.AccessConditions.IfMatch = eTag;
+        auto page = blobClient.GetLayout(options, context);
+        _detail::DataLocalityLayout layout;
+        for (; page.HasPage(); page.MoveToNextPage(context))
+        {
+          if (!layout.ETag.HasValue())
+          {
+            layout.ETag = page.Layout.Properties.ETag;
+          }
+          if (layout.BlobSize == 0)
+          {
+            layout.BlobSize = page.Layout.Properties.BlobSize;
+          }
+          for (auto& layoutRange : page.Layout.Ranges)
+          {
+            if (layoutRange.Endpoint.empty() || layoutRange.Range.Offset < 0
+                || !layoutRange.Range.Length.HasValue() || layoutRange.Range.Length.Value() <= 0)
+            {
+              throw Azure::Core::RequestFailedException("Invalid blob layout range.");
+            }
+            layout.Ranges.push_back(std::move(layoutRange));
+          }
+        }
+        std::sort(
+            layout.Ranges.begin(),
+            layout.Ranges.end(),
+            [](const Models::_detail::BlobLayoutRange& lhs,
+               const Models::_detail::BlobLayoutRange& rhs) {
+              return lhs.Range.Offset < rhs.Range.Offset;
+            });
+        return layout;
+      }
+      catch (const StorageException& exception)
+      {
+        if (exception.StatusCode == Core::Http::HttpStatusCode::BadRequest
+            || static_cast<int>(exception.StatusCode) >= 500)
+        {
+          return _detail::DataLocalityLayout();
+        }
+        throw;
+      }
+    };
+
+    return std::make_unique<_detail::DataLocalityLayoutState>(std::move(refresher));
+  }
 
   BlobClient BlobClient::CreateFromConnectionString(
       const std::string& connectionString,
@@ -348,9 +350,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     std::string dataLocalityEndpoint;
-    const auto downloadContext = !options.LayoutEndpoint.empty()
-        ? _internal::WithDataLocalityEndpoint(context, options.LayoutEndpoint)
-        : context.TryGetValue(_internal::DataLocalityEndpointKey, dataLocalityEndpoint)
+    const auto downloadContext
+        = context.TryGetValue(_internal::DataLocalityEndpointKey, dataLocalityEndpoint)
         ? context
         : _internal::WithReplicaStatus(context);
     auto downloadResponse = _detail::BlobClient::Download(
@@ -488,8 +489,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     return downloadResponse;
   }
 
-  BlobLayoutPagedResponse BlobClient::GetLayout(
-      const GetBlobLayoutOptions& options,
+  _detail::BlobLayoutPagedResponse BlobClient::GetLayout(
+      const _detail::GetBlobLayoutOptions& options,
       const Azure::Core::Context& context) const
   {
     _detail::BlobClient::GetBlobLayoutOptions protocolLayerOptions;
@@ -521,7 +522,7 @@ namespace Azure { namespace Storage { namespace Blobs {
 
     auto response
         = _detail::BlobClient::GetLayout(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
-    BlobLayoutPagedResponse pagedResponse;
+    _detail::BlobLayoutPagedResponse pagedResponse;
     std::map<int32_t, std::string> endpoints;
     for (const auto& endpoint : response.Value.Endpoints)
     {
@@ -544,7 +545,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         throw Azure::Core::RequestFailedException("Invalid blob layout range.");
       }
-      Models::BlobLayoutRange layoutRange;
+      Models::_detail::BlobLayoutRange layoutRange;
       layoutRange.Range.Offset = range.Start;
       layoutRange.Range.Length = static_cast<int64_t>(rangeLength);
       layoutRange.Endpoint = endpoint->second;
@@ -626,7 +627,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Core::Http::HttpRange remainingRange;
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
-      dataLocalityState = CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+      dataLocalityState
+          = _detail::DataLocalityLayoutState::Create(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
@@ -654,9 +656,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
-                                          context, dataLocalityState->GetEndpoint(offset, length))
-                                                        : context;
+            const auto chunkContext = dataLocalityState
+                ? _internal::WithDataLocalityEndpoint(
+                      context, dataLocalityState->GetEndpoint(offset, length))
+                : context;
             auto chunk = Download(chunkOptions, chunkContext);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
@@ -773,7 +776,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Core::Http::HttpRange remainingRange;
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
-      dataLocalityState = CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
+      dataLocalityState
+          = _detail::DataLocalityLayoutState::Create(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
@@ -824,9 +828,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
-                                          context, dataLocalityState->GetEndpoint(offset, length))
-                                                        : context;
+            const auto chunkContext = dataLocalityState
+                ? _internal::WithDataLocalityEndpoint(
+                      context, dataLocalityState->GetEndpoint(offset, length))
+                : context;
             auto chunk = Download(chunkOptions, chunkContext);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),
