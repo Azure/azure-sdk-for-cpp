@@ -18,8 +18,6 @@
 
 ### Other Changes
 
-- Removed public layout discovery and explicit single-shot download endpoint selection while retaining
-  locality-aware managed downloads.
 - Changed the default initial transfer size for partitioned uploads and downloads from 256 MiB to
   4 MiB, matching the default subsequent chunk size. Explicitly configured
   `InitialChunkSize` and `SingleUploadThreshold` values are still respected.

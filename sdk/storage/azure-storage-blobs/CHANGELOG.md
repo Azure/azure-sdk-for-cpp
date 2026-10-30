@@ -15,8 +15,6 @@
 
 ### Other Changes
 
-- Kept layout discovery private and removed explicit single-shot download endpoint selection while
-  retaining locality-aware managed downloads.
 - Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
   Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
   requesting XML responses.
