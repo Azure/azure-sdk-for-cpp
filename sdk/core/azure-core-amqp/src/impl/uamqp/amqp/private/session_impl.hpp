@@ -42,6 +42,9 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   class SessionImpl final : public std::enable_shared_from_this<SessionImpl> {
   public:
+    // Internal seam for exercising native shutdown failures without a live broker.
+    using EndSession = int (*)(SESSION_HANDLE, char const*, char const*);
+
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::Endpoint& newEndpoint,
@@ -50,7 +53,8 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
     SessionImpl(
         std::shared_ptr<_detail::ConnectionImpl> parentConnection,
         _internal::SessionOptions const& options,
-        _internal::SessionEvents* eventHandler = nullptr);
+        _internal::SessionEvents* eventHandler = nullptr,
+        EndSession endSession = session_end);
     ~SessionImpl() noexcept;
 
     SessionImpl(SessionImpl const&) = delete;
@@ -79,8 +83,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _detail {
 
   private:
     SessionImpl();
+    EndSession m_endSession{session_end};
     bool m_connectionAsyncStarted{false};
     bool m_isBegun{false};
+    // A failed protocol shutdown still requires native destruction and a polling release.
+    bool m_endFailed{false};
     std::shared_ptr<_detail::ConnectionImpl> m_connectionToPoll;
     UniqueAmqpSession m_session;
     _internal::SessionOptions m_options;

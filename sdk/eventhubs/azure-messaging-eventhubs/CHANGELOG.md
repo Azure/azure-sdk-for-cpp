@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed producer cleanup after partition discovery fails during management-client initialization or session shutdown. Cleanup now ends an acquired session independently of management-client creation and supports repeated close calls.
+- Synchronized uAMQP properties queries with cleanup during producer recovery. Cleanup cancels an active query before releasing its management client and session, without cancelling the caller's context. Rust cancellation and concurrent cleanup are deferred to [azure-sdk-for-rust#5527](https://github.com/Azure/azure-sdk-for-rust/issues/5527).
+
 ### Other Changes
 
 ## 1.0.0-beta.15 (2026-09-02)

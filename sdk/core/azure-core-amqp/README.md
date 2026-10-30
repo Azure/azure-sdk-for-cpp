@@ -77,6 +77,8 @@ while (messageSendCount < maxMessageSendCount)
 
 You can build and run the tests locally by executing `azure-core-amqp-test`. Explore the `test` folder to see advanced usage and behavior of the public classes.
 
+For session shutdown failures and Event Hubs properties cleanup, see the [cleanup regression test guide](https://github.com/Azure/azure-sdk-for-cpp/blob/main/doc/EventHubsCleanupTests.md). It describes the ownership checks and how to enable and run the uAMQP process tests.
+
 ### Run broker-backed tests
 
 Some tests in this package need a live AMQP broker. They use the `TestAmqpBroker` from [Azure/azure-amqp][azure_amqp]. The default build sets `USE_RUST_AMQP`, so these tests exercise the Rust AMQP stack. The setup script clones the commit that `Test-Setup.ps1` pins, restores through the `nuget.cfsclean.config` in this directory, builds the `net10.0` target, and waits for the broker to accept TCP connections.
