@@ -18,7 +18,7 @@ steps:
     displayName: Show current path for ${{ parameters.PackageName }}
 
   - script: |
-      ${{ parameters.Env }} cmake ${{ parameters.GenerateArgs }} ..
+      ${{ parameters.Env }} cmake -DCMAKE_CXX_STANDARD=14 ${{ parameters.GenerateArgs }} ..
     workingDirectory: ${{ parameters.CmakeGeneratePath }}/build
     displayName: cmake generate for ${{ parameters.PackageName }}
     env:

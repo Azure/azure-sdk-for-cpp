@@ -6,8 +6,6 @@ cmake_minimum_required (VERSION 3.13)
 set(azure-core-test-fault-injector)
 
 project (azure-core-test-fault-injector LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable (
   azure-core-test-fault-injector
