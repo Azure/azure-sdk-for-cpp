@@ -1950,6 +1950,27 @@ namespace Azure { namespace Storage { namespace Blobs {
   };
 
   namespace _detail {
+    /**
+     * @brief Optional parameters for BlobClient::GetLayout.
+     */
+    struct GetBlobLayoutOptions final
+    {
+      /**
+       * @brief The range of bytes for which to retrieve the layout.
+       */
+      Azure::Nullable<Core::Http::HttpRange> Range;
+
+      /**
+       * @brief The continuation token for retrieving the next page.
+       */
+      Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * @brief Access conditions for the operation.
+       */
+      BlobAccessConditions AccessConditions;
+    };
+
     inline std::string TagsToString(const std::map<std::string, std::string>& tags)
     {
       return std::accumulate(

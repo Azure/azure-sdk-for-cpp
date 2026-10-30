@@ -19,50 +19,9 @@ namespace Azure { namespace Storage { namespace Blobs { namespace _detail {
   constexpr std::chrono::minutes DataLocalityLayoutValidity{5};
   constexpr std::chrono::minutes DataLocalityLayoutExtendedExpiry{5};
 
-  struct BlobLayoutRange final
-  {
-    Azure::Core::Http::HttpRange Range;
-    std::string Endpoint;
-  };
-
-  struct BlobLayoutInfo final
-  {
-    std::vector<BlobLayoutRange> Ranges;
-    Models::BlobProperties Properties;
-  };
-
-  struct GetBlobLayoutOptions final
-  {
-    Azure::Nullable<Core::Http::HttpRange> Range;
-    Azure::Nullable<std::string> ContinuationToken;
-    BlobAccessConditions AccessConditions;
-  };
-
-  class BlobLayoutPagedResponse final : public Azure::Core::PagedResponse<BlobLayoutPagedResponse> {
-  public:
-    BlobLayoutInfo Layout;
-
-  private:
-    void OnNextPage(const Azure::Core::Context& context);
-
-    std::shared_ptr<Blobs::BlobClient> m_blobClient;
-    GetBlobLayoutOptions m_operationOptions;
-
-    friend class BlobLayoutClient;
-    friend class Azure::Core::PagedResponse<BlobLayoutPagedResponse>;
-  };
-
-  class BlobLayoutClient final {
-  public:
-    static BlobLayoutPagedResponse GetLayout(
-        const Blobs::BlobClient& blobClient,
-        const GetBlobLayoutOptions& options = GetBlobLayoutOptions(),
-        const Azure::Core::Context& context = Azure::Core::Context());
-  };
-
   struct DataLocalityLayout final
   {
-    std::vector<BlobLayoutRange> Ranges;
+    std::vector<Models::_detail::BlobLayoutRange> Ranges;
     int64_t BlobSize = 0;
     Azure::ETag ETag;
   };

@@ -282,6 +282,10 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         const Azure::Core::Context& context = Azure::Core::Context()) const;
 
   private:
+    _detail::FileLayoutPagedResponse GetLayout(
+        const _detail::GetFileLayoutOptions& options = _detail::GetFileLayoutOptions(),
+        const Azure::Core::Context& context = Azure::Core::Context()) const;
+
     explicit DataLakeFileClient(
         Azure::Core::Url fileUrl,
         Blobs::BlobClient blobClient,
@@ -297,5 +301,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
 
     friend class DataLakeFileSystemClient;
     friend class DataLakeDirectoryClient;
+    friend class _detail::FileLayoutPagedResponse;
   };
 }}}} // namespace Azure::Storage::Files::DataLake

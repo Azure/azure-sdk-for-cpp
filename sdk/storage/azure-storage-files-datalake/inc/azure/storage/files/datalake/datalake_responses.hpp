@@ -463,6 +463,28 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
       Azure::Nullable<std::string> Permissions;
     };
 
+    namespace _detail {
+      /**
+       * @brief A file range and its resolved locality endpoint.
+       */
+      using FileLayoutRange = Blobs::Models::_detail::BlobLayoutRange;
+
+      /**
+       * @brief A page of file layout information and the file properties returned with it.
+       */
+      struct FileLayoutInfo final
+      {
+        /**
+         * @brief The ranges and locality endpoints in this page.
+         */
+        std::vector<FileLayoutRange> Ranges;
+        /**
+         * @brief The file properties returned with this page.
+         */
+        PathProperties Properties;
+      };
+    } // namespace _detail
+
     /**
      * @brief The access control list of a path.
      */
@@ -802,6 +824,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using SetPathTagsResult = Blobs::Models::SetBlobTagsResult;
 
   } // namespace Models
+
+  namespace _detail {
+    /**
+     * @brief Response type for DataLakeFileClient::GetLayout.
+     */
+    class FileLayoutPagedResponse final
+        : public Azure::Core::PagedResponse<FileLayoutPagedResponse> {
+    public:
+      /**
+       * @brief The layout and file properties in this page.
+       */
+      Models::_detail::FileLayoutInfo Layout;
+
+    private:
+      void OnNextPage(const Azure::Core::Context& context);
+
+      std::shared_ptr<DataLakeFileClient> m_fileClient;
+      GetFileLayoutOptions m_operationOptions;
+
+      friend class DataLake::DataLakeFileClient;
+      friend class Azure::Core::PagedResponse<FileLayoutPagedResponse>;
+    };
+  } // namespace _detail
 
   /**
    * @brief Response type for

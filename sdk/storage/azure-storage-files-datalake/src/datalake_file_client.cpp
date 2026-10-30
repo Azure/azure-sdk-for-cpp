@@ -285,6 +285,32 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
         std::move(ret), std::move(response.RawResponse));
   }
 
+  _detail::FileLayoutPagedResponse DataLakeFileClient::GetLayout(
+      const _detail::GetFileLayoutOptions& options,
+      const Azure::Core::Context& context) const
+  {
+    Blobs::_detail::GetBlobLayoutOptions blobOptions;
+    blobOptions.Range = options.Range;
+    blobOptions.ContinuationToken = options.ContinuationToken;
+    blobOptions.AccessConditions.IfMatch = options.AccessConditions.IfMatch;
+    blobOptions.AccessConditions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
+    blobOptions.AccessConditions.IfModifiedSince = options.AccessConditions.IfModifiedSince;
+    blobOptions.AccessConditions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
+    blobOptions.AccessConditions.LeaseId = options.AccessConditions.LeaseId;
+    auto response = m_blobClient.GetLayout(blobOptions, context);
+
+    _detail::FileLayoutPagedResponse result;
+    result.Layout.Ranges = std::move(response.Layout.Ranges);
+    result.Layout.Properties = _detail::PathPropertiesFromBlobProperties(
+        std::move(response.Layout.Properties), *response.RawResponse);
+    result.CurrentPageToken = std::move(response.CurrentPageToken);
+    result.NextPageToken = std::move(response.NextPageToken);
+    result.RawResponse = std::move(response.RawResponse);
+    result.m_fileClient = std::make_shared<DataLakeFileClient>(*this);
+    result.m_operationOptions = options;
+    return result;
+  }
+
   Azure::Response<Models::UploadFileFromResult> DataLakeFileClient::UploadFrom(
       const std::string& fileName,
       const UploadFileFromOptions& options,

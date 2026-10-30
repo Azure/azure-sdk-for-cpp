@@ -890,6 +890,29 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     Nullable<bool> IncludeUserPrincipalName;
   };
 
+  namespace _detail {
+    /**
+     * @brief Optional parameters for DataLakeFileClient::GetLayout.
+     */
+    struct GetFileLayoutOptions final
+    {
+      /**
+       * @brief The range of bytes for which to retrieve the layout.
+       */
+      Azure::Nullable<Core::Http::HttpRange> Range;
+
+      /**
+       * @brief The continuation token for retrieving the next page.
+       */
+      Azure::Nullable<std::string> ContinuationToken;
+
+      /**
+       * @brief Access conditions for the operation.
+       */
+      PathAccessConditions AccessConditions;
+    };
+  } // namespace _detail
+
   /**
    * @brief Optional parameters for #Azure::Storage::Files::DataLake::DataLakeFileClient::Download.
    * @remark Some optional parameter is mandatory in certain combination.
