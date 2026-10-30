@@ -5,11 +5,7 @@
 ### Features Added
 
 - Added support for persisted session authentication for eligible blob download requests.
-- Added `BlobClient::GetLayout` and related options and response types for retrieving locality
-  endpoints, byte ranges, and blob properties. Ranges are exposed directly through
-  `Models::BlobLayoutInfo::Ranges` as a vector of `Models::BlobLayoutRange`.
-- Added `DownloadBlobOptions::LayoutEndpoint` for one-shot download routing and
-  `DownloadBlobToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
+- Added `DownloadBlobToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
   managed downloads.
 - Added `Models::DownloadHint` and `Models::DownloadBlobDetails::DownloadHint`.
 
@@ -19,6 +15,8 @@
 
 ### Other Changes
 
+- Kept layout discovery private and removed explicit single-shot download endpoint selection while
+  retaining locality-aware managed downloads.
 - Changed the default response format for `ListBlobs` and `ListBlobsByHierarchy` from XML to
   Apache Arrow. Set `ListBlobsOptions::ResponseFormat` to `StorageResponseFormat::Xml` to continue
   requesting XML responses.

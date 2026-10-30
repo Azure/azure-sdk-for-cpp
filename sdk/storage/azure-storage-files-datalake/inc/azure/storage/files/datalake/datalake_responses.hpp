@@ -464,26 +464,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     };
 
     /**
-     * @brief A file range and its resolved locality endpoint.
-     */
-    using FileLayoutRange = Blobs::Models::BlobLayoutRange;
-
-    /**
-     * @brief A page of file layout information and the file properties returned with it.
-     */
-    struct FileLayoutInfo final
-    {
-      /**
-       * @brief The ranges and locality endpoints in this page.
-       */
-      std::vector<FileLayoutRange> Ranges;
-      /**
-       * @brief The file properties returned with this page.
-       */
-      PathProperties Properties;
-    };
-
-    /**
      * @brief The access control list of a path.
      */
     struct PathAccessControlList final
@@ -822,27 +802,6 @@ namespace Azure { namespace Storage { namespace Files { namespace DataLake {
     using SetPathTagsResult = Blobs::Models::SetBlobTagsResult;
 
   } // namespace Models
-
-  /**
-   * @brief Response type for
-   * #Azure::Storage::Files::DataLake::DataLakeFileClient::GetLayout.
-   */
-  class FileLayoutPagedResponse final : public Azure::Core::PagedResponse<FileLayoutPagedResponse> {
-  public:
-    /**
-     * @brief The layout and file properties in this page.
-     */
-    Models::FileLayoutInfo Layout;
-
-  private:
-    void OnNextPage(const Azure::Core::Context& context);
-
-    std::shared_ptr<DataLakeFileClient> m_fileClient;
-    GetFileLayoutOptions m_operationOptions;
-
-    friend class DataLakeFileClient;
-    friend class Azure::Core::PagedResponse<FileLayoutPagedResponse>;
-  };
 
   /**
    * @brief Response type for

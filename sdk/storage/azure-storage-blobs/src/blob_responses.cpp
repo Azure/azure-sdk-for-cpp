@@ -7,14 +7,15 @@
 #include "azure/storage/blobs/blob_container_client.hpp"
 #include "azure/storage/blobs/blob_service_client.hpp"
 #include "azure/storage/blobs/page_blob_client.hpp"
+#include "private/data_locality.hpp"
 
 namespace Azure { namespace Storage { namespace Blobs {
 
-  void BlobLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
+  void _detail::BlobLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
   {
     m_operationOptions.ContinuationToken = NextPageToken;
     m_operationOptions.AccessConditions.IfMatch = Layout.Properties.ETag;
-    *this = m_blobClient->GetLayout(m_operationOptions, context);
+    *this = BlobLayoutClient::GetLayout(*m_blobClient, m_operationOptions, context);
   }
 
   std::unique_ptr<Azure::Core::Http::RawResponse> StartBlobCopyOperation::PollInternal(

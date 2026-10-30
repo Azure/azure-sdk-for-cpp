@@ -10,14 +10,6 @@
 #include "private/datalake_utilities.hpp"
 
 namespace Azure { namespace Storage { namespace Files { namespace DataLake {
-  void FileLayoutPagedResponse::OnNextPage(const Azure::Core::Context& context)
-  {
-    auto options = m_operationOptions;
-    options.ContinuationToken = NextPageToken;
-    options.AccessConditions.IfMatch = Layout.Properties.ETag;
-    *this = m_fileClient->GetLayout(options, context);
-  }
-
   namespace Models {
 
     Acl Acl::FromString(const std::string& aclString)

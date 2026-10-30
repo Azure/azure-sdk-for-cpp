@@ -112,10 +112,10 @@ namespace Azure { namespace Storage { namespace Blobs {
                         blobClient = std::move(blobClient)]() {
         try
         {
-          GetBlobLayoutOptions options;
+          _detail::GetBlobLayoutOptions options;
           options.Range = range;
           options.AccessConditions.IfMatch = eTag;
-          auto page = blobClient.GetLayout(options, context);
+          auto page = _detail::BlobLayoutClient::GetLayout(blobClient, options, context);
           _detail::DataLocalityLayout layout;
           for (; page.HasPage(); page.MoveToNextPage(context))
           {
@@ -140,7 +140,7 @@ namespace Azure { namespace Storage { namespace Blobs {
           std::sort(
               layout.Ranges.begin(),
               layout.Ranges.end(),
-              [](const Models::BlobLayoutRange& lhs, const Models::BlobLayoutRange& rhs) {
+              [](const _detail::BlobLayoutRange& lhs, const _detail::BlobLayoutRange& rhs) {
                 return lhs.Range.Offset < rhs.Range.Offset;
               });
           return layout;
@@ -348,9 +348,8 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
 
     std::string dataLocalityEndpoint;
-    const auto downloadContext = !options.LayoutEndpoint.empty()
-        ? _internal::WithDataLocalityEndpoint(context, options.LayoutEndpoint)
-        : context.TryGetValue(_internal::DataLocalityEndpointKey, dataLocalityEndpoint)
+    const auto downloadContext
+        = context.TryGetValue(_internal::DataLocalityEndpointKey, dataLocalityEndpoint)
         ? context
         : _internal::WithReplicaStatus(context);
     auto downloadResponse = _detail::BlobClient::Download(
@@ -488,9 +487,10 @@ namespace Azure { namespace Storage { namespace Blobs {
     return downloadResponse;
   }
 
-  BlobLayoutPagedResponse BlobClient::GetLayout(
+  _detail::BlobLayoutPagedResponse _detail::BlobLayoutClient::GetLayout(
+      const Blobs::BlobClient& blobClient,
       const GetBlobLayoutOptions& options,
-      const Azure::Core::Context& context) const
+      const Azure::Core::Context& context)
   {
     _detail::BlobClient::GetBlobLayoutOptions protocolLayerOptions;
     protocolLayerOptions.Marker = options.ContinuationToken;
@@ -510,17 +510,18 @@ namespace Azure { namespace Storage { namespace Blobs {
     protocolLayerOptions.IfUnmodifiedSince = options.AccessConditions.IfUnmodifiedSince;
     protocolLayerOptions.IfMatch = options.AccessConditions.IfMatch;
     protocolLayerOptions.IfNoneMatch = options.AccessConditions.IfNoneMatch;
-    if (m_clientConfiguration.CustomerProvidedKey.HasValue())
+    if (blobClient.m_clientConfiguration.CustomerProvidedKey.HasValue())
     {
-      protocolLayerOptions.EncryptionKey = m_clientConfiguration.CustomerProvidedKey.Value().Key;
+      protocolLayerOptions.EncryptionKey
+          = blobClient.m_clientConfiguration.CustomerProvidedKey.Value().Key;
       protocolLayerOptions.EncryptionKeySha256
-          = m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
+          = blobClient.m_clientConfiguration.CustomerProvidedKey.Value().KeyHash;
       protocolLayerOptions.EncryptionAlgorithm
-          = m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
+          = blobClient.m_clientConfiguration.CustomerProvidedKey.Value().Algorithm.ToString();
     }
 
-    auto response
-        = _detail::BlobClient::GetLayout(*m_pipeline, m_blobUrl, protocolLayerOptions, context);
+    auto response = _detail::BlobClient::GetLayout(
+        *blobClient.m_pipeline, blobClient.m_blobUrl, protocolLayerOptions, context);
     BlobLayoutPagedResponse pagedResponse;
     std::map<int32_t, std::string> endpoints;
     for (const auto& endpoint : response.Value.Endpoints)
@@ -544,7 +545,7 @@ namespace Azure { namespace Storage { namespace Blobs {
       {
         throw Azure::Core::RequestFailedException("Invalid blob layout range.");
       }
-      Models::BlobLayoutRange layoutRange;
+      BlobLayoutRange layoutRange;
       layoutRange.Range.Offset = range.Start;
       layoutRange.Range.Length = static_cast<int64_t>(rangeLength);
       layoutRange.Endpoint = endpoint->second;
@@ -557,7 +558,7 @@ namespace Azure { namespace Storage { namespace Blobs {
     }
     CompleteBlobPropertiesFromResponse(pagedResponse.Layout.Properties, *response.RawResponse);
 
-    pagedResponse.m_blobClient = std::make_shared<BlobClient>(*this);
+    pagedResponse.m_blobClient = std::make_shared<Blobs::BlobClient>(blobClient);
     pagedResponse.m_operationOptions = options;
     pagedResponse.CurrentPageToken = options.ContinuationToken.ValueOr(std::string());
     pagedResponse.NextPageToken = response.Value.NextMarker;
@@ -654,9 +655,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
-                                          context, dataLocalityState->GetEndpoint(offset, length))
-                                                        : context;
+            const auto chunkContext = dataLocalityState
+                ? _internal::WithDataLocalityEndpoint(
+                      context, dataLocalityState->GetEndpoint(offset, length))
+                : context;
             auto chunk = Download(chunkOptions, chunkContext);
             int64_t bytesRead = chunk.Value.BodyStream->ReadToCount(
                 buffer + (offset - firstChunkOffset),
@@ -824,9 +826,10 @@ namespace Azure { namespace Storage { namespace Blobs {
             chunkOptions.Range.Value().Length = length;
             chunkOptions.AccessConditions.IfMatch = eTag;
             chunkOptions.ValidationOptions = options.ValidationOptions;
-            const auto chunkContext = dataLocalityState ? _internal::WithDataLocalityEndpoint(
-                                          context, dataLocalityState->GetEndpoint(offset, length))
-                                                        : context;
+            const auto chunkContext = dataLocalityState
+                ? _internal::WithDataLocalityEndpoint(
+                      context, dataLocalityState->GetEndpoint(offset, length))
+                : context;
             auto chunk = Download(chunkOptions, chunkContext);
             bodyStreamToFile(
                 *(chunk.Value.BodyStream),

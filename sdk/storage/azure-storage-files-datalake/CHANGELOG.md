@@ -5,11 +5,7 @@
 ### Features Added
 
 - Added support for persisted session authentication for eligible file download requests.
-- Added `DataLakeFileClient::GetLayout` and related options and response types for retrieving
-  locality endpoints, byte ranges, and file properties. Ranges are exposed directly through
-  `Models::FileLayoutInfo::Ranges` as a vector of `Models::FileLayoutRange`.
-- Added `DownloadFileOptions::LayoutEndpoint` for one-shot download routing and
-  `DownloadFileToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
+- Added `DownloadFileToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
   managed downloads.
 - Added the `Models::DownloadHint` alias and `Models::DownloadFileDetails::DownloadHint`.
 
@@ -22,6 +18,8 @@
 
 ### Other Changes
 
+- Removed public layout discovery and explicit single-shot download endpoint selection while retaining
+  locality-aware managed downloads.
 - Changed the default initial transfer size for partitioned uploads and downloads from 256 MiB to
   4 MiB, matching the default subsequent chunk size. Explicitly configured
   `InitialChunkSize` and `SingleUploadThreshold` values are still respected.

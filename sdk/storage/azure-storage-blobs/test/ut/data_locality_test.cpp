@@ -72,12 +72,13 @@ namespace Azure { namespace Storage { namespace Test {
 
         {
           std::lock_guard<std::mutex> lock(m_state->Mutex);
-          m_state->Requests.push_back(LocalityRequest{
-              request.GetUrl().GetHost(),
-              hostHeader == headers.end() ? std::string() : hostHeader->second,
-              ifMatchHeader == headers.end() ? std::string() : ifMatchHeader->second,
-              rangeHeader == headers.end() ? std::string() : rangeHeader->second,
-              isLayout});
+          m_state->Requests.push_back(
+              LocalityRequest{
+                  request.GetUrl().GetHost(),
+                  hostHeader == headers.end() ? std::string() : hostHeader->second,
+                  ifMatchHeader == headers.end() ? std::string() : ifMatchHeader->second,
+                  rangeHeader == headers.end() ? std::string() : rangeHeader->second,
+                  isLayout});
         }
 
         if (isLayout)
@@ -164,9 +165,10 @@ namespace Azure { namespace Storage { namespace Test {
             rangeHeader == headers.end() ? Core::Http::HttpStatusCode::Ok
                                          : Core::Http::HttpStatusCode::PartialContent,
             "OK");
-        response->SetBodyStream(std::make_unique<Core::IO::MemoryBodyStream>(
-            reinterpret_cast<const uint8_t*>(m_data->data() + offset),
-            static_cast<size_t>(length)));
+        response->SetBodyStream(
+            std::make_unique<Core::IO::MemoryBodyStream>(
+                reinterpret_cast<const uint8_t*>(m_data->data() + offset),
+                static_cast<size_t>(length)));
         response->SetHeader("content-length", std::to_string(length));
         if (rangeHeader != headers.end())
         {
@@ -223,12 +225,12 @@ namespace Azure { namespace Storage { namespace Test {
       return options;
     }
 
-    Blobs::Models::BlobLayoutRange MakeLayoutRange(
+    Blobs::_detail::BlobLayoutRange MakeLayoutRange(
         int64_t offset,
         int64_t length,
         std::string endpoint)
     {
-      Blobs::Models::BlobLayoutRange range;
+      Blobs::_detail::BlobLayoutRange range;
       range.Range.Offset = offset;
       range.Range.Length = length;
       range.Endpoint = std::move(endpoint);
@@ -243,12 +245,11 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  class DataLocalityRecordedTest : public StorageTest {
-  };
+  class DataLocalityRecordedTest : public StorageTest {};
 
   TEST(DataLocalityTest, SelectsIdealEndpoint)
   {
-    using Range = Blobs::Models::BlobLayoutRange;
+    using Range = Blobs::_detail::BlobLayoutRange;
     struct TestCase final
     {
       const char* Name;
@@ -337,7 +338,7 @@ namespace Azure { namespace Storage { namespace Test {
     auto data = std::make_shared<std::string>(1024 * 1024, 'n');
     auto client = CreateLocalityClient(state, data);
 
-    auto page = client.GetLayout();
+    auto page = Blobs::_detail::BlobLayoutClient::GetLayout(client);
 
     EXPECT_TRUE(page.Layout.Ranges.empty());
     EXPECT_EQ(page.Layout.Properties.ETag.ToString(), "\"locality-etag\"");
@@ -355,9 +356,9 @@ namespace Azure { namespace Storage { namespace Test {
         "data-locality-multi-endpoint.bin",
         clientOptions);
 
-    std::vector<Blobs::Models::BlobLayoutRange> ranges;
+    std::vector<Blobs::_detail::BlobLayoutRange> ranges;
     std::set<std::string> endpoints;
-    auto page = blobClient.GetLayout();
+    auto page = Blobs::_detail::BlobLayoutClient::GetLayout(blobClient);
     EXPECT_EQ(page.Layout.Properties.BlobSize, 64 * 1024 * 1024);
     EXPECT_EQ(page.Layout.Properties.BlobType, Blobs::Models::BlobType::BlockBlob);
     EXPECT_EQ(page.Layout.Properties.HttpHeaders.ContentType, "application/octet-stream");
@@ -416,7 +417,7 @@ namespace Azure { namespace Storage { namespace Test {
     for (bool bounded : {true, false})
     {
       SCOPED_TRACE(bounded);
-      Blobs::GetBlobLayoutOptions options;
+      Blobs::_detail::GetBlobLayoutOptions options;
       options.Range = Core::Http::HttpRange();
       options.Range.Value().Offset = bounded ? 8 * 1024 * 1024 - 2 : blobSize - 16;
       if (bounded)
@@ -426,7 +427,8 @@ namespace Azure { namespace Storage { namespace Test {
       const auto offset = options.Range.Value().Offset;
       bool coversOffset = false;
       size_t rangeCount = 0;
-      for (auto page = client.GetLayout(options); page.HasPage(); page.MoveToNextPage())
+      for (auto page = Blobs::_detail::BlobLayoutClient::GetLayout(client, options); page.HasPage();
+           page.MoveToNextPage())
       {
         EXPECT_EQ(page.Layout.Properties.BlobSize, blobSize);
         EXPECT_GT(page.Layout.Properties.BlobSize, options.Range.Value().Length.ValueOr(16));
@@ -775,14 +777,13 @@ namespace Azure { namespace Storage { namespace Test {
     EXPECT_EQ(state->Requests[2].IfMatch, "\"locality-etag\"");
   }
 
-  TEST(DataLocalityTest, RoutesOneShotDownloadToLayoutEndpoint)
+  TEST(DataLocalityTest, OneShotDownloadUsesClientEndpoint)
   {
     auto state = std::make_shared<LocalityState>();
     auto data = std::make_shared<std::string>(4 * 1024, 'o');
     auto client = CreateLocalityClient(state, data);
 
     Blobs::DownloadBlobOptions options;
-    options.LayoutEndpoint = "locality0.test:443";
     auto response = client.Download(options);
 
     EXPECT_TRUE(response.Value.Details.DownloadHint.HasValue());
@@ -791,8 +792,8 @@ namespace Azure { namespace Storage { namespace Test {
     std::lock_guard<std::mutex> lock(state->Mutex);
     ASSERT_EQ(state->Requests.size(), 1U);
     EXPECT_FALSE(state->Requests.front().IsLayout);
-    EXPECT_EQ(state->Requests.front().Host, "locality0.test");
-    EXPECT_EQ(state->Requests.front().HostHeader, "primary.test");
+    EXPECT_EQ(state->Requests.front().Host, "primary.test");
+    EXPECT_TRUE(state->Requests.front().HostHeader.empty());
   }
 
   TEST(DataLocalityTest, FallsBackOnUnsupportedLayout)

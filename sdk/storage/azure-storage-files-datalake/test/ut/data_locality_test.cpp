@@ -8,7 +8,6 @@
 #include <cstdio>
 #include <fstream>
 #include <memory>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -58,21 +57,21 @@ namespace Azure { namespace Storage { namespace Test {
         };
         const bool isLayout = query.count("comp") && query.at("comp") == "layout";
         const auto marker = query.count("marker") ? query.at("marker") : std::string();
-        m_state->Requests.push_back(LocalityRequest{
-            request.GetUrl().GetHost(),
-            header("host"),
-            header("x-ms-range"),
-            header("if-match"),
-            marker,
-            isLayout});
+        m_state->Requests.push_back(
+            LocalityRequest{
+                request.GetUrl().GetHost(),
+                header("host"),
+                header("x-ms-range"),
+                header("if-match"),
+                marker,
+                isLayout});
 
         auto response = std::make_unique<Core::Http::RawResponse>(
             1,
             1,
-            isLayout
-                ? (m_state->NoLayout ? Core::Http::HttpStatusCode::NoContent
-                                     : Core::Http::HttpStatusCode::Ok)
-                : Core::Http::HttpStatusCode::PartialContent,
+            isLayout ? (m_state->NoLayout ? Core::Http::HttpStatusCode::NoContent
+                                          : Core::Http::HttpStatusCode::Ok)
+                     : Core::Http::HttpStatusCode::PartialContent,
             "OK");
         response->SetHeader("etag", "\"layout-etag\"");
         response->SetHeader("last-modified", "Thu, 23 Aug 2001 07:00:00 GMT");
@@ -113,9 +112,10 @@ namespace Azure { namespace Storage { namespace Test {
         response->SetHeader(
             "content-range", "bytes " + std::to_string(offset) + "-" + std::to_string(end) + "/12");
         response->SetHeader("x-ms-download-hint", "layout");
-        response->SetBodyStream(std::make_unique<Core::IO::MemoryBodyStream>(
-            reinterpret_cast<const uint8_t*>(data.data() + offset),
-            static_cast<size_t>(end - offset + 1)));
+        response->SetBodyStream(
+            std::make_unique<Core::IO::MemoryBodyStream>(
+                reinterpret_cast<const uint8_t*>(data.data() + offset),
+                static_cast<size_t>(end - offset + 1)));
         return response;
       }
 
@@ -148,162 +148,29 @@ namespace Azure { namespace Storage { namespace Test {
     }
   } // namespace
 
-  class DataLakeLocalityRecordedTest : public StorageTest {
-  };
-
-  TEST_F(DataLakeLocalityRecordedTest, GetLayoutAndDownloadHint_PLAYBACKONLY_)
-  {
-    if (!m_testContext.IsPlaybackMode())
-    {
-      GTEST_SKIP() << "Reuses the Blob multi-endpoint recording.";
-    }
-    m_testContext.RecordingPath = std::string(AZURE_TEST_RECORDING_DIR)
-        + "/../../../azure-storage-blobs/test/ut/recordings";
-    m_testContext.RenameTest(
-        "DataLocalityRecordedTest", "GetLayoutMultipleEndpoints_PLAYBACKONLY_");
-    auto options = InitStorageClientOptions<DataLake::DataLakeClientOptions>();
-    auto client = DataLake::DataLakeFileClient(
-        "https://" + StandardStorageAccountName()
-            + ".dfs.core.windows.net/data-locality-test/data-locality-multi-endpoint.bin",
-        GetTestCredential(),
-        options);
-    auto page = client.GetLayout();
-    EXPECT_EQ(page.Layout.Properties.FileSize, 64 * 1024 * 1024);
-    EXPECT_EQ(page.Layout.Properties.HttpHeaders.ContentType, "application/octet-stream");
-    ASSERT_TRUE(page.Layout.Properties.IsServerEncrypted.HasValue());
-    EXPECT_TRUE(page.Layout.Properties.IsServerEncrypted.Value());
-    EXPECT_TRUE(page.Layout.Properties.ETag.HasValue());
-    EXPECT_FALSE(page.Layout.Properties.IsDirectory);
-    std::set<std::string> endpoints;
-    std::vector<DataLake::Models::FileLayoutRange> ranges;
-    for (; page.HasPage(); page.MoveToNextPage())
-    {
-      for (const auto& range : page.Layout.Ranges)
-      {
-        ASSERT_TRUE(range.Range.Length.HasValue());
-        EXPECT_GT(range.Range.Length.Value(), 0);
-        EXPECT_FALSE(range.Endpoint.empty());
-        ranges.push_back(range);
-        endpoints.insert(range.Endpoint);
-      }
-    }
-    EXPECT_GE(endpoints.size(), 2U);
-    ASSERT_GT(ranges.size(), 1U);
-    DataLake::DownloadFileOptions downloadOptions;
-    downloadOptions.Range = Core::Http::HttpRange();
-    downloadOptions.Range.Value().Offset = ranges[1].Range.Offset - 2;
-    downloadOptions.Range.Value().Length = 5;
-    auto response = client.Download(downloadOptions);
-    EXPECT_EQ(response.Value.Body->ReadToEnd().size(), 5U);
-    EXPECT_EQ(response.Value.FileSize, 64 * 1024 * 1024);
-    ASSERT_TRUE(response.Value.Details.DownloadHint.HasValue());
-    EXPECT_EQ(response.Value.Details.DownloadHint.Value(), Blobs::Models::DownloadHint::Layout);
-  }
-
-  TEST_F(DataLakeLocalityRecordedTest, GetLayoutRangeReturnsFullFileSize_PLAYBACKONLY_)
-  {
-    if (!m_testContext.IsPlaybackMode())
-    {
-      GTEST_SKIP() << "Reuses the Blob ranged layout recording.";
-    }
-    m_testContext.RecordingPath = std::string(AZURE_TEST_RECORDING_DIR)
-        + "/../../../azure-storage-blobs/test/ut/recordings";
-    m_testContext.RenameTest(
-        "DataLocalityRecordedTest", "GetLayoutRangeReturnsFullBlobSize_PLAYBACKONLY_");
-    auto clientOptions = InitStorageClientOptions<DataLake::DataLakeClientOptions>();
-    auto client = DataLake::DataLakeFileClient(
-        "https://" + StandardStorageAccountName()
-            + ".dfs.core.windows.net/data-locality-test/data-locality-multi-endpoint.bin",
-        GetTestCredential(),
-        clientOptions);
-    constexpr int64_t fileSize = 64 * 1024 * 1024;
-    for (bool bounded : {true, false})
-    {
-      SCOPED_TRACE(bounded);
-      DataLake::GetFileLayoutOptions options;
-      options.Range = Core::Http::HttpRange();
-      options.Range.Value().Offset = bounded ? 8 * 1024 * 1024 - 2 : fileSize - 16;
-      if (bounded)
-      {
-        options.Range.Value().Length = 5;
-      }
-      const auto offset = options.Range.Value().Offset;
-      bool coversOffset = false;
-      size_t rangeCount = 0;
-      for (auto page = client.GetLayout(options); page.HasPage(); page.MoveToNextPage())
-      {
-        EXPECT_EQ(page.Layout.Properties.FileSize, fileSize);
-        EXPECT_GT(page.Layout.Properties.FileSize, options.Range.Value().Length.ValueOr(16));
-        EXPECT_TRUE(page.Layout.Properties.ETag.HasValue());
-        for (const auto& range : page.Layout.Ranges)
-        {
-          ASSERT_TRUE(range.Range.Length.HasValue());
-          ASSERT_GT(range.Range.Length.Value(), 0);
-          ASSERT_GE(range.Range.Offset, 0);
-          ASSERT_LE(range.Range.Offset, fileSize);
-          ASSERT_LE(range.Range.Length.Value(), fileSize - range.Range.Offset);
-          EXPECT_FALSE(range.Endpoint.empty());
-          coversOffset = coversOffset
-              || (range.Range.Offset <= offset
-                  && offset - range.Range.Offset < range.Range.Length.Value());
-          ++rangeCount;
-        }
-      }
-      EXPECT_GT(rangeCount, 0U);
-      EXPECT_TRUE(coversOffset);
-    }
-  }
-
-  TEST(DataLakeLocalityTest, GetLayoutMapsPropertiesAndPages)
-  {
-    auto state = std::make_shared<LocalityState>();
-    auto client = CreateClient(state, 0);
-    DataLake::GetFileLayoutOptions options;
-    options.Range = Core::Http::HttpRange();
-    options.Range.Value().Offset = 2;
-    options.Range.Value().Length = 10;
-    options.AccessConditions.IfMatch = ETag("\"layout-etag\"");
-    auto page = client.GetLayout(options);
-    EXPECT_EQ(page.CurrentPageToken, "");
-    EXPECT_EQ(page.NextPageToken.Value(), "page2");
-    ASSERT_EQ(page.Layout.Ranges.size(), 1U);
-    EXPECT_EQ(page.Layout.Ranges[0].Endpoint, "locality0.test:443");
-    EXPECT_EQ(page.Layout.Properties.FileSize, 12);
-    EXPECT_EQ(page.Layout.Properties.Metadata.at("layout"), "metadata");
-    EXPECT_EQ(page.Layout.Properties.Owner.Value(), "owner");
-    EXPECT_EQ(page.Layout.Properties.Group.Value(), "group");
-    EXPECT_EQ(page.Layout.Properties.Permissions.Value(), "rw-r-----");
-    EXPECT_EQ(page.Layout.Properties.EncryptionContext.Value(), "context");
-    ASSERT_TRUE(page.Layout.Properties.Acls.HasValue());
-    EXPECT_EQ(page.Layout.Properties.Acls.Value().size(), 3U);
-    page.MoveToNextPage();
-    EXPECT_EQ(page.CurrentPageToken, "page2");
-    ASSERT_EQ(page.Layout.Ranges.size(), 1U);
-    EXPECT_EQ(page.Layout.Ranges[0].Range.Offset, 6);
-    EXPECT_EQ(page.Layout.Ranges[0].Range.Length.Value(), 6);
-    EXPECT_EQ(page.Layout.Ranges[0].Endpoint, "locality1.test:443");
-    page.MoveToNextPage();
-    EXPECT_FALSE(page.HasPage());
-    ASSERT_EQ(state->Requests.size(), 2U);
-    EXPECT_EQ(state->Requests[0].Host, "account.blob.core.windows.net");
-    EXPECT_EQ(state->Requests[1].Range, "bytes=2-11");
-    EXPECT_EQ(state->Requests[1].IfMatch, "\"layout-etag\"");
-    EXPECT_EQ(state->Requests[1].Marker, "page2");
-  }
-
-  TEST(DataLakeLocalityTest, GetLayoutNoContent)
+  TEST(DataLakeLocalityTest, ManagedDownloadFallsBackWithoutLayout)
   {
     auto state = std::make_shared<LocalityState>();
     state->NoLayout = true;
-    auto page = CreateClient(state, 0).GetLayout();
-    EXPECT_TRUE(page.Layout.Ranges.empty());
-    EXPECT_EQ(page.Layout.Properties.FileSize, 12);
-    EXPECT_EQ(page.RawResponse->GetStatusCode(), Core::Http::HttpStatusCode::NoContent);
-    page.MoveToNextPage();
-    EXPECT_FALSE(page.HasPage());
+    DataLake::DownloadFileToOptions options;
+    options.Range = Core::Http::HttpRange();
+    options.Range.Value().Length = 12;
+    options.LayoutAwareRouting = DataLake::LayoutAwareRouting::Enabled;
+    options.TransferOptions.InitialChunkSize = 1;
+    options.TransferOptions.ChunkSize = 6;
+    options.TransferOptions.Concurrency = 1;
+    std::vector<uint8_t> content(12);
+    CreateClient(state, 0).DownloadTo(content.data(), content.size(), options);
+    EXPECT_EQ(std::string(content.begin(), content.end()), "abcdefghijkl");
+    ASSERT_EQ(state->Requests.size(), 4U);
+    EXPECT_TRUE(state->Requests[1].IsLayout);
+    for (const auto& request : state->Requests)
+    {
+      EXPECT_EQ(request.Host, "account.blob.core.windows.net");
+    }
   }
 
-  TEST(DataLakeLocalityTest, RoutesOneShotDownloadForAllClientOrigins)
+  TEST(DataLakeLocalityTest, OneShotDownloadUsesClientEndpointForAllClientOrigins)
   {
     for (int origin = 0; origin != 4; ++origin)
     {
@@ -314,12 +181,11 @@ namespace Azure { namespace Storage { namespace Test {
       options.Range = Core::Http::HttpRange();
       options.Range.Value().Offset = 6;
       options.Range.Value().Length = 1;
-      options.LayoutEndpoint = "locality1.test:443";
       auto response = client.Download(options);
       EXPECT_EQ(response.Value.Body->ReadToEnd(), std::vector<uint8_t>{'g'});
       ASSERT_EQ(state->Requests.size(), 1U);
-      EXPECT_EQ(state->Requests[0].Host, "locality1.test");
-      EXPECT_EQ(state->Requests[0].HostHeader, "account.blob.core.windows.net");
+      EXPECT_EQ(state->Requests[0].Host, "account.blob.core.windows.net");
+      EXPECT_TRUE(state->Requests[0].HostHeader.empty());
       ASSERT_TRUE(response.Value.Details.DownloadHint.HasValue());
       EXPECT_EQ(response.Value.Details.DownloadHint.Value(), Blobs::Models::DownloadHint::Layout);
     }
