@@ -102,15 +102,16 @@ namespace Azure { namespace Storage { namespace Blobs {
 
   } // namespace
 
-  std::unique_ptr<_detail::DataLocalityLayoutState> BlobClient::CreateDataLocalityLayoutState(
+  std::unique_ptr<_detail::DataLocalityLayoutState> _detail::CreateDataLocalityLayoutState(
+      Blobs::BlobClient blobClient,
       Azure::Nullable<Azure::Core::Http::HttpRange> range,
       Azure::ETag eTag,
-      Azure::Core::Context context) const
+      Azure::Core::Context context)
   {
     auto refresher = [range = std::move(range),
                       eTag = std::move(eTag),
                       context = std::move(context),
-                      blobClient = *this]() {
+                      blobClient = std::move(blobClient)]() {
       try
       {
         _detail::GetBlobLayoutOptions options;
@@ -626,7 +627,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Core::Http::HttpRange remainingRange;
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
-      dataLocalityState = CreateDataLocalityLayoutState(remainingRange, eTag, context);
+      dataLocalityState
+          = _detail::CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
@@ -774,7 +776,8 @@ namespace Azure { namespace Storage { namespace Blobs {
       Core::Http::HttpRange remainingRange;
       remainingRange.Offset = remainingOffset;
       remainingRange.Length = remainingSize;
-      dataLocalityState = CreateDataLocalityLayoutState(remainingRange, eTag, context);
+      dataLocalityState
+          = _detail::CreateDataLocalityLayoutState(*this, remainingRange, eTag, context);
       dataLocalityState->WaitForInitialLayout();
       if (!dataLocalityState->HasLayout())
       {
