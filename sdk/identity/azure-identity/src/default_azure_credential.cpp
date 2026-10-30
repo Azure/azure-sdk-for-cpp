@@ -98,8 +98,8 @@ DefaultAzureCredential::DefaultAzureCredential(
             true,
             "ManagedIdentityCredential",
             [&specificCred](auto options) {
-              return std::shared_ptr<ManagedIdentityCredential>(
-                  new ManagedIdentityCredential({}, !specificCred, options));
+              return std::shared_ptr<ManagedIdentityCredential>(new ManagedIdentityCredential(
+                  Environment::GetVariable("AZURE_CLIENT_ID"), !specificCred, options));
             }},
         CredentialInfo{
             false,

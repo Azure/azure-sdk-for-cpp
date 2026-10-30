@@ -4,7 +4,13 @@
 
 ### Features Added
 
+- `DefaultAzureCredential` uses `AZURE_CLIENT_ID` to select a user-assigned managed identity.
+
 ### Breaking Changes
+
+- When `AZURE_CLIENT_ID` is set, the managed identity credential in `DefaultAzureCredential`
+  now selects that identity instead of sending no identity selector. Standalone
+  `ManagedIdentityCredential` constructors are unchanged.
 
 ### Bugs Fixed
 
