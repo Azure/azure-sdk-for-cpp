@@ -98,6 +98,18 @@ The [Managed identity authentication](https://learn.microsoft.com/entra/identity
 * [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
 * [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 
+### Specify a user-assigned managed identity with `DefaultAzureCredential`
+
+Set `AZURE_CLIENT_ID` to the client ID of a user-assigned managed identity
+attached to the Azure host. `DefaultAzureCredential` passes this value to the
+managed identity credential in its chain. An unset or empty value preserves
+the existing behavior of sending no identity selector.
+
+This also applies when `AZURE_TOKEN_CREDENTIALS=ManagedIdentityCredential`.
+It does not change credential ordering or configure credentials constructed
+directly with `ManagedIdentityCredential`; those still require explicit
+identity selection as shown below.
+
 ### Specify a user-assigned managed identity with `ManagedIdentityCredential`
 
 Many Azure hosts allow the assignment of a user-assigned managed identity. The following examples demonstrate configuring `ManagedIdentityCredential` to authenticate a user-assigned managed identity when deployed to an Azure host. The sample code uses the credential to authenticate a `BlobClient` from the [Azure::Storage::Blobs][blobs_client_library] client library. It also demonstrates how you can specify a user-assigned managed identity either by a client ID, resource ID, or an object ID.

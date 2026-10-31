@@ -2,9 +2,11 @@
 // Licensed under the MIT License.
 
 #include "azure/identity/default_azure_credential.hpp"
+#include "azure/identity/managed_identity_credential.hpp"
 #include "credential_test_helper.hpp"
 
 #include <azure/core/diagnostics/logger.hpp>
+#include <azure/core/url.hpp>
 
 #include <../src/private/chained_token_credential_impl.hpp>
 #include <gtest/gtest.h>
@@ -274,7 +276,8 @@ TEST_P(LogMessages, )
             EXPECT_EQ(
                 log.at(i).second,
                 "Identity: ManagedIdentityCredential will be created "
-                "with Azure Instance Metadata Service source."
+                "with Azure Instance Metadata Service source "
+                "and Client ID 'fedcba98-7654-3210-0123-456789abcdef'."
                 "\nSuccessful creation does not guarantee further successful token retrieval.");
 
             {
@@ -488,7 +491,8 @@ TEST_P(LogMessagesForSpecificCredential, )
       EXPECT_EQ(
           log.at(i).second,
           "Identity: ManagedIdentityCredential will be created "
-          "with Azure Instance Metadata Service source."
+          "with Azure Instance Metadata Service source "
+          "and Client ID 'fedcba98-7654-3210-0123-456789abcdef'."
           "\nSuccessful creation does not guarantee further successful token retrieval.");
     }
     else if (specificCredentialInfo.CredentialName == "AzureCliCredential")
@@ -527,6 +531,98 @@ TEST(DefaultAzureCredential, RequireCredentialSpecifierEnvVarValue)
 {
   EXPECT_THROW(
       static_cast<void>(std::make_unique<DefaultAzureCredential>(true)), AuthenticationException);
+}
+
+TEST(DefaultAzureCredential, ManagedIdentityClientIdFromEnvironment)
+{
+  for (std::string const credentialSpecifier : {"", "prod", "ManagedIdentityCredential"})
+  {
+    for (std::string const clientId : {"", "fedcba98-7654-3210-0123-456789abcdef"})
+    {
+      SCOPED_TRACE(credentialSpecifier + ": " + clientId);
+      CredentialTestHelper::EnvironmentOverride const env({
+          {"AZURE_TOKEN_CREDENTIALS", credentialSpecifier},
+          {"AZURE_CLIENT_ID", clientId},
+          {"AZURE_TENANT_ID", ""},
+          {"AZURE_CLIENT_SECRET", ""},
+          {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+          {"AZURE_FEDERATED_TOKEN_FILE", ""},
+          {"AZURE_AUTHORITY_HOST", ""},
+          {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
+          {"MSI_ENDPOINT", ""},
+          {"MSI_SECRET", ""},
+          {"IDENTITY_ENDPOINT", ""},
+          {"IDENTITY_HEADER", ""},
+          {"IMDS_ENDPOINT", ""},
+      });
+
+      auto const actual = CredentialTestHelper::SimulateTokenRequest(
+          [](auto transport) {
+            TokenCredentialOptions options;
+            options.Transport.Transport = transport;
+            return std::make_unique<DefaultAzureCredential>(options);
+          },
+          {{"https://storage.azure.com/.default"}},
+          {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"});
+
+      ASSERT_EQ(actual.Requests.size(), 1U);
+      auto const query = Azure::Core::Url(actual.Requests.at(0).AbsoluteUrl).GetQueryParameters();
+      if (clientId.empty())
+      {
+        EXPECT_EQ(query.count("client_id"), 0U);
+      }
+      else
+      {
+        ASSERT_EQ(query.count("client_id"), 1U);
+        EXPECT_EQ(query.at("client_id"), clientId);
+      }
+      ASSERT_EQ(actual.Responses.size(), 1U);
+      EXPECT_EQ(actual.Responses.at(0).AccessToken.Token, "ACCESSTOKEN");
+    }
+  }
+}
+
+TEST(DefaultAzureCredential, StandaloneManagedIdentityIgnoresClientIdEnvironment)
+{
+  CredentialTestHelper::EnvironmentOverride const env({
+      {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+      {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
+      {"MSI_ENDPOINT", ""},
+      {"MSI_SECRET", ""},
+      {"IDENTITY_ENDPOINT", ""},
+      {"IDENTITY_HEADER", ""},
+      {"IMDS_ENDPOINT", ""},
+  });
+
+  for (std::string const explicitClientId : {"", "01234567-89ab-cdef-fedc-ba8976543210"})
+  {
+    SCOPED_TRACE(explicitClientId);
+    auto const actual = CredentialTestHelper::SimulateTokenRequest(
+        [&](auto transport) {
+          TokenCredentialOptions options;
+          options.Transport.Transport = transport;
+          if (explicitClientId.empty())
+          {
+            return std::make_unique<Azure::Identity::ManagedIdentityCredential>(options);
+          }
+          return std::make_unique<Azure::Identity::ManagedIdentityCredential>(
+              explicitClientId, options);
+        },
+        {{"https://storage.azure.com/.default"}},
+        {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"});
+
+    ASSERT_EQ(actual.Requests.size(), 1U);
+    auto const query = Azure::Core::Url(actual.Requests.at(0).AbsoluteUrl).GetQueryParameters();
+    if (explicitClientId.empty())
+    {
+      EXPECT_EQ(query.count("client_id"), 0U);
+    }
+    else
+    {
+      ASSERT_EQ(query.count("client_id"), 1U);
+      EXPECT_EQ(query.at("client_id"), explicitClientId);
+    }
+  }
 }
 
 TEST(DefaultAzureCredential, ImdsProbe)
