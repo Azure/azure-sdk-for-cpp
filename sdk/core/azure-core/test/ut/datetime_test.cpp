@@ -173,8 +173,8 @@ TEST(DateTime, ParseTimeRoundripYear9999) { TestDateTimeRoundtrip("9999-12-31T23
 
 TEST(DateTime, EmittingTimeCorrectDay)
 {
-  DateTime const test
-      = DateTime() + std::chrono::seconds(63691573964LL); // 2019-04-22T23:52:44 is a Monday
+  DateTime const test(
+      DateTime() + std::chrono::seconds(63691573964LL)); // 2019-04-22T23:52:44 is a Monday
   auto const actual = test.ToString(DateTime::DateFormat::Rfc1123);
   std::string const expected("Mon");
   EXPECT_EQ(actual.substr(0, 3), expected);
@@ -840,26 +840,143 @@ TEST(DateTime, ParseRoundUpInvalidDate)
       std::invalid_argument);
 }
 
+TEST(DateTime, SystemClockBeforeEpoch)
+{
+  using SystemClock = std::chrono::system_clock;
+
+  struct TestCase
+  {
+    DateTime Date;
+    int64_t Seconds;
+  };
+  TestCase const cases[] = {
+      {DateTime(1900), -2208988800LL},
+      {DateTime(1969, 12, 31), -86400},
+      {DateTime(1969, 12, 31, 23, 59, 59), -1},
+      {DateTime(1970), 0},
+  };
+
+  for (auto const& testCase : cases)
+  {
+    SCOPED_TRACE(testCase.Seconds);
+    auto const systemTime = SystemClock::time_point(
+        std::chrono::duration_cast<SystemClock::duration>(std::chrono::seconds(testCase.Seconds)));
+    EXPECT_EQ(testCase.Date, DateTime(systemTime));
+    EXPECT_EQ(systemTime, static_cast<SystemClock::time_point>(testCase.Date));
+  }
+}
+
+TEST(DateTime, SystemClockFractionalSeconds)
+{
+  using SystemClock = std::chrono::system_clock;
+  auto const epochTicks = DateTime(1970).time_since_epoch().count();
+  auto const systemTicksPerSecond = SystemClock::period::den / SystemClock::period::num;
+  int64_t const offsets[] = {-101, -100, -99, -11, -10, -9, -1, 0, 1, 9, 10, 11, 99, 100, 101};
+
+  for (auto const offset : offsets)
+  {
+    SCOPED_TRACE(offset);
+    auto const systemTime = SystemClock::time_point(SystemClock::duration(offset));
+    EXPECT_EQ(
+        epochTicks + offset * 10000000 / systemTicksPerSecond,
+        DateTime(systemTime).time_since_epoch().count());
+
+    auto const date = DateTime(DateTime::time_point(DateTime::duration(epochTicks + offset)));
+    EXPECT_EQ(
+        offset * systemTicksPerSecond / 10000000,
+        static_cast<SystemClock::time_point>(date).time_since_epoch().count());
+  }
+}
+
+TEST(DateTime, FromSystemClockLimits)
+{
+  using SystemClock = std::chrono::system_clock;
+  auto const min = (std::numeric_limits<int64_t>::min)();
+  auto const max = (std::numeric_limits<int64_t>::max)();
+  auto const expectDateTime = [](int64_t systemTicks, int64_t dateTimeTicks) {
+    SCOPED_TRACE(systemTicks);
+    EXPECT_NO_THROW({
+      auto const date = DateTime(SystemClock::time_point(SystemClock::duration(systemTicks)));
+      EXPECT_EQ(dateTimeTicks, date.time_since_epoch().count());
+    });
+  };
+  auto const expectOutOfRange = [](int64_t systemTicks) {
+    SCOPED_TRACE(systemTicks);
+    EXPECT_THROW(
+        static_cast<void>(DateTime(SystemClock::time_point(SystemClock::duration(systemTicks)))),
+        std::invalid_argument);
+  };
+
+  // The expected counts include the 621355968000000000-tick Unix epoch offset.
+  if (std::ratio_equal<SystemClock::period, std::nano>::value)
+  {
+    expectDateTime(min, 529122247631452242LL);
+    expectDateTime(max, 713589688368547758LL);
+  }
+  else if (std::ratio_equal<SystemClock::period, std::micro>::value)
+  {
+    expectDateTime(-984472800485477580LL, -9223372036854775800LL);
+    expectDateTime(860201606885477580LL, 9223372036854775800LL);
+    expectOutOfRange(-984472800485477581LL);
+    expectOutOfRange(860201606885477581LL);
+    expectOutOfRange(min);
+    expectOutOfRange(max);
+  }
+  else if (std::ratio_equal<SystemClock::period, DateTime::period>::value)
+  {
+    expectDateTime(min, -8602016068854775808LL);
+    expectDateTime(8602016068854775807LL, max);
+    expectOutOfRange(8602016068854775808LL);
+    expectOutOfRange(max);
+  }
+}
+
+TEST(DateTime, ToSystemClockLimits)
+{
+  using SystemClock = std::chrono::system_clock;
+  auto const min = (std::numeric_limits<int64_t>::min)();
+  auto const max = (std::numeric_limits<int64_t>::max)();
+  auto const expectSystemTime = [](int64_t dateTimeTicks, int64_t systemTicks) {
+    SCOPED_TRACE(dateTimeTicks);
+    EXPECT_NO_THROW({
+      auto const date = DateTime(DateTime::time_point(DateTime::duration(dateTimeTicks)));
+      EXPECT_EQ(systemTicks, static_cast<SystemClock::time_point>(date).time_since_epoch().count());
+    });
+  };
+  auto const expectOutOfRange = [](int64_t dateTimeTicks) {
+    SCOPED_TRACE(dateTimeTicks);
+    EXPECT_THROW(
+        static_cast<void>(static_cast<SystemClock::time_point>(
+            DateTime(DateTime::time_point(DateTime::duration(dateTimeTicks))))),
+        std::invalid_argument);
+  };
+
+  if (std::ratio_equal<SystemClock::period, std::nano>::value)
+  {
+    expectSystemTime(529122247631452242LL, -9223372036854775800LL);
+    expectSystemTime(713589688368547758LL, 9223372036854775800LL);
+    expectOutOfRange(529122247631452241LL);
+    expectOutOfRange(713589688368547759LL);
+    expectOutOfRange(min);
+    expectOutOfRange(max);
+  }
+  else if (std::ratio_equal<SystemClock::period, std::micro>::value)
+  {
+    // Subtracting the epoch from min exceeds int64_t; the microsecond count fits.
+    expectSystemTime(min, -984472800485477580LL);
+    expectSystemTime(max, 860201606885477580LL);
+  }
+  else if (std::ratio_equal<SystemClock::period, DateTime::period>::value)
+  {
+    expectSystemTime(-8602016068854775808LL, min);
+    expectSystemTime(max, 8602016068854775807LL);
+    expectOutOfRange(-8602016068854775809LL);
+    expectOutOfRange(min);
+  }
+}
+
 TEST(DateTime, ToSystemClock)
 {
-  if (DateTime(std::chrono::system_clock::time_point::min())
-      > DateTime(DateTime::time_point::min()))
-  {
-    EXPECT_THROW(
-        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
-            DateTime(DateTime::time_point::min()))),
-        std::invalid_argument);
-  }
-
-  if (DateTime(std::chrono::system_clock::time_point::max())
-      > DateTime(DateTime::time_point::max()))
-  {
-    EXPECT_THROW(
-        static_cast<void>(static_cast<std::chrono::system_clock::time_point>(
-            DateTime(DateTime::time_point::max()))),
-        std::invalid_argument);
-  }
-
   {
     auto const tt = std::chrono::system_clock::to_time_t(
         static_cast<std::chrono::system_clock::time_point>(DateTime(2021, 7, 8, 15, 34, 56)));
