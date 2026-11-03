@@ -132,6 +132,12 @@ cmake ..
 cmake --build .
 ```
 
+The SDK requires C++14 and uses it by default. To build with a newer language
+standard, pass `-DCMAKE_CXX_STANDARD=17` or `-DCMAKE_CXX_STANDARD=20` when
+configuring CMake. A standard set by a parent CMake project is also preserved.
+Older standards are raised to 14. This does not change the SDK's minimum language
+requirement; dependencies must support the selected standard.
+
 #### Static Analysis
 
 When the project is built using MSVC on Windows, the compiler can run [static analysis](https://learn.microsoft.com/cpp/code-quality/walkthrough-analyzing-c-cpp-code-for-defects) on the code. The CMake project can add the required compiler flags to perform this check. To enable this feature, set an environment variable `AZURE_ENABLE_STATIC_ANALYSIS`.
