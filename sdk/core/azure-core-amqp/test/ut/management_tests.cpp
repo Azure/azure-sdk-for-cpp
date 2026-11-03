@@ -196,6 +196,10 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       {
         m_expectedStatusDescriptionName = expectedStatusDescriptionName;
       }
+      // Accept the request and never answer it. The send then succeeds and the caller waits for a
+      // response that never arrives, which is the only way to reach the exit that throws for a
+      // wait that ended without a result.
+      void SetSwallowRequests(bool swallowRequests) { m_swallowRequests = swallowRequests; }
       ManagementServiceEndpoint(MessageTests::MockServiceEndpointOptions const& options)
           : MockServiceEndpoint("$management", options)
       {
@@ -232,6 +236,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       void MessageReceived(std::string const&, std::shared_ptr<AmqpMessage> const& incomingMessage)
           override
       {
+        if (m_swallowRequests)
+        {
+          GTEST_LOG_(INFO) << "Swallowing request; no response will be sent.";
+          return;
+        }
         if (incomingMessage->ApplicationProperties.at("operation") == "Test")
         {
           AmqpMessage responseMessage;
@@ -265,6 +274,7 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
       AmqpValue m_expectedStatusDescription{"Successful"};
       std::string m_expectedStatusCodeName = "statusCode";
       std::string m_expectedStatusDescriptionName = "statusDescription";
+      bool m_swallowRequests{false};
     };
   } // namespace
 #endif
@@ -563,6 +573,66 @@ namespace Azure { namespace Core { namespace Amqp { namespace Tests {
     EXPECT_EQ(response.Status, ManagementOperationStatus::Ok);
     EXPECT_EQ(response.StatusCode, 200);
     EXPECT_EQ(response.Error.Description, "Successful");
+    management.Close();
+
+    StopServerListening();
+
+    EndAmqpSession(session);
+    CloseAmqpConnection(connection);
+#else
+#endif
+  }
+
+  // `ExecuteOperation` creates one response queue per request and removes it on the way out. Two
+  // of its exits did that inline; the exit that throws for a wait that ended without a result did
+  // not, and neither did the rethrow that follows. A management client lives as long as its
+  // connection, so a cancelled operation left an entry behind for good.
+  //
+  // Reaching that exit needs the send to succeed and the response never to arrive, so the endpoint
+  // swallows the request and a deadline ends the wait. Cancelling before the call would not do it:
+  // the send fails first and takes a different exit, one that already removed the queue.
+  TEST_F(TestManagement, ManagementExecuteOperationLeavesNoPendingQueueWhenTheWaitEnds)
+  {
+#if ENABLE_UAMQP
+    auto managementEndpoint
+        = std::make_shared<ManagementServiceEndpoint>(MessageTests::MockServiceEndpointOptions{});
+    m_mockServer.AddServiceEndpoint(managementEndpoint);
+
+    Connection connection{CreateAmqpConnection()};
+    Session session{CreateAmqpSession(connection)};
+    ManagementClientOptions options;
+    options.EnableTrace = true;
+    ManagementClient management(session.CreateManagementClient("Test", options));
+
+    StartServerListening();
+
+    auto openResult = management.Open();
+    ASSERT_EQ(openResult, ManagementOpenStatus::Ok);
+
+    ASSERT_EQ(std::size_t{0}, management.GetPendingOperationCount());
+
+    AmqpMessage messageToSend;
+    messageToSend.SetBody(AmqpValue("Test"));
+
+    managementEndpoint->SetSwallowRequests(true);
+    EXPECT_THROW(
+        {
+          auto unusedResponse = management.ExecuteOperation(
+              "Test",
+              "Test",
+              "Test",
+              messageToSend,
+              Azure::Core::Context{}.WithDeadline(
+                  std::chrono::system_clock::now() + std::chrono::seconds(3)));
+          (void)unusedResponse;
+        },
+        Azure::Core::OperationCancelledException);
+
+    // The queue for that request must be gone. Before the fix it stayed in the map.
+    EXPECT_EQ(std::size_t{0}, management.GetPendingOperationCount());
+
+    managementEndpoint->SetSwallowRequests(false);
+
     management.Close();
 
     StopServerListening();

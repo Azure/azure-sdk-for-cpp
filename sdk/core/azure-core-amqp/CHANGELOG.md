@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - Fixed uAMQP message annotation encoding so messages with annotations, including Event Hubs partition keys, include the required AMQP section descriptor. [[#7426]](https://github.com/Azure/azure-sdk-for-cpp/issues/7426)
+- The uAMQP management client no longer leaves the response queue of a cancelled operation behind. `ExecuteOperation` creates one queue for each request and removed it on the two exits that return, but not on the exit that throws for a wait that ended without a result, and not on the rethrow that follows. A management client lives as long as the connection that owns it, and the `$cbs` client runs a put-token for every authentication, so a long running client grew that map by one entry for every cancelled operation. The removal now runs from a scope guard, so every exit clears it. The request identifier is a UUID, so a leaked entry could never be matched to a later request; the cost was memory. `ExecuteOperation` also read the queue out of the map with `at()` while holding no lock. That function runs on more than one thread and it is where entries are inserted and removed, so the read raced with another caller's insert or erase. It now takes the queue under the lock and waits without it, because the receive path needs the same lock to complete the queue. [[#7386]](https://github.com/Azure/azure-sdk-for-cpp/issues/7386)
 
 ### Other Changes
 

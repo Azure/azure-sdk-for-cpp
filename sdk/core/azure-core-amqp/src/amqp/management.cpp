@@ -47,4 +47,11 @@ namespace Azure { namespace Core { namespace Amqp { namespace _internal {
     return m_impl->ExecuteOperation(
         operationToPerform, typeOfOperation, locales, messageToSend, context);
   }
+
+#if _azure_TESTING_BUILD && ENABLE_UAMQP
+  std::size_t ManagementClient::GetPendingOperationCount() const
+  {
+    return m_impl->GetPendingOperationCount();
+  }
+#endif
 }}}} // namespace Azure::Core::Amqp::_internal
