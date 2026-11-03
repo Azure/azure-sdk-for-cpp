@@ -1,12 +1,10 @@
 # Release History
 
-## 1.0.0-beta.7 (Unreleased)
+## 1.0.0-beta.7 (2026-11-04)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- [[#6522]](https://github.com/Azure/azure-sdk-for-cpp/pull/6522) Expose Scopes on the client options.
 
 ### Other Changes
 
