@@ -45,6 +45,29 @@ TEST(RequestFailedException, JSONError)
   EXPECT_NE(std::string(exception.what()).find("retry please :"), std::string::npos);
 }
 
+TEST(RequestFailedException, CopyPreservesWhatAndMessage)
+{
+  auto response = std::make_unique<Azure::Core::Http::RawResponse>(
+      1, 1, Azure::Core::Http::HttpStatusCode::ServiceUnavailable, "retry please :");
+  static constexpr uint8_t const responseBody[]
+      = "{\"error\":{ \"code\":\"503\",  \"message\":\"JT\"}}";
+  static constexpr uint8_t const responseBodyStream[]
+      = "{\"error\":{ \"code\":\"503\",  \"message\":\"JT\"}}";
+
+  response->SetHeader(HttpShared::ContentType, "application/json");
+  response->SetHeader(HttpShared::MsRequestId, "1");
+  response->SetHeader(HttpShared::MsClientRequestId, "2");
+  response->SetBody(std::vector<uint8_t>(responseBody, responseBody + sizeof(responseBody)));
+  response->SetBodyStream(std::make_unique<Azure::Core::IO::MemoryBodyStream>(
+      responseBodyStream, sizeof(responseBodyStream) - 1));
+
+  auto exception = Azure::Core::RequestFailedException(response);
+  auto copy = Azure::Core::RequestFailedException(exception);
+
+  EXPECT_EQ(std::string(copy.what()), std::string(exception.what()));
+  EXPECT_EQ(copy.Message, exception.Message);
+}
+
 TEST(RequestFailedException, JSONErrorNoError)
 {
   auto response = std::make_unique<Azure::Core::Http::RawResponse>(
