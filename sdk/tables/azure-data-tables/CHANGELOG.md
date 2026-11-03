@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- [[#6522]](https://github.com/Azure/azure-sdk-for-cpp/pull/6522) Expose Scopes on the client options.
+- [[#6522]](https://github.com/Azure/azure-sdk-for-cpp/pull/6522) Added `TableClientOptions::Audience` to configure the audience used to derive the authentication token scope.
 
 ### Other Changes
 
