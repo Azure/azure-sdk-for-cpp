@@ -14,6 +14,10 @@
 
 ### Bugs Fixed
 
+- `DefaultAzureCredential` defers managed identity construction failures until
+  that credential is attempted, allowing earlier credentials to authenticate
+  on Cloud Shell and Azure Arc when `AZURE_CLIENT_ID` is set.
+
 ### Other Changes
 
 ## 1.13.3 (2026-01-16)

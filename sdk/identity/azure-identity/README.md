@@ -110,6 +110,14 @@ It does not change credential ordering or configure credentials constructed
 directly with `ManagedIdentityCredential`; those still require explicit
 identity selection as shown below.
 
+If managed identity rejects the selector during construction, such as on
+Cloud Shell or Azure Arc, `DefaultAzureCredential` defers that error until
+managed identity is attempted. Earlier credentials can still authenticate;
+if the managed identity entry is reached, its original error is logged and
+the chain continues according to its existing fallback behavior. This does
+not add support for that selector on the host or change standalone
+`ManagedIdentityCredential` validation.
+
 ### Specify a user-assigned managed identity with `ManagedIdentityCredential`
 
 Many Azure hosts allow the assignment of a user-assigned managed identity. The following examples demonstrate configuring `ManagedIdentityCredential` to authenticate a user-assigned managed identity when deployed to an Azure host. The sample code uses the credential to authenticate a `BlobClient` from the [Azure::Storage::Blobs][blobs_client_library] client library. It also demonstrates how you can specify a user-assigned managed identity either by a client ID, resource ID, or an object ID.

@@ -8,6 +8,8 @@
 #include <azure/core/diagnostics/logger.hpp>
 #include <azure/core/url.hpp>
 
+#include <algorithm>
+
 #include <../src/private/chained_token_credential_impl.hpp>
 #include <gtest/gtest.h>
 
@@ -623,6 +625,98 @@ TEST(DefaultAzureCredential, StandaloneManagedIdentityIgnoresClientIdEnvironment
       EXPECT_EQ(query.at("client_id"), explicitClientId);
     }
   }
+}
+
+class UnsupportedManagedIdentityHost : public ::testing::TestWithParam<std::string> {
+  std::unique_ptr<CredentialTestHelper::EnvironmentOverride> m_environment;
+
+protected:
+  std::vector<std::string> m_log;
+
+  void SetUp() override
+  {
+    const auto cloudShell = GetParam() == "CloudShell";
+    m_environment = std::make_unique<CredentialTestHelper::EnvironmentOverride>(
+        std::map<std::string, std::string>{
+            {"AZURE_TOKEN_CREDENTIALS", ""},
+            {"AZURE_TENANT_ID", "01234567-89ab-cdef-fedc-ba8976543210"},
+            {"AZURE_CLIENT_ID", "fedcba98-7654-3210-0123-456789abcdef"},
+            {"AZURE_CLIENT_SECRET", "CLIENTSECRET"},
+            {"AZURE_CLIENT_CERTIFICATE_PATH", ""},
+            {"AZURE_FEDERATED_TOKEN_FILE", ""},
+            {"AZURE_AUTHORITY_HOST", ""},
+            {"AZURE_POD_IDENTITY_AUTHORITY_HOST", ""},
+            {"MSI_ENDPOINT", cloudShell ? "http://localhost:40342/token" : ""},
+            {"MSI_SECRET", ""},
+            {"IDENTITY_ENDPOINT", cloudShell ? "" : "http://localhost:40342/token"},
+            {"IDENTITY_HEADER", ""},
+            {"IDENTITY_SERVER_THUMBPRINT", ""},
+            {"IMDS_ENDPOINT", cloudShell ? "" : "http://localhost:40342"},
+        });
+  }
+
+  void TearDown() override { Logger::SetListener(nullptr); }
+};
+
+INSTANTIATE_TEST_SUITE_P(
+    DefaultAzureCredential,
+    UnsupportedManagedIdentityHost,
+    ::testing::Values("CloudShell", "AzureArc"));
+
+TEST_P(UnsupportedManagedIdentityHost, EnvironmentCredentialSucceeds)
+{
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+        return std::make_unique<DefaultAzureCredential>(options);
+      },
+      {{"https://storage.azure.com/.default"}},
+      {"{\"expires_in\":3600, \"access_token\":\"ACCESSTOKEN\"}"});
+
+  ASSERT_EQ(actual.Requests.size(), 1U);
+  EXPECT_EQ(
+      actual.Requests.at(0).AbsoluteUrl,
+      "https://login.microsoftonline.com/01234567-89ab-cdef-fedc-ba8976543210/oauth2/v2.0/token");
+  ASSERT_EQ(actual.Responses.size(), 1U);
+  EXPECT_EQ(actual.Responses.at(0).AccessToken.Token, "ACCESSTOKEN");
+}
+
+TEST_P(UnsupportedManagedIdentityHost, ErrorDeferredUntilManagedIdentityIsAttempted)
+{
+  CredentialTestHelper::EnvironmentOverride const env(
+      std::map<std::string, std::string>{{"AZURE_TOKEN_CREDENTIALS", "ManagedIdentityCredential"}});
+  Logger::SetLevel(Logger::Level::Verbose);
+  Logger::SetListener([&](auto, auto message) { m_log.push_back(message); });
+
+  auto const actual = CredentialTestHelper::SimulateTokenRequest(
+      [&](auto transport) {
+        TokenCredentialOptions options;
+        options.Transport.Transport = transport;
+        auto credential = std::make_unique<DefaultAzureCredential>(options);
+
+        m_log.clear();
+        EXPECT_THROW(static_cast<void>(credential->GetToken({}, {})), AuthenticationException);
+        EXPECT_TRUE(std::any_of(m_log.begin(), m_log.end(), [&](auto const& message) {
+          return message.find("Failed to get token from ManagedIdentityCredential")
+              != std::string::npos
+              && message.find(GetParam() == "CloudShell" ? "Cloud Shell" : "Azure Arc")
+              != std::string::npos;
+        }));
+        return credential;
+      },
+      {},
+      std::vector<std::string>{});
+
+  EXPECT_TRUE(actual.Requests.empty());
+}
+
+TEST_P(UnsupportedManagedIdentityHost, StandaloneConstructorStillRejectsClientId)
+{
+  EXPECT_THROW(
+      static_cast<void>(std::make_unique<Azure::Identity::ManagedIdentityCredential>(
+          "fedcba98-7654-3210-0123-456789abcdef")),
+      AuthenticationException);
 }
 
 TEST(DefaultAzureCredential, ImdsProbe)
