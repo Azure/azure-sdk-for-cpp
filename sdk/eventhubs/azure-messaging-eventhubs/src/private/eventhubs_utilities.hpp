@@ -21,6 +21,7 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <utility>
 
@@ -195,7 +196,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
     {
 
 #if defined(ENABLE_UAMQP)
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      auto lock = AcquireManagementLock(context);
       auto operationContext = CreateOperationContext(context);
 #else
       auto const* operationContext = &context;
@@ -258,7 +259,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         Core::Context const& context)
     {
 #if defined(ENABLE_UAMQP)
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      auto lock = AcquireManagementLock(context);
       auto operationContext = CreateOperationContext(context);
 #else
       auto const* operationContext = &context;
@@ -330,7 +331,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
         }
       }
 #endif
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      std::unique_lock<std::timed_mutex> lock(m_managementClientMutex);
       if (m_managementClientIsOpen)
       {
         // ManagementClient::Close releases its links even when it reports a close failure.
@@ -367,6 +368,19 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 
   private:
 #if defined(ENABLE_UAMQP)
+    std::unique_lock<std::timed_mutex> AcquireManagementLock(Azure::Core::Context const& context)
+    {
+      context.ThrowIfCancelled();
+      std::unique_lock<std::timed_mutex> lock(m_managementClientMutex, std::defer_lock);
+      // A query waiting behind an unanswered operation must still observe its own cancellation.
+      while (!lock.try_lock_for(std::chrono::milliseconds(10)))
+      {
+        context.ThrowIfCancelled();
+      }
+      context.ThrowIfCancelled();
+      return lock;
+    }
+
     std::shared_ptr<Azure::Core::Context> CreateOperationContext(
         Azure::Core::Context const& context)
     {
@@ -388,7 +402,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
 #if !defined(ENABLE_UAMQP)
       // Rust management calls do not yet observe cancellation of the child context.
       // Keep the lock limited to initialization until that support is available.
-      std::unique_lock<std::mutex> lock(m_managementClientMutex);
+      std::unique_lock<std::timed_mutex> lock(m_managementClientMutex);
 #endif
       // With uAMQP, the getter holds this lock through operation completion.
       if (!m_managementClient)
@@ -417,7 +431,7 @@ namespace Azure { namespace Messaging { namespace EventHubs { namespace _detail 
       }
     }
 
-    std::mutex m_managementClientMutex;
+    std::timed_mutex m_managementClientMutex;
 #if defined(ENABLE_UAMQP)
     std::mutex m_operationContextMutex;
     std::weak_ptr<Azure::Core::Context> m_operationContext;

@@ -21,22 +21,22 @@ cmake --build build/cleanup --config Debug --target \
   azure-core-amqp-tests azure-messaging-eventhubs-test
 
 ctest --test-dir build/cleanup -C Debug -N \
-  -R 'SessionCleanupDeathTest|PropertiesCleanupDeathTest'
+  -R 'SessionCleanupDeathTest|PropertiesCleanupDeathTest|WaitingPropertiesCancellationDeathTest'
 
 ctest --test-dir build/cleanup -C Debug \
-  -R 'SessionCleanupDeathTest|PropertiesCleanupDeathTest' \
+  -R 'SessionCleanupDeathTest|PropertiesCleanupDeathTest|WaitingPropertiesCancellationDeathTest' \
   --output-on-failure --timeout 60
 ```
 
 The configure option sets the Event Hubs test timeout to 60 seconds; CTest's `--timeout` alone does not override an explicit per-test timeout.
 
-The discovery command should list **20 cases**: four session cases, eight properties cleanup cases, and eight parameterized concurrency cases. Both test files are guarded by `ENABLE_UAMQP`. The default Rust backend does not include them; a successful run with no matching tests does not validate this cleanup behavior.
+The discovery command should list **28 cases**: four session cases, eight properties cleanup cases, eight parameterized query/close cases, and eight parameterized waiting-query cancellation cases. Both test files are guarded by `ENABLE_UAMQP`. The default Rust backend does not include them; a successful run with no matching tests does not validate this cleanup behavior.
 
 To repeat just the concurrency cases five times:
 
 ```sh
 ctest --test-dir build/cleanup -C Debug \
-  -R 'ConcurrentPropertiesCleanupDeathTest' \
+  -R 'ConcurrentPropertiesCleanupDeathTest|WaitingPropertiesCancellationDeathTest' \
   --repeat until-fail:5 --output-on-failure --timeout 60
 ```
 
@@ -78,6 +78,14 @@ The same source contains `ConcurrentPropertiesCleanupDeathTest`, instantiated as
 Both tests verify that cleanup ends the session once, preserves the caller's cancellation state, rejects later queries through the closed properties-client reference, and leaves global polling idle. The parameter tuple is `(partitionProperties, cancelCaller)`: indices 0 through 3 correspond to `(false, false)`, `(false, true)`, `(true, false)`, and `(true, true)`.
 
 The second test depends on the management log messages containing `ManagementClient::ExecuteOperation:` and `Create Queue for request.`. If those diagnostics change, update the gate as well. The gate uses a bounded wait so a missing signal fails the child instead of hanging the suite.
+
+## Cancellation while waiting for another query
+
+`WaitingPropertiesCancellationDeathTest.CancelWhileAnotherQueryIsPending` establishes query A by waiting for the mock endpoint to receive its management request. The endpoint withholds the response, and A has no deadline. Query B starts with an independent context and must throw `OperationCancelledException` after explicit cancellation or deadline expiry while A remains pending.
+
+The test checks that only A's management request reaches the endpoint, A's caller context remains uncancelled, and no session end occurs before close. Closing afterward must terminate A, end the session exactly once, reject queries through stale references, and leave global polling idle. A ten-second watchdog exits the child if an operation fails to finish, preventing a blocked future destructor from hanging the regression.
+
+The parameter tuple is `(firstPartitionProperties, secondPartitionProperties, expireDeadline)`. All eight combinations cover both getters independently for A and B and both cancellation modes. The queries retain the management lock through operation completion; only the uAMQP lock-acquisition wait checks cancellation between timed attempts.
 
 ## Why these are process tests
 
