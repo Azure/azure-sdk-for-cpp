@@ -1,6 +1,6 @@
 # Release History
 
-## 12.18.0-beta.1 (Unreleased)
+## 12.18.0-beta.1 (2026-11-06)
 
 ### Features Added
 
@@ -8,8 +8,6 @@
 - Added `DownloadFileToOptions::LayoutAwareRouting` (`Auto`, `Disabled`, `Enabled`; default `Disabled`) for
   managed downloads.
 - Added the `Models::DownloadHint` alias and `Models::DownloadFileDetails::DownloadHint`.
-
-### Breaking Changes
 
 ### Bugs Fixed
 

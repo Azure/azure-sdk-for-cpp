@@ -1,6 +1,6 @@
 # Release History
 
-## 12.20.0-beta.1 (Unreleased)
+## 12.20.0-beta.1 (2026-11-06)
 
 ### Features Added
 
@@ -10,12 +10,6 @@
 - Added support for enabling and configuring Files Change Feed when creating or updating a share.
 - Added support for addressing files and directories by file ID, retrieving their properties, and
   listing a file's hard links.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 12.19.0 (2026-09-29)
 
