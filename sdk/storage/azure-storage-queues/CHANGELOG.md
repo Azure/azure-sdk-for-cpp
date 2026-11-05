@@ -1,14 +1,10 @@
 # Release History
 
-## 12.9.0-beta.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+## 12.9.0 (2026-11-06)
 
 ### Other Changes
+
+- Stable partner-feed release; no public API changes since `12.9.0-beta.1`.
 
 ## 12.9.0-beta.1 (2026-11-06)
 
